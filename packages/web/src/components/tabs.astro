@@ -1,0 +1,103 @@
+---
+import crypto from 'node:crypto'
+import type { HTMLAttributes } from 'astro/types'
+
+interface Props extends HTMLAttributes<'div'> {
+  titles: string[]
+  secondary?: boolean
+}
+
+const name = crypto.randomUUID()
+const tabs = Astro.props.titles.map((tab) => ({
+  id: crypto.randomUUID(),
+  label: tab,
+}))
+---
+
+<div {...Astro.props} class:list={['tabs', Astro.props.class]}>
+  <div
+    class:list={{
+      'tabs-container flex': true,
+      'mt-6 bg-primary relative': !Astro.props.secondary,
+      'w-[80%] my-6 mx-auto border-2 border-primary rounded':
+        Astro.props.secondary,
+    }}
+  >
+    {
+      tabs.map((tab, i) => (
+        <div
+          data-label={tab.label}
+          class:list={{
+            'tab relative flex-1 text-center': true,
+            'text-white bg-primary': !Astro.props.secondary,
+            'font-semibold text-xs md:text-base': Astro.props.secondary,
+          }}
+        >
+          <input
+            {name}
+            type="radio"
+            id={`tab-${tab.id}`}
+            class="absolute h-0 w-0 overflow-hidden peer"
+            checked={i === 0 ? 'checked' : undefined}
+          />
+          <label
+            class:list={{
+              'block py-3 w-full h-full cursor-pointer': true,
+              'peer-checked:font-semibold': !Astro.props.secondary,
+              'bg-white text-primary peer-checked:bg-primary peer-checked:text-white':
+                Astro.props.secondary,
+            }}
+            for={`tab-${tab.id}`}
+          >
+            {tab.label}
+          </label>
+          {Astro.props.secondary ? null : (
+            <div class="hidden peer-checked:block bg-[#003ca8] absolute inset-x-0 h-1 bottom-0 transition-[left] ease-in-out" />
+          )}
+        </div>
+      ))
+    }
+  </div>
+  <div
+    class="panels-container [&>*:first-child]:block [&>:not(*:first-child)]:hidden"
+  >
+    <slot />
+  </div>
+</div>
+
+<script>
+  const parents = document.querySelectorAll('.tabs')
+
+  for (const parent of parents) {
+    const panelsContainer = parent.querySelector('.panels-container')
+    if (!panelsContainer) continue
+
+    const tabsContainer = parent.querySelector('.tabs-container')
+    if (!tabsContainer) continue
+
+    const tabs = tabsContainer.querySelectorAll(
+      ':scope > .tab'
+    ) as unknown as HTMLElement[]
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('change', (e) => {
+        // clear off the initial classes for hiding panels
+        panelsContainer.className = 'panels-container'
+
+        tabs.forEach((tab) => {
+          const label = tab.dataset.label
+          const panel = panelsContainer.querySelector(`[id="${label}"]`)
+          if (!panel) return
+
+          if (label === (e.currentTarget as HTMLInputElement).dataset.label) {
+            panel.classList.remove('hidden')
+            panel.classList.add('block')
+          } else {
+            panel.classList.remove('block')
+            panel.classList.add('hidden')
+          }
+        })
+      })
+    })
+  }
+</script>

@@ -1,0 +1,291 @@
+---
+import { groupBy } from 'remeda'
+import TeamStat from './team-stat.astro'
+import { GameraNflBoxScore, getUrlForEntity } from '@lib/gamera'
+import type { HTMLAttributes } from 'astro/types'
+import Tabs from './tabs.astro'
+import TabPanel from './tab-panel.astro'
+import Grid from '@components/grid.astro'
+
+interface Props extends HTMLAttributes<'div'> {
+  data: GameraNflBoxScore
+}
+
+const data = Astro.props.data
+const [boxScoreData] = data.visual.detail
+const homeTeam = boxScoreData.homeTeam
+const homeTeamStats = boxScoreData.teamDetail.homeTeam
+const awayTeam = boxScoreData.awayTeam
+const awayTeamStats = boxScoreData.teamDetail.awayTeam
+
+const homeTeamUrl = getUrlForEntity(homeTeam.entity)
+const awayTeamUrl = getUrlForEntity(awayTeam.entity)
+
+const plays = boxScoreData.scoringSummary
+const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
+---
+
+<div class="w-full max-w-3xl mx-auto text-[#333]">
+  <h3 class="font-semibold bg-[#e4f2ff] rounded-sm px-3 py-2 w-fit">Final</h3>
+  <div>
+    <div class="flex items-center mb-6">
+      <a title={awayTeam.name} href={awayTeamUrl}>
+        <img
+          src={awayTeam.logoUrl}
+          alt={awayTeam.abbrev}
+          class="w-24 h-24 object-contain"
+        />
+      </a>
+      <div class="flex-1 ml-5">
+        <a title={awayTeam.name} href={awayTeamUrl}>
+          <h1 class="font-semibold text-2xl md:text-3xl">{awayTeam.name}</h1>
+        </a>
+        <p class="font-semibold md:text-xl">{awayTeam.record}</p>
+      </div>
+      <h2 class="font-semibold text-5xl">{awayTeam.score}</h2>
+    </div>
+    <div class="flex items-center mb-6">
+      <a title={homeTeam.name} href={homeTeamUrl}>
+        <img
+          src={homeTeam.logoUrl}
+          class="w-24 h-24 object-contain"
+          alt={homeTeam.abbrev}
+        />
+      </a>
+      <div class="flex-1 ml-5">
+        <a title={homeTeam.name} href={homeTeamUrl}>
+          <h1 class="font-semibold text-2xl md:text-3xl">{homeTeam.name}</h1>
+        </a>
+        <p class="font-semibold md:text-xl">{homeTeam.record}</p>
+      </div>
+      <h2 class="font-semibold text-5xl">{homeTeam.score}</h2>
+    </div>
+  </div>
+  <div class="flex py-0.5 border border-[#e4e4e4] rounded-sm">
+    {
+      boxScoreData.summary.columns.map((column) => (
+        <div class="first:flex-1 divide-y divide-[#e4e4e4] text-center first:text-left">
+          <p class="p-2.5 text-xs md:text-base text-[#a8a8a8]">
+            {column.title}
+          </p>
+          {boxScoreData.summary.rows.map((row) => (
+            <p class="p-2.5 text-xs md:text-base font-semibold">
+              {row[column.rowItemKey].entity ? (
+                <a
+                  title={row[column.rowItemKey].display}
+                  href={getUrlForEntity(row[column.rowItemKey].entity!)}
+                >
+                  {row[column.rowItemKey].display}
+                </a>
+              ) : (
+                row[column.rowItemKey].display
+              )}
+            </p>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="text-sm md:text-base">
+    <Tabs titles={['Summary', 'Team Stats', 'Player Stats']}>
+      <TabPanel title="Summary">
+        <div>
+          {
+            quarters.map(([quarter, plays]) => (
+              <div class="border-b border-[#e4e4e4]">
+                <div class="flex text-[#a8a8a8] border-b border-[#e4e4e4]">
+                  <p class="flex-1 py-1">{quarter}</p>
+                  <p class="text-center py-1 w-16">{awayTeam.abbrev}</p>
+                  <p class="text-center py-1 w-16">{homeTeam.abbrev}</p>
+                </div>
+                {plays.map((play) => (
+                  <div class="flex py-1.5">
+                    <img
+                      title={play.team}
+                      src={
+                        play.team === awayTeam.name
+                          ? awayTeam.logoUrl
+                          : homeTeam.logoUrl
+                      }
+                      alt={play.team}
+                      class="w-7 h-7 mt-2 object-contain"
+                    />
+                    <p class="flex-1 py-2 px-4">{play.description}</p>
+                    <>
+                      <p class="w-16 text-center py-2 px-4">
+                        {play.awayTeamScore}
+                      </p>
+                      <p class="w-16 text-center py-2 px-4">
+                        {play.homeTeamScore}
+                      </p>
+                    </>
+                  </div>
+                ))}
+              </div>
+            ))
+          }
+        </div>
+      </TabPanel>
+      <TabPanel title="Team Stats">
+        <div class="flex">
+          <p
+            class="flex-1 p-2.5 border-b border-[#e4e4e4] font-semibold whitespace-nowrap overflow-hidden text-ellipsis"
+          >
+          </p>
+          <p
+            class="w-[85px] sm:w-24 py-2.5 text-center font-semibold border-b border-[#e4e4e4] whitespace-nowrap overflow-hidden text-ellipsis"
+          >
+            {awayTeam.name}
+          </p>
+          <p
+            class="w-[85px] sm:w-24 py-2.5 text-center font-semibold border-b border-[#e4e4e4] whitespace-nowrap overflow-hidden text-ellipsis"
+          >
+            {homeTeam.name}
+          </p>
+        </div>
+        <TeamStat
+          title="1st Downs"
+          away={awayTeamStats.firstDowns}
+          home={homeTeamStats.firstDowns}
+        />
+        <TeamStat
+          indented
+          title="Passing 1st Downs"
+          away={awayTeamStats.firstDownsPassing}
+          home={homeTeamStats.firstDownsPassing}
+        />
+        <TeamStat
+          indented
+          title="Rushing 1st Downs"
+          away={awayTeamStats.firstDownsRushing}
+          home={homeTeamStats.firstDownsRushing}
+        />
+        <TeamStat
+          indented
+          title="1st downs from penalties"
+          away={awayTeamStats.firstDownsPenalty}
+          home={homeTeamStats.firstDownsPenalty}
+        />
+        <TeamStat
+          indented
+          title="3rd down efficiency"
+          away={`${awayTeamStats.thirdDownConversions} - ${awayTeamStats.thirdDownAttempts}`}
+          home={`${homeTeamStats.thirdDownConversions} - ${homeTeamStats.thirdDownAttempts}`}
+        />
+        <TeamStat
+          indented
+          title="4th down efficiency"
+          away={`${awayTeamStats.fourthDownConversions} - ${awayTeamStats.fourthDownAttempts}`}
+          home={`${homeTeamStats.fourthDownConversions} - ${homeTeamStats.fourthDownAttempts}`}
+        />
+        <TeamStat
+          title="Total Plays"
+          away={awayTeamStats.totalPlays}
+          home={homeTeamStats.totalPlays}
+        />
+        <TeamStat
+          title="Total Yards"
+          away={awayTeamStats.totalYards}
+          home={homeTeamStats.totalYards}
+        />
+        <TeamStat
+          title="Yards per play"
+          away={awayTeamStats.yardsPerPlay}
+          home={homeTeamStats.yardsPerPlay}
+        />
+        <TeamStat
+          title="Passing"
+          away={awayTeamStats.netPassingYards}
+          home={homeTeamStats.netPassingYards}
+        />
+        <TeamStat
+          indented
+          title="Comp - Att"
+          away={`${awayTeamStats.passingCompletions} - ${awayTeamStats.passingAttempts}`}
+          home={`${homeTeamStats.passingCompletions} - ${homeTeamStats.passingAttempts}`}
+        />
+        <TeamStat
+          indented
+          title="Yards per pass"
+          away={awayTeamStats.yardsPerPass}
+          home={homeTeamStats.yardsPerPass}
+        />
+        <TeamStat
+          indented
+          title="Interceptions thrown"
+          away={awayTeamStats.passingInterceptions}
+          home={homeTeamStats.passingInterceptions}
+        />
+        <TeamStat
+          indented
+          title="Sacks - Yards lost"
+          away={`${awayTeamStats.passingSacks} - ${awayTeamStats.passingSacksYardsLost}`}
+          home={`${homeTeamStats.passingSacks} - ${homeTeamStats.passingSacksYardsLost}`}
+        />
+        <TeamStat
+          title="Rushing"
+          away={awayTeamStats.rushingYards}
+          home={homeTeamStats.rushingYards}
+        />
+        <TeamStat
+          indented
+          title="Rushing Attempts"
+          away={awayTeamStats.rushingAttempts}
+          home={homeTeamStats.rushingAttempts}
+        />
+        <TeamStat
+          indented
+          title="Yards per rush"
+          away={awayTeamStats.rushingAverage}
+          home={homeTeamStats.rushingAverage}
+        />
+        <TeamStat
+          title="Penalties"
+          away={awayTeamStats.penalties}
+          home={homeTeamStats.penalties}
+        />
+        <TeamStat
+          title="Turnovers"
+          away={awayTeamStats.turnovers}
+          home={homeTeamStats.turnovers}
+        />
+        <TeamStat
+          indented
+          title="Fumbles lost"
+          away={awayTeamStats.fumblesLost}
+          home={homeTeamStats.fumblesLost}
+        />
+        <TeamStat
+          indented
+          title="Interceptions"
+          away={awayTeamStats.passingInterceptions}
+          home={homeTeamStats.passingInterceptions}
+        />
+        <TeamStat
+          title="Possession"
+          away={awayTeamStats.possession}
+          home={homeTeamStats.possession}
+        />
+      </TabPanel>
+      <TabPanel title="Player Stats">
+        <Tabs secondary titles={[awayTeam.abbrev, homeTeam.abbrev]}>
+          <TabPanel title={awayTeam.abbrev} class="space-y-5">
+            {
+              boxScoreData.playerDetail.awayTeam.grids.map((grid) => (
+                <Grid data={grid} />
+              ))
+            }
+          </TabPanel>
+          <TabPanel title={homeTeam.abbrev} class="space-y-5">
+            {
+              boxScoreData.playerDetail.homeTeam.grids.map((grid) => (
+                <Grid data={grid} />
+              ))
+            }
+          </TabPanel>
+        </Tabs>
+      </TabPanel>
+    </Tabs>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+---
+import GameLayout from '@layouts/game.astro'
+
+import { getGame } from '@lib/game'
+import type {  GameraDomain } from '@lib/gamera'
+import NbaBoxscore from '@components/nba-boxscore.astro'
+import NflBoxscore from '@components/nfl-boxscore.astro'
+import MlbBoxscore from '@components/mlb-boxscore.astro'
+import NhlBoxscore from '@components/nhl-boxscore.astro'
+
+const { league, game } = Astro.params
+if (!game || !league) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
+const domain = league.toUpperCase() as GameraDomain
+const data = await getGame({ domain, game })
+---
+
+<GameLayout data={data}>
+{(function() { switch(data.domain) {
+   case "NBA": return <NbaBoxscore data={data} />
+   case "NFL": return <NflBoxscore data={data} />
+   case "MLB": return <MlbBoxscore data={data} />
+   case "NHL": return <NhlBoxscore data={data} />
+   default: throw new Error("cannot render a boxscore for PGA")
+}})()}
+</GameLayout>

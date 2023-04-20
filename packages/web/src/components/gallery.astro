@@ -1,0 +1,38 @@
+---
+import { GameraGalleryImage, getUrlForEntity } from '@lib/gamera'
+import type { HTMLAttributes } from 'astro/types'
+
+interface Props extends HTMLAttributes<'div'> {
+  images: GameraGalleryImage[]
+  title?: string
+  alt?: string
+}
+
+const { images, title, alt } = Astro.props
+const [firstLeader] = images
+const Wrapper = firstLeader.entity ? 'a' : 'div'
+---
+
+<div class={Astro.props.class}>
+  <div class="flex mb-0.5">
+    <h3 class="font-semibold text-team-primary">{title || 'Gallery'}</h3>
+  </div>
+  <div class="flex flex-wrap gap-[3px] md:gap-1.5">
+    {
+      images &&
+        images.map((image) => (
+          <Wrapper
+            href={image.entity ? getUrlForEntity(image.entity) : undefined}
+            class="h-[85px] w-[120px] md:h-[100px] md:w-[150px] flex justify-center items-end rounded-lg overflow-hidden"
+            style={`background-color: ${image.colors.backgroundColor}`}
+          >
+            <img
+              alt={image.entity?.display || alt || 'Player Gallery Image'}
+              class="h-[90%]"
+              src={image.url}
+            />
+          </Wrapper>
+        ))
+    }
+  </div>
+</div>

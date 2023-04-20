@@ -1,0 +1,199 @@
+---
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Container from '@components/container.astro'
+
+import {
+  getUrlForEntity,
+  getDefaultBustImageUrl,
+  tokensToText,
+  GameraPlayerBio,
+  GameraDomain,
+} from '@lib/gamera'
+import { Metadata, getLeagueKeywords } from '@lib/meta'
+
+interface Props {
+  bio: GameraPlayerBio
+  meta?: Metadata
+}
+
+const { bio, meta } = Astro.props
+
+const { league, player } = Astro.params
+if (!player || !league) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
+const domain = league.toUpperCase() as GameraDomain
+const teamUrl = getUrlForEntity(bio.team.entity)
+const bustImageUrl = bio.bustImageUrl || getDefaultBustImageUrl(domain)
+const bustImageAlt = bio.bustImageUrl?.includes('silhouette')
+  ? `Illustrated silhouette of a player wearing the ${bio.team.name} uniform`
+  : `Illustration of ${bio.usedName} wearing the ${bio.team.name} uniform`
+
+const path = Astro.url.pathname
+const canonical = Astro.url.pathname + Astro.url.search
+const playerPath = getUrlForEntity({
+  type: 'player',
+  domain,
+  id: bio.playerId.toString(),
+  display: bio.usedName,
+})
+
+const links = [
+  { text: 'Overview', href: playerPath },
+  { text: 'Stats', href: `${playerPath}/career-stats` },
+  { text: 'Game Log', href: `${playerPath}/game-log` },
+  { text: 'Splits', href: `${playerPath}/splits` },
+  { text: 'Bio', href: `${playerPath}/bio` },
+]
+
+const title = `${bio.usedName} Overview`
+const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
+const keywords = `${getLeagueKeywords(domain)} ${
+  bio.usedName
+} career stats statistics`
+---
+
+<Layout
+  colors={bio.team.colors}
+  meta={{ title, description, keywords, canonical, ...(meta || {}) }}
+>
+  <Header />
+  <Container class="mb-5 bg-team-primary text-team-secondary">
+    <div class="flex flex-col md:flex-row relative">
+      <div class="flex-1 mt-5 mb-7">
+        <div
+          class="flex flex-col md:flex-row md:flex-wrap items-center gap-x-3 mb-2"
+        >
+          <h2 class="text-5xl font-semibold text-center md:text-left">
+            {bio.usedName}
+          </h2>
+        </div>
+        <div class="whitespace-nowrap text-center md:text-left">
+          {
+            bio.heightFeetInches && (
+              <>
+                <span>
+                  {bio.heightFeetInches}, {bio.weightLbs} lbs
+                </span>
+                <span class="last:hidden">•</span>
+              </>
+            )
+          }
+          {
+            teamUrl ? (
+              <a
+                class="text-inherit underline"
+                href={teamUrl}
+                set:text={bio.team.nickname || bio.team.name}
+              />
+            ) : (
+              <>{bio.team.nickname || bio.team.name}</>
+            )
+          }
+          <span class="last:hidden">•</span>
+          {
+            bio.position && (
+              <>
+                <span>
+                  {bio.jerseyNumber && `#${bio.jerseyNumber}`} {bio.position}
+                </span>
+                <span class="last:hidden">•</span>
+              </>
+            )
+          }
+        </div>
+        <div class="hidden md:block mt-6">
+          <div class="text-center w-fit">
+            <div class="flex gap-5 mb-1">
+              {
+                bio.statsSummary?.stats?.map((stat) => (
+                  <div>
+                    <p class="uppercase">{stat.label}</p>
+                    <p class="text-3xl">{stat.value}</p>
+                  </div>
+                ))
+              }
+            </div>
+            <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+              {bio.statsSummary.statsScope}
+            </p>
+          </div>
+        </div>
+      </div>
+      <img
+        class="self-center md:self-end h-44 md:h-52"
+        src={bustImageUrl}
+        alt={bustImageAlt}
+        bio-cy-illustration
+      />
+      <div
+        class="md:hidden flex flex-col items-center absolute right-0 bottom-2.5 space-y-2.5"
+      >
+      </div>
+    </div>
+  </Container>
+  <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
+    <div class="text-center w-fit">
+      <div class="flex gap-5 mb-1">
+        {
+          bio.statsSummary?.stats?.map((stat) => (
+            <div>
+              <p class="uppercase">{stat.label}</p>
+              <p class="text-3xl">{stat.value}</p>
+            </div>
+          ))
+        }
+      </div><p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+        {bio.statsSummary.statsScope}
+      </p>
+    </div>
+  </div>
+  <Container>
+    <div class="flex flex-nowrap overflow-auto mb-5 space-x-5">
+      {
+        links.map(({ href, text }) => (
+          <a
+            aria-current={href === path ? 'page' : undefined}
+            class:list={{
+              'text-3xl font-semibold shrink-0': true,
+              'text-team-primary active': href === path,
+              'text-black': href !== path,
+            }}
+            {href}
+          >
+            {text}
+          </a>
+        ))
+      }
+    </div>
+    <slot />
+    <div class="mb-4">
+      <h3 class="text-4xl font-semibold">Explore</h3><ul
+        class="flex flex-wrap gap-1.5"
+        data-cy-related-questions
+      >
+        {
+          bio.additionalQuestions.map((question) => (
+            <li class="flex-1 min-w-[210px] my-1.5 flex gap-1.5 leading-snug">
+              <i class="w-5 h-5 shrink-0 explore-search-icon" />
+              <a
+                href={`/${question.domain.toLowerCase()}/ask?q=${question.text
+                  .replaceAll(' ', '+')
+                  .toLowerCase()}`}
+              >
+                {question.text}
+              </a>
+            </li>
+          ))
+        }
+
+        <li class="flex-1 min-w-[210px] my-1.5 flex gap-1.5">
+          <i class="w-5 h-5 shrink-0 explore-flame-icon"></i>
+          <a href={`/${bio.domain.toLowerCase()}/questions`}>See trending</a>
+        </li>
+      </ul>
+    </div>
+  </Container>
+</Layout>

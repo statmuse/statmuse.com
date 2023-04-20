@@ -1,0 +1,84 @@
+---
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Container from '@components/container.astro'
+
+import { GameraBoxScore, tokensToHtml } from '@lib/gamera'
+import type { Metadata } from '@lib/meta'
+
+interface Props {
+  data: GameraBoxScore
+  meta?: Metadata
+}
+
+const { meta, data } = Astro.props
+const { league, game } = Astro.params
+if (!game || !league) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
+// const domain = league.toUpperCase() as GameraDomain
+// const path = Astro.url.pathname
+// const canonical = Astro.url.pathname + Astro.url.search
+const answer = tokensToHtml(data.nlg.text.answer)
+const subject = data.visual.summary.subject
+---
+
+<Layout colors={subject?.colors}>
+  <Header />
+  <div
+    class="grid grid-cols-[1fr_min(1250px,_100%)_1fr] w-full px-3 md:px-[75px] [&>*]:col-span-1 [&>*]:col-start-2 mb-5 bg-team-primary text-team-secondary"
+  >
+    <div class="flex flex-col md:flex-row pt-4 md:pt-6 relative">
+      <div
+        class="flex-1 flex flex-col justify-between text-center md:text-left"
+      >
+        <!-- TODO: "answered on..."  -->
+        <!-- <span class="italic opacity-50 saturate-0"> </span> -->
+        <h1
+          class="font-semibold text-xl md:text-2xl md:leading-snug lg:text-[1.75rem] xl:text-3xl xl:leading-snug my-auto"
+          data-cy-nlg=""
+        >
+          <p
+            class="my-[1em] [&>a]:underline [&>a]:text-team-secondary"
+            set:html={answer}
+          />
+        </h1>
+      </div>
+
+      <img
+        class="h-44 md:h-52 self-center md:self-end mt-2 md:mt-0 md:pl-6 md:pr-1.5 select-none"
+        src={subject.imageUrl}
+      />
+    </div>
+  </div>
+  <Container>
+    <slot />
+    <div class="mt-6 mb-4">
+      <h3 class="text-4xl font-semibold">Explore</h3>
+      <ul class="flex flex-wrap gap-1.5" data-cy-related-questions>
+        {
+          data.visual.additionalQuestions.map((question) => (
+            <li class="flex-1 min-w-[210px] my-1.5 flex gap-1.5 leading-snug">
+              <i class="w-5 h-5 shrink-0 explore-search-icon" />
+              <a
+                href={`/${question.domain.toLowerCase()}/ask?q=${question.text
+                  .replaceAll(' ', '+')
+                  .toLowerCase()}`}
+              >
+                {question.text}
+              </a>
+            </li>
+          ))
+        }
+
+        <li class="flex-1 min-w-[210px] my-1.5 flex gap-1.5">
+          <i class="w-5 h-5 shrink-0 explore-flame-icon"></i>
+          <a href={`/${data.visual.domain.toLowerCase()}/questions`}>
+            See trending
+          </a>
+        </li>
+      </ul>
+    </div>
+  </Container>
+</Layout>

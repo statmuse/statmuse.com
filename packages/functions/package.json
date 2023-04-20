@@ -1,0 +1,24 @@
+{
+  "name": "@statmuse/functions",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "sst bind vitest",
+    "typecheck": "tsc -noEmit"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.114",
+    "@types/node": "^18.15.11",
+    "sst": "^2.5.2",
+    "stripe-event-types": "^2.3.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.315.0",
+    "kysely": "^0.23.5",
+    "pg": "^8.10.0",
+    "stripe": "^12.1.1"
+  },
+  "prettier": {
+    "semi": false
+  }
+}

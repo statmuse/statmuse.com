@@ -1,0 +1,56 @@
+---
+import Grid from '@components/grid.astro'
+import PlayerLayout from '@layouts/player.astro'
+import { GameraDomain, tokensToText } from '@lib/gamera'
+import { getPlayerBio, getPlayerStats } from '@lib/player'
+import { getLeagueKeywords } from '@lib/meta'
+
+const { league, player } = Astro.params
+if (!player || !league) {
+  return new Response(null, {
+    status: 404,
+    statusText: 'Not found',
+  })
+}
+
+const domain = league as GameraDomain
+const bio = await getPlayerBio(league as GameraDomain, player)
+const params = Astro.url.searchParams
+const stats = await getPlayerStats({
+  domain,
+  player,
+  params,
+})
+const { grids, parameters } = stats
+
+const [firstParam] = Object.values(parameters)
+const firstParamDisplay = firstParam
+  ? firstParam.values.find((v) => v.id === firstParam.selectedValueId)?.display
+  : undefined
+const title = `${bio.usedName} Career Stats${
+  firstParamDisplay ? ` (${firstParamDisplay})` : ''
+}`
+const description =
+  (bio.summaryNlg && tokensToText(bio.summaryNlg)) ||
+  `${bio.usedName} career stats for the ${domain} regular season and playoffs`
+const keywords = `${getLeagueKeywords(bio.domain)} ${
+  bio.usedName
+} career stats statistics`
+const meta = { title, description, keywords }
+---
+
+<PlayerLayout {bio} {meta}>
+  <div>
+    {
+      grids &&
+        grids.map((grid) => (
+          <Grid
+            class="mb-5"
+            data={grid}
+            columnStyles={{ SEASON: 'text-left' }}
+            {parameters}
+          />
+        ))
+    }
+  </div>
+</PlayerLayout>

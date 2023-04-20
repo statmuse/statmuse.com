@@ -1,0 +1,48 @@
+---
+import { GameraTeamLeader, getUrlForEntity } from '@lib/gamera'
+import type { HTMLAttributes } from 'astro/types'
+
+interface Props extends HTMLAttributes<'div'> {
+  leaders: GameraTeamLeader[]
+  title?: string
+}
+
+const { leaders, title } = Astro.props
+const [firstLeader] = leaders
+const Wrapper = firstLeader.galleryImage.entity ? 'a' : 'div'
+---
+
+<div class={Astro.props.class}>
+  <div class="max-w-fit mx-0 my-auto">
+    <div class="flex justify-between mb-0.5">
+      <h3 class="font-semibold text-team-primary">{title || 'Team Leaders'}</h3>
+      <slot />
+    </div>
+    <div class="flex gap-1.5">
+      {
+        leaders.map((leader) => (
+          <Wrapper
+            href={
+              leader.galleryImage.entity
+                ? getUrlForEntity(leader.galleryImage.entity)
+                : undefined
+            }
+            class:list={{
+              'flex flex-col justify-between w-32 text-center rounded-lg overflow-hidden hover:no-underline': true,
+            }}
+            style={`background-color: ${leader.galleryImage.colors.backgroundColor}; color: ${leader.galleryImage.colors.foregroundColor};`}
+          >
+            <div class="mt-4 mb-3">
+              <p style="line-height: normal;">{leader.stat.label}</p>
+              <p class="text-3xl" style="line-height: normal;">
+                {leader.stat.value}
+              </p>
+              <p class="uppercase text-xs tracking-[0.07rem]">{leader.name}</p>
+            </div>
+            <img alt={leader.name} src={leader.galleryImage.url} />
+          </Wrapper>
+        ))
+      }
+    </div>
+  </div>
+</div>

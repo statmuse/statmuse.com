@@ -1,0 +1,15 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+interface Props extends HTMLAttributes<'div'> {
+  title: string
+}
+---
+
+<div
+  id={Astro.props.title}
+  {...Astro.props}
+  class:list={['', Astro.props.class]}
+>
+  <slot />
+</div>

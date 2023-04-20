@@ -1,0 +1,28 @@
+{
+  "name": "statmuse",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "sst dev",
+    "build": "sst build",
+    "deploy": "sst deploy",
+    "remove": "sst remove",
+    "console": "sst console",
+    "typecheck": "tsc --noEmit",
+    "sso": "aws sso login --profile=statmuse"
+  },
+  "devDependencies": {
+    "sst": "^2.5.2",
+    "aws-cdk-lib": "2.72.1",
+    "constructs": "10.1.156",
+    "typescript": "^5.0.4",
+    "@tsconfig/node16": "^1.0.3"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "prettier": {
+    "semi": false
+  }
+}

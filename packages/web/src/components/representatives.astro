@@ -1,0 +1,98 @@
+---
+import type { GameraGalleryImage, getUrlForEntity } from '@lib/gamera'
+import type { HTMLAttributes } from 'astro/types'
+
+interface Props extends HTMLAttributes<'div'> {
+  representatives: GameraGalleryImage[]
+  title?: string
+  alt?: string
+  fallback?: string
+}
+
+const { representatives, title, alt, fallback } = Astro.props
+
+const getIllustrationHeight = (image: GameraGalleryImage) => {
+  const specialPlayers = [
+    'Davante Adams',
+    'Ja Morant',
+    'Darius Garland',
+    'Jarrett Allen',
+    'Collin Sexton',
+    'Coby White',
+    'Isaiah Stewart',
+    'Jalen Ramsey',
+  ]
+  if (specialPlayers.includes(image.entity?.display)) {
+    return 205
+  }
+
+  return 175
+}
+---
+
+<>
+  {
+    representatives.length === 0 && (
+      <div
+        class="h-40 sm:h-48 w-40 sm:w-48 mb-5 md:mb-0 flex items-center justify-center rounded-full bg-[#eff4f8] shrink-0 self-center"
+        style="border: 4px solid var(--team-secondary-color)"
+      >
+        <img
+          alt={alt}
+          class="max-w-[75%] max-h-[75%]"
+          src={fallback}
+          data-cy-illustration
+        />
+      </div>
+    )
+  }
+  {
+    representatives.length === 3 && (
+      <div class="flex items-end justify-center w-[480px]">
+        <div class="relative">
+          <img
+            class="max-w-none absolute bottom-0 left-0 -translate-x-1/2"
+            alt={representatives[0].entity?.display}
+            src={representatives[0].url}
+            style={`height: ${getIllustrationHeight(representatives[0])}px;`}
+            data-cy-illustration
+          />
+          <img
+            class="max-w-none relative z-[1]"
+            alt={representatives[1].entity?.display}
+            src={representatives[1].url}
+            style={`height: ${getIllustrationHeight(representatives[1])}px;`}
+            data-cy-illustration
+          />
+          <img
+            class="max-w-none absolute bottom-0 right-0 translate-x-1/2"
+            alt={representatives[2].entity?.display}
+            src={representatives[2].url}
+            style={`height: ${getIllustrationHeight(representatives[2])}px;`}
+            data-cy-illustration
+          />
+        </div>
+      </div>
+    )
+  }
+  {
+    representatives.length === 2 && (
+      <div class="flex items-end justify-center w-[360px]">
+        <img
+          class="translate-x-1/4"
+          alt={representatives[0].entity?.display}
+          src={representatives[0].url}
+          style={`height: ${getIllustrationHeight(representatives[0])}px;`}
+          data-cy-illustration
+        />
+        <img
+          class="-[175px] -translate-x-1/4 z-[1]"
+          alt={representatives[1].entity?.display}
+          src={representatives[1].url}
+          style={`height: ${getIllustrationHeight(representatives[1])}px;`}
+          data-cy-illustration
+        />
+      </div>
+    )
+  }
+</>

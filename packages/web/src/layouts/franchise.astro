@@ -1,0 +1,183 @@
+---
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Container from '@components/container.astro'
+import TeamRepresentatives from '@components/representatives.astro'
+
+import {
+  getUrlForEntity,
+  getDefaultTeamLogoUrl,
+  GameraTeamFranchiseOverview,
+  GameraDomain,
+} from '@lib/gamera'
+import { Metadata, getLeagueKeywords } from '@lib/meta'
+
+interface Props {
+  overview: GameraTeamFranchiseOverview
+  meta?: Metadata
+}
+
+const { overview, meta } = Astro.props
+const { bio } = overview
+
+const domain = overview.domain.toUpperCase() as GameraDomain
+const path = Astro.url.pathname
+const canonical = Astro.url.pathname + Astro.url.search
+const teamPath = getUrlForEntity({
+  type: 'teamFranchise',
+  domain,
+  id: overview.teamId.toString(),
+  display: bio.name,
+})
+const yearId = overview.seasons[0].entity.id
+
+const links = [
+  { text: 'Overview', href: `${teamPath}/${yearId}` },
+  { text: 'Stats', href: `${teamPath}/stats/${yearId}` },
+  { text: 'Scores & Schedule', href: `${teamPath}/schedule/${yearId}` },
+  { text: 'Roster', href: `${teamPath}/roster/${yearId}` },
+  { text: 'Splits', href: `${teamPath}/splits/${yearId}` },
+  { text: 'History', href: `${teamPath}/history` },
+]
+
+const title = `${bio.name} Overview`
+const description = `View ${bio.name} career stats, including game logs, splits, and more.`
+const keywords = `${getLeagueKeywords(domain)} ${
+  bio.name
+} career stats statistics`
+---
+
+<Layout
+  colors={bio.colors}
+  meta={{ title, description, keywords, canonical, ...(meta || {}) }}
+>
+  <Header />
+  <Container class="mb-5 bg-team-primary text-team-secondary overflow-hidden">
+    <div
+      class="relative flex flex-col md:flex-row md:flex-wrap justify-center items-center md:items-stretch"
+    >
+      <div class="flex-1 mt-5 mb-7">
+        <h2 class="text-5xl font-semibold mb-2 text-center md:text-left">
+          {bio.name}
+        </h2>
+        <div class="flex flex-wrap flex-col md:flex-row items-center gap-3">
+          <div class="cursor-pointer relative">
+            <select
+              class="team-season-select appearance-none border-none bg-team-primary color-current font-semibold outline-none pr-3"
+              data-cy-team-select
+            >
+              <option value="history" data-url={teamPath} selected="selected">
+                History
+              </option>
+              {
+                overview.seasons.map((season) => {
+                  const url = getUrlForEntity(season.entity)
+                  return (
+                    <option value={season.entity.id} data-url={url}>
+                      {season.name}
+                    </option>
+                  )
+                })
+              }
+            </select>
+            <div class="bg-team-secondary absolute bottom-0 w-full h-[1px]">
+            </div>
+            <div
+              class="border-x-4 border-x-transparent border-t-4 border-t-team-secondary h-0 w-0 absolute right-0 top-1/2 -translate-y-[35%]"
+            >
+            </div>
+          </div>
+          <div class="whitespace-nowrap">
+            {
+              bio.conference && (
+                <>
+                  <span>{bio.conference}</span>
+                  <span class="last:hidden"> • </span>
+                </>
+              )
+            }
+            {
+              bio.division && (
+                <>
+                  <span>{bio.division}</span>
+                  <span class="last:hidden"> • </span>
+                </>
+              )
+            }
+          </div>
+        </div>
+        <div class="hidden md:block mt-6">
+          <div class="flex gap-5 mb-1 text-center">
+            {
+              bio.recordSummaries.map((summary) => (
+                <div>
+                  <p class="uppercase">{summary.recordScope}</p>
+                  <p class="text-3xl">{summary.winPercentage}</p>
+                  <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+                    {summary.record}
+                  </p>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+      <TeamRepresentatives
+        representatives={bio.franchiseRepresentatives}
+        fallback={bio.logoImageUrl || getDefaultTeamLogoUrl(domain)}
+        alt={`Logo for the ${bio.name}`}
+      />
+      <div class="absolute right-0 bottom-2.5 md:hidden" style="z-index: 1;">
+      </div>
+    </div>
+  </Container>
+  <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
+    <div class="flex gap-5 mb-1 text-center">
+      {
+        bio.recordSummaries.map((summary) => (
+          <div>
+            <p class="uppercase">{summary.recordScope}</p>
+            <p class="text-3xl">{summary.winPercentage}</p>
+            <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+              {summary.record}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <Container>
+    <div class="flex flex-nowrap overflow-auto mb-5 space-x-5">
+      {
+        links.map(({ href, text }, index) => (
+          <a
+            aria-current={href === path ? 'page' : undefined}
+            class:list={{
+              'text-3xl font-semibold shrink-0': true,
+              'text-team-primary active': index === 5,
+              'text-black': index !== 5,
+            }}
+            {href}
+          >
+            {text}
+          </a>
+        ))
+      }
+    </div>
+    <div class="mb-1.5">
+      <slot />
+    </div>
+  </Container>
+</Layout>
+
+<script>
+  const selects = document.querySelectorAll('select.team-season-select')
+  selects.forEach((select) => {
+    select.addEventListener('change', (event) => {
+      const select = event.target as HTMLSelectElement
+      if (!select.selectedOptions) return
+      const newUrl = select.selectedOptions[0].dataset['url'] as string
+      window.location.href = newUrl
+    })
+  })
+</script>

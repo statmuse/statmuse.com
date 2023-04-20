@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>StatMuse</ShortName>
+  <Description>Search for stats, scores, schedules, and more.</Description>
+  <Tags>sports stats statistics players teams baseball hockey basketball football nba nfl mlb nhl</Tags>
+  <Contact>support@statmuse.com</Contact>
+  <Url type="text/html"
+    template="https://www.statmuse.com/ask?q={searchTerms}"/>
+  <Image height="16" width="16" type="image/vnd.microsoft.icon">https://www.statmuse.com/favicon.ico</Image>
+  <Query role="example" searchTerms="A sports or stats related question" />
+  <Developer>StatMuse Development Team</Developer>
+  <Attribution>
+    Search data Copyright StatMuse, Inc.
+  </Attribution>
+  <SyndicationRight>open</SyndicationRight>
+  <AdultContent>false</AdultContent>
+  <Language>en-us</Language>
+  <OutputEncoding>UTF-8</OutputEncoding>
+  <InputEncoding>UTF-8</InputEncoding>
+</OpenSearchDescription>

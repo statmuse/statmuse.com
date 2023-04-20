@@ -1,0 +1,269 @@
+---
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Container from '@components/container.astro'
+import TeamRepresentatives from '@components/representatives.astro'
+
+import {
+  getUrlForEntity,
+  getDefaultTeamLogoUrl,
+  tokensToText,
+  GameraTeamSeasonBio,
+  GameraDomain,
+} from '@lib/gamera'
+import { Metadata, getLeagueKeywords } from '@lib/meta'
+
+interface Props {
+  bio: GameraTeamSeasonBio
+  meta?: Metadata
+}
+
+const { bio, meta } = Astro.props
+
+const domain = bio.domain.toUpperCase() as GameraDomain
+const teamFranchiseUrl = getUrlForEntity(bio.franchise)
+
+const path = Astro.url.pathname
+const canonical = Astro.url.pathname + Astro.url.search
+const teamPath = getUrlForEntity({
+  type: 'teamSeason',
+  domain,
+  id: bio.teamId.toString(),
+  display: bio.name,
+})
+const year = bio.season.name
+const currentSeason = bio.season?.all?.find((s) => s.name === year)
+const [, yearId] = currentSeason?.entity.id.split('/') || []
+
+const links = [
+  { text: 'Overview', href: `${teamPath}/${yearId}` },
+  { text: 'Stats', href: `${teamPath}/stats/${yearId}` },
+  { text: 'Scores & Schedule', href: `${teamPath}/schedule/${yearId}` },
+  { text: 'Roster', href: `${teamPath}/roster/${yearId}` },
+  { text: 'Splits', href: `${teamPath}/splits/${yearId}` },
+  { text: 'History', href: `${teamPath}/history` },
+]
+
+let page = 0
+
+if (path.includes('stats')) {
+  page = 1
+} else if (path.includes('schedule')) {
+  page = 2
+} else if (path.includes('roster')) {
+  page = 3
+} else if (path.includes('splits')) {
+  page = 4
+} else if (path.includes('history')) {
+  page = 5
+}
+
+const title = `${bio.name} Overview`
+const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
+const keywords = `${getLeagueKeywords(domain)} ${
+  bio.name
+} career stats statistics`
+---
+
+<Layout
+  colors={bio.colors}
+  meta={{ title, description, keywords, canonical, ...(meta || {}) }}
+>
+  <Header />
+  <Container class="mb-5 bg-team-primary text-team-secondary overflow-hidden">
+    <div
+      class="relative flex flex-col md:flex-row md:flex-wrap justify-center items-center md:items-stretch"
+    >
+      <div class="flex-1 mt-5 mb-7">
+        <h2 class="text-5xl font-semibold mb-2 text-center md:text-left">
+          <a
+            class="text-current"
+            href={teamFranchiseUrl}
+            title={`${bio.name} Franchise`}
+            data-cy-team-name-link
+          >
+            {bio.name}
+          </a>
+        </h2>
+        <div class="flex flex-wrap flex-col md:flex-row items-center gap-3">
+          <div class="cursor-pointer relative">
+            <select
+              class="team-season-select appearance-none border-none bg-team-primary color-current font-semibold outline-none pr-3"
+              data-cy-team-select
+            >
+              <option value="history" data-url={teamFranchiseUrl}>
+                History
+              </option>
+              {
+                bio.season.all.map((season) => {
+                  const url = getUrlForEntity(season.entity)
+                  return (
+                    <option
+                      value={season.entity.id}
+                      data-url={url}
+                      selected={year === season.name ? 'selected' : undefined}
+                    >
+                      {season.name}
+                    </option>
+                  )
+                })
+              }
+            </select>
+            <div class="bg-team-secondary absolute bottom-0 w-full h-[1px]">
+            </div>
+            <div
+              class="border-x-4 border-x-transparent border-t-4 border-t-team-secondary h-0 w-0 absolute right-0 top-1/2 -translate-y-[35%]"
+            >
+            </div>
+          </div>
+          <div class="whitespace-nowrap">
+            {
+              bio.standing?.record && (
+                <>
+                  <span>{bio.standing.record}</span>
+                  <span class="last:hidden"> • </span>
+                </>
+              )
+            }
+            {
+              bio.standing?.leagueRank && (
+                <>
+                  <span>{bio.standing.leagueRank}</span>
+                  <span class="last:hidden"> • </span>
+                </>
+              )
+            }
+            {
+              bio.standing?.conferenceRank && (
+                <>
+                  <span>{bio.standing.conferenceRank}</span>
+                  <span class="last:hidden"> • </span>
+                </>
+              )
+            }
+            {
+              bio.standing?.divisionRank && (
+                <>
+                  <span>{bio.standing.divisionRank}</span>
+                  <span class="last:hidden"> • </span>
+                </>
+              )
+            }
+            {
+              bio.standing?.championship && (
+                <>
+                  <span>🏆</span>
+                  <span class="last:hidden"> • </span>
+                </>
+              )
+            }
+          </div>
+        </div>
+        <div class="hidden md:block mt-6">
+          <div class="flex gap-5 mb-1 text-center">
+            {
+              bio.statsSummary.stats.map((stat) => (
+                <div>
+                  <p class="uppercase">{stat.label}</p>
+                  <p class="text-3xl">{stat.value}</p>
+                  <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+                    {stat.rank}
+                  </p>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+      <TeamRepresentatives
+        representatives={bio.teamRepresentatives}
+        fallback={bio.logoImageUrl || getDefaultTeamLogoUrl(domain)}
+        alt={`Logo for the ${bio.season.name} ${bio.name}`}
+      />
+      <div class="absolute right-0 bottom-2.5 md:hidden" style="z-index: 1;">
+        <div
+          class="flex items-center justify-center w-12 h-12 rounded-full bg-team-primary"
+        >
+          <answer-share
+            class="unstable"
+            url="https://www.statmuse.com/nba/team/2016-17-san-antonio-spurs-27/2017"
+            ><div>
+              <span style="cursor: pointer;">
+                <svg
+                  width="25"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 22.7 22.7"
+                  xml:space="preserve"
+                >
+                  <g
+                    style="fill: none; stroke: var(--team-secondary-color, #c5c9cc); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10;"
+                  >
+                    <polyline points="6.5,8.9 11.4,4 16.2,8.8"></polyline><line
+                      x1="11.4"
+                      y1="4"
+                      x2="11.4"
+                      y2="13.1"
+                    >
+                    </line><polyline
+                      points="3.2,13.2 3.2,18.7 19.5,18.7 19.5,13.2"
+                    >
+                    </polyline>
+                  </g>
+                </svg>
+              </span>
+            </div></answer-share
+          >
+        </div>
+      </div>
+    </div>
+  </Container>
+  <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
+    <div class="flex gap-5 mb-1 text-center">
+      {
+        bio.statsSummary.stats.map((stat) => (
+          <div>
+            <p class="uppercase">{stat.label}</p>
+            <p class="text-3xl">{stat.value}</p>
+            <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+              {stat.rank}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <Container>
+    <div class="flex flex-nowrap overflow-auto mb-5 space-x-5">
+      {
+        links.map(({ href, text }, index) => (
+          <a
+            aria-current={href === path ? 'page' : undefined}
+            class:list={{
+              'text-3xl font-semibold shrink-0': true,
+              'text-team-primary active': index === page,
+              'text-black': index !== page,
+            }}
+            {href}
+          >
+            {text}
+          </a>
+        ))
+      }
+    </div>
+    <div class="mb-1.5">
+      <slot />
+    </div>
+  </Container>
+</Layout>
+
+<script>
+  const selects = document.querySelectorAll('select.team-season-select')
+  selects.forEach((select) => {
+    select.addEventListener('change', (event) => {
+      const select = event.target as HTMLSelectElement
+      if (!select.selectedOptions) return
+      const newUrl = select.selectedOptions[0].dataset['url'] as string
+      window.location.href = newUrl
+    })
+  })
+</script>

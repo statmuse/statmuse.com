@@ -1,0 +1,35 @@
+---
+interface Props {
+  title: string
+  home: string
+  away: string
+  indented?: boolean
+}
+---
+
+<div class="flex">
+  <p
+    class:list={{
+      'flex-1 p-2.5 border-b border-[#e4e4e4] font-semibold whitespace-nowrap overflow-hidden text-ellipsis': true,
+      'font-normal border-none pl-2.5 sm:pl-12': Astro.props.indented,
+    }}
+  >
+    {Astro.props.title}
+  </p>
+  <p
+    class:list={{
+      'w-[85px] sm:w-24 py-2.5 text-center font-semibold border-b border-[#e4e4e4] whitespace-nowrap overflow-hidden text-ellipsis': true,
+      'font-normal border-none': Astro.props.indented,
+    }}
+  >
+    {Astro.props.away}
+  </p>
+  <p
+    class:list={{
+      'w-[85px] sm:w-24 py-2.5 text-center font-semibold border-b border-[#e4e4e4] whitespace-nowrap overflow-hidden text-ellipsis': true,
+      'font-normal border-none': Astro.props.indented,
+    }}
+  >
+    {Astro.props.home}
+  </p>
+</div>

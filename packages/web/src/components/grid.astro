@@ -1,0 +1,272 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+import type { GameraGrid } from '@lib/gamera'
+import { getUrlForEntity, GameraParameter } from '@lib/gamera'
+
+interface Props extends HTMLAttributes<'div'> {
+  data: GameraGrid
+  fullWidth?: boolean
+  seeAllUrl?: string
+  title?: string
+  hideTitle?: boolean
+  columnStyles?: Record<string, string>
+  columnHeaderStyles?: Record<string, string>
+  parameters?: Record<string, GameraParameter>
+}
+
+const {
+  seeAllUrl,
+  data,
+  title,
+  columnStyles,
+  columnHeaderStyles,
+  parameters,
+  hideTitle,
+} = Astro.props
+type Column = GameraGrid['columns'][0]
+type Row = GameraGrid['rows'][0][string]
+const fullWidth = Astro.props.fullWidth ?? true
+
+const getTextColumnStyles = (col: Column) => {
+  const customColumnStyles = columnStyles ? columnStyles[col.rowItemKey] : ''
+  if (customColumnStyles) return customColumnStyles
+
+  const defaultColumnStyles = columnStyles ? columnStyles['default'] : ''
+  if (defaultColumnStyles) return defaultColumnStyles
+
+  switch (col.type) {
+    case 'date':
+    case 'number':
+    case 'time':
+      return 'text-right'
+    case 'string':
+      return 'text-left'
+    default:
+      return 'text-center'
+  }
+}
+
+const getTextColumnHeaderStyles = (col: Column) => {
+  const customColumnStyles = columnHeaderStyles
+    ? columnHeaderStyles[col.rowItemKey]
+    : ''
+  if (customColumnStyles) return customColumnStyles
+
+  const defaultColumnStyles = columnHeaderStyles
+    ? columnHeaderStyles['default']
+    : ''
+  if (defaultColumnStyles) return defaultColumnStyles
+
+  return ''
+}
+
+const dateRegex = /(Sun|Mon|Tue|Wed|Thu|Fri|Sat)\s(\d+\/\d+)/
+const scoreRegex = /(W|L)\s(\d+-\d+)/
+---
+
+<div class={Astro.props.class}>
+  <div class="flex justify-between mb-0.5">
+    {
+      !hideTitle && (
+        <h3 class="font-semibold text-team-primary">{title || data.name}</h3>
+      )
+    }
+    {seeAllUrl && <a href={seeAllUrl}>See all</a>}
+    <slot />
+    {
+      parameters && (
+        <div class="space-x-3">
+          {Object.entries(parameters).map(([key, value]) => (
+            <div class="inline-block relative cursor-pointer" data-cy="select">
+              <div
+                class="w-full bg-team-primary absolute bottom-0"
+                style="height: 1px;"
+              />
+              <select
+                name={key}
+                autocomplete="off"
+                class="grid-filter appearance-none font-semibold text-team-primary bg-white pr-3 cursor-pointer outline-none"
+              >
+                {value.values.map((v) => (
+                  <option
+                    value={v.id}
+                    selected={
+                      v.id.toString() ===
+                      parameters[key].selectedValueId.toString()
+                        ? 'selected'
+                        : undefined
+                    }
+                  >
+                    {v.display}
+                  </option>
+                ))}
+              </select>
+              <div
+                class="w-0 h-0 border-x-[5px] border-x-transparent border-t-[5px] border-t-team-primary absolute top-1/2 right-0"
+                style="transform: translateY(-35%);"
+              />
+            </div>
+          ))}
+        </div>
+      )
+    }
+  </div>
+  <div class="relative overflow-x-auto">
+    <table
+      class:list={{
+        'text-[15px] whitespace-nowrap': true,
+        'w-full': fullWidth,
+      }}
+    >
+      <thead>
+        <tr class="text-xs text-team-secondary uppercase tracking-[0.07rem]">
+          {
+            data.columns.map((col, index) => {
+              const textColumnStyles = getTextColumnStyles(col)
+              const textColumnHeaderStyles = getTextColumnHeaderStyles(col)
+              const hasImage = data.rows.some(
+                (row) => row[col.rowItemKey].imageUrl
+              )
+
+              return (
+                <th
+                  class:list={{
+                    'first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5': true,
+                    'p-1.5': true,
+                    'pl-8': hasImage,
+                    'sticky left-0': index === 0,
+                    [textColumnStyles]: !!textColumnStyles,
+                    [textColumnHeaderStyles]: !!textColumnHeaderStyles,
+                  }}
+                >
+                  {col.title}
+                </th>
+              )
+            })
+          }
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-[#c7c8ca] leading-[22px]">
+        {
+          data.rows.map((row) => (
+            <tr>
+              {data.columns.map((col, x) => {
+                const getCellContent = (row: Row) => {
+                  const playerEntity = row.entity?.type.includes('player')
+
+                  if (row.imageUrl) {
+                    return (
+                      <div class="flex items-center">
+                        {row.imageUrl ? (
+                          <img
+                            src={row.imageUrl}
+                            alt={row.display}
+                            class:list={{
+                              'w-6 h-6 max-w-none object-cover rounded-full bg-white':
+                                playerEntity,
+                              'opacity-50':
+                                playerEntity &&
+                                row.imageUrl.includes('silhouette'),
+                              'w-4 h-4 max-w-none object-contain':
+                                !playerEntity,
+                              'mr-2.5': true,
+                            }}
+                          />
+                        ) : (
+                          <div class="w-4 h-4 mr-2.5" />
+                        )}
+                        {row.display}
+                      </div>
+                    )
+                  }
+
+                  if (row.display?.match(dateRegex)) {
+                    const [, day, date] = row.display.match(dateRegex) || []
+                    return (
+                      <div class="flex">
+                        <div class="w-8">{day}</div>
+                        <div>{date}</div>
+                      </div>
+                    )
+                  }
+
+                  if (row.display?.match(scoreRegex)) {
+                    const [, result, score] =
+                      row.display.match(scoreRegex) || []
+                    return (
+                      <div class="flex">
+                        <div class="w-5">{result}</div>
+                        <div>{score}</div>
+                      </div>
+                    )
+                  }
+
+                  return row.display
+                }
+
+                const { entity, imageUrl } = row[col.rowItemKey]
+                const content = getCellContent(row[col.rowItemKey])
+                const textColumnStyles = getTextColumnStyles(col)
+                const href = entity ? getUrlForEntity(entity) : undefined
+
+                return (
+                  <td
+                    class:list={{
+                      'px-2': true,
+                      'py-1': !imageUrl,
+                      'bg-white': true, // TODO: support highlight on sort
+                      'sticky left-0': x === 0,
+                      'w-2': !!imageUrl,
+                      [textColumnStyles]: !!textColumnStyles,
+                    }}
+                  >
+                    {entity ? (
+                      <a title={entity.display} href={href}>
+                        {content}
+                      </a>
+                    ) : (
+                      <>{content}</>
+                    )}
+                  </td>
+                )
+              })}
+            </tr>
+          ))
+        }
+        {
+          data.aggregations?.map((row) => (
+            <tr class="text-sm font-semibold">
+              {data.columns.map((col, x) => {
+                const { display } = row[col.rowItemKey]
+                const textColumnStyles = getTextColumnStyles(col)
+                return (
+                  <td
+                    class:list={{
+                      'px-2 py-1 bg-white': true,
+                      'sticky left-0': x === 0,
+                      [textColumnStyles]: !!textColumnStyles,
+                    }}
+                  >
+                    {display}
+                  </td>
+                )
+              })}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const selects = document.querySelectorAll('select.grid-filter')
+  selects.forEach((select) => {
+    select.addEventListener('change', (event) => {
+      const select = event.target as HTMLSelectElement
+      const url = new URL(window.location.href)
+      url.searchParams.set(select.name, select.value)
+      window.location.href = url.toString()
+    })
+  })
+</script>

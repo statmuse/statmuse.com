@@ -1,0 +1,44 @@
+---
+import TeamLayout from '@layouts/team.astro'
+import Grid from '@components/grid.astro'
+
+import { GameraDomain, tokensToText } from '@lib/gamera'
+import { getTeamSeasonBio, getTeamSeasonGameResults } from '@lib/team'
+import { getLeagueKeywords } from '@lib/meta'
+
+const { league, team, year } = Astro.params
+if (!team || !league || !year) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
+const domain = league.toUpperCase() as GameraDomain
+const bio = await getTeamSeasonBio({ domain, team, year })
+const gameResults = await getTeamSeasonGameResults({ domain, team, year })
+
+const title = `${bio.name} Overview`
+const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
+const keywords = `${getLeagueKeywords(domain)} ${
+  bio.name
+} career stats statistics`
+const meta = { title, description, keywords }
+---
+
+<TeamLayout {bio} {meta}>
+  <div class="space-y-5 mb-5">
+    {
+      gameResults?.grids &&
+        gameResults.grids.map((data) => (
+          <Grid
+            {data}
+            fullWidth={false}
+            columnStyles={{
+              DATE: 'text-left w-20',
+              SCORE: 'text-left w-20',
+              OPP: 'text-left w-20',
+              RECORD: 'text-right w-20',
+            }}
+          />
+        ))
+    }
+  </div>
+</TeamLayout>

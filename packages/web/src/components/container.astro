@@ -1,0 +1,9 @@
+---
+const classes = Astro.props.class
+---
+
+<div
+  class={`grid grid-cols-[1fr_min(1250px,_100%)_1fr] w-full px-3 md:px-[75px] [&>*]:col-span-1 [&>*]:col-start-2 ${classes}`}
+>
+  <slot />
+</div>

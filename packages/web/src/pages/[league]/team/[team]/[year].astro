@@ -1,0 +1,81 @@
+---
+import TeamLayout from '@layouts/team.astro'
+import Grid from '@components/grid.astro'
+import TeamLeaders from '@components/leaders.astro'
+import PlayerGallery from '@components/gallery.astro'
+
+import { GameraDomain, tokensToText, tokensToHtml } from '@lib/gamera'
+import { getTeamSeasonOverview } from '@lib/team'
+import { getLeagueKeywords } from '@lib/meta'
+
+const { league, team, year } = Astro.params
+if (!team || !league || !year) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
+const domain = league.toUpperCase() as GameraDomain
+const { bio, scoresAndSchedule, teamLeaders, standings, stats, playerGallery } =
+  await getTeamSeasonOverview({
+    domain,
+    team,
+    year,
+  })
+
+const summary = bio.summaryNlg ? tokensToHtml(bio.summaryNlg) : undefined
+
+const title = `${bio.name} Overview`
+const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
+const keywords = `${getLeagueKeywords(domain)} ${
+  bio.name
+} career stats statistics`
+const meta = { title, description, keywords }
+---
+
+<TeamLayout {bio} {meta}>
+  <div>
+    <div class="mb-5 leading-snug">
+      <p set:html={summary} />
+    </div>
+    <div
+      class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 mb-5"
+    >
+      {
+        scoresAndSchedule && (
+          <Grid
+            data={scoresAndSchedule}
+            columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+          >
+            <a href={`schedule/${year}`}>See schedule</a>
+          </Grid>
+        )
+      }
+      {
+        teamLeaders && (
+          <TeamLeaders leaders={teamLeaders}>
+            <a href={`roster/${year}`}>See roster</a>
+          </TeamLeaders>
+        )
+      }
+      {
+        standings && (
+          <Grid
+            data={standings}
+            columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+          />
+        )
+      }
+    </div>
+    {
+      stats && (
+        <Grid
+          data={stats}
+          class="mb-5"
+          columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+        >
+          <a href={`stats/${year}`}>See stats</a>
+        </Grid>
+      )
+    }
+    {playerGallery && <PlayerGallery images={playerGallery} class="mb-5" />}
+  </div>
+</TeamLayout>

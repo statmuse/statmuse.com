@@ -1,0 +1,59 @@
+---
+import FranchiseLayout from '@layouts/franchise.astro'
+import Grid from '@components/grid.astro'
+import TeamLeaders from '@components/leaders.astro'
+import PlayerGallery from '@components/gallery.astro'
+
+import type { GameraDomain } from '@lib/gamera'
+import { getTeamFranchiseOverview } from '@lib/team'
+import { getLeagueKeywords } from '@lib/meta'
+
+const { league, team } = Astro.params
+if (!team || !league) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
+const domain = league.toUpperCase() as GameraDomain
+const overview = await getTeamFranchiseOverview({ domain, team })
+const { bio, teamHistory, franchiseInfo, franchiseLeaders, playerGallery } =
+  overview
+
+const title = `${bio.name} Overview`
+const description = `${bio.name} franchise overview`
+const keywords = `${getLeagueKeywords(domain)} ${
+  bio.name
+} career stats statistics`
+const meta = { title, description, keywords }
+---
+
+<FranchiseLayout {overview} {meta}>
+  <div class="space-y-5 mb-5">
+    {
+      teamHistory && (
+        <Grid
+          data={teamHistory}
+          columnStyles={{
+            POSTSEASON: 'text-left',
+            CHAMPION: 'w-2',
+            default: 'text-center w-20',
+          }}
+        />
+      )
+    }
+    <div
+      class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 mb-5"
+    >
+      {franchiseInfo && <Grid data={franchiseInfo} class="mb-5" />}
+      {
+        franchiseLeaders && (
+          <TeamLeaders
+            leaders={franchiseLeaders}
+            title="Franchise Leaders"
+            class="mb-5"
+          />
+        )
+      }
+    </div>
+    {playerGallery && <PlayerGallery images={playerGallery} class="mb-5" />}
+  </div>
+</FranchiseLayout>
