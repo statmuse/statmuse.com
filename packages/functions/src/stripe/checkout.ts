@@ -10,12 +10,7 @@ type Request = {
 }
 
 export const handler = ApiHandler(async (evt) => {
-  if (!evt.body) {
-    return {
-      statusCode: 400,
-      body: "Missing body",
-    }
-  }
+  if (!evt.body) return { statusCode: 400, body: "Missing body" }
 
   const body = JSON.parse(evt.body) as Request
   if (!body.email || !body.userId || !body.successUrl || !body.cancelUrl) {
