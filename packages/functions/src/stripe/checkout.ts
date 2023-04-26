@@ -5,6 +5,7 @@ import { stripe } from "@statmuse/core/stripe"
 type Request = {
   email: string
   userId: string
+  customerId?: string
   successUrl: string
   cancelUrl: string
 }
@@ -30,7 +31,8 @@ export const handler = ApiHandler(async (evt) => {
     mode: "subscription",
     success_url: body.successUrl,
     cancel_url: body.cancelUrl,
-    customer_email: body.email,
+    customer_email: body.customerId ? undefined : body.email,
+    customer: body.customerId ? body.customerId : undefined,
     client_reference_id: body.userId,
   })
 

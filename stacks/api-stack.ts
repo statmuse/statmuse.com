@@ -58,6 +58,14 @@ export function API({ stack }: StackContext) {
         authorizer: "simple",
         function: "packages/functions/src/stripe/checkout.handler",
       },
+      "POST /stripe/manage": {
+        authorizer: "simple",
+        function: "packages/functions/src/stripe/manage.handler",
+      },
+      "POST /user/delete": {
+        authorizer: "simple",
+        function: "packages/functions/src/user/delete.handler",
+      },
       "POST /stripe/webhooks": "packages/functions/src/stripe/webhooks.handler",
     },
     defaults: {
@@ -81,22 +89,16 @@ export function API({ stack }: StackContext) {
           handler: "packages/functions/src/authorizer.handler",
           bind: [secrets.API_KEY],
         }),
-        resultsCacheTtl: "5 minutes",
+        resultsCacheTtl: "1 minute",
         responseTypes: ["simple"],
       },
     },
   })
 
-  const rdsFunctions = ["POST /checkout", "POST /stripe/webhooks"]
+  rdsCredentialsSecret.grantRead(api.getFunction("POST /checkout")!)
+  rdsCredentialsSecret.grantRead(api.getFunction("POST /stripe/manage")!)
+  rdsCredentialsSecret.grantRead(api.getFunction("POST /stripe/webhooks")!)
+  rdsCredentialsSecret.grantRead(api.getFunction("POST /user/delete")!)
 
-  for (const fn of rdsFunctions) {
-    const lambdaFn = api.getFunction(fn)
-    if (!lambdaFn) throw new Error("Function doesn't exist")
-
-    rdsCredentialsSecret.grantRead(lambdaFn)
-  }
-
-  stack.addOutputs({
-    ApiEndpoint: api.url,
-  })
+  stack.addOutputs({ ApiEndpoint: api.url })
 }

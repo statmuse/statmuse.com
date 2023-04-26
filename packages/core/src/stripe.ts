@@ -30,17 +30,17 @@ async function handleCheckoutSessionCompleted(
     session.id,
     { expand: ["subscription"] }
   )
+  const subscription =
+    sessionWithSubscription.subscription as Stripe.Subscription
 
-  const response = await db
+  await db
     .updateTable("users")
     .set({
       stripe_customer_id: session.customer as string,
-      stripe_subscription_status: sessionWithSubscription.status,
+      stripe_subscription_status: subscription.status,
     })
     .where("users.id", "=", session.client_reference_id)
     .executeTakeFirst()
-
-  console.log(JSON.stringify(response, undefined, 2))
 }
 
 async function handleSubscriptionCreatedOrUpdated(
@@ -48,11 +48,9 @@ async function handleSubscriptionCreatedOrUpdated(
 ) {
   const subscription = event.data.object
 
-  const response = await db
+  await db
     .updateTable("users")
     .set({ stripe_subscription_status: subscription.status })
     .where("users.stripe_customer_id", "=", subscription.customer as string)
     .executeTakeFirst()
-
-  console.log(JSON.stringify(response, undefined, 2))
 }

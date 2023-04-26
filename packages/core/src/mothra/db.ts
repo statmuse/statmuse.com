@@ -6,11 +6,13 @@ import {
   SecretsManagerClient,
 } from "@aws-sdk/client-secrets-manager"
 
-const secretsManager = new SecretsManagerClient({})
+const secretsManager = new SecretsManagerClient({
+  region: process.env.AWS_REGION || "us-east-1",
+})
 
 const { SecretString: secret } = await secretsManager.send(
   new GetSecretValueCommand({
-    SecretId: process.env.RDS_SECRET_ARN,
+    SecretId: process.env.POSTGRES_SECRET_ARN,
   })
 )
 if (!secret) throw new Error("No secret found")
@@ -44,20 +46,41 @@ interface UserTable {
   updated_at: ColumnType<Date, string | undefined, string | undefined>
 }
 
+interface AskUserTable {
+  id: Generated<string>
+
+  ask_id: string
+  user_id: string
+
+  inserted_at: ColumnType<Date, string | undefined, string | undefined>
+  updated_at: ColumnType<Date, string | undefined, string | undefined>
+}
+
+interface AskEventTable {
+  id: Generated<string>
+
+  user_id: string | null
+
+  inserted_at: ColumnType<Date, string | undefined, string | undefined>
+  updated_at: ColumnType<Date, string | undefined, string | undefined>
+}
+
 // Keys of this interface are table names.
 interface Database {
   users: UserTable
+  ask_events: AskEventTable
+  asks_users: AskUserTable
 }
 
 // You'd create one of these when you start your app.
 export const db = new Kysely<Database>({
   dialect: new PostgresDialect({
     pool: new Pool({
-      host: process.env.RDS_PROXY_HOST,
-      port: Number.parseInt(process.env.RDS_PROXY_PORT || "5432"),
-      database: process.env.RDS_PROXY_DATABASE || credentials.dbname,
-      user: process.env.RDS_PROXY_USER || credentials.username,
-      password: process.env.RDS_PROXY_PASSWORD || credentials.password,
+      host: process.env.POSTGRES_HOST,
+      port: Number.parseInt(process.env.POSTGRES_PORT || "5432"),
+      database: process.env.POSTGRES_DATABASE || credentials.dbname,
+      user: process.env.POSTGRES_USER || credentials.username,
+      password: process.env.POSTGRES_PASSWORD || credentials.password,
     }),
   }),
 })
