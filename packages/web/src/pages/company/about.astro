@@ -12,7 +12,14 @@ const metrics = [
 const affiliations = ['nflpa', 'google', 'disney']
 ---
 
-<Layout colors={{ foreground: '#fff', background: '#00c1d8' }}>
+<Layout
+  meta={{
+    title: 'About',
+    description:
+      'StatMuse, a creative technology company, is the leader in conversational AI for sports. The company was founded in 2014 by two lifelong friends and is backed by Disney, Google, Techstars Ventures, Greycroft, the NFL Players Association and NBA Commissioner Emeritus, David Stern.',
+  }}
+  colors={{ foreground: '#fff', background: '#00c1d8' }}
+>
   <Header />
   <Container class="text-white bg-primary">
     <div class="pt-[54px] pb-10 md:pt-[90px] md:pb-16">
