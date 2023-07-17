@@ -1,0 +1,199 @@
+---
+import { assign, entries, flatten, groupBy, compose } from 'lodash/fp'
+import {
+  type ScheduleDetail,
+  type ScheduledGame,
+  fallbackIcon,
+} from '@statmuse/core/gamera'
+import EntityLink from '@components/entity-link.astro'
+
+interface Props {
+  league: string
+  detail: ScheduleDetail
+}
+
+const detail = Astro.props.detail
+const groupGames = compose(entries, groupBy('date'))
+
+type ScheduledGameWithType = ScheduledGame & {
+  type: 'completed' | 'inProgress' | 'scheduled'
+}
+
+const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
+  flatten([
+    detail.completed.map(assign({ type: 'completed' })),
+    detail.inProgress.map(assign({ type: 'inProgress' })),
+    detail.scheduled.map(assign({ type: 'scheduled' })),
+  ])
+)
+
+const league = Astro.props.league
+---
+
+<div class="text-sm md:text-base w-full max-w-3xl mx-auto">
+  {
+    gamesByDate.map(([date, games]) => (
+      <div>
+        <p class="text-[#a8a8a8] py-1 border-t border-[#e4e4e4]">{date}</p>
+        {games.map((game) => {
+          switch (game.type) {
+            case 'completed':
+              return (
+                <div class="border-t border-[#e4e4e4] py-2">
+                  <div class="flex">
+                    <div class="flex-1">
+                      <div class="flex items center py-2.5">
+                        <EntityLink entity={game.awayTeam.entity}>
+                          <img
+                            class="block w-6 h-6 object-contain mr-2.5"
+                            src={game.awayTeam.logoUrl || fallbackIcon(league)}
+                            alt={game.awayTeam.name}
+                          />
+                        </EntityLink>
+                        <p
+                          class:list={{
+                            'flex-1': true,
+                            'font-semibold':
+                              game.awayTeam.score! > game.homeTeam.score!,
+                          }}
+                        >
+                          <EntityLink entity={game.awayTeam.entity}>
+                            {game.awayTeam.name}
+                          </EntityLink>
+                        </p>
+                        <p
+                          class:list={{
+                            'font-semibold':
+                              game.awayTeam.score! > game.homeTeam.score!,
+                          }}
+                        >
+                          {game.awayTeam.score}
+                        </p>
+                      </div>
+                      <div class="flex items center py-2.5">
+                        <EntityLink entity={game.homeTeam.entity}>
+                          <img
+                            class="block w-6 h-6 object-contain mr-2.5"
+                            src={game.homeTeam.logoUrl || fallbackIcon(league)}
+                            alt={game.homeTeam.name}
+                          />
+                        </EntityLink>
+                        <p
+                          class:list={{
+                            'flex-1': true,
+                            'font-semibold':
+                              game.homeTeam.score! > game.awayTeam.score!,
+                          }}
+                        >
+                          <EntityLink entity={game.homeTeam.entity}>
+                            {game.homeTeam.name}
+                          </EntityLink>
+                        </p>
+                        <p
+                          class:list={{
+                            'font-semibold':
+                              game.homeTeam.score! > game.awayTeam.score!,
+                          }}
+                        >
+                          {game.homeTeam.score}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="w-28 text-center border-l border-[#e4e4e4] ml-5 mt-2.5">
+                      <p class="my-0.5 first:font-semibold">
+                        <EntityLink entity={game.entity}>
+                          {game.completedGameStatus ?? 'Final'}
+                        </EntityLink>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )
+            case 'inProgress':
+              return (
+                <div class="border-t border-[#e4e4e4] py-2">
+                  <div class="flex">
+                    <div class="flex-1">
+                      <div class="flex items center py-2.5">
+                        <EntityLink entity={game.awayTeam.entity}>
+                          <img
+                            class="block w-6 h-6 object-contain mr-2.5"
+                            src={game.awayTeam.logoUrl || fallbackIcon(league)}
+                            alt={game.awayTeam.name}
+                          />
+                        </EntityLink>
+                        <p class="flex-1">
+                          <EntityLink entity={game.awayTeam.entity}>
+                            {game.awayTeam.name}
+                          </EntityLink>
+                        </p>
+                        <p>{game.awayTeam.score}</p>
+                      </div>
+                      <div class="flex items center py-2.5">
+                        <EntityLink entity={game.homeTeam.entity}>
+                          <img
+                            class="block w-6 h-6 object-contain mr-2.5"
+                            src={game.homeTeam.logoUrl || fallbackIcon(league)}
+                            alt={game.homeTeam.name}
+                          />
+                        </EntityLink>
+                        <p class="flex-1">
+                          <EntityLink entity={game.homeTeam.entity}>
+                            {game.homeTeam.name}
+                          </EntityLink>
+                        </p>
+                        <p>{game.homeTeam.score}</p>
+                      </div>
+                    </div>
+                    <div class="w-28 text-center border-l border-[#e4e4e4] ml-5 mt-2.5">
+                      {game.status?.split(', ').map((s) => (
+                        <p class="my-0.5 first:font-semibold">{s}</p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )
+            case 'scheduled':
+              return (
+                <div class="border-t border-[#e4e4e4] py-2">
+                  <div class="flex items center py-2.5">
+                    <EntityLink entity={game.awayTeam.entity}>
+                      <img
+                        class="block w-6 h-6 object-contain mr-2.5"
+                        src={game.awayTeam.logoUrl || fallbackIcon(league)}
+                        alt={game.awayTeam.name}
+                      />
+                    </EntityLink>
+                    <p class="flex-1">
+                      <EntityLink entity={game.awayTeam.entity}>
+                        {game.awayTeam.name}
+                      </EntityLink>
+                    </p>
+                    <p>
+                      {game.time} {game.network && `on ${game.network}`}
+                    </p>
+                  </div>
+                  <div class="flex items center py-2.5">
+                    <EntityLink entity={game.homeTeam.entity}>
+                      <img
+                        class="block w-6 h-6 object-contain mr-2.5"
+                        src={game.homeTeam.logoUrl || fallbackIcon(league)}
+                        alt={game.homeTeam.name}
+                      />
+                    </EntityLink>
+                    <p class="flex-1">
+                      <EntityLink entity={game.homeTeam.entity}>
+                        {game.homeTeam.name}
+                      </EntityLink>
+                    </p>
+                  </div>
+                </div>
+              )
+            default:
+              return null
+          }
+        })}
+      </div>
+    ))
+  }
+</div>

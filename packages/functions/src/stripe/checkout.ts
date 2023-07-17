@@ -5,6 +5,7 @@ import { stripe } from "@statmuse/core/stripe"
 type Request = {
   email: string
   userId: string
+  referral?: string
   customerId?: string
   successUrl: string
   cancelUrl: string
@@ -21,6 +22,24 @@ export const handler = ApiHandler(async (evt) => {
     }
   }
 
+  let customerId = body.customerId
+
+  if (body.customerId) {
+    if (body.referral) {
+      await stripe.customers.update(body.customerId, {
+        metadata: { referral: body.referral },
+        coupon: body.referral ? "referral" : undefined,
+      })
+    }
+  } else {
+    const customer = await stripe.customers.create({
+      email: body.email,
+      metadata: body.referral ? { referral: body.referral } : undefined,
+      coupon: body.referral ? "referral" : undefined,
+    })
+    customerId = customer.id
+  }
+
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
@@ -31,9 +50,9 @@ export const handler = ApiHandler(async (evt) => {
     mode: "subscription",
     success_url: body.successUrl,
     cancel_url: body.cancelUrl,
-    customer_email: body.customerId ? undefined : body.email,
-    customer: body.customerId ? body.customerId : undefined,
+    customer: customerId,
     client_reference_id: body.userId,
+    allow_promotion_codes: true,
   })
 
   if (!session.url) {

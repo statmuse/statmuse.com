@@ -1,4 +1,4 @@
-import type { GameraDomain } from '@lib/gamera'
+import type { GameraDomain } from '@statmuse/core/gamera'
 
 export interface Metadata {
   title?: string

@@ -1,52 +1,257 @@
 ---
 import Layout from '@layouts/main.astro'
+import Logo from '@components/logo.astro'
+import { listLatestMusings } from '@statmuse/core/musings'
+import { listOnboarding } from '@statmuse/core/examples'
+import { getImageUrl } from "@statmuse/core/questions"
+import { rgbToHex } from '@statmuse/core/color'
+import { formatDate } from '@statmuse/core/time'
+import { marked } from 'marked'
+
+const musings = await listLatestMusings.execute()
+const examples = await listOnboarding.execute()
+const banner = examples[Math.floor(Math.random() * examples.length)]
 ---
 
 <Layout>
-  <main class="home-layout [--header-height:55px] md:[--header-height:64px]">
+  <main
+    id="home"
+    class="home-layout [--header-height:55px] md:[--header-height:64px]"
+  >
+    <div class="sidebar hidden md:block min-w-[75px] bg-[#f9f9f9]">
+      <sidebar-menu>
+        <div
+          class="sticky top-0 bg-[#f9f9f9] border-t border-transparent w-[237px]"
+        >
+          <span
+            class="sidebar-hamburger-icon block w-[33px] h-[33px] my-[15.5px] ml-5 cursor-pointer"
+          >
+          </span><div class="mb-[22px]">
+            <ul>
+              <li
+                class="flex items-center my-0.5 py-1.5 highlight bg-white font-semibold"
+              >
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 home-icon"></span> Home
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/money"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 money-icon"></span> Money
+                  Search
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/questions"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 trending-icon">
+                  </span> Trending
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/players"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 gallery-icon">
+                  </span> Gallery
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="https://shop.statmuse.com"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 shop-icon"></span> Shop
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="https://blog.statmuse.com/"
+                  target="_blank"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 blog-icon"></span> Blog
+                </a>
+              </li>
+            </ul>
+          </div><div class="mb-[22px]">
+            <h3
+              class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
+              style="margin-left: 22.5px;"
+            >
+              Search
+            </h3><ul>
+              <li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/product/examples"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 example-icon">
+                  </span> Examples
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/product/data"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 data-coverage-icon">
+                  </span> Data &amp; Glossary
+                </a>
+              </li>
+            </ul>
+          </div><div class="mb-[22px]">
+            <h3
+              class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
+              style="margin-left: 22.5px;"
+            >
+              Play
+            </h3><ul>
+              <li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="https://elementsofbasketball.com/"
+                  target="_blank"
+                  style="margin-left: 21px;"
+                >
+                  <span
+                    class="block w-[29px] h-[29px] mr-2 elements-bball-icon"
+                  >
+                  </span> Elements of Bball
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="https://hardenmaze.com/"
+                  target="_blank"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 harden-maze-icon">
+                  </span> Harden Maze
+                </a>
+              </li>
+            </ul>
+          </div><div class="mb-[22px]">
+            <h3
+              class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
+              style="margin-left: 22.5px;"
+            >
+              Company
+            </h3><ul>
+              <li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/company/about"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 about-icon"></span> About
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div></sidebar-menu
+      >
+    </div>
+
     <div
       class="main h-[var(--header-height)] px-3 md:px-[21px] bg-white flex items-center sticky md:relative top-0 z-20"
     >
-      <div class="md:hidden">
-        <a
-          href="/money"
-          class="group flex items-center border border-secondary text-secondary hover:text-white hover:bg-secondary rounded-md py-[5px] px-2.5 mx-[5px] ml-[13px]"
-        >
-          <span class="btn-money-icon inline-block w-[26px] h-[26px] mr-[3px]">
-          </span> Try Money Search
-        </a>
+      <div class="min-w-[25px] md:hidden">
+        <dropdown-menu hamburger="true"></dropdown-menu>
       </div>
+
+      <div class="flex space-x-5 items-center flex-1 justify-end"></div>
     </div>
 
     <div class="main content-layout">
       <div class="-mb-[5px] z-10">
         <div class="flex flex-col md:flex-row items-center mt-[55px] md:mt-0">
-          <div class="flex-1 mb-[34px] md:-mr-[20px] md:mb-0"></div>
+          <div class="flex-1 mb-[34px] md:-mr-[20px] md:mb-0">
+            <Logo />
+          </div>
           <img
             class="max-w-[70%] md:max-w-none md:h-[205px] md:pr-[10px]"
-            alt="tom brady stats"
-            src="https://cdn.statmuse.com/img/nfl/players/tampa-bay-buccaneers-tom-brady2021-min--uuyzey5t.png"
+            alt={banner.text}
+            src={getImageUrl(banner)}
           />
         </div>
       </div>
-
       <div
         class="content-item-full content-layout mb-5 md:mb-[30px] sticky top-[var(--header-height)] md:top-0 py-[5px] bg-white z-[5]"
       >
-        <div class="min-h-[46px]"></div>
+        <div class="min-h-[46px]">
+          <ask-bar
+            action="/ask"
+            autosuggest-enabled="true"
+            class="unstable"
+            context="sports"
+            csrf-token="CzZHLDIeYyB8JCQYH04wP3A-AmYjXQApgQjsBNTT9sRLE8Yo5oi6H61K"
+            placeholder="Search players, stats or odds"
+            query-text=""
+            throttle="600"
+            ><form accept-charset="UTF-8" action="/ask" method="post">
+              <div
+                role="combobox"
+                aria-haspopup="listbox"
+                aria-owns="react-autowhatever-1"
+                aria-expanded="false"
+                class="relative rounded-lg text-[#191919]"
+              >
+                <div class="relative group">
+                  <textarea
+                    class="input appearance-none outline-none resize-none block w-full border border-black rounded-lg p-2.5 focus:shadow-md peer group-hover:shadow-md"
+                    autocomplete="off"
+                    aria-autocomplete="list"
+                    aria-controls="react-autowhatever-1"
+                    name="question[query]"
+                    placeholder="Search players, stats or odds"
+                    required=""
+                    enterkeyhint="search"
+                    style="height: 46px !important;"
+                  >
+                  </textarea><input
+                    type="submit"
+                    class="ask-bar-search-icon absolute bottom-3 right-2.5 block w-5 h-5 cursor-pointer"
+                    value=""
+                  />
+                </div><div
+                  id="react-autowhatever-1"
+                  role="listbox"
+                  class="suggestions-container hidden bg-white w-full px-2 absolute top-full border-x border-x-black border-b border-b-slate-400 rounded-b-lg shadow-md"
+                >
+                </div>
+              </div><input
+                name="question[preferred_domain]"
+                type="hidden"
+                value=""
+              /><input
+                name="question[conversation_token]"
+                type="hidden"
+                value=""
+              /><input
+                name="_csrf_token"
+                type="hidden"
+                value="CzZHLDIeYyB8JCQYH04wP3A-AmYjXQApgQjsBNTT9sRLE8Yo5oi6H61K"
+              />
+            </form></ask-bar
+          >
+        </div>
       </div>
-      <!-- <div -->
-      <!--   class="ad-wrapper blank placement--home_top" -->
-      <!--   data-debug="eyJjbGllbnRfZGV2aWNlIjoiZGVza3RvcCIsImNvdW50cnlfY29kZSI6IlVTIiwibWF4X2hlaWdodCI6MTYwLCJtaW5faGVpZ2h0IjoxNjAsInBsYWNlbWVudCI6ImhvbWVfdG9wIiwicXVlcnlfdmVyc2lvbiI6InYzIiwicmVuZGVyX2VuZ2luZSI6ImludGVsaXRpY3MiLCJzdGF0ZV9uYW1lIjoiTWlzc291cmkiLCJ1cmwiOiJodHRwczovL3d3dy5zdGF0bXVzZS5jb20vIn0=" -->
-      <!-- > -->
-      <!--   <div class="ad blank engine--intelitics"> -->
-      <!--     <div class="ad-tag" data-name="Blank Desktop Top"></div> -->
-      <!--   </div> -->
-      <!-- </div> -->
       <div>
         <div class="flex flex-nowrap gap-[5px] mb-2.5">
           <a
-            class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 bg-primary text-white"
+            class="flex items-center justify-center border border-primary rounded-md hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 bg-primary text-white"
             href="/"
           >
             All
@@ -94,6 +299,13 @@ import Layout from '@layouts/main.astro'
           >
             Fantasy
           </a>
+          <a
+            class="hidden md:flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1"
+            style="min-width: fit-content;"
+            href="/money"
+          >
+            Money
+          </a>
         </div>
         <div class="flex flex-nowrap gap-[5px] mb-2.5 md:hidden">
           <a
@@ -103,1445 +315,70 @@ import Layout from '@layouts/main.astro'
           >
             Fantasy
           </a>
+          <a
+            class="flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1"
+            style="max-width: fit-content;"
+            href="/money"
+          >
+            Money
+          </a>
         </div>
       </div>
-
-      <div class="mb-[30px]"></div>
-
       <h3
         class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
       >
-        Latest Stats
+        Stat Stories
       </h3>
-
-      <div
-        class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-        data-clickable-url="https://www.statmuse.com/musings/jerami-grant-tonight-36-pts-12-17-fg-5-8-3p-3rd-35-point-game-of-his-sea-e1528508"
-      >
-        <div
-          class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-          style="background-color: #C8102E"
-        >
-          <img
-            class-name="h-36 max-w-full object-contain"
-            alt="Jerami Grant tonight:
-
-36 PTS
-12-17 FG
-5-8 3P
-
-3rd 35-point game of his season."
-            src="https://cdn.statmuse.com/img/nba/players/portland-trail-blazers-jerami-grant2022-min--kgvr3072.png"
-            data-cy-illustration=""
-          /><img
-            class="h-36 max-w-full object-contain"
-            alt="Jerami Grant tonight:
-
-36 PTS
-12-17 FG
-5-8 3P
-
-3rd 35-point game of his season."
-            data-cy-illustration=""
-            style="visibility: unset;"
-            src="https://cdn.statmuse.com/img/nba/players/portland-trail-blazers-jerami-grant2022-min--kgvr3072.png"
-          />
-        </div>
-      </div>
-      <div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-        <span class="flex-1 leading-snug space-y-4">
-          <p>Jerami Grant tonight:</p><p>
-            36 PTS<br />
-            12-17 FG<br />
-            5-8 3P
-          </p><p>3rd 35-point game of his season.</p>
-        </span>
-        <div class="flex items-center mt-[5px]">
-          <content-share href="https://statm.us/e/I0c04rtHS"
-            ><div class="relative inline-block">
-              <img
-                class="w-[22px]"
-                src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-                alt="share"
-              />
+      {
+        musings.map((musing) => (
+          <div class="flex flex-col md:flex-row mb-[30px] cursor-pointer">
+            <div
+              class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
+              style={`background-color: ${rgbToHex(musing.background_rgba)}`}
+            >
+              <lazy-img
+                class-name="h-36 max-w-full object-contain"
+                alt={musing.text_plain}
+                src={musing.image_url}
+                data-cy-illustration=""
+              >
+                <a href={`/musings/${musing.friendly_id}`}>
+                  <img
+                    class="h-36 max-w-full object-contain"
+                    alt={musing.text_plain}
+                    data-cy-illustration=""
+                    style="visibility: unset;"
+                    src={musing.image_url}
+                  />
+                </a>
+              </lazy-img>
             </div>
-          </content-share>
-          <p
-            class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-          >
-            Monday, January 2nd
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div
-      class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-      data-clickable-url="https://www.statmuse.com/musings/klay-tonight-54-pts-7-reb-21-39-fg-10-20-3p-warriors-are-undefeated-when-444d5aa8"
-    >
-      <div
-        class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-        style="background-color: #1D4289"
-      >
-        <img
-          class-name="h-36 max-w-full object-contain"
-          alt="Klay tonight:
-
-54 PTS
-7 REB
-21-39 FG
-10-20 3P (!!)
-
-Warriors are undefeated when Klay hits 10+ threes."
-          src="https://cdn.statmuse.com/img/nba/players/golden-state-warriors-klay-thompson2022-min--nuqzza6n.png"
-          data-cy-illustration=""
-        /><img
-          class="h-36 max-w-full object-contain"
-          alt="Klay tonight:
-
-54 PTS
-7 REB
-21-39 FG
-10-20 3P (!!)
-
-Warriors are undefeated when Klay hits 10+ threes."
-          data-cy-illustration=""
-          style="visibility: unset;"
-          src="https://cdn.statmuse.com/img/nba/players/golden-state-warriors-klay-thompson2022-min--nuqzza6n.png"
-        />
-      </div>
-    </div>
-    <div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-      <span class="flex-1 leading-snug space-y-4">
-        <p>Klay tonight:</p><p>
-          54 PTS<br />
-          7 REB<br />
-          21-39 FG<br />
-          10-20 3P (!!)
-        </p><p>Warriors are undefeated when Klay hits 10+ threes.</p>
-      </span>
-      <div class="flex items-center mt-[5px]">
-        <content-share href="https://statm.us/e/HVZPM8eXF"
-          ><div class="relative inline-block">
-            <img
-              class="w-[22px]"
-              src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-              alt="share"
-            />
+            <div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5" onclick=`location.href='/musings/${musing.friendly_id}';`>
+              <div 
+                 class="flex-1 leading-snug space-y-4"
+                 set:html={marked(musing.text_markdown || '', {
+                    gfm: true,
+                    breaks: true,
+                  })}>
+              </div>
+              <div class="flex items-center mt-[5px]">
+                <content-share href="https://stage.statm.us/e/R3Qtu1vWY">
+                  <div class="relative inline-block">
+                    <img
+                      class="w-[22px]"
+                      src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
+                      alt="share"
+                    />
+                  </div>
+                </content-share>
+                <p class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]">
+                  {formatDate(musing.publish_at, 'MMMM Do, YYYY')}
+                </p>
+              </div>
+            </div>
           </div>
-        </content-share>
-        <p
-          class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-        >
-          Monday, January 2nd
-        </p>
-      </div>
+        ))
+      }
     </div>
   </main>
-
-  <div
-    class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-    data-clickable-url="https://www.statmuse.com/musings/donovan-mitchell-tonight-71-pts-11-ast-22-34-fg-7-15-3p-20-25-ft-only-th-3932c31a"
-  >
-    <div
-      class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-      style="background-color: #6F263D"
-    >
-      <img
-        class-name="h-36 max-w-full object-contain"
-        alt="Donovan Mitchell tonight:
-
-71 PTS
-11 AST
-22-34 FG
-7-15 3P
-20-25 FT
-
-Only the 5th player with a 70-point game since Wilt."
-        src="https://cdn.statmuse.com/img/nba/players/cleveland-cavaliers-donovan-mitchell2022-min--5youbyts.png"
-        data-cy-illustration=""
-      /><img
-        class="h-36 max-w-full object-contain"
-        alt="Donovan Mitchell tonight:
-
-71 PTS
-11 AST
-22-34 FG
-7-15 3P
-20-25 FT
-
-Only the 5th player with a 70-point game since Wilt."
-        data-cy-illustration=""
-        style="visibility: unset;"
-        src="https://cdn.statmuse.com/img/nba/players/cleveland-cavaliers-donovan-mitchell2022-min--5youbyts.png"
-      />
-    </div>
-  </div>
-  <div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-    <span class="flex-1 leading-snug space-y-4">
-      <p>Donovan Mitchell tonight:</p><p>
-        71 PTS<br />
-        11 AST<br />
-        22-34 FG<br />
-        7-15 3P<br />
-        20-25 FT
-      </p><p>Only the 5th player with a 70-point game since Wilt.</p>
-    </span>
-    <div class="flex items-center mt-[5px]">
-      <content-share href="https://statm.us/e/dya5sEtez"
-        ><div class="relative inline-block">
-          <img
-            class="w-[22px]"
-            src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-            alt="share"
-          />
-        </div>
-      </content-share>
-      <p
-        class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-      >
-        Monday, January 2nd
-      </p>
-    </div>
-  </div>
 </Layout>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/luka-tonight-39-pts-12-reb-8-ast-averaging-451110-in-his-last-6-games-e7558962"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #0050B5"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="Luka tonight:
-
-39 PTS
-12 REB
-8 AST
-
-Averaging 45/11/10 in his last 6 games."
-      src="https://cdn.statmuse.com/img/nba/players/dallas-mavericks-luka-doncic2022-min--wec12jsv.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="Luka tonight:
-
-39 PTS
-12 REB
-8 AST
-
-Averaging 45/11/10 in his last 6 games."
-      data-cy-illustration=""
-      style="visibility: unset;"
-      src="https://cdn.statmuse.com/img/nba/players/dallas-mavericks-luka-doncic2022-min--wec12jsv.png"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>Luka tonight:</p><p>
-      39 PTS<br />
-      12 REB<br />
-      8 AST
-    </p><p>Averaging 45/11/10 in his last 6 games.</p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/V23W6ruWl"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Monday, January 2nd
-    </p>
-  </div>
-</div>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/lebron-tonight-43-pts-11-reb-6-ast-16-26-fg-averaging-4511-since-turning-1def40fd"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #582C83"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="LeBron tonight:
-
-43 PTS
-11 REB
-6 AST
-16-26 FG
-
-Averaging 45/11 since turning 38."
-      src="https://cdn.statmuse.com/img/nba/players/los-angeles-lakers-lebron-james2021-min--i_ura2lt.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="LeBron tonight:
-
-43 PTS
-11 REB
-6 AST
-16-26 FG
-
-Averaging 45/11 since turning 38."
-      data-cy-illustration=""
-      style="visibility: unset;"
-      src="https://cdn.statmuse.com/img/nba/players/los-angeles-lakers-lebron-james2021-min--i_ura2lt.png"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>LeBron tonight:</p><p>
-      43 PTS<br />
-      11 REB<br />
-      6 AST<br />
-      16-26 FG
-    </p><p>Averaging 45/11 since turning 38.</p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/upHeo7QVn"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Monday, January 2nd
-    </p>
-  </div>
-</div>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/benn-mathurin-tonight-21-pts-6-9-fg-2-2-3p-21-1st-in-points-off-the-benc-23fa4729"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #041E42"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="Benn Mathurin tonight:
-
-21 PTS
-6-9 FG
-2-2 3P
-+21
-
-1st in points off the bench. 1st in points by a rookie."
-      src="https://cdn.statmuse.com/img/nba/players/indiana-pacers-bennedict-mathurin-min--9bodzbxg.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="Benn Mathurin tonight:
-
-21 PTS
-6-9 FG
-2-2 3P
-+21
-
-1st in points off the bench. 1st in points by a rookie."
-      data-cy-illustration=""
-      style="visibility: unset;"
-      src="https://cdn.statmuse.com/img/nba/players/indiana-pacers-bennedict-mathurin-min--9bodzbxg.png"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>Benn Mathurin tonight:</p><p>
-      21 PTS<br />
-      6-9 FG<br />
-      2-2 3P<br />
-      +21
-    </p><p>1st in points off the bench. 1st in points by a rookie.</p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/pvKVZKLcj"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Monday, January 2nd
-    </p>
-  </div>
-</div>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/embiid-tonight-42-pts-11-reb-5-ast-15-24-fg-leading-the-nba-in-40-point-7652b751"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #003DA5"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="Embiid tonight:
-
-42 PTS
-11 REB
-5 AST
-15-24 FG
-
-Leading the NBA in 40-point games over the last 3 seasons"
-      src="https://cdn.statmuse.com/img/nba/players/philadelphia-76ers-joel-embiid2019-min--re4lh26b.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="Embiid tonight:
-
-42 PTS
-11 REB
-5 AST
-15-24 FG
-
-Leading the NBA in 40-point games over the last 3 seasons"
-      data-cy-illustration=""
-      style="visibility: unset;"
-      src="https://cdn.statmuse.com/img/nba/players/philadelphia-76ers-joel-embiid2019-min--re4lh26b.png"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>Embiid tonight:</p><p>
-      42 PTS<br />
-      11 REB<br />
-      5 AST<br />
-      15-24 FG
-    </p><p>Leading the NBA in 40-point games over the last 3 seasons</p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/mrtumnIFM"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Monday, January 2nd
-    </p>
-  </div>
-</div>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/ja-tonight-35-pts-8-reb-5-ast-fdf88ef9"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #7D9BC0"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="Ja tonight:
-
-35 PTS
-8 REB
-5 AST"
-      src="https://cdn.statmuse.com/img/nba/players/memphis-grizzlies-ja-morant2021-min--rhv9qhxa.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="Ja tonight:
-
-35 PTS
-8 REB
-5 AST"
-      data-cy-illustration=""
-      style="visibility: unset;"
-      src="https://cdn.statmuse.com/img/nba/players/memphis-grizzlies-ja-morant2021-min--rhv9qhxa.png"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>Ja tonight:</p><p>
-      35 PTS<br />
-      8 REB<br />
-      5 AST
-    </p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/QeLTZFvjX"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Last Sunday
-    </p>
-  </div>
-</div>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/jokic-tonight-30-pts-12-reb-12-ast-10-13-fg-d9d6cae0"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #0C2340"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="Jokic tonight:
-
-30 PTS
-12 REB
-12 AST
-10-13 FG"
-      src="https://cdn.statmuse.com/img/nba/players/denver-nuggets-nikola-jokic2021-min--kw623ufi.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="Jokic tonight:
-
-30 PTS
-12 REB
-12 AST
-10-13 FG"
-      data-cy-illustration=""
-      style="visibility: unset;"
-      src="https://cdn.statmuse.com/img/nba/players/denver-nuggets-nikola-jokic2021-min--kw623ufi.png"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>Jokic tonight:</p><p>
-      30 PTS<br />
-      12 REB<br />
-      12 AST<br />
-      10-13 FG
-    </p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/Nlkdw65v9"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Last Sunday
-    </p>
-  </div>
-</div>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/kuzma-tonight-10-pts-13-reb-11-ast-his-2nd-career-triple-double-8f60cd6a"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #C8102E"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="Kuzma tonight:
-
-10 PTS
-13 REB
-11 AST
-
-His 2nd career triple-double."
-      src="https://cdn.statmuse.com/img/nba/players/washington-wizards-kyle-kuzma2021-min--eeqsla8_.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="Kuzma tonight:
-
-10 PTS
-13 REB
-11 AST
-
-His 2nd career triple-double."
-      data-cy-illustration=""
-      style="visibility: unset;"
-      src="https://cdn.statmuse.com/img/nba/players/washington-wizards-kyle-kuzma2021-min--eeqsla8_.png"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>Kuzma tonight:</p><p>
-      10 PTS<br />
-      13 REB<br />
-      11 AST
-    </p><p>His 2nd career triple-double.</p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/oQDHfwssy"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Last Sunday
-    </p>
-  </div>
-</div>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/luka-tonight-35-pts-12-reb-13-ast-leading-the-league-in-triple-doubles-eefe62f6"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #0050B5"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="Luka tonight:
-
-35 PTS
-12 REB
-13 AST
-
-Leading the league in triple-doubles."
-      src="https://cdn.statmuse.com/img/nba/players/dallas-mavericks-luka-doncic2022-min--wec12jsv.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="Luka tonight:
-
-35 PTS
-12 REB
-13 AST
-
-Leading the league in triple-doubles."
-      data-cy-illustration=""
-      style="visibility: unset;"
-      src="https://cdn.statmuse.com/img/nba/players/dallas-mavericks-luka-doncic2022-min--wec12jsv.png"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>Luka tonight:</p><p>
-      35 PTS<br />
-      12 REB<br />
-      13 AST
-    </p><p>Leading the league in triple-doubles.</p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/3f5KcPAx8"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Last Thursday
-    </p>
-  </div>
-</div>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/julius-randle-last-5-games-41-pts-11-reb-29-pts-18-reb-35-pts-8-reb-29-p-3aa99d62"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #003DA5"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="Julius Randle last 5 games:
-
-41 PTS | 11 REB
-29 PTS | 18 REB
-35 PTS | 8 REB
-29 PTS | 12 REB
-30 PTS | 13 REB
-
-0-5 in that stretch."
-      src="https://cdn.statmuse.com/img/nba/players/new-york-knicks-julius-randle2022-min--lmifudy6.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="Julius Randle last 5 games:
-
-41 PTS | 11 REB
-29 PTS | 18 REB
-35 PTS | 8 REB
-29 PTS | 12 REB
-30 PTS | 13 REB
-
-0-5 in that stretch."
-      data-cy-illustration=""
-      style="visibility: hidden;"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>Julius Randle last 5 games:</p><p>
-      41 PTS | 11 REB<br />
-      29 PTS | 18 REB<br />
-      35 PTS | 8 REB<br />
-      29 PTS | 12 REB<br />
-      30 PTS | 13 REB
-    </p><p>0-5 in that stretch.</p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/Uvau1YpVi"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Last Thursday
-    </p>
-  </div>
-</div>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/lamelo-tonight-27-pts-10-reb-9-ast-2-blk-5-10-3p-averaging-a-career-high-3d9e8d99"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #00778B"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="LaMelo tonight:
-
-27 PTS
-10 REB
-9 AST
-2 BLK
-5-10 3P
-
-Averaging a career high in points and threes."
-      src="https://cdn.statmuse.com/img/nba/players/charlotte-hornets-lamelo-ball1-min--gulluqi3.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="LaMelo tonight:
-
-27 PTS
-10 REB
-9 AST
-2 BLK
-5-10 3P
-
-Averaging a career high in points and threes."
-      data-cy-illustration=""
-      style="visibility: hidden;"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>LaMelo tonight:</p><p>
-      27 PTS<br />
-      10 REB<br />
-      9 AST<br />
-      2 BLK<br />
-      5-10 3P
-    </p><p>Averaging a career high in points and threes.</p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/21AlFh0J5"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Last Thursday
-    </p>
-  </div>
-</div>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/mathurin-tonight-23-pts-7-14-fg-giving-paolo-a-run-for-his-money-4fe89842"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #041E42"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="Mathurin tonight:
-
-23 PTS
-7-14 FG
-
-Giving Paolo a run for his money."
-      src="https://cdn.statmuse.com/img/nba/players/indiana-pacers-bennedict-mathurin-min--9bodzbxg.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="Mathurin tonight:
-
-23 PTS
-7-14 FG
-
-Giving Paolo a run for his money."
-      data-cy-illustration=""
-      style="visibility: hidden;"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>Mathurin tonight:</p><p>
-      23 PTS<br />
-      7-14 FG
-    </p><p>Giving Paolo a run for his money.</p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/4W8FME8j2"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Last Thursday
-    </p>
-  </div>
-</div>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/luka-tonight-60-pts-21-reb-10-ast-21-31-fg-magic-a415bb5c"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #0050B5"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="Luka tonight:
-
-60 PTS
-21 REB
-10 AST
-21-31 FG
-
-Magic."
-      src="https://cdn.statmuse.com/img/nba/players/dallas-mavericks-luka-doncic2022-min--wec12jsv.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="Luka tonight:
-
-60 PTS
-21 REB
-10 AST
-21-31 FG
-
-Magic."
-      data-cy-illustration=""
-      style="visibility: hidden;"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>Luka tonight:</p><p>
-      60 PTS<br />
-      21 REB<br />
-      10 AST<br />
-      21-31 FG
-    </p><p>Magic.</p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/V7FwUbyfj"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Last Tuesday
-    </p>
-  </div>
-</div>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/siakam-last-4-games-36-pts-9-reb-5-ast-26-pts-7-reb-9-ast-52-pts-9-reb-7-4680f29c"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #BA0C2F"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="Siakam last 4 games:
-
-36 PTS | 9 REB | 5 AST
-26 PTS | 7 REB | 9 AST
-52 PTS | 9 REB | 7 AST
-38 PTS | 15 REB | 6 AST"
-      src="https://cdn.statmuse.com/img/nba/players/toronto-raptors-pascal-siakam2022-min--kqbr6uk1.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="Siakam last 4 games:
-
-36 PTS | 9 REB | 5 AST
-26 PTS | 7 REB | 9 AST
-52 PTS | 9 REB | 7 AST
-38 PTS | 15 REB | 6 AST"
-      data-cy-illustration=""
-      style="visibility: hidden;"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>Siakam last 4 games:</p><p>
-      36 PTS | 9 REB | 5 AST<br />
-      26 PTS | 7 REB | 9 AST<br />
-      52 PTS | 9 REB | 7 AST<br />
-      38 PTS | 15 REB | 6 AST
-    </p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/ebin70RD6"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Last Tuesday
-    </p>
-  </div>
-</div>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/shai-in-the-win-28-pts-6-reb-8-ast-2-stl-4-blk-9-14-fg-leading-the-thund-e23256fa"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #0072CE"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="Shai in the win:
-
-28 PTS
-6 REB
-8 AST
-2 STL
-4 BLK
-9-14 FG
-
-Leading the Thunder in PPG, APG and SPG this season."
-      src="https://cdn.statmuse.com/img/nba/players/oklahoma-city-thunder-shai-gilgeous-alexander2022-min--esbc6f8o.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="Shai in the win:
-
-28 PTS
-6 REB
-8 AST
-2 STL
-4 BLK
-9-14 FG
-
-Leading the Thunder in PPG, APG and SPG this season."
-      data-cy-illustration=""
-      style="visibility: hidden;"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>Shai in the win:</p><p>
-      28 PTS<br />
-      6 REB<br />
-      8 AST<br />
-      2 STL<br />
-      4 BLK<br />
-      9-14 FG
-    </p><p>Leading the Thunder in PPG, APG and SPG this season.</p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/GfB5YJGq8"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Last Tuesday
-    </p>
-  </div>
-</div>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/buddy-hield-tonight-28-pts-9-reb-11-16-fg-6-7-3p-leading-the-nba-in-thre-73120718"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #041E42"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="Buddy Hield tonight:
-
-28 PTS
-9 REB
-11-16 FG
-6-7 3P
-
-Leading the NBA in threes over the past 5 seasons."
-      src="https://cdn.statmuse.com/img/nba/players/indiana-pacers-buddy-hield2021-min--atpvilaz.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="Buddy Hield tonight:
-
-28 PTS
-9 REB
-11-16 FG
-6-7 3P
-
-Leading the NBA in threes over the past 5 seasons."
-      data-cy-illustration=""
-      style="visibility: hidden;"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>Buddy Hield tonight:</p><p>
-      28 PTS<br />
-      9 REB<br />
-      11-16 FG<br />
-      6-7 3P
-    </p><p>Leading the NBA in threes over the past 5 seasons.</p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/OcmTrFFUQ"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Last Tuesday
-    </p>
-  </div>
-</div>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/embiid-in-the-loss-48-pts-9-reb-3-stl-3-blk-passes-wilt-in-40-point-game-0e7704c7"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #003DA5"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="Embiid in the loss:
-
-48 PTS
-9 REB
-3 STL
-3 BLK
-
-Passes Wilt in 40-point games by a 76er."
-      src="https://cdn.statmuse.com/img/nba/players/philadelphia-76ers-joel-embiid2019-min--re4lh26b.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="Embiid in the loss:
-
-48 PTS
-9 REB
-3 STL
-3 BLK
-
-Passes Wilt in 40-point games by a 76er."
-      data-cy-illustration=""
-      style="visibility: hidden;"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>Embiid in the loss:</p><p>
-      48 PTS<br />
-      9 REB<br />
-      3 STL<br />
-      3 BLK
-    </p><p>Passes Wilt in 40-point games by a 76er.</p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/9mIHZCngV"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Last Tuesday
-    </p>
-  </div>
-</div>
-
-<div
-  class="flex flex-col md:flex-row mb-[30px] cursor-pointer"
-  data-clickable-url="https://www.statmuse.com/musings/kawhi-in-the-win-15-pts-7-reb-8-ast-clippers-are-10-3-with-kawhi-8afe25f5"
->
-  <div
-    class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-    style="background-color: #1D428A"
-  >
-    <img
-      class-name="h-36 max-w-full object-contain"
-      alt="Kawhi in the win:
-
-15 PTS
-7 REB
-8 AST
-
-Clippers are 10-3 with Kawhi."
-      src="https://cdn.statmuse.com/img/nba/players/los-angeles-clippers-kawhi-leonard2019-min--oxvylx4q.png"
-      data-cy-illustration=""
-    /><img
-      class="h-36 max-w-full object-contain"
-      alt="Kawhi in the win:
-
-15 PTS
-7 REB
-8 AST
-
-Clippers are 10-3 with Kawhi."
-      data-cy-illustration=""
-      style="visibility: hidden;"
-    />
-  </div>
-</div>
-<div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5">
-  <span class="flex-1 leading-snug space-y-4">
-    <p>Kawhi in the win:</p><p>
-      15 PTS<br />
-      7 REB<br />
-      8 AST
-    </p><p>Clippers are 10-3 with Kawhi.</p>
-  </span>
-  <div class="flex items-center mt-[5px]">
-    <content-share href="https://statm.us/e/GVpNodXdN"
-      ><div class="relative inline-block">
-        <img
-          class="w-[22px]"
-          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-          alt="share"
-        />
-      </div>
-    </content-share>
-    <p
-      class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]"
-    >
-      Last Tuesday
-    </p>
-  </div>
-</div>
-
-<h4 class="font-semibold text-right py-4">
-  <a href="/questions">See trending searches</a>
-</h4>
-<div
-  class="ad-wrapper placement--home_bottom"
-  data-debug="eyJjbGllbnRfZGV2aWNlIjoiZGVza3RvcCIsImNvdW50cnlfY29kZSI6IlVTIiwibWF4X2hlaWdodCI6MTYwLCJtaW5faGVpZ2h0IjoxNjAsInBsYWNlbWVudCI6ImhvbWVfYm90dG9tIiwicXVlcnlfdmVyc2lvbiI6InYzIiwicmVuZGVyX2VuZ2luZSI6ImludGVsaXRpY3MiLCJzdGF0ZV9uYW1lIjoiTWlzc291cmkiLCJ1cmwiOiJodHRwczovL3d3dy5zdGF0bXVzZS5jb20vIn0="
->
-  <div class="ad engine--intelitics">
-    <div class="ad-tag" data-name="StatMuse Offers (Desktop)">
-      <div
-        style="
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 160px;
-  "
-      >
-        <a
-          href="/offers"
-          style="
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #23bfd6;
-      width: 100%;
-      padding: 10px 0;
-    "
-          data-track-event='{
-      "name": "Ad Click",
-      "ad": "StatMuse Offers (Desktop)"
-    }'
-        >
-          <div>
-            <img
-              src="https://cdn.statmuse.com/img/misc/statmuse-offers-desktop-ad.jpg"
-              style="width: 100%; height: auto"
-              alt="StatMuse Offers"
-            />
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div style="margin-bottom: 40px;">
-  <h4 class="font-semibold" style="margin: 0 0 10px;">
-    Get the latest news and updates from StatMuse
-  </h4>
-  <div
-    class="sendgrid-subscription-widget widget-2092"
-    data-emailerror="Please enter a valid email address"
-    data-nameerror="Please enter your name"
-    data-checkboxerror="Please tick the box to accept our conditions"
-  >
-    <form
-      class="sg-widget"
-      data-token="614ae142b3ba57b10c813dd234d1b4a8"
-      onsubmit="return false;"
-      style="display: flex;"
-    >
-      <input
-        class="sg_email flex-1 h-[45px] p-2 border border-black rounded-sm"
-        type="email"
-        name="sg_email"
-        placeholder="Enter your email address"
-        required="required"
-      />
-      <input
-        type="submit"
-        class="sg-submit-btn mx-2 p-2 w-[100px] rounded-md cursor-pointer shadow-sm shadow-black/20 active:shadow-black/60"
-        id="widget-2092"
-        value="Subscribe"
-        style="background-color: #00c1d8; color: #fff;"
-      />
-    </form>
-    <div class="sg-response" style="margin-top: 10px;"></div>
-  </div>
-</div>
-
-<div class="main">
-  <footer class="border-y border-[#c7c8ca]">
-    <div
-      class="flex flex-wrap items-center justify-center sm:justify-between mx-auto px-3 max-w-[1144px]"
-    >
-      <div class="flex">
-        <ul class="flex flex-col sm:flex-row mt-4">
-          <li class="p-8 sm:first-of-type:pl-0">
-            <h6 class="text-[0.8rem] uppercase tracking-[0.07rem] my-1.5">
-              Company
-            </h6>
-            <ul>
-              <li class="inline-block sm:block pr-4 sm:p-0 my-2">
-                <a href="/">Home</a>
-              </li>
-
-              <li class="inline-block sm:block pr-4 sm:p-0 my-2">
-                <a href="/company">About</a>
-              </li>
-
-              <li class="inline-block sm:block pr-4 sm:p-0 my-2">
-                <a href="https://shop.statmuse.com/">Shop</a>
-              </li>
-
-              <li class="inline-block sm:block pr-4 sm:p-0 my-2">
-                <a href="https://blog.statmuse.com/">Blog</a>
-              </li>
-            </ul>
-          </li>
-
-          <li class="p-8 sm:first-of-type:pl-0">
-            <h6 class="text-[0.8rem] uppercase tracking-[0.07rem] my-1.5">
-              Search
-            </h6>
-            <ul>
-              <li class="inline-block sm:block pr-4 sm:p-0 my-2">
-                <a href="/money">Money</a>
-              </li>
-
-              <li class="inline-block sm:block pr-4 sm:p-0 my-2">
-                <a href="/questions">Trending</a>
-              </li>
-
-              <li class="inline-block sm:block pr-4 sm:p-0 my-2">
-                <a href="/product/examples">Examples</a>
-              </li>
-
-              <li class="inline-block sm:block pr-4 sm:p-0 my-2">
-                <a href="/product/data">Data</a>
-              </li>
-
-              <li class="inline-block sm:block pr-4 sm:p-0 my-2">
-                <a href="/product/voices">Voices</a>
-              </li>
-            </ul>
-          </li>
-
-          <li class="p-8 sm:first-of-type:pl-0">
-            <h6 class="text-[0.8rem] uppercase tracking-[0.07rem] my-1.5">
-              Legal
-            </h6>
-            <ul>
-              <li class="inline-block sm:block pr-4 sm:p-0 my-2">
-                <a href="/terms">Terms of Service</a>
-              </li>
-
-              <li class="inline-block sm:block pr-4 sm:p-0 my-2">
-                <a href="/privacy">Privacy Policy</a>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-      <ul class="flex my-4">
-        <li class="p-3">
-          <a href="https://twitter.com/statmuse" target="_blank">
-            <img
-              class="w-7 h-7"
-              src="https://cdn.statmuse.com/app/images/icons/twitter-e466efadc7f7e338c6abbb857fa5c608.svg?vsn=d"
-              alt="twitter.svg"
-            />
-          </a>
-        </li>
-
-        <li class="p-3">
-          <a href="https://tiktok.com/@statmuse" target="_blank">
-            <img
-              class="w-7 h-7"
-              src="https://cdn.statmuse.com/app/images/icons/tiktok-c8d2177432de0577cc4c75c60028b826.svg?vsn=d"
-              alt="tiktok.svg"
-            />
-          </a>
-        </li>
-
-        <li class="p-3">
-          <a href="https://www.instagram.com/statmuse/" target="_blank">
-            <img
-              class="w-7 h-7"
-              src="https://cdn.statmuse.com/app/images/icons/ig-a495fab4078b3ba82694f5e727053ada.svg?vsn=d"
-              alt="ig.svg"
-            />
-          </a>
-        </li>
-
-        <li class="p-3">
-          <a href="https://blog.statmuse.com/tagged/podcast" target="_blank">
-            <img
-              class="w-7 h-7"
-              src="https://cdn.statmuse.com/app/images/icons/podcast-fb04e76ab22946582b757a2f1e0467d8.svg?vsn=d"
-              alt="podcast.svg"
-            />
-          </a>
-        </li>
-      </ul>
-    </div>
-  </footer>
-</div>

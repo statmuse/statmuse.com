@@ -5,6 +5,7 @@ import type { HTMLAttributes } from 'astro/types'
 interface Props extends HTMLAttributes<'div'> {
   titles: string[]
   secondary?: boolean
+  selected?: string
 }
 
 const name = crypto.randomUUID()
@@ -38,7 +39,13 @@ const tabs = Astro.props.titles.map((tab) => ({
             type="radio"
             id={`tab-${tab.id}`}
             class="absolute h-0 w-0 overflow-hidden peer"
-            checked={i === 0 ? 'checked' : undefined}
+            checked={
+              Astro.props.selected
+                ? tab.label === Astro.props.selected
+                : i === 0
+                ? 'checked'
+                : undefined
+            }
           />
           <label
             class:list={{

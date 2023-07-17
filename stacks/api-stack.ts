@@ -42,6 +42,9 @@ export function API({ stack }: StackContext) {
     POSTGRES_HOST: isProd
       ? "mothra-prod.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com"
       : "mothra-staging.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com",
+    GAMERA_API_URL: isProd
+      ? "http://gamera.statmuse.com"
+      : "http://gamera.staging.statmuse.com",
   }
 
   if (isDev) {
@@ -101,4 +104,12 @@ export function API({ stack }: StackContext) {
   rdsCredentialsSecret.grantRead(api.getFunction("POST /user/delete")!)
 
   stack.addOutputs({ ApiEndpoint: api.url })
+
+  return {
+    secrets,
+    vpc,
+    environment,
+    lambdaSecurityGroup,
+    rdsCredentialsSecret,
+  }
 }

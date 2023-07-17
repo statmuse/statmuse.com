@@ -1,17 +1,26 @@
 ---
 import { groupBy } from 'remeda'
-import { GameraMlbBoxScore, getUrlForEntity } from '@lib/gamera'
+import {
+  GameraMlbBoxScore,
+  getUrlForEntity,
+  MlbHistoricalBoxScore,
+} from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
-import Tabs from './tabs.astro'
-import TabPanel from './tab-panel.astro'
-import Grid from './grid.astro'
+import Tabs from '@components/tabs.astro'
+import TabPanel from '@components/tab-panel.astro'
+import Grid from '@components/grid.astro'
 
 interface Props extends HTMLAttributes<'div'> {
-  data: GameraMlbBoxScore
+  data?: GameraMlbBoxScore
+  detail?: MlbHistoricalBoxScore
 }
 
+if (!Astro.props.data && !Astro.props.detail)
+  throw new Error('Must provide data or detail')
+
 const data = Astro.props.data
-const [boxScoreData] = data.visual.detail
+const boxScoreData =
+  data?.visual.detail[0] ?? (Astro.props.detail as MlbHistoricalBoxScore)
 const homeTeam = boxScoreData.homeTeam
 const awayTeam = boxScoreData.awayTeam
 
@@ -62,9 +71,15 @@ const innings = Object.entries(groupBy(plays, (p) => p.inning))
   <div class="flex py-0.5 border border-[#e4e4e4] rounded-sm">
     {
       boxScoreData.lineScore.columns.map((column, i) => (
-        <div class:list={{ "first:flex-1 divide-y divide-[#e4e4e4] text-center first:text-left": true, "border-r border-[#e4e4e4]": i === 0 || i === 9 }}>
-          <!-- prettier-ignore  -->
-          <p class="p-2.5 text-xs whitespace-pre md:text-base text-[#a8a8a8]">{column.title || ' '}</p>
+        <div
+          class:list={{
+            'first:flex-1 divide-y divide-[#e4e4e4] text-center first:text-left': true,
+            'border-r border-[#e4e4e4]': i === 0 || i === 9,
+          }}
+        >
+          <p class="p-2.5 text-xs whitespace-pre md:text-base text-[#a8a8a8]">
+            {column.title || ' '}
+          </p>
           {boxScoreData.lineScore.rows.map((row) => (
             <p class="p-2.5 text-xs md:text-base font-semibold">
               {row[column.rowItemKey].entity ? (
@@ -124,14 +139,26 @@ const innings = Object.entries(groupBy(plays, (p) => p.inning))
         </div>
       </TabPanel>
       <TabPanel title="Player Stats">
-        <Tabs secondary titles={[awayTeam.abbrev, homeTeam.abbrev]}>
-          <TabPanel title={awayTeam.abbrev} class="space-y-5">
-            <Grid data={boxScoreData.stats.awayTeam.batterStats} />
-            <Grid data={boxScoreData.stats.awayTeam.pitcherStats} />
+        <Tabs secondary titles={[awayTeam.name, homeTeam.name]}>
+          <TabPanel title={awayTeam.name} class="space-y-5">
+            <Grid
+              data={boxScoreData.stats.awayTeam.batterStats}
+              alternateStyle
+            />
+            <Grid
+              data={boxScoreData.stats.awayTeam.pitcherStats}
+              alternateStyle
+            />
           </TabPanel>
-          <TabPanel title={homeTeam.abbrev} class="space-y-5">
-            <Grid data={boxScoreData.stats.homeTeam.batterStats} />
-            <Grid data={boxScoreData.stats.homeTeam.pitcherStats} />
+          <TabPanel title={homeTeam.name} class="space-y-5">
+            <Grid
+              data={boxScoreData.stats.homeTeam.batterStats}
+              alternateStyle
+            />
+            <Grid
+              data={boxScoreData.stats.homeTeam.pitcherStats}
+              alternateStyle
+            />
           </TabPanel>
         </Tabs>
       </TabPanel>

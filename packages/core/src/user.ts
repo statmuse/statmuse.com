@@ -1,4 +1,4 @@
-import { db } from "./mothra/db"
+import { db } from "./db"
 
 export async function deleteUser(id: string) {
   console.log("Deleting user asks with id: " + id)

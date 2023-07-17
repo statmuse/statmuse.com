@@ -1,17 +1,26 @@
 ---
-import TeamStat from './team-stat.astro'
-import { GameraNbaBoxScore, getUrlForEntity } from '@lib/gamera'
+import {
+  GameraNbaBoxScore,
+  NbaHistoricalBoxScore,
+  getUrlForEntity,
+} from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
-import Tabs from './tabs.astro'
-import TabPanel from './tab-panel.astro'
-import Grid from './grid.astro'
+import Grid from '@components/grid.astro'
+import TabPanel from '@components/tab-panel.astro'
+import Tabs from '@components/tabs.astro'
+import TeamStat from '@components/team-stat.astro'
 
 interface Props extends HTMLAttributes<'div'> {
-  data: GameraNbaBoxScore
+  data?: GameraNbaBoxScore
+  detail?: NbaHistoricalBoxScore
 }
 
+if (!Astro.props.data && !Astro.props.detail)
+  throw new Error('Must provide data or detail')
+
 const data = Astro.props.data
-const [boxScoreData, grids] = data.visual.detail
+const boxScoreData =
+  data?.visual.detail[0] ?? (Astro.props.detail as NbaHistoricalBoxScore)
 const homeTeam = boxScoreData.homeTeam
 const homeTeamStats = boxScoreData.teamDetail.homeTeam
 const awayTeam = boxScoreData.awayTeam
@@ -176,18 +185,18 @@ const awayTeamUrl = getUrlForEntity(awayTeam.entity)
         />
       </TabPanel>
       <TabPanel title="Player Stats">
-        <Tabs secondary titles={[awayTeam.abbrev, homeTeam.abbrev]}>
-          <TabPanel title={awayTeam.abbrev} class="space-y-5">
+        <Tabs secondary titles={[awayTeam.name, homeTeam.name]}>
+          <TabPanel title={awayTeam.name} class="space-y-5">
             {
               boxScoreData.playerDetail.awayTeam.grids.map((grid) => (
-                <Grid data={grid} />
+                <Grid data={grid} alternateStyle />
               ))
             }
           </TabPanel>
-          <TabPanel title={homeTeam.abbrev} class="space-y-5">
+          <TabPanel title={homeTeam.name} class="space-y-5">
             {
               boxScoreData.playerDetail.homeTeam.grids.map((grid) => (
-                <Grid data={grid} />
+                <Grid data={grid} alternateStyle />
               ))
             }
           </TabPanel>

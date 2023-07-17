@@ -1,0 +1,28 @@
+---
+import type { StandingsDetail } from '@statmuse/core/gamera'
+import type { HTMLAttributes } from 'astro/types'
+import Standings from '@components/standings.astro'
+
+interface Props extends HTMLAttributes<'div'> {
+  detail: StandingsDetail
+}
+
+const detail = Astro.props.detail
+const afcStandings = detail.standings
+  .filter((x) => x.group.includes('AFC'))
+  .sort((a, b) => a.group.localeCompare(b.group))
+const nfcStandings = detail.standings
+  .filter((x) => x.group.includes('NFC'))
+  .sort((a, b) => a.group.localeCompare(b.group))
+const groups = [
+  { name: 'AFC', standings: afcStandings },
+  { name: 'NFC', standings: nfcStandings },
+]
+if (
+  detail.topic?.group?.startsWith('NFC') ||
+  nfcStandings.find((s) => s.teams.find((t) => t.name === detail.topic?.team))
+)
+  groups.reverse()
+---
+
+<Standings {groups} highlight={detail.topic?.team} />

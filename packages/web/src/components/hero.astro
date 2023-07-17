@@ -1,0 +1,60 @@
+---
+import { marked } from 'marked'
+import Container from '@components/container.astro'
+import { GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
+import { relativeTimeFromDates } from '@statmuse/core/time'
+import type { Musing } from '@statmuse/core/musings'
+
+interface Props {
+  question: string
+  response?: GameraResponse
+  musing?: Musing
+}
+
+const { response, musing } = Astro.props
+
+if (!response && !musing)
+  throw new Error('Must provide either data or musing props')
+
+const data = response ?? (musing?.answer as GameraResponse)
+const answer = musing
+  ? marked(musing.text_markdown || '', { gfm: true, breaks: true })
+  : tokensToHtml(data.nlg.text.answer)
+const subject = data.visual.summary.subject
+const answered = musing ? relativeTimeFromDates(musing.publish_at) : undefined
+---
+
+<Container class="mb-5 bg-team-primary text-team-secondary">
+  <div class="flex flex-col md:flex-row pt-4 md:pt-6 relative">
+    <div class="flex-1 flex flex-col justify-between text-center md:text-left">
+      {
+        answered ? (
+          <span class="italic opacity-50 saturate-0">Answered {answered}</span>
+        ) : null
+      }
+      <h1
+        class:list={{
+          'font-semibold text-xl md:text-2xl md:leading-snug lg:text-[1.75rem] xl:text-3xl xl:leading-snug my-auto': true,
+          '[&>p]:my-[1em] [&>ul]:my-[1em] [&>p>a]:underline [&>p>a]:text-team-secondary':
+            !!musing,
+        }}
+        data-cy-nlg=""
+        set:html={musing ? answer : undefined}
+      >
+        {
+          !musing ? (
+            <p
+              class="my-[1em] [&>a]:underline [&>a]:text-team-secondary"
+              set:html={answer}
+            />
+          ) : null
+        }
+      </h1>
+    </div>
+    <img
+      class="h-44 md:h-52 self-center md:self-end mt-2 md:mt-0 md:pl-6 md:pr-1.5 select-none"
+      alt={Astro.props.question}
+      src={subject.imageUrl}
+    />
+  </div>
+</Container>

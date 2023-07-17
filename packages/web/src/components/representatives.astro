@@ -1,5 +1,5 @@
 ---
-import type { GameraGalleryImage, getUrlForEntity } from '@lib/gamera'
+import type { GameraGalleryImage } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
 
 interface Props extends HTMLAttributes<'div'> {
@@ -9,7 +9,7 @@ interface Props extends HTMLAttributes<'div'> {
   fallback?: string
 }
 
-const { representatives, title, alt, fallback } = Astro.props
+const { representatives, alt, fallback } = Astro.props
 
 const getIllustrationHeight = (image: GameraGalleryImage) => {
   const specialPlayers = [
@@ -22,7 +22,7 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
     'Isaiah Stewart',
     'Jalen Ramsey',
   ]
-  if (specialPlayers.includes(image.entity?.display)) {
+  if (specialPlayers.includes(image.entity?.display ?? '')) {
     return 205
   }
 

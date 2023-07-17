@@ -1,17 +1,16 @@
 ---
-import Layout from '@layouts/main.astro'
-import Header from '@components/header.astro'
 import Container from '@components/container.astro'
+import Header from '@components/header.astro'
 import TeamRepresentatives from '@components/representatives.astro'
-
+import Layout from '@layouts/main.astro'
 import {
-  getUrlForEntity,
-  getDefaultTeamLogoUrl,
-  tokensToText,
-  GameraTeamSeasonBio,
   GameraDomain,
-} from '@lib/gamera'
-import { Metadata, getLeagueKeywords } from '@lib/meta'
+  GameraTeamSeasonBio,
+  getDefaultTeamLogoUrl,
+  getUrlForEntity,
+  tokensToText,
+} from '@statmuse/core/gamera'
+import { getLeagueKeywords, Metadata } from '@lib/meta'
 
 interface Props {
   bio: GameraTeamSeasonBio

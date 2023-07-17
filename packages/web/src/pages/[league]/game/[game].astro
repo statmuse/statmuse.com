@@ -2,7 +2,7 @@
 import GameLayout from '@layouts/game.astro'
 
 import { getGame } from '@lib/game'
-import type {  GameraDomain } from '@lib/gamera'
+import type { GameraDomain } from '@statmuse/core/gamera'
 import NbaBoxscore from '@components/nba-boxscore.astro'
 import NflBoxscore from '@components/nfl-boxscore.astro'
 import MlbBoxscore from '@components/mlb-boxscore.astro'
@@ -17,12 +17,21 @@ const domain = league.toUpperCase() as GameraDomain
 const data = await getGame({ domain, game })
 ---
 
-<GameLayout data={data}>
-{(function() { switch(data.domain) {
-   case "NBA": return <NbaBoxscore data={data} />
-   case "NFL": return <NflBoxscore data={data} />
-   case "MLB": return <MlbBoxscore data={data} />
-   case "NHL": return <NhlBoxscore data={data} />
-   default: throw new Error("cannot render a boxscore for PGA")
-}})()}
+<GameLayout {data}>
+  {
+    (function () {
+      switch (data.domain) {
+        case 'NBA':
+          return <NbaBoxscore {data} />
+        case 'NFL':
+          return <NflBoxscore {data} />
+        case 'MLB':
+          return <MlbBoxscore {data} />
+        case 'NHL':
+          return <NhlBoxscore {data} />
+        default:
+          throw new Error('cannot render a boxscore for PGA')
+      }
+    })()
+  }
 </GameLayout>

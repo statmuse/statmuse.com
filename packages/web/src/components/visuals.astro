@@ -1,0 +1,108 @@
+---
+import Grid from '@components/grid.astro'
+import Chart from '@components/chart.astro'
+import Container from '@components/container.astro'
+import MlbStandings from '@components/mlb-standings.astro'
+import NbaStandings from '@components/nba-standings.astro'
+import NflStandings from '@components/nfl-standings.astro'
+import NhlStandings from '@components/nhl-standings.astro'
+import MlbBoxscore from '@components/mlb-boxscore.astro'
+import NbaBoxscore from '@components/nba-boxscore.astro'
+import NflBoxscore from '@components/nfl-boxscore.astro'
+import NhlBoxscore from '@components/nhl-boxscore.astro'
+import Schedule from '@components/schedule.astro'
+import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
+
+interface Props {
+  response: GameraResponse
+}
+
+const response = Astro.props.response
+const summary = tokensToHtml(response.visual.summaryTokens)
+const showSummary = !!response.visual.summaryTokens?.find(
+  (t) => t.type === 'inferred'
+)
+const ignoreGenericGrids = response.visual.detail?.find(
+  (d) =>
+    d.type === 'standings' ||
+    d.type === 'schedule' ||
+    d.type === 'mlbHistoricalBoxScore' ||
+    d.type === 'nbaHistoricalBoxScore' ||
+    d.type === 'nflHistoricalBoxScore' ||
+    d.type === 'nhlHistoricalBoxScore'
+)
+const details = response.visual.detail?.filter((d) =>
+  ignoreGenericGrids ? d.type !== 'genericGrids' : true
+)
+---
+
+<Container>
+  {
+    showSummary && details && (
+      <div class="text-sm md:text-base text-[#333] mb-2.5">
+        <h5 class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] inline">
+          Interpreted as:
+        </h5>
+        <Fragment set:html={summary} />
+      </div>
+    )
+  }
+  {
+    details?.map((detail) => {
+      switch (detail.type) {
+        case 'stats':
+          return (
+            <Fragment>
+              {detail.columnCharts.map((chart) => (
+                <Chart
+                  model={chart}
+                  totalWidth={1495}
+                  isSuperlative={response.visual.isSuperlative}
+                />
+              ))}
+              {detail.grids.map((grid) => (
+                <Grid data={grid} hideTitle />
+              ))}
+            </Fragment>
+          )
+        case 'genericGrids':
+          return detail.grids.map((grid) => <Grid data={grid} hideTitle />)
+        case 'standings':
+          switch (response.visual.domain) {
+            case 'MLB':
+              return <MlbStandings {detail} />
+            case 'NBA':
+              return <NbaStandings {detail} />
+            case 'NFL':
+              return <NflStandings {detail} />
+            case 'NHL':
+              return <NhlStandings {detail} />
+
+            default:
+              return null
+          }
+        case 'schedule':
+          return <Schedule {detail} />
+        case 'mlbHistoricalBoxScore':
+          return <MlbBoxscore {detail} />
+        case 'nbaHistoricalBoxScore':
+          return <NbaBoxscore {detail} />
+        case 'nflHistoricalBoxScore':
+          return <NflBoxscore {detail} />
+        case 'nhlHistoricalBoxScore':
+          return <NhlBoxscore {detail} />
+        default:
+          return null
+      }
+    })
+  }
+  {
+    details ? (
+      <div class="my-2.5">
+        {response.visual.disclaimers?.map((d) => (
+          <div class="text-sm italic font-light" set:html={d} />
+        ))}
+      </div>
+    ) : null
+  }
+</Container>

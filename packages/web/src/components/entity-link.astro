@@ -1,0 +1,149 @@
+---
+import type { GameraEntity } from '@statmuse/core/gamera'
+import type { HTMLAttributes } from 'astro/types'
+import { get, has, includes } from 'lodash'
+
+interface Props extends HTMLAttributes<'a'> {
+  entity: GameraEntity
+}
+
+const buildLinkPath = (assetPath: string) =>
+  `${Astro.url.origin}/${assetPath.replace(/^\//, '')}`
+
+const allowedPlayerProfileDomains = ['MLB', 'NBA', 'NFL', 'NHL']
+const allowedTeamProfileDomains = ['MLB', 'NBA', 'NFL', 'NHL']
+
+const getSlug = (name: string, id: string) =>
+  `${name.toLowerCase().replace(/[\s/]/g, '-')}-${id}`
+
+const teamSeasonSlug = (name: string, id: string) => {
+  const teamId = get(id.split('/'), '0')
+  return `${name.toLowerCase().replace(/[\s/]/g, '-')}-${teamId}`
+}
+
+const teamSeasonYear = (id: string) => get(id.split('/'), '1')
+
+const getQuery = (parameters: Record<string, string>) => {
+  if (!parameters) return ''
+  const query = new URLSearchParams(parameters).toString()
+  return query ? `?${query}` : ''
+}
+
+const getPlayerProfilePath = ({
+  id,
+  domain,
+  display,
+  parameters,
+}: GameraEntity) => {
+  if (!includes(allowedPlayerProfileDomains, domain)) {
+    return null
+  }
+
+  const path = has(parameters, 'seasonYear')
+    ? `/${domain.toLowerCase()}/player/${getSlug(display, id)}/game-log`
+    : `/${domain.toLowerCase()}/player/${getSlug(display, id)}`
+
+  return path + getQuery(parameters ?? {})
+}
+
+const getTeamFranchiseProfilePath = ({
+  id,
+  domain,
+  display,
+  parameters,
+}: GameraEntity) =>
+  allowedTeamProfileDomains.includes(domain)
+    ? `/${domain.toLowerCase()}/team/${getSlug(display, id)}${getQuery(
+        parameters ?? {}
+      )}`
+    : null
+
+const getTeamSeasonProfilePath = ({
+  id,
+  domain,
+  display,
+  parameters,
+}: GameraEntity) => {
+  if (!includes(allowedTeamProfileDomains, domain)) {
+    return null
+  }
+
+  const path =
+    get(parameters, 'seasonType') === 'postseason'
+      ? `/${domain.toLowerCase()}/team/${teamSeasonSlug(
+          display,
+          id
+        )}/schedule/${teamSeasonYear(id)}`
+      : `/${domain.toLowerCase()}/team/${teamSeasonSlug(
+          display,
+          id
+        )}/${teamSeasonYear(id)}`
+
+  return path + getQuery(parameters ?? {})
+}
+
+const getGameBoxScorePath = ({
+  id,
+  domain,
+  display,
+  parameters,
+}: GameraEntity) =>
+  `/${domain.toLowerCase()}/game/${getSlug(display, id)}${getQuery(
+    parameters ?? {}
+  )}`
+
+const getPlayerStatsAskPath = ({ display, parameters }: GameraEntity) => {
+  const playerSlug = display?.toLowerCase()?.split(' ')?.join('-')
+
+  const statsSlug = has(parameters, 'seasonYear')
+    ? `stats-in-${get(parameters, 'seasonYear')}`
+    : 'career-stats'
+
+  return `/pga/ask/${playerSlug}-${statsSlug}`
+}
+
+const getEntityUrl = (entity: GameraEntity) => {
+  const entityType = get(entity, 'type')
+
+  let path: string | null = ''
+  switch (entityType) {
+    case 'player':
+      path = getPlayerProfilePath(entity)
+      break
+    case 'player-ask':
+      path = getPlayerStatsAskPath(entity)
+      break
+    case 'teamFranchise':
+      path = getTeamFranchiseProfilePath(entity)
+      break
+    case 'teamSeason':
+      path = getTeamSeasonProfilePath(entity)
+      break
+    case 'game':
+      path = getGameBoxScorePath(entity)
+      break
+    default:
+      break
+  }
+
+  return path ? buildLinkPath(path) : undefined
+}
+
+const entity = Astro.props.entity
+// const entityDisplay = get(entity, 'display')
+const url = getEntityUrl(entity)
+// const title = children !== entityDisplay ? entityDisplay : ''
+const title = ''
+---
+
+{
+  url ? (
+    <a {...Astro.props} {title} href={url}>
+      <slot />
+    </a>
+  ) : (
+    <span {...Astro.props} class={''}>
+      <slot />
+    </span>
+  )
+}

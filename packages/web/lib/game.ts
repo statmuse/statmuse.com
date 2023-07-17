@@ -1,10 +1,10 @@
 import type {
   GameraDomain,
+  GameraMlbBoxScore,
   GameraNbaBoxScore,
   GameraNflBoxScore,
-  GameraMlbBoxScore,
   GameraNhlBoxScore,
-} from './gamera'
+} from '@statmuse/core/gamera'
 import { parseGameId } from './parse'
 
 const gameraApiUrl = import.meta.env.GAMERA_API_URL

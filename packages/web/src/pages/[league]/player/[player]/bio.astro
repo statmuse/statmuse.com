@@ -1,11 +1,9 @@
 ---
 import PlayerLayout from '@layouts/player.astro'
-import { GameraDomain, tokensToText, tokensToHtml } from '@lib/gamera'
+import { GameraDomain, tokensToText, tokensToHtml } from '@statmuse/core/gamera'
+import { formatDateString } from '@statmuse/core/time'
 import { getPlayerBio } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
-import dayjs from 'dayjs'
-import localizedFormat from 'dayjs/plugin/localizedFormat'
-dayjs.extend(localizedFormat)
 
 const { league, player } = Astro.params
 if (!player || !league) {
@@ -23,7 +21,7 @@ const title = `${bio.usedName} Bio`
 const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
 const keywords = `${leagueKeywords} ${bio.usedName} career stats statistics`
 const meta = { title, description, keywords }
-const birthdate = dayjs(bio.birthdate).format('LL')
+const birthdate = formatDateString(bio.birthdate)
 ---
 
 <PlayerLayout {bio} {meta}>

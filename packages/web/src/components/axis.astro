@@ -1,0 +1,203 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+import type { ScaleLinear, ScaleBand } from 'd3-scale'
+
+interface Props extends HTMLAttributes<'g'> {
+  tickArguments?: [count?: number | undefined]
+  tickValues?: string[] | null
+  tickFormat?: (label: string | number) => string
+  innerTickSize?: number
+  tickPadding?: number
+  outerTickSize?: number
+  scaleBand?: ScaleBand<string>
+  scaleLinear?: ScaleLinear<number, number, never>
+  zero?: number
+  orientation?: 'top' | 'bottom' | 'left' | 'right'
+  label?: string
+  hide?: boolean
+  angle?: boolean
+}
+
+const defaultProps: Props = {
+  tickArguments: [10],
+  tickValues: null,
+  tickFormat: undefined,
+  innerTickSize: 6,
+  tickPadding: 3,
+  outerTickSize: 6,
+  class: 'axis',
+  zero: 0,
+  label: '',
+}
+
+const tickArguments =
+  Astro.props.tickArguments ?? defaultProps.tickArguments ?? []
+const zero = Astro.props.zero ?? defaultProps.zero
+const height = Astro.props.height ?? defaultProps.height ?? 0
+const width = Astro.props.width ?? defaultProps.width ?? 0
+const innerTickSize =
+  Astro.props.innerTickSize ?? defaultProps.innerTickSize ?? 0
+const tickPadding = Astro.props.tickPadding ?? defaultProps.tickPadding ?? 0
+const tickSpacing = Math.max(innerTickSize, 0) + tickPadding
+const outerTickSize =
+  Astro.props.outerTickSize ?? defaultProps.outerTickSize ?? 0
+const orientation = Astro.props.orientation
+const angle = Astro.props.angle ?? false
+
+function getTranslateString() {
+  if (orientation === 'top') {
+    return `translate(0, ${zero})`
+  }
+  if (orientation === 'bottom') {
+    return `translate(0, ${zero == 0 ? height : zero})`
+  }
+  if (orientation === 'left') {
+    return `translate(${zero}, 0)`
+  }
+  if (orientation === 'right') {
+    return `translate(${zero == 0 ? width : zero}, 0)`
+  }
+  return ''
+}
+
+let transform = getTranslateString()
+
+let ticks: number[] | string[] = (
+  Astro.props.tickValues == null
+    ? Astro.props.scaleLinear?.ticks
+      ? Astro.props.scaleLinear.ticks.apply(
+          Astro.props.scaleLinear,
+          tickArguments
+        )
+      : Astro.props.scaleBand?.domain()
+    : Astro.props.tickValues
+) as number[] | string[]
+
+let tickFormat: ((d: number | string) => string) | undefined =
+  Astro.props.tickFormat
+
+if (!Astro.props.tickFormat) {
+  if (Astro.props.scaleLinear?.tickFormat) {
+    tickFormat = Astro.props.scaleLinear.tickFormat.apply(
+      Astro.props.scaleLinear,
+      tickArguments
+    ) as (d: number | string) => string
+  } else {
+    tickFormat = (x) => {
+      return x.toString()
+    }
+  }
+}
+
+if (zero != height && zero != width && zero != 0) {
+  ticks = (ticks as []).filter((element: number | string) => {
+    return element != 0
+  })
+}
+
+function d3_scaleExtent(domain: number[]) {
+  const start = domain[0]
+  const stop = domain[domain.length - 1]
+  return start < stop ? [start, stop] : [stop, start]
+}
+
+const sign = orientation === 'top' || orientation === 'left' ? -1 : 1
+const scale = Astro.props.scaleBand ?? Astro.props.scaleLinear
+const range = scale ? d3_scaleExtent(scale.range()) : []
+
+const activeScale = Astro.props.scaleBand?.bandwidth
+  ? (e: string | number) => {
+      if (!Astro.props.scaleBand) return 0
+      const constant = Astro.props.scaleBand(e.toString()) ?? 0
+      return constant + Astro.props.scaleBand.bandwidth() / 2
+    }
+  : scale!
+
+let x: number
+let y: number
+let x2: number
+let y2: number
+let dy: string
+let textAnchor: string
+let d: string
+
+if (orientation === 'bottom' || orientation === 'top') {
+  transform = 'translate({}, 0)'
+  x = 0
+  y = sign * tickSpacing
+  x2 = 0
+  y2 = sign * innerTickSize
+  dy = sign < 0 ? '0em' : '.71em'
+  textAnchor = 'middle'
+  d = `M${range[0]}, ${sign * outerTickSize}V0H${range[1]}V${
+    sign * outerTickSize
+  }`
+} else {
+  transform = 'translate(0, {})'
+  x = sign * tickSpacing
+  y = 0
+  x2 = sign * innerTickSize
+  y2 = 0
+  dy = '.32em'
+  textAnchor = sign < 0 ? 'end' : 'start'
+  d = `M${sign * outerTickSize}, ${range[0]}H0V${range[1]}H${
+    sign * outerTickSize
+  }`
+}
+---
+
+<g
+  class={Astro.props.class}
+  transform={getTranslateString()}
+  style={{
+    fontSize: 12.6,
+    shapeRendering: 'crispEdges',
+    display: Astro.props.hide ? 'none' : 'block',
+  }}
+>
+  {
+    ticks?.map((tick, index) => {
+      // @ts-expect-error
+      const position = activeScale(tick)
+      const translate = transform.replace('{}', position?.toString() ?? '')
+      textAnchor = angle ? 'end' : textAnchor
+
+      return (
+        <g transform={translate}>
+          <line x2={x2} y2={y2} stroke="#aaa" />
+          <text
+            x={x}
+            y={y}
+            dy={dy}
+            text-anchor={textAnchor}
+            style={{ fontSize: 12.6 }}
+            transform={`rotate(${angle ? '-45' : '0'})`}
+          >
+            {tick.toString().indexOf('<br>') > -1
+              ? tick
+                  .toString()
+                  .split('<br>')
+                  .map((t, index) => (
+                    <tspan x="0" dy="1.2em">
+                      {tickFormat(t)}
+                    </tspan>
+                  ))
+              : tickFormat(tick)}
+          </text>
+        </g>
+      )
+    })
+  }
+  <path {d} fill="none" stroke="#aaa"></path>
+  <text
+    text-anchor="end"
+    x={orientation === 'top' || orientation === 'bottom' ? width : undefined}
+    y={orientation === 'top' || orientation === 'bottom' ? -6 : 6}
+    dy={orientation === 'top' || orientation === 'bottom' ? undefined : '.75em'}
+    transform={orientation === 'top' || orientation === 'bottom'
+      ? undefined
+      : 'rotation(-90)'}
+  >
+    {Astro.props.label}
+  </text>
+</g>

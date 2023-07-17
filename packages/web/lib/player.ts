@@ -1,14 +1,13 @@
 import type {
   GameraDomain,
   GameraPlayerBio,
-  GameraPlayerProfileResponse,
-  GameraPlayerStats,
   GameraPlayerGameLog,
+  GameraPlayerProfileResponse,
   GameraPlayerSplits,
-} from '@lib/gamera'
+  GameraPlayerStats,
+} from '@statmuse/core/gamera'
 import { parsePlayerId } from './parse'
-
-const gameraApiUrl = import.meta.env.GAMERA_API_URL
+import { gameraApiUrl } from '@lib/gamera'
 
 export const getPlayerBio = async (domain: GameraDomain, player: string) => {
   const playerId = parsePlayerId(player)

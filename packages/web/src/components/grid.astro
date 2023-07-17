@@ -1,7 +1,10 @@
 ---
+import {
+  type GameraGrid,
+  GameraParameter,
+  getUrlForEntity,
+} from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
-import type { GameraGrid } from '@lib/gamera'
-import { getUrlForEntity, GameraParameter } from '@lib/gamera'
 
 interface Props extends HTMLAttributes<'div'> {
   data: GameraGrid
@@ -12,6 +15,8 @@ interface Props extends HTMLAttributes<'div'> {
   columnStyles?: Record<string, string>
   columnHeaderStyles?: Record<string, string>
   parameters?: Record<string, GameraParameter>
+  alternateStyle?: boolean
+  highlight?: string
 }
 
 const {
@@ -22,7 +27,10 @@ const {
   columnHeaderStyles,
   parameters,
   hideTitle,
+  alternateStyle,
+  highlight,
 } = Astro.props
+
 type Column = GameraGrid['columns'][0]
 type Row = GameraGrid['rows'][0][string]
 const fullWidth = Astro.props.fullWidth ?? true
@@ -62,6 +70,7 @@ const getTextColumnHeaderStyles = (col: Column) => {
 
 const dateRegex = /(Sun|Mon|Tue|Wed|Thu|Fri|Sat)\s(\d+\/\d+)/
 const scoreRegex = /(W|L)\s(\d+-\d+)/
+// (comment left for treesitter :/)
 ---
 
 <div class={Astro.props.class}>
@@ -111,15 +120,27 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
       )
     }
   </div>
-  <div class="relative overflow-x-auto">
+  <div
+    class:list={{
+      'relative overflow-x-auto': !alternateStyle,
+      'overflow-auto border border-[#e4e4e4]': alternateStyle,
+    }}
+  >
     <table
       class:list={{
-        'text-[15px] whitespace-nowrap': true,
+        'text-[15px] whitespace-nowrap': !alternateStyle,
+        'border-spacing-0': alternateStyle,
         'w-full': fullWidth,
       }}
     >
       <thead>
-        <tr class="text-xs text-team-secondary uppercase tracking-[0.07rem]">
+        <tr
+          class:list={{
+            'text-xs text-team-secondary uppercase tracking-[0.07rem]':
+              !alternateStyle,
+            'border-b border-[#e4e4e4]': alternateStyle,
+          }}
+        >
           {
             data.columns.map((col, index) => {
               const textColumnStyles = getTextColumnStyles(col)
@@ -131,12 +152,15 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
               return (
                 <th
                   class:list={{
-                    'first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5': true,
-                    'p-1.5': true,
-                    'pl-8': hasImage,
-                    'sticky left-0': index === 0,
-                    [textColumnStyles]: !!textColumnStyles,
-                    [textColumnHeaderStyles]: !!textColumnHeaderStyles,
+                    'first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5':
+                      !alternateStyle,
+                    'text-[#a8a8a8] font-normal px-3 py-2.5 text-center whitespace-nowrap first:border-r first:border-[#e4e4e4] first:min-w-[175px] first:w-[175px] first:sticky first:left-0 first:bg-white':
+                      alternateStyle,
+                    'pl-8': hasImage && !alternateStyle,
+                    'sticky left-0': index === 0 && !alternateStyle,
+                    [textColumnStyles]: !alternateStyle && !!textColumnStyles,
+                    [textColumnHeaderStyles]:
+                      !alternateStyle && !!textColumnHeaderStyles,
                   }}
                 >
                   {col.title}
@@ -146,10 +170,19 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
           }
         </tr>
       </thead>
-      <tbody class="divide-y divide-[#c7c8ca] leading-[22px]">
+      <tbody
+        class:list={{
+          'divide-y divide-[#c7c8ca] leading-[22px]': !alternateStyle,
+          'divide-y divide-[#e4e4e4]': alternateStyle,
+        }}
+      >
         {
           data.rows.map((row) => (
-            <tr>
+            <tr
+              class:list={{
+                'bg-[#e9f9ff]': highlight === row[Object.keys(row)[0]].value,
+              }}
+            >
               {data.columns.map((col, x) => {
                 const getCellContent = (row: Row) => {
                   const playerEntity = row.entity?.type.includes('player')
@@ -162,14 +195,15 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                             src={row.imageUrl}
                             alt={row.display}
                             class:list={{
-                              'w-6 h-6 max-w-none object-cover rounded-full bg-white':
-                                playerEntity,
+                              'w-6 h-6 max-w-none object-cover rounded-full bg-white mr-2.5':
+                                playerEntity && !alternateStyle,
                               'opacity-50':
                                 playerEntity &&
                                 row.imageUrl.includes('silhouette'),
-                              'w-4 h-4 max-w-none object-contain':
-                                !playerEntity,
-                              'mr-2.5': true,
+                              'w-4 h-4 max-w-none object-contain mr-2.5':
+                                !playerEntity && !alternateStyle,
+                              'inline-block w-6 h-6 object-contain mr-2.5 align-middle':
+                                alternateStyle,
                             }}
                           />
                         ) : (
@@ -212,12 +246,20 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                 return (
                   <td
                     class:list={{
-                      'px-2': true,
-                      'py-1': !imageUrl,
-                      'bg-white': true, // TODO: support highlight on sort
-                      'sticky left-0': x === 0,
-                      'w-2': !!imageUrl,
-                      [textColumnStyles]: !!textColumnStyles,
+                      'px-2 py-1': !alternateStyle && !imageUrl,
+                      'px-2': !alternateStyle && !!imageUrl,
+                      'px-3 py-2.5 text-center whitespace-nowrap first:border-r first:border-[#e4e4e4] first:min-w-[175px] first:w-[175px] first:sticky first:left-0 first:bg-white first:text-left':
+                        alternateStyle,
+                      'first:bg-white':
+                        alternateStyle &&
+                        highlight !== row[Object.keys(row)[0]].value,
+                      'first:bg-[#e9f9ff]':
+                        alternateStyle &&
+                        highlight === row[Object.keys(row)[0]].value,
+                      'bg-white': !alternateStyle, // TODO: support highlight on sort
+                      'sticky left-0': x === 0 && !alternateStyle,
+                      'w-2': !!imageUrl && !alternateStyle,
+                      [textColumnStyles]: !alternateStyle && !!textColumnStyles,
                     }}
                   >
                     {entity ? (

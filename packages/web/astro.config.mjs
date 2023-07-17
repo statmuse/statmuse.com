@@ -1,16 +1,30 @@
-import { defineConfig } from 'astro/config'
-import solid from '@astrojs/solid-js'
 import tailwind from '@astrojs/tailwind'
 import aws from 'astro-sst/lambda'
-import image from '@astrojs/image'
+import { defineConfig } from 'astro/config'
+import rollupNodePolyFill from 'rollup-plugin-node-polyfills'
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [
-    solid(),
-    tailwind({ config: { applyBaseStyles: false } }),
-    image({ serviceEntryPoint: '@astrojs/image/sharp' }),
-  ],
+  integrations: [tailwind({ config: { applyBaseStyles: false } })],
   output: 'server',
   adapter: aws(),
+  vite: {
+    optimizeDeps: {
+      esbuildOptions: {
+        define: {
+          global: 'globalThis',
+        },
+      },
+    },
+    build: {
+      rollupOptions: {
+        plugins: [rollupNodePolyFill()],
+      },
+    },
+    resolve: {
+      alias: {
+        './runtimeConfig': './runtimeConfig.browser',
+      },
+    },
+  },
 })

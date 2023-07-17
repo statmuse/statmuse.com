@@ -1,7 +1,7 @@
 /// <reference types="stripe-event-types" />
 import Stripe from "stripe"
 import { Config } from "sst/node/config"
-import { db } from "./mothra/db"
+import { db } from "./db"
 
 export const stripe = new Stripe(Config.STRIPE_SECRET, {
   apiVersion: "2022-11-15",
@@ -26,18 +26,12 @@ async function handleCheckoutSessionCompleted(
   event: Stripe.DiscriminatedEvent.CheckoutSessionEvent
 ) {
   const session = event.data.object
-  const sessionWithSubscription = await stripe.checkout.sessions.retrieve(
-    session.id,
-    { expand: ["subscription"] }
-  )
-  const subscription =
-    sessionWithSubscription.subscription as Stripe.Subscription
 
   await db
     .updateTable("users")
     .set({
       stripe_customer_id: session.customer as string,
-      stripe_subscription_status: subscription.status,
+      stripe_subscription_status: "active",
     })
     .where("users.id", "=", session.client_reference_id)
     .executeTakeFirst()
@@ -47,6 +41,14 @@ async function handleSubscriptionCreatedOrUpdated(
   event: Stripe.DiscriminatedEvent.CustomerSubscriptionEvent
 ) {
   const subscription = event.data.object
+  if (subscription.status === "incomplete") return
+
+  if (subscription.status !== "active") {
+    // console.log(JSON.stringify(subscription))
+    console.log(
+      `${subscription.customer} has non-active status ${subscription.status}`
+    )
+  }
 
   await db
     .updateTable("users")

@@ -2,8 +2,7 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
-
-import { GameraBoxScore, tokensToHtml } from '@lib/gamera'
+import { GameraBoxScore, tokensToHtml } from '@statmuse/core/gamera'
 import type { Metadata } from '@lib/meta'
 
 interface Props {
@@ -11,7 +10,7 @@ interface Props {
   meta?: Metadata
 }
 
-const { meta, data } = Astro.props
+const { data } = Astro.props
 const { league, game } = Astro.params
 if (!game || !league) {
   return new Response(null, { status: 404, statusText: 'Not found' })
@@ -58,7 +57,7 @@ const subject = data.visual.summary.subject
       <h3 class="text-4xl font-semibold">Explore</h3>
       <ul class="flex flex-wrap gap-1.5" data-cy-related-questions>
         {
-          data.visual.additionalQuestions.map((question) => (
+          data.visual.additionalQuestions?.map((question) => (
             <li class="flex-1 min-w-[210px] my-1.5 flex gap-1.5 leading-snug">
               <i class="w-5 h-5 shrink-0 explore-search-icon" />
               <a

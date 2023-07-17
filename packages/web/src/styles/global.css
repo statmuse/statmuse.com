@@ -83,189 +83,187 @@
 }
 
 .btn-gallery-icon {
-  background: url(data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDA4NmZmIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCI+PHBhdGggZD0ibTIuMyAyLjNoOHY4aC04eiIvPjxwYXRoIGQ9Im0xMi41IDIuM2g4djhoLTh6Ii8+PHBhdGggZD0ibTIuMyAxMi41aDh2OGgtOHoiLz48cGF0aCBkPSJtMTIuNSAxMi41aDh2OGgtOHoiLz48L2c+PC9zdmc+Cg==);
+  background: url('data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDA4NmZmIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCI+PHBhdGggZD0ibTIuMyAyLjNoOHY4aC04eiIvPjxwYXRoIGQ9Im0xMi41IDIuM2g4djhoLTh6Ii8+PHBhdGggZD0ibTIuMyAxMi41aDh2OGgtOHoiLz48cGF0aCBkPSJtMTIuNSAxMi41aDh2OGgtOHoiLz48L2c+PC9zdmc+Cg==');
 }
 
 .btn-money-icon {
-  background: url(data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDA4NmZmIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCI+PGNpcmNsZSBjeD0iOS44IiBjeT0iOS44IiByPSI3LjYiLz48cGF0aCBkPSJtMTUuMiAxNS4yIDUuMiA1LjIiLz48L2c+PC9zdmc+Cg==);
+  background: url('data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDA4NmZmIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCI+PGNpcmNsZSBjeD0iOS44IiBjeT0iOS44IiByPSI3LjYiLz48cGF0aCBkPSJtMTUuMiAxNS4yIDUuMiA1LjIiLz48L2c+PC9zdmc+Cg==');
 }
 
 .group:hover {
   .btn-gallery-icon {
-    background: url(data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiPjxwYXRoIGQ9Im0yLjMgMi4zaDh2OGgtOHoiLz48cGF0aCBkPSJtMTIuNSAyLjNoOHY4aC04eiIvPjxwYXRoIGQ9Im0yLjMgMTIuNWg4djhoLTh6Ii8+PHBhdGggZD0ibTEyLjUgMTIuNWg4djhoLTh6Ii8+PC9nPjwvc3ZnPgo=);
+    background: url('data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiPjxwYXRoIGQ9Im0yLjMgMi4zaDh2OGgtOHoiLz48cGF0aCBkPSJtMTIuNSAyLjNoOHY4aC04eiIvPjxwYXRoIGQ9Im0yLjMgMTIuNWg4djhoLTh6Ii8+PHBhdGggZD0ibTEyLjUgMTIuNWg4djhoLTh6Ii8+PC9nPjwvc3ZnPgo=');
   }
 
   .btn-money-icon {
-    background: url(data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiPjxjaXJjbGUgY3g9IjkuOCIgY3k9IjkuOCIgcj0iNy42Ii8+PHBhdGggZD0ibTE1LjIgMTUuMiA1LjIgNS4yIi8+PC9nPjwvc3ZnPgo=);
+    background: url('data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiPjxjaXJjbGUgY3g9IjkuOCIgY3k9IjkuOCIgcj0iNy42Ii8+PHBhdGggZD0ibTE1LjIgMTUuMiA1LjIgNS4yIi8+PC9nPjwvc3ZnPgo=');
   }
 }
 
 .sidebar-hamburger-icon {
-  background: url(@cosmos/components/menu/icons/icon-hamburger.svg) no-repeat
-    center center;
+  background: url('/icons/icon-hamburger.svg') no-repeat center center;
 }
 
 .about-icon {
-  background: url(@cosmos/components/menu/icons/icon-about.svg);
+  background: url('/icons/icon-about.svg');
 }
 
 .blog-icon {
-  background: url(@cosmos/components/menu/icons/icon-blog.svg);
+  background: url('/icons/icon-blog.svg');
 }
 
 .data-coverage-icon {
-  background: url(@cosmos/components/menu/icons/icon-data-coverage.svg);
+  background: url('/icons/icon-data-coverage.svg');
 }
 
 .elements-bball-icon {
-  background: url(@cosmos/components/menu/icons/icon-elements-of-bball.svg);
+  background: url('/icons/icon-elements-of-bball.svg');
 }
 
 .example-icon {
-  background: url(@cosmos/components/menu/icons/icon-examples.svg);
+  background: url('/icons/icon-examples.svg');
 }
 
 .feedback-icon {
-  background: url(@cosmos/components/menu/icons/icon-feedback.svg);
+  background: url('/icons/icon-feedback.svg');
 }
 
 .gallery-icon {
-  background: url(@cosmos/components/menu/icons/icon-gallery.svg);
+  background: url('/icons/icon-gallery.svg');
 }
 
 .glossary-icon {
-  background: url(@cosmos/components/menu/icons/icon-glossary.svg);
+  background: url('/icons/icon-glossary.svg');
 }
 
 .harden-maze-icon {
-  background: url(@cosmos/components/menu/icons/icon-harden-maze.svg);
+  background: url('/icons/icon-harden-maze.svg');
 }
 
 .home-icon {
-  background: url(@cosmos/components/menu/icons/icon-home.svg);
+  background: url('/icons/icon-home.svg');
 }
 
 .money-icon {
-  background: url(@cosmos/components/menu/icons/icon-money.svg);
+  background: url('/icons/icon-money.svg');
 }
 
 .offers-icon {
-  background: url(@cosmos/components/menu/icons/icon-offers.svg);
+  background: url('/icons/icon-offers.svg');
 }
 
 .shop-icon {
-  background: url(@cosmos/components/menu/icons/icon-shop.svg);
+  background: url('/icons/icon-shop.svg');
 }
 
 .trending-icon {
-  background: url(@cosmos/components/menu/icons/icon-trending.svg);
+  background: url('/icons/icon-trending.svg');
 }
 
 .voice-icon {
-  background: url(@cosmos/components/menu/icons/icon-authentic-voices.svg);
+  background: url('/icons/icon-authentic-voices.svg');
 }
 
 .highlight,
 .group:hover {
   .about-icon {
-    background: url(@cosmos/components/menu/icons/teal/icon-about.svg);
+    background: url('/icons/teal/icon-about.svg');
   }
 
   .blog-icon {
-    background: url(@cosmos/components/menu/icons/teal/icon-blog.svg);
+    background: url('/icons/teal/icon-blog.svg');
   }
 
   .data-coverage-icon {
-    background: url(@cosmos/components/menu/icons/teal/icon-data-coverage.svg);
+    background: url('/icons/teal/icon-data-coverage.svg');
   }
 
   .elements-bball-icon {
-    background: url(@cosmos/components/menu/icons/teal/icon-elements-of-bball.svg);
+    background: url('/icons/teal/icon-elements-of-bball.svg');
   }
 
   .example-icon {
-    background: url(@cosmos/components/menu/icons/teal/icon-examples.svg);
+    background: url('/icons/teal/icon-examples.svg');
   }
 
   .feedback-icon {
-    background: url(@cosmos/components/menu/icons/teal/icon-feedback.svg);
+    background: url('/icons/teal/icon-feedback.svg');
   }
 
   .gallery-icon {
-    background: url(@cosmos/components/menu/icons/teal/icon-gallery.svg);
+    background: url('/icons/teal/icon-gallery.svg');
   }
 
   .glossary-icon {
-    background: url(@cosmos/components/menu/icons/teal/icon-glossary.svg);
+    background: url('/icons/teal/icon-glossary.svg');
   }
 
   .harden-maze-icon {
-    background: url(@cosmos/components/menu/icons/teal/icon-harden-maze.svg);
+    background: url('/icons/teal/icon-harden-maze.svg');
   }
 
   .home-icon {
-    background: url(@cosmos/components/menu/icons/teal/icon-home.svg);
+    background: url('/icons/teal/icon-home.svg');
   }
 
   .money-icon {
-    background: url(@cosmos/components/menu/icons/teal/icon-money.svg);
+    background: url('/icons/teal/icon-money.svg');
   }
 
   .offers-icon {
-    background: url(@cosmos/components/menu/icons/teal/icon-offers.svg);
+    background: url('/icons/teal/icon-offers.svg');
   }
 
   .shop-icon {
-    background: url(@cosmos/components/menu/icons/teal/icon-shop.svg);
+    background: url('/icons/teal/icon-shop.svg');
   }
 
   .trending-icon {
-    background: url(@cosmos/components/menu/icons/teal/icon-trending.svg);
+    background: url('/icons/teal/icon-trending.svg');
   }
 
   .voice-icon {
-    background: url(@cosmos/components/menu/icons/teal/icon-authentic-voices.svg);
+    background: url('/icons/teal/icon-authentic-voices.svg');
   }
 }
 
 /* ask bar styles */
 .ask-bar-search-icon {
-  background: url(@images/icons/icon-search.svg) no-repeat scroll center /
-    contain;
+  background: url('/icons/icon-search.svg') no-repeat scroll center / contain;
 }
 
 .group:hover .ask-bar-search-icon,
 .peer:focus ~ .ask-bar-search-icon {
-  background: url(@images/icons/icon-search-blue.svg) no-repeat scroll center /
+  background: url('/icons/icon-search-blue.svg') no-repeat scroll center /
     contain;
 }
 
 .suggestion-nba-icon {
-  background: url(@images/icons/icon-nba.svg) center / contain;
+  background: url('/icons/icon-nba.svg') center / contain;
 }
 
 .suggestion-nfl-icon {
-  background: url(@images/icons/icon-nfl.svg) center / contain;
+  background: url('/icons/icon-nfl.svg') center / contain;
 }
 
 .suggestion-mlb-icon {
-  background: url(@images/icons/icon-mlb.svg) center / contain;
+  background: url('/icons/icon-mlb.svg') center / contain;
 }
 
 .suggestion-nhl-icon {
-  background: url(@images/icons/icon-nhl.svg) center / contain;
+  background: url('/icons/icon-nhl.svg') center / contain;
 }
 
 .suggestion-pga-icon {
-  background: url(@images/icons/icon-pga.svg) center / contain;
+  background: url('/icons/icon-pga.svg') center / contain;
 }
 
 .suggestion-history-icon {
-  background: url(@images/icons/icon-history.svg) center / contain;
+  background: url('/icons/icon-history.svg') center / contain;
 }
 
 .suggestion-example-icon {
-  background: url(@images/finance/icons/icon-mag.svg) center / contain;
+  background: url('/finance/icons/icon-mag.svg') center / contain;
 }
 
 .container-open .input {
@@ -289,7 +287,7 @@
     height: 2em;
     background-size: 100% auto;
     background-repeat: no-repeat;
-    background-image: url('@images/quotes_start.svg');
+    background-image: url('/quotes_start.svg');
   }
 
   &::after {
@@ -300,34 +298,34 @@
     height: 2em;
     background-size: 100% auto;
     background-repeat: no-repeat;
-    background-image: url('@images/quotes_end.svg');
+    background-image: url('/quotes_end.svg');
   }
 }
 
 .overview-affiliation {
   &-nflpa {
-    background-image: url(@images/affiliations/nflpa.png);
+    background-image: url('/affiliations/nflpa.png');
   }
 
   &-disney {
-    background-image: url(@images/affiliations/disney.svg);
+    background-image: url('/affiliations/disney.svg');
   }
 
   &-greycroft {
-    background-image: url(@images/affiliations/greycroft.svg);
+    background-image: url('/affiliations/greycroft.svg');
   }
 
   &-google {
-    background-image: url(@images/affiliations/google.svg);
+    background-image: url('/affiliations/google.svg');
   }
 }
 
 .about-stars-close-btn {
-  background-image: url(@cosmos/components/about-stars/close_button.svg);
+  background-image: url('/about-stars/close_button.svg');
 }
 
 .about-stars-play-btn {
-  background-image: url(@cosmos/components/about-stars/play_button.svg);
+  background-image: url('/about-stars/play_button.svg');
 }
 
 .star {
@@ -351,12 +349,12 @@
 }
 
 .explore-search-icon {
-  background: url(data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDBjMWQ4IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLXdpZHRoPSIyIj48Y2lyY2xlIGN4PSI5LjUiIGN5PSI5LjciIHI9IjcuMyIvPjxwYXRoIGQ9Im0xOS45IDIwLTUuMi01LjIiLz48L2c+PC9zdmc+Cg==)
+  background: url('data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDBjMWQ4IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLXdpZHRoPSIyIj48Y2lyY2xlIGN4PSI5LjUiIGN5PSI5LjciIHI9IjcuMyIvPjxwYXRoIGQ9Im0xOS45IDIwLTUuMi01LjIiLz48L2c+PC9zdmc+Cg==')
     no-repeat center / contain;
 }
 
 .explore-flame-icon {
-  background: url(data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwYzFkODtzdHJva2Utd2lkdGg6MjtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6MTAiPjxwYXRoIGQ9Im0xMS4zIDIwLjRjMy40IDAgNi45LTQuMiAwLTEwLTYuOSA1LjctMy40IDEwIDAgMTB6Ii8+PHBhdGggZD0ibTExLjQgMi4zYzAgMy43LTYuNyA0LjUtNy44IDkuMS0xLjMgNS4xIDMuMSA5LjEgNy44IDkuMSA3LjMtLjEgMTMuNi05LjQgMC0xOC4yeiIvPjwvZz48L3N2Zz4=)
+  background: url('data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwYzFkODtzdHJva2Utd2lkdGg6MjtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6MTAiPjxwYXRoIGQ9Im0xMS4zIDIwLjRjMy40IDAgNi45LTQuMiAwLTEwLTYuOSA1LjctMy40IDEwIDAgMTB6Ii8+PHBhdGggZD0ibTExLjQgMi4zYzAgMy43LTYuNyA0LjUtNy44IDkuMS0xLjMgNS4xIDMuMSA5LjEgNy44IDkuMSA3LjMtLjEgMTMuNi05LjQgMC0xOC4yeiIvPjwvZz48L3N2Zz4=')
     no-repeat center / contain;
 }
 
@@ -398,7 +396,7 @@
 
       .close {
         background: white
-          url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDIyLjcgMjIuNzsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPgoJLnN0NzZ7ZmlsbDpub25lO3N0cm9rZTojOTY5Y2ExO3N0cm9rZS13aWR0aDoyO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMDt9Cjwvc3R5bGU+CjxnIGlkPSJBdXRvLXN1Z2dlc3QxIj4KCTxnPgoJCTxsaW5lIGNsYXNzPSJzdDc2IiB4MT0iNC4yIiB5MT0iNC4yIiB4Mj0iMTguNSIgeTI9IjE4LjUiLz4KCQk8bGluZSBjbGFzcz0ic3Q3NiIgeDE9IjE4LjUiIHkxPSI0LjIiIHgyPSI0LjIiIHkyPSIxOC41Ii8+Cgk8L2c+CjwvZz4KPC9zdmc+Cg==)
+          url('data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDIyLjcgMjIuNzsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPgoJLnN0NzZ7ZmlsbDpub25lO3N0cm9rZTojOTY5Y2ExO3N0cm9rZS13aWR0aDoyO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMDt9Cjwvc3R5bGU+CjxnIGlkPSJBdXRvLXN1Z2dlc3QxIj4KCTxnPgoJCTxsaW5lIGNsYXNzPSJzdDc2IiB4MT0iNC4yIiB5MT0iNC4yIiB4Mj0iMTguNSIgeTI9IjE4LjUiLz4KCQk8bGluZSBjbGFzcz0ic3Q3NiIgeDE9IjE4LjUiIHkxPSI0LjIiIHgyPSI0LjIiIHkyPSIxOC41Ii8+Cgk8L2c+CjwvZz4KPC9zdmc+Cg==')
           center/17px no-repeat;
         border-radius: 100%;
         box-shadow: 0 6px 14px -2px rgb(0 0 0 / 70%);
@@ -475,5 +473,5 @@
 }
 
 .alert-icon {
-  background: url(@images/alert.svg) no-repeat center / contain;
+  background: url('/alert.svg') no-repeat center / contain;
 }

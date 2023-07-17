@@ -6,7 +6,8 @@
       "@lib/*": ["lib/*"],
       "@layouts/*": ["src/layouts/*"],
       "@components/*": ["src/components/*"],
-      "@styles/*": ["src/styles/*"]
+      "@styles/*": ["src/styles/*"],
+      "@statmuse/core/*": ["../core/src/*"]
     },
     // Solid specific settings
     "jsx": "preserve",

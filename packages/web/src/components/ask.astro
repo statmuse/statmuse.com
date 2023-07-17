@@ -1,0 +1,45 @@
+---
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Hero from '@components/hero.astro'
+import Visuals from '@components/visuals.astro'
+import { ask } from '@lib/gamera'
+import {
+  getUrlForEntity,
+  PlayerProfileDetail,
+  TeamProfileDetail,
+} from '@statmuse/core/gamera'
+
+interface Props {
+  league: string
+  query: string
+}
+
+const { league, query } = Astro.props
+if (!query) return Astro.redirect('/questions')
+const question = query?.replaceAll('-', ' ')
+const response = await ask(league, question)
+const subject = response.visual.summary.subject
+
+const playerProfile = response.visual.detail?.find(
+  (d) => d.type === 'playerProfile'
+) as PlayerProfileDetail
+if (playerProfile) {
+  const url = getUrlForEntity(playerProfile.entity)
+  return Astro.redirect(url)
+}
+
+const teamProfile = response.visual.detail?.find(
+  (d) => d.type === 'teamProfile'
+) as TeamProfileDetail
+if (teamProfile) {
+  const url = getUrlForEntity(teamProfile.entity)
+  return Astro.redirect(url)
+}
+---
+
+<Layout colors={subject?.colors}>
+  <Header />
+  <Hero {response} {question} />
+  <Visuals {response} />
+</Layout>

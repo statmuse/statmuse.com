@@ -1,0 +1,28 @@
+---
+import type { StandingsDetail } from '@statmuse/core/gamera'
+import type { HTMLAttributes } from 'astro/types'
+import Standings from '@components/standings.astro'
+
+interface Props extends HTMLAttributes<'div'> {
+  detail: StandingsDetail
+}
+
+const detail = Astro.props.detail
+const eastStandings = detail.standings
+  .filter((x) => x.group.includes('Eastern Conference'))
+  .sort((a, b) => a.group.localeCompare(b.group))
+const westStandings = detail.standings
+  .filter((x) => x.group.includes('Western Conference'))
+  .sort((a, b) => a.group.localeCompare(b.group))
+const groups = [
+  { name: 'Eastern Conference', standings: eastStandings },
+  { name: 'Western Conference', standings: westStandings },
+]
+if (
+  detail.topic?.group?.startsWith('Western') ||
+  westStandings.find((s) => s.teams.find((t) => t.name === detail.topic?.team))
+)
+  groups.reverse()
+---
+
+<Standings {groups} highlight={detail.topic?.team} />

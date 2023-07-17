@@ -4,7 +4,7 @@ import Grid from '@components/grid.astro'
 import TeamLeaders from '@components/leaders.astro'
 import PlayerGallery from '@components/gallery.astro'
 
-import { GameraDomain, tokensToText, tokensToHtml } from '@lib/gamera'
+import { GameraDomain, tokensToText, tokensToHtml } from '@statmuse/core/gamera'
 import { getTeamSeasonOverview } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
 
@@ -66,15 +66,26 @@ const meta = { title, description, keywords }
       }
     </div>
     {
-      stats && (
-        <Grid
-          data={stats}
-          class="mb-5"
-          columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
-        >
-          <a href={`stats/${year}`}>See stats</a>
-        </Grid>
-      )
+      stats &&
+        (Array.isArray(stats) ? (
+          stats.map((data) => (
+            <Grid
+              data={data}
+              class="mb-5"
+              columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+            >
+              <a href={`stats/${year}`}>See stats</a>
+            </Grid>
+          ))
+        ) : (
+          <Grid
+            data={stats}
+            class="mb-5"
+            columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+          >
+            <a href={`stats/${year}`}>See stats</a>
+          </Grid>
+        ))
     }
     {playerGallery && <PlayerGallery images={playerGallery} class="mb-5" />}
   </div>

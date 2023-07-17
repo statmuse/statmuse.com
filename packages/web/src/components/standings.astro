@@ -1,0 +1,59 @@
+---
+import type { Standings, GameraGrid } from '@statmuse/core/gamera'
+import type { HTMLAttributes } from 'astro/types'
+import Tabs from '@components/tabs.astro'
+import TabPanel from '@components/tab-panel.astro'
+import Grid from '@components/grid.astro'
+
+interface Props extends HTMLAttributes<'div'> {
+  groups: {
+    name: string
+    standings: Standings[]
+  }[]
+  highlight?: string
+}
+
+const groups = Astro.props.groups
+const allTeams = groups.flatMap((x) => x.standings.flatMap((s) => s.teams))
+
+function addImageToGrid(grid: GameraGrid): GameraGrid {
+  const rows = grid.rows.map((row) => ({
+    ...Object.entries(row)
+      .map(([key, value], i) => ({
+        [key]: {
+          ...value,
+          imageUrl:
+            i === 0
+              ? allTeams.find((t) => t.name === value.value)?.logoUrl
+              : undefined,
+        },
+      }))
+      .reduce((acc, x) => ({ ...acc, ...x }), {}),
+  }))
+  return { ...grid, rows }
+}
+---
+
+<div class="text-[#333] text-sm md:text-base">
+  <Tabs titles={groups.map((g) => g.name)}>
+    {
+      groups.map((group) => (
+        <TabPanel title={group.name}>
+          {group.standings.map((x) => (
+            <div>
+              <p class="font-semibold text-center py-2.5">
+                {x.group.replace('/', ' ').replace(group.name, '')}
+              </p>
+              <Grid
+                data={addImageToGrid(x.grid)}
+                highlight={Astro.props.highlight}
+                hideTitle
+                alternateStyle
+              />
+            </div>
+          ))}
+        </TabPanel>
+      ))
+    }
+  </Tabs>
+</div>

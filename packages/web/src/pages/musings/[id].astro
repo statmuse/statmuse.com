@@ -1,0 +1,26 @@
+---
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Hero from '@components/hero.astro'
+import Visuals from '@components/visuals.astro'
+import { getMusing } from '@statmuse/core/musings'
+import { rgbToHex } from '@statmuse/core/color'
+import type { GameraResponse } from '@statmuse/core/gamera'
+
+const { id } = Astro.params
+const musing = await getMusing(id).executeTakeFirst()
+if (!musing) return Astro.halt({ status: 404 })
+
+const foreground = musing.foreground_rgba
+  ? rgbToHex(musing.foreground_rgba)
+  : undefined
+const background = musing.background_rgba
+  ? rgbToHex(musing.background_rgba)
+  : undefined
+---
+
+<Layout colors={{ foreground, background }}>
+  <Header />
+  <Hero {musing} question={musing.text_plain ?? ''} />
+  <Visuals response={musing.answer as GameraResponse} />
+</Layout>

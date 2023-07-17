@@ -1,17 +1,16 @@
 import type {
   GameraDomain,
+  GameraTeamFranchiseOverview,
   GameraTeamSeasonBio,
-  GameraTeamSeasonOverview,
-  GameraTeamSeasonStats,
-  GameraTeamSeasonPlayerStats,
   GameraTeamSeasonGameResults,
+  GameraTeamSeasonOverview,
+  GameraTeamSeasonPlayerStats,
   GameraTeamSeasonRoster,
   GameraTeamSeasonSplits,
-  GameraTeamFranchiseOverview,
-} from '@lib/gamera'
+  GameraTeamSeasonStats,
+} from '@statmuse/core/gamera'
 import { parseTeamId, parseYearId } from './parse'
-
-const gameraApiUrl = import.meta.env.GAMERA_API_URL
+import { gameraApiUrl } from '@lib/gamera'
 
 export const getTeamSeasonOverview = async (props: {
   domain: GameraDomain
