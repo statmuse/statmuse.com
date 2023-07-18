@@ -1,6 +1,18 @@
 ---
 import ProductLayout from '@layouts/product.astro'
 
+export const prerender = true
+
+export function getStaticPaths() {
+  return [
+    { params: { league: 'nba' } },
+    { params: { league: 'nfl' } },
+    { params: { league: 'mlb' } },
+    { params: { league: 'nhl' } },
+    { params: { league: 'pga' } },
+  ]
+}
+
 const { league } = Astro.params
 
 const meta = {
