@@ -29,9 +29,19 @@ const domains = ['NFL', 'NBA', 'MLB', 'NHL', 'PGA']
       <div class="w-full md:w-64 text-sm md:text-base text-[#333]">
         <div class="block md:hidden">
           <select
+            id="select"
             class="w-full font-semibold text-sm text-primary border border-[#e4e4e4] p-[0.5em]"
           >
-            {domains.map((domain) => <option value={domain}>{domain}</option>)}
+            {
+              domains.map((domain) => (
+                <option
+                  value={domain.toLowerCase()}
+                  selected={domain.toLowerCase() === league}
+                >
+                  {domain}
+                </option>
+              ))
+            }
           </select>
         </div>
         <ul class="hidden md:block">
@@ -60,3 +70,9 @@ const domains = ['NFL', 'NBA', 'MLB', 'NHL', 'PGA']
     </div>
   </Container>
 </Layout>
+<script define:vars={{ prefixPath }}>
+const onChange = (e) => {
+  window.location.pathname = `${prefixPath}/${e.target.value}`
+}
+document.getElementById('select')?.addEventListener('change', onChange)
+</script>
