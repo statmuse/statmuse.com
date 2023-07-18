@@ -5,6 +5,13 @@ export async function ask(league: string | undefined, query: string) {
   const requestUrl = `${gameraApiUrl}${league}/answer?input=${encodeURIComponent(
     query as string
   )}`
-  const response = await fetch(requestUrl)
-  return response.json() as Promise<GameraResponse>
+
+  console.log(requestUrl)
+
+  try {
+    const response = await fetch(requestUrl)
+    return response.json() as Promise<GameraResponse>
+  } catch (error) {
+    console.error(error)
+  }
 }

@@ -43,8 +43,8 @@ export function API({ stack }: StackContext) {
       ? "mothra-prod.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com"
       : "mothra-staging.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com",
     GAMERA_API_URL: isProd
-      ? "http://gamera.statmuse.com"
-      : "http://gamera.staging.statmuse.com",
+      ? "http://gamera.statmuse.com/"
+      : "http://gamera.staging.statmuse.com/",
   }
 
   if (isDev) {
