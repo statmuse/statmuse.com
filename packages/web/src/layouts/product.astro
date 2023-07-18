@@ -13,6 +13,17 @@ interface Props {
 const { league, meta, prefixPath } = Astro.props
 
 const domains = ['NFL', 'NBA', 'MLB', 'NHL', 'PGA']
+
+const productPages = [
+  {
+    href: '/product/examples',
+    title: 'Examples',
+  },
+  {
+    href: '/product/data',
+    title: 'Data Coverage',
+  },
+]
 ---
 
 <Layout {meta} colors={{ foreground: '#fff', background: '#00c1d8' }}>
@@ -23,6 +34,24 @@ const domains = ['NFL', 'NBA', 'MLB', 'NHL', 'PGA']
         The elephant of sports and financial information.
       </h1>
     </div>
+  </Container>
+  <Container class="text-white bg-primary about-nav-container">
+    <ul class="flex items-center overflow-x-auto space-x-6 md:space-x-12">
+      {
+        productPages.map((page) => (
+          <li class="whitespace-nowrap">
+            <a
+              href={page.href}
+              class={`flex items-center h-[50px] text-sm md:text-base text-white opacity-80 hover:no-underline hover:opacity-100 ${
+                page.href.includes(prefixPath) && 'font-semibold opacity-100'
+              }`}
+            >
+              {page.title}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
   </Container>
   <Container class="py-12">
     <div class="flex flex-wrap gap-6 md:gap-12">
@@ -74,5 +103,5 @@ const domains = ['NFL', 'NBA', 'MLB', 'NHL', 'PGA']
 const onChange = (e) => {
   window.location.pathname = `${prefixPath}/${e.target.value}`
 }
-document.getElementById('select')?.addEventListener('change', onChange)
+  document.getElementById('select')?.addEventListener('change', onChange)
 </script>
