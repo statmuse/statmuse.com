@@ -42,8 +42,10 @@ const productPages = [
           <li class="whitespace-nowrap">
             <a
               href={page.href}
-              class={`flex items-center h-[50px] text-sm md:text-base text-white opacity-80 hover:no-underline hover:opacity-100 ${
-                page.href.includes(prefixPath) && 'font-semibold opacity-100'
+              class={`flex items-center h-[50px] text-sm md:text-base text-white hover:no-underline hover:opacity-100 ${
+                page.href.includes(prefixPath)
+                  ? 'font-semibold opacity-100'
+                  : 'opacity-80'
               }`}
             >
               {page.title}
