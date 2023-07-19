@@ -12,7 +12,7 @@ interface Props {
 
 const { league, meta, prefixPath } = Astro.props
 
-const domains = ['NFL', 'NBA', 'MLB', 'NHL', 'PGA']
+const domains = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
 
 const productPages = [
   {
@@ -103,5 +103,5 @@ const productPages = [
 const onChange = (e) => {
   window.location.pathname = `${prefixPath}/${e.target.value}`
 }
-  document.getElementById('select')?.addEventListener('change', onChange)
+document.getElementById('select')?.addEventListener('change', onChange)
 </script>
