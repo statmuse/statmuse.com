@@ -1,0 +1,1226 @@
+---
+import ProductLayout from '@layouts/product.astro'
+
+export const prerender = true
+
+export function getStaticPaths() {
+  return [
+    { params: { league: 'nba' } },
+    { params: { league: 'nfl' } },
+    { params: { league: 'mlb' } },
+    { params: { league: 'nhl' } },
+    { params: { league: 'pga' } },
+  ]
+}
+
+const { league } = Astro.params
+
+const meta = {
+  title: 'Data',
+  description:
+    "StatMuse boasts the world's most comprehensive publicly available sports statistics database, with data going back to the inaugural seasons for NFL (1920), NBA (1947), MLB (1876) and NHL (1917).",
+}
+
+const data = [
+  {
+    league: 'NFL',
+    coverage: [
+      'Season-by-season coverage for all official statistics dating back to 1932.',
+      'Game-by-game coverage for passing, rushing, and receiving statistics dating back to 1950.',
+      'Game-by-game coverage for all other official statistics dating back to 1960.',
+      'Game results and team standings dating back to 1920.',
+    ],
+    glossaryItems: [
+      {
+        term: 'Assisted Tackles',
+        description: '',
+      },
+      {
+        term: 'Combined Tackles',
+        description: 'Solo tackles plus assisted tackles.',
+      },
+      {
+        term: 'Completion Percentage',
+        description: 'Pass completions divided by pass attempts.',
+      },
+      {
+        term: 'Extra Point Percentage',
+        description: 'Extra points made divided by extra points attempted.',
+      },
+      {
+        term: 'Extra Points Attempted',
+        description: '',
+      },
+      {
+        term: 'Extra Points Made',
+        description: '',
+      },
+      {
+        term: 'Field Goal Percentage',
+        description: 'Field goals made divided by field goals attempted.',
+      },
+      {
+        term: 'Field Goals Attempted',
+        description: '',
+      },
+      {
+        term: 'Field Goals Made',
+        description: '',
+      },
+      {
+        term: 'First Downs',
+        description:
+          'Includes first downs rushing, first downs passing, and first downs by penalty.',
+      },
+      {
+        term: 'First Downs by Penalty',
+        description: '',
+      },
+      {
+        term: 'First Downs Passing',
+        description: '',
+      },
+      {
+        term: 'First Downs Rushing',
+        description: '',
+      },
+      {
+        term: 'Fourth Down Attempts',
+        description: '',
+      },
+      {
+        term: 'Fourth Down Conversion Percentage',
+        description: 'Fourth down conversions divided by fourth down attempts.',
+      },
+      {
+        term: 'Fourth Down Conversions',
+        description: '',
+      },
+      {
+        term: 'Fumble Recovery Touchdowns',
+        description: '',
+      },
+      {
+        term: 'Fumble Recovery Yards',
+        description: '',
+      },
+      {
+        term: 'Fumbles',
+        description:
+          "Includes fumbles that were recovered by a player's own team and fumbles that were recovered by the opponent.",
+      },
+      {
+        term: 'Fumbles Forced',
+        description: '',
+      },
+      {
+        term: 'Fumbles Lost',
+        description: '',
+      },
+      {
+        term: 'Fumbles Recovered',
+        description:
+          'Includes own team fumbles recovered and opponent fumbles recovered.',
+      },
+      {
+        term: 'Games Played',
+        description: '',
+      },
+      {
+        term: 'Games Started',
+        description: '',
+      },
+      {
+        term: 'Interception Percentage',
+        description: 'Pass interceptions divided by pass attempts.',
+      },
+      {
+        term: 'Interception Return Touchdowns',
+        description: '',
+      },
+      {
+        term: 'Interception Return Yards',
+        description: '',
+      },
+      {
+        term: 'Interceptions',
+        description: '',
+      },
+      {
+        term: 'Kick Return Average',
+        description: 'Kickoff return yards divided by kickoff returns.',
+      },
+      {
+        term: 'Kick Return Touchdowns',
+        description: '',
+      },
+      {
+        term: 'Kick Return Yards',
+        description: '',
+      },
+      {
+        term: 'Kick Returns',
+        description: '',
+      },
+      {
+        term: 'Losses',
+        description: '',
+      },
+      {
+        term: 'Net Passing Yards',
+        description: 'Passing yards minus yards lost on sacks taken.',
+      },
+      {
+        term: 'Opponent',
+        description:
+          'Add "opponent" to most statistics to get the corresponding team-opponent value (e.g., opponent rushing yards).',
+      },
+      {
+        term: 'Other Return Touchdowns',
+        description:
+          'Includes blocked punts retruned for touchdowns, blocked field goals returned for touchdowns, and other miscellaneous return touchdowns.',
+      },
+      {
+        term: 'Pass Attempts',
+        description: '',
+      },
+      {
+        term: 'Pass Completions',
+        description: '',
+      },
+      {
+        term: 'Pass Interceptions',
+        description: '',
+      },
+      {
+        term: 'Passer Rating',
+        description:
+          'A measure of passing performance that takes into account completion percentage, yards per attempt, touchdown percentage, and interception percentage.',
+      },
+      {
+        term: 'Passes Defended',
+        description: '',
+      },
+      {
+        term: 'Passing Average',
+        description: 'Passing yards divided by pass attempts.',
+      },
+      {
+        term: 'Passing Touchdowns',
+        description: '',
+      },
+      {
+        term: 'Passing Yards',
+        description: '',
+      },
+      {
+        term: 'Penalties',
+        description: '',
+      },
+      {
+        term: 'Penalty Yards',
+        description: '',
+      },
+      {
+        term: 'Per Game',
+        description:
+          'Add "per game" to most totals to get the corresponding per-game average (e.g., rushing yards per game).',
+      },
+      {
+        term: 'Points',
+        description: '',
+      },
+      {
+        term: 'Punt Return Average',
+        description: 'Punt return yards divided by punt returns.',
+      },
+      {
+        term: 'Punt Return Touchdowns',
+        description: '',
+      },
+      {
+        term: 'Punt Return Yards',
+        description: '',
+      },
+      {
+        term: 'Punt Returns',
+        description: '',
+      },
+      {
+        term: 'Punting Average',
+        description: 'Punting yards divided by punts.',
+      },
+      {
+        term: 'Punting Yards',
+        description: '',
+      },
+      {
+        term: 'Punts',
+        description: '',
+      },
+      {
+        term: 'Punts Blocked',
+        description: '',
+      },
+      {
+        term: 'Quarterback Hits',
+        description: '',
+      },
+      {
+        term: 'Receiving Average',
+        description: 'Receiving yards divided by receptions.',
+      },
+      {
+        term: 'Receiving Touchdowns',
+        description: '',
+      },
+      {
+        term: 'Receiving Yards',
+        description: '',
+      },
+      {
+        term: 'Receptions',
+        description: '',
+      },
+      {
+        term: 'Rush Attempts',
+        description: '',
+      },
+      {
+        term: 'Rushing Average',
+        description: 'Rushing yards divided by rush attempts.',
+      },
+      {
+        term: 'Rushing Touchdowns',
+        description: '',
+      },
+      {
+        term: 'Rushing Yards',
+        description: '',
+      },
+      {
+        term: 'Sacks',
+        description: '',
+      },
+      {
+        term: 'Sacks Taken',
+        description: '',
+      },
+      {
+        term: 'Safeties',
+        description: '',
+      },
+      {
+        term: 'Solo Tackles',
+        description: '',
+      },
+      {
+        term: 'Tackles For Loss',
+        description: '',
+      },
+      {
+        term: 'Targets',
+        description: '',
+      },
+      {
+        term: 'Third Down Attempts',
+        description: '',
+      },
+      {
+        term: 'Third Down Conversion Percentage',
+        description: 'Third down conversions divided by third down attempts.',
+      },
+      {
+        term: 'Third Down Conversions',
+        description: '',
+      },
+      {
+        term: 'Ties',
+        description: '',
+      },
+      {
+        term: 'Time of Possession',
+        description: '',
+      },
+      {
+        term: 'Total Touchdowns',
+        description:
+          'Includes rushing touchdowns, receiving touchdowns, and all return touchdowns.',
+      },
+      {
+        term: 'Touchdown Percentage',
+        description: 'Passing touchdowns divided by pass attempts.',
+      },
+      {
+        term: 'Two-Point Conversions Made',
+        description: '',
+      },
+      {
+        term: 'Winning percentage',
+        description: 'Wins plus one-half times ties, divided by games played.',
+      },
+      {
+        term: 'Wins',
+        description: '',
+      },
+      {
+        term: 'Yards Lost on Sacks',
+        description: '',
+      },
+      {
+        term: 'Yards Lost on Sacks Taken',
+        description: '',
+      },
+    ],
+  },
+  {
+    league: 'NBA',
+    coverage: [
+      'Season-by-season coverage for all official statistics dating back to 1946-47.',
+      'Game-by-game coverage for points, field-goals made, and free-throws made dating back to 1946-47.',
+      'Game-by-game coverage for all other official statistics dating back to 1984-85.',
+      'Game results and team standings dating back to 1946-47.',
+    ],
+    glossaryItems: [
+      {
+        term: '3-Point Field Goal Percentage',
+        description:
+          '3-point field goals made divided by 3-point field goals attempted.',
+      },
+      {
+        term: '3-Point Field Goals Attempted',
+        description: '',
+      },
+      {
+        term: '3-Point Field Goals Made',
+        description: '',
+      },
+      {
+        term: 'Assist Percentage',
+        description:
+          'An estimate of the percentage of teammate field goals assisted by a player while he is on the floor.',
+      },
+      {
+        term: 'Assists',
+        description: '',
+      },
+      {
+        term: 'Block Percentage',
+        description:
+          'An estimate of the percentage of opponent 2-point field goal attempts blocked by a player while he is on the floor.',
+      },
+      {
+        term: 'Blocks',
+        description: '',
+      },
+      {
+        term: 'Defensive Rating',
+        description:
+          'For teams, an estimate of the number of points a team allows per 100 defensive possessions. For players, an estimate of the number of points a player allows (taking into account steals, blocks, etc.) per 100 defensive possessions.',
+      },
+      {
+        term: 'Defensive Rebound Percentage',
+        description:
+          'An estimate of the percentage of available defensive rebounds a player grabs while on the floor.',
+      },
+      {
+        term: 'Defensive Rebounds',
+        description: '',
+      },
+      {
+        term: 'Double-Doubles',
+        description:
+          'A game in which a player records double figures in two of the following categories: points, rebounds, assists, steals, and blocks.',
+      },
+      {
+        term: 'Effective Field Goal Percentage',
+        description:
+          'An adjusted field goal percentage that takes into account the extra point provided by the 3-point shot.',
+      },
+      {
+        term: 'Field Goal Percentage',
+        description: 'Field goals made divided by field goals attempted',
+      },
+      {
+        term: 'Field Goals Attempted',
+        description: '',
+      },
+      {
+        term: 'Field Goals Made',
+        description: '',
+      },
+      {
+        term: 'Free Throw Percentage',
+        description: 'Free throws made divided by free throws attempted',
+      },
+      {
+        term: 'Free Throws Attempted',
+        description: '',
+      },
+      {
+        term: 'Free Throws Made',
+        description: '',
+      },
+      {
+        term: 'Games Played',
+        description: '',
+      },
+      {
+        term: 'Games Started',
+        description: '',
+      },
+      {
+        term: 'Losses',
+        description: '',
+      },
+      {
+        term: 'Margin of Victory',
+        description: 'Points scored minus points allowed.',
+      },
+      {
+        term: 'Minutes',
+        description: '',
+      },
+      {
+        term: 'Net Rating',
+        description: 'Offensive rating minus defensive rating.',
+      },
+      {
+        term: 'Offensive Rating',
+        description:
+          'For teams, an estimate of the number of points a team scores per 100 offensive possessions. For players, an estimate of the number of points a player produces (taking into account points, assists, etc.) per 100 individual offensive possessions.',
+      },
+      {
+        term: 'Offensive Rebound Percentage',
+        description:
+          'An estimate of the percentage of available offensive rebounds a player grabs while on the floor.',
+      },
+      {
+        term: 'Offensive Rebounds',
+        description: '',
+      },
+      {
+        term: 'Opponent',
+        description:
+          'Add "opponent" to most statistics to get the corresponding team-opponent value (e.g., opponent points).',
+      },
+      {
+        term: 'Pace Factor',
+        description: 'An estimate of team possessions per 48 minutes.',
+      },
+      {
+        term: 'Per Game',
+        description:
+          'Add "per game" to most totals to get the corresponding per-game average (e.g., points per game).',
+      },
+      {
+        term: 'Per n Minutes',
+        description:
+          'Add "per n minutes” to most totals to get the corresponding per-n-minutes average (e.g., points per 48 minutes).',
+      },
+      {
+        term: 'Personal Fouls',
+        description: '',
+      },
+      {
+        term: 'Plus-Minus',
+        description:
+          "The number of points a player's team scores while he is on the floor minus the number of points a player's team allows while he is on the floor.",
+      },
+      {
+        term: 'Points',
+        description: '',
+      },
+      {
+        term: 'Possessions',
+        description: '',
+      },
+      {
+        term: 'Quadruple-Doubles',
+        description:
+          'A game in which a player records double figures in four of the following categories: points, rebounds, assists, steals, and blocks.',
+      },
+      {
+        term: 'Steal Percentage',
+        description:
+          'An estimate of the percentage of opponent possessions in which a player records a steal while he is on the floor.',
+      },
+      {
+        term: 'Steals',
+        description: '',
+      },
+      {
+        term: 'Total Rebound Percentage',
+        description:
+          'An estimate of the percentage of available rebounds a player grabs while on the floor.',
+      },
+      {
+        term: 'Total Rebounds',
+        description: 'Offensive rebounds plus defensive rebounds',
+      },
+      {
+        term: 'Triple-Doubles',
+        description:
+          'A game in which a player records double figures in three of the following categories: points, rebounds, assists, steals, and blocks.',
+      },
+      {
+        term: 'True Shooting Percentage',
+        description:
+          'A measure of shooting efficiency that includes 2-pointers, 3-pointers, and free throws.',
+      },
+      {
+        term: 'Turnover Percentage',
+        description:
+          'An estimate of the percentage of plays that end in a turnover.',
+      },
+      {
+        term: 'Turnovers',
+        description: '',
+      },
+      {
+        term: 'Usage Percentage',
+        description:
+          'An estimate of the percentage of team plays a player uses while he is on the floor.',
+      },
+      {
+        term: 'Winning Percentage',
+        description: 'Wins divided by games played.',
+      },
+      {
+        term: 'Wins',
+        description: '',
+      },
+    ],
+  },
+  {
+    league: 'MLB',
+    coverage: [
+      'Season-by-season coverage for all official statistics dating back to 1876.',
+      'Game-by-game coverage for all official statistics dating back to 1908.',
+      'Game results and team standings dating back to 1876.',
+    ],
+    glossaryItems: [
+      {
+        term: 'At Bats',
+        description: '',
+      },
+      {
+        term: 'Bases on Balls',
+        description: 'Also known as walks.',
+      },
+      {
+        term: 'Batting Average',
+        description: 'Hits divided by at bats.',
+      },
+      {
+        term: 'Batting Runs Above Average',
+        description: 'Weighted runs above average adjusted for park.',
+      },
+      {
+        term: 'Caught Stealing',
+        description: '',
+      },
+      {
+        term: 'Complete Games',
+        description: '',
+      },
+      {
+        term: 'Doubles',
+        description: '',
+      },
+      {
+        term: 'Earned Run Average',
+        description: 'Earned runs allowed per nine innings pitched.',
+      },
+      {
+        term: 'Earned Run Average Minus',
+        description:
+          'Earned run average adjusted for league and park and scaled such that 100 is league average. Every percentage point below/above 100 is equivalent to one percentage point better/worse than league average.',
+      },
+      {
+        term: 'Earned Runs',
+        description: '',
+      },
+      {
+        term: 'Extra-Base Hits',
+        description: 'Doubles plus triples plus home runs.',
+      },
+      {
+        term: 'Fielding Independent Pitching',
+        description:
+          "Estimate of a pitcher's run prevention independent of his team's defense. It is scaled to resemble Earned Run Average.",
+      },
+      {
+        term: 'Fielding Independent Pitching Minus',
+        description:
+          'Fielding independent pitching adjusted for league and park and scaled such that 100 is league average. Every percentage point below/above 100 is equivalent to one percentage point better/worse than league average.',
+      },
+      {
+        term: 'Games',
+        description: '',
+      },
+      {
+        term: 'Games Started',
+        description: '',
+      },
+      {
+        term: 'Ground Into Double Plays',
+        description: '',
+      },
+      {
+        term: 'Hit By Pitch',
+        description: '',
+      },
+      {
+        term: 'Hits',
+        description: '',
+      },
+      {
+        term: 'Home Runs',
+        description: '',
+      },
+      {
+        term: 'Innings Pitched',
+        description: '',
+      },
+      {
+        term: 'Intentional Bases on Balls',
+        description: '',
+      },
+      {
+        term: 'Isolated Power',
+        description: 'Slugging percentage minus batting average.',
+      },
+      {
+        term: 'Losses',
+        description: '',
+      },
+      {
+        term: 'On-Base Percentage',
+        description:
+          'Hits plus bases on balls plus hit by pitch, divided by at bats plus bases on balls plus hit by pitch plus sacrifice flies.',
+      },
+      {
+        term: 'On-Base Percentage Plus Slugging Percentage',
+        description: 'Also know as OPS.',
+      },
+      {
+        term: 'Per Nine Innings',
+        description:
+          'Add "per nine innings” to most pitching totals to get the corresponding per-nine-innings average (e.g., strikeouts per nine innings).',
+      },
+      {
+        term: 'Plate Appearances',
+        description: '',
+      },
+      {
+        term: 'Runs',
+        description: '',
+      },
+      {
+        term: 'Runs Batted In',
+        description: '',
+      },
+      {
+        term: 'Sacrifice Flies',
+        description: '',
+      },
+      {
+        term: 'Sacrifice Hits',
+        description: '',
+      },
+      {
+        term: 'Saves',
+        description: '',
+      },
+      {
+        term: 'Shutouts',
+        description: '',
+      },
+      {
+        term: 'Singles',
+        description: '',
+      },
+      {
+        term: 'Slugging Percentage',
+        description: 'Total bases divided by at bats.',
+      },
+      {
+        term: 'Stolen Base Percentage',
+        description:
+          'Stolen bases divided by stolen bases plus caught stealing.',
+      },
+      {
+        term: 'Stolen Bases',
+        description: '',
+      },
+      {
+        term: 'Strikeouts',
+        description: '',
+      },
+      {
+        term: 'Total Bases',
+        description:
+          'Singles, plus two times doubles, plus three times triples, plus four times home runs.',
+      },
+      {
+        term: 'Total Batters Faced',
+        description: '',
+      },
+      {
+        term: 'Triples',
+        description: '',
+      },
+      {
+        term: 'Walks',
+        description: 'Also known as bases on balls.',
+      },
+      {
+        term: 'Walks Plus Hits Per Inning Pitched',
+        description: 'Also known as WHIP.',
+      },
+      {
+        term: 'Weighted On-Base Average',
+        description:
+          'Rate statistic that combines singles, doubles, triples, home runs, unintentional bases on balls, and hit by pitch into one metric, weighting each of them in proportion to their actual run value.',
+      },
+      {
+        term: 'Weighted Runs Above Average',
+        description:
+          'Number of offensive runs a player has contributed to his team compared to a league average player, where league average is equal to zero.',
+      },
+      {
+        term: 'Weighted Runs Created',
+        description:
+          'Number of offensive runs a player has contributed to his team.',
+      },
+      {
+        term: 'Weighted Runs Created Plus',
+        description:
+          'Weighted runs created per plate appearance, adjusted for league and park and scaled such that 100 is league average. Every percentage point above/below 100 is equivalent to one percentage point better/worse than league average.',
+      },
+      {
+        term: 'Wild Pitches',
+        description: '',
+      },
+      {
+        term: 'Winning Percentage',
+        description: 'Wins, divided by wins plus losses.',
+      },
+      {
+        term: 'Wins',
+        description: '',
+      },
+    ],
+  },
+  {
+    league: 'NHL',
+    coverage: [
+      'Season-by-season coverage for all official statistics dating back to 1917-18.',
+      'Game-by-game coverage for all official statistics dating back to 1917-18.',
+      'Game results and team standings dating back to 1917-18.',
+    ],
+    glossaryItems: [
+      {
+        term: 'Assists',
+        description: '',
+      },
+      {
+        term: 'Average Time On Ice',
+        description: 'Time on ice divided by games played.',
+      },
+      {
+        term: 'Bench Penalties',
+        description:
+          'Penalties that generally are assessed against a team as a whole or non-player team personnel.',
+      },
+      {
+        term: 'Blocked Shots',
+        description:
+          'A shot attempt that is deflected wide or blocked by an opponent.',
+      },
+      {
+        term: 'Empty-Net Goals',
+        description: '',
+      },
+      {
+        term: 'Even-Strength Assists',
+        description: '',
+      },
+      {
+        term: 'Even-Strength Goals',
+        description: '',
+      },
+      {
+        term: 'Even-Strength Points',
+        description: '',
+      },
+      {
+        term: 'Faceoff Losses',
+        description: '',
+      },
+      {
+        term: 'Faceoff Win Percentage',
+        description: 'Faceoff wins divided by faceoffs.',
+      },
+      {
+        term: 'Faceoff Wins',
+        description: '',
+      },
+      {
+        term: 'Faceoffs',
+        description: '',
+      },
+      {
+        term: 'Game-Winning Goals',
+        description: '',
+      },
+      {
+        term: 'Games Played',
+        description: '',
+      },
+      {
+        term: 'Games Started',
+        description: '',
+      },
+      {
+        term: 'Giveaways',
+        description:
+          "When a player's own actions result in a loss of possession to the opposing team.",
+      },
+      {
+        term: 'Goals',
+        description: '',
+      },
+      {
+        term: 'Goals Against',
+        description: '',
+      },
+      {
+        term: 'Goals-Against Average',
+        description: 'Goals against per 60 minutes.',
+      },
+      {
+        term: 'Hat Tricks',
+        description: 'Three or more goals by a player in a game.',
+      },
+      {
+        term: 'Hits',
+        description:
+          'When intentional contact between the puck carrier and the opposition results in the puck carrier losing possession of the puck.',
+      },
+      {
+        term: 'Losses',
+        description: '',
+      },
+      {
+        term: 'Major Penalties',
+        description:
+          'A penalty that results in a five-minute stint in the penalty box.',
+      },
+      {
+        term: 'Minor Penalties',
+        description:
+          'A penalty that results in a two-minute stint in the penalty box.',
+      },
+      {
+        term: 'Minutes',
+        description: '',
+      },
+      {
+        term: 'Overtime Goals',
+        description: '',
+      },
+      {
+        term: 'Overtime Losses',
+        description: '',
+      },
+      {
+        term: 'Penalties',
+        description: '',
+      },
+      {
+        term: 'Penalty Kills',
+        description:
+          'Opponent power-play opportunities minus opponent power-play goals.',
+      },
+      {
+        term: 'Penalty Minutes',
+        description: '',
+      },
+      {
+        term: 'Penalty Shot Shooting Percentage',
+        description: 'Penalty-shot goals divided by penalty-shot attempts.',
+      },
+      {
+        term: 'Penalty-Kill Percentage',
+        description:
+          'Penalty kills divided by opponent power-play opportunities.',
+      },
+      {
+        term: 'Penalty-Shot Attempts',
+        description: '',
+      },
+      {
+        term: 'Penalty-Shot Goals',
+        description: '',
+      },
+      {
+        term: 'Plus-Minus',
+        description: '',
+      },
+      {
+        term: 'Points',
+        description:
+          'For players, it is goals plus assists. For teams, it is two times wins plus overtime losses and/or ties.',
+      },
+      {
+        term: 'Points Percentage',
+        description: 'Team points divided by two times games played.',
+      },
+      {
+        term: 'Power-Play Assists',
+        description: '',
+      },
+      {
+        term: 'Power-Play Goals',
+        description: '',
+      },
+      {
+        term: 'Power-Play Opportunities',
+        description: '',
+      },
+      {
+        term: 'Power-Play Percentage',
+        description: 'Power-play goals divided by power-play opportunities.',
+      },
+      {
+        term: 'Power-Play Points',
+        description: 'Power-play goals plus power-play assists.',
+      },
+      {
+        term: 'Power-Play Time On Ice',
+        description: '',
+      },
+      {
+        term: 'Save Percentage',
+        description: 'Saves divided by shots against.',
+      },
+      {
+        term: 'Saves',
+        description: 'Shots against minus goals against.',
+      },
+      {
+        term: 'Shifts',
+        description: '',
+      },
+      {
+        term: 'Shooting Percentage',
+        description: 'Goals divided by shots.',
+      },
+      {
+        term: 'Shootout Attempts',
+        description: '',
+      },
+      {
+        term: 'Shootout Goals',
+        description: '',
+      },
+      {
+        term: 'Shootout Goals Against',
+        description: '',
+      },
+      {
+        term: 'Shootout Losses',
+        description: '',
+      },
+      {
+        term: 'Shootout Save Percentage',
+        description: 'Shootout saves divided by shootout shots against.',
+      },
+      {
+        term: 'Shootout Saves',
+        description: 'Shootout shots against minus shootout goals.',
+      },
+      {
+        term: 'Shootout Shooting Percentage',
+        description: 'Shootout goals divided by shootout attempts.',
+      },
+      {
+        term: 'Shootout Shots Against',
+        description: '',
+      },
+      {
+        term: 'Shootout Wins',
+        description: '',
+      },
+      {
+        term: 'Short-Handed Assists',
+        description: '',
+      },
+      {
+        term: 'Short-Handed Goals',
+        description: '',
+      },
+      {
+        term: 'Short-Handed Points',
+        description: 'Short-handed goals plus short-handed assists.',
+      },
+      {
+        term: 'Short-Handed Time On Ice',
+        description: '',
+      },
+      {
+        term: 'Shots',
+        description:
+          'A shot attempt that either goes into the net for a goal or is stopped by the goaltender for a save.',
+      },
+      {
+        term: 'Shots Against',
+        description:
+          'A shot attempt that either goes into the net for a goal or is stopped by the goaltender for a save.',
+      },
+      {
+        term: 'Shutouts',
+        description: '',
+      },
+      {
+        term: 'Takeaways',
+        description:
+          'When pressure from the defending team results in a defending player gaining possession of the puck.',
+      },
+      {
+        term: 'Ties',
+        description: '',
+      },
+      {
+        term: 'Time On Ice',
+        description: '',
+      },
+      {
+        term: 'Wins',
+        description: '',
+      },
+    ],
+  },
+  {
+    league: 'PGA',
+    coverage: [
+      'Season-by-season coverage for most official statistics dating back to 1979-80.',
+      'Coverage for putting average dating back to 1985-86.',
+      'Coverage for scrambling percentage dating back to 1991-92.',
+      'Coverage for eagles, birdies, bogeys, double bogeys and holes in one dating back to 2011-12.',
+    ],
+    glossaryItems: [
+      {
+        term: 'Birdies/Birdies per round',
+        description: 'A score of 1-under par on a hole.',
+      },
+      {
+        term: 'Bogeys',
+        description: 'A score of 1-over par on a hole.',
+      },
+      {
+        term: 'Double Bogeys',
+        description: 'A score of 2-over par on a hole.',
+      },
+      {
+        term: 'Driving Distance Average',
+        description: 'The average number of yards per measured drive.',
+      },
+      {
+        term: 'Eagles/Holes per eagle',
+        description: 'A score of 2-under par on a hole.',
+      },
+      {
+        term: 'Earnings/Money',
+        description: '',
+      },
+      {
+        term: 'Fairway Percentage/Driving Accuracy (FWY%)',
+        description:
+          'The percentage of time a tee shot comes to rest in the fairway or on the green.',
+      },
+      {
+        term: 'FedEx Cup points',
+        description: '',
+      },
+      {
+        term: 'Greens in Regulation (GIR)',
+        description:
+          'The percent of time a player was able to hit the green in regulation.',
+      },
+      {
+        term: 'Holes in one',
+        description: '',
+      },
+      {
+        term: 'Putting Average',
+        description: 'The average number of putts per green in regulation.',
+      },
+      {
+        term: 'Sand Save %',
+        description:
+          'The percent of sand shots that hit the green and were following by only one putt to hole out.',
+      },
+      {
+        term: 'Scrambling %',
+        description:
+          'The percent of time a player misses the green in regulation, but still makes par or better.',
+      },
+      {
+        term: 'Scoring Average',
+        description:
+          'The weighted scoring average which takes the stroke average of the field into account.',
+      },
+      {
+        term: 'Top 10 finishes',
+        description: '',
+      },
+      {
+        term: 'Wins',
+        description: '',
+      },
+    ],
+  },
+]
+
+const { coverage, glossaryItems } = data.find(
+  (x) => x.league.toLowerCase() === league
+) || { coverage: [], glossaryItems: [] }
+---
+
+<ProductLayout {meta} league={league || 'nfl'} prefixPath="/product/data">
+  <div class="pb-6">
+    <h3 class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3">
+      {league?.toUpperCase()} data coverage
+    </h3>
+    <ul
+      class="list-disc list-inside border-b border-[#e4e4e4] pb-6 mb-6 space-y-4"
+    >
+      {coverage.map((item) => <li>{item}</li>)}
+      <li>
+        <p class="inline-block mr-[0.45em]">Real-time scores and stats</p>
+        <img
+          class="inline-block h-[20px] object-contain"
+          alt="Sportradar"
+          src="https://developer.sportradar.com/files/powered-by-sportradar-1000w.png"
+        />
+      </li>
+    </ul>
+
+    <h3 class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3">
+      {`${league?.toUpperCase()} glossary`}
+    </h3>
+    <ul class="mt-5 space-y-6">
+      {
+        glossaryItems.map(({ term, description }) => (
+          <li>
+            <p class="font-semibold">{term}</p>
+            <p>{description}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</ProductLayout>

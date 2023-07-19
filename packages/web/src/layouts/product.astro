@@ -1,0 +1,107 @@
+---
+import Layout from './main.astro'
+import Header from '@components/header.astro'
+import Container from '@components/container.astro'
+import type { Metadata } from '@lib/meta'
+
+interface Props {
+  league: string
+  meta?: Metadata
+  prefixPath: string
+}
+
+const { league, meta, prefixPath } = Astro.props
+
+const domains = ['NFL', 'NBA', 'MLB', 'NHL', 'PGA']
+
+const productPages = [
+  {
+    href: '/product/examples',
+    title: 'Examples',
+  },
+  {
+    href: '/product/data',
+    title: 'Data Coverage',
+  },
+]
+---
+
+<Layout {meta} colors={{ foreground: '#fff', background: '#00c1d8' }}>
+  <Header />
+  <Container class="text-white bg-primary">
+    <div class="pt-[54px] pb-10 md:pt-[90px] md:pb-16">
+      <h1 class="font-semibold text-xl md:text-3xl">
+        The elephant of sports and financial information.
+      </h1>
+    </div>
+  </Container>
+  <Container class="text-white bg-primary about-nav-container">
+    <ul class="flex items-center overflow-x-auto space-x-6 md:space-x-12">
+      {
+        productPages.map((page) => (
+          <li class="whitespace-nowrap">
+            <a
+              href={page.href}
+              class={`flex items-center h-[50px] text-sm md:text-base text-white opacity-80 hover:no-underline hover:opacity-100 ${
+                page.href.includes(prefixPath) && 'font-semibold opacity-100'
+              }`}
+            >
+              {page.title}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+  <Container class="py-12">
+    <div class="flex flex-wrap gap-6 md:gap-12">
+      <div class="w-full md:w-64 text-sm md:text-base text-[#333]">
+        <div class="block md:hidden">
+          <select
+            id="select"
+            class="w-full font-semibold text-sm text-primary border border-[#e4e4e4] p-[0.5em]"
+          >
+            {
+              domains.map((domain) => (
+                <option
+                  value={domain.toLowerCase()}
+                  selected={domain.toLowerCase() === league}
+                >
+                  {domain}
+                </option>
+              ))
+            }
+          </select>
+        </div>
+        <ul class="hidden md:block">
+          {
+            domains.map((domain) => (
+              <li
+                class={`rounded-md hover:bg-[#f4f6f9] ${
+                  league === domain.toLowerCase() &&
+                  'font-semibold bg-[#f4f6f9]'
+                }`}
+              >
+                <a
+                  class="block p-3 cursor-pointer"
+                  href={`${prefixPath}/${domain.toLowerCase()}`}
+                >
+                  {domain}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="flex-1">
+        <slot />
+      </div>
+    </div>
+  </Container>
+</Layout>
+<script define:vars={{ prefixPath }}>
+const onChange = (e) => {
+  window.location.pathname = `${prefixPath}/${e.target.value}`
+}
+  document.getElementById('select')?.addEventListener('change', onChange)
+</script>
