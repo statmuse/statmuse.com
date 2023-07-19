@@ -1,0 +1,1155 @@
+---
+import ProductLayout from '@layouts/product.astro'
+
+const { league } = Astro.params
+
+const meta = {
+  title: 'Examples',
+  description:
+    "StatMuse is great; and like other great experiences in life, it's even better if you know what you're doing. Here are some example questions to help get you started.",
+}
+
+const nbaExampleSets = [
+  {
+    title: 'Scores',
+    examples: [
+      {
+        query: 'Did the Warriors win?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/did-the-warriors-win',
+      },
+      {
+        query: 'Who won the Finals last year?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/who-won-the-finals-last-year',
+      },
+      {
+        query: 'What was the score of the last Pacers game?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/what-was-the-score-of-the-last-pacers-game',
+      },
+    ],
+  },
+  {
+    title: 'Schedules',
+    examples: [
+      {
+        query: 'Who do the Cavs play this week?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/who-do-the-cavs-play-this-week',
+      },
+      {
+        query: 'What channel is the Raptors game on?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/what-channel-is-the-raptors-game-on',
+      },
+      {
+        query: 'When do the Spurs play next?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/when-do-the-spurs-play-next',
+      },
+    ],
+  },
+  {
+    title: 'Standings',
+    examples: [
+      {
+        query: 'Are the Sixers in the playoffs?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/are-the-sixers-in-the-playoffs',
+      },
+      {
+        query: 'Western Conference standings this season?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/western-conference-standings-this-season',
+      },
+      {
+        query: 'Who leads the East?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/who-leads-the-east',
+      },
+    ],
+  },
+  {
+    title: 'Stats',
+    examples: [
+      {
+        query: 'Lowest defensive rating by a team this season?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/lowest-defensive-rating-by-a-team-this-season',
+      },
+      {
+        query: 'Who had the most points in a game last season?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/who-had-the-most-points-in-a-game-last-season',
+      },
+      {
+        query: 'Which team has the most threes in a playoff game?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/which-team-has-the-most-threes-in-a-playoff-game',
+      },
+    ],
+  },
+  {
+    title: 'Bios',
+    examples: [
+      {
+        query: 'How tall is Giannis?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/how-tall-is-giannis',
+      },
+      {
+        query: 'Where did Kyrie Irving go to college?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/where-did-kyrie-irving-go-to-college',
+      },
+      {
+        query: 'Tell me about Larry Bird',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/tell-me-about-larry-bird',
+      },
+    ],
+  },
+  {
+    title: 'Recaps',
+    examples: [
+      {
+        query: 'How did LeBron do?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/how-did-lebron-do',
+      },
+      {
+        query: 'Did Russell Westbrook have a good season this year?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/did-russell-westbrook-have-a-good-season-this-year',
+      },
+      {
+        query: 'How did MJ do in his rookie season?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/how-did-mj-do-in-his-rookie-season',
+      },
+    ],
+  },
+  {
+    title: 'Odds',
+    examples: [
+      {
+        query: 'NBA odds',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/nba-odds',
+      },
+      {
+        query: 'Who are the favorites tonight?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask/who-are-the-favorites-tonight',
+      },
+      {
+        query: 'Lakers over/under',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask?q=lakers+over%2Funder',
+      },
+    ],
+  },
+  {
+    title: 'Beyond the Box Score',
+    examples: [
+      {
+        query: "What is Steph Curry's career true shooting percentage?",
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath:
+          '/nba/ask?q=what+is+steph+curry%27s+career+true+shooting+percentage',
+      },
+      {
+        query: 'Who had the most DraftKings points in the last NBA Finals?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath:
+          '/nba/ask/who-had-the-most-draftkings-points-in-the-last-nba-finals',
+      },
+      {
+        query: 'Kevin Durant shot chart in 2013-14?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath: '/nba/ask?q=kevin+durant+shot+chart+in+2013-14',
+      },
+    ],
+  },
+  {
+    title: 'Conversational Dialogues (Google Assistant and Alexa)',
+    examples: [
+      {
+        query: 'How many assists does Ben Simmons have in his last game?',
+        preferredDomain: 'NBA',
+        conversationToken: '',
+        askPath:
+          '/nba/ask/how-many-assists-does-ben-simmons-have-in-his-last-game',
+      },
+      {
+        query: 'What about points?',
+        preferredDomain: 'NBA',
+        isFollowup: true,
+        conversationToken:
+          'GhIJuMtmU/Pl8EURlrnAdshgmnQiyQUKxgUKOgo4SG93IG1hbnkgYXNzaXN0cyBkb2VzIEJlbiBTaW1tb25zIGhhdmUgaW4gaGlzIGxhc3QgZ2FtZT8SBQoDTkJBGg8KC0JlbiBTaW1tb25zEAAaFwoTdGhlIE1pbHdhdWtlZSBCdWNrcxABIhQKEgnh4si718PGTBGsnV8fP21tkzLABArpAgrmAjxhdWRpbyBzcmM9Imh0dHBzOi8vYXBpLnN0YXRtdXNlLmNvbS9hdWRpbz9zb3VyY2U9c3RhdG11c2UtYXVkaW8mYW1wO2NvbnRlbnQ9WW1Kak9HVXlaVEV0WXpOa055MDBZMk0yTFdGak9XUXROV1l4WmpObU5tUTJaRGt6SzE5SmJuUnliMlIxWTNScGIyNWZWR2hwYzBselJtOXliV1Z5VGtKQlEyOXRiV2x6YzJsdmJtVnlSR0YyYVdSVGRHVnliaTUzWVhZclFtVnVYMU5wYlcxdmJuTXVkMkYySzJoaFpDNTNZWFlyYzJWMlpXNWZZWE56YVhOMGMxOUZMbmRoZGl0aFoyRnBibk4wWDNSb1pTNTNZWFlyVFdsc2QyRjFhMlZsWDBKMVkydHpMbmRoZGl0dmJsOVhaV1J1WlhOa1lYbGZSUzUzWVhZPSIgLz48YnJlYWsgdGltZT0iNTBtcyIgLz4S0QEKzgE8YXVkaW8gc3JjPSJodHRwczovL2FwaS5zdGF0bXVzZS5jb20vYXVkaW8/c291cmNlPXN0YXRtdXNlLWF1ZGlvJmFtcDtjb250ZW50PVltSmpPR1V5WlRFdFl6TmtOeTAwWTJNMkxXRmpPV1F0TldZeFpqTm1ObVEyWkRreksxOVFjbTl0Y0hSZlRtVjRkRjlMWldWd1ZHaGxVWFZsYzNScGIyNXpRMjl0YVc1bkxuZGhkZz09IiAvPjxicmVhayB0aW1lPSI1MG1zIiAvPg==',
+        askPath: '/nba/ask/what-about-points',
+      },
+      {
+        query: 'What about Donovan Mitchell?',
+        preferredDomain: 'NBA',
+        isFollowup: true,
+        conversationToken:
+          'GhIJuMtmU/Pl8EURlrnAdshgmnQi/AQK+QQKOQo3SG93IG1hbnkgcG9pbnRzIGRvZXMgQmVuIFNpbW1vbnMgaGF2ZSBpbiBoaXMgbGFzdCBnYW1lPxIFCgNOQkEaDwoLQmVuIFNpbW1vbnMQABoXChN0aGUgTWlsd2F1a2VlIEJ1Y2tzEAEiFAoSCeHiyLvXw8ZMEaydXx8/bW2TMvQDCqECCp4CPGF1ZGlvIHNyYz0iaHR0cHM6Ly9hcGkuc3RhdG11c2UuY29tL2F1ZGlvP3NvdXJjZT1zdGF0bXVzZS1hdWRpbyZhbXA7Y29udGVudD1ZbUpqT0dVeVpURXRZek5rTnkwMFkyTTJMV0ZqT1dRdE5XWXhaak5tTm1RMlpEa3pLMEpsYmw5VGFXMXRiMjV6TG5kaGRpdHpZMjl5WldRdWQyRjJLMlp2ZFhJdWQyRjJLM0J2YVc1MGN5NTNZWFlyWVdkaGFXNXpkRjkwYUdVdWQyRjJLMDFwYkhkaGRXdGxaVjlDZFdOcmN5NTNZWFlyYjI1ZlYyVmtibVZ6WkdGNVgwVXVkMkYyIiAvPjxicmVhayB0aW1lPSI1MG1zIiAvPhLNAQrKATxhdWRpbyBzcmM9Imh0dHBzOi8vYXBpLnN0YXRtdXNlLmNvbS9hdWRpbz9zb3VyY2U9c3RhdG11c2UtYXVkaW8mYW1wO2NvbnRlbnQ9WW1Kak9HVXlaVEV0WXpOa055MDBZMk0yTFdGak9XUXROV1l4WmpObU5tUTJaRGt6SzE5UWNtOXRjSFJmVG1WNGRGOUlhWFJOWlZkcGRHaEJibTkwYUdWeVQyNWxMbmRoZGc9PSIgLz48YnJlYWsgdGltZT0iNTBtcyIgLz4=',
+        askPath: '/nba/ask/what-about-donovan-mitchell',
+      },
+    ],
+  },
+]
+
+const nflExampleSets = [
+  {
+    title: 'Scores',
+    examples: [
+      {
+        query: 'Did the Eagles win?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/did-the-eagles-win',
+      },
+      {
+        query: 'Who won the first Super Bowl?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/who-won-the-first-super-bowl',
+      },
+      {
+        query: 'What was the score of the last Saints game?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/what-was-the-score-of-the-last-saints-game',
+      },
+    ],
+  },
+  {
+    title: 'Schedules',
+    examples: [
+      {
+        query: 'Who do the Chiefs play this week?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/who-do-the-chiefs-play-this-week',
+      },
+      {
+        query: 'What channel is the Super Bowl on?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/what-channel-is-the-super-bowl-on',
+      },
+      {
+        query: 'When do the Rams play next?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/when-do-the-rams-play-next',
+      },
+    ],
+  },
+  {
+    title: 'Standings',
+    examples: [
+      {
+        query: "What is the Carolina Panthers' record?",
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask?q=what+is+the+carolina+panthers%27+record',
+      },
+      {
+        query: 'Which team had the best record in the NFC East last season?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath:
+          '/nfl/ask/which-team-had-the-best-record-in-the-nfc-east-last-season',
+      },
+      {
+        query: 'Did the Ravens make the playoffs?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/did-the-ravens-make-the-playoffs',
+      },
+    ],
+  },
+  {
+    title: 'Stats',
+    examples: [
+      {
+        query: 'Who has the most touchdowns?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/who-has-the-most-touchdowns',
+      },
+      {
+        query: 'Which team has the most two-point conversions this season?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath:
+          '/nfl/ask?q=which+team+has+the+most+two-point+conversions+this+season',
+      },
+      {
+        query: 'Which QB has the most passing yards in a playoff game?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath:
+          '/nfl/ask/which-qb-has-the-most-passing-yards-in-a-playoff-game',
+      },
+    ],
+  },
+  {
+    title: 'Bios',
+    examples: [
+      {
+        query: 'Tell me about the 49ers',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/tell-me-about-the-49ers',
+      },
+      {
+        query: 'Where did Todd Gurley go to college?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/where-did-todd-gurley-go-to-college',
+      },
+      {
+        query: 'Dan Marino career stats?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/dan-marino-career-stats',
+      },
+    ],
+  },
+  {
+    title: 'Recaps',
+    examples: [
+      {
+        query: 'How did Case Keenum do?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/how-did-case-keenum-do',
+      },
+      {
+        query: 'Did Julio Jones have a good season last year?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/did-julio-jones-have-a-good-season-last-year',
+      },
+      {
+        query: 'How did Randy Moss do in his rookie season?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/how-did-randy-moss-do-in-his-rookie-season',
+      },
+    ],
+  },
+  {
+    title: 'Odds',
+    examples: [
+      {
+        query: 'NFL odds',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/nfl-odds',
+      },
+      {
+        query: 'Who are the favorites this week?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/who-are-the-favorites-this-week',
+      },
+      {
+        query: 'Chiefs spread',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/chiefs-spread',
+      },
+    ],
+  },
+  {
+    title: 'Beyond the box score',
+    examples: [
+      {
+        query: 'Which team has the most career ties in the NFL?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/which-team-has-the-most-career-ties-in-the-nfl',
+      },
+      {
+        query: 'Who had the most DraftKings points in the last Super Bowl?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath:
+          '/nfl/ask/who-had-the-most-draftkings-points-in-the-last-super-bowl',
+      },
+      {
+        query: 'Which team had the most third down conversions last season?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath:
+          '/nfl/ask/which-team-had-the-most-third-down-conversions-last-season',
+      },
+    ],
+  },
+  {
+    title: 'Conversational Dialogues (Google Assistant and Alexa)',
+    examples: [
+      {
+        query: 'How many passing touchdowns do the Jaguars have last season?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath:
+          '/nfl/ask/how-many-passing-touchdowns-do-the-jaguars-have-last-season',
+      },
+      {
+        query: 'What about rushing touchdowns?',
+        preferredDomain: 'NFL',
+        isFollowup: true,
+        conversationToken:
+          'GhIJ9htpbUqIY0sRko29A1b7IAgimQUKlgUKPgo8SG93IG1hbnkgcGFzc2luZyB0b3VjaGRvd25zIGRvIHRoZSBKYWd1YXJzIGhhdmUgbGFzdCBzZWFzb24/EgUKA05GTBocChh0aGUgSmFja3NvbnZpbGxlIEphZ3VhcnMQASIUChIJIDGMr/94cEURnUh1aWj14fcymAQKyQIKxgI8YXVkaW8gc3JjPSJodHRwczovL2FwaS5zdGF0bXVzZS5jb20vYXVkaW8/c291cmNlPXN0YXRtdXNlLWF1ZGlvJmFtcDtjb250ZW50PVlXWTRZek14TWpBdE56aG1aaTAwTlRjd0xUbGtORGd0TnpVMk9UWTRaalZsTVdZM0sxOUpiblJ5YjJSMVkzUnBiMjVmU0dWeVpTNTNZWFlyVkdobFgwcGhZMnR6YjI1MmFXeHNaVjlLWVdkMVlYSnpMbmRoZGl0VWFISmxkMTlHYjNJdWQyRjJLMVIzWlc1MGVWOVBibVV1ZDJGMksxUnZkV05vWkc5M2JuTXVkMkYySzBsdUxuZGhkaXRVZDI5ZlZHaHZkWE5oYm1SZlUyVjJaVzUwWldWdUxuZGhkZz09IiAvPjxicmVhayB0aW1lPSI1MG1zIiAvPhLJAQrGATxhdWRpbyBzcmM9Imh0dHBzOi8vYXBpLnN0YXRtdXNlLmNvbS9hdWRpbz9zb3VyY2U9c3RhdG11c2UtYXVkaW8mYW1wO2NvbnRlbnQ9WVdZNFl6TXhNakF0TnpobVppMDBOVGN3TFRsa05EZ3ROelUyT1RZNFpqVmxNV1kzSzE5UWNtOXRjSFJmVjJoaGRFRmtaR2wwYVc5dVlXeFJkV1Z6ZEdsdmJuTXVkMkYyIiAvPjxicmVhayB0aW1lPSI1MG1zIiAvPg==',
+        askPath: '/nfl/ask/what-about-rushing-touchdowns',
+      },
+      {
+        query: 'What about Leonard Fournette?',
+        preferredDomain: 'NFL',
+        isFollowup: true,
+        conversationToken:
+          'GhIJuMtmU/Pl8EURlrnAdshgmnQiyQQKxgQKRApCSG93IG1hbnkgcnVzaGluZyB0b3VjaGRvd25zIGRvIExlb25hcmQgRm91cm5ldHRlIGhhdmUgbGFzdCBzZWFzb24/EgUKA05GTCIUChIJAx8ounaNwkMRj0T7txtdCbgy4AMKnQIKmgI8YXVkaW8gc3JjPSJodHRwczovL2FwaS5zdGF0bXVzZS5jb20vYXVkaW8/c291cmNlPXN0YXRtdXNlLWF1ZGlvJmFtcDtjb250ZW50PVltRXlPREZtTURNdE9HUTNOaTAwTTJNeUxUaG1ORFF0Wm1KaU56RmlOV1F3T1dJNEsxOUpiblJ5YjJSMVkzUnBiMjVmU0dsVWFHbHpTWE11ZDJGMkswbGZjbUZ1WDJadmNpNTNZWFlyVG1sdVpTNTNZWFlyVkc5MVkyaGtiM2R1Y3k1M1lYWXJTVzVmZEhkdlgzUm9iM1Z6WVc1a1gzTmxkbVZ1ZEdWbGJsOUZMbmRoZGc9PSIgLz48YnJlYWsgdGltZT0iNTBtcyIgLz4SvQEKugE8YXVkaW8gc3JjPSJodHRwczovL2FwaS5zdGF0bXVzZS5jb20vYXVkaW8/c291cmNlPXN0YXRtdXNlLWF1ZGlvJmFtcDtjb250ZW50PVltRXlPREZtTURNdE9HUTNOaTAwTTJNeUxUaG1ORFF0Wm1KaU56RmlOV1F3T1dJNEsxOVFjbTl0Y0hSZlRtVjRkRjlYYUdGMFJXeHpaUzUzWVhZPSIgLz48YnJlYWsgdGltZT0iNTBtcyIgLz4=',
+        askPath: '/nfl/ask/what-about-leonard-fournette',
+      },
+    ],
+  },
+  {
+    title: 'Fantasy',
+    examples: [
+      {
+        query: 'What is your projection for Patrick Mahomes?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/what-is-your-projection-for-patrick-mahomes',
+      },
+      {
+        query: 'Should I start Kamara or Chubb?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath: '/nfl/ask/should-i-start-kamara-or-chubb',
+      },
+      {
+        query: 'Which TE scored the most fantasy points last season?',
+        preferredDomain: 'NFL',
+        conversationToken: '',
+        askPath:
+          '/fantasy/ask/which-te-scored-the-most-fantasy-points-last-season',
+      },
+    ],
+  },
+]
+
+const nhlExampleSets = [
+  {
+    title: 'Scores',
+    examples: [
+      {
+        query: 'Did the Golden Knights win?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/did-the-golden-knights-win',
+      },
+      {
+        query: 'Who won the Stanley Cup last season?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/who-won-the-stanley-cup-last-season',
+      },
+      {
+        query: 'What happened in the Predators game?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/what-happened-in-the-predators-game',
+      },
+    ],
+  },
+  {
+    title: 'Schedules',
+    examples: [
+      {
+        query: 'What NHL games are there tonight?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/what-nhl-games-are-there-tonight',
+      },
+      {
+        query: 'What channel is the Avalanche game on?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/what-channel-is-the-avalanche-game-on',
+      },
+      {
+        query: 'When do the Sharks play next?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/when-do-the-sharks-play-next',
+      },
+    ],
+  },
+  {
+    title: 'Standings',
+    examples: [
+      {
+        query: "What is the Carolina Hurricanes' record?",
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask?q=what+is+the+carolina+hurricanes%27+record',
+      },
+      {
+        query: 'What place are the Ducks in?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/what-place-are-the-ducks-in',
+      },
+      {
+        query: "What is the Devils' best record in a season?",
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask?q=what+is+the+devils%27+best+record+in+a+season',
+      },
+    ],
+  },
+  {
+    title: 'Stats',
+    examples: [
+      {
+        query: 'Who leads the NHL in points?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/who-leads-the-nhl-in-points',
+      },
+      {
+        query: 'Which team had the most power play points this season?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath:
+          '/nhl/ask/which-team-had-the-most-power-play-points-this-season',
+      },
+      {
+        query: 'Who had the most assists in a season?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/who-had-the-most-assists-in-a-season',
+      },
+    ],
+  },
+  {
+    title: 'Bios',
+    examples: [
+      {
+        query: 'How old is Patrik Laine?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/how-old-is-patrik-laine',
+      },
+      {
+        query: 'How tall is Wayne Gretzky?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/how-tall-is-wayne-gretzky',
+      },
+      {
+        query: "What are Mario Lemieux's career stats?",
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask?q=what+are+mario+lemieux%27s+career+stats',
+      },
+    ],
+  },
+  {
+    title: 'Recaps',
+    examples: [
+      {
+        query: 'Tell me about Gordie Howe',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/tell-me-about-gordie-howe',
+      },
+      {
+        query: 'Did Tyler Seguin have a good season this year?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/did-tyler-seguin-have-a-good-season-this-year',
+      },
+      {
+        query: 'How did Sidney Crosby do in his rookie season?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/how-did-sidney-crosby-do-in-his-rookie-season',
+      },
+    ],
+  },
+  {
+    title: 'Odds',
+    examples: [
+      {
+        query: 'NHL odds',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/nhl-odds',
+      },
+      {
+        query: 'Who are the favorites tonight?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/who-are-the-favorites-tonight',
+      },
+      {
+        query: 'Maple Leafs moneyline',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/maple-leafs-moneyline',
+      },
+    ],
+  },
+  {
+    title: 'Beyond the box score',
+    examples: [
+      {
+        query: 'Which team has the highest faceoff win percentage this season?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath:
+          '/nhl/ask/which-team-has-the-highest-faceoff-win-percentage-this-season',
+      },
+      {
+        query:
+          'Which team has the highest penalty kill percentage in a season in the playoffs with at least 8 games played?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath:
+          '/nhl/ask/which-team-has-the-highest-penalty-kill-percentage-in-a-season-in-the-playoffs-with-at-least-8-games-played',
+      },
+      {
+        query:
+          'Who had the most game winning goals in a season in the playoffs?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath:
+          '/nhl/ask/who-had-the-most-game-winning-goals-in-a-season-in-the-playoffs',
+      },
+    ],
+  },
+  {
+    title: 'Conversational Dialogues (Google Assistant and Alexa)',
+    examples: [
+      {
+        query: 'How many points did Alex Ovechkin have this season?',
+        preferredDomain: 'NHL',
+        conversationToken: '',
+        askPath: '/nhl/ask/how-many-points-did-alex-ovechkin-have-this-season',
+      },
+      {
+        query: 'What about goals?',
+        preferredDomain: 'NHL',
+        isFollowup: true,
+        conversationToken:
+          'GhIJGa9RIapkn00RhoBggEX5/2ki2QQK1gQKNQozSG93IG1hbnkgcG9pbnRzIGRpZCBBbGV4IE92ZWNoa2luIGhhdmUgdGhpcyBzZWFzb24/EgUKA05ITBoRCg1BbGV4IE92ZWNoa2luEAAiFAoSCR6cj8FutHxOEbPES/duyUVbMuwDCq0CCqoCPGF1ZGlvIHNyYz0iaHR0cHM6Ly9hcGkuc3RhdG11c2UuY29tL2F1ZGlvP3NvdXJjZT1zdGF0bXVzZS1hdWRpbyZhbXA7Y29udGVudD1ZekU0Wmpsak1XVXRZalEyWlMwMFpUZGpMV0l6WXpRdE5HSm1OelpsWXprME5UVmlLMTlKYm5SeWIyUjFZM1JwYjI1ZlZHaHBjMGx6Um05eVUwMVRWbEF1ZDJGMkswRnNaWGhmVDNabFkyaHJhVzR1ZDJGMksyTnZiR3hsWTNSbFpDNTNZWFlyWldsbmFIUjVYM05sZG1WdUxuZGhkaXRRYjJsdWRITXVkMkYySzFSb2FYTmZVMlZoYzI5dVgwVXVkMkYyIiAvPjxicmVhayB0aW1lPSI1MG1zIiAvPhK5AQq2ATxhdWRpbyBzcmM9Imh0dHBzOi8vYXBpLnN0YXRtdXNlLmNvbS9hdWRpbz9zb3VyY2U9c3RhdG11c2UtYXVkaW8mYW1wO2NvbnRlbnQ9WXpFNFpqbGpNV1V0WWpRMlpTMDBaVGRqTFdJell6UXROR0ptTnpabFl6azBOVFZpSzE5UWNtOXRjSFJmUVc1dmRHaGxjazl1WlM1M1lYWT0iIC8+PGJyZWFrIHRpbWU9IjUwbXMiIC8+',
+        askPath: '/nhl/ask/what-about-goals',
+      },
+      {
+        query: 'What about Nikita Kucherov?',
+        preferredDomain: 'NHL',
+        isFollowup: true,
+        conversationToken:
+          'GhIJGa9RIapkn00RhoBggEX5/2kiuAQKtQQKNAoySG93IG1hbnkgZ29hbHMgZGlkIEFsZXggT3ZlY2hraW4gaGF2ZSB0aGlzIHNlYXNvbj8SBQoDTkhMGhEKDUFsZXggT3ZlY2hraW4QACIUChIJHpyPwW60fE4Rs8RL927JRVsyzAMK9QEK8gE8YXVkaW8gc3JjPSJodHRwczovL2FwaS5zdGF0bXVzZS5jb20vYXVkaW8/c291cmNlPXN0YXRtdXNlLWF1ZGlvJmFtcDtjb250ZW50PVl6RTRaamxqTVdVdFlqUTJaUzAwWlRkakxXSXpZelF0TkdKbU56WmxZemswTlRWaUswRnNaWGhmVDNabFkyaHJhVzR1ZDJGMkswZHZkQzUzWVhZclptOXlkSGxmYm1sdVpTNTNZWFlyWjI5aGJITXVkMkYySzFSb2FYTmZVMlZoYzI5dVgwVXVkMkYyIiAvPjxicmVhayB0aW1lPSI1MG1zIiAvPhLRAQrOATxhdWRpbyBzcmM9Imh0dHBzOi8vYXBpLnN0YXRtdXNlLmNvbS9hdWRpbz9zb3VyY2U9c3RhdG11c2UtYXVkaW8mYW1wO2NvbnRlbnQ9WXpFNFpqbGpNV1V0WWpRMlpTMDBaVGRqTFdJell6UXROR0ptTnpabFl6azBOVFZpSzE5UWNtOXRjSFJmUVc1NWRHaHBibWRGYkhObFNVTmhia0Z1YzNkbGNrWnZjbGx2ZFM1M1lYWT0iIC8+PGJyZWFrIHRpbWU9IjUwbXMiIC8+',
+        askPath: '/nhl/ask/what-about-nikita-kucherov',
+      },
+    ],
+  },
+]
+
+const mlbExampleSets = [
+  {
+    title: 'Scores',
+    examples: [
+      {
+        query: 'Did the Giants win?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/did-the-giants-win',
+      },
+      {
+        query: 'Which team has won the most World Series?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/which-team-has-won-the-most-world-series',
+      },
+      {
+        query: 'Who won the World Series last year?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/who-won-the-world-series-last-year',
+      },
+    ],
+  },
+  {
+    title: 'Schedules',
+    examples: [
+      {
+        query: 'When is the next Athletics home game? ',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/when-is-the-next-athletics-home-game',
+      },
+      {
+        query: 'What channel is the Mariners game on?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/what-channel-is-the-mariners-game-on',
+      },
+      {
+        query: 'When do the Dodgers play the Giants next?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/when-do-the-dodgers-play-the-giants-next',
+      },
+    ],
+  },
+  {
+    title: 'Standings',
+    examples: [
+      {
+        query: "What is the Cubs' record?",
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask?q=what+is+the+cubs%27+record',
+      },
+      {
+        query: "What was the Cubs' record last season?",
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask?q=what+was+the+cubs%27+record+last+season',
+      },
+      {
+        query: 'Who had the best record in the American League last season?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath:
+          '/mlb/ask/who-had-the-best-record-in-the-american-league-last-season',
+      },
+    ],
+  },
+  {
+    title: 'Stats',
+    examples: [
+      {
+        query: 'Which pitcher has the most strikeouts this season?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/which-pitcher-has-the-most-strikeouts-this-season',
+      },
+      {
+        query: 'Which team had the most home runs in a season?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/which-team-had-the-most-home-runs-in-a-season',
+      },
+      {
+        query: 'Who has the most RBI in a World Series?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/who-has-the-most-rbi-in-a-world-series',
+      },
+    ],
+  },
+  {
+    title: 'Bios',
+    examples: [
+      {
+        query: 'How tall was Randy Johnson?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/how-tall-was-randy-johnson',
+      },
+      {
+        query: 'How much does Bartolo Colon weigh?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/how-much-does-bartolo-colon-weigh',
+      },
+      {
+        query: "What are Babe Ruth's career stats?",
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask?q=what+are+babe+ruth%27s+career+stats',
+      },
+    ],
+  },
+  {
+    title: 'Recaps',
+    examples: [
+      {
+        query: 'How did Mike Trout do?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/how-did-mike-trout-do',
+      },
+      {
+        query: 'How did the Blue Jays do last season?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/how-did-the-blue-jays-do-last-season',
+      },
+      {
+        query: 'How did Jose Altuve do in his rookie season?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/how-did-jose-altuve-do-in-his-rookie-season',
+      },
+    ],
+  },
+  {
+    title: 'Odds',
+    examples: [
+      {
+        query: 'MLB odds',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/mlb-odds',
+      },
+      {
+        query: 'Who are the favorites tonight?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/who-are-the-favorites-tonight',
+      },
+      {
+        query: 'Red Sox moneyline',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/red-sox-moneyline',
+      },
+    ],
+  },
+  {
+    title: 'Beyond the box score',
+    examples: [
+      {
+        query: 'Who has the highest wRC+ in a season?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask?q=who+has+the+highest+wrc%2B+in+a+season',
+      },
+      {
+        query:
+          'Which pitcher has the highest career strikeouts per nine innings?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath:
+          '/mlb/ask/which-pitcher-has-the-highest-career-strikeouts-per-nine-innings',
+      },
+      {
+        query: 'Who has the highest weighted on base percentage in a season?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath:
+          '/mlb/ask/who-has-the-highest-weighted-on-base-percentage-in-a-season',
+      },
+    ],
+  },
+  {
+    title: 'Conversational Dialogues (Google Assistant and Alexa)',
+    examples: [
+      {
+        query: 'How many home runs do the Reds have this season?',
+        preferredDomain: 'MLB',
+        conversationToken: '',
+        askPath: '/mlb/ask/how-many-home-runs-do-the-reds-have-this-season',
+      },
+      {
+        query: 'What about stolen bases?',
+        preferredDomain: 'MLB',
+        isFollowup: true,
+        conversationToken:
+          'GhIJgOmdpT+XDkoRkPqPK3w7FKsi+AQK9QQKMgowSG93IG1hbnkgaG9tZSBydW5zIGRvIHRoZSBSZWRzIGhhdmUgdGhpcyBzZWFzb24/EgUKA01MQhoXChN0aGUgQ2luY2lubmF0aSBSZWRzEAEiFAoSCR6cj8FutHxOEbPES/duyUVbMogECqUCCqICPGF1ZGlvIHNyYz0iaHR0cHM6Ly9hcGkuc3RhdG11c2UuY29tL2F1ZGlvP3NvdXJjZT1zdGF0bXVzZS1hdWRpbyZhbXA7Y29udGVudD1ZekU0Wmpsak1XVXRZalEyWlMwMFpUZGpMV0l6WXpRdE5HSm1OelpsWXprME5UVmlLMTlKYm5SeWIyUjFZM1JwYjI1ZlNYUnpUV1V1ZDJGMksxUm9aVjlEYVc1amFXNXVZWFJwWDFKbFpITXVkMkYySzJoaGRtVXVkMkYySzBodmJXVnlaV1F1ZDJGMkswVnNaWFpsYmw5MGFXMWxjeTUzWVhZclZHaHBjMTlUWldGemIyNWZSUzUzWVhZPSIgLz48YnJlYWsgdGltZT0iNTBtcyIgLz4S3QEK2gE8YXVkaW8gc3JjPSJodHRwczovL2FwaS5zdGF0bXVzZS5jb20vYXVkaW8/c291cmNlPXN0YXRtdXNlLWF1ZGlvJmFtcDtjb250ZW50PVl6RTRaamxqTVdVdFlqUTJaUzAwWlRkakxXSXpZelF0TkdKbU56WmxZemswTlRWaUsxOVFjbTl0Y0hSZlYyaGhkRTkwYUdWeVVYVmxjM1JwYjI1elYyOTFiR1JaYjNWTWFXdGxRVzV6ZDJWeVpXUXVkMkYyIiAvPjxicmVhayB0aW1lPSI1MG1zIiAvPg==',
+        askPath: '/mlb/ask/what-about-stolen-bases',
+      },
+      {
+        query: 'What about Billy Hamilton?',
+        preferredDomain: 'MLB',
+        isFollowup: true,
+        conversationToken:
+          'GhIJgOmdpT+XDkoRkPqPK3w7FKsitwQKtAQKNQozSG93IG1hbnkgc3RvbGVuIGJhc2VzIGRvIHRoZSBSZWRzIGhhdmUgdGhpcyBzZWFzb24/EgUKA01MQhoXChN0aGUgQ2luY2lubmF0aSBSZWRzEAEiFAoSCR6cj8FutHxOEbPES/duyUVbMsQDCvkBCvYBPGF1ZGlvIHNyYz0iaHR0cHM6Ly9hcGkuc3RhdG11c2UuY29tL2F1ZGlvP3NvdXJjZT1zdGF0bXVzZS1hdWRpbyZhbXA7Y29udGVudD1ZekU0Wmpsak1XVXRZalEyWlMwMFpUZGpMV0l6WXpRdE5HSm1OelpsWXprME5UVmlLMVJvWlY5RGFXNWphVzV1WVhScFgxSmxaSE11ZDJGMksyaGhkbVV1ZDJGMkswNXBibVV1ZDJGMkszTjBaV0ZzY3k1M1lYWXJWR2hwYzE5VFpXRnpiMjVmUlM1M1lYWT0iIC8+PGJyZWFrIHRpbWU9IjUwbXMiIC8+EsUBCsIBPGF1ZGlvIHNyYz0iaHR0cHM6Ly9hcGkuc3RhdG11c2UuY29tL2F1ZGlvP3NvdXJjZT1zdGF0bXVzZS1hdWRpbyZhbXA7Y29udGVudD1ZekU0Wmpsak1XVXRZalEyWlMwMFpUZGpMV0l6WXpRdE5HSm1OelpsWXprME5UVmlLMTlRY205dGNIUmZRWE5yVFdWVGIyMWxkR2hwYm1kRmJITmxMbmRoZGc9PSIgLz48YnJlYWsgdGltZT0iNTBtcyIgLz4=',
+        askPath: '/mlb/ask/what-about-billy-hamilton',
+      },
+    ],
+  },
+]
+
+const pgaExampleSets = [
+  {
+    title: 'Scores',
+    examples: [
+      {
+        query: 'Did Tiger win The Masters last year?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/did-tiger-win-the-masters-last-year',
+      },
+      {
+        query: 'Who won the PGA Championship in 1980?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/who-won-the-pga-championship-in-1980',
+      },
+      {
+        query: 'Who won the US Open in 2000?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/who-won-the-us-open-in-2000',
+      },
+    ],
+  },
+  {
+    title: 'Schedules',
+    examples: [
+      {
+        query: 'What is the PGA schedule?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/what-is-the-pga-schedule',
+      },
+      {
+        query: 'When is the next US Open?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/when-is-the-next-us-open',
+      },
+      {
+        query: 'When is the next Masters?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/when-is-the-next-masters',
+      },
+    ],
+  },
+  {
+    title: 'Standings',
+    examples: [
+      {
+        query: 'FedEx Cup rankings in 2013?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/fedex-cup-rankings-in-2013',
+      },
+      {
+        query: 'What was The Masters leaderboard in 2016?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/what-was-the-masters-leaderboard-in-2016',
+      },
+      {
+        query: 'Who led the FedEx rankings last year?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/who-led-the-fedex-rankings-last-year',
+      },
+    ],
+  },
+  {
+    title: 'Stats',
+    examples: [
+      {
+        query: 'Who won the most tournaments in 2000?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/who-won-the-most-tournaments-in-2000',
+      },
+      {
+        query: 'Who had the best putting average last season?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/who-had-the-best-putting-average-last-season',
+      },
+      {
+        query: "What was Tiger's FWY% in 2003?",
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask?q=what+was+tiger%27s+fwy%25+in+2003',
+      },
+    ],
+  },
+  {
+    title: 'Bios',
+    examples: [
+      {
+        query: 'How old is Phil Mickelson?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/how-old-is-phil-mickelson',
+      },
+      {
+        query: 'Tiger Woods career stats',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/tiger-woods-career-stats',
+      },
+      {
+        query: 'Tell me about Rory McIlroy',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/about-rory-mcilroy',
+      },
+    ],
+  },
+  {
+    title: 'Recaps',
+    examples: [
+      {
+        query: 'How did Tiger Woods do in 2000?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/how-did-tiger-woods-do-in-2000',
+      },
+      {
+        query: 'Did Jordan Spieth have a good season last year?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/did-jordan-spieth-have-a-good-season-last-year',
+      },
+      {
+        query: 'How did Jordan Spieth do in his first season?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/how-did-jordan-spieth-do-in-his-first-season',
+      },
+    ],
+  },
+  {
+    title: 'Beyond the box score',
+    examples: [
+      {
+        query:
+          'Who had the best driving distance average in a season, minimum 80 events?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath:
+          '/pga/ask?q=who+had+the+best+driving+distance+average+in+a+season%2C+minimum+80+events',
+      },
+      {
+        query:
+          'Who was the last player with at least 70 gir% in a season when winning at least 5 tournaments?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath:
+          '/pga/ask?q=who+was+the+last+player+with+at+least+70+gir%25+in+a+season+when+winning+at+least+5+tournaments',
+      },
+      {
+        query:
+          'When was the last time Tiger had 70 GIR% and 70 FWY% in a season?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath:
+          '/pga/ask?q=when+was+the+last+time+tiger+had+70+gir%25+and+70+fwy%25+in+a+season',
+      },
+    ],
+  },
+  {
+    title: 'Conversational Dialogues (Google Assistant and Alexa)',
+    examples: [
+      {
+        query: 'How many tournaments did Tiger Woods win in 2019?',
+        preferredDomain: 'PGA',
+        conversationToken: '',
+        askPath: '/pga/ask/how-many-tournaments-did-tiger-woods-win-in-2019',
+      },
+      {
+        query: 'What about in 2000?',
+        preferredDomain: 'PGA',
+        conversationToken:
+          'GhIJAliUeXlgZE4RvyL8q45mlbAi2AEK1QEKMwoxSG93IG1hbnkgdG91cm5hbWVudHMgZGlkIFRpZ2VyIFdvb2RzIHdpbiBpbiAyMDE5PxIFCgNQR0EaDwoLVGlnZXIgV29vZHMQADKFAQpgCl5UaWdlciBXb29kcyBoYWQgb25lIHRvdXJuYW1lbnQgd2luIGluIDxzYXktYXMgaW50ZXJwcmV0LWFzPSJkYXRlIiBmb3JtYXQ9InkiPjIwMTg8L3NheS1hcz4gMTkuEiEKH1doYXQgZWxzZSBjYW4gSSBhbnN3ZXIgZm9yIHlvdT8oAQ',
+        askPath: '/pga/ask/how-many-tournaments-did-tiger-woods-win-in-2000',
+      },
+      {
+        query: 'What about Phil Mickelson?',
+        preferredDomain: 'PGA',
+        conversationToken:
+          'GhIJAliUeXlgZE4RvyL8q45mlbAikgIKjwIKMwoxSG93IG1hbnkgdG91cm5hbWVudHMgZGlkIFRpZ2VyIFdvb2RzIHdpbiBpbiAyMDAwPxIFCgNQR0EaDwoLVGlnZXIgV29vZHMQADK_AQqVAQqSAVRpZ2VyIFdvb2RzIGhhZCBuaW5lIHRvdXJuYW1lbnQgd2lucyBpbiA8c2F5LWFzIGludGVycHJldC1hcz0iZGF0ZSIgZm9ybWF0PSJ5Ij4xOTk5PC9zYXktYXM-IDxzYXktYXMgaW50ZXJwcmV0LWFzPSJkYXRlIiBmb3JtYXQ9InkiPjIwMDA8L3NheS1hcz4uEiUKI0FueXRoaW5nIGVsc2UgSSBjYW4gYW5zd2VyIGZvciB5b3U_KAE',
+        askPath: '/pga/ask/how-many-tournaments-did-phil-mickelson-win-in-2000',
+      },
+    ],
+  },
+]
+
+const leagueSets = [
+  {
+    league: 'NBA',
+    exampleSets: nbaExampleSets,
+  },
+  {
+    league: 'NFL',
+    exampleSets: nflExampleSets,
+  },
+  {
+    league: 'NHL',
+    exampleSets: nhlExampleSets,
+  },
+  {
+    league: 'MLB',
+    exampleSets: mlbExampleSets,
+  },
+  {
+    league: 'PGA',
+    exampleSets: pgaExampleSets,
+  },
+]
+
+const { exampleSets } = leagueSets.find(
+  (x) => x.league.toLowerCase() === league
+) || { exampleSets: [] }
+---
+
+<ProductLayout {meta} league={league || 'nfl'} prefixPath="/product/examples">
+  {
+    exampleSets.map(({ title, examples }) => (
+      <div class="border-b border-[#e4e4e4] mb-6 md:mb-12">
+        <h2 class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3">
+          {title}
+        </h2>
+        <ul class="space-y-3 mb-3">
+          {examples.map((example) => (
+            <li>
+              {example.conversationToken ? (
+                <span class="text-sm md:text-base">{example.query}</span>
+              ) : (
+                <a href={example.askPath}>{example.query}</a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</ProductLayout>
