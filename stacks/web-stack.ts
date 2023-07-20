@@ -24,5 +24,7 @@ export function Web({ stack }: StackContext) {
     permissions: [[api.rdsCredentialsSecret, "grantRead"]],
   })
 
+  stack.addOutputs({ CdnUrl: astroSite.url })
+
   return { astroSite }
 }
