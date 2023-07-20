@@ -1,5 +1,8 @@
 ---
-import { assign, entries, flatten, groupBy, compose } from 'lodash/fp'
+import entries from 'lodash/fp/entries'
+import compose from 'lodash/fp/compose'
+import flatten from 'lodash/fp/flatten'
+import groupBy from 'lodash/fp/groupBy'
 import {
   type ScheduleDetail,
   type ScheduledGame,
@@ -22,9 +25,9 @@ type ScheduledGameWithType = ScheduledGame & {
 
 const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
   flatten([
-    detail.completed.map(assign({ type: 'completed' })),
-    detail.inProgress.map(assign({ type: 'inProgress' })),
-    detail.scheduled.map(assign({ type: 'scheduled' })),
+    detail.completed.map((d) => ({ ...d, type: 'completed' })),
+    detail.inProgress.map((d) => ({ ...d, type: 'inProgress' })),
+    detail.scheduled.map((d) => ({ ...d, type: 'scheduled' })),
   ])
 )
 ---

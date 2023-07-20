@@ -15,6 +15,8 @@ export default defineConfig({
     '/company/products': '/company/about',
     '/company/shoutouts': '/company/about',
     '/company/twitter-love': '/company/about',
+    '/product/data': '/product/data/nba',
+    '/product/examples': '/product/examples/nba',
     '/getting-started/data-coverage': '/product/data',
     '/getting-started/glossary': '/product/data',
     '/getting-started/personalities': '/product/examples',

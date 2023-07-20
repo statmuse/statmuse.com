@@ -12,7 +12,7 @@ if (!musing) return Astro.halt({ status: 404 })
 
 const query = musing.text_plain ?? ''
 const conversationToken = musing.input_conversation_token
-const league = musing.name
+const preferredDomain = musing.name
 
 const foreground = musing.foreground_rgba
   ? rgbToHex(musing.foreground_rgba)

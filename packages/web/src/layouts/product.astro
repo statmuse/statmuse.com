@@ -1,5 +1,5 @@
 ---
-import Layout from './main.astro'
+import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
 import type { Metadata } from '@lib/meta'
@@ -102,8 +102,8 @@ const productPages = [
   </Container>
 </Layout>
 <script define:vars={{ prefixPath }}>
-const onChange = (e) => {
-  window.location.pathname = `${prefixPath}/${e.target.value}`
-}
-document.getElementById('select')?.addEventListener('change', onChange)
+  const onChange = (e) => {
+    window.location.pathname = `${prefixPath}/${e.target.value}`
+  }
+  document.getElementById('select')?.addEventListener('change', onChange)
 </script>
