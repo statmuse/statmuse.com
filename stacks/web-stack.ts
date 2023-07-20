@@ -13,7 +13,7 @@ export function Web({ stack }: StackContext) {
       api.secrets.STRIPE_PRICE_ID,
     ],
     environment: api.environment,
-    nodejs: { install: ["pg"] },
+    nodejs: { install: ["pg", "sharp"] },
     cdk: {
       server: {
         vpc: api.vpc,

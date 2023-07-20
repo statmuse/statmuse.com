@@ -1,7 +1,11 @@
 export const cdnBaseUrl = "https://cdn.statmuse.com"
 
-export async function handleResponse(response: GameraResponse) {
+export function handleResponse(response: GameraResponse) {
   const subject = response.visual.summary.subject
+  const conversationToken = response.conversation.token
+  if (response.type === "nlgPromptForMoreInfoVisualChoicesOptional") {
+    return { subject, conversationToken }
+  }
 
   let redirectUrl = ""
   const playerProfile = response.visual.detail?.find(
@@ -21,6 +25,7 @@ export async function handleResponse(response: GameraResponse) {
   return {
     subject,
     redirectUrl,
+    conversationToken,
   }
 }
 
@@ -872,7 +877,18 @@ export interface Visual {
   additionalQuestions?: AdditionalQuestion[]
   detail?: Detail[]
   disclaimers?: [string]
-  choices?: [
+}
+
+export interface ChoicesVisual
+  extends Omit<
+    Visual,
+    | "domain"
+    | "detail"
+    | "disclaimers"
+    | "additionalQuestions"
+    | "isSuperlative"
+  > {
+  choices: [
     {
       display: string
       assetId: string
@@ -920,31 +936,57 @@ export interface TokenizationScore {
 
 export interface GameraResponseBase {
   domain: GameraDomain
-  nlg: Nlg
   conversation: Conversation
   disposition: Disposition
   tokenizationScore: TokenizationScore
 }
 
-export interface GameraResponse extends GameraResponseBase {
+export interface GameraDefaultResponse extends GameraResponseBase {
+  type:
+    | "fullNlgAnswerVisualsOptional"
+    | "nlgAnswerNotPossibleVisualsRequired"
+    | "error"
   visual: Visual
+  nlg: Nlg
 }
+
+export interface GameraChoicesResponse extends GameraResponseBase {
+  type: "nlgPromptForMoreInfoVisualChoicesOptional"
+  visual: ChoicesVisual
+  nlg: ChoicesNlg
+}
+
+export interface ChoicesNlg {
+  text: {
+    promptForMoreInfo: string
+  }
+  ssml: {
+    promptForMoreInfo: string
+    repromptForMoreInfo: string
+  }
+}
+
+export type GameraResponse = GameraDefaultResponse | GameraChoicesResponse
 
 export interface GameraNbaBoxScore extends GameraResponseBase {
   domain: "NBA"
   visual: NbaVisual
+  nlg: Nlg
 }
 export interface GameraNflBoxScore extends GameraResponseBase {
   domain: "NFL"
   visual: NflVisual
+  nlg: Nlg
 }
 export interface GameraMlbBoxScore extends GameraResponseBase {
   domain: "MLB"
   visual: MlbVisual
+  nlg: Nlg
 }
 export interface GameraNhlBoxScore extends GameraResponseBase {
   domain: "NHL"
   visual: NhlVisual
+  nlg: Nlg
 }
 
 export type GameraBoxScore =

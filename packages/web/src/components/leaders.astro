@@ -1,6 +1,7 @@
 ---
 import { GameraTeamLeader, getUrlForEntity } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
+import { Image } from 'astro:assets'
 
 interface Props extends HTMLAttributes<'div'> {
   leaders: GameraTeamLeader[]
@@ -39,7 +40,12 @@ const Wrapper = firstLeader.galleryImage.entity ? 'a' : 'div'
               </p>
               <p class="uppercase text-xs tracking-[0.07rem]">{leader.name}</p>
             </div>
-            <img alt={leader.name} src={leader.galleryImage.url} />
+            <Image
+              alt={leader.name}
+              src={leader.galleryImage.url}
+              width={128}
+              height={128}
+            />
           </Wrapper>
         ))
       }

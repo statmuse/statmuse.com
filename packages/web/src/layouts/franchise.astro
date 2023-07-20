@@ -20,8 +20,9 @@ const { overview, meta } = Astro.props
 const { bio } = overview
 
 const domain = overview.domain.toUpperCase() as GameraDomain
+const preferredDomain = domain.toLowerCase()
 const path = Astro.url.pathname
-const canonical = Astro.url.pathname + Astro.url.search
+const canonical = { url: Astro.url.pathname + Astro.url.search }
 const teamPath = getUrlForEntity({
   type: 'teamFranchise',
   domain,
@@ -50,7 +51,7 @@ const keywords = `${getLeagueKeywords(domain)} ${
   colors={bio.colors}
   meta={{ title, description, keywords, canonical, ...(meta || {}) }}
 >
-  <Header />
+  <Header {preferredDomain} />
   <Container class="mb-5 bg-team-primary text-team-secondary overflow-hidden">
     <div
       class="relative flex flex-col md:flex-row md:flex-wrap justify-center items-center md:items-stretch"

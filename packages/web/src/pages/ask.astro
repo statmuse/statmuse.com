@@ -1,0 +1,56 @@
+---
+import { ask } from '@lib/gamera'
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Hero from '@components/hero.astro'
+import Visuals from '@components/visuals.astro'
+import { handleResponse, tokensToText } from '@statmuse/core/gamera'
+import { clean } from '@lib/meta'
+
+if (Astro.request.method !== 'POST') {
+  return Astro.redirect('/questions')
+}
+
+const data = await Astro.request.formData()
+let preferredDomain = data.get('question[preferred_domain]')?.toString()
+let query = data.get('question[query]')?.toString()
+let conversationToken = data.get('question[conversation_token]')?.toString()
+
+if (!query) throw new Error('No query provided')
+
+const response = await ask({ query, preferredDomain, conversationToken })
+if (!response) return Astro.halt({ status: 404 })
+
+conversationToken = response.conversation.token
+query = tokensToText(
+  response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
+)
+preferredDomain =
+  response.type === 'nlgPromptForMoreInfoVisualChoicesOptional'
+    ? undefined
+    : response.visual.domain
+
+const handled = handleResponse(response)
+if (handled.redirectUrl) return Astro.redirect(handled.redirectUrl)
+
+const subject = handled.subject
+
+query = clean(query)
+const path = encodeURIComponent(query.replace(/\s/g, '-'))
+
+const meta = {
+  canonical:
+    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
+      ? {
+          url: `/${response.visual.domain.toLowerCase()}/ask/${path}`,
+          rewrite: true,
+        }
+      : undefined,
+}
+---
+
+<Layout colors={subject?.colors} {meta}>
+  <Header {query} {conversationToken} {preferredDomain} />
+  <Hero {query} {response} />
+  <Visuals {response} {conversationToken} />
+</Layout>

@@ -1,6 +1,8 @@
 ---
 import Layout from '@layouts/main.astro'
 import Logo from '@components/logo.astro'
+import AskBar from '@components/ask-bar.astro'
+import { Image } from "astro:assets"
 import { listLatestMusings } from '@statmuse/core/musings'
 import { listOnboarding } from '@statmuse/core/examples'
 import { getImageUrl } from "@statmuse/core/questions"
@@ -180,10 +182,13 @@ const banner = examples[Math.floor(Math.random() * examples.length)]
           <div class="flex-1 mb-[34px] md:-mr-[20px] md:mb-0">
             <Logo />
           </div>
-          <img
-            class="max-w-[70%] md:max-w-none md:h-[205px] md:pr-[10px]"
-            alt={banner.text}
+          <Image
             src={getImageUrl(banner)}
+            class="max-w-[70%] md:max-w-none md:h-[205px] md:pr-[10px] object-contain object-bottom"
+            alt={banner.text}
+            width={260}
+            height={260}
+            loading="eager"
           />
         </div>
       </div>
@@ -191,61 +196,7 @@ const banner = examples[Math.floor(Math.random() * examples.length)]
         class="content-item-full content-layout mb-5 md:mb-[30px] sticky top-[var(--header-height)] md:top-0 py-[5px] bg-white z-[5]"
       >
         <div class="min-h-[46px]">
-          <ask-bar
-            action="/ask"
-            autosuggest-enabled="true"
-            class="unstable"
-            context="sports"
-            csrf-token="CzZHLDIeYyB8JCQYH04wP3A-AmYjXQApgQjsBNTT9sRLE8Yo5oi6H61K"
-            placeholder="Search players, stats or odds"
-            query-text=""
-            throttle="600"
-            ><form accept-charset="UTF-8" action="/ask" method="post">
-              <div
-                role="combobox"
-                aria-haspopup="listbox"
-                aria-owns="react-autowhatever-1"
-                aria-expanded="false"
-                class="relative rounded-lg text-[#191919]"
-              >
-                <div class="relative group">
-                  <textarea
-                    class="input appearance-none outline-none resize-none block w-full border border-black rounded-lg p-2.5 focus:shadow-md peer group-hover:shadow-md"
-                    autocomplete="off"
-                    aria-autocomplete="list"
-                    aria-controls="react-autowhatever-1"
-                    name="question[query]"
-                    placeholder="Search players, stats or odds"
-                    required=""
-                    enterkeyhint="search"
-                    style="height: 46px !important;"
-                  >
-                  </textarea><input
-                    type="submit"
-                    class="ask-bar-search-icon absolute bottom-3 right-2.5 block w-5 h-5 cursor-pointer"
-                    value=""
-                  />
-                </div><div
-                  id="react-autowhatever-1"
-                  role="listbox"
-                  class="suggestions-container hidden bg-white w-full px-2 absolute top-full border-x border-x-black border-b border-b-slate-400 rounded-b-lg shadow-md"
-                >
-                </div>
-              </div><input
-                name="question[preferred_domain]"
-                type="hidden"
-                value=""
-              /><input
-                name="question[conversation_token]"
-                type="hidden"
-                value=""
-              /><input
-                name="_csrf_token"
-                type="hidden"
-                value="CzZHLDIeYyB8JCQYH04wP3A-AmYjXQApgQjsBNTT9sRLE8Yo5oi6H61K"
-              />
-            </form></ask-bar
-          >
+          <AskBar />
         </div>
       </div>
       <div>
@@ -253,75 +204,45 @@ const banner = examples[Math.floor(Math.random() * examples.length)]
           <a
             class="flex items-center justify-center border border-primary rounded-md hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 bg-primary text-white"
             href="/"
-          >
-            All
-          </a>
-
+            set:text="All" />
           <a
             class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
             href="/nba"
-          >
-            NBA
-          </a>
-
+            set:text="NBA" />
           <a
             class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
             href="/nfl"
-          >
-            NFL
-          </a>
-
+            set:text="NFL" />
           <a
             class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
             href="/nhl"
-          >
-            NHL
-          </a>
-
+            set:text="NHL" />
           <a
             class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
             href="/mlb"
-          >
-            MLB
-          </a>
-
+            set:text="MLB" />
           <a
             class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
             href="/pga"
-          >
-            PGA
-          </a>
-
+            set:text="PGA" />
           <a
-            class="hidden md:flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1"
-            style="min-width: fit-content;"
+            class="hidden md:flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 min-w-fit"
             href="/fantasy"
-          >
-            Fantasy
-          </a>
+            set:text="Fantasy" />
           <a
-            class="hidden md:flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1"
-            style="min-width: fit-content;"
+            class="hidden md:flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 min-w-fit"
             href="/money"
-          >
-            Money
-          </a>
+            set:text="Money" />
         </div>
         <div class="flex flex-nowrap gap-[5px] mb-2.5 md:hidden">
           <a
-            class="flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1"
-            style="max-width: fit-content;"
+            class="flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 max-w-fit"
             href="/fantasy"
-          >
-            Fantasy
-          </a>
+            set:text="Fantasy" />
           <a
-            class="flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1"
-            style="max-width: fit-content;"
+            class="flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 max-w-fit"
             href="/money"
-          >
-            Money
-          </a>
+            set:text="Money" />
         </div>
       </div>
       <h3
@@ -336,22 +257,17 @@ const banner = examples[Math.floor(Math.random() * examples.length)]
               class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
               style={`background-color: ${rgbToHex(musing.background_rgba)}`}
             >
-              <lazy-img
-                class-name="h-36 max-w-full object-contain"
-                alt={musing.text_plain}
-                src={musing.image_url}
-                data-cy-illustration=""
-              >
                 <a href={`/musings/${musing.friendly_id}`}>
-                  <img
-                    class="h-36 max-w-full object-contain"
-                    alt={musing.text_plain}
-                    data-cy-illustration=""
+                  <Image
+                    data-cy-illustration
+                    class="h-36 max-w-full object-contain object-bottom"
                     style="visibility: unset;"
-                    src={musing.image_url}
+                    alt={musing.text_plain}
+                    src={musing.image_url!}
+                    width={192}
+                    height={192}
                   />
                 </a>
-              </lazy-img>
             </div>
             <div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5" onclick=`location.href='/musings/${musing.friendly_id}';`>
               <div 
@@ -359,6 +275,8 @@ const banner = examples[Math.floor(Math.random() * examples.length)]
                  set:html={marked(musing.text_markdown || '', {
                     gfm: true,
                     breaks: true,
+                    mangle: false,
+                    headerIds: false
                   })}>
               </div>
               <div class="flex items-center mt-[5px]">

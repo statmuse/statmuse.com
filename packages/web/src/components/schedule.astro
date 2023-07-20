@@ -12,6 +12,7 @@ interface Props {
   detail: ScheduleDetail
 }
 
+const league = Astro.props.league
 const detail = Astro.props.detail
 const groupGames = compose(entries, groupBy('date'))
 
@@ -26,8 +27,6 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
     detail.scheduled.map(assign({ type: 'scheduled' })),
   ])
 )
-
-const league = Astro.props.league
 ---
 
 <div class="text-sm md:text-base w-full max-w-3xl mx-auto">

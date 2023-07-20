@@ -11,8 +11,8 @@ interface Props {
 }
 
 const { data } = Astro.props
-const { league, game } = Astro.params
-if (!game || !league) {
+const { league: preferredDomain, game } = Astro.params
+if (!game || !preferredDomain) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
 
@@ -23,8 +23,8 @@ const answer = tokensToHtml(data.nlg.text.answer)
 const subject = data.visual.summary.subject
 ---
 
-<Layout colors={subject?.colors}>
-  <Header />
+<Layout colors={subject?.colors} {...Astro.props.meta ?? {}}>
+  <Header {preferredDomain} />
   <div
     class="grid grid-cols-[1fr_min(1250px,_100%)_1fr] w-full px-3 md:px-[75px] [&>*]:col-span-1 [&>*]:col-start-2 mb-5 bg-team-primary text-team-secondary"
   >
@@ -32,8 +32,6 @@ const subject = data.visual.summary.subject
       <div
         class="flex-1 flex flex-col justify-between text-center md:text-left"
       >
-        <!-- TODO: "answered on..."  -->
-        <!-- <span class="italic opacity-50 saturate-0"> </span> -->
         <h1
           class="font-semibold text-xl md:text-2xl md:leading-snug lg:text-[1.75rem] xl:text-3xl xl:leading-snug my-auto"
           data-cy-nlg=""

@@ -78,9 +78,9 @@ const meta = { title, description, keywords }
         )
       }
       {
-        bio.bustImageUrlGallery && (
+        bio.bustImageUrlGallery.length ? (
           <PlayerGallery images={bio.bustImageUrlGallery} class="mb-5" />
-        )
+        ) : null
       }
     </div>
   </div>

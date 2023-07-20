@@ -15,28 +15,81 @@ import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
 
 interface Props {
   response: GameraResponse
+  query?: string
+  conversationToken?: string
 }
+
+const query = Astro.props.query
+const conversationToken = Astro.props.conversationToken
 
 const response = Astro.props.response
 const summary = tokensToHtml(response.visual.summaryTokens)
 const showSummary = !!response.visual.summaryTokens?.find(
   (t) => t.type === 'inferred'
 )
-const ignoreGenericGrids = response.visual.detail?.find(
-  (d) =>
-    d.type === 'standings' ||
-    d.type === 'schedule' ||
-    d.type === 'mlbHistoricalBoxScore' ||
-    d.type === 'nbaHistoricalBoxScore' ||
-    d.type === 'nflHistoricalBoxScore' ||
-    d.type === 'nhlHistoricalBoxScore'
-)
-const details = response.visual.detail?.filter((d) =>
-  ignoreGenericGrids ? d.type !== 'genericGrids' : true
-)
+const ignoreGenericGrids =
+  response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' &&
+  response.visual.detail?.find(
+    (d) =>
+      d.type === 'standings' ||
+      d.type === 'schedule' ||
+      d.type === 'mlbHistoricalBoxScore' ||
+      d.type === 'nbaHistoricalBoxScore' ||
+      d.type === 'nflHistoricalBoxScore' ||
+      d.type === 'nhlHistoricalBoxScore'
+  )
+const details =
+  response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
+    ? response.visual.detail?.filter((d) =>
+        ignoreGenericGrids ? d.type !== 'genericGrids' : true
+      )
+    : undefined
 ---
 
 <Container>
+  {
+    response.type === 'nlgPromptForMoreInfoVisualChoicesOptional' ? (
+      <div class="h-screen w-full flex flex-col justify-center items-center">
+        <h1
+          class="text-3xl my-5 font-semibold"
+          set:html={tokensToHtml(response.visual.summary.answer)}
+        />
+        <div class="w-full flex flex-col sm:flex-row sm:justify-center my-5 gap-2">
+          {response.visual.choices.map((choice) => (
+            <form action="/ask" method="post">
+              <input name="_method" type="hidden" value="POST" />
+              <input
+                id="question_conversation_token"
+                name="question[conversation_token]"
+                type="hidden"
+                value={conversationToken}
+              />
+              <input
+                id="question_query"
+                name="question[query]"
+                required=""
+                type="hidden"
+                value={choice.input}
+              />
+              <input
+                id="question_query_clarification_for"
+                name="question[query_clarification_for]"
+                type="hidden"
+                value={query}
+              />
+              <button
+                data-cy-choice-btn
+                class="w-full text-xl border-2 border-black rounded-md cursor-pointer p-7"
+                type="submit"
+              >
+                {choice.display}
+              </button>
+            </form>
+          ))}
+        </div>
+      </div>
+    ) : null
+  }
   {
     showSummary && details && (
       <div class="text-sm md:text-base text-[#333] mb-2.5">
@@ -48,56 +101,57 @@ const details = response.visual.detail?.filter((d) =>
     )
   }
   {
-    details?.map((detail) => {
-      switch (detail.type) {
-        case 'stats':
-          return (
-            <Fragment>
-              {detail.columnCharts.map((chart) => (
-                <Chart
-                  model={chart}
-                  totalWidth={1495}
-                  isSuperlative={response.visual.isSuperlative}
-                />
-              ))}
-              {detail.grids.map((grid) => (
-                <Grid data={grid} hideTitle />
-              ))}
-            </Fragment>
-          )
-        case 'genericGrids':
-          return detail.grids.map((grid) => <Grid data={grid} hideTitle />)
-        case 'standings':
-          switch (response.visual.domain) {
-            case 'MLB':
-              return <MlbStandings {detail} />
-            case 'NBA':
-              return <NbaStandings {detail} />
-            case 'NFL':
-              return <NflStandings {detail} />
-            case 'NHL':
-              return <NhlStandings {detail} />
+    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' &&
+      details?.map((detail) => {
+        switch (detail.type) {
+          case 'stats':
+            return (
+              <Fragment>
+                {detail.columnCharts.map((chart) => (
+                  <Chart
+                    model={chart}
+                    totalWidth={1495}
+                    isSuperlative={response.visual.isSuperlative}
+                  />
+                ))}
+                {detail.grids.map((grid) => (
+                  <Grid data={grid} hideTitle />
+                ))}
+              </Fragment>
+            )
+          case 'genericGrids':
+            return detail.grids.map((grid) => <Grid data={grid} hideTitle />)
+          case 'standings':
+            switch (response.visual.domain) {
+              case 'MLB':
+                return <MlbStandings {detail} />
+              case 'NBA':
+                return <NbaStandings {detail} />
+              case 'NFL':
+                return <NflStandings {detail} />
+              case 'NHL':
+                return <NhlStandings {detail} />
 
-            default:
-              return null
-          }
-        case 'schedule':
-          return <Schedule {detail} />
-        case 'mlbHistoricalBoxScore':
-          return <MlbBoxscore {detail} />
-        case 'nbaHistoricalBoxScore':
-          return <NbaBoxscore {detail} />
-        case 'nflHistoricalBoxScore':
-          return <NflBoxscore {detail} />
-        case 'nhlHistoricalBoxScore':
-          return <NhlBoxscore {detail} />
-        default:
-          return null
-      }
-    })
+              default:
+                return null
+            }
+          case 'schedule':
+            return <Schedule league={response.visual.domain} {detail} />
+          case 'mlbHistoricalBoxScore':
+            return <MlbBoxscore {detail} />
+          case 'nbaHistoricalBoxScore':
+            return <NbaBoxscore {detail} />
+          case 'nflHistoricalBoxScore':
+            return <NflBoxscore {detail} />
+          case 'nhlHistoricalBoxScore':
+            return <NhlBoxscore {detail} />
+          default:
+            return null
+        }
+      })
   }
   {
-    details ? (
+    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && details ? (
       <div class="my-2.5">
         {response.visual.disclaimers?.map((d) => (
           <div class="text-sm italic font-light" set:html={d} />

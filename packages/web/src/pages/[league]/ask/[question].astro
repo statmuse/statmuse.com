@@ -6,12 +6,10 @@ import Visuals from '@components/visuals.astro'
 import { handleResponse } from '@statmuse/core/gamera'
 import { ask } from '@lib/gamera'
 
-const { league: preferredDomain } = Astro.params
-const question = Astro.url.searchParams.get('q')
+const { league: preferredDomain, question } = Astro.params
 if (!question) return Astro.redirect('/questions')
-
 const query = question.replaceAll('-', ' ')
-const response = await ask({ query, preferredDomain })
+const response = await ask({preferredDomain, query })
 if (!response) return Astro.halt({ status: 404 })
 
 const { subject, redirectUrl, conversationToken } = handleResponse(response)
@@ -21,5 +19,5 @@ if (redirectUrl) return Astro.redirect(redirectUrl)
 <Layout colors={subject?.colors}>
   <Header {query} {preferredDomain} {conversationToken} />
   <Hero {response} {query} />
-  <Visuals {response} {conversationToken} />
+  <Visuals {response} />
 </Layout>

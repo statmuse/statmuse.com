@@ -19,12 +19,12 @@ interface Props {
 
 const { bio, meta } = Astro.props
 
-const { league, player } = Astro.params
-if (!player || !league) {
+const { league: preferredDomain, player } = Astro.params
+if (!player || !preferredDomain) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
 
-const domain = league.toUpperCase() as GameraDomain
+const domain = preferredDomain.toUpperCase() as GameraDomain
 const teamUrl = getUrlForEntity(bio.team.entity)
 const bustImageUrl = bio.bustImageUrl || getDefaultBustImageUrl(domain)
 const bustImageAlt = bio.bustImageUrl?.includes('silhouette')
@@ -32,7 +32,7 @@ const bustImageAlt = bio.bustImageUrl?.includes('silhouette')
   : `Illustration of ${bio.usedName} wearing the ${bio.team.name} uniform`
 
 const path = Astro.url.pathname
-const canonical = Astro.url.pathname + Astro.url.search
+const canonical = { url: Astro.url.pathname + Astro.url.search }
 const playerPath = getUrlForEntity({
   type: 'player',
   domain,
@@ -59,7 +59,7 @@ const keywords = `${getLeagueKeywords(domain)} ${
   colors={bio.team.colors}
   meta={{ title, description, keywords, canonical, ...(meta || {}) }}
 >
-  <Header />
+  <Header {preferredDomain} />
   <Container class="mb-5 bg-team-primary text-team-secondary">
     <div class="flex flex-col md:flex-row relative">
       <div class="flex-1 mt-5 mb-7">

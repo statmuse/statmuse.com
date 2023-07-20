@@ -5,6 +5,7 @@ export const getMusing = (musing?: string) =>
   db
     .selectFrom("musings")
     .innerJoin("questions", "questions.id", "musings.question_id")
+    .innerJoin("leagues", "leagues.id", "musings.league_id")
     .where("musings.friendly_id", "=", musing || null)
     .selectAll()
     .limit(1)

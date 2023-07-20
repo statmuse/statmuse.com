@@ -6,6 +6,7 @@ import {
   GetSecretValueCommand,
   SecretsManagerClient,
 } from "@aws-sdk/client-secrets-manager"
+import { GameraResponse } from "./gamera"
 
 const secretsManager = new SecretsManagerClient({
   region: process.env.AWS_REGION || "us-east-1",
@@ -101,7 +102,7 @@ interface QuestionTable {
   caption: string
   config: {}
   text: string
-  answer: {}
+  answer: GameraResponse
   is_successful: boolean
   data_last_updated_at: ColumnType<Date, string | undefined, string | undefined>
   duration: number

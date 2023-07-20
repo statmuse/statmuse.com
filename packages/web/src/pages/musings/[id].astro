@@ -5,11 +5,14 @@ import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals.astro'
 import { getMusing } from '@statmuse/core/musings'
 import { rgbToHex } from '@statmuse/core/color'
-import type { GameraResponse } from '@statmuse/core/gamera'
 
 const { id } = Astro.params
 const musing = await getMusing(id).executeTakeFirst()
 if (!musing) return Astro.halt({ status: 404 })
+
+const query = musing.text_plain ?? ''
+const conversationToken = musing.input_conversation_token
+const league = musing.name
 
 const foreground = musing.foreground_rgba
   ? rgbToHex(musing.foreground_rgba)
@@ -20,7 +23,7 @@ const background = musing.background_rgba
 ---
 
 <Layout colors={{ foreground, background }}>
-  <Header />
-  <Hero {musing} question={musing.text_plain ?? ''} />
-  <Visuals response={musing.answer as GameraResponse} />
+  <Header {query} {conversationToken} {preferredDomain} />
+  <Hero {musing} {query} />
+  <Visuals response={musing.answer} />
 </Layout>
