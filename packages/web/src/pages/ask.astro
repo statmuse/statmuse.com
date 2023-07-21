@@ -1,5 +1,5 @@
 ---
-import { ask } from '@lib/gamera'
+import { ask, getHeroProps } from '@lib/gamera'
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Hero from '@components/hero.astro'
@@ -47,10 +47,12 @@ const meta = {
         }
       : undefined,
 }
+
+const heroProps = getHeroProps({ imageAlt: query, response })
 ---
 
 <Layout colors={subject?.colors} {meta}>
   <Header {query} {conversationToken} {preferredDomain} />
-  <Hero {query} {response} />
+  {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals {response} {conversationToken} />
 </Layout>

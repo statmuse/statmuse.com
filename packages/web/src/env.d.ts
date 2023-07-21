@@ -3,6 +3,7 @@
 interface ImportMetaEnv {
   readonly PUBLIC_API_URL: string
   readonly GAMERA_API_URL: string
+  readonly KANEDAMA_API_URL: string
 }
 
 interface ImportMeta {

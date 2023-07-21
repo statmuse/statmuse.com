@@ -879,24 +879,6 @@ export interface Visual {
   disclaimers?: [string]
 }
 
-export interface ChoicesVisual
-  extends Omit<
-    Visual,
-    | "domain"
-    | "detail"
-    | "disclaimers"
-    | "additionalQuestions"
-    | "isSuperlative"
-  > {
-  choices: [
-    {
-      display: string
-      assetId: string
-      input: string
-    }
-  ]
-}
-
 export interface NbaVisual extends Visual {
   domain: "NBA"
   detail: [NbaHistoricalBoxScore, GameraGenericGridsDetail]
@@ -954,6 +936,24 @@ export interface GameraChoicesResponse extends GameraResponseBase {
   type: "nlgPromptForMoreInfoVisualChoicesOptional"
   visual: ChoicesVisual
   nlg: ChoicesNlg
+}
+
+export interface ChoicesVisual
+  extends Omit<
+    Visual,
+    | "domain"
+    | "detail"
+    | "disclaimers"
+    | "additionalQuestions"
+    | "isSuperlative"
+  > {
+  choices: [
+    {
+      display: string
+      assetId: string
+      input: string
+    }
+  ]
 }
 
 export interface ChoicesNlg {

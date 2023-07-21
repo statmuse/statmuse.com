@@ -4,7 +4,7 @@ import Header from '@components/header.astro'
 import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals.astro'
 import { handleResponse } from '@statmuse/core/gamera'
-import { ask } from '@lib/gamera'
+import { ask, getHeroProps } from '@lib/gamera'
 
 const { league: preferredDomain, question } = Astro.params
 if (!question) return Astro.redirect('/questions')
@@ -14,10 +14,12 @@ if (!response) return Astro.halt({ status: 404 })
 
 const { subject, redirectUrl, conversationToken } = handleResponse(response)
 if (redirectUrl) return Astro.redirect(redirectUrl)
+
+const heroProps = getHeroProps({ imageAlt: query, response })
 ---
 
 <Layout colors={subject?.colors}>
   <Header {query} {preferredDomain} {conversationToken} />
-  <Hero {response} {query} />
+  {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals {response} />
 </Layout>

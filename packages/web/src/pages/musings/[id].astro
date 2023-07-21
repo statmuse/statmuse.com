@@ -5,6 +5,7 @@ import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals.astro'
 import { getMusing } from '@statmuse/core/musings'
 import { rgbToHex } from '@statmuse/core/color'
+import { getHeroProps } from '@lib/gamera'
 
 const { id } = Astro.params
 const musing = await getMusing(id).executeTakeFirst()
@@ -20,10 +21,12 @@ const foreground = musing.foreground_rgba
 const background = musing.background_rgba
   ? rgbToHex(musing.background_rgba)
   : undefined
+
+const heroProps = getHeroProps({ imageAlt: query, musing })
 ---
 
 <Layout colors={{ foreground, background }}>
   <Header {query} {conversationToken} {preferredDomain} />
-  <Hero {musing} {query} />
+  {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals response={musing.answer} />
 </Layout>

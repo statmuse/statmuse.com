@@ -45,6 +45,9 @@ export function API({ stack }: StackContext) {
     GAMERA_API_URL: isProd
       ? "http://gamera.statmuse.com/"
       : "http://gamera.staging.statmuse.com/",
+    KANEDAMA_API_URL: isProd
+      ? "http://kanedama.statmuse.com/"
+      : "http://kanedama.staging.statmuse.com/",
   }
 
   if (isDev) {
