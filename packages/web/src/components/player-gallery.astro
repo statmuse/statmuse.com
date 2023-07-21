@@ -64,7 +64,7 @@ const meta = {
                   ? 'opacity-100 font-semibold'
                   : 'opacity-80'
               }`}
-              href={`/${x.toLowerCase()}/players`}
+              href={x === 'All' ? '/players' : `/${x.toLowerCase()}/players`}
             >
               {x}
             </a>
