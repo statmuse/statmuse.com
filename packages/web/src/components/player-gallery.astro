@@ -1,8 +1,8 @@
 ---
-import Layout from '@layouts/main.astro'
-import Header from '@components/header.astro'
-import Container from '@components/container.astro'
-import type { PlayerGalleryItem } from '@lib/player'
+import Layout from "@layouts/main.astro"
+import Header from "@components/header.astro"
+import Container from "@components/container.astro"
+import type { PlayerGalleryItem } from "@lib/player"
 
 interface Props {
   league?: string
@@ -11,7 +11,7 @@ interface Props {
 
 const { league, players } = Astro.props
 
-const leagues = ['All', 'NBA', 'NFL', 'NHL', 'MLB', 'PGA']
+const leagues = ["All", "NBA", "NFL", "NHL", "MLB", "PGA"]
 
 const alphabet = [...Array(26)].map((_x, i) =>
   String.fromCharCode(i + 65).toLowerCase()
@@ -33,14 +33,14 @@ const groupedByFirstLetterLastName = players.reduce(
 )
 
 const colors = {
-  foreground: '#fff',
-  background: '#00c1d8',
+  foreground: "#fff",
+  background: "#00c1d8",
 }
 
 const meta = {
-  title: 'Player Gallery',
+  title: "Player Gallery",
   description:
-    'Browse the largest gallery of player illustrations in the world.',
+    "Browse the largest gallery of player illustrations in the world.",
 }
 ---
 
@@ -60,11 +60,11 @@ const meta = {
           <li class="mx-3 md:mx-6">
             <a
               class={`text-sm md:text-base flex items-center h-11 md:h-[50px] text-white hover:no-underline hover:opacity-100 ${
-                x === (league || 'All')
-                  ? 'opacity-100 font-semibold'
-                  : 'opacity-80'
+                x === (league || "All")
+                  ? "opacity-100 font-semibold"
+                  : "opacity-80"
               }`}
-              href={x === 'All' ? '/players' : `/${x.toLowerCase()}/players`}
+              href={x === "All" ? "/players" : `/${x.toLowerCase()}/players`}
             >
               {x}
             </a>
@@ -116,7 +116,7 @@ const meta = {
                   </div>
                 </a>
                 <div
-                  id={`#${letter}`}
+                  id={`${letter}`}
                   class="relative -top-[62px] md:-top-[70px]"
                 />
                 {players.map((player) => (
