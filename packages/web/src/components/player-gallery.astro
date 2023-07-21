@@ -158,3 +158,21 @@ const meta = {
     </p>
   </Container>
 </Layout>
+<script>
+  // Player Gallery Alphabet Nav Highlight
+  document.querySelectorAll('[data-click-nav]').forEach((el) => {
+    el.addEventListener('click', () => {
+      // remove classes from previously selected item
+      document.querySelectorAll('[data-highlight="true"]').forEach((n) => {
+        ;['text-white', 'bg-primary', 'hover:no-underline'].forEach((x) => {
+          n.classList.remove(x)
+        })
+      })
+
+      el.classList.add('text-white')
+      el.classList.add('bg-primary')
+      el.classList.add('hover:no-underline')
+      el.dataset.highlight = true
+    })
+  })
+</script>
