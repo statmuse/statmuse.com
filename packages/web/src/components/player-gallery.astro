@@ -3,6 +3,7 @@ import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
 import type { PlayerGalleryItem } from '@lib/player'
+import { type GameraDomain, getUrlForEntity } from '@statmuse/core/gamera'
 
 interface Props {
   league?: string
@@ -96,7 +97,14 @@ const meta = {
           ([letter, [firstPlayer, ...players]]) => {
             return (
               <>
-                <a href="">
+                <a
+                  href={getUrlForEntity({
+                    id: firstPlayer.resource_id,
+                    type: 'player',
+                    display: firstPlayer.used_name,
+                    domain: firstPlayer.domain as GameraDomain,
+                  })}
+                >
                   <div
                     class="h-28 w-28 md:h-44 md:w-44 m-0.5 md:m-1.5 rounded-lg flex justify-center overflow-hidden relative"
                     style={`background: ${firstPlayer.background_color_hex};`}
@@ -121,7 +129,14 @@ const meta = {
                   class="relative -top-[62px] md:-top-[70px]"
                 />
                 {players.map((player) => (
-                  <a href="">
+                  <a
+                    href={getUrlForEntity({
+                      id: player.resource_id,
+                      type: 'player',
+                      display: player.used_name,
+                      domain: player.domain as GameraDomain,
+                    })}
+                  >
                     <div
                       class="h-28 w-28 md:h-44 md:w-44 m-0.5 md:m-1.5 rounded-lg flex justify-center overflow-hidden relative"
                       style={`background: ${player.background_color_hex};`}

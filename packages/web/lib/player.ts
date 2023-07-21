@@ -85,7 +85,7 @@ export const getPlayerGalleryList = async (league?: string) => {
   }
 
   return query.selectAll('players')
-  .select(['leagues.name as league_name'])
+  .select(['leagues.name as domain'])
   .execute()
 }
 
