@@ -8,6 +8,7 @@ import type {
 } from '@statmuse/core/gamera'
 import { parsePlayerId } from './parse'
 import { gameraApiUrl } from '@lib/gamera'
+import { db } from '@statmuse/core/db'
 
 export const getPlayerBio = async (domain: GameraDomain, player: string) => {
   const playerId = parsePlayerId(player)
@@ -69,3 +70,23 @@ export const getPlayerSplits = async (props: {
   const data = (await response.json()) as GameraPlayerSplits
   return data
 }
+
+export const getPlayerGalleryList = async (league?: string) => {
+  let query = db
+  .selectFrom('players')
+  .innerJoin('leagues', 'leagues.id', 'players.league_id')
+  .where('players.bust_image_url', 'is not', null)
+  .orderBy('players.last_name')
+  .orderBy('players.first_name')
+  .orderBy('players.resource_id')
+
+  if (league) {
+    query = query.where('leagues.name', '=', league)
+  }
+
+  return query.selectAll('players')
+  .select(['leagues.name as league_name'])
+  .execute()
+}
+
+export type PlayerGalleryItem = Awaited<ReturnType<typeof getPlayerGalleryList>>[number]
