@@ -1,0 +1,24 @@
+---
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Container from '@components/container.astro'
+
+// interface Props {
+
+// }
+
+const colors = {
+  foreground: '#fff',
+  background: '#00c1d8',
+}
+
+const meta = {
+  title: 'Player Gallery',
+  description:
+    'Browse the largest gallery of player illustrations in the world.',
+}
+---
+
+<Layout {meta} {colors}>
+  <Header />
+</Layout>
