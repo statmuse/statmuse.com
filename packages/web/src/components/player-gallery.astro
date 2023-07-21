@@ -38,9 +38,10 @@ const colors = {
 }
 
 const meta = {
-  title: "Player Gallery",
-  description:
-    "Browse the largest gallery of player illustrations in the world.",
+  title: league ? `${league} Player Gallery` : 'Player Gallery',
+  description: `Browse the largest gallery of ${
+    league ? `${league} ` : ''
+  }player illustrations in the world.`,
 }
 ---
 
