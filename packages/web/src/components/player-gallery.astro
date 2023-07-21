@@ -17,6 +17,21 @@ const alphabet = [...Array(26)].map((_x, i) =>
   String.fromCharCode(i + 65).toLowerCase()
 )
 
+const groupedByFirstLetterLastName = players.reduce(
+  (acc: { [key: string]: PlayerGalleryItem[] }, player) => {
+    const [char] = player.last_name
+
+    if (acc.hasOwnProperty(char.toLowerCase())) {
+      acc[char.toLowerCase()].push(player)
+    } else {
+      acc[char.toLowerCase()] = [player]
+    }
+
+    return acc
+  },
+  {}
+)
+
 const colors = {
   foreground: '#fff',
   background: '#00c1d8',
@@ -49,7 +64,7 @@ const meta = {
                   ? 'opacity-100 font-semibold'
                   : 'opacity-80'
               }`}
-              href={`/${x}/players`}
+              href={`/${x.toLowerCase()}/players`}
             >
               {x}
             </a>
@@ -74,7 +89,64 @@ const meta = {
         ))
       }
     </div>
-
+    <div class="flex flex-wrap justify-center">
+      {
+        Object.entries(groupedByFirstLetterLastName).map(
+          ([letter, [firstPlayer, ...players]]) => {
+            return (
+              <>
+                <a href="">
+                  <div
+                    class="h-28 w-28 md:h-44 md:w-44 m-0.5 md:m-1.5 rounded-lg flex justify-center overflow-hidden relative"
+                    style={`background: ${firstPlayer.background_color_hex};`}
+                  >
+                    <img
+                      class="h-full object-cover mt-1.5 md:mt-2.5"
+                      alt={firstPlayer.used_name}
+                      src={firstPlayer.bust_image_url}
+                      data-cy-illustration
+                    />
+                    <div
+                      class="absolute w-full h-full"
+                      style="background: linear-gradient(to top, black 0%, transparent 25%);"
+                    />
+                    <h3 class="text-xs md:text-sm font-semibold text-center text-white absolute bottom-1">
+                      {firstPlayer.used_name}
+                    </h3>
+                  </div>
+                </a>
+                <div
+                  id={`#${letter}`}
+                  class="relative -top-[62px] md:-top-[70px]"
+                />
+                {players.map((player) => (
+                  <a href="">
+                    <div
+                      class="h-28 w-28 md:h-44 md:w-44 m-0.5 md:m-1.5 rounded-lg flex justify-center overflow-hidden relative"
+                      style={`background: ${player.background_color_hex};`}
+                    >
+                      <img
+                        class="h-full object-cover mt-1.5 md:mt-2.5"
+                        alt={player.used_name}
+                        src={player.bust_image_url}
+                        data-cy-illustration
+                      />
+                      <div
+                        class="absolute w-full h-full"
+                        style="background: linear-gradient(to top, black 0%, transparent 25%);"
+                      />
+                      <h3 class="text-xs md:text-sm font-semibold text-center text-white absolute bottom-1">
+                        {player.used_name}
+                      </h3>
+                    </div>
+                  </a>
+                ))}
+              </>
+            )
+          }
+        )
+      }
+    </div>
     <p
       class="my-4"
       style="color: #969ca1; text-align: right; font-style: italic;"
