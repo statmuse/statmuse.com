@@ -2,10 +2,14 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
+import type { PlayerGalleryItem } from '@lib/player'
 
-// interface Props {
+interface Props {
+  league?: string
+  players: PlayerGalleryItem[]
+}
 
-// }
+const { league, players } = Astro.props
 
 const leagues = ['All', 'NBA', 'NFL', 'NHL', 'MLB', 'PGA']
 
@@ -41,7 +45,9 @@ const meta = {
           <li class="mx-3 md:mx-6">
             <a
               class={`text-sm md:text-base flex items-center h-11 md:h-[50px] text-white hover:no-underline hover:opacity-100 ${
-                x === 'NBA' ? 'opacity-100 font-semibold' : 'opacity-80'
+                x === (league || 'All')
+                  ? 'opacity-100 font-semibold'
+                  : 'opacity-80'
               }`}
               href={`/${x}/players`}
             >
