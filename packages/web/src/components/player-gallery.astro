@@ -7,6 +7,12 @@ import Container from '@components/container.astro'
 
 // }
 
+const leagues = ['All', 'NBA', 'NFL', 'NHL', 'MLB', 'PGA']
+
+const alphabet = [...Array(26)].map((_x, i) =>
+  String.fromCharCode(i + 65).toLowerCase()
+)
+
 const colors = {
   foreground: '#fff',
   background: '#00c1d8',
@@ -21,4 +27,55 @@ const meta = {
 
 <Layout {meta} {colors}>
   <Header />
+  <Container class="text-white bg-primary">
+    <div class="pt-[54px] pb-10 md:pt-[90px] md:pb-16 text-center">
+      <h1 class="font-semibold text-xl md:text-3xl">
+        Gallery <span style="font-weight: 100;">|</span> Players
+      </h1>
+    </div>
+  </Container>
+  <Container class="bg-primary">
+    <ul class="flex items-center justify-center">
+      {
+        leagues.map((x) => (
+          <li class="mx-3 md:mx-6">
+            <a
+              class={`text-sm md:text-base flex items-center h-11 md:h-[50px] text-white hover:no-underline hover:opacity-100 ${
+                x === 'NBA' ? 'opacity-100 font-semibold' : 'opacity-80'
+              }`}
+              href={`/${x}/players`}
+            >
+              {x}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+  <Container>
+    <div
+      class="flex justify-start md:justify-center py-4 overflow-auto bg-white"
+    >
+      {
+        alphabet.map((letter) => (
+          <a
+            class="text-[#333] mx-0.5 rounded-md uppercase w-6 h-6 shrink-0 flex justify-center items-center"
+            href={`#${letter}`}
+            data-click-nav
+          >
+            {letter}
+          </a>
+        ))
+      }
+    </div>
+
+    <p
+      class="my-4"
+      style="color: #969ca1; text-align: right; font-style: italic;"
+    >
+      All illustrations and content on this site &copy; 2016-2021 StatMuse, Inc.<br
+      />
+      Unauthorized duplication or usage prohibited.
+    </p>
+  </Container>
 </Layout>
