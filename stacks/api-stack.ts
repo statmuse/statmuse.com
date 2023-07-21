@@ -15,8 +15,9 @@ export function API({ stack }: StackContext) {
     "API_KEY"
   )
 
-  const isDev = stack.stage === "adam"
+  const isStaging = stack.stage === "staging"
   const isProd = stack.stage === "production"
+  const isDev = !isStaging && !isProd
 
   const rdsCredentialsSecret = Secret.fromSecretNameV2(
     stack,

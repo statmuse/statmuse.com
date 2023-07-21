@@ -10,7 +10,7 @@ interface Props extends HTMLAttributes<'div'> {
 
 const { images, title, alt } = Astro.props
 const [firstLeader] = images
-const Wrapper = firstLeader.entity ? 'a' : 'div'
+const Wrapper = firstLeader?.entity ? 'a' : 'div'
 ---
 
 <div class={Astro.props.class}>
