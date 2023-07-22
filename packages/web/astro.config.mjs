@@ -11,6 +11,7 @@ export default defineConfig({
   experimental: { assets: true },
   // image: { service: sharpImageService() },
   redirects: {
+    '/alexa': 'https://www.amazon.com/StatMuse-Inc/dp/B074VD131M',
     '/company': '/company/about',
     '/company/products': '/company/about',
     '/company/shoutouts': '/company/about',
