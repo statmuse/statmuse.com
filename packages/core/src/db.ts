@@ -154,6 +154,23 @@ interface LeagueTable {
   updated_at: ColumnType<Date, string | undefined, string | undefined>
 }
 
+interface PlayerTable {
+  id: Generated<string>
+
+  background_color_hex: string | null
+  bust_image_url: string | null
+  first_name: string
+  foreground_color_hex: string | null
+  last_name: string
+  resource_id: string
+  resource_path: string
+  used_name: string
+  league_id: string
+
+  inserted_at: ColumnType<Date, string | undefined, string | undefined>
+  updated_at: ColumnType<Date, string | undefined, string | undefined>
+}
+
 export interface Database {
   users: UserTable
   ask_events: AskEventTable
@@ -162,6 +179,7 @@ export interface Database {
   questions: QuestionTable
   examples: ExampleTable
   leagues: LeagueTable
+  players: PlayerTable
 }
 
 export const db = new Kysely<Database>({
