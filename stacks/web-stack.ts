@@ -1,8 +1,10 @@
-import { SubnetType } from "aws-cdk-lib/aws-ec2"
 import { StackContext, AstroSite, use } from "sst/constructs"
+import { SubnetType } from "aws-cdk-lib/aws-ec2"
 import { API } from "./api-stack"
+import { DNS } from "./dns-stack"
 
 export function Web({ stack }: StackContext) {
+  const dns = use(DNS)
   const api = use(API)
 
   const astroSite = new AstroSite(stack, "astro-site", {
@@ -22,9 +24,13 @@ export function Web({ stack }: StackContext) {
       },
     },
     permissions: [[api.rdsCredentialsSecret, "grantRead"]],
+    customDomain: {
+      hostedZone: dns.zone,
+      domainName: dns.domain,
+    },
   })
 
-  stack.addOutputs({ CdnUrl: astroSite.url })
+  stack.addOutputs({ CdnUrl: astroSite.url, Url: astroSite.customDomainUrl })
 
   return { astroSite }
 }
