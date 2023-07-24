@@ -800,6 +800,13 @@ const examples = {
           ))
         }
       </div>
+      <h4 class="font-semibold text-right py-4">
+        <a href={`/${league}/questions`}>
+          See trending {
+            league === 'fantasy' ? 'Fantasy Football' : league.toUpperCase()
+          } searches
+        </a>
+      </h4>
     </div>
   </main>
 </Layout>
