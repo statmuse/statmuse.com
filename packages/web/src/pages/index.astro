@@ -11,7 +11,7 @@ import { formatDate } from '@statmuse/core/time'
 import { marked } from 'marked'
 
 const musings = await listLatestMusings.execute()
-const examples = await listOnboarding.execute()
+const examples = await listOnboarding()
 const banner = examples[Math.floor(Math.random() * examples.length)]
 ---
 

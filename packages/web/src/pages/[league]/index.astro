@@ -10,7 +10,10 @@ import { createAskPath } from '@lib/path'
 type LeagueParam = 'nba' | 'nfl' | 'mlb' | 'nhl' | 'pga' | 'fantasy'
 const league = Astro.params.league as LeagueParam
 
-const onboardingExamples = await listOnboarding.execute()
+const onboardingExamples = await listOnboarding(
+  league === 'fantasy' ? 'nfl' : league,
+  10
+)
 const banner =
   onboardingExamples[Math.floor(Math.random() * onboardingExamples.length)]
 
