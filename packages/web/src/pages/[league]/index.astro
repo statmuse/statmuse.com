@@ -545,9 +545,18 @@ const examples = {
 }
 
 const leagues = ['All', 'NBA', 'NFL', 'NHL', 'MLB', 'PGA']
+
+const meta = {
+  title: `${
+    league === 'fantasy' ? 'Fantasy Football' : league.toUpperCase()
+  } Stats`,
+  description: `Instant answers to your ${
+    league === 'fantasy' ? 'fantasy football' : league.toUpperCase()
+  } questions. Stats, projections, comparisons, outlooks, recaps and more — just ask.`,
+}
 ---
 
-<Layout>
+<Layout {meta}>
   <main
     id="home"
     class="home-layout [--header-height:55px] md:[--header-height:64px]"
