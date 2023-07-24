@@ -540,6 +540,8 @@ const examples = {
   pga: pgaExamples as ExampleSet[],
   fantasy: fantasyExamples as ExampleSet[],
 }
+
+const leagues = ['All', 'NBA', 'NFL', 'NHL', 'MLB', 'PGA']
 ---
 
 <Layout>
@@ -728,38 +730,21 @@ const examples = {
       </div>
       <div>
         <div class="flex flex-nowrap gap-[5px] mb-2.5">
+          {
+            leagues.map((x) => (
+              <a
+                class={`flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 ${
+                  x.toLowerCase() === league && 'bg-primary text-white'
+                }`}
+                href={x === 'All' ? '/' : `/${x.toLowerCase()}`}
+                set:text={x}
+              />
+            ))
+          }
           <a
-            class="flex items-center justify-center border border-primary rounded-md hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 bg-primary text-white"
-            href="/"
-            set:text="All"
-          />
-          <a
-            class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
-            href="/nba"
-            set:text="NBA"
-          />
-          <a
-            class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
-            href="/nfl"
-            set:text="NFL"
-          />
-          <a
-            class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
-            href="/nhl"
-            set:text="NHL"
-          />
-          <a
-            class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
-            href="/mlb"
-            set:text="MLB"
-          />
-          <a
-            class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
-            href="/pga"
-            set:text="PGA"
-          />
-          <a
-            class="hidden md:flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 min-w-fit"
+            class={`hidden md:flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 min-w-fit ${
+              league === 'fantasy' && 'bg-secondary text-white'
+            }`}
             href="/fantasy"
             set:text="Fantasy"
           />
@@ -771,7 +756,9 @@ const examples = {
         </div>
         <div class="flex flex-nowrap gap-[5px] mb-2.5 md:hidden">
           <a
-            class="flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 max-w-fit"
+            class={`flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 max-w-fit ${
+              league === 'fantasy' && 'bg-secondary text-white'
+            }`}
             href="/fantasy"
             set:text="Fantasy"
           />
