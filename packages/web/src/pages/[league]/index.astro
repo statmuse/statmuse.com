@@ -1,0 +1,255 @@
+---
+import Layout from '@layouts/main.astro'
+import Logo from '@components/logo.astro'
+import AskBar from '@components/ask-bar.astro'
+import { Image } from 'astro:assets'
+import { getImageUrl } from '@statmuse/core/questions'
+import { listOnboarding } from '@statmuse/core/examples'
+
+const examples = await listOnboarding.execute()
+const banner = examples[Math.floor(Math.random() * examples.length)]
+---
+
+<Layout>
+  <main
+    id="home"
+    class="home-layout [--header-height:55px] md:[--header-height:64px]"
+  >
+    <div class="sidebar hidden md:block min-w-[75px] bg-[#f9f9f9]">
+      <sidebar-menu>
+        <div
+          class="sticky top-0 bg-[#f9f9f9] border-t border-transparent w-[237px]"
+        >
+          <span
+            class="sidebar-hamburger-icon block w-[33px] h-[33px] my-[15.5px] ml-5 cursor-pointer"
+          >
+          </span><div class="mb-[22px]">
+            <ul>
+              <li
+                class="flex items-center my-0.5 py-1.5 highlight bg-white font-semibold"
+              >
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 home-icon"></span> Home
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/money"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 money-icon"></span> Money
+                  Search
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/questions"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 trending-icon">
+                  </span> Trending
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/players"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 gallery-icon">
+                  </span> Gallery
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="https://shop.statmuse.com"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 shop-icon"></span> Shop
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="https://blog.statmuse.com/"
+                  target="_blank"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 blog-icon"></span> Blog
+                </a>
+              </li>
+            </ul>
+          </div><div class="mb-[22px]">
+            <h3
+              class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
+              style="margin-left: 22.5px;"
+            >
+              Search
+            </h3><ul>
+              <li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/product/examples"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 example-icon">
+                  </span> Examples
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/product/data"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 data-coverage-icon">
+                  </span> Data &amp; Glossary
+                </a>
+              </li>
+            </ul>
+          </div><div class="mb-[22px]">
+            <h3
+              class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
+              style="margin-left: 22.5px;"
+            >
+              Play
+            </h3><ul>
+              <li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="https://elementsofbasketball.com/"
+                  target="_blank"
+                  style="margin-left: 21px;"
+                >
+                  <span
+                    class="block w-[29px] h-[29px] mr-2 elements-bball-icon"
+                  >
+                  </span> Elements of Bball
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="https://hardenmaze.com/"
+                  target="_blank"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 harden-maze-icon">
+                  </span> Harden Maze
+                </a>
+              </li>
+            </ul>
+          </div><div class="mb-[22px]">
+            <h3
+              class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
+              style="margin-left: 22.5px;"
+            >
+              Company
+            </h3><ul>
+              <li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/company/about"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 about-icon"></span> About
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div></sidebar-menu
+      >
+    </div>
+
+    <div
+      class="main h-[var(--header-height)] px-3 md:px-[21px] bg-white flex items-center sticky md:relative top-0 z-20"
+    >
+      <div class="min-w-[25px] md:hidden">
+        <dropdown-menu hamburger="true"></dropdown-menu>
+      </div>
+
+      <div class="flex space-x-5 items-center flex-1 justify-end"></div>
+    </div>
+
+    <div class="main content-layout">
+      <div class="-mb-[5px] z-10">
+        <div class="flex flex-col md:flex-row items-center mt-[55px] md:mt-0">
+          <div class="flex-1 mb-[34px] md:-mr-[20px] md:mb-0">
+            <Logo />
+          </div>
+          <Image
+            src={getImageUrl(banner)}
+            class="max-w-[70%] md:max-w-none md:h-[205px] md:pr-[10px] object-contain object-bottom"
+            alt={banner.text}
+            width={260}
+            height={260}
+            loading="eager"
+          />
+        </div>
+      </div>
+      <div
+        class="content-item-full content-layout mb-5 md:mb-[30px] sticky top-[var(--header-height)] md:top-0 py-[5px] bg-white z-[5]"
+      >
+        <div class="min-h-[46px]">
+          <AskBar />
+        </div>
+      </div>
+      <div>
+        <div class="flex flex-nowrap gap-[5px] mb-2.5">
+          <a
+            class="flex items-center justify-center border border-primary rounded-md hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 bg-primary text-white"
+            href="/"
+            set:text="All"
+          />
+          <a
+            class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
+            href="/nba"
+            set:text="NBA"
+          />
+          <a
+            class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
+            href="/nfl"
+            set:text="NFL"
+          />
+          <a
+            class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
+            href="/nhl"
+            set:text="NHL"
+          />
+          <a
+            class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
+            href="/mlb"
+            set:text="MLB"
+          />
+          <a
+            class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
+            href="/pga"
+            set:text="PGA"
+          />
+          <a
+            class="hidden md:flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 min-w-fit"
+            href="/fantasy"
+            set:text="Fantasy"
+          />
+          <a
+            class="hidden md:flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 min-w-fit"
+            href="/money"
+            set:text="Money"
+          />
+        </div>
+        <div class="flex flex-nowrap gap-[5px] mb-2.5 md:hidden">
+          <a
+            class="flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 max-w-fit"
+            href="/fantasy"
+            set:text="Fantasy"
+          />
+          <a
+            class="flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 max-w-fit"
+            href="/money"
+            set:text="Money"
+          />
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
