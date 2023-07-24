@@ -7,7 +7,7 @@ import { getImageUrl } from '@statmuse/core/questions'
 import { listOnboarding } from '@statmuse/core/examples'
 import { createAskPath } from '@lib/path'
 
-type LeagueParam = 'nba' | 'nfl' | 'mlb' | 'nhl' | 'pga'
+type LeagueParam = 'nba' | 'nfl' | 'mlb' | 'nhl' | 'pga' | 'fantasy'
 const league = Astro.params.league as LeagueParam
 
 const onboardingExamples = await listOnboarding.execute()
@@ -447,6 +447,89 @@ const pgaExamples = [
   ],
 ]
 
+const fantasyExamples = [
+  [
+    'Player Outlooks & Projections',
+    [
+      'What is your projection for Davante Adams?',
+      'What is your outlook for Ezekiel Elliott this week?',
+      'Give me your projection for Pat Mahomes.',
+      'Where do you rank Matt Ryan?',
+      'Tell me about Russell Wilson.',
+      'How will Kyler Murray do?',
+      'What are your thoughts on Tom Brady this week?',
+      'Should I start Ezekiel Elliott?',
+      'How do you feel about James Conner?',
+      'Should I sit Keenan Allen?',
+      "What's the deal with Melvin Gordon?",
+      'Should I play Amari Cooper?',
+      'What do you think about Gronk?',
+      'Will Jared Goff be a good fantasy quarterback this week?',
+      'Who is the top-ranked quarterback?',
+      'Who will be the best fantasy wide receiver this week?',
+      'How will the Rams defense do this week?',
+      'Are the Cowboys going to be a good defense?',
+      'Will A.J. Green be a factor?',
+      'Will Cooper Kupp be a worthwhile start?',
+      'How has Kareem Hunt been doing?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'fantasy', query: q }),
+    })),
+  ],
+  [
+    'Player Comparisons',
+    [
+      'Who should I start between Josh Jacobs and Aaron Jones?',
+      'Should I start Aaron Rodgers or Lamar Jackson?',
+      'Should I start Alvin Kamara or Nick Chubb?',
+      'Who would you start out of Antonio Brown, DK Metcalf and Amari Cooper?',
+      'Would you start Dalvin Cook or Derrick Henry?',
+      'Tell me who to start from Josh Allen, Kyler Murray or Lamar Jackson?',
+      'T.J. Hockenson, Jimmy Graham or Evan Engram?',
+      'Who should I start from Robert Woods and A.J. Brown?',
+      'Should I go with the Ravens defense or the Colts defense?',
+      'Start Tom Brady or Ryan Tannehill?',
+      'How about Phillip Lindsay or Miles Sanders?',
+      'James Robinson or Kenyan Drake?',
+      'Ronald Jones, Tyler Boyd or Baker Mayfield?',
+      'Jonathan Taylor, Julio Jones, Jared Cook or Kirk Cousins?',
+      'CeeDee Lamb or Marquez Valdes-Scantling?',
+      'JuJu or Tyreek?',
+      'Diggs or Thielen?',
+      'Chubb or Dalvin or Kamara?',
+      'Kittle or Waller?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'fantasy', query: q }),
+    })),
+  ],
+  [
+    'Player & Team Fantasy Recaps',
+    [
+      'Patrick Mahomes vs Chargers.',
+      'Who scored the most fantasy points last season?',
+      'Which running back averaged the most fantasy points per game last season?',
+      'Which WR had the most fantasy points last week?',
+      'Which QB had the most draftkings points?',
+      'Who has the most fantasy points per game in a season?',
+      'Which tight end scored the most fantasy points last season?',
+      'How many fantasy points per game is Derrick Henry averaging this season?',
+      'Which team defense has scored the fewest fantasy points in 2020?',
+      'Which tight end scored the most fantasy points?',
+      'Tell me about Stefon Diggs.',
+      'How did Tyreek Hill do?',
+      'How is Brady doing this season?',
+      'Which rookie has the most fantasy points per game this season?',
+      'Which TE is leading in PPR this season?',
+      'How did Dalvin Cook do in Week 15?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'fantasy', query: q }),
+    })),
+  ],
+]
+
 type ExampleSet = [string, { query: string; path: string }[]]
 
 const examples = {
@@ -455,6 +538,7 @@ const examples = {
   mlb: mlbExamples as ExampleSet[],
   nhl: nhlExamples as ExampleSet[],
   pga: pgaExamples as ExampleSet[],
+  fantasy: fantasyExamples as ExampleSet[],
 }
 ---
 
