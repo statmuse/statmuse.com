@@ -16,7 +16,7 @@ const examples = [
       "What's the all-time low price of Amazon?",
     ].map((q) => ({
       query: q,
-      path: createAskPath({ domain: 'nba', query: q }),
+      path: createAskPath({ domain: 'money', query: q }),
     })),
   ],
   [
@@ -29,7 +29,7 @@ const examples = [
       "What's the best large-cap energy company this decade?",
     ].map((q) => ({
       query: q,
-      path: createAskPath({ domain: 'nba', query: q }),
+      path: createAskPath({ domain: 'money', query: q }),
     })),
   ],
   [
@@ -42,7 +42,7 @@ const examples = [
       'Tell me about Gold and Silver month to date',
     ].map((q) => ({
       query: q,
-      path: createAskPath({ domain: 'nba', query: q }),
+      path: createAskPath({ domain: 'money', query: q }),
     })),
   ],
   [
@@ -56,7 +56,7 @@ const examples = [
       "What's the most shorted stock with a p/e ratio above 100?",
     ].map((q) => ({
       query: q,
-      path: createAskPath({ domain: 'nba', query: q }),
+      path: createAskPath({ domain: 'money', query: q }),
     })),
   ],
   [
@@ -69,7 +69,7 @@ const examples = [
       'Bumble vs Match performance ytd',
     ].map((q) => ({
       query: q,
-      path: createAskPath({ domain: 'nba', query: q }),
+      path: createAskPath({ domain: 'money', query: q }),
     })),
   ],
   [
@@ -82,7 +82,7 @@ const examples = [
       'USD/BTC return since the last halving',
     ].map((q) => ({
       query: q,
-      path: createAskPath({ domain: 'nba', query: q }),
+      path: createAskPath({ domain: 'money', query: q }),
     })),
   ],
   [
@@ -95,7 +95,7 @@ const examples = [
       "What's the all time market cap of Tesla?",
     ].map((q) => ({
       query: q,
-      path: createAskPath({ domain: 'nba', query: q }),
+      path: createAskPath({ domain: 'money', query: q }),
     })),
   ],
   [
@@ -108,7 +108,7 @@ const examples = [
       'How many Bitcoin are there?',
     ].map((q) => ({
       query: q,
-      path: createAskPath({ domain: 'nba', query: q }),
+      path: createAskPath({ domain: 'money', query: q }),
     })),
   ],
 ] as [string, { query: string; path: string }[]][]
