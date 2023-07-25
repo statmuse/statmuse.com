@@ -1,0 +1,36 @@
+---
+import { Image, RemoteImageProps } from 'astro:assets'
+import type { GameraResponse } from '@statmuse/core/gamera'
+import type { Answer } from '@statmuse/core/questions'
+
+interface Props extends Omit<RemoteImageProps, 'src'> {
+  src: string | { answer: Answer }
+}
+
+const getImageUrl = (src: string | { answer: Answer }) => {
+  if (typeof src === 'string') return src
+
+  const answer = src.answer as GameraResponse
+  const subject = answer.visual.summary.subject
+  const params: Record<string, string> = { format: 'auto' }
+  if (Astro.props.width) params['width'] = Astro.props.width.toString()
+  else if (Astro.props.height) params['height'] = Astro.props.height.toString()
+
+  return (
+    new URL(subject.imageUrl).pathname +
+    '?' +
+    new URLSearchParams(params).toString()
+  )
+}
+
+const { class: classes, ...other } = Astro.props
+---
+
+<Image
+  class:list={{
+    'object-contain object-bottom': true,
+    [classes ?? '']: !!classes,
+  }}
+  {...other}
+  src={getImageUrl(Astro.props.src)}
+/>

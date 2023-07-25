@@ -2,7 +2,7 @@
 import Layout from '@layouts/main.astro'
 import Logo from '@components/logo.astro'
 import AskBar from '@components/ask-bar.astro'
-import { Image } from "astro:assets"
+import Image from "@components/optimized-image.astro"
 import { listLatestMusings } from '@statmuse/core/musings'
 import { listOnboarding } from '@statmuse/core/examples'
 import { getImageUrl } from "@statmuse/core/questions"
@@ -183,8 +183,8 @@ const banner = examples[Math.floor(Math.random() * examples.length)]
             <Logo />
           </div>
           <Image
-            class="max-w-[70%] md:max-w-none md:h-[205px] md:pr-[10px] object-contain object-bottom"
-            src={getImageUrl(banner)}
+            class="max-w-[70%] md:max-w-none md:h-[205px] md:pr-[10px]"
+            src={banner}
             alt={banner.text}
             width={260}
             height={260}
