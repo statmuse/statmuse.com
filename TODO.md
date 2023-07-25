@@ -13,8 +13,9 @@
 - [ ] mlb: issue with inning table at top (whitespace issue in html)
 - [ ] share components
 - [ ] trending pages
-- [ ] league index pages
-- [ ] gallery page
+- [x] league index pages
+- [x] money index page
+- [x] gallery page
 - [ ] grid column sort
 - [ ] typeahead suggestions (ask-bar component)
 - [ ] auth (visitors, users)
@@ -22,5 +23,6 @@
 - [ ] image optimization (current site does none, should add a behavior to cdn.statmuse.com; how do we test?)
 
 ## Launch
+
 - [ ] tests for all sitemap pages
 - [ ] distributed load testing (artillery)
