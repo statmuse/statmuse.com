@@ -8,8 +8,7 @@ interface Props extends Omit<RemoteImageProps, 'src'> {
 }
 
 const getImageUrl = (src: string | { answer: Answer }) => {
-  if (typeof src === 'string') return src
-
+  if (typeof src === 'string') return new URL(src).pathname
   const answer = src.answer as GameraResponse
   const subject = answer.visual.summary.subject
   return new URL(subject.imageUrl).pathname

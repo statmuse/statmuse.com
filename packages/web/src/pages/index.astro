@@ -5,7 +5,6 @@ import AskBar from '@components/ask-bar.astro'
 import Image from "@components/optimized-image.astro"
 import { listLatestMusings } from '@statmuse/core/musings'
 import { listOnboarding } from '@statmuse/core/examples'
-import { getImageUrl } from "@statmuse/core/questions"
 import { rgbToHex } from '@statmuse/core/color'
 import { formatDate } from '@statmuse/core/time'
 import { marked } from 'marked'
@@ -260,7 +259,7 @@ const banner = examples[Math.floor(Math.random() * examples.length)]
                 <a href={`/musings/${musing.friendly_id}`}>
                   <Image
                     data-cy-illustration
-                    class="h-36 max-w-full object-contain object-bottom"
+                    class="h-36 max-w-full"
                     style="visibility: unset;"
                     alt={musing.text_plain}
                     src={musing.image_url!}
