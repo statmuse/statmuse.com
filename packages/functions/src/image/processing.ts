@@ -137,9 +137,7 @@ export const handler = ApiHandler(async (event) => {
       }
     }
 
-    console.log("MADE IT")
     transformedBuffer = await transformedImage.toBuffer()
-    console.log("MADE IT HERE TOO")
   } catch (error) {
     return sendError(500, "error transforming image", error)
   }
@@ -151,7 +149,7 @@ export const handler = ApiHandler(async (event) => {
   try {
     await s3.send(
       new PutObjectCommand({
-        Body: transformedImage ?? stream,
+        Body: transformedBuffer ?? stream,
         Bucket: Bucket["transformed-image-bucket"].bucketName,
         Key: originalImagePath + "/" + operationsPrefix,
         ContentType: contentType,
