@@ -59,29 +59,9 @@ export function ImageOptimization({ stack }: StackContext) {
   const isStaging = stack.stage === "staging"
   const isProd = stack.stage === "production"
 
-  if (!isStaging && !isProd) return
-
   const SECRET_KEY = new Config.Parameter(stack, "SECRET_KEY", {
     value: createHash("md5").update(stack.node.addr).digest("hex"),
   })
-
-  // const distrobutionAttributes = isProd
-  //   ? {
-  //       // cdn.statmuse.com
-  //       domainName: "d2w4qhtqw7zj2e.cloudfront.net",
-  //       distributionId: "E1Z2Q4Z9J3X9Z2",
-  //     }
-  //   : {
-  //       // cdn.staging.statmuse.com
-  //       domainName: "d3o0bb9q1k1awu.cloudfront.net",
-  //       distributionId: "E1FIMCAEMN63EV",
-  //     }
-  //
-  // const existingCdn = Distribution.fromDistributionAttributes(
-  //   stack,
-  //   "existing-cdn",
-  //   distrobutionAttributes
-  // )
 
   const bucketAttributes = isProd
     ? {
@@ -115,21 +95,25 @@ export function ImageOptimization({ stack }: StackContext) {
     },
   })
 
-  const imageProcessingFunction = new Function(stack, "image-processor", {
+  const sharpLayer = new LayerVersion(stack, "sharp-layer", {
+    code: Code.fromAsset("layers/sharp"),
+  })
+  const imageProcessingFunction = new Function(stack, "image-processing", {
     handler: "packages/functions/src/image/processing.handler",
-    runtime: "nodejs16.x",
+    runtime: "nodejs18.x",
     timeout: "60 seconds",
     memorySize: 1500,
     logRetention: "one_day",
     bind: [transformedImageBucket, ORIGINAL_BUCKET_NAME, SECRET_KEY],
-    nodejs: { install: ["sharp"] },
     permissions: [[originalImageBucket, "grantRead"], transformedImageBucket],
     url: true,
+    layers: [sharpLayer],
+    nodejs: { esbuild: { external: ["sharp"] } },
   })
 
   const imageProcessingHelper = new LambdaFunctionUrlHelper(
     stack,
-    "lambda-function-url-helper",
+    "image-processing-url-helper",
     { Url: imageProcessingFunction.url as string }
   )
 
@@ -170,7 +154,6 @@ export function ImageOptimization({ stack }: StackContext) {
       stack,
       `ResponseHeadersPolicy${stack.node.addr}`,
       {
-        // responseHeadersPolicyName: "ImageResponsePolicy",
         corsBehavior: {
           accessControlAllowCredentials: false,
           accessControlAllowHeaders: ["*"],
@@ -204,7 +187,12 @@ export function ImageOptimization({ stack }: StackContext) {
 }
 
 import { Construct } from "constructs"
-import { Code, Runtime, SingletonFunction } from "aws-cdk-lib/aws-lambda"
+import {
+  Code,
+  LayerVersion,
+  Runtime,
+  SingletonFunction,
+} from "aws-cdk-lib/aws-lambda"
 import { RetentionDays } from "aws-cdk-lib/aws-logs"
 import { Provider } from "aws-cdk-lib/custom-resources"
 

@@ -37,6 +37,9 @@ export const handler = ApiHandler(async (event) => {
   imagePathArray.shift()
   const originalImagePath = imagePathArray.join("/")
 
+  console.log("operationsPrefix", operationsPrefix)
+  console.log("originalImagePath", originalImagePath)
+
   // timing variable
   let timingLog = "perf "
   let startTime = performance.now()
@@ -52,6 +55,7 @@ export const handler = ApiHandler(async (event) => {
       })
     )
     contentType = originalImage.ContentType as string
+    console.log("contentType", contentType)
   } catch (error) {
     return sendError(500, "error downloading original image", error)
   }
@@ -62,6 +66,7 @@ export const handler = ApiHandler(async (event) => {
 
   // Get image orientation to rotate if needed
   const imageMetadata = await transformedImage.metadata()
+  console.log("imageMetadata", imageMetadata)
 
   //  execute the requested operations
   const operationsJSON: Record<string, string> = {}
@@ -131,8 +136,10 @@ export const handler = ApiHandler(async (event) => {
       }
     }
 
-    stream.pipe(transformedImage)
+    console.log("MADE IT")
+    transformedImage = stream.pipe(transformedImage)
     transformedBuffer = await transformedImage.toBuffer()
+    console.log("MADE IT HERE TOO")
   } catch (error) {
     return sendError(500, "error transforming image", error)
   }
@@ -144,7 +151,7 @@ export const handler = ApiHandler(async (event) => {
   try {
     await s3.send(
       new PutObjectCommand({
-        Body: transformedImage,
+        Body: transformedImage ?? stream,
         Bucket: Bucket["transformed-image-bucket"].bucketName,
         Key: originalImagePath + "/" + operationsPrefix,
         ContentType: contentType,
@@ -152,7 +159,7 @@ export const handler = ApiHandler(async (event) => {
       })
     )
   } catch (error) {
-    sendError(500, "Could not upload transformed image to S3", error)
+    return sendError(500, "Could not upload transformed image to S3", error)
   }
 
   timingLog = timingLog + (performance.now() - startTime) + " "
