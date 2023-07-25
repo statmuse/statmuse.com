@@ -1,5 +1,6 @@
 # dependencies
 node_modules
+!layers/**/*/node_modules
 
 # sst
 .sst
