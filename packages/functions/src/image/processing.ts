@@ -37,9 +37,6 @@ export const handler = ApiHandler(async (event) => {
   imagePathArray.shift()
   const originalImagePath = imagePathArray.join("/")
 
-  console.log("operationsPrefix", operationsPrefix)
-  console.log("originalImagePath", originalImagePath)
-
   // timing variable
   let timingLog = "perf "
   let startTime = performance.now()
@@ -61,13 +58,11 @@ export const handler = ApiHandler(async (event) => {
   }
 
   let transformedImage = sharp({ failOn: "none" })
-  let transformedBuffer: Buffer
-  const stream = originalImage.Body as Readable
+  let stream: Readable | Buffer = originalImage.Body as Readable
   stream.pipe(transformedImage)
 
   // Get image orientation to rotate if needed
   const imageMetadata = await transformedImage.metadata()
-  console.log("imageMetadata", imageMetadata)
 
   //  execute the requested operations
   const operationsJSON: Record<string, string> = {}
@@ -137,7 +132,7 @@ export const handler = ApiHandler(async (event) => {
       }
     }
 
-    transformedBuffer = await transformedImage.toBuffer()
+    stream = await transformedImage.toBuffer()
   } catch (error) {
     return sendError(500, "error transforming image", error)
   }
@@ -149,7 +144,7 @@ export const handler = ApiHandler(async (event) => {
   try {
     await s3.send(
       new PutObjectCommand({
-        Body: transformedBuffer ?? stream,
+        Body: stream,
         Bucket: Bucket["transformed-image-bucket"].bucketName,
         Key: originalImagePath + "/" + operationsPrefix,
         ContentType: contentType,
@@ -157,7 +152,7 @@ export const handler = ApiHandler(async (event) => {
       })
     )
   } catch (error) {
-    return sendError(500, "Could not upload transformed image to S3", error)
+    sendError(500, "Could not upload transformed image to S3", error)
   }
 
   timingLog = timingLog + (performance.now() - startTime) + " "
@@ -166,7 +161,7 @@ export const handler = ApiHandler(async (event) => {
   // return transformed image
   return {
     statusCode: 200,
-    body: (transformedBuffer ?? stream).toString("base64"),
+    body: stream.toString("base64"),
     isBase64Encoded: true,
     headers: {
       "Content-Type": contentType,
