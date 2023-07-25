@@ -1,14 +1,14 @@
-import { StackContext, Config, Function, Bucket } from "sst/constructs"
+import { StackContext, Config, Function, Bucket, use } from "sst/constructs"
 import {
   CachePolicy,
   CacheQueryStringBehavior,
-  Distribution,
   FunctionCode,
   FunctionEventType,
   ResponseHeadersPolicy,
   ViewerProtocolPolicy,
 } from "aws-cdk-lib/aws-cloudfront"
 import { Bucket as CdkBucket } from "aws-cdk-lib/aws-s3"
+import { Web } from "./web-stack"
 import { CustomResource, Duration, RemovalPolicy } from "aws-cdk-lib/core"
 import {
   HttpOrigin,
@@ -17,14 +17,6 @@ import {
 } from "aws-cdk-lib/aws-cloudfront-origins"
 import { Function as CfFunction } from "aws-cdk-lib/aws-cloudfront"
 import { createHash } from "crypto"
-
-type ImageDeliveryCacheBehaviorConfig = {
-  origin: any
-  viewerProtocolPolicy: any
-  cachePolicy: any
-  functionAssociations: any
-  responseHeadersPolicy?: any
-}
 
 // Region to Origin Shield mapping based on latency. to be updated when new Regional Edge Caches are added to CloudFront.
 const ORIGIN_SHIELD_MAPPING = new Map([
@@ -56,27 +48,19 @@ const CLOUDFRONT_ORIGIN_SHIELD_REGION = ORIGIN_SHIELD_MAPPING.get(
 )
 
 export function ImageOptimization({ stack }: StackContext) {
-  const isStaging = stack.stage === "staging"
-  const isProd = stack.stage === "production"
+  const { astroSite } = use(Web)
 
   const SECRET_KEY = new Config.Parameter(stack, "SECRET_KEY", {
     value: createHash("md5").update(stack.node.addr).digest("hex"),
   })
 
-  const bucketAttributes = isProd
-    ? {
-        bucketArn: "arn:aws:s3:::statmuse-prod",
-        bucketName: "statmuse-prod",
-      }
-    : {
-        bucketArn: "arn:aws:s3:::statmuse-dev",
-        bucketName: "statmuse-dev",
-      }
-
   const originalImageBucket = CdkBucket.fromBucketAttributes(
     stack,
     "original-bucket",
-    bucketAttributes
+    {
+      bucketArn: "arn:aws:s3:::statmuse-prod",
+      bucketName: "statmuse-prod",
+    }
   )
 
   const ORIGINAL_BUCKET_NAME = new Config.Parameter(
@@ -95,9 +79,6 @@ export function ImageOptimization({ stack }: StackContext) {
     },
   })
 
-  const sharpLayer = new LayerVersion(stack, "sharp-layer", {
-    code: Code.fromAsset("layers/sharp"),
-  })
   const imageProcessingFunction = new Function(stack, "image-processing", {
     handler: "packages/functions/src/image/processing.handler",
     runtime: "nodejs18.x",
@@ -107,7 +88,11 @@ export function ImageOptimization({ stack }: StackContext) {
     bind: [transformedImageBucket, ORIGINAL_BUCKET_NAME, SECRET_KEY],
     permissions: [[originalImageBucket, "grantRead"], transformedImageBucket],
     url: true,
-    layers: [sharpLayer],
+    layers: [
+      new LayerVersion(stack, "sharp-layer", {
+        code: Code.fromAsset("layers/sharp"),
+      }),
+    ],
     nodejs: { esbuild: { external: ["sharp"] } },
   })
 
@@ -135,8 +120,7 @@ export function ImageOptimization({ stack }: StackContext) {
     functionName: `urlRewriteFunction${stack.node.addr}`,
   })
 
-  var imageDeliveryCacheBehaviorConfig: ImageDeliveryCacheBehaviorConfig = {
-    origin: imageOrigin,
+  astroSite.cdk?.distribution.addBehavior("img/", imageOrigin, {
     viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     cachePolicy: new CachePolicy(stack, `ImageCachePolicy${stack.node.addr}`, {
       defaultTtl: Duration.hours(24),
@@ -175,13 +159,7 @@ export function ImageOptimization({ stack }: StackContext) {
         },
       }
     ),
-  }
-
-  const imageDistribution = new Distribution(stack, "image-delivery-cdn", {
-    defaultBehavior: imageDeliveryCacheBehaviorConfig,
   })
-
-  stack.addOutputs({ CloudfrontUrl: imageDistribution.domainName })
 
   return {}
 }

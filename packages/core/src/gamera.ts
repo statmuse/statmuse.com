@@ -1,4 +1,4 @@
-export const cdnBaseUrl = "https://cdn.statmuse.com"
+export const cdnBaseUrl = ""
 
 export function handleResponse(response: GameraResponse) {
   const subject = response.visual.summary.subject

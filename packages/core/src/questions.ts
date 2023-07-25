@@ -12,5 +12,6 @@ export type Answer = Question["answer"]
 export const getImageUrl = (question: { answer: Answer }) => {
   const answer = question.answer as GameraResponse
   const subject = answer.visual.summary.subject
-  return subject.imageUrl
+  const params = new URLSearchParams({ format: "auto" })
+  return new URL(subject.imageUrl).pathname + "?" + params.toString()
 }

@@ -52,7 +52,6 @@ export const handler = ApiHandler(async (event) => {
       })
     )
     contentType = originalImage.ContentType as string
-    console.log("contentType", contentType)
   } catch (error) {
     return sendError(500, "error downloading original image", error)
   }
