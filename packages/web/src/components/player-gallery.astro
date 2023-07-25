@@ -1,0 +1,193 @@
+---
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Container from '@components/container.astro'
+import type { PlayerGalleryItem } from '@lib/player'
+import { type GameraDomain, getUrlForEntity } from '@statmuse/core/gamera'
+
+interface Props {
+  league?: string
+  players: PlayerGalleryItem[]
+}
+
+const { league, players } = Astro.props
+
+const leagues = ['All', 'NBA', 'NFL', 'NHL', 'MLB', 'PGA']
+
+const alphabet = [...Array(26)].map((_x, i) =>
+  String.fromCharCode(i + 65).toLowerCase()
+)
+
+const groupedByFirstLetterLastName = players.reduce(
+  (acc: { [key: string]: PlayerGalleryItem[] }, player) => {
+    const [char] = player.last_name
+
+    if (acc.hasOwnProperty(char.toLowerCase())) {
+      acc[char.toLowerCase()].push(player)
+    } else {
+      acc[char.toLowerCase()] = [player]
+    }
+
+    return acc
+  },
+  {}
+)
+
+const colors = {
+  foreground: '#fff',
+  background: '#00c1d8',
+}
+
+const meta = {
+  title: league ? `${league} Player Gallery` : 'Player Gallery',
+  description: `Browse the largest gallery of ${
+    league ? `${league} ` : ''
+  }player illustrations in the world.`,
+}
+---
+
+<Layout {meta} {colors}>
+  <Header />
+  <Container class="text-white bg-primary">
+    <div class="pt-[54px] pb-10 md:pt-[90px] md:pb-16 text-center">
+      <h1 class="font-semibold text-xl md:text-3xl">
+        Gallery <span style="font-weight: 100;">|</span> Players
+      </h1>
+    </div>
+  </Container>
+  <Container class="bg-primary">
+    <ul class="flex items-center justify-center">
+      {
+        leagues.map((x) => (
+          <li class="mx-3 md:mx-6">
+            <a
+              class={`text-sm md:text-base flex items-center h-11 md:h-[50px] text-white hover:no-underline hover:opacity-100 ${
+                x === (league || 'All')
+                  ? 'opacity-100 font-semibold'
+                  : 'opacity-80'
+              }`}
+              href={x === 'All' ? '/players' : `/${x.toLowerCase()}/players`}
+            >
+              {x}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+  <Container>
+    <div
+      class="flex justify-start md:justify-center py-4 overflow-auto bg-white"
+    >
+      {
+        alphabet.map((letter) => (
+          <a
+            class="text-[#333] mx-0.5 rounded-md uppercase w-6 h-6 shrink-0 flex justify-center items-center"
+            href={`#${letter}`}
+            data-click-nav
+          >
+            {letter}
+          </a>
+        ))
+      }
+    </div>
+    <div class="flex flex-wrap justify-center">
+      {
+        Object.entries(groupedByFirstLetterLastName).map(
+          ([letter, [firstPlayer, ...players]]) => {
+            return (
+              <>
+                <a
+                  href={getUrlForEntity({
+                    id: firstPlayer.resource_id,
+                    type: 'player',
+                    display: firstPlayer.used_name,
+                    domain: firstPlayer.domain as GameraDomain,
+                  })}
+                >
+                  <div
+                    class="h-28 w-28 md:h-44 md:w-44 m-0.5 md:m-1.5 rounded-lg flex justify-center overflow-hidden relative"
+                    style={`background: ${firstPlayer.background_color_hex};`}
+                  >
+                    <img
+                      class="h-full object-cover mt-1.5 md:mt-2.5"
+                      alt={firstPlayer.used_name}
+                      src={firstPlayer.bust_image_url}
+                      data-cy-illustration
+                    />
+                    <div
+                      class="absolute w-full h-full"
+                      style="background: linear-gradient(to top, black 0%, transparent 25%);"
+                    />
+                    <h3 class="text-xs md:text-sm font-semibold text-center text-white absolute bottom-1">
+                      {firstPlayer.used_name}
+                    </h3>
+                  </div>
+                </a>
+                <div
+                  id={`${letter}`}
+                  class="relative -top-[62px] md:-top-[70px]"
+                />
+                {players.map((player) => (
+                  <a
+                    href={getUrlForEntity({
+                      id: player.resource_id,
+                      type: 'player',
+                      display: player.used_name,
+                      domain: player.domain as GameraDomain,
+                    })}
+                  >
+                    <div
+                      class="h-28 w-28 md:h-44 md:w-44 m-0.5 md:m-1.5 rounded-lg flex justify-center overflow-hidden relative"
+                      style={`background: ${player.background_color_hex};`}
+                    >
+                      <img
+                        class="h-full object-cover mt-1.5 md:mt-2.5"
+                        alt={player.used_name}
+                        src={player.bust_image_url}
+                        data-cy-illustration
+                      />
+                      <div
+                        class="absolute w-full h-full"
+                        style="background: linear-gradient(to top, black 0%, transparent 25%);"
+                      />
+                      <h3 class="text-xs md:text-sm font-semibold text-center text-white absolute bottom-1">
+                        {player.used_name}
+                      </h3>
+                    </div>
+                  </a>
+                ))}
+              </>
+            )
+          }
+        )
+      }
+    </div>
+    <p
+      class="my-4"
+      style="color: #969ca1; text-align: right; font-style: italic;"
+    >
+      All illustrations and content on this site &copy; 2016-2021 StatMuse, Inc.<br
+      />
+      Unauthorized duplication or usage prohibited.
+    </p>
+  </Container>
+</Layout>
+<script>
+  // Player Gallery Alphabet Nav Highlight
+  document.querySelectorAll('[data-click-nav]').forEach((el) => {
+    el.addEventListener('click', () => {
+      // remove classes from previously selected item
+      document.querySelectorAll('[data-highlight="true"]').forEach((n) => {
+        ;['text-white', 'bg-primary', 'hover:no-underline'].forEach((x) => {
+          n.classList.remove(x)
+        })
+      })
+
+      el.classList.add('text-white')
+      el.classList.add('bg-primary')
+      el.classList.add('hover:no-underline')
+      el.dataset.highlight = true
+    })
+  })
+</script>
