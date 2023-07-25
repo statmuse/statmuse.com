@@ -113,6 +113,15 @@ const examples = [
   ],
 ] as [string, { query: string; path: string }[]][]
 
+const dataCoverage = [
+  'All ~3K NASDAQ stocks, intraday and historical',
+  'All ~3K NYSE stocks, intraday and historical',
+  '2,000+ ETFs and all major indices, historical',
+  'Ticker search for the top 60 fiat currencies, intraday and historical',
+  'Bitcoin price, supply, hashrate and block height, intraday and historical',
+  'Data providers include Twelve Data and EOD Historical Data',
+]
+
 const imgs = [
   'https://cdn.statmuse.com/finance/asset_img/statmuse-finance-btc--jgfo5tnv.png',
   'https://cdn.statmuse.com/finance/asset_img/kanedama-cyborg-01-min--fc2wcyxt.png',
@@ -330,6 +339,16 @@ const meta = {
             </div>
           ))
         }
+        <div class="py-6 md:py-8" style="margin-bottom: 24px;">
+          <h3
+            class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
+          >
+            DATA COVERAGE
+          </h3>
+          <ul class="list-disc list-inside">
+            {dataCoverage.map((data) => <li class="my-3" set:html={data} />)}
+          </ul>
+        </div>
       </div>
     </div>
   </main>
