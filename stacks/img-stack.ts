@@ -120,7 +120,7 @@ export function ImageOptimization({ stack }: StackContext) {
     functionName: `urlRewriteFunction${stack.node.addr}`,
   })
 
-  astroSite.cdk?.distribution.addBehavior("img/", imageOrigin, {
+  astroSite.cdk?.distribution.addBehavior("img/*", imageOrigin, {
     viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     cachePolicy: new CachePolicy(stack, `ImageCachePolicy${stack.node.addr}`, {
       defaultTtl: Duration.hours(24),

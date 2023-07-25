@@ -61,7 +61,7 @@ export const handler = ApiHandler(async (event) => {
   stream.pipe(transformedImage)
 
   // Get image orientation to rotate if needed
-  const imageMetadata = await transformedImage.metadata()
+  const metadata = await transformedImage.metadata()
 
   //  execute the requested operations
   const operationsJSON: Record<string, string> = {}
@@ -76,16 +76,22 @@ export const handler = ApiHandler(async (event) => {
   try {
     // check if resizing is requested
     const resizingOptions: sharp.ResizeOptions = {}
-    if (operationsJSON["width"])
-      resizingOptions.width = parseInt(operationsJSON["width"])
-    if (operationsJSON["height"])
-      resizingOptions.height = parseInt(operationsJSON["height"])
+    const width = parseInt(operationsJSON["width"] ?? "0")
+    const height = parseInt(operationsJSON["height"] ?? "0")
+    const originalWidth = metadata.width ?? Number.MAX_VALUE
+    const originalHeight = metadata.height ?? Number.MAX_VALUE
+
+    // don't upscale
+    if (width && width < originalWidth) {
+      resizingOptions.width = width 
+    if (height && height < originalHeight)
+      resizingOptions.height = height 
 
     if (resizingOptions)
       transformedImage = transformedImage.resize(resizingOptions)
 
     // check if rotation is needed
-    if (imageMetadata.orientation) transformedImage = transformedImage.rotate()
+    if (metadata.orientation) transformedImage = transformedImage.rotate()
 
     // check if formatting is requested
     const format = operationsJSON["format"] as
