@@ -82,10 +82,8 @@ export const handler = ApiHandler(async (event) => {
     const originalHeight = metadata.height ?? Number.MAX_VALUE
 
     // don't upscale
-    if (width && width < originalWidth) {
-      resizingOptions.width = width 
-    if (height && height < originalHeight)
-      resizingOptions.height = height 
+    if (width && width < originalWidth) resizingOptions.width = width
+    if (height && height < originalHeight) resizingOptions.height = height
 
     if (resizingOptions)
       transformedImage = transformedImage.resize(resizingOptions)
