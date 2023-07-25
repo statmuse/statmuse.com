@@ -1,0 +1,71 @@
+---
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Container from '@components/container.astro'
+
+const { league } = Astro.params
+
+const leagues = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
+
+const headline = (str?: string) => {
+  if (str && leagues.includes(str.toUpperCase())) {
+    return `Trending ${str.toUpperCase()} Searches`
+  }
+
+  if (str === 'fantasy') {
+    return 'Trending Fantasy Football Searches'
+  }
+
+  if (str === 'money') {
+    return 'Trending Finance Searches'
+  }
+}
+
+const meta = {}
+---
+
+<Layout>
+  <Header />
+  <Container>
+    <nav style="margin-top: 15px;">
+      <div style="display: flex; gap: 10px;">
+        {
+          ['All', ...leagues].map((x) => (
+            <a
+              class={`flex items-center justify-center min-w-[80px] border border-primary rounded-md hover:no-underline hover:text-white hover:bg-primary p-[5px] ${
+                x.toLowerCase() === (league || 'All')
+                  ? 'bg-primary text-white'
+                  : 'text-primary'
+              } %>`}
+              href={
+                x === 'All' ? '/questions' : `/${x.toLowerCase()}/questions`
+              }
+              set:html={x}
+            />
+          ))
+        }
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        {
+          ['Fantasy Football', 'Money'].map((x) => (
+            <a
+              class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
+                x.toLowerCase().includes(league || '')
+                  ? 'bg-secondary text-white'
+                  : 'text-secondary'
+              } %>`}
+              href={x === 'Money' ? '/money/questions' : '/fantasy/questions'}
+              set:html={x}
+            />
+          ))
+        }
+      </div>
+    </nav>
+  </Container>
+  <Container>
+    <section>
+      <h2 class="text-2xl font-semibold my-5">{headline(league)}</h2>
+      <div class="space-y-5"></div>
+    </section>
+  </Container>
+</Layout>
