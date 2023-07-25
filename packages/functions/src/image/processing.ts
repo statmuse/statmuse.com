@@ -63,7 +63,7 @@ export const handler = ApiHandler(async (event) => {
   let transformedImage = sharp({ failOn: "none" })
   let transformedBuffer: Buffer
   const stream = originalImage.Body as Readable
-  transformedImage = stream.pipe(transformedImage)
+  stream.pipe(transformedImage)
 
   // Get image orientation to rotate if needed
   const imageMetadata = await transformedImage.metadata()
