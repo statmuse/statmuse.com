@@ -170,7 +170,7 @@ export function ImageOptimization({ stack }: StackContext) {
       stack,
       `ResponseHeadersPolicy${stack.node.addr}`,
       {
-        responseHeadersPolicyName: "ImageResponsePolicy",
+        // responseHeadersPolicyName: "ImageResponsePolicy",
         corsBehavior: {
           accessControlAllowCredentials: false,
           accessControlAllowHeaders: ["*"],
