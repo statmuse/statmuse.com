@@ -2,9 +2,15 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
+
+export const prerender = true
+
+const meta = {
+  title: 'Slack Successfully Connected',
+}
 ---
 
-<Layout>
+<Layout {meta}>
   <Header />
   <Container>
     <div
