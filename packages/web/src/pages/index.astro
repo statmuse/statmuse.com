@@ -12,6 +12,8 @@ import { marked } from 'marked'
 const musings = await listLatestMusings.execute()
 const examples = await listOnboarding.execute()
 const banner = examples[Math.floor(Math.random() * examples.length)]
+
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=86400')
 ---
 
 <Layout>
