@@ -35,41 +35,39 @@ type PaginationOptions = {
 
 const paginate = (
   asks: Ask[],
-  { next, previous, page }: SearchParams
+  { next, previous, page }: SearchParams,
+  overflow: boolean
 ): PaginationOptions => {
   if (asks.length === 0) return {}
 
   if (!next && !previous && !page) {
-    console.log(asks[asks.length - 1])
     return {
-      current_page: asks.length <= ASK_LIMIT ? 'first-last' : 'first',
-      n:
-        asks.length <= ASK_LIMIT
-          ? undefined
-          : asks[asks.length - 1].last_web_search_at
-              ?.toISOString()
-              .replaceAll(':', '_'),
+      current_page: overflow ? 'first' : 'first-last',
+      n: overflow
+        ? asks[asks.length - 1].last_web_search_at
+            ?.toISOString()
+            .replaceAll(':', '_')
+        : undefined,
     }
   }
 
   if (page && page === 'last') {
     return {
-      current_page: asks.length <= ASK_LIMIT ? 'first-last' : 'last',
-      p:
-        asks.length <= ASK_LIMIT
-          ? undefined
-          : asks[0].last_web_search_at?.toISOString().replaceAll(':', '_'),
+      current_page: overflow ? 'last' : 'first-last',
+      p: overflow
+        ? asks[0].last_web_search_at?.toISOString().replaceAll(':', '_')
+        : undefined,
     }
   }
 
-  if (next && asks.length <= ASK_LIMIT) {
+  if (next && !overflow) {
     return {
       current_page: 'last',
       p: asks[0].last_web_search_at?.toISOString().replaceAll(':', '_'),
     }
   }
 
-  if (previous && asks.length <= ASK_LIMIT) {
+  if (previous && !overflow) {
     return {
       current_page: 'first',
       n: asks[asks.length - 1].last_web_search_at
@@ -92,7 +90,7 @@ const leagues = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
 
 let asks = await getAsksIndex(league ? [league] : undefined, searchParams)
 
-const paginationOptions = paginate(asks, searchParams)
+const overflow = asks.length > ASK_LIMIT
 
 if (
   searchParams.previous ||
@@ -102,6 +100,8 @@ if (
 } else {
   asks = asks.slice(0, ASK_LIMIT)
 }
+
+const paginationOptions = paginate(asks, searchParams, overflow)
 
 const headline = (str?: string) => {
   if (str && leagues.includes(str.toUpperCase())) {

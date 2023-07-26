@@ -21,10 +21,10 @@ export const getAsksIndex = async (names = leagues, params: { next?: Date, previ
     .where('context_id', 'in', await getListContextIds(names))
 
   if (params.next) {
-    query = query.where('last_web_search_at', '<', params.next.toISOString())
+    query = query.where('last_web_search_at', '<', params.next)
       .orderBy('last_web_search_at', 'desc')
   } else if (params.previous) {
-    query = query.where('last_web_search_at', '>', params.previous.toISOString())
+    query = query.where('last_web_search_at', '>', params.previous)
       .orderBy('last_web_search_at', 'asc')
   } else if (params.page && params.page === 'last') {
     query = query.orderBy('last_web_search_at', 'asc')
