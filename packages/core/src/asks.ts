@@ -10,17 +10,37 @@ export const getListContextIds = async (names: string[]) => {
   return records.map(r => r.id)
 }
 
-export const getAsksIndex = async (names = leagues) => 
-  db.selectFrom('asks')
-  .selectAll('asks')
-  .innerJoin('contexts', 'contexts.id', 'asks.context_id')
-  .where('is_in_index', '=', true)
-  .where('last_web_search_at', 'is not', null)
-  .where('context_id', 'in', await getListContextIds(names))
-  .orderBy('last_web_search_at', 'desc')
-  .selectAll('asks')
-  .select('contexts.name as league_name')
-  .limit(15)
-  .execute()
+export const ASK_LIMIT = 15
+
+export const getAsksIndex = async (names = leagues, params: { next?: Date, previous?: Date, page?: string }) => {
+  let query = db.selectFrom('asks')
+    .selectAll('asks')
+    .innerJoin('contexts', 'contexts.id', 'asks.context_id')
+    .where('is_in_index', '=', true)
+    .where('last_web_search_at', 'is not', null)
+    .where('context_id', 'in', await getListContextIds(names))
+
+  if (params.next) {
+    query = query.where('last_web_search_at', '<', params.next.toISOString())
+      .orderBy('last_web_search_at', 'desc')
+  } else if (params.previous) {
+    query = query.where('last_web_search_at', '>', params.previous.toISOString())
+      .orderBy('last_web_search_at', 'asc')
+  } else if (params.page && params.page === 'last') {
+    query = query.orderBy('last_web_search_at', 'asc')
+  } else {
+    query = query.orderBy('last_web_search_at', 'desc')
+  }
+
+  const records = await query.selectAll('asks')
+    .select('contexts.name as league_name')
+    .limit(ASK_LIMIT + 1)
+    .execute()
+
+  if (params.previous || params.page) {
+    records.reverse()
+  }
+  return records
+}
 
 export type Ask = Awaited<ReturnType<typeof getAsksIndex>>[number]

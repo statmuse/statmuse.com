@@ -6,9 +6,41 @@ import { getAsksIndex } from '@statmuse/core/asks'
 
 const { league } = Astro.params
 
+const dateFromParam = (x: string) => {
+  const date = new Date(x)
+  if (date.toString() !== 'Invalid Date') {
+    return date
+  }
+  return
+}
+
+const parseSearchParams = (params: URLSearchParams) => {
+  const next = (params.get('n') || '').replaceAll('_', ':')
+  const previous = (params.get('p') || '').replaceAll('_', ':')
+  const page = params.get('page') || undefined
+  return {
+    next: dateFromParam(next),
+    previous: dateFromParam(previous),
+    page,
+  }
+}
+
+const searchParams = parseSearchParams(Astro.url.searchParams)
+
+console.log(searchParams)
+
 const leagues = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
 
-const asks = await getAsksIndex(league ? [league] : undefined)
+let asks = await getAsksIndex(league ? [league] : undefined, searchParams)
+
+if (
+  searchParams.previous ||
+  (searchParams.page && searchParams.page === 'last')
+) {
+  asks = asks.slice(1)
+} else {
+  asks = asks.slice(0, 15)
+}
 
 const headline = (str?: string) => {
   if (str && leagues.includes(str.toUpperCase())) {
