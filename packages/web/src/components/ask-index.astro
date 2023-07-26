@@ -3,6 +3,7 @@ import Layout from "@layouts/main.astro"
 import Header from "@components/header.astro"
 import Container from "@components/container.astro"
 import { ASK_LIMIT, type FinanceAsk, type Ask } from "@statmuse/core/asks"
+import { createAskPath } from "@lib/path"
 
 interface Props {
   domain?: string
@@ -119,7 +120,10 @@ const headline = (title?: string) => {
   }
 }
 
-const createLink = (domain?: string, params?: Record<string, string>) => {
+const createPaginationLink = (
+  domain?: string,
+  params?: Record<string, string>
+) => {
   let link = domain ? `/${domain}/questions` : "/questions"
   if (params) {
     link = link + `?${new URLSearchParams(params).toString()}`
@@ -136,6 +140,19 @@ const getBgColor = (ask: Ask | FinanceAsk) =>
   isAsk(ask)
     ? ask.hex_background
     : ask.answer.visual.summary.subject.colors.background
+
+const askPath = (ask: Ask | FinanceAsk, domain = "") => {
+  if (domain === "money") {
+    return createAskPath({ domain, query: ask.query })
+  }
+  if (isAsk(ask) && ask.is_fantasy_query) {
+    return createAskPath({ domain: "fantasy", query: ask.query })
+  }
+  if (isAsk(ask)) {
+    return createAskPath({ domain: ask.league_name, query: ask.query })
+  }
+  return ""
+}
 
 const leagues = ["NBA", "NFL", "NHL", "MLB", "PGA"]
 const meta = {}
@@ -195,7 +212,7 @@ const meta = {}
               >
                 <a
                   class="h-full flex justify-center items-end"
-                  href="<%= ask_path(@conn, ask) %>"
+                  href={askPath(ask, domain)}
                 >
                   <img
                     class="h-[90%]"
@@ -206,7 +223,7 @@ const meta = {}
               </div>
               <div class="flex-1 flex flex-col">
                 <h3 class="text-lg font-semibold">
-                  <a href="<%= ask_path(@conn, ask) %>">{ask.query}</a>
+                  <a href={askPath(ask, domain)}>{ask.query}</a>
                 </h3>
                 <div class="italic opacity-50">{ask.last_web_search_at}</div>
                 <div
@@ -223,7 +240,7 @@ const meta = {}
     <ul class="text-center my-10 space-x-2">
       <li class="inline-block">
         <a
-          href={createLink(domain)}
+          href={createPaginationLink(domain)}
           class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${['first', 'first-last'].includes(paginationOptions.current_page || '') ? 'text-black pointer-events-none' : ''}`
         >
           « First
@@ -231,7 +248,7 @@ const meta = {}
       </li>
       <li class="inline-block">
         <a
-          href={createLink(domain, { p: paginationOptions.p || "" })}
+          href={createPaginationLink(domain, { p: paginationOptions.p || "" })}
           class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${paginationOptions.p ? '' : 'text-[#c5c9cc] pointer-events-none'}`
         >
           &lt; Previous
@@ -239,7 +256,7 @@ const meta = {}
       </li>
       <li class="inline-block">
         <a
-          href={createLink(domain, { n: paginationOptions.n || "" })}
+          href={createPaginationLink(domain, { n: paginationOptions.n || "" })}
           class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${paginationOptions.n ? '' : 'text-[#c5c9cc] pointer-events-none'}`
         >
           Next &gt;
@@ -247,7 +264,7 @@ const meta = {}
       </li>
       <li class="inline-block">
         <a
-          href={createLink(domain, { page: "last" })}
+          href={createPaginationLink(domain, { page: "last" })}
           class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${['last', 'first-last'].includes(paginationOptions.current_page || '') ? 'text-black pointer-events-none' : ''}`
         >
           Last »
