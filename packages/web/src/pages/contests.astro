@@ -1,0 +1,70 @@
+---
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Container from '@components/container.astro'
+
+export const prerender = true
+
+const meta = {
+  title: 'Contest Terms & Conditions',
+}
+---
+
+<Layout {meta}>
+  <Header />
+  <Container>
+    <p class="my-4">
+      <strong>GIVEAWAY/CONTEST TERMS & CONDITIONS</strong>
+    </p>
+    <ul class="list-disc pl-5">
+      <li>No purchase necessary to enter.</li>
+      <li>
+        Winners will be notified through Direct Message on Instagram or Twitter.
+        Failure to accept prize within 3 days of notification forfeits
+        eligibility.
+      </li>
+      <li>
+        If prize is not accepted within 3 days of notification or winner does
+        not meet criteria for eligibility, we reserve the right to choose a
+        different winner.
+      </li>
+      <li>
+        Prize will be shipped standard shipping and the winner should receive it
+        within 3-10 days from ship date. StatMuse is not responsible for lost or
+        stolen shipments. Prize will ship in 2-6 weeks from winner acceptance.
+      </li>
+      <li>
+        Winner will be chosen by the StatMuse Creative team at their sole
+        discretion.
+      </li>
+      <li>Contest applies to US residents only.</li>
+      <li>Must be 18 years of age or older.</li>
+      <li>
+        Must follow directions in the Instagram or Twitter post to enter.
+        Failure to follow all rules forfeits the participant's eligibility to
+        win.
+      </li>
+      <li>Contest rules and prizes are subject to change at any time.</li>
+      <li>
+        We reserve the right to swap prizes for items of equal or higher value
+        if item is unavailable.
+      </li>
+      <li>
+        Prize includes one Echo Dot or Echo Show 5 depending on entry post.
+      </li>
+      <li>
+        This giveaway is not sponsored or endorsed by Instagram or Twitter in
+        any way.
+      </li>
+      <li>
+        The Echo Dot is given away by StatMuse. Amazon is not a sponsor of this
+        promotion.
+      </li>
+      <li>
+        Amazon, Echo, Alexa, and all related logos are trademarks of Amazon.com,
+        Inc. or its affiliates.
+      </li>
+    </ul>
+    <p class="my-4">*P.O. Boxes are not eligible for this contest.</p>
+  </Container>
+</Layout>
