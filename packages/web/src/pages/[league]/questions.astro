@@ -2,10 +2,13 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
+import { getAsksIndex } from '@statmuse/core/asks'
 
 const { league } = Astro.params
 
 const leagues = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
+
+const asks = await getAsksIndex.execute()
 
 const headline = (str?: string) => {
   if (str && leagues.includes(str.toUpperCase())) {
@@ -65,7 +68,39 @@ const meta = {}
   <Container>
     <section>
       <h2 class="text-2xl font-semibold my-5">{headline(league)}</h2>
-      <div class="space-y-5"></div>
+      <div class="space-y-5">
+        {
+          asks.map((ask) => (
+            <article class="flex">
+              <div
+                class="hidden sm:block h-24 w-36 rounded-lg mr-2.5 overflow-hidden"
+                style={`background: ${ask.hex_background}`}
+              >
+                <a
+                  class="h-full flex justify-center items-end"
+                  href="<%= ask_path(@conn, ask) %>"
+                >
+                  <img
+                    class="h-[90%]"
+                    src={ask.image_url}
+                    alt="player illustration"
+                  />
+                </a>
+              </div>
+              <div class="flex-1 flex flex-col">
+                <h3 class="text-lg font-semibold">
+                  <a href="<%= ask_path(@conn, ask) %>">{ask.query}</a>
+                </h3>
+                <div class="italic opacity-50">{ask.last_web_search_at}</div>
+                <div
+                  class="flex-1 flex items-center border-l-2 border-secondary pl-1.5"
+                  set:html={ask.answer_html}
+                />
+              </div>
+            </article>
+          ))
+        }
+      </div>
     </section>
   </Container>
 </Layout>
