@@ -91,10 +91,16 @@ interface AskUserTable {
   updated_at: ColumnType<Date, string | undefined, string | undefined>
 }
 
+
 interface AskEventTable {
   id: Generated<string>
 
+  conversation_token: string
+  query_raw: string
+  ask_id: string
+  question_id: string | null
   user_id: string | null
+  visitor_id: string | null
 
   inserted_at: ColumnType<Date, string | undefined, string | undefined>
   updated_at: ColumnType<Date, string | undefined, string | undefined>
@@ -187,6 +193,13 @@ interface LeagueTable {
   updated_at: ColumnType<Date, string | undefined, string | undefined>
 }
 
+interface ContextTable {
+  id: Generated<string>
+  name: string
+  inserted_at: ColumnType<Date, string | undefined, string | undefined>
+  updated_at: ColumnType<Date, string | undefined, string | undefined>
+}
+
 interface PlayerTable {
   id: Generated<string>
 
@@ -209,6 +222,7 @@ export interface Database {
   asks: AskTable
   ask_events: AskEventTable
   asks_users: AskUserTable
+  contexts: ContextTable
   musings: MusingTable
   questions: QuestionTable
   examples: ExampleTable
