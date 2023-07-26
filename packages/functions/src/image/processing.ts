@@ -143,6 +143,8 @@ export const handler = ApiHandler(async (event) => {
   timingLog = timingLog + (performance.now() - startTime) + " "
   startTime = performance.now()
 
+  const cacheControl = "public, max-age=31536000, immutable"
+
   // upload transformed image back to S3 if required in the architecture
   try {
     await s3.send(
@@ -151,7 +153,7 @@ export const handler = ApiHandler(async (event) => {
         Bucket: Bucket["transformed-image-bucket"].bucketName,
         Key: originalImagePath + "/" + operationsPrefix,
         ContentType: contentType,
-        Metadata: { "cache-control": "max-age=31536000" },
+        CacheControl: cacheControl,
       })
     )
   } catch (error) {
@@ -168,7 +170,7 @@ export const handler = ApiHandler(async (event) => {
     isBase64Encoded: true,
     headers: {
       "Content-Type": contentType,
-      "Cache-Control": "max-age=31536000",
+      "Cache-Control": cacheControl,
     },
   }
 })
