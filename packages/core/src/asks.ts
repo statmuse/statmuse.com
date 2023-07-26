@@ -48,3 +48,34 @@ export const getAsksIndex = async (names = leagues, params: { n?: Date, p?: Date
 }
 
 export type Ask = Awaited<ReturnType<typeof getAsksIndex>>[number]
+
+export const getFinanceAsksIndex = async (params: { n?: Date, p?: Date, page?: string }) => {
+  let query = db.selectFrom('finance_asks')
+    .selectAll('finance_asks')
+    .where('is_in_index', '=', true)
+    .where('last_web_search_at', 'is not', null)
+
+
+  if (params.n) {
+    query = query.where('last_web_search_at', '<', params.n)
+      .orderBy('last_web_search_at', 'desc')
+  } else if (params.p) {
+    query = query.where('last_web_search_at', '>', params.p)
+      .orderBy('last_web_search_at', 'asc')
+  } else if (params.page && params.page === 'last') {
+    query = query.orderBy('last_web_search_at', 'asc')
+  } else {
+    query = query.orderBy('last_web_search_at', 'desc')
+  }
+
+  const records = await query.selectAll('finance_asks')
+    .limit(ASK_LIMIT + 1)
+    .execute()
+
+  if (params.p || params.page) {
+    records.reverse()
+  }
+  return records
+}
+
+export type FinanceAsk = Awaited<ReturnType<typeof getFinanceAsksIndex>>[number]
