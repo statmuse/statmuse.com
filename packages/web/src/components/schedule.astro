@@ -9,6 +9,7 @@ import {
   fallbackIcon,
 } from '@statmuse/core/gamera'
 import EntityLink from '@components/entity-link.astro'
+import Image from '@components/image.astro'
 
 interface Props {
   league: string
@@ -46,10 +47,12 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
                     <div class="flex-1">
                       <div class="flex items center py-2.5">
                         <EntityLink entity={game.awayTeam.entity}>
-                          <img
+                          <Image
                             class="block w-6 h-6 object-contain mr-2.5"
                             src={game.awayTeam.logoUrl || fallbackIcon(league)}
                             alt={game.awayTeam.name}
+                            width={24}
+                            height={24}
                           />
                         </EntityLink>
                         <p
@@ -74,10 +77,12 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
                       </div>
                       <div class="flex items center py-2.5">
                         <EntityLink entity={game.homeTeam.entity}>
-                          <img
+                          <Image
                             class="block w-6 h-6 object-contain mr-2.5"
                             src={game.homeTeam.logoUrl || fallbackIcon(league)}
                             alt={game.homeTeam.name}
+                            width={24}
+                            height={24}
                           />
                         </EntityLink>
                         <p
@@ -118,10 +123,12 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
                     <div class="flex-1">
                       <div class="flex items center py-2.5">
                         <EntityLink entity={game.awayTeam.entity}>
-                          <img
+                          <Image
                             class="block w-6 h-6 object-contain mr-2.5"
                             src={game.awayTeam.logoUrl || fallbackIcon(league)}
                             alt={game.awayTeam.name}
+                            width={24}
+                            height={24}
                           />
                         </EntityLink>
                         <p class="flex-1">
@@ -133,10 +140,12 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
                       </div>
                       <div class="flex items center py-2.5">
                         <EntityLink entity={game.homeTeam.entity}>
-                          <img
+                          <Image
                             class="block w-6 h-6 object-contain mr-2.5"
                             src={game.homeTeam.logoUrl || fallbackIcon(league)}
                             alt={game.homeTeam.name}
+                            width={24}
+                            height={24}
                           />
                         </EntityLink>
                         <p class="flex-1">
@@ -160,10 +169,12 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
                 <div class="border-t border-[#e4e4e4] py-2">
                   <div class="flex items center py-2.5">
                     <EntityLink entity={game.awayTeam.entity}>
-                      <img
+                      <Image
                         class="block w-6 h-6 object-contain mr-2.5"
                         src={game.awayTeam.logoUrl || fallbackIcon(league)}
                         alt={game.awayTeam.name}
+                        width={24}
+                        height={24}
                       />
                     </EntityLink>
                     <p class="flex-1">
@@ -177,10 +188,12 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
                   </div>
                   <div class="flex items center py-2.5">
                     <EntityLink entity={game.homeTeam.entity}>
-                      <img
+                      <Image
                         class="block w-6 h-6 object-contain mr-2.5"
                         src={game.homeTeam.logoUrl || fallbackIcon(league)}
                         alt={game.homeTeam.name}
+                        width={24}
+                        height={24}
                       />
                     </EntityLink>
                     <p class="flex-1">

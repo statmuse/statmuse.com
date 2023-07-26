@@ -1,0 +1,60 @@
+---
+import { Image as AstroImage, RemoteImageProps } from 'astro:assets'
+import type { GameraResponse } from '@statmuse/core/gamera'
+import type { Answer } from '@statmuse/core/questions'
+
+interface Props extends Omit<RemoteImageProps, 'src'> {
+  src: string | { answer: Answer }
+}
+
+const getUrl = (src: string | { answer: Answer }) => {
+  if (typeof src === 'string') return src
+  const answer = src.answer as GameraResponse
+  const subject = answer.visual.summary.subject
+  return subject.imageUrl
+}
+
+const getImageUrl = (src: string | { answer: Answer }) => {
+  const url = getUrl(src)
+  if (import.meta.env.DEV) return url
+  if (typeof src === 'string') return new URL(src).pathname
+  return new URL(url).pathname
+}
+
+const getSrc = (url: string) => {
+  const params: Record<string, string> = { format: 'auto' }
+  if (Astro.props.width) params['width'] = Astro.props.width.toString()
+  else if (Astro.props.height) params['height'] = Astro.props.height.toString()
+
+  return url + '?' + new URLSearchParams(params).toString()
+}
+
+const getSrcSet = (url: string) => {
+  const params: Record<string, string> = { format: 'auto' }
+  const width =
+    typeof Astro.props.width === 'number'
+      ? Astro.props.width
+      : parseInt(Astro.props.width)
+
+  const getDensity = (multiplier: 1 | 2 | 3) =>
+    url +
+    '?' +
+    new URLSearchParams({
+      ...params,
+      width: (width * multiplier).toString(),
+    }).toString() +
+    ` ${multiplier}x`
+
+  const base = getDensity(1)
+  const double = getDensity(2)
+  const triple = getDensity(3)
+
+  return [base, double, triple].join(', ')
+}
+
+const url = getImageUrl(Astro.props.src)
+const src = import.meta.env.DEV ? url : getSrc(url)
+const srcset = import.meta.env.DEV ? undefined : getSrcSet(url)
+---
+
+<AstroImage {...Astro.props} {src} {srcset} />

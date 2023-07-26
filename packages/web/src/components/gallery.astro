@@ -1,6 +1,7 @@
 ---
 import { GameraGalleryImage, getUrlForEntity } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
+import Image from '@components/image.astro'
 
 interface Props extends HTMLAttributes<'div'> {
   images: GameraGalleryImage[]
@@ -26,10 +27,12 @@ const Wrapper = firstLeader?.entity ? 'a' : 'div'
             class="h-[85px] w-[120px] md:h-[100px] md:w-[150px] flex justify-center items-end rounded-lg overflow-hidden"
             style={`background-color: ${image.colors.backgroundColor}`}
           >
-            <img
+            <Image
+              class="h-[90%] object-contain object-bottom"
               alt={image.entity?.display || alt || 'Player Gallery Image'}
-              class="h-[90%]"
               src={image.url}
+              width={110}
+              height={110}
             />
           </Wrapper>
         ))

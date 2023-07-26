@@ -2,6 +2,7 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
+import Image from '@components/image.astro'
 import type { PlayerGalleryItem } from '@lib/player'
 import { type GameraDomain, getUrlForEntity } from '@statmuse/core/gamera'
 
@@ -94,7 +95,7 @@ const meta = {
     <div class="flex flex-wrap justify-center">
       {
         Object.entries(groupedByFirstLetterLastName).map(
-          ([letter, [firstPlayer, ...players]]) => {
+          ([letter, [firstPlayer, ...players]], i) => {
             return (
               <>
                 <a
@@ -109,11 +110,14 @@ const meta = {
                     class="h-28 w-28 md:h-44 md:w-44 m-0.5 md:m-1.5 rounded-lg flex justify-center overflow-hidden relative"
                     style={`background: ${firstPlayer.background_color_hex};`}
                   >
-                    <img
-                      class="h-full object-cover mt-1.5 md:mt-2.5"
-                      alt={firstPlayer.used_name}
-                      src={firstPlayer.bust_image_url}
+                    <Image
                       data-cy-illustration
+                      class="h-full mt-1.5 md:mt-2.5 object-cover"
+                      alt={firstPlayer.used_name}
+                      src={firstPlayer.bust_image_url!}
+                      width={250}
+                      height={250}
+                      loading={i < 20 ? 'eager' : 'lazy'}
                     />
                     <div
                       class="absolute w-full h-full"
@@ -128,7 +132,7 @@ const meta = {
                   id={`${letter}`}
                   class="relative -top-[62px] md:-top-[70px]"
                 />
-                {players.map((player) => (
+                {players.map((player, i) => (
                   <a
                     href={getUrlForEntity({
                       id: player.resource_id,
@@ -141,11 +145,14 @@ const meta = {
                       class="h-28 w-28 md:h-44 md:w-44 m-0.5 md:m-1.5 rounded-lg flex justify-center overflow-hidden relative"
                       style={`background: ${player.background_color_hex};`}
                     >
-                      <img
-                        class="h-full object-cover mt-1.5 md:mt-2.5"
-                        alt={player.used_name}
-                        src={player.bust_image_url}
+                      <Image
                         data-cy-illustration
+                        class="h-full mt-1.5 md:mt-2.5 object-cover"
+                        alt={player.used_name}
+                        src={player.bust_image_url!}
+                        width={250}
+                        height={250}
+                        loading={i < 20 ? 'eager' : 'lazy'}
                       />
                       <div
                         class="absolute w-full h-full"
@@ -167,8 +174,9 @@ const meta = {
       class="my-4"
       style="color: #969ca1; text-align: right; font-style: italic;"
     >
-      All illustrations and content on this site &copy; 2016-2021 StatMuse, Inc.<br
-      />
+      All illustrations and content on this site &copy; 2016-{
+        new Date().getFullYear()
+      } StatMuse, Inc.<br />
       Unauthorized duplication or usage prohibited.
     </p>
   </Container>
@@ -176,7 +184,8 @@ const meta = {
 <script>
   // Player Gallery Alphabet Nav Highlight
   document.querySelectorAll('[data-click-nav]').forEach((el) => {
-    el.addEventListener('click', () => {
+    const element = el as HTMLAnchorElement
+    element.addEventListener('click', () => {
       // remove classes from previously selected item
       document.querySelectorAll('[data-highlight="true"]').forEach((n) => {
         ;['text-white', 'bg-primary', 'hover:no-underline'].forEach((x) => {
@@ -184,10 +193,10 @@ const meta = {
         })
       })
 
-      el.classList.add('text-white')
-      el.classList.add('bg-primary')
-      el.classList.add('hover:no-underline')
-      el.dataset.highlight = true
+      element.classList.add('text-white')
+      element.classList.add('bg-primary')
+      element.classList.add('hover:no-underline')
+      element.dataset.highlight = 'true'
     })
   })
 </script>

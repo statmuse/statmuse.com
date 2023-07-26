@@ -1,0 +1,810 @@
+---
+import Layout from '@layouts/main.astro'
+import Logo from '@components/logo.astro'
+import AskBar from '@components/ask-bar.astro'
+import Image from '@components/image.astro'
+import { listOnboarding } from '@statmuse/core/examples'
+import { createAskPath } from '@lib/path'
+
+type LeagueParam = 'nba' | 'nfl' | 'mlb' | 'nhl' | 'pga' | 'fantasy'
+const league = Astro.params.league as LeagueParam
+
+const onboardingExamples = await listOnboarding(
+  league === 'fantasy' ? 'nfl' : league,
+  10
+)
+const banner =
+  onboardingExamples[Math.floor(Math.random() * onboardingExamples.length)]
+
+const nbaExamples = [
+  [
+    'Scores',
+    [
+      'Did the Warriors win?',
+      'Who won the Finals last year?',
+      'What was the score of the last Pacers game?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nba', query: q }),
+    })),
+  ],
+  [
+    'Schedules',
+    [
+      'Who do the Cavs play this week?',
+      'What channel is the Raptors game on?',
+      'When do the Spurs play next?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nba', query: q }),
+    })),
+  ],
+  [
+    'Standings',
+    [
+      'Are the Sixers in the playoffs?',
+      'Western Conference standings this season?',
+      'Who leads the East?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nba', query: q }),
+    })),
+  ],
+  [
+    'Stats',
+    [
+      'Lowest defensive rating by a team this season?',
+      'Who had the most points in a game last season?',
+      'Which team has the most threes in a playoff game?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nba', query: q }),
+    })),
+  ],
+  [
+    'Bios',
+    [
+      'How tall is Giannis?',
+      'Where did Kyrie Irving go to college?',
+      'Tell me about Larry Bird',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nba', query: q }),
+    })),
+  ],
+  [
+    'Recaps',
+    [
+      'How did LeBron do?',
+      'Did Russell Westbrook have a good season this year?',
+      'How did MJ do in his rookie season?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nba', query: q }),
+    })),
+  ],
+  [
+    'Odds',
+    ['NBA odds', 'Who are the favorites tonight?', 'Lakers over/under'].map(
+      (q) => ({
+        query: q,
+        path: createAskPath({ domain: 'nba', query: q }),
+      })
+    ),
+  ],
+  [
+    'Beyond the Box Score',
+    [
+      "What is Steph Curry's career true shooting percentage?",
+      'Who had the most DraftKings points in the last NBA Finals?',
+      'Kevin Durant shot chart in 2013-14?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nba', query: q }),
+    })),
+  ],
+]
+
+const nflExamples = [
+  [
+    'Scores',
+    [
+      'Did the Eagles win?',
+      'Who won the first Super Bowl?',
+      'What was the score of the last Saints game?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nfl', query: q }),
+    })),
+  ],
+  [
+    'Schedules',
+    [
+      'Who do the Chiefs play this week?',
+      'What channel is the Super Bowl on?',
+      'When do the Rams play next?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nfl', query: q }),
+    })),
+  ],
+  [
+    'Standings',
+    [
+      "What is the Carolina Panthers' record?",
+      'Which team had the best record in the NFC East last season?',
+      'Did the Ravens make the playoffs?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nfl', query: q }),
+    })),
+  ],
+  [
+    'Stats',
+    [
+      'Who has the most touchdowns?',
+      'Which team has the most two-point conversions this season?',
+      'Which QB has the most passing yards in a playoff game?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nfl', query: q }),
+    })),
+  ],
+  [
+    'Bios',
+    [
+      'Tell me about the 49ers',
+      'Where did Todd Gurley go to college?',
+      'Dan Marino career stats?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nfl', query: q }),
+    })),
+  ],
+  [
+    'Recaps',
+    [
+      'How did Case Keenum do?',
+      'Did Julio Jones have a good season last year?',
+      'How did Randy Moss do in his rookie season?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nfl', query: q }),
+    })),
+  ],
+  [
+    'Odds',
+    ['NFL odds', 'Who are the favorites this week?', 'Chiefs spread'].map((q) =>
+      createAskPath({ domain: 'nfl', query: q })
+    ),
+  ],
+  [
+    'Beyond the Box Score',
+    [
+      'Which team has the most career ties in the NFL?',
+      'Who had the most DraftKings points in the last Super Bowl?',
+      'Which team had the most third down conversions last season?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nfl', query: q }),
+    })),
+  ],
+]
+
+const mlbExamples = [
+  [
+    'Scores',
+    [
+      'Did the Giants win?',
+      'Which team has won the most World Series?',
+      'Who won the World Series last year?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'mlb', query: q }),
+    })),
+  ],
+  [
+    'Schedules',
+    [
+      'When is the next Athletics home game?',
+      'What channel is the Mariners game on?',
+      'When do the Dodgers play the Giants next?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'mlb', query: q }),
+    })),
+  ],
+  [
+    'Standings',
+    [
+      "What is the Cubs' record?",
+      "What was the Cubs' record last season?",
+      'Who had the best record in the American League last season?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'mlb', query: q }),
+    })),
+  ],
+  [
+    'Stats',
+    [
+      'Which pitcher has the most strikeouts this season?',
+      'Which team had the most home runs in a season?',
+      'Who has the most RBI in a World Series?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'mlb', query: q }),
+    })),
+  ],
+  [
+    'Bios',
+    [
+      'How tall was Randy Johnson?',
+      'How much does Bartolo Colon weigh?',
+      "What are Babe Ruth's career stats?",
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'mlb', query: q }),
+    })),
+  ],
+  [
+    'Recaps',
+    [
+      'How did Mike Trout do?',
+      'How did the Blue Jays do last season?',
+      'How did Jose Altuve do in his rookie season?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'mlb', query: q }),
+    })),
+  ],
+  [
+    'Odds',
+    ['MLB odds', 'Who are the favorites tonight?', 'Red Sox moneyline'].map(
+      (q) => ({
+        query: q,
+        path: createAskPath({ domain: 'mlb', query: q }),
+      })
+    ),
+  ],
+  [
+    'Beyond the Box Score',
+    [
+      'Who has the highest wRC+ in a season?',
+      'Which pitcher has the highest career strikeouts per nine innings?',
+      'Who has the highest weighted on base percentage in a season?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'mlb', query: q }),
+    })),
+  ],
+]
+
+const nhlExamples = [
+  [
+    'Scores',
+    [
+      'Did the Golden Knights win?',
+      'Who won the Stanley Cup last season?',
+      'What happened in the Predators game?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nhl', query: q }),
+    })),
+  ],
+  [
+    'Schedules',
+    [
+      'What NHL games are there tonight?',
+      'What channel is the Avalanche game on?',
+      'When do the Sharks play next?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nhl', query: q }),
+    })),
+  ],
+  [
+    'Standings',
+    [
+      "What is the Carolina Hurricanes' record?",
+      'What place are the Ducks in?',
+      "What is the Devils' best record in a season?",
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nhl', query: q }),
+    })),
+  ],
+  [
+    'Stats',
+    [
+      'Who leads the NHL in points?',
+      'Which team had the most power play points this season?',
+      'Who had the most assists in a season?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nhl', query: q }),
+    })),
+  ],
+  [
+    'Bios',
+    [
+      'How old is Patrik Laine?',
+      'How tall is Wayne Gretzky?',
+      "What are Mario Lemieux's career stats?",
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nhl', query: q }),
+    })),
+  ],
+  [
+    'Recaps',
+    [
+      'Tell me about Gordie Howe',
+      'Did Tyler Seguin have a good season this year?',
+      'How did Sidney Crosby do in his rookie season?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nhl', query: q }),
+    })),
+  ],
+  [
+    'Odds',
+    ['NHL odds', 'Who are the favorites tonight?', 'Maple Leafs moneyline'].map(
+      (q) => ({
+        query: q,
+        path: createAskPath({ domain: 'nhl', query: q }),
+      })
+    ),
+  ],
+  [
+    'Beyond the Box Score',
+    [
+      'Which team has the highest faceoff win percentage this season?',
+      'Which team has the highest penalty kill percentage in a season in the playoffs with at least 8 games played?',
+      'Who had the most game winning goals in a season in the playoffs?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nhl', query: q }),
+    })),
+  ],
+]
+
+const pgaExamples = [
+  [
+    'Scores',
+    [
+      'Did Tiger win The Masters last year?',
+      'Who won the PGA Championship in 1980?',
+      'Who won the US Open in 2000?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'pga', query: q }),
+    })),
+  ],
+  [
+    'Schedules',
+    [
+      'What is the PGA schedule?',
+      'When is the next US Open?',
+      'When is the next Masters?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'pga', query: q }),
+    })),
+  ],
+  [
+    'Standings',
+    [
+      'FedEx Cup rankings in 2013?',
+      'What was The Masters leaderboard in 2016?',
+      'Who led the FedEx rankings last year?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'pga', query: q }),
+    })),
+  ],
+  [
+    'Stats',
+    [
+      'Who won the most tournaments in 2000?',
+      'Who had the best putting average last season?',
+      "What was Tiger's FWY% in 2003?",
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'pga', query: q }),
+    })),
+  ],
+  [
+    'Bios',
+    [
+      'How old is Phil Mickelson?',
+      'Tiger Woods career stats',
+      'Tell me about Rory McIlroy',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'pga', query: q }),
+    })),
+  ],
+  [
+    'Recaps',
+    [
+      'How did Tiger Woods do in 2000?',
+      'Did Jordan Spieth have a good season last year?',
+      'How did Jordan Spieth do in his first season?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'pga', query: q }),
+    })),
+  ],
+  [
+    'Beyond the Box Score',
+    [
+      'Who had the best driving distance average in a season, minimum 80 events?',
+      'Who was the last player with at least 70 gir% in a season when winning at least 5 tournaments?',
+      'When was the last time Tiger had 70 GIR% and 70 FWY% in a season?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'pga', query: q }),
+    })),
+  ],
+]
+
+const fantasyExamples = [
+  [
+    'Player Outlooks & Projections',
+    [
+      'What is your projection for Davante Adams?',
+      'What is your outlook for Ezekiel Elliott this week?',
+      'Give me your projection for Pat Mahomes.',
+      'Where do you rank Matt Ryan?',
+      'Tell me about Russell Wilson.',
+      'How will Kyler Murray do?',
+      'What are your thoughts on Tom Brady this week?',
+      'Should I start Ezekiel Elliott?',
+      'How do you feel about James Conner?',
+      'Should I sit Keenan Allen?',
+      "What's the deal with Melvin Gordon?",
+      'Should I play Amari Cooper?',
+      'What do you think about Gronk?',
+      'Will Jared Goff be a good fantasy quarterback this week?',
+      'Who is the top-ranked quarterback?',
+      'Who will be the best fantasy wide receiver this week?',
+      'How will the Rams defense do this week?',
+      'Are the Cowboys going to be a good defense?',
+      'Will A.J. Green be a factor?',
+      'Will Cooper Kupp be a worthwhile start?',
+      'How has Kareem Hunt been doing?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'fantasy', query: q }),
+    })),
+  ],
+  [
+    'Player Comparisons',
+    [
+      'Who should I start between Josh Jacobs and Aaron Jones?',
+      'Should I start Aaron Rodgers or Lamar Jackson?',
+      'Should I start Alvin Kamara or Nick Chubb?',
+      'Who would you start out of Antonio Brown, DK Metcalf and Amari Cooper?',
+      'Would you start Dalvin Cook or Derrick Henry?',
+      'Tell me who to start from Josh Allen, Kyler Murray or Lamar Jackson?',
+      'T.J. Hockenson, Jimmy Graham or Evan Engram?',
+      'Who should I start from Robert Woods and A.J. Brown?',
+      'Should I go with the Ravens defense or the Colts defense?',
+      'Start Tom Brady or Ryan Tannehill?',
+      'How about Phillip Lindsay or Miles Sanders?',
+      'James Robinson or Kenyan Drake?',
+      'Ronald Jones, Tyler Boyd or Baker Mayfield?',
+      'Jonathan Taylor, Julio Jones, Jared Cook or Kirk Cousins?',
+      'CeeDee Lamb or Marquez Valdes-Scantling?',
+      'JuJu or Tyreek?',
+      'Diggs or Thielen?',
+      'Chubb or Dalvin or Kamara?',
+      'Kittle or Waller?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'fantasy', query: q }),
+    })),
+  ],
+  [
+    'Player & Team Fantasy Recaps',
+    [
+      'Patrick Mahomes vs Chargers.',
+      'Who scored the most fantasy points last season?',
+      'Which running back averaged the most fantasy points per game last season?',
+      'Which WR had the most fantasy points last week?',
+      'Which QB had the most draftkings points?',
+      'Who has the most fantasy points per game in a season?',
+      'Which tight end scored the most fantasy points last season?',
+      'How many fantasy points per game is Derrick Henry averaging this season?',
+      'Which team defense has scored the fewest fantasy points in 2020?',
+      'Which tight end scored the most fantasy points?',
+      'Tell me about Stefon Diggs.',
+      'How did Tyreek Hill do?',
+      'How is Brady doing this season?',
+      'Which rookie has the most fantasy points per game this season?',
+      'Which TE is leading in PPR this season?',
+      'How did Dalvin Cook do in Week 15?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'fantasy', query: q }),
+    })),
+  ],
+]
+
+type ExampleSet = [string, { query: string; path: string }[]]
+
+const examples = {
+  nba: nbaExamples as ExampleSet[],
+  nfl: nflExamples as ExampleSet[],
+  mlb: mlbExamples as ExampleSet[],
+  nhl: nhlExamples as ExampleSet[],
+  pga: pgaExamples as ExampleSet[],
+  fantasy: fantasyExamples as ExampleSet[],
+}
+
+const leagues = ['All', 'NBA', 'NFL', 'NHL', 'MLB', 'PGA']
+
+const meta = {
+  title: `${
+    league === 'fantasy' ? 'Fantasy Football' : league.toUpperCase()
+  } Stats`,
+  description: `Instant answers to your ${
+    league === 'fantasy' ? 'fantasy football' : league.toUpperCase()
+  } questions. Stats, projections, comparisons, outlooks, recaps and more — just ask.`,
+}
+---
+
+<Layout {meta}>
+  <main
+    id="home"
+    class="home-layout [--header-height:55px] md:[--header-height:64px]"
+  >
+    <div class="sidebar hidden md:block min-w-[75px] bg-[#f9f9f9]">
+      <sidebar-menu>
+        <div
+          class="sticky top-0 bg-[#f9f9f9] border-t border-transparent w-[237px]"
+        >
+          <span
+            class="sidebar-hamburger-icon block w-[33px] h-[33px] my-[15.5px] ml-5 cursor-pointer"
+          >
+          </span><div class="mb-[22px]">
+            <ul>
+              <li
+                class="flex items-center my-0.5 py-1.5 highlight bg-white font-semibold"
+              >
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 home-icon"></span> Home
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/money"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 money-icon"></span> Money
+                  Search
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/questions"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 trending-icon">
+                  </span> Trending
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/players"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 gallery-icon">
+                  </span> Gallery
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="https://shop.statmuse.com"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 shop-icon"></span> Shop
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="https://blog.statmuse.com/"
+                  target="_blank"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 blog-icon"></span> Blog
+                </a>
+              </li>
+            </ul>
+          </div><div class="mb-[22px]">
+            <h3
+              class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
+              style="margin-left: 22.5px;"
+            >
+              Search
+            </h3><ul>
+              <li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/product/examples"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 example-icon">
+                  </span> Examples
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/product/data"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 data-coverage-icon">
+                  </span> Data &amp; Glossary
+                </a>
+              </li>
+            </ul>
+          </div><div class="mb-[22px]">
+            <h3
+              class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
+              style="margin-left: 22.5px;"
+            >
+              Play
+            </h3><ul>
+              <li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="https://elementsofbasketball.com/"
+                  target="_blank"
+                  style="margin-left: 21px;"
+                >
+                  <span
+                    class="block w-[29px] h-[29px] mr-2 elements-bball-icon"
+                  >
+                  </span> Elements of Bball
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="https://hardenmaze.com/"
+                  target="_blank"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 harden-maze-icon">
+                  </span> Harden Maze
+                </a>
+              </li>
+            </ul>
+          </div><div class="mb-[22px]">
+            <h3
+              class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
+              style="margin-left: 22.5px;"
+            >
+              Company
+            </h3><ul>
+              <li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/company/about"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 about-icon"></span> About
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div></sidebar-menu
+      >
+    </div>
+
+    <div
+      class="main h-[var(--header-height)] px-3 md:px-[21px] bg-white flex items-center sticky md:relative top-0 z-20"
+    >
+      <div class="min-w-[25px] md:hidden">
+        <dropdown-menu hamburger="true"></dropdown-menu>
+      </div>
+
+      <div class="flex space-x-5 items-center flex-1 justify-end"></div>
+    </div>
+
+    <div class="main content-layout">
+      <div class="-mb-[5px] z-10">
+        <div class="flex flex-col md:flex-row items-center mt-[55px] md:mt-0">
+          <div class="flex-1 mb-[34px] md:-mr-[20px] md:mb-0">
+            <Logo />
+          </div>
+          <Image
+            class="max-w-[70%] md:max-w-none md:h-[205px] md:pr-[10px] object-contain object-bottom"
+            src={banner}
+            alt={banner.text}
+            width={260}
+            height={260}
+            loading="eager"
+          />
+        </div>
+      </div>
+      <div
+        class="content-item-full content-layout mb-5 md:mb-[30px] sticky top-[var(--header-height)] md:top-0 py-[5px] bg-white z-[5]"
+      >
+        <div class="min-h-[46px]">
+          <AskBar />
+        </div>
+      </div>
+      <div>
+        <div class="flex flex-nowrap gap-[5px] mb-2.5">
+          {
+            leagues.map((x) => (
+              <a
+                class={`flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 ${
+                  x.toLowerCase() === league && 'bg-primary text-white'
+                }`}
+                href={x === 'All' ? '/' : `/${x.toLowerCase()}`}
+                set:text={x}
+              />
+            ))
+          }
+          <a
+            class={`hidden md:flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 min-w-fit ${
+              league === 'fantasy' && 'bg-secondary text-white'
+            }`}
+            href="/fantasy"
+            set:text="Fantasy"
+          />
+          <a
+            class="hidden md:flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 min-w-fit"
+            href="/money"
+            set:text="Money"
+          />
+        </div>
+        <div class="flex flex-nowrap gap-[5px] mb-2.5 md:hidden">
+          <a
+            class={`flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 max-w-fit ${
+              league === 'fantasy' && 'bg-secondary text-white'
+            }`}
+            href="/fantasy"
+            set:text="Fantasy"
+          />
+          <a
+            class="flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 max-w-fit"
+            href="/money"
+            set:text="Money"
+          />
+        </div>
+      </div>
+      <div class="divide-y divide-[#e4e4e4]">
+        {
+          examples[league || 'nba'].map(([title, queries]) => (
+            <div class="py-4">
+              <h2 class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3">
+                {title}
+              </h2>
+              <ul>
+                {queries.map(({ query, path }) => (
+                  <li class="my-3">
+                    <a href={path}>{query}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+      <h4 class="font-semibold text-right py-4">
+        <a href={`/${league}/questions`}>
+          See trending {
+            league === 'fantasy' ? 'Fantasy Football' : league.toUpperCase()
+          } searches
+        </a>
+      </h4>
+    </div>
+  </main>
+</Layout>

@@ -5,6 +5,7 @@ import {
   getUrlForEntity,
 } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
+import Image from '@components/image.astro'
 
 interface Props extends HTMLAttributes<'div'> {
   data: GameraGrid
@@ -191,7 +192,7 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                     return (
                       <div class="flex items-center">
                         {row.imageUrl ? (
-                          <img
+                          <Image
                             src={row.imageUrl}
                             alt={row.display}
                             class:list={{
@@ -205,6 +206,8 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                               'inline-block w-6 h-6 object-contain mr-2.5 align-middle':
                                 alternateStyle,
                             }}
+                            width={24}
+                            height={24}
                           />
                         ) : (
                           <div class="w-4 h-4 mr-2.5" />

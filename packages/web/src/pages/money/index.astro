@@ -1,0 +1,364 @@
+---
+import Layout from '@layouts/main.astro'
+import Logo from '@components/logo.astro'
+import AskBar from '@components/ask-bar.astro'
+import Image from '@components/image.astro'
+import { createAskPath } from '@lib/path'
+
+const examples = [
+  [
+    'Prices',
+    [
+      "What's the all-time high price of Bitcoin?",
+      'What was the price of Disney at the end of last year?',
+      'What was the price of Tesla on April 20, 2021?',
+      "What's the average price of Apple in the last 4 years?",
+      "What's the all-time low price of Amazon?",
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'money', query: q }),
+    })),
+  ],
+  [
+    'Returns',
+    [
+      "What's the best returning micro-cap stock MTD?",
+      "What's the return of Nike this quarter?",
+      "What's the best returning index since March 12, 2020?",
+      "What's the return of Bitcoin since Jan 1, 2017?",
+      "What's the best large-cap energy company this decade?",
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'money', query: q }),
+    })),
+  ],
+  [
+    'Recaps',
+    [
+      'How did Bumble do?',
+      'Tell me about gold and bitcoin this year',
+      'How did the NASDAQ and S&P 500 do last December?',
+      "How's NFLX doing this year?",
+      'Tell me about Gold and Silver month to date',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'money', query: q }),
+    })),
+  ],
+  [
+    'Short Interest',
+    [
+      'What are the most shorted stocks?',
+      'How much short interest is in GME?',
+      'Which entertainment stock has the most short interest?',
+      'Which large cap retail stock has the most short interest?',
+      "What's the least shorted stock?",
+      "What's the most shorted stock with a p/e ratio above 100?",
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'money', query: q }),
+    })),
+  ],
+  [
+    'Comparisons',
+    [
+      'Highest return between Bitcoin, Gold, NASDAQ and S&P 500 in the last decade?',
+      "What's the best return between AAPL, FB, GOOGL and Amazon since April 1, 2018?",
+      'S&P 500, DJI, NASDAQ returns in the last 20 years?',
+      "What's the best return between PENN and DKNG in the last 12 months?",
+      'Bumble vs Match performance ytd',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'money', query: q }),
+    })),
+  ],
+  [
+    'Money Pairs',
+    [
+      "What's the return of gold when priced in bitcoin since jan 1, 2017?",
+      'GBP/XAU return last 10 years',
+      'How has the Argentine peso performed in the last 4 years?',
+      'Indian rupee vs Turkish lira this year',
+      'USD/BTC return since the last halving',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'money', query: q }),
+    })),
+  ],
+  [
+    'Valuations',
+    [
+      "What's the market cap of Bitcoin?",
+      "What's the market cap of Square since 2005?",
+      "What's the market cap of Apple?",
+      "What's the market cap of GME this year?",
+      "What's the all time market cap of Tesla?",
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'money', query: q }),
+    })),
+  ],
+  [
+    'Bitcoin-only',
+    [
+      "What's the hashrate?",
+      "What's the block height?",
+      'When is the next halving?',
+      "What's the return of Bitcoin since the last halving?",
+      'How many Bitcoin are there?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'money', query: q }),
+    })),
+  ],
+] as [string, { query: string; path: string }[]][]
+
+const dataCoverage = [
+  'All ~3K NASDAQ stocks, intraday and historical',
+  'All ~3K NYSE stocks, intraday and historical',
+  '2,000+ ETFs and all major indices, historical',
+  'Ticker search for the top 60 fiat currencies, intraday and historical',
+  'Bitcoin price, supply, hashrate and block height, intraday and historical',
+  'Data providers include Twelve Data and EOD Historical Data',
+]
+
+const imgs = [
+  'https://cdn.statmuse.com/finance/asset_img/statmuse-finance-btc--jgfo5tnv.png',
+  'https://cdn.statmuse.com/finance/asset_img/kanedama-cyborg-01-min--fc2wcyxt.png',
+]
+
+const img = imgs[Math.floor(Math.random() * imgs.length)]
+
+const meta = {
+  title: 'StatMuse Money',
+  description:
+    'Search stock prices, currency pairs, Bitcoin returns and more — just ask.',
+  keywords:
+    'StatMuse, finance, financial information, finance search, stocks, money, Bitcoin, gold, currencies, markets, FX, stock prices, bitcoin prices, stock returns, Bitcoin returns, currency pairs, index funds, ETFs, BTC, USD, EUR, GBP, NASDAQ stocks, NYSE stocks',
+}
+---
+
+<Layout {meta}>
+  <main
+    id="home"
+    class="home-layout [--header-height:55px] md:[--header-height:64px]"
+  >
+    <div class="sidebar hidden md:block min-w-[75px] bg-[#f9f9f9]">
+      <sidebar-menu>
+        <div
+          class="sticky top-0 bg-[#f9f9f9] border-t border-transparent w-[237px]"
+        >
+          <span
+            class="sidebar-hamburger-icon block w-[33px] h-[33px] my-[15.5px] ml-5 cursor-pointer"
+          >
+          </span><div class="mb-[22px]">
+            <ul>
+              <li
+                class="flex items-center my-0.5 py-1.5 highlight bg-white font-semibold"
+              >
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 home-icon"></span> Home
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/money"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 money-icon"></span> Money
+                  Search
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/questions"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 trending-icon">
+                  </span> Trending
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/players"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 gallery-icon">
+                  </span> Gallery
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="https://shop.statmuse.com"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 shop-icon"></span> Shop
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="https://blog.statmuse.com/"
+                  target="_blank"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 blog-icon"></span> Blog
+                </a>
+              </li>
+            </ul>
+          </div><div class="mb-[22px]">
+            <h3
+              class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
+              style="margin-left: 22.5px;"
+            >
+              Search
+            </h3><ul>
+              <li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/product/examples"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 example-icon">
+                  </span> Examples
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/product/data"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 data-coverage-icon">
+                  </span> Data &amp; Glossary
+                </a>
+              </li>
+            </ul>
+          </div><div class="mb-[22px]">
+            <h3
+              class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
+              style="margin-left: 22.5px;"
+            >
+              Play
+            </h3><ul>
+              <li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="https://elementsofbasketball.com/"
+                  target="_blank"
+                  style="margin-left: 21px;"
+                >
+                  <span
+                    class="block w-[29px] h-[29px] mr-2 elements-bball-icon"
+                  >
+                  </span> Elements of Bball
+                </a>
+              </li><li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="https://hardenmaze.com/"
+                  target="_blank"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 harden-maze-icon">
+                  </span> Harden Maze
+                </a>
+              </li>
+            </ul>
+          </div><div class="mb-[22px]">
+            <h3
+              class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
+              style="margin-left: 22.5px;"
+            >
+              Company
+            </h3><ul>
+              <li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline"
+                  href="/company/about"
+                  style="margin-left: 21px;"
+                >
+                  <span class="block w-[29px] h-[29px] mr-2 about-icon"></span> About
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div></sidebar-menu
+      >
+    </div>
+
+    <div
+      class="main h-[var(--header-height)] px-3 md:px-[21px] bg-white flex items-center sticky md:relative top-0 z-20"
+    >
+      <div class="min-w-[25px] md:hidden">
+        <dropdown-menu hamburger="true"></dropdown-menu>
+      </div>
+
+      <div class="flex space-x-5 items-center flex-1 justify-end"></div>
+    </div>
+
+    <div class="main content-layout">
+      <div class="-mb-[5px] z-10">
+        <div class="flex flex-col md:flex-row items-center mt-[55px] md:mt-0">
+          <div class="flex-1 mb-[34px] md:-mr-[20px] md:mb-0">
+            <Logo />
+          </div>
+          <Image
+            src={img}
+            class="max-w-[70%] md:max-w-none md:h-[205px] md:pr-[10px] object-contain object-bottom"
+            alt="magic money man"
+            width={260}
+            height={260}
+            loading="eager"
+          />
+        </div>
+      </div>
+      <div
+        class="content-item-full content-layout mb-5 md:mb-[30px] sticky top-[var(--header-height)] md:top-0 py-[5px] bg-white z-[5]"
+      >
+        <div class="min-h-[46px]">
+          <AskBar />
+        </div>
+      </div>
+      <div class="divide-y divide-[#e4e4e4]">
+        {
+          examples.map(([title, queries]) => (
+            <div class="py-4">
+              <h2 class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3">
+                {title}
+              </h2>
+              <ul>
+                {queries.map(({ query, path }) => (
+                  <li class="my-3">
+                    <a href={path}>{query}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+        <div class="py-6 md:py-8" style="margin-bottom: 24px;">
+          <h3
+            class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
+          >
+            DATA COVERAGE
+          </h3>
+          <ul class="list-disc list-inside">
+            {dataCoverage.map((data) => <li class="my-3" set:html={data} />)}
+          </ul>
+        </div>
+      </div>
+      <iframe
+        class="w-full aspect-video mb-6 md:mb-8"
+        src="https://player.vimeo.com/video/554757123"
+        width="100%"
+        frameborder="0"
+        allow="autoplay; fullscreen"
+        allowfullscreen
+      >
+      </iframe>
+    </div>
+  </main>
+</Layout>

@@ -1,6 +1,7 @@
 ---
 import { marked } from 'marked'
 import Container from '@components/container.astro'
+import Image from '@components/image.astro'
 import type { HeroProps } from '@lib/props'
 
 interface Props extends HeroProps {}
@@ -44,10 +45,13 @@ const content = markdown
         }
       </h1>
     </div>
-    <img
-      class="h-44 md:h-52 self-center md:self-end mt-2 md:mt-0 md:pl-6 md:pr-1.5 select-none"
+    <Image
+      class="h-44 md:h-52 self-center md:self-end mt-2 md:mt-0 md:pl-6 md:pr-1.5 select-none object-contain object-bottom"
       alt={Astro.props.imageAlt}
       src={Astro.props.imageUrl}
+      width={350}
+      height={350}
+      loading="eager"
     />
   </div>
 </Container>

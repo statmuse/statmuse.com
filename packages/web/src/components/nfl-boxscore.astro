@@ -7,6 +7,7 @@ import {
 } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
 import { groupBy } from 'remeda'
+import Image from '@components/image.astro'
 import TabPanel from '@components/tab-panel.astro'
 import Tabs from '@components/tabs.astro'
 import TeamStat from '@components/team-stat.astro'
@@ -39,10 +40,13 @@ const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
   <div>
     <div class="flex items-center mb-6">
       <a title={awayTeam.name} href={awayTeamUrl}>
-        <img
+        <Image
           src={awayTeam.logoUrl}
           alt={awayTeam.abbrev}
           class="w-24 h-24 object-contain"
+          width={96}
+          height={96}
+          loading="eager"
         />
       </a>
       <div class="flex-1 ml-5">
@@ -55,10 +59,13 @@ const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
     </div>
     <div class="flex items-center mb-6">
       <a title={homeTeam.name} href={homeTeamUrl}>
-        <img
-          src={homeTeam.logoUrl}
+        <Image
           class="w-24 h-24 object-contain"
+          src={homeTeam.logoUrl}
           alt={homeTeam.abbrev}
+          width={96}
+          height={96}
+          loading="eager"
         />
       </a>
       <div class="flex-1 ml-5">
@@ -110,7 +117,7 @@ const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
                 </div>
                 {plays.map((play) => (
                   <div class="flex py-1.5">
-                    <img
+                    <Image
                       title={play.team}
                       src={
                         play.team === awayTeam.name
@@ -119,6 +126,8 @@ const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
                       }
                       alt={play.team}
                       class="w-7 h-7 mt-2 object-contain"
+                      width={28}
+                      height={28}
                     />
                     <p class="flex-1 py-2 px-4">{play.description}</p>
                     <>

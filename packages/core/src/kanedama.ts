@@ -1,4 +1,4 @@
-export const cdnBaseUrl = ""
+export const cdnBaseUrl = "https://cdn.statmuse.com"
 
 export function handleResponse(response: KanedamaResponse) {
   const subject = response.visual.summary.subject

@@ -1,12 +1,13 @@
 ---
 import type { GameraGalleryImage } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
+import Image from '@components/image.astro'
 
 interface Props extends HTMLAttributes<'div'> {
   representatives: GameraGalleryImage[]
   title?: string
-  alt?: string
-  fallback?: string
+  alt: string
+  fallback: string
 }
 
 const { representatives, alt, fallback } = Astro.props
@@ -37,11 +38,14 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
         class="h-40 sm:h-48 w-40 sm:w-48 mb-5 md:mb-0 flex items-center justify-center rounded-full bg-[#eff4f8] shrink-0 self-center"
         style="border: 4px solid var(--team-secondary-color)"
       >
-        <img
-          alt={alt}
-          class="max-w-[75%] max-h-[75%]"
-          src={fallback}
+        <Image
           data-cy-illustration
+          class="max-w-[75%] max-h-[75%] object-contain object-bottom"
+          alt={alt}
+          src={fallback}
+          width={250}
+          height={250}
+          loading="eager"
         />
       </div>
     )
@@ -50,26 +54,35 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
     representatives.length === 3 && (
       <div class="flex items-end justify-center w-[480px]">
         <div class="relative">
-          <img
-            class="max-w-none absolute bottom-0 left-0 -translate-x-1/2"
-            alt={representatives[0].entity?.display}
+          <Image
+            data-cy-illustration
+            class="max-w-none absolute bottom-0 left-0 -translate-x-1/2 object-contain object-bottom"
+            alt={representatives[0].entity?.display ?? ''}
             src={representatives[0].url}
             style={`height: ${getIllustrationHeight(representatives[0])}px;`}
-            data-cy-illustration
+            width={250}
+            height={250}
+            loading="eager"
           />
-          <img
-            class="max-w-none relative z-[1]"
-            alt={representatives[1].entity?.display}
+          <Image
+            data-cy-illustration
+            class="max-w-none relative z-[1] object-contain object-bottom"
+            alt={representatives[1].entity?.display ?? ''}
             src={representatives[1].url}
             style={`height: ${getIllustrationHeight(representatives[1])}px;`}
-            data-cy-illustration
+            width={250}
+            height={250}
+            loading="eager"
           />
-          <img
-            class="max-w-none absolute bottom-0 right-0 translate-x-1/2"
-            alt={representatives[2].entity?.display}
+          <Image
+            data-cy-illustration
+            class="max-w-none absolute bottom-0 right-0 translate-x-1/2 object-contain object-bottom"
+            alt={representatives[2].entity?.display ?? ''}
             src={representatives[2].url}
             style={`height: ${getIllustrationHeight(representatives[2])}px;`}
-            data-cy-illustration
+            width={250}
+            height={250}
+            loading="eager"
           />
         </div>
       </div>
@@ -78,19 +91,25 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
   {
     representatives.length === 2 && (
       <div class="flex items-end justify-center w-[360px]">
-        <img
-          class="translate-x-1/4"
-          alt={representatives[0].entity?.display}
+        <Image
+          data-cy-illustration
+          class="translate-x-1/4 object-contain object-bottom"
+          alt={representatives[0].entity?.display ?? ''}
           src={representatives[0].url}
           style={`height: ${getIllustrationHeight(representatives[0])}px;`}
-          data-cy-illustration
+          width={250}
+          height={250}
+          loading="eager"
         />
-        <img
-          class="-[175px] -translate-x-1/4 z-[1]"
-          alt={representatives[1].entity?.display}
+        <Image
+          data-cy-illustration
+          class="-[175px] -translate-x-1/4 z-[1] object-contain object-bottom"
+          alt={representatives[1].entity?.display ?? ''}
           src={representatives[1].url}
           style={`height: ${getIllustrationHeight(representatives[1])}px;`}
-          data-cy-illustration
+          width={250}
+          height={250}
+          loading="eager"
         />
       </div>
     )
