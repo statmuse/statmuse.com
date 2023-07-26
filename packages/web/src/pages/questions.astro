@@ -1,1 +1,6 @@
-questions
+---
+import AskIndex from '@components/ask-index.astro'
+import { getAsksIndex } from '@statmuse/core/asks'
+---
+
+<AskIndex fetchAsks={(params) => getAsksIndex(undefined, params)} />

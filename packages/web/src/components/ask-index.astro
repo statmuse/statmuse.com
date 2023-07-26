@@ -104,7 +104,9 @@ if (searchParams.p || (searchParams.page && searchParams.page === 'last')) {
 const paginationOptions = paginate(asks, searchParams, overflow)
 
 const headline = (title?: string) => {
-  if (title && leagues.includes(title.toUpperCase())) {
+  if (!title) return 'Trending Searches'
+
+  if (leagues.includes(title.toUpperCase())) {
     return `Trending ${title.toUpperCase()} Searches`
   }
 
@@ -138,7 +140,7 @@ const meta = {}
           ['All', ...leagues].map((league) => (
             <a
               class={`flex items-center justify-center min-w-[80px] border border-primary rounded-md hover:no-underline hover:text-white hover:bg-primary p-[5px] ${
-                league.toLowerCase() === (domain || 'All')
+                league.toLowerCase() === (domain || 'all')
                   ? 'bg-primary text-white'
                   : 'text-primary'
               } %>`}
@@ -157,7 +159,7 @@ const meta = {}
           ['Fantasy Football', 'Money'].map((x) => (
             <a
               class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
-                x.toLowerCase().includes(domain || '')
+                x.toLowerCase() === domain
                   ? 'bg-secondary text-white'
                   : 'text-secondary'
               } %>`}
