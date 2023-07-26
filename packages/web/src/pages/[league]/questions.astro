@@ -2,7 +2,7 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
-import { getAsksIndex } from '@statmuse/core/asks'
+import { getAsksIndex, ASK_LIMIT, type Ask } from '@statmuse/core/asks'
 
 const { league } = Astro.params
 
@@ -25,13 +25,74 @@ const parseSearchParams = (params: URLSearchParams) => {
   }
 }
 
-const searchParams = parseSearchParams(Astro.url.searchParams)
+type SearchParams = ReturnType<typeof parseSearchParams>
 
-console.log(searchParams)
+type PaginationOptions = {
+  current_page?: 'first-last' | 'first' | 'last'
+  n?: string
+  p?: string
+}
+
+const paginate = (
+  asks: Ask[],
+  { next, previous, page }: SearchParams
+): PaginationOptions => {
+  if (asks.length === 0) return {}
+
+  if (!next && !previous && !page) {
+    console.log(asks[asks.length - 1])
+    return {
+      current_page: asks.length <= ASK_LIMIT ? 'first-last' : 'first',
+      n:
+        asks.length <= ASK_LIMIT
+          ? undefined
+          : asks[asks.length - 1].last_web_search_at
+              ?.toISOString()
+              .replaceAll(':', '_'),
+    }
+  }
+
+  if (page && page === 'last') {
+    return {
+      current_page: asks.length <= ASK_LIMIT ? 'first-last' : 'last',
+      p:
+        asks.length <= ASK_LIMIT
+          ? undefined
+          : asks[0].last_web_search_at?.toISOString().replaceAll(':', '_'),
+    }
+  }
+
+  if (next && asks.length <= ASK_LIMIT) {
+    return {
+      current_page: 'last',
+      p: asks[0].last_web_search_at?.toISOString().replaceAll(':', '_'),
+    }
+  }
+
+  if (previous && asks.length <= ASK_LIMIT) {
+    return {
+      current_page: 'first',
+      n: asks[asks.length - 1].last_web_search_at
+        ?.toISOString()
+        .replaceAll(':', '_'),
+    }
+  }
+
+  return {
+    n: asks[asks.length - 1].last_web_search_at
+      ?.toISOString()
+      .replaceAll(':', '_'),
+    p: asks[0].last_web_search_at?.toISOString().replaceAll(':', '_'),
+  }
+}
+
+const searchParams = parseSearchParams(Astro.url.searchParams)
 
 const leagues = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
 
 let asks = await getAsksIndex(league ? [league] : undefined, searchParams)
+
+const paginationOptions = paginate(asks, searchParams)
 
 if (
   searchParams.previous ||
@@ -39,7 +100,7 @@ if (
 ) {
   asks = asks.slice(1)
 } else {
-  asks = asks.slice(0, 15)
+  asks = asks.slice(0, ASK_LIMIT)
 }
 
 const headline = (str?: string) => {
@@ -54,6 +115,14 @@ const headline = (str?: string) => {
   if (str === 'money') {
     return 'Trending Finance Searches'
   }
+}
+
+const createLink = (league?: string, params?: Record<string, string>) => {
+  let link = league ? `/${league}/questions` : '/questions'
+  if (params) {
+    link = link + `?${new URLSearchParams(params).toString()}`
+  }
+  return link
 }
 
 const meta = {}
@@ -134,5 +203,40 @@ const meta = {}
         }
       </div>
     </section>
+
+    <ul class="text-center my-10 space-x-2">
+      <li class="inline-block">
+        <a
+          href={createLink(league)}
+          class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${['first', 'first-last'].includes(paginationOptions.current_page || '') ? 'text-black pointer-events-none' : ''}`
+        >
+          « First
+        </a>
+      </li>
+      <li class="inline-block">
+        <a
+          href={createLink(league, { p: paginationOptions.p || '' })}
+          class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${paginationOptions.p ? '' : 'text-[#c5c9cc] pointer-events-none'}`
+        >
+          &lt; Previous
+        </a>
+      </li>
+      <li class="inline-block">
+        <a
+          href={createLink(league, { n: paginationOptions.n || '' })}
+          class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${paginationOptions.n ? '' : 'text-[#c5c9cc] pointer-events-none'}`
+        >
+          Next &gt;
+        </a>
+      </li>
+      <li class="inline-block">
+        <a
+          href={createLink(league, { page: 'last' })}
+          class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${['last', 'first-last'].includes(paginationOptions.current_page || '') ? 'text-black pointer-events-none' : ''}`
+        >
+          Last »
+        </a>
+      </li>
+    </ul>
   </Container>
 </Layout>
