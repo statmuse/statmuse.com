@@ -120,46 +120,71 @@ export function ImageOptimization({ stack }: StackContext) {
     functionName: `urlRewriteFunction${stack.node.addr}`,
   })
 
-  astroSite.cdk?.distribution.addBehavior("img/*", imageOrigin, {
-    viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-    cachePolicy: new CachePolicy(stack, `ImageCachePolicy${stack.node.addr}`, {
+  const cachePolicy = new CachePolicy(
+    stack,
+    `ImageCachePolicy${stack.node.addr}`,
+    {
       defaultTtl: Duration.hours(24),
       maxTtl: Duration.days(365),
       minTtl: Duration.seconds(0),
       queryStringBehavior: CacheQueryStringBehavior.all(),
-    }),
+    }
+  )
+
+  const responseHeadersPolicy = new ResponseHeadersPolicy(
+    stack,
+    `ResponseHeadersPolicy${stack.node.addr}`,
+    {
+      corsBehavior: {
+        accessControlAllowCredentials: false,
+        accessControlAllowHeaders: ["*"],
+        accessControlAllowMethods: ["GET"],
+        accessControlAllowOrigins: ["*"],
+        accessControlMaxAge: Duration.seconds(600),
+        originOverride: false,
+      },
+      // recognizing image requests that were processed by this solution
+      customHeadersBehavior: {
+        customHeaders: [
+          {
+            header: "x-aws-image-optimization",
+            value: "v1.0",
+            override: true,
+          },
+          { header: "vary", value: "accept", override: true },
+        ],
+      },
+    }
+  )
+
+  const params = {
+    viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+    cachePolicy,
     functionAssociations: [
       {
         eventType: FunctionEventType.VIEWER_REQUEST,
         function: urlRewriteFunction,
       },
     ],
-    responseHeadersPolicy: new ResponseHeadersPolicy(
-      stack,
-      `ResponseHeadersPolicy${stack.node.addr}`,
-      {
-        corsBehavior: {
-          accessControlAllowCredentials: false,
-          accessControlAllowHeaders: ["*"],
-          accessControlAllowMethods: ["GET"],
-          accessControlAllowOrigins: ["*"],
-          accessControlMaxAge: Duration.seconds(600),
-          originOverride: false,
-        },
-        // recognizing image requests that were processed by this solution
-        customHeadersBehavior: {
-          customHeaders: [
-            {
-              header: "x-aws-image-optimization",
-              value: "v1.0",
-              override: true,
-            },
-            { header: "vary", value: "accept", override: true },
-          ],
-        },
-      }
-    ),
-  })
+    responseHeadersPolicy,
+  }
+
+  astroSite.cdk?.distribution.addBehavior("img/*", imageOrigin, params)
+  astroSite.cdk?.distribution.addBehavior(
+    "app/media/*.jpg",
+    imageOrigin,
+    params
+  )
+  astroSite.cdk?.distribution.addBehavior(
+    "app/media/*.jpeg",
+    imageOrigin,
+    params
+  )
+  astroSite.cdk?.distribution.addBehavior(
+    "app/media/*.png",
+    imageOrigin,
+    params
+  )
 
   return {}
 }
