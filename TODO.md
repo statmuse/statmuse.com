@@ -13,8 +13,9 @@
 - [x] mlb: issue with inning table at top (whitespace issue in html)
 - [ ] share components
 - [ ] trending pages
-- [ ] league index pages
-- [ ] gallery page
+- [x] league index pages
+- [x] money index page
+- [x] gallery page
 - [ ] grid column sort
 - [ ] typeahead suggestions (ask-bar component)
 - [ ] auth (visitors, users)
@@ -24,6 +25,7 @@
 - [ ] navigation issue on team profiles (going to history and then back to another page)
 
 ## Launch
+
 - [ ] tests for all sitemap pages
 - [ ] distributed load testing (artillery)
 - [ ] dev environment for OSS
