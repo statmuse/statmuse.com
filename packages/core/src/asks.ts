@@ -12,7 +12,7 @@ export const getListContextIds = async (names: string[]) => {
 
 export const ASK_LIMIT = 15
 
-export const getAsksIndex = async (names = leagues, params: { next?: Date, previous?: Date, page?: string }) => {
+export const getAsksIndex = async (names = leagues, params: { n?: Date, p?: Date, page?: string }) => {
   let query = db.selectFrom('asks')
     .selectAll('asks')
     .innerJoin('contexts', 'contexts.id', 'asks.context_id')
@@ -20,11 +20,11 @@ export const getAsksIndex = async (names = leagues, params: { next?: Date, previ
     .where('last_web_search_at', 'is not', null)
     .where('context_id', 'in', await getListContextIds(names))
 
-  if (params.next) {
-    query = query.where('last_web_search_at', '<', params.next)
+  if (params.n) {
+    query = query.where('last_web_search_at', '<', params.n)
       .orderBy('last_web_search_at', 'desc')
-  } else if (params.previous) {
-    query = query.where('last_web_search_at', '>', params.previous)
+  } else if (params.p) {
+    query = query.where('last_web_search_at', '>', params.p)
       .orderBy('last_web_search_at', 'asc')
   } else if (params.page && params.page === 'last') {
     query = query.orderBy('last_web_search_at', 'asc')
@@ -37,7 +37,7 @@ export const getAsksIndex = async (names = leagues, params: { next?: Date, previ
     .limit(ASK_LIMIT + 1)
     .execute()
 
-  if (params.previous || params.page) {
+  if (params.p || params.page) {
     records.reverse()
   }
   return records
