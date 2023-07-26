@@ -2,14 +2,14 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
-import { ASK_LIMIT, type Ask } from '@statmuse/core/asks'
+import { ASK_LIMIT, type FinanceAsk, type Ask } from '@statmuse/core/asks'
 
 interface Props {
   domain?: string
-  fetchAsks: (params: SearchParams) => Promise<Ask[]>
+  fetchAsks: (params: SearchParams) => Promise<Ask[] | FinanceAsk[]>
 }
 
-const { domain, fetchAsks } = Astro.props
+const { domain, fetchAsks } = Astro.props as Props
 
 const dateFromString = (x: string) => {
   const date = new Date(x)
@@ -39,7 +39,7 @@ type PaginationOptions = {
 }
 
 const paginate = (
-  asks: Ask[],
+  asks: Ask[] | FinanceAsk[],
   { n, p, page }: SearchParams,
   overflow: boolean
 ): PaginationOptions => {
@@ -127,6 +127,17 @@ const createLink = (domain?: string, params?: Record<string, string>) => {
   return link
 }
 
+const isAsk = (ask: Ask | FinanceAsk): ask is Ask =>
+  (ask as Ask).answer_html !== undefined
+const getNlg = (ask: Ask | FinanceAsk) =>
+  isAsk(ask) ? ask.answer_html : ask.answer_text
+const getImage = (ask: Ask | FinanceAsk) =>
+  isAsk(ask) ? ask.image_url : ask.answer.visual.summary.subject.imageUrl
+const getBgColor = (ask: Ask | FinanceAsk) =>
+  isAsk(ask)
+    ? ask.hex_background
+    : ask.answer.visual.summary.subject.colors.background
+
 const leagues = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
 const meta = {}
 ---
@@ -181,7 +192,7 @@ const meta = {}
             <article class="flex">
               <div
                 class="hidden sm:block h-24 w-36 rounded-lg mr-2.5 overflow-hidden"
-                style={`background: ${ask.hex_background}`}
+                style={`background: ${getBgColor(ask)}`}
               >
                 <a
                   class="h-full flex justify-center items-end"
@@ -189,7 +200,7 @@ const meta = {}
                 >
                   <img
                     class="h-[90%]"
-                    src={ask.image_url}
+                    src={getImage(ask)}
                     alt="player illustration"
                   />
                 </a>
@@ -201,7 +212,7 @@ const meta = {}
                 <div class="italic opacity-50">{ask.last_web_search_at}</div>
                 <div
                   class="flex-1 flex items-center border-l-2 border-secondary pl-1.5"
-                  set:html={ask.answer_html}
+                  set:html={getNlg(ask)}
                 />
               </div>
             </article>
