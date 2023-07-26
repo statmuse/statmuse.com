@@ -9,7 +9,7 @@ interface Props {
   fetchAsks: (params: SearchParams) => Promise<Ask[] | FinanceAsk[]>
 }
 
-const { domain, fetchAsks } = Astro.props as Props
+const { domain, fetchAsks } = Astro.props
 
 const dateFromString = (x: string) => {
   const date = new Date(x)
@@ -127,8 +127,7 @@ const createLink = (domain?: string, params?: Record<string, string>) => {
   return link
 }
 
-const isAsk = (ask: Ask | FinanceAsk): ask is Ask =>
-  (ask as Ask).answer_html !== undefined
+const isAsk = (ask: Ask | FinanceAsk): ask is Ask => "answer_html" in ask
 const getNlg = (ask: Ask | FinanceAsk) =>
   isAsk(ask) ? ask.answer_html : ask.answer_text
 const getImage = (ask: Ask | FinanceAsk) =>
