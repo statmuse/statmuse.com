@@ -1,8 +1,8 @@
 ---
-import Layout from '@layouts/main.astro'
-import Header from '@components/header.astro'
-import Container from '@components/container.astro'
-import { ASK_LIMIT, type FinanceAsk, type Ask } from '@statmuse/core/asks'
+import Layout from "@layouts/main.astro"
+import Header from "@components/header.astro"
+import Container from "@components/container.astro"
+import { ASK_LIMIT, type FinanceAsk, type Ask } from "@statmuse/core/asks"
 
 interface Props {
   domain?: string
@@ -13,16 +13,16 @@ const { domain, fetchAsks } = Astro.props as Props
 
 const dateFromString = (x: string) => {
   const date = new Date(x)
-  if (date.toString() !== 'Invalid Date') {
+  if (date.toString() !== "Invalid Date") {
     return date
   }
   return
 }
 
 const parseSearchParams = (params: URLSearchParams) => {
-  const next = (params.get('n') || '').replaceAll('_', ':')
-  const previous = (params.get('p') || '').replaceAll('_', ':')
-  const page = params.get('page') || undefined
+  const next = (params.get("n") || "").replaceAll("_", ":")
+  const previous = (params.get("p") || "").replaceAll("_", ":")
+  const page = params.get("page") || undefined
   return {
     n: dateFromString(next),
     p: dateFromString(previous),
@@ -33,7 +33,7 @@ const parseSearchParams = (params: URLSearchParams) => {
 type SearchParams = ReturnType<typeof parseSearchParams>
 
 type PaginationOptions = {
-  current_page?: 'first-last' | 'first' | 'last'
+  current_page?: "first-last" | "first" | "last"
   n?: string
   p?: string
 }
@@ -47,45 +47,45 @@ const paginate = (
 
   if (!n && !p && !page) {
     return {
-      current_page: overflow ? 'first' : 'first-last',
+      current_page: overflow ? "first" : "first-last",
       n: overflow
         ? asks[asks.length - 1].last_web_search_at
             ?.toISOString()
-            .replaceAll(':', '_')
+            .replaceAll(":", "_")
         : undefined,
     }
   }
 
-  if (page && page === 'last') {
+  if (page && page === "last") {
     return {
-      current_page: overflow ? 'last' : 'first-last',
+      current_page: overflow ? "last" : "first-last",
       p: overflow
-        ? asks[0].last_web_search_at?.toISOString().replaceAll(':', '_')
+        ? asks[0].last_web_search_at?.toISOString().replaceAll(":", "_")
         : undefined,
     }
   }
 
   if (n && !overflow) {
     return {
-      current_page: 'last',
-      p: asks[0].last_web_search_at?.toISOString().replaceAll(':', '_'),
+      current_page: "last",
+      p: asks[0].last_web_search_at?.toISOString().replaceAll(":", "_"),
     }
   }
 
   if (p && !overflow) {
     return {
-      current_page: 'first',
+      current_page: "first",
       n: asks[asks.length - 1].last_web_search_at
         ?.toISOString()
-        .replaceAll(':', '_'),
+        .replaceAll(":", "_"),
     }
   }
 
   return {
     n: asks[asks.length - 1].last_web_search_at
       ?.toISOString()
-      .replaceAll(':', '_'),
-    p: asks[0].last_web_search_at?.toISOString().replaceAll(':', '_'),
+      .replaceAll(":", "_"),
+    p: asks[0].last_web_search_at?.toISOString().replaceAll(":", "_"),
   }
 }
 
@@ -95,7 +95,7 @@ let asks = await fetchAsks(searchParams)
 
 const overflow = asks.length > ASK_LIMIT
 
-if (searchParams.p || (searchParams.page && searchParams.page === 'last')) {
+if (searchParams.p || (searchParams.page && searchParams.page === "last")) {
   asks = asks.slice(1)
 } else {
   asks = asks.slice(0, ASK_LIMIT)
@@ -104,23 +104,23 @@ if (searchParams.p || (searchParams.page && searchParams.page === 'last')) {
 const paginationOptions = paginate(asks, searchParams, overflow)
 
 const headline = (title?: string) => {
-  if (!title) return 'Trending Searches'
+  if (!title) return "Trending Searches"
 
   if (leagues.includes(title.toUpperCase())) {
     return `Trending ${title.toUpperCase()} Searches`
   }
 
-  if (title === 'fantasy') {
-    return 'Trending Fantasy Football Searches'
+  if (title === "fantasy") {
+    return "Trending Fantasy Football Searches"
   }
 
-  if (title === 'money') {
-    return 'Trending Finance Searches'
+  if (title === "money") {
+    return "Trending Finance Searches"
   }
 }
 
 const createLink = (domain?: string, params?: Record<string, string>) => {
-  let link = domain ? `/${domain}/questions` : '/questions'
+  let link = domain ? `/${domain}/questions` : "/questions"
   if (params) {
     link = link + `?${new URLSearchParams(params).toString()}`
   }
@@ -138,7 +138,7 @@ const getBgColor = (ask: Ask | FinanceAsk) =>
     ? ask.hex_background
     : ask.answer.visual.summary.subject.colors.background
 
-const leagues = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
+const leagues = ["NBA", "NFL", "NHL", "MLB", "PGA"]
 const meta = {}
 ---
 
@@ -148,16 +148,16 @@ const meta = {}
     <nav style="margin-top: 15px;">
       <div style="display: flex; gap: 10px;">
         {
-          ['All', ...leagues].map((league) => (
+          ["All", ...leagues].map((league) => (
             <a
               class={`flex items-center justify-center min-w-[80px] border border-primary rounded-md hover:no-underline hover:text-white hover:bg-primary p-[5px] ${
-                league.toLowerCase() === (domain || 'all')
-                  ? 'bg-primary text-white'
-                  : 'text-primary'
+                league.toLowerCase() === (domain || "all")
+                  ? "bg-primary text-white"
+                  : "text-primary"
               } %>`}
               href={
-                league === 'All'
-                  ? '/questions'
+                league === "All"
+                  ? "/questions"
                   : `/${league.toLowerCase()}/questions`
               }
               set:html={league}
@@ -168,14 +168,14 @@ const meta = {}
       <div style="display: flex; gap: 10px; margin-top: 10px;">
         <a
           class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
-            'fantasy' === domain ? 'bg-secondary text-white' : 'text-secondary'
+            "fantasy" === domain ? "bg-secondary text-white" : "text-secondary"
           } %>`}
           href="/fantasy/questions"
           set:html="Fantasy Football"
         />
         <a
           class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
-            'money' === domain ? 'bg-secondary text-white' : 'text-secondary'
+            "money" === domain ? "bg-secondary text-white" : "text-secondary"
           } %>`}
           href="/money/questions"
           set:html="Money"
@@ -232,7 +232,7 @@ const meta = {}
       </li>
       <li class="inline-block">
         <a
-          href={createLink(domain, { p: paginationOptions.p || '' })}
+          href={createLink(domain, { p: paginationOptions.p || "" })}
           class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${paginationOptions.p ? '' : 'text-[#c5c9cc] pointer-events-none'}`
         >
           &lt; Previous
@@ -240,7 +240,7 @@ const meta = {}
       </li>
       <li class="inline-block">
         <a
-          href={createLink(domain, { n: paginationOptions.n || '' })}
+          href={createLink(domain, { n: paginationOptions.n || "" })}
           class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${paginationOptions.n ? '' : 'text-[#c5c9cc] pointer-events-none'}`
         >
           Next &gt;
@@ -248,7 +248,7 @@ const meta = {}
       </li>
       <li class="inline-block">
         <a
-          href={createLink(domain, { page: 'last' })}
+          href={createLink(domain, { page: "last" })}
           class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${['last', 'first-last'].includes(paginationOptions.current_page || '') ? 'text-black pointer-events-none' : ''}`
         >
           Last »
