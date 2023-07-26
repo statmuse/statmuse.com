@@ -8,7 +8,7 @@ const { league } = Astro.params
 
 const leagues = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
 
-const asks = await getAsksIndex.execute()
+const asks = await getAsksIndex(league ? [league] : undefined)
 
 const headline = (str?: string) => {
   if (str && leagues.includes(str.toUpperCase())) {
