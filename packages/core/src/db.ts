@@ -217,12 +217,36 @@ interface PlayerTable {
   updated_at: ColumnType<Date, string | undefined, string | undefined>
 }
 
+interface FinanceAskTable {
+  id: Generated<string>
+
+  answer: GameraResponse
+  answer_text: string | null
+  answer_type: 'answer' | 'asset' | 'error' | 'unknown'
+  count_total: number
+  count_web_search: number
+  count_web_view: number
+  is_in_index: boolean | null
+  is_in_index_pin: boolean | null
+  is_in_suggests: boolean | null
+  is_in_suggests_pin: boolean | null
+  last_user_id: string | null
+  last_visitor_id: string | null
+  last_web_search_at: ColumnType<Date, string | undefined, string | undefined> | null
+  query: string
+  sid: Generated<number> 
+
+  inserted_at: ColumnType<Date, string | undefined, string | undefined>
+  updated_at: ColumnType<Date, string | undefined, string | undefined>
+}
+
 export interface Database {
   users: UserTable
   asks: AskTable
   ask_events: AskEventTable
   asks_users: AskUserTable
   contexts: ContextTable
+  finance_asks: FinanceAskTable
   musings: MusingTable
   questions: QuestionTable
   examples: ExampleTable
