@@ -2,7 +2,7 @@
 import Layout from '@layouts/main.astro'
 import Logo from '@components/logo.astro'
 import AskBar from '@components/ask-bar.astro'
-import Image from "@components/optimized-image.astro"
+import Image from "@components/image.astro"
 import { listLatestMusings } from '@statmuse/core/musings'
 import { listOnboarding } from '@statmuse/core/examples'
 import { rgbToHex } from '@statmuse/core/color'
@@ -182,7 +182,7 @@ const banner = examples[Math.floor(Math.random() * examples.length)]
             <Logo />
           </div>
           <Image
-            class="max-w-[70%] md:max-w-none md:h-[205px] md:pr-[10px]"
+            class="max-w-[70%] md:max-w-none md:h-[205px] md:pr-[10px] object-contain object-bottom"
             src={banner}
             alt={banner.text}
             width={250}
@@ -250,7 +250,7 @@ const banner = examples[Math.floor(Math.random() * examples.length)]
         Stat Stories
       </h3>
       {
-        musings.map((musing) => (
+        musings.map((musing, i) => (
           <div class="flex flex-col md:flex-row mb-[30px] cursor-pointer">
             <div
               class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
@@ -259,12 +259,13 @@ const banner = examples[Math.floor(Math.random() * examples.length)]
                 <a href={`/musings/${musing.friendly_id}`}>
                   <Image
                     data-cy-illustration
-                    class="h-36 max-w-full"
+                    class="h-36 max-w-full object-contain object-bottom"
                     style="visibility: unset;"
                     alt={musing.text_plain}
                     src={musing.image_url!}
                     width={192}
                     height={192}
+                    loading={i < 4 ? "eager" : "lazy"}
                   />
                 </a>
             </div>

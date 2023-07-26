@@ -162,7 +162,7 @@ const keywords = `${getLeagueKeywords(domain)} ${
         <div class="hidden md:block mt-6">
           <div class="flex gap-5 mb-1 text-center">
             {
-              bio.statsSummary.stats.map((stat) => (
+              bio.statsSummary?.stats.map((stat) => (
                 <div>
                   <p class="uppercase">{stat.label}</p>
                   <p class="text-3xl">{stat.value}</p>
@@ -217,21 +217,23 @@ const keywords = `${getLeagueKeywords(domain)} ${
       </div>
     </div>
   </Container>
-  <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
-    <div class="flex gap-5 mb-1 text-center">
-      {
-        bio.statsSummary.stats.map((stat) => (
-          <div>
-            <p class="uppercase">{stat.label}</p>
-            <p class="text-3xl">{stat.value}</p>
-            <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-              {stat.rank}
-            </p>
-          </div>
-        ))
-      }
-    </div>
-  </div>
+  {
+    bio.statsSummary ? (
+      <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
+        <div class="flex gap-5 mb-1 text-center">
+          {bio.statsSummary.stats.map((stat) => (
+            <div>
+              <p class="uppercase">{stat.label}</p>
+              <p class="text-3xl">{stat.value}</p>
+              <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+                {stat.rank}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    ) : null
+  }
   <Container>
     <div class="flex flex-nowrap overflow-auto mb-5 space-x-5">
       {

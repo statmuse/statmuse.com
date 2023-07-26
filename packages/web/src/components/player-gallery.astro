@@ -2,7 +2,7 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
-import Image from '@components/optimized-image.astro'
+import Image from '@components/image.astro'
 import type { PlayerGalleryItem } from '@lib/player'
 import { type GameraDomain, getUrlForEntity } from '@statmuse/core/gamera'
 
@@ -174,8 +174,9 @@ const meta = {
       class="my-4"
       style="color: #969ca1; text-align: right; font-style: italic;"
     >
-      All illustrations and content on this site &copy; 2016-2021 StatMuse, Inc.<br
-      />
+      All illustrations and content on this site &copy; 2016-{
+        new Date().getFullYear()
+      } StatMuse, Inc.<br />
       Unauthorized duplication or usage prohibited.
     </p>
   </Container>
@@ -183,7 +184,8 @@ const meta = {
 <script>
   // Player Gallery Alphabet Nav Highlight
   document.querySelectorAll('[data-click-nav]').forEach((el) => {
-    el.addEventListener('click', () => {
+    const element = el as HTMLAnchorElement
+    element.addEventListener('click', () => {
       // remove classes from previously selected item
       document.querySelectorAll('[data-highlight="true"]').forEach((n) => {
         ;['text-white', 'bg-primary', 'hover:no-underline'].forEach((x) => {
@@ -191,10 +193,10 @@ const meta = {
         })
       })
 
-      el.classList.add('text-white')
-      el.classList.add('bg-primary')
-      el.classList.add('hover:no-underline')
-      el.dataset.highlight = true
+      element.classList.add('text-white')
+      element.classList.add('bg-primary')
+      element.classList.add('hover:no-underline')
+      element.dataset.highlight = 'true'
     })
   })
 </script>

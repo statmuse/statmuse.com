@@ -6,6 +6,7 @@ import {
 } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
 import Grid from '@components/grid.astro'
+import Image from '@components/image.astro'
 import TabPanel from '@components/tab-panel.astro'
 import Tabs from '@components/tabs.astro'
 import TeamStat from '@components/team-stat.astro'
@@ -35,10 +36,13 @@ const awayTeamUrl = getUrlForEntity(awayTeam.entity)
   <div>
     <div class="flex items-center mb-6">
       <a title={awayTeam.name} href={awayTeamUrl}>
-        <img
+        <Image
           src={awayTeam.logoUrl}
           alt={awayTeam.abbrev}
           class="w-24 h-24 object-contain"
+          width={96}
+          height={96}
+          loading="eager"
         />
       </a>
       <div class="flex-1 ml-5">
@@ -51,10 +55,13 @@ const awayTeamUrl = getUrlForEntity(awayTeam.entity)
     </div>
     <div class="flex items-center mb-6">
       <a title={homeTeam.name} href={homeTeamUrl}>
-        <img
-          src={homeTeam.logoUrl}
+        <Image
           class="w-24 h-24 object-contain"
+          src={homeTeam.logoUrl}
           alt={homeTeam.abbrev}
+          width={96}
+          height={96}
+          loading="eager"
         />
       </a>
       <div class="flex-1 ml-5">

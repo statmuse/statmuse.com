@@ -51,8 +51,10 @@ export const fallbackIcon = (league: string) => {
       return "/icons/icon-nfl.svg"
     case "nhl":
       return "/icons/icon-nhl.svg"
+    case "pga":
+      return "/icons/icon-pga.svg"
     default:
-      return undefined
+      throw new Error("Unknown league")
   }
 }
 
@@ -402,7 +404,7 @@ export interface GameraTeamSeasonBio {
     backgroundColor: string
   }
   teamRepresentatives: GameraGalleryImage[]
-  statsSummary: {
+  statsSummary?: {
     statsScope: string
     stats: {
       label: string

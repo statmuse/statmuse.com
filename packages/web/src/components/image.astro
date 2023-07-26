@@ -1,5 +1,5 @@
 ---
-import { Image, RemoteImageProps } from 'astro:assets'
+import { Image as AstroImage, RemoteImageProps } from 'astro:assets'
 import type { GameraResponse } from '@statmuse/core/gamera'
 import type { Answer } from '@statmuse/core/questions'
 
@@ -7,11 +7,18 @@ interface Props extends Omit<RemoteImageProps, 'src'> {
   src: string | { answer: Answer }
 }
 
-const getImageUrl = (src: string | { answer: Answer }) => {
-  if (typeof src === 'string') return new URL(src).pathname
+const getUrl = (src: string | { answer: Answer }) => {
+  if (typeof src === 'string') return src
   const answer = src.answer as GameraResponse
   const subject = answer.visual.summary.subject
-  return new URL(subject.imageUrl).pathname
+  return subject.imageUrl
+}
+
+const getImageUrl = (src: string | { answer: Answer }) => {
+  const url = getUrl(src)
+  if (import.meta.env.DEV) return url
+  if (typeof src === 'string') return new URL(src).pathname
+  return new URL(url).pathname
 }
 
 const getSrc = (url: string) => {
@@ -45,19 +52,9 @@ const getSrcSet = (url: string) => {
   return [base, double, triple].join(', ')
 }
 
-const { class: classes, ...other } = Astro.props
-
 const url = getImageUrl(Astro.props.src)
-const src = getSrc(url)
-const srcset = getSrcSet(url)
+const src = import.meta.env.DEV ? url : getSrc(url)
+const srcset = import.meta.env.DEV ? undefined : getSrcSet(url)
 ---
 
-<Image
-  class:list={{
-    'object-contain object-bottom': true,
-    [classes ?? '']: !!classes,
-  }}
-  {...other}
-  {src}
-  {srcset}
-/>
+<AstroImage {...Astro.props} {src} {srcset} />
