@@ -1,0 +1,9 @@
+---
+import AskIndex from '@components/ask-index.astro'
+import { getAsksIndex } from '@statmuse/core/asks'
+---
+
+<AskIndex
+  domain="fantasy"
+  fetchAsks={(params) => getAsksIndex(['nfl'], params, true)}
+/>

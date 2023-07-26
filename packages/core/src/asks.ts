@@ -12,13 +12,17 @@ export const getListContextIds = async (names: string[]) => {
 
 export const ASK_LIMIT = 15
 
-export const getAsksIndex = async (names = leagues, params: { n?: Date, p?: Date, page?: string }) => {
+export const getAsksIndex = async (names = leagues, params: { n?: Date, p?: Date, page?: string }, isFantasy = false) => {
   let query = db.selectFrom('asks')
     .selectAll('asks')
     .innerJoin('contexts', 'contexts.id', 'asks.context_id')
     .where('is_in_index', '=', true)
     .where('last_web_search_at', 'is not', null)
     .where('context_id', 'in', await getListContextIds(names))
+
+  if (isFantasy) {
+    query = query.where('is_fantasy_query', '=', true)
+  }
 
   if (params.n) {
     query = query.where('last_web_search_at', '<', params.n)

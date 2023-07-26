@@ -155,19 +155,20 @@ const meta = {}
         }
       </div>
       <div style="display: flex; gap: 10px; margin-top: 10px;">
-        {
-          ['Fantasy Football', 'Money'].map((x) => (
-            <a
-              class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
-                x.toLowerCase() === domain
-                  ? 'bg-secondary text-white'
-                  : 'text-secondary'
-              } %>`}
-              href={x === 'Money' ? '/money/questions' : '/fantasy/questions'}
-              set:html={x}
-            />
-          ))
-        }
+        <a
+          class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
+            'fantasy' === domain ? 'bg-secondary text-white' : 'text-secondary'
+          } %>`}
+          href="/fantasy/questions"
+          set:html="Fantasy Football"
+        />
+        <a
+          class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
+            'money' === domain ? 'bg-secondary text-white' : 'text-secondary'
+          } %>`}
+          href="/money/questions"
+          set:html="Money"
+        />
       </div>
     </nav>
   </Container>
