@@ -4,6 +4,7 @@ import Header from "@components/header.astro"
 import Container from "@components/container.astro"
 import { ASK_LIMIT, type FinanceAsk, type Ask } from "@statmuse/core/asks"
 import { createAskPath } from "@lib/path"
+import { formatDate } from "@statmuse/core/time"
 
 interface Props {
   domain?: string
@@ -225,7 +226,10 @@ const meta = {}
                 <h3 class="text-lg font-semibold">
                   <a href={askPath(ask, domain)}>{ask.query}</a>
                 </h3>
-                <div class="italic opacity-50">{ask.last_web_search_at}</div>
+                <div class="italic opacity-50">
+                  Answered{" "}
+                  {formatDate(ask.last_web_search_at as Date, "MMMM Do, YYYY")}
+                </div>
                 <div
                   class="flex-1 flex items-center border-l-2 border-secondary pl-1.5"
                   set:html={getNlg(ask)}
