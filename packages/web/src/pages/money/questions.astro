@@ -1,0 +1,12 @@
+---
+import AskIndex from "@components/ask-index.astro"
+import { getFinanceAsksIndex } from "@statmuse/core/asks"
+
+const meta = {
+  title: "Money",
+  description:
+    "Search stock prices, currency pairs, Bitcoin returns and more — just ask.",
+}
+---
+
+<AskIndex {meta} domain="money" fetchAsks={getFinanceAsksIndex} />
