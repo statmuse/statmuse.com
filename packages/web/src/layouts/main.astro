@@ -2,6 +2,7 @@
 import '@styles/global.css'
 import Footer from '@components/footer.astro'
 import type { Metadata } from '@lib/meta'
+import { ViewTransitions } from 'astro:transitions'
 
 interface Props {
   meta?: Metadata
@@ -56,6 +57,7 @@ const defaultImageUrl = '/images/sm-meta-banner.jpg'
     <meta name="generator" content={Astro.generator} />
     <meta name="apple-itunes-app" content="app-id=1234654160" />
     <title>{title}</title>
+    <ViewTransitions />
     <meta name="description" content={description} />
     <meta name="keywords" content={keywords} />
     <meta property="fb:app_id" content="915991831757165" />
@@ -161,77 +163,76 @@ const defaultImageUrl = '/images/sm-meta-banner.jpg'
   <body>
     <slot />
     <Footer />
+    <script>
+      /**
+       * Given window and document, add or remove "selected" class to league nav
+       * links if current window location matches nav href. Note that the argument
+       * tests are more comprehensive to protect functions downstream of this.
+       *
+       * @param {Window} win - DOM window
+       * @param {Element} ctag - Node Element with data for canonical link
+       *
+       */
+      const shouldRewriteUrl = (win: Window, ctag: HTMLLinkElement) => {
+        return (
+          win instanceof Window &&
+          win.history instanceof History &&
+          win.location instanceof Location &&
+          ctag.href !== win.location.href &&
+          ctag.dataset.shouldRewrite === 'true'
+        )
+      }
+
+      /**
+       * Rewrite URL.
+       *
+       * @param {Window} win - DOM window
+       * @param {HTMLDocument} doc - DOM document
+       * @param {String} newUrl - Destination URL
+       *
+       */
+      const rewriteUrl = (win: Window, doc: Document, newUrl: string) =>
+        win.history.replaceState(null, doc.title, newUrl)
+
+      /**
+       * Given window and document, add or remove "selected" class to league nav
+       * links if current window location matches nav href.
+       *
+       * @param {Window} win - DOM window
+       * @param {HTMLDocument} doc - DOM document
+       *
+       */
+      const updateLeagueNav = (win: Window, doc: Document) => {
+        Array.from(doc.querySelectorAll('nav.nav-league a')).forEach((e) => {
+          const nav = e as HTMLAnchorElement
+
+          nav.href === win.location.href
+            ? nav.classList.add('selected')
+            : nav.classList.remove('selected')
+        })
+      }
+
+      /**
+       * Given window and document, get canonical link tag and check if URL should be
+       * rewritten, in which case call rewriteUrl and updateLeagueNav.
+       *
+       * @param {Window} win - DOM window
+       * @param {HTMLDocument} doc - DOM document
+       *
+       */
+      const maybeRewriteUrl = (win: Window, doc: Document) => {
+        const canonicalTag = doc.querySelector(
+          'link[rel="canonical"]'
+        ) as HTMLLinkElement | null
+        if (!canonicalTag) return
+
+        if (shouldRewriteUrl(win, canonicalTag)) {
+          rewriteUrl(win, doc, canonicalTag.href)
+          updateLeagueNav(win, doc)
+        }
+      }
+
+      maybeRewriteUrl(window, document)
+    </script>
   </body>
 </html>
-
-<script>
-  /**
-   * Given window and document, add or remove "selected" class to league nav
-   * links if current window location matches nav href. Note that the argument
-   * tests are more comprehensive to protect functions downstream of this.
-   *
-   * @param {Window} win - DOM window
-   * @param {Element} ctag - Node Element with data for canonical link
-   *
-   */
-  const shouldRewriteUrl = (win: Window, ctag: HTMLLinkElement) => {
-    return (
-      win instanceof Window &&
-      win.history instanceof History &&
-      win.location instanceof Location &&
-      ctag.href !== win.location.href &&
-      ctag.dataset.shouldRewrite === 'true'
-    )
-  }
-
-  /**
-   * Rewrite URL.
-   *
-   * @param {Window} win - DOM window
-   * @param {HTMLDocument} doc - DOM document
-   * @param {String} newUrl - Destination URL
-   *
-   */
-  const rewriteUrl = (win: Window, doc: Document, newUrl: string) =>
-    win.history.replaceState(null, doc.title, newUrl)
-
-  /**
-   * Given window and document, add or remove "selected" class to league nav
-   * links if current window location matches nav href.
-   *
-   * @param {Window} win - DOM window
-   * @param {HTMLDocument} doc - DOM document
-   *
-   */
-  const updateLeagueNav = (win: Window, doc: Document) => {
-    Array.from(doc.querySelectorAll('nav.nav-league a')).forEach((e) => {
-      const nav = e as HTMLAnchorElement
-
-      nav.href === win.location.href
-        ? nav.classList.add('selected')
-        : nav.classList.remove('selected')
-    })
-  }
-
-  /**
-   * Given window and document, get canonical link tag and check if URL should be
-   * rewritten, in which case call rewriteUrl and updateLeagueNav.
-   *
-   * @param {Window} win - DOM window
-   * @param {HTMLDocument} doc - DOM document
-   *
-   */
-  const maybeRewriteUrl = (win: Window, doc: Document) => {
-    const canonicalTag = doc.querySelector(
-      'link[rel="canonical"]'
-    ) as HTMLLinkElement | null
-    if (!canonicalTag) return
-
-    if (shouldRewriteUrl(win, canonicalTag)) {
-      rewriteUrl(win, doc, canonicalTag.href)
-      updateLeagueNav(win, doc)
-    }
-  }
-
-  maybeRewriteUrl(window, document)
-</script>
