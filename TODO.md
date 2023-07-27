@@ -12,7 +12,7 @@
 - [ ] fix home layout (move footer out of base layout, into sub layouts)
 - [x] mlb: issue with inning table at top (whitespace issue in html)
 - [ ] share components
-- [ ] trending pages
+- [x] trending pages
 - [x] league index pages
 - [x] money index page
 - [x] gallery page
@@ -22,7 +22,7 @@
 - [ ] statmuse+ (limit features for free users)
 - [x] image optimization (current site does none, should add a behavior to cdn.statmuse.com; how do we test?)
 - [ ] swap out font for variable font
-- [ ] navigation issue on team profiles (going to history and then back to another page)
+- [x] navigation issue on team profiles (going to history and then back to another page)
 
 ## Launch
 
