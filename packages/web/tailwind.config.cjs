@@ -17,7 +17,7 @@ module.exports = {
         'team-secondary': 'var(--team-secondary-color, #000)',
       },
       fontFamily: {
-        sans: ['canada-type-gibson', ...defaultTheme.fontFamily.sans],
+        sans: ['canada-type-gibson', 'canada-type-gibson-fallback', ...defaultTheme.fontFamily.sans],
         mono: ['"Courier New"', ...defaultTheme.fontFamily.mono],
       },
     },
