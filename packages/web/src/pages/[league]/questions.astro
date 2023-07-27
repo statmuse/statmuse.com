@@ -1,11 +1,17 @@
 ---
-import AskIndex from '@components/ask-index.astro'
-import { getAsksIndex } from '@statmuse/core/asks'
+import AskIndex from "@components/ask-index.astro"
+import { getAsksIndex } from "@statmuse/core/asks"
 
 const league = Astro.params.league as string
+
+const meta = {
+  title: `${league.toUpperCase()} Stats`,
+  description: `Instant answers to your ${league.toUpperCase()} questions. Stats, scores, schedules, standings, recaps and more — just ask.`,
+}
 ---
 
 <AskIndex
+  {meta}
   domain={league}
   fetchAsks={(params) => getAsksIndex([league], params)}
 />

@@ -5,13 +5,15 @@ import Container from "@components/container.astro"
 import { ASK_LIMIT, type FinanceAsk, type Ask } from "@statmuse/core/asks"
 import { createAskPath } from "@lib/path"
 import { formatDate } from "@statmuse/core/time"
+import type { Metadata } from "@lib/meta"
 
 interface Props {
   domain?: string
   fetchAsks: (params: SearchParams) => Promise<Ask[] | FinanceAsk[]>
+  meta?: Metadata
 }
 
-const { domain, fetchAsks } = Astro.props
+const { domain, fetchAsks, meta } = Astro.props
 
 const dateFromString = (x: string) => {
   const date = new Date(x)
@@ -156,10 +158,9 @@ const askPath = (ask: Ask | FinanceAsk, domain = "") => {
 }
 
 const leagues = ["NBA", "NFL", "NHL", "MLB", "PGA"]
-const meta = {}
 ---
 
-<Layout>
+<Layout {meta}>
   <Header />
   <Container>
     <nav style="margin-top: 15px;">

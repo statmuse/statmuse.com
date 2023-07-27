@@ -1,9 +1,16 @@
 ---
-import AskIndex from '@components/ask-index.astro'
-import { getAsksIndex } from '@statmuse/core/asks'
+import AskIndex from "@components/ask-index.astro"
+import { getAsksIndex } from "@statmuse/core/asks"
+
+const meta = {
+  title: "Fantasy Football Stats",
+  description:
+    "Instant answers to your fantasy football questions. Stats, projections, comparisons, outlooks, recaps and more — just ask.",
+}
 ---
 
 <AskIndex
+  {meta}
   domain="fantasy"
-  fetchAsks={(params) => getAsksIndex(['nfl'], params, true)}
+  fetchAsks={(params) => getAsksIndex(["nfl"], params, true)}
 />
