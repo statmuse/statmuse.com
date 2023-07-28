@@ -118,7 +118,7 @@ const keywords = `${getLeagueKeywords(domain)} ${
               }
             </div>
             <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-              {bio.statsSummary.statsScope}
+              {bio.statsSummary?.statsScope}
             </p>
           </div>
         </div>
@@ -129,7 +129,7 @@ const keywords = `${getLeagueKeywords(domain)} ${
         src={bustImageUrl}
         alt={bustImageAlt}
         width={300}
-        height={300}
+        height={176}
         loading="eager"
       />
       <div
@@ -150,7 +150,7 @@ const keywords = `${getLeagueKeywords(domain)} ${
           ))
         }
       </div><p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-        {bio.statsSummary.statsScope}
+        {bio.statsSummary?.statsScope}
       </p>
     </div>
   </div>
