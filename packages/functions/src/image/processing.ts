@@ -174,7 +174,7 @@ const _handler = async (
   // responseStream.setIsBase64Encoded(true)
   // responseStream.setCacheControl(cacheControl)
 
-  await pipeline(stream, responseStream)
+  await pipeline(Readable.from(stream), responseStream)
 
   // return transformed image
   // return {
