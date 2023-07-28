@@ -142,6 +142,7 @@ const _handler = async (
       }
     }
 
+    // stream = await transformedImage.toBuffer()
     stream = Readable.from(transformedImage)
   } catch (error) {
     return sendError("error transforming image", error)
@@ -153,19 +154,19 @@ const _handler = async (
   const cacheControl = "public, max-age=31536000, immutable"
 
   // upload transformed image back to S3 if required in the architecture
-  try {
-    await s3.send(
-      new PutObjectCommand({
-        Body: stream,
-        Bucket: Bucket["transformed-image-bucket"].bucketName,
-        Key: originalImagePath + "/" + operationsPrefix,
-        ContentType: contentType,
-        CacheControl: cacheControl,
-      })
-    )
-  } catch (error) {
-    sendError("Could not upload transformed image to S3", error)
-  }
+  // try {
+  //   await s3.send(
+  //     new PutObjectCommand({
+  //       Body: stream,
+  //       Bucket: Bucket["transformed-image-bucket"].bucketName,
+  //       Key: originalImagePath + "/" + operationsPrefix,
+  //       ContentType: contentType,
+  //       CacheControl: cacheControl,
+  //     })
+  //   )
+  // } catch (error) {
+  //   sendError("Could not upload transformed image to S3", error)
+  // }
 
   timingLog = timingLog + (performance.now() - startTime) + " "
   console.log(timingLog)
