@@ -26,7 +26,7 @@ const _handler = async (
     !event.headers["x-origin-secret-header"] ||
     !(event.headers["x-origin-secret-header"] === Config.SECRET_KEY)
   )
-    return sendError(403, "Request unauthorized", event)
+    return sendError("Request unauthorized", event)
 
   // Validate if this is a GET request
   if (
@@ -34,7 +34,7 @@ const _handler = async (
     !event.requestContext.http ||
     !(event.requestContext.http.method === "GET")
   )
-    return sendError(400, "Only GET method is supported", event)
+    return sendError("Only GET method is supported", event)
 
   // An example of expected path is /images/rio/1.jpeg/format=auto,width=100 or /images/rio/1.jpeg/original where /images/rio/1.jpeg is the path of the original image
   const imagePathArray = event.requestContext.http.path.split("/")
@@ -60,7 +60,7 @@ const _handler = async (
     )
     contentType = originalImage.ContentType as string
   } catch (error) {
-    return sendError(500, "error downloading original image", error)
+    return sendError("error downloading original image", error)
   }
 
   let transformedImage = sharp({ failOn: "none" })
@@ -144,7 +144,7 @@ const _handler = async (
 
     stream = await transformedImage.toBuffer()
   } catch (error) {
-    return sendError(500, "error transforming image", error)
+    return sendError("error transforming image", error)
   }
 
   timingLog = timingLog + (performance.now() - startTime) + " "
@@ -164,37 +164,22 @@ const _handler = async (
       })
     )
   } catch (error) {
-    sendError(500, "Could not upload transformed image to S3", error)
+    sendError("Could not upload transformed image to S3", error)
   }
 
   timingLog = timingLog + (performance.now() - startTime) + " "
   console.log(timingLog)
 
   responseStream.setContentType(contentType)
-  // responseStream.setIsBase64Encoded(true)
-  // responseStream.setCacheControl(cacheControl)
 
+  // stream transformed image
   await pipeline(Readable.from(stream), responseStream)
-
-  // return transformed image
-  // return {
-  //   statusCode: 200,
-  //   body: stream.toString("base64"),
-  //   isBase64Encoded: true,
-  //   headers: {
-  //     "Content-Type": contentType,
-  //     "Cache-Control": cacheControl,
-  //   },
-  // }
 }
 
 export const handler = streamifyResponse(_handler)
 
-function sendError(statusCode: number, message: string, error: unknown) {
+function sendError(message: string, error: unknown) {
   console.log("APPLICATION ERROR", message)
   console.log(error)
-  return {
-    statusCode,
-    body: message,
-  }
+  throw error
 }

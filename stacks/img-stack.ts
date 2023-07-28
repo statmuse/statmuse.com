@@ -164,6 +164,11 @@ export function ImageOptimization({ stack }: StackContext) {
             override: true,
           },
           { header: "vary", value: "accept", override: true },
+          {
+            header: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+            override: true,
+          },
         ],
       },
     }
@@ -194,6 +199,11 @@ export function ImageOptimization({ stack }: StackContext) {
   )
   astroSite.cdk?.distribution.addBehavior(
     "app/media/*.png",
+    imageOrigin,
+    params
+  )
+  astroSite.cdk?.distribution.addBehavior(
+    "finance/asset_img/*",
     imageOrigin,
     params
   )
