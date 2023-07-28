@@ -24,6 +24,7 @@
     "packages/*"
   ],
   "prettier": {
-    "semi": false
+    "semi": false,
+    "singleQuote": true
   }
 }
