@@ -142,7 +142,7 @@ const _handler = async (
       }
     }
 
-    stream = await transformedImage.toBuffer()
+    stream = Readable.from(transformedImage)
   } catch (error) {
     return sendError("error transforming image", error)
   }
@@ -173,7 +173,7 @@ const _handler = async (
   responseStream.setContentType(contentType)
 
   // stream transformed image
-  await pipeline(Readable.from(stream), responseStream)
+  await pipeline(stream, responseStream)
 }
 
 export const handler = streamifyResponse(_handler)
