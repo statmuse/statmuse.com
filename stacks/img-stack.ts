@@ -110,7 +110,7 @@ export function ImageOptimization({ stack }: StackContext) {
 
   const imageProcessingHelper = new LambdaFunctionUrlHelper(
     stack,
-    "image-processing-url-helper",
+    "image-processing-url",
     { Url: imageProcessingFunction.url as string }
   )
 
