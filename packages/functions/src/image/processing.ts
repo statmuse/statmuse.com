@@ -12,7 +12,6 @@ import { promisify } from "util"
 import { pipeline as _pipeline } from "stream"
 import { APIGatewayProxyEventV2 } from "aws-lambda"
 const pipeline = promisify(_pipeline)
-import zlib from "zlib"
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
@@ -175,7 +174,7 @@ export const _handler = async (
   responseStream.setIsBase64Encoded(true)
   // responseStream.setCacheControl(cacheControl)
 
-  return pipeline(stream, zlib.createGzip(), responseStream)
+  return pipeline(stream, responseStream)
 
   // return transformed image
   // return {
