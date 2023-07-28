@@ -24,12 +24,12 @@ const preferredDomain = domain.toLowerCase()
 const path = Astro.url.pathname
 const canonical = { url: Astro.url.pathname + Astro.url.search }
 const teamPath = getUrlForEntity({
-  type: 'teamFranchise',
+  type: 'teamSeason',
   domain,
   id: overview.teamId.toString(),
   display: bio.name,
 })
-const yearId = overview.seasons[0].entity.id
+const yearId = overview.seasons[0].name
 
 const links = [
   { text: 'Overview', href: `${teamPath}/${yearId}` },
