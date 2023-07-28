@@ -38,6 +38,7 @@ export const getAsksIndex = async (
     query = query
       .where('last_web_search_at', '>', params.p)
       .orderBy('last_web_search_at', 'asc')
+      .offset(1)
   } else if (params.page && params.page === 'last') {
     query = query.orderBy('last_web_search_at', 'asc')
   } else {
@@ -77,6 +78,7 @@ export const getFinanceAsksIndex = async (params: {
     query = query
       .where('last_web_search_at', '>', params.p)
       .orderBy('last_web_search_at', 'asc')
+      .offset(1)
   } else if (params.page && params.page === 'last') {
     query = query.orderBy('last_web_search_at', 'asc')
   } else {
