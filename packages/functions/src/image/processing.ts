@@ -17,7 +17,7 @@ const s3 = new S3Client({
   region: process.env.AWS_REGION,
 })
 
-export const _handler = async (
+const _handler = async (
   event: APIGatewayProxyEventV2,
   responseStream: ResponseStream
 ) => {
@@ -171,10 +171,10 @@ export const _handler = async (
   console.log(timingLog)
 
   responseStream.setContentType(contentType)
-  responseStream.setIsBase64Encoded(true)
+  // responseStream.setIsBase64Encoded(true)
   // responseStream.setCacheControl(cacheControl)
 
-  return pipeline(stream, responseStream)
+  await pipeline(stream, responseStream)
 
   // return transformed image
   // return {
