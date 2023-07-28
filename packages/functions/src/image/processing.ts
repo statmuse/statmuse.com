@@ -4,7 +4,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3"
-import { Readable } from "stream"
+import { PassThrough, Readable, Stream } from "stream"
 import { Config } from "sst/node/config"
 import { Bucket } from "sst/node/bucket"
 import { streamifyResponse, ResponseStream } from "lambda-stream"
@@ -147,19 +147,22 @@ const _handler = async (
     return sendError("error transforming image", error)
   }
 
+  const split1 = stream.pipe(new PassThrough())
+  const split2 = stream.pipe(new PassThrough())
+
   timingLog = timingLog + (performance.now() - startTime) + " "
   startTime = performance.now()
 
   responseStream.setContentType(contentType)
 
   // stream transformed image
-  await pipeline(stream, responseStream)
+  await pipeline(split1, responseStream)
 
   // upload transformed image back to S3
   try {
     await s3.send(
       new PutObjectCommand({
-        Body: await transformedImage.toBuffer(),
+        Body: await toBuffer(split2),
         Bucket: Bucket["transformed-image-bucket"].bucketName,
         Key: originalImagePath + "/" + operationsPrefix,
         ContentType: contentType,
@@ -180,4 +183,13 @@ function sendError(message: string, error: unknown) {
   console.log("APPLICATION ERROR", message)
   console.log(error)
   throw error
+}
+
+async function toBuffer(stream: Stream): Promise<Buffer> {
+  return new Promise<Buffer>((resolve, reject) => {
+    const _buf = Array<any>()
+    stream.on("data", (chunk) => _buf.push(chunk))
+    stream.on("end", () => resolve(Buffer.concat(_buf)))
+    stream.on("error", (err) => reject(`error converting stream - ${err}`))
+  })
 }
