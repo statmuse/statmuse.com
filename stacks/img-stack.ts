@@ -87,13 +87,25 @@ export function ImageOptimization({ stack }: StackContext) {
     logRetention: "one_day",
     bind: [transformedImageBucket, ORIGINAL_BUCKET_NAME, SECRET_KEY],
     permissions: [[originalImageBucket, "grantRead"], transformedImageBucket],
-    url: true,
     layers: [
       new LayerVersion(stack, "sharp-layer", {
         code: Code.fromAsset("layers/sharp"),
       }),
     ],
     nodejs: { esbuild: { external: ["sharp"] } },
+  })
+
+  imageProcessingFunction.addFunctionUrl({
+    authType: FunctionUrlAuthType.NONE,
+    cors: {
+      // allowCredentials: cors.allowCredentials,
+      allowedHeaders: ["*"],
+      allowedMethods: [HttpMethod.ALL],
+      allowedOrigins: ["*"],
+      // exposedHeaders: cors.exposeHeaders,
+      // maxAge: cors.maxAge && toCdkDuration(cors.maxAge),
+    },
+    invokeMode: InvokeMode.RESPONSE_STREAM,
   })
 
   const imageProcessingHelper = new LambdaFunctionUrlHelper(
@@ -192,6 +204,9 @@ export function ImageOptimization({ stack }: StackContext) {
 import { Construct } from "constructs"
 import {
   Code,
+  FunctionUrlAuthType,
+  HttpMethod,
+  InvokeMode,
   LayerVersion,
   Runtime,
   SingletonFunction,

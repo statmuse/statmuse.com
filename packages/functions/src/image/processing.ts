@@ -1,4 +1,3 @@
-import { ApiHandler } from "sst/node/api"
 import sharp from "sharp"
 import {
   GetObjectCommand,
@@ -8,12 +7,21 @@ import {
 import { Readable } from "stream"
 import { Config } from "sst/node/config"
 import { Bucket } from "sst/node/bucket"
+import { streamifyResponse, ResponseStream } from "lambda-stream"
+import { promisify } from "util"
+import { pipeline as _pipeline } from "stream"
+import { APIGatewayProxyEventV2 } from "aws-lambda"
+const pipeline = promisify(_pipeline)
+import zlib from "zlib"
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
 })
 
-export const handler = ApiHandler(async (event) => {
+export const _handler = async (
+  event: APIGatewayProxyEventV2,
+  responseStream: ResponseStream
+) => {
   // First validate if the request is coming from CloudFront
   if (
     !event.headers["x-origin-secret-header"] ||
@@ -163,17 +171,25 @@ export const handler = ApiHandler(async (event) => {
   timingLog = timingLog + (performance.now() - startTime) + " "
   console.log(timingLog)
 
+  responseStream.setContentType(contentType)
+  responseStream.setIsBase64Encoded(true)
+  // responseStream.setCacheControl(cacheControl)
+
+  return pipeline(stream, zlib.createGzip(), responseStream)
+
   // return transformed image
-  return {
-    statusCode: 200,
-    body: stream.toString("base64"),
-    isBase64Encoded: true,
-    headers: {
-      "Content-Type": contentType,
-      "Cache-Control": cacheControl,
-    },
-  }
-})
+  // return {
+  //   statusCode: 200,
+  //   body: stream.toString("base64"),
+  //   isBase64Encoded: true,
+  //   headers: {
+  //     "Content-Type": contentType,
+  //     "Cache-Control": cacheControl,
+  //   },
+  // }
+}
+
+export const handler = streamifyResponse(_handler)
 
 function sendError(statusCode: number, message: string, error: unknown) {
   console.log("APPLICATION ERROR", message)
