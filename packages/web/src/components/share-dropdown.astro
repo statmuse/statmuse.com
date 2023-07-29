@@ -8,7 +8,11 @@ const fbSvg = ''
 const twitterSvg = ''
 ---
 
-<div class="relative inline-block" onclick="event.stopPropagation();">
+<div
+  class="relative inline-block"
+  onclick="event.stopPropagation();"
+  data-dropdown
+>
   <input id={Astro.props.id} type="checkbox" class="hidden peer" />
   <label for={Astro.props.id} class="cursor-pointer">
     <img
@@ -53,3 +57,10 @@ const twitterSvg = ''
   </li> -->
   </ul>
 </div>
+<script>
+  window.addEventListener('click', () => {
+    document.querySelectorAll('[data-dropdown] input:checked').forEach((el) => {
+      ;(el as HTMLInputElement).checked = false
+    })
+  })
+</script>
