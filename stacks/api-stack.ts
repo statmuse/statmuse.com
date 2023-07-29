@@ -51,7 +51,7 @@ export function API({ stack }: StackContext) {
       : "http://kanedama.staging.statmuse.com/",
   }
 
-  if (isDev) {
+  if (isDev && process.env.NODE_ENV === "development") {
     environment["POSTGRES_HOST"] = "localhost"
     environment["POSTGRES_PORT"] = "5432"
     environment["POSTGRES_DATABASE"] = "mothra_dev"

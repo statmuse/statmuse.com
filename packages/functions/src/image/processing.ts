@@ -8,9 +8,9 @@ import { PassThrough, Readable, Stream } from "stream"
 import { Config } from "sst/node/config"
 import { Bucket } from "sst/node/bucket"
 import { streamifyResponse, ResponseStream } from "lambda-stream"
+import { APIGatewayProxyEventV2 } from "aws-lambda"
 import { promisify } from "util"
 import { pipeline as _pipeline } from "stream"
-import { APIGatewayProxyEventV2 } from "aws-lambda"
 const pipeline = promisify(_pipeline)
 
 const s3 = new S3Client({
@@ -152,6 +152,16 @@ const _handler = async (
 
   timingLog = timingLog + (performance.now() - startTime) + " "
   startTime = performance.now()
+
+  // const metadata = {
+  //   statusCode: 200,
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     CustomHeader: "outerspace",
+  //   },
+  // }
+  //
+  // responseStream = awslambda.HttpResponseStream.from(responseStream, metadata)
 
   responseStream.setContentType(contentType)
 

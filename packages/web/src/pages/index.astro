@@ -2,18 +2,17 @@
 import Layout from '@layouts/main.astro'
 import Logo from '@components/logo.astro'
 import AskBar from '@components/ask-bar.astro'
-import Image from "@components/image.astro"
-import { listLatestMusings } from '@statmuse/core/musings'
+import Image from '@components/image.astro'
+import Musings from '@components/musings.astro'
 import { listOnboarding } from '@statmuse/core/examples'
-import { rgbToHex } from '@statmuse/core/color'
-import { formatDate } from '@statmuse/core/time'
-import { marked } from 'marked'
 
-const musings = await listLatestMusings.execute()
 const examples = await listOnboarding()
 const banner = examples[Math.floor(Math.random() * examples.length)]
 
-Astro.response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=86400')
+Astro.response.headers.set(
+  'Cache-Control',
+  'public, s-maxage=60, stale-while-revalidate=86400'
+)
 ---
 
 <Layout>
@@ -205,104 +204,60 @@ Astro.response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-re
           <a
             class="flex items-center justify-center border border-primary rounded-md hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 bg-primary text-white"
             href="/"
-            set:text="All" />
+            set:text="All"
+          />
           <a
             class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
             href="/nba"
-            set:text="NBA" />
+            set:text="NBA"
+          />
           <a
             class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
             href="/nfl"
-            set:text="NFL" />
+            set:text="NFL"
+          />
           <a
             class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
             href="/nhl"
-            set:text="NHL" />
+            set:text="NHL"
+          />
           <a
             class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
             href="/mlb"
-            set:text="MLB" />
+            set:text="MLB"
+          />
           <a
             class="flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1"
             href="/pga"
-            set:text="PGA" />
+            set:text="PGA"
+          />
           <a
             class="hidden md:flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 min-w-fit"
             href="/fantasy"
-            set:text="Fantasy" />
+            set:text="Fantasy"
+          />
           <a
             class="hidden md:flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 min-w-fit"
             href="/money"
-            set:text="Money" />
+            set:text="Money"
+          />
         </div>
         <div class="flex flex-nowrap gap-[5px] mb-2.5 md:hidden">
           <a
             class="flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 max-w-fit"
             href="/fantasy"
-            set:text="Fantasy" />
+            set:text="Fantasy"
+          />
           <a
             class="flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 max-w-fit"
             href="/money"
-            set:text="Money" />
+            set:text="Money"
+          />
         </div>
       </div>
-      <h3
-        class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
-      >
-        Stat Stories
-      </h3>
-      {
-        musings.map((musing, i) => (
-          <div class="flex flex-col md:flex-row mb-[30px] cursor-pointer">
-            <div
-              class="flex items-end justify-center w-full md:w-64 min-h-[10rem] rounded-lg"
-              style={`background-color: ${rgbToHex(musing.background_rgba)}`}
-            >
-                <a href={`/musings/${musing.friendly_id}`}>
-                  <Image
-                    data-cy-illustration
-                    class="h-36 max-w-full object-contain object-bottom"
-                    style="visibility: unset;"
-                    alt={musing.text_plain}
-                    src={musing.image_url!}
-                    width={192}
-                    height={192}
-                    loading={i < 4 ? "eager" : "lazy"}
-                  />
-                </a>
-            </div>
-            <div class="flex-1 flex flex-col pt-4 px-2.5 md:px-5" onclick=`location.href='/musings/${musing.friendly_id}';`>
-              <div 
-                 class="flex-1 leading-snug space-y-4"
-                 set:html={marked(musing.text_markdown || '', {
-                    gfm: true,
-                    breaks: true,
-                    mangle: false,
-                    headerIds: false
-                  })}>
-              </div>
-              <div class="flex items-center mt-[5px]">
-                <content-share href="https://stage.statm.us/e/R3Qtu1vWY">
-                  <div class="relative inline-block">
-                    <img
-                      class="w-[22px]"
-                      src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
-                      alt="share"
-                    />
-                  </div>
-                </content-share>
-                <p class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]">
-                  {formatDate(musing.publish_at, 'MMMM Do, YYYY')}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))
-      }
+      <Musings />
       <h4 class="font-semibold text-right py-4">
-        <a href="/questions">
-          See trending searches
-        </a>
+        <a href="/questions">See trending searches</a>
       </h4>
     </div>
   </main>
