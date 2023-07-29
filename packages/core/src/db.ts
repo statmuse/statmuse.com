@@ -1,15 +1,15 @@
-import pg from "pg"
+import pg from 'pg'
 const { Pool } = pg
 
-import { Kysely, PostgresDialect, Generated, ColumnType } from "kysely"
+import { Kysely, PostgresDialect, Generated, ColumnType } from 'kysely'
 import {
   GetSecretValueCommand,
   SecretsManagerClient,
-} from "@aws-sdk/client-secrets-manager"
-import { GameraResponse } from "./gamera"
+} from '@aws-sdk/client-secrets-manager'
+import { GameraResponse } from './gamera'
 
 const secretsManager = new SecretsManagerClient({
-  region: process.env.AWS_REGION || "us-east-1",
+  region: process.env.AWS_REGION || 'us-east-1',
 })
 
 const { SecretString: secret } = await secretsManager.send(
@@ -17,7 +17,7 @@ const { SecretString: secret } = await secretsManager.send(
     SecretId: process.env.POSTGRES_SECRET_ARN,
   })
 )
-if (!secret) throw new Error("No secret found")
+if (!secret) throw new Error('No secret found')
 
 const credentials = JSON.parse(secret) as {
   username: string
@@ -54,13 +54,20 @@ interface AskTable {
   answer: GameraResponse
   answer_html: string | null
   answer_text: string | null
-  answer_type: 'answer' | 'error' | 'prompt' | 'player_bio' | 'team_franchise_bio' | 'team_season_bio' | 'unknown'
+  answer_type:
+    | 'answer'
+    | 'error'
+    | 'prompt'
+    | 'player_bio'
+    | 'team_franchise_bio'
+    | 'team_season_bio'
+    | 'unknown'
   context_id: string
   count_total: number
   count_web_search: number
   count_web_view: number
   hex_background: string | null
-  hex_foreground:  string | null
+  hex_foreground: string | null
   image_url: string | null
   is_fantasy_query: boolean
   is_game_odds_query: boolean | null
@@ -71,7 +78,11 @@ interface AskTable {
   is_legacy_answer: boolean
   last_user_id: string | null
   last_visitor_id: string | null
-  last_web_search_at: ColumnType<Date, string | undefined, string | undefined> | null
+  last_web_search_at: ColumnType<
+    Date,
+    string | undefined,
+    string | undefined
+  > | null
   query: string
   resource_path: string
   resource_query: string
@@ -91,7 +102,6 @@ interface AskUserTable {
   updated_at: ColumnType<Date, string | undefined, string | undefined>
 }
 
-
 interface AskEventTable {
   id: Generated<string>
 
@@ -110,10 +120,10 @@ interface MusingTable {
   id: Generated<string>
   friendly_id: string
   league_id: string
-  content_type: "latest-stats" | "user-generated" | "templated"
+  content_type: 'latest-stats' | 'user-generated' | 'templated'
   publish_at: ColumnType<Date, string | undefined, string | undefined>
 
-  layout_type: "bottom"
+  layout_type: 'bottom'
   text_markdown: string | null
   text_plain: string | null
   image_url: string | null
@@ -168,7 +178,7 @@ interface ExampleTable {
   is_published: boolean
   position: number
   text: string
-  type: "sitemap" | "onboarding" | "noteworthy"
+  type: 'sitemap' | 'onboarding' | 'noteworthy'
   author_id: string
   league_id: string
   previous_question_id: string
@@ -232,9 +242,13 @@ interface FinanceAskTable {
   is_in_suggests_pin: boolean | null
   last_user_id: string | null
   last_visitor_id: string | null
-  last_web_search_at: ColumnType<Date, string | undefined, string | undefined> | null
+  last_web_search_at: ColumnType<
+    Date,
+    string | undefined,
+    string | undefined
+  > | null
   query: string
-  sid: Generated<number> 
+  sid: Generated<number>
 
   inserted_at: ColumnType<Date, string | undefined, string | undefined>
   updated_at: ColumnType<Date, string | undefined, string | undefined>
@@ -258,7 +272,7 @@ export const db = new Kysely<Database>({
   dialect: new PostgresDialect({
     pool: new Pool({
       host: process.env.POSTGRES_HOST,
-      port: Number.parseInt(process.env.POSTGRES_PORT || "5432"),
+      port: Number.parseInt(process.env.POSTGRES_PORT || '5432'),
       database: process.env.POSTGRES_DATABASE || credentials.dbname,
       user: process.env.POSTGRES_USER || credentials.username,
       password: process.env.POSTGRES_PASSWORD || credentials.password,
