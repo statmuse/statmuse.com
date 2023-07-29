@@ -1,0 +1,55 @@
+---
+interface Props {
+  id: string
+}
+
+const encodedHref = ''
+const fbSvg = ''
+const twitterSvg = ''
+---
+
+<div class="relative inline-block" onclick="event.stopPropagation();">
+  <input id={Astro.props.id} type="checkbox" class="hidden peer" />
+  <label for={Astro.props.id} class="cursor-pointer">
+    <img
+      class="w-[22px]"
+      src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
+      alt="share"
+    />
+  </label>
+  <ul
+    class="hidden peer-checked:block bg-white absolute overflow-hidden w-40 top-full border border-[#e4e4e4] shadow-lg"
+  >
+    <li class="mx-4 py-2 border-b border-[#e4e4e4]">
+      <a
+        href={`https://www.facebook.com/sharer/sharer.php?u=${encodedHref}`}
+        target="_blank"
+        rel="noopener"
+        class="flex items-center cursor-pointer text-primary"
+      >
+        <div class="w-8 h-5 flex justify-center items-center pr-2 relative">
+          <img class="max-h-full" alt="facebook" src={fbSvg} />
+        </div>
+        Facebook
+      </a>
+    </li>
+    <li class="mx-4 py-2 border-b border-[#e4e4e4]">
+      <a
+        href={`http://twitter.com/share?url=${encodedHref}`}
+        target="_blank"
+        rel="noopener"
+        class="flex items-center cursor-pointer text-primary"
+      >
+        <div class="w-8 h-5 flex justify-center items-center pr-2 relative">
+          <img class="max-h-full" alt="twitter" src={twitterSvg} />
+        </div>
+        Twitter
+      </a>
+    </li>
+    <!-- <li class="mx-4 py-2">
+    <CopyButton
+      {...{ isCopied, copyFailed, copyLink, href, doesClipboardWork }}
+    />
+  </li> -->
+  </ul>
+</div>
