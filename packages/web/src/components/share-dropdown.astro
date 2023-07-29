@@ -58,9 +58,21 @@ const twitterSvg = ''
   </ul>
 </div>
 <script>
+  // close dropdown when clicking outside
   window.addEventListener('click', () => {
     document.querySelectorAll('[data-dropdown] input:checked').forEach((el) => {
       ;(el as HTMLInputElement).checked = false
+    })
+  })
+  // clear previous dropwdown when clicking on another share button
+  document.querySelectorAll('[data-dropdown] label').forEach((el) => {
+    el.addEventListener('click', () => {
+      const input = document.querySelector(
+        '[data-dropdown] input:checked'
+      ) as HTMLInputElement | null
+      if (input) {
+        input.checked = false
+      }
     })
   })
 </script>
