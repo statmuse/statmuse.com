@@ -217,7 +217,7 @@ export interface GameraPlayerBio {
     domain: string
     text: string
   }[]
-  statsSummary: {
+  statsSummary?: {
     statsScope: string
     stats: {
       label: string

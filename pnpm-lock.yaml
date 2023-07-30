@@ -22,7 +22,7 @@ importers:
         version: 10.1.156
       sst:
         specifier: 2.21.8
-        version: 2.21.8(pg@8.11.0)
+        version: link:../sst/packages/sst/dist
       typescript:
         specifier: ^5.0.4
         version: 5.0.4
@@ -123,7 +123,7 @@ importers:
         version: 2.9.0(@types/node@20.3.1)(sharp@0.32.3)
       astro-sst:
         specifier: 2.21.8
-        version: 2.21.8
+        version: link:../../../sst/packages/astro-sst
       d3:
         specifier: ^7.8.5
         version: 7.8.5
@@ -3989,12 +3989,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
-
-  /astro-sst@2.21.8:
-    resolution: {integrity: sha512-PJkT6jgRn2N7wMFEVRKd+Tq+r9vuEWWhxagA23zDrXwi34Kg2sISJfbINPcoEN75alYial5yWSPmY3LSadMrbg==}
-    dependencies:
-      '@astrojs/webapi': 2.2.0
-    dev: false
 
   /astro@2.9.0(@types/node@20.3.1)(sharp@0.32.3):
     resolution: {integrity: sha512-qD8hFvFrpLDA1/wGivP9YbKq7vfMfS1XPE9SyrrDaYFB/NXnZPqnwSXOxRD0AA4WSv9OAtUO3DV8dHFj9xWi/Q==}

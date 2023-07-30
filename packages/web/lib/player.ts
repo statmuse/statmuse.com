@@ -73,20 +73,20 @@ export const getPlayerSplits = async (props: {
 
 export const getPlayerGalleryList = async (league?: string) => {
   let query = db
-  .selectFrom('players')
-  .innerJoin('leagues', 'leagues.id', 'players.league_id')
-  .where('players.bust_image_url', 'is not', null)
-  .orderBy('players.last_name')
-  .orderBy('players.first_name')
-  .orderBy('players.resource_id')
+    .selectFrom('players')
+    .innerJoin('leagues', 'leagues.id', 'players.league_id')
+    .where('players.bust_image_url', 'is not', null)
+    .orderBy('players.last_name')
+    .orderBy('players.first_name')
+    .orderBy('players.resource_id')
 
   if (league) {
     query = query.where('leagues.name', '=', league)
   }
 
-  return query.selectAll('players')
-  .select(['leagues.name as domain'])
-  .execute()
+  return query.selectAll('players').select(['leagues.name as domain']).execute()
 }
 
-export type PlayerGalleryItem = Awaited<ReturnType<typeof getPlayerGalleryList>>[number]
+export type PlayerGalleryItem = Awaited<
+  ReturnType<typeof getPlayerGalleryList>
+>[number]

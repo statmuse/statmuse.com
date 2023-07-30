@@ -92,7 +92,7 @@ const keywords = `${getLeagueKeywords(domain)} ${
               bio.conference && (
                 <>
                   <span>{bio.conference}</span>
-                  <span class="last:hidden"> • </span>
+                  <span class="last:hidden" set:text=" • " />
                 </>
               )
             }
@@ -100,7 +100,7 @@ const keywords = `${getLeagueKeywords(domain)} ${
               bio.division && (
                 <>
                   <span>{bio.division}</span>
-                  <span class="last:hidden"> • </span>
+                  <span class="last:hidden" set:text=" • " />
                 </>
               )
             }

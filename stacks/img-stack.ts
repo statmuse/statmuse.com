@@ -7,9 +7,16 @@ import {
   ResponseHeadersPolicy,
   ViewerProtocolPolicy,
 } from "aws-cdk-lib/aws-cloudfront"
+import {
+  Code,
+  FunctionUrlAuthType,
+  HttpMethod,
+  InvokeMode,
+  LayerVersion,
+} from "aws-cdk-lib/aws-lambda"
 import { Bucket as CdkBucket } from "aws-cdk-lib/aws-s3"
 import { Web } from "./web-stack"
-import { CustomResource, Duration, RemovalPolicy } from "aws-cdk-lib/core"
+import { Duration, Fn, RemovalPolicy } from "aws-cdk-lib/core"
 import {
   HttpOrigin,
   OriginGroup,
@@ -108,17 +115,11 @@ export function ImageOptimization({ stack }: StackContext) {
     invokeMode: InvokeMode.RESPONSE_STREAM,
   })
 
-  const imageProcessingHelper = new LambdaFunctionUrlHelper(
-    stack,
-    "image-processing-url",
-    { Url: url }
-  )
-
   const imageOrigin = new OriginGroup({
     primaryOrigin: new S3Origin(transformedImageBucket.cdk.bucket, {
       originShieldRegion: CLOUDFRONT_ORIGIN_SHIELD_REGION,
     }),
-    fallbackOrigin: new HttpOrigin(imageProcessingHelper.hostname, {
+    fallbackOrigin: new HttpOrigin(Fn.parseDomainName(url), {
       originShieldRegion: CLOUDFRONT_ORIGIN_SHIELD_REGION,
       customHeaders: { "x-origin-secret-header": SECRET_KEY.value },
     }),
@@ -164,6 +165,11 @@ export function ImageOptimization({ stack }: StackContext) {
             override: true,
           },
           { header: "vary", value: "accept", override: true },
+          {
+            header: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+            override: true,
+          },
         ],
       },
     }
@@ -197,99 +203,11 @@ export function ImageOptimization({ stack }: StackContext) {
     imageOrigin,
     params
   )
+  astroSite.cdk?.distribution.addBehavior(
+    "finance/asset_img/*",
+    imageOrigin,
+    params
+  )
 
   return {}
-}
-
-import { Construct } from "constructs"
-import {
-  Code,
-  FunctionUrlAuthType,
-  HttpMethod,
-  InvokeMode,
-  LayerVersion,
-  Runtime,
-  SingletonFunction,
-} from "aws-cdk-lib/aws-lambda"
-import { RetentionDays } from "aws-cdk-lib/aws-logs"
-import { Provider } from "aws-cdk-lib/custom-resources"
-
-const customResourceHandler = `
-import urllib.parse
-
-def on_event(event, context):
-  print(event)
-  request_type = event['RequestType']
-  if request_type == 'Create': return on_create(event)
-  if request_type == 'Update': return on_update(event)
-  if request_type == 'Delete': return on_delete(event)
-  raise Exception("Invalid request type: %s" % request_type)
-
-def on_create(event):
-  props = event["ResourceProperties"]
-  print("create new resource with props %s" % props)
-
-  url = event['ResourceProperties']['Url']
-  parsed_url = urllib.parse.urlparse(url)
-  attributes = {
-      'HostName': parsed_url.netloc
-  }
-  return { 'Data': attributes }
-
-def on_update(event):
-  physical_id = event["PhysicalResourceId"]
-  props = event["ResourceProperties"]
-  print("update resource %s with props %s" % (physical_id, props))
-  # ...
-
-  return { 'PhysicalResourceId': physical_id }
-
-def on_delete(event):
-  physical_id = event["PhysicalResourceId"]
-  print("delete resource %s" % physical_id)
-  # ...
-
-  return { 'PhysicalResourceId': physical_id }
-
-def is_complete(event, context):
-  physical_id = event["PhysicalResourceId"]
-  request_type = event["RequestType"]
-
-  # check if resource is stable based on request_type
-  # is_ready = ...
-
-  return { 'IsComplete': True }
-`
-
-export class LambdaFunctionUrlHelper extends Construct {
-  public readonly hostname: string
-
-  constructor(scope: Construct, id: string, props: { Url: string }) {
-    super(scope, id)
-
-    const onEvent = new SingletonFunction(this, "Singleton", {
-      uuid: "f7d4f730-4ee1-11e8-9c2d-fa7ae01bbebc",
-      code: Code.fromInline(customResourceHandler),
-      handler: "index.on_event",
-      timeout: Duration.seconds(300),
-      runtime: Runtime.PYTHON_3_9,
-      logRetention: RetentionDays.ONE_DAY,
-    })
-
-    const myProvider = new Provider(
-      this,
-      "lambda-function-url-helper-provider",
-      {
-        onEventHandler: onEvent,
-        logRetention: RetentionDays.ONE_DAY,
-      }
-    )
-
-    const resource = new CustomResource(this, "lambda-function-url-helper", {
-      serviceToken: myProvider.serviceToken,
-      properties: props,
-    })
-
-    this.hostname = resource.getAtt("HostName").toString()
-  }
 }
