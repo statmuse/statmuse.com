@@ -84,7 +84,7 @@ const linkSvg = ''
       const input = document.querySelector(
         '[data-dropdown] input:checked'
       ) as HTMLInputElement | null
-      if (input) {
+      if (input && input.parentNode !== el.parentElement) {
         input.checked = false
       }
     })
