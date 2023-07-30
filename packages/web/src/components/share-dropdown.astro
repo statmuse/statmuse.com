@@ -4,10 +4,7 @@ interface Props {
 }
 
 const encodedHref = ''
-const fbSvg = ''
-const twitterSvg = ''
 const url = 'https://statm.us/e/'
-const linkSvg = ''
 ---
 
 <div
@@ -34,7 +31,11 @@ const linkSvg = ''
         class="flex items-center cursor-pointer text-primary"
       >
         <div class="w-8 h-5 flex justify-center items-center pr-2 relative">
-          <img class="max-h-full" alt="facebook" src={fbSvg} />
+          <img
+            class="max-h-full"
+            alt="facebook"
+            src="/share-icons/facebook.svg"
+          />
         </div>
         Facebook
       </a>
@@ -47,7 +48,11 @@ const linkSvg = ''
         class="flex items-center cursor-pointer text-primary"
       >
         <div class="w-8 h-5 flex justify-center items-center pr-2 relative">
-          <img class="max-h-full" alt="twitter" src={twitterSvg} />
+          <img
+            class="max-h-full"
+            alt="twitter"
+            src="/share-icons/twitter.svg"
+          />
         </div>
         Twitter
       </a>
@@ -58,7 +63,7 @@ const linkSvg = ''
         data-share-url={url}
       >
         <div class="w-8 h-5 flex justify-center items-center pr-2 relative">
-          <img class="max-h-full" src={linkSvg} alt="share" />
+          <img class="max-h-full" src="/share-icons/link.svg" alt="share" />
         </div>
         Copy Link
       </a>
