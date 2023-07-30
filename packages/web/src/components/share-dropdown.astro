@@ -6,6 +6,8 @@ interface Props {
 const encodedHref = ''
 const fbSvg = ''
 const twitterSvg = ''
+const url = 'https://statm.us/e/'
+const linkSvg = ''
 ---
 
 <div
@@ -50,11 +52,23 @@ const twitterSvg = ''
         Twitter
       </a>
     </li>
-    <!-- <li class="mx-4 py-2">
-    <CopyButton
-      {...{ isCopied, copyFailed, copyLink, href, doesClipboardWork }}
-    />
-  </li> -->
+    <li class="mx-4 py-2">
+      <a
+        class="flex items-center cursor-pointer text-primary"
+        data-share-url={url}
+      >
+        <div class="w-8 h-5 flex justify-center items-center pr-2 relative">
+          <img class="max-h-full" src={linkSvg} alt="share" />
+        </div>
+        Copy Link
+      </a>
+      <input
+        class="absolute right-[99999px]"
+        type="text"
+        value={url}
+        readonly
+      />
+    </li>
   </ul>
 </div>
 <script>
@@ -73,6 +87,17 @@ const twitterSvg = ''
       if (input) {
         input.checked = false
       }
+    })
+  })
+  // copy clipboard bind & event handler
+  document.querySelectorAll('[data-share-url]').forEach((el) => {
+    el.addEventListener('click', async () => {
+      ;(el.nextSibling as HTMLInputElement).select()
+      try {
+        await navigator.clipboard.writeText(
+          (el as HTMLElement).dataset.shareUrl || ''
+        )
+      } catch (err) {}
     })
   })
 </script>
