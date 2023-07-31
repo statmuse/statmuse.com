@@ -1,17 +1,26 @@
 ---
 import Logo from '@components/logo.astro'
 import AskBar from '@components/ask-bar.astro'
+import AnswerShare from '@components/answer-share.astro'
 import { clean } from '@lib/meta'
 
 interface Props {
   query?: string
   conversationToken?: string
   preferredDomain?: string
+  share?: {
+    type: 'ask' | 'musing' | 'profile'
+    shortCode?: string
+    url?: string
+    query?: string
+    domain?: string
+  }
 }
 
 const query = Astro.props.query ? clean(Astro.props.query) : undefined
 const conversationToken = Astro.props.conversationToken
 const preferredDomain = Astro.props.preferredDomain
+const share = Astro.props.share
 ---
 
 <div
@@ -27,35 +36,10 @@ const preferredDomain = Astro.props.preferredDomain
     <div class="flex-1">
       <AskBar {query} {conversationToken} {preferredDomain} />
     </div>
-    <div class="md:flex items-center ml-4 hidden space-x-4">
-      <answer-share
-        ask-short-url="https://statm.us/e/0lV7ABoj9"
-        ask-url="https://www.statmuse.com/nba/ask/most-points-in-a-game"
-        class="unstable"
-        ><div>
-          <span style="cursor: pointer;">
-            <svg
-              width="25"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 22.7 22.7"
-              xml:space="preserve"
-            >
-              <g
-                style="fill: none; stroke: var(--team-secondary-color, #c5c9cc); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10;"
-              >
-                <polyline points="6.5,8.9 11.4,4 16.2,8.8"></polyline><line
-                  x1="11.4"
-                  y1="4"
-                  x2="11.4"
-                  y2="13.1"
-                >
-                </line><polyline points="3.2,13.2 3.2,18.7 19.5,18.7 19.5,13.2">
-                </polyline>
-              </g>
-            </svg>
-          </span>
-        </div>
-      </answer-share>
+    <div
+      class="md:flex md:w-fit w-0 items-center ml-4 space-x-4 overflow-hidden"
+    >
+      {share && <AnswerShare {...share} />}
     </div>
   </div>
 </div>

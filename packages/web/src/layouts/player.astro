@@ -3,7 +3,7 @@ import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Image from '@components/image.astro'
 import Container from '@components/container.astro'
-
+import AnswerShare from '@components/answer-share.astro'
 import {
   getUrlForEntity,
   getDefaultBustImageUrl,
@@ -60,7 +60,7 @@ const keywords = `${getLeagueKeywords(domain)} ${
   colors={bio.team.colors}
   meta={{ title, description, keywords, canonical, ...(meta || {}) }}
 >
-  <Header {preferredDomain} />
+  <Header {preferredDomain} share={{ type: 'profile', url: Astro.url.href }} />
   <Container class="mb-5 bg-team-primary text-team-secondary">
     <div class="flex flex-col md:flex-row relative">
       <div class="flex-1 mt-5 mb-7">
@@ -135,6 +135,7 @@ const keywords = `${getLeagueKeywords(domain)} ${
       <div
         class="md:hidden flex flex-col items-center absolute right-0 bottom-2.5 space-y-2.5"
       >
+        <AnswerShare onlyIcon />
       </div>
     </div>
   </Container>

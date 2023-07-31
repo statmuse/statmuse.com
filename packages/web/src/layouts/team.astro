@@ -2,6 +2,7 @@
 import Container from '@components/container.astro'
 import Header from '@components/header.astro'
 import TeamRepresentatives from '@components/representatives.astro'
+import AnswerShare from '@components/answer-share.astro'
 import Layout from '@layouts/main.astro'
 import {
   GameraDomain,
@@ -69,7 +70,7 @@ const keywords = `${getLeagueKeywords(domain)} ${
   colors={bio.colors}
   meta={{ title, description, keywords, canonical, ...(meta || {}) }}
 >
-  <Header {preferredDomain} />
+  <Header {preferredDomain} share={{ type: 'profile', url: Astro.url.href }} />
   <Container class="mb-5 bg-team-primary text-team-secondary overflow-hidden">
     <div
       class="relative flex flex-col md:flex-row md:flex-wrap justify-center items-center md:items-stretch"
@@ -184,35 +185,7 @@ const keywords = `${getLeagueKeywords(domain)} ${
         <div
           class="flex items-center justify-center w-12 h-12 rounded-full bg-team-primary"
         >
-          <answer-share
-            class="unstable"
-            url="https://www.statmuse.com/nba/team/2016-17-san-antonio-spurs-27/2017"
-            ><div>
-              <span style="cursor: pointer;">
-                <svg
-                  width="25"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 22.7 22.7"
-                  xml:space="preserve"
-                >
-                  <g
-                    style="fill: none; stroke: var(--team-secondary-color, #c5c9cc); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10;"
-                  >
-                    <polyline points="6.5,8.9 11.4,4 16.2,8.8"></polyline><line
-                      x1="11.4"
-                      y1="4"
-                      x2="11.4"
-                      y2="13.1"
-                    >
-                    </line><polyline
-                      points="3.2,13.2 3.2,18.7 19.5,18.7 19.5,13.2"
-                    >
-                    </polyline>
-                  </g>
-                </svg>
-              </span>
-            </div></answer-share
-          >
+          <AnswerShare onlyIcon />
         </div>
       </div>
     </div>

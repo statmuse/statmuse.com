@@ -11,7 +11,7 @@ const { id } = Astro.params
 const musing = await getMusing(id).executeTakeFirst()
 if (!musing) return Astro.halt({ status: 404 })
 
-const query = musing.text_plain ?? ''
+const query = musing.text ?? ''
 const conversationToken = musing.input_conversation_token
 const preferredDomain = musing.name
 
@@ -26,7 +26,17 @@ const heroProps = getHeroProps({ imageAlt: query, musing })
 ---
 
 <Layout colors={{ foreground, background }}>
-  <Header {query} {conversationToken} {preferredDomain} />
+  <Header
+    {query}
+    {conversationToken}
+    {preferredDomain}
+    share={{
+      type: 'musing',
+      query,
+      domain: preferredDomain.toLowerCase(),
+      shortCode: musing.short_code,
+    }}
+  />
   {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals response={musing.answer} />
 </Layout>

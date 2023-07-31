@@ -254,6 +254,21 @@ interface FinanceAskTable {
   updated_at: ColumnType<Date, string | undefined, string | undefined>
 }
 
+interface LinkTable {
+  id: Generated<string>
+
+  short_code: string
+  linkable_type: 'ask' | 'finance_ask' | 'question' | 'musing' | 'url'
+  ask_id: string | null
+  finance_ask_id: string | null
+  question_id: string | null
+  musing_id: string | null
+  url: string | null
+
+  inserted_at: ColumnType<Date, string | undefined, string | undefined>
+  updated_at: ColumnType<Date, string | undefined, string | undefined>
+}
+
 export interface Database {
   users: UserTable
   asks: AskTable
@@ -261,6 +276,7 @@ export interface Database {
   asks_users: AskUserTable
   contexts: ContextTable
   finance_asks: FinanceAskTable
+  links: LinkTable
   musings: MusingTable
   questions: QuestionTable
   examples: ExampleTable

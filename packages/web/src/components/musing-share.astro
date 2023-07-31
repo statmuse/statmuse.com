@@ -1,0 +1,112 @@
+---
+interface Props {
+  id: string
+  url: string
+}
+
+const { url } = Astro.props
+---
+
+<div
+  class="relative inline-block"
+  onclick="event.stopPropagation();"
+  data-dropdown
+>
+  <input id={Astro.props.id} type="checkbox" class="hidden peer" />
+  <label for={Astro.props.id} class="cursor-pointer">
+    <img
+      class="w-[22px]"
+      src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6Izk2OWNhMTtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMCI+PHBhdGggZD0ibTYuNSA4LjkgNC45LTQuOSA0LjggNC44Ii8+PHBhdGggZD0ibTExLjQgNHY5LjEiLz48cGF0aCBkPSJtMy4yIDEzLjJ2NS41aDE2LjN2LTUuNSIvPjwvZz48L3N2Zz4K"
+      alt="share"
+    />
+  </label>
+  <ul
+    class="hidden peer-checked:block bg-white absolute overflow-hidden w-40 top-full border border-[#e4e4e4] shadow-lg"
+  >
+    <li class="mx-4 py-2 border-b border-[#e4e4e4]">
+      <a
+        href={`https://www.facebook.com/sharer/sharer.php?${new URLSearchParams(
+          { u: url }
+        ).toString()}`}
+        target="_blank"
+        rel="noopener"
+        class="flex items-center cursor-pointer text-primary"
+      >
+        <div class="w-8 h-5 flex justify-center items-center pr-2 relative">
+          <img
+            class="max-h-full"
+            alt="facebook"
+            src="/share-icons/facebook-dark.svg"
+          />
+        </div>
+        Facebook
+      </a>
+    </li>
+    <li class="mx-4 py-2 border-b border-[#e4e4e4]">
+      <a
+        href={`http://twitter.com/share?${new URLSearchParams({
+          url,
+        }).toString()}`}
+        target="_blank"
+        rel="noopener"
+        class="flex items-center cursor-pointer text-primary"
+      >
+        <div class="w-8 h-5 flex justify-center items-center pr-2 relative">
+          <img
+            class="max-h-full"
+            alt="twitter"
+            src="/share-icons/twitter-dark.svg"
+          />
+        </div>
+        Twitter
+      </a>
+    </li>
+    <li class="mx-4 py-2">
+      <a
+        class="flex items-center cursor-pointer text-primary"
+        data-share-url={url}
+      >
+        <div class="w-8 h-5 flex justify-center items-center pr-2 relative">
+          <img class="max-h-full" src="/share-icons/link.svg" alt="share" />
+        </div>
+        Copy Link
+      </a>
+      <input
+        class="absolute right-[99999px]"
+        type="text"
+        value={url}
+        readonly
+      />
+    </li>
+  </ul>
+</div>
+<script>
+  // close dropdown when clicking outside
+  window.addEventListener('click', () => {
+    document.querySelectorAll('[data-dropdown] input:checked').forEach((el) => {
+      ;(el as HTMLInputElement).checked = false
+    })
+  })
+  // clear previous dropwdown when clicking on another share button
+  document.querySelectorAll('[data-dropdown] label').forEach((el) => {
+    el.addEventListener('click', () => {
+      const input = document.querySelector(
+        '[data-dropdown] input:checked'
+      ) as HTMLInputElement | null
+      if (input && input.parentNode !== el.parentElement) {
+        input.checked = false
+      }
+    })
+  })
+  // copy clipboard bind & event handler
+  document.querySelectorAll('[data-share-url]').forEach((el) => {
+    el.addEventListener('click', async () => {
+      ;(el.nextSibling as HTMLInputElement).select()
+      try {
+        await navigator.clipboard.writeText(
+          (el as HTMLElement).dataset.shareUrl || ''
+        )
+      } catch (err) {}
+    })
+  })
+</script>

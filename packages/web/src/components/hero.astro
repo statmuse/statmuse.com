@@ -3,6 +3,7 @@ import { marked } from 'marked'
 import Container from '@components/container.astro'
 import Image from '@components/image.astro'
 import type { HeroProps } from '@lib/props'
+import AnswerShare from './answer-share.astro'
 
 interface Props extends HeroProps {}
 
@@ -53,5 +54,10 @@ const content = markdown
       height={350}
       loading="eager"
     />
+    <div
+      class="md:hidden flex flex-col items-center absolute right-0 bottom-2.5 space-y-2.5"
+    >
+      <AnswerShare onlyIcon />
+    </div>
   </div>
 </Container>

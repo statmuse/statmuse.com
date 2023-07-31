@@ -9,7 +9,7 @@ import { ask, getHeroProps } from '@lib/gamera'
 const { league: preferredDomain, question } = Astro.params
 if (!question) return Astro.redirect('/questions')
 const query = question.replaceAll('-', ' ')
-const response = await ask({preferredDomain, query })
+const response = await ask({ preferredDomain, query })
 if (!response) return Astro.halt({ status: 404 })
 
 const { subject, redirectUrl, conversationToken } = handleResponse(response)
@@ -19,7 +19,12 @@ const heroProps = getHeroProps({ imageAlt: query, response })
 ---
 
 <Layout colors={subject?.colors}>
-  <Header {query} {preferredDomain} {conversationToken} />
+  <Header
+    {query}
+    {preferredDomain}
+    {conversationToken}
+    share={{ type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
+  />
   {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals {response} />
 </Layout>

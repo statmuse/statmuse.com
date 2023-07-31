@@ -21,7 +21,12 @@ const heroProps = getHeroProps({ imageAlt: query, response })
 ---
 
 <Layout colors={subject?.colors}>
-  <Header {query} {preferredDomain} {conversationToken} />
+  <Header
+    {query}
+    {preferredDomain}
+    {conversationToken}
+    share={{ type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
+  />
   {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals {response} {conversationToken} />
 </Layout>
