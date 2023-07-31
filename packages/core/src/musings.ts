@@ -6,8 +6,10 @@ export const getMusing = (musing?: string) =>
     .selectFrom('musings')
     .innerJoin('questions', 'questions.id', 'musings.question_id')
     .innerJoin('leagues', 'leagues.id', 'musings.league_id')
+    .innerJoin('links', 'links.musing_id', 'musings.id')
     .where('musings.friendly_id', '=', musing || null)
-    .selectAll()
+    .selectAll(['musings', 'questions', 'leagues'])
+    .select('links.short_code')
     .limit(1)
 
 const getMusingQuery = getMusing()
