@@ -60,7 +60,7 @@ const keywords = `${getLeagueKeywords(domain)} ${
   colors={bio.team.colors}
   meta={{ title, description, keywords, canonical, ...(meta || {}) }}
 >
-  <Header {preferredDomain} />
+  <Header {preferredDomain} share={{ type: 'profile', url: Astro.url.href }} />
   <Container class="mb-5 bg-team-primary text-team-secondary">
     <div class="flex flex-col md:flex-row relative">
       <div class="flex-1 mt-5 mb-7">
