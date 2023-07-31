@@ -39,7 +39,7 @@ const socialButtons = [
     icon: twitterSvg,
     bgColor: '#1DA1F2',
     shareUrl: (x: string) =>
-      'http://twitter.com/share?' + new URLSearchParams({ url: x }).toString(),
+      'https://twitter.com/share?' + new URLSearchParams({ url: x }).toString(),
   },
 ]
 ---
@@ -96,6 +96,7 @@ const socialButtons = [
                 style={{ background: button.bgColor }}
                 target="_blank"
                 rel="noopener noreferrer"
+                data-social={button.label}
               >
                 <img
                   src={button.icon}
@@ -169,14 +170,12 @@ const socialButtons = [
 </div>
 <script>
   const input = document.querySelector<HTMLInputElement>('[data-share-input]')
-  if (input) {
+  const inputLabel = input?.parentNode?.querySelector('span')
+  if (input && inputLabel) {
     input.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(input.value)
-        const span = input.parentNode?.querySelector('span')
-        if (span) {
-          span.innerText = 'COPIED'
-        }
+        inputLabel.innerText = 'COPIED'
       } catch (err) {}
     })
   }
@@ -185,7 +184,8 @@ const socialButtons = [
   const disclaimer = document.querySelector<HTMLElement>(
     '[data-share-disclaimer]'
   )
-  if (checkbox && input && disclaimer) {
+  if (checkbox && input && inputLabel && disclaimer) {
+    // listen to changes on checkbox and set share url on input
     checkbox.addEventListener('change', () => {
       if (checkbox.dataset.shareType === 'ask') {
         checkbox.checked
@@ -195,11 +195,29 @@ const socialButtons = [
         checkbox.checked
           ? (input.value = checkbox.dataset.shareUrl || '')
           : (input.value = checkbox.dataset.shortLink || '')
+        // set disclaimer messsage
         checkbox.checked
           ? (disclaimer.innerText =
               'This answer is live and will keep updating')
           : (disclaimer.innerText = 'This answer is static and will not update')
       }
+      // reset input label
+      inputLabel.innerText = 'COPY'
+      // set the social button hrefs with new share url
+      document
+        .querySelectorAll<HTMLAnchorElement>('[data-social]')
+        .forEach((el) => {
+          if (el.dataset.social === 'Facebook') {
+            el.href =
+              'https://www.facebook.com/sharer/sharer.php?' +
+              new URLSearchParams({ u: input.value }).toString()
+          }
+          if (el.dataset.social === 'Twitter') {
+            el.href =
+              'https://twitter.com/share?' +
+              new URLSearchParams({ url: input.value }).toString()
+          }
+        })
     })
   }
 </script>
