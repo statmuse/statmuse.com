@@ -1,10 +1,10 @@
 ---
 interface Props {
   id: string
+  url: string
 }
 
-const encodedHref = ''
-const url = 'https://statm.us/e/'
+const { url } = Astro.props
 ---
 
 <div
@@ -25,7 +25,9 @@ const url = 'https://statm.us/e/'
   >
     <li class="mx-4 py-2 border-b border-[#e4e4e4]">
       <a
-        href={`https://www.facebook.com/sharer/sharer.php?u=${encodedHref}`}
+        href={`https://www.facebook.com/sharer/sharer.php?${new URLSearchParams(
+          { u: url }
+        ).toString()}`}
         target="_blank"
         rel="noopener"
         class="flex items-center cursor-pointer text-primary"
@@ -42,7 +44,9 @@ const url = 'https://statm.us/e/'
     </li>
     <li class="mx-4 py-2 border-b border-[#e4e4e4]">
       <a
-        href={`http://twitter.com/share?url=${encodedHref}`}
+        href={`http://twitter.com/share?${new URLSearchParams({
+          url,
+        }).toString()}`}
         target="_blank"
         rel="noopener"
         class="flex items-center cursor-pointer text-primary"

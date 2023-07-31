@@ -7,6 +7,9 @@ import { formatDate } from "@statmuse/core/time";
 import { marked } from "marked";
 
 const musings = await listLatestMusings.execute()
+
+const shortLinkUrl =  process.env.SHORT_LINK_URL || 'http://localhost:3000/';
+
 ---
 <Fragment>
   <h3
@@ -45,7 +48,7 @@ const musings = await listLatestMusings.execute()
               })}>
           </div>
           <div class="flex items-center mt-[5px]">
-            <ShareDropdown id={musing.id} />
+            <ShareDropdown id={musing.id} url={`${shortLinkUrl}e/${musing.short_code}`} />
             <p class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]">
               {formatDate(musing.publish_at, 'MMMM Do, YYYY')}
             </p>
