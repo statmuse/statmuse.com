@@ -10,10 +10,6 @@ interface Props {
   onlyIcon?: boolean
 }
 
-const closeSvg = ''
-const fbSvg = ''
-const twitterSvg = ''
-
 const {
   type = 'profile',
   shortCode,
@@ -31,7 +27,7 @@ const shortLinkUrl = shortCode
 const socialButtons = [
   {
     label: 'Facebook',
-    icon: fbSvg,
+    icon: '/share-icons/facebook-light.svg',
     bgColor: '#3C5A99',
     shareUrl: (x: string) =>
       'https://www.facebook.com/sharer/sharer.php?' +
@@ -39,7 +35,7 @@ const socialButtons = [
   },
   {
     label: 'Twitter',
-    icon: twitterSvg,
+    icon: '/share-icons/twitter-light.svg',
     bgColor: '#1DA1F2',
     shareUrl: (x: string) =>
       'https://twitter.com/share?' + new URLSearchParams({ url: x }).toString(),
@@ -91,7 +87,7 @@ const socialButtons = [
         <div class="bg-white w-[98%] max-w-[500px] absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-[#333] px-3 py-6 sm:p-6 text-left">
           <label for="answer-share" class="cursor-pointer">
             <img
-              src={closeSvg}
+              src="/share-icons/x.svg"
               class="w-4 h-4 absolute top-6 right-3 sm:right-6"
               alt="close"
             />
