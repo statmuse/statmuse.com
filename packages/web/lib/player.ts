@@ -11,22 +11,32 @@ import { gameraApiUrl } from '@lib/gamera'
 import { db } from '@statmuse/core/db'
 
 export const getPlayerBio = async (domain: GameraDomain, player: string) => {
-  const playerId = parsePlayerId(player)
-  const requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}/bio`
-  const response = await fetch(requestUrl)
-  const data = (await response.json()) as GameraPlayerBio
-  return data
+  try {
+    const playerId = parsePlayerId(player)
+    const requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}/bio`
+    const response = await fetch(requestUrl)
+    const data = (await response.json()) as GameraPlayerBio
+    return data
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
 }
 
 export const getPlayerProfile = async (
   domain: GameraDomain,
   player: string
 ) => {
-  const playerId = parsePlayerId(player)
-  const requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}`
-  const response = await fetch(requestUrl)
-  const data = (await response.json()) as GameraPlayerProfileResponse
-  return data
+  try {
+    const playerId = parsePlayerId(player)
+    const requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}`
+    const response = await fetch(requestUrl)
+    const data = (await response.json()) as GameraPlayerProfileResponse
+    return data
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
 }
 
 export const getPlayerStats = async (props: {
@@ -35,12 +45,17 @@ export const getPlayerStats = async (props: {
   params: URLSearchParams
 }) => {
   const { player, domain, params } = props
-  const playerId = parsePlayerId(player)
-  let requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}/careerStats`
-  if (params) requestUrl += `?${params.toString()}`
-  const response = await fetch(requestUrl)
-  const data = (await response.json()) as GameraPlayerStats
-  return data
+  try {
+    const playerId = parsePlayerId(player)
+    let requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}/careerStats`
+    if (params) requestUrl += `?${params.toString()}`
+    const response = await fetch(requestUrl)
+    const data = (await response.json()) as GameraPlayerStats
+    return data
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
 }
 
 export const getPlayerGameLog = async (props: {
@@ -49,12 +64,17 @@ export const getPlayerGameLog = async (props: {
   params: URLSearchParams
 }) => {
   const { player, domain, params } = props
-  const playerId = parsePlayerId(player)
-  let requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}/gameLog`
-  if (params) requestUrl += `?${params.toString()}`
-  const response = await fetch(requestUrl)
-  const data = (await response.json()) as GameraPlayerGameLog
-  return data
+  try {
+    const playerId = parsePlayerId(player)
+    let requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}/gameLog`
+    if (params) requestUrl += `?${params.toString()}`
+    const response = await fetch(requestUrl)
+    const data = (await response.json()) as GameraPlayerGameLog
+    return data
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
 }
 
 export const getPlayerSplits = async (props: {
@@ -63,12 +83,17 @@ export const getPlayerSplits = async (props: {
   params: URLSearchParams
 }) => {
   const { player, domain, params } = props
-  const playerId = parsePlayerId(player)
-  let requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}/splits`
-  if (params) requestUrl += `?${params.toString()}`
-  const response = await fetch(requestUrl)
-  const data = (await response.json()) as GameraPlayerSplits
-  return data
+  try {
+    const playerId = parsePlayerId(player)
+    let requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}/splits`
+    if (params) requestUrl += `?${params.toString()}`
+    const response = await fetch(requestUrl)
+    const data = (await response.json()) as GameraPlayerSplits
+    return data
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
 }
 
 export const getPlayerGalleryList = async (league?: string) => {

@@ -15,6 +15,10 @@ if (!player || !league) {
 
 const domain = league.toUpperCase() as GameraDomain
 const bio = await getPlayerBio(domain, player)
+if (!bio) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
 const leagueKeywords = getLeagueKeywords(domain)
 const summary = bio.summaryNlg ? tokensToHtml(bio.summaryNlg) : undefined
 const title = `${bio.usedName} Bio`

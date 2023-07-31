@@ -1,7 +1,6 @@
 import tailwind from '@astrojs/tailwind'
 import aws from 'astro-sst/lambda'
 import { defineConfig } from 'astro/config'
-import rollupNodePolyFill from 'rollup-plugin-node-polyfills'
 
 // https://astro.build/config
 export default defineConfig({
@@ -10,24 +9,22 @@ export default defineConfig({
   adapter: aws(),
   compressHTML: true,
   build: { inlineStylesheets: 'auto' },
-  experimental: { assets: true, viewTransitions: true },
-  vite: {
-    optimizeDeps: {
-      esbuildOptions: {
-        define: {
-          global: 'globalThis',
-        },
-      },
-    },
-    build: {
-      rollupOptions: {
-        plugins: [rollupNodePolyFill()],
-      },
-    },
-    resolve: {
-      alias: {
-        './runtimeConfig': './runtimeConfig.browser',
-      },
-    },
+  redirects: {
+    '/company': '/company/about',
+    '/company/products': '/company/about',
+    '/company/shoutouts': '/company/about',
+    '/company/twitter-love': '/company/about',
+    '/product/data': '/product/data/nba',
+    '/product/examples': '/product/examples/nba',
+    '/getting-started/data-coverage': '/product/data',
+    '/getting-started/glossary': '/product/data',
+    '/getting-started/personalities': '/product/examples',
+    '/getting-started/voices': '/product/examples',
+    '/product/data-coverage': '/product/data',
+    '/product/glossary': '/product/data',
+    '/product/personalities': '/product/examples',
+    '/product/voices': '/product/examples',
+    '/statlove': '/company/about',
   },
+  experimental: { assets: true, viewTransitions: true },
 })
