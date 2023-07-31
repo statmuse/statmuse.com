@@ -2,6 +2,7 @@
 import Container from '@components/container.astro'
 import Header from '@components/header.astro'
 import TeamRepresentatives from '@components/representatives.astro'
+import AnswerShare from '@components/answer-share.astro'
 import Layout from '@layouts/main.astro'
 import {
   GameraDomain,
@@ -128,6 +129,11 @@ const keywords = `${getLeagueKeywords(domain)} ${
         alt={`Logo for the ${bio.name}`}
       />
       <div class="absolute right-0 bottom-2.5 md:hidden" style="z-index: 1;">
+        <div
+          class="flex items-center justify-center w-12 h-12 rounded-full bg-team-primary"
+        >
+          <AnswerShare onlyIcon />
+        </div>
       </div>
     </div>
   </Container>
