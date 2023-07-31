@@ -1,6 +1,6 @@
 ---
 import Image from "@components/image.astro"
-import ShareDropdown from "@components/share-dropdown.astro"
+import MusingShare from "@components/musing-share.astro"
 import { rgbToHex } from "@statmuse/core/color";
 import { listLatestMusings } from "@statmuse/core/musings"
 import { formatDate } from "@statmuse/core/time";
@@ -48,7 +48,7 @@ const shortLinkUrl =  process.env.SHORT_LINK_URL || 'http://localhost:3000/';
               })}>
           </div>
           <div class="flex items-center mt-[5px]">
-            <ShareDropdown id={musing.id} url={`${shortLinkUrl}e/${musing.short_code}`} />
+            <MusingShare id={musing.id} url={`${shortLinkUrl}e/${musing.short_code}`} />
             <p class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-[20px]">
               {formatDate(musing.publish_at, 'MMMM Do, YYYY')}
             </p>
