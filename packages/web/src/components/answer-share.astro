@@ -91,6 +91,7 @@ const socialButtons = [
           type="text"
           value={url}
           readonly
+          data-share-link
         />
         <span
           class="absolute top-1/2 right-4 -translate-y-1/2 text-primary font-semibold text-sm"
@@ -126,3 +127,17 @@ const socialButtons = [
     </div>
   </div>
 </div>
+<script>
+  const input = document.querySelector<HTMLInputElement>('[data-share-link]')
+  if (input) {
+    input.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(input.value)
+        const span = input.parentNode?.querySelector('span')
+        if (span) {
+          span.innerText = 'COPIED'
+        }
+      } catch (err) {}
+    })
+  }
+</script>
