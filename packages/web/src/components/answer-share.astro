@@ -14,6 +14,9 @@ const twitterSvg = ''
 const { type = 'profile', shortCode, url } = Astro.props
 
 const shareUrl = url || ''
+const shortLinkUrl = shortCode
+  ? `${process.env.SHORT_LINK_URL || 'http://localhost:3000/'}e/${shortCode}`
+  : ''
 
 const socialButtons = [
   {
@@ -102,7 +105,7 @@ const socialButtons = [
           type="text"
           value={shareUrl}
           readonly
-          data-share-link
+          data-share-input
         />
         <span
           class="absolute top-1/2 right-4 -translate-y-1/2 text-primary font-semibold text-sm"
@@ -120,12 +123,14 @@ const socialButtons = [
                 backgroundColor: '#e4e4e4',
                 marginBottom: '20px',
               }}
-            ></div>
+            />
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <input
                 id="share-checkbox"
                 type="checkbox"
                 class="appearance-none bg-white checked:bg-primary border-2 border-primary rounded-sm w-5 h-5 mr-2.5 cursor-pointer flex items-center justify-center after:content-['\\2713'] after:text-white"
+                data-share-url={shareUrl}
+                data-short-link={shortLinkUrl}
               />
               <label
                 for="share-checkbox"
@@ -135,7 +140,7 @@ const socialButtons = [
                   cursor: 'pointer',
                 }}
               >
-                Keep answer updated | Shorten link
+                {type === 'ask' ? 'Shorten link' : 'Keep answer updated'}
               </label>
             </div>
             <p style={{ marginTop: '1em', fontSize: '14px', color: '#d1d1d1' }}>
@@ -148,7 +153,7 @@ const socialButtons = [
   </div>
 </div>
 <script>
-  const input = document.querySelector<HTMLInputElement>('[data-share-link]')
+  const input = document.querySelector<HTMLInputElement>('[data-share-input]')
   if (input) {
     input.addEventListener('click', async () => {
       try {
@@ -158,6 +163,15 @@ const socialButtons = [
           span.innerText = 'COPIED'
         }
       } catch (err) {}
+    })
+  }
+
+  const checkbox = document.querySelector<HTMLInputElement>('[data-share-url]')
+  if (checkbox && input) {
+    checkbox.addEventListener('change', () => {
+      checkbox.checked
+        ? (input.value = checkbox.dataset.shortLink || '')
+        : (input.value = checkbox.dataset.shareUrl || '')
     })
   }
 </script>
