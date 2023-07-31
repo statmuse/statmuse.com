@@ -187,7 +187,7 @@ const socialButtons = [
   const disclaimer = document.querySelector<HTMLElement>(
     '[data-share-disclaimer]'
   )
-  if (input && inputLabel && checkbox && disclaimer && toggle) {
+  if (input && inputLabel && toggle) {
     // copy to clipboard
     input.addEventListener('click', async () => {
       try {
@@ -196,7 +196,7 @@ const socialButtons = [
       } catch (err) {}
     })
     // listen to changes on checkbox and set share url on input
-    checkbox.addEventListener('change', () => {
+    checkbox?.addEventListener('change', () => {
       if (checkbox.dataset.shareType === 'ask') {
         checkbox.checked
           ? (input.value = checkbox.dataset.shortLink || '')
@@ -206,10 +206,13 @@ const socialButtons = [
           ? (input.value = checkbox.dataset.shareUrl || '')
           : (input.value = checkbox.dataset.shortLink || '')
         // set disclaimer messsage
-        checkbox.checked
-          ? (disclaimer.innerText =
-              'This answer is live and will keep updating')
-          : (disclaimer.innerText = 'This answer is static and will not update')
+        if (disclaimer) {
+          checkbox.checked
+            ? (disclaimer.innerText =
+                'This answer is live and will keep updating')
+            : (disclaimer.innerText =
+                'This answer is static and will not update')
+        }
       }
       // reset input label
       inputLabel.innerText = 'COPY'
@@ -232,7 +235,7 @@ const socialButtons = [
     toggle.addEventListener('change', () => {
       if (!toggle.checked) {
         inputLabel.innerText = 'COPY'
-        checkbox.checked && checkbox.click()
+        checkbox?.checked && checkbox.click()
       }
     })
   }

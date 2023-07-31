@@ -36,7 +36,9 @@ const share = Astro.props.share
     <div class="flex-1">
       <AskBar {query} {conversationToken} {preferredDomain} />
     </div>
-    <div class="md:flex items-center ml-4 hidden space-x-4">
+    <div
+      class="md:flex md:w-fit w-0 items-center ml-4 space-x-4 overflow-hidden"
+    >
       {share && <AnswerShare {...share} />}
     </div>
   </div>
