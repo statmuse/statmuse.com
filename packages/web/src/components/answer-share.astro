@@ -1,4 +1,5 @@
 ---
+import { createAskPath } from '@lib/path'
 interface Props {
   type?: 'ask' | 'musing' | 'profile'
   shortCode?: string
@@ -11,9 +12,15 @@ const closeSvg = ''
 const fbSvg = ''
 const twitterSvg = ''
 
-const { type = 'profile', shortCode, url } = Astro.props
+const {
+  type = 'profile',
+  shortCode,
+  url,
+  query = '',
+  domain = '',
+} = Astro.props
 
-const shareUrl = url || ''
+const shareUrl = url || `${Astro.url.origin}${createAskPath({ query, domain })}`
 const shortLinkUrl = shortCode
   ? `${process.env.SHORT_LINK_URL || 'http://localhost:3000/'}e/${shortCode}`
   : ''
@@ -82,7 +89,9 @@ const socialButtons = [
           socialButtons.map((button) => (
             <div style={{ textAlign: 'center', fontSize: '14px' }}>
               <a
-                href={button.shareUrl(shareUrl)}
+                href={button.shareUrl(
+                  type === 'musing' ? shortLinkUrl : shareUrl
+                )}
                 class="flex items-center justify-center w-16 h-16 my-1 mx-2.5 rounded-full"
                 style={{ background: button.bgColor }}
                 target="_blank"
@@ -103,7 +112,7 @@ const socialButtons = [
         <input
           class="w-full h-[42px] outline-none cursor-pointer px-4 pr-[70px] text-sm bg-[#fbfbfb] border border-[#e4e4e4] overflow-auto"
           type="text"
-          value={shareUrl}
+          value={type === 'musing' ? shortLinkUrl : shareUrl}
           readonly
           data-share-input
         />
@@ -131,6 +140,7 @@ const socialButtons = [
                 class="appearance-none bg-white checked:bg-primary border-2 border-primary rounded-sm w-5 h-5 mr-2.5 cursor-pointer flex items-center justify-center after:content-['\\2713'] after:text-white"
                 data-share-url={shareUrl}
                 data-short-link={shortLinkUrl}
+                data-share-type={type}
               />
               <label
                 for="share-checkbox"
@@ -143,8 +153,13 @@ const socialButtons = [
                 {type === 'ask' ? 'Shorten link' : 'Keep answer updated'}
               </label>
             </div>
-            <p style={{ marginTop: '1em', fontSize: '14px', color: '#d1d1d1' }}>
-              This answer is live and will keep updating
+            <p
+              style={{ marginTop: '1em', fontSize: '14px', color: '#d1d1d1' }}
+              data-share-disclaimer
+            >
+              {type === 'musing'
+                ? 'This answer is static and will not update'
+                : 'This answer is live and will keep updating'}
             </p>
           </>
         )
@@ -167,11 +182,24 @@ const socialButtons = [
   }
 
   const checkbox = document.querySelector<HTMLInputElement>('[data-share-url]')
-  if (checkbox && input) {
+  const disclaimer = document.querySelector<HTMLElement>(
+    '[data-share-disclaimer]'
+  )
+  if (checkbox && input && disclaimer) {
     checkbox.addEventListener('change', () => {
-      checkbox.checked
-        ? (input.value = checkbox.dataset.shortLink || '')
-        : (input.value = checkbox.dataset.shareUrl || '')
+      if (checkbox.dataset.shareType === 'ask') {
+        checkbox.checked
+          ? (input.value = checkbox.dataset.shortLink || '')
+          : (input.value = checkbox.dataset.shareUrl || '')
+      } else {
+        checkbox.checked
+          ? (input.value = checkbox.dataset.shareUrl || '')
+          : (input.value = checkbox.dataset.shortLink || '')
+        checkbox.checked
+          ? (disclaimer.innerText =
+              'This answer is live and will keep updating')
+          : (disclaimer.innerText = 'This answer is static and will not update')
+      }
     })
   }
 </script>
