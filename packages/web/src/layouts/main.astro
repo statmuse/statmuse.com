@@ -2,7 +2,7 @@
 import '@styles/global.css'
 import Footer from '@components/footer.astro'
 import type { Metadata } from '@lib/meta'
-// import { ViewTransitions } from 'astro:transitions'
+import { ViewTransitions } from 'astro:transitions'
 
 interface Props {
   meta?: Metadata
@@ -62,7 +62,7 @@ Astro.response.headers.set(
     <meta name="generator" content={Astro.generator} />
     <meta name="apple-itunes-app" content="app-id=1234654160" />
     <title>{title}</title>
-    <!-- <ViewTransitions /> -->
+    <ViewTransitions />
     <meta name="description" content={description} />
     <meta name="keywords" content={keywords} />
     <meta property="fb:app_id" content="915991831757165" />

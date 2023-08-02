@@ -15,11 +15,11 @@ const data = await Astro.request.formData()
 let preferredDomain = data.get('question[preferred_domain]')?.toString()
 let query = data.get('question[query]')?.toString()
 let conversationToken = data.get('question[conversation_token]')?.toString()
-
 if (!query) throw new Error('No query provided')
 
 const response = await ask({ query, preferredDomain, conversationToken })
-if (!response) return Astro.halt({ status: 404 })
+if (!response)
+  return new Response(null, { status: 404, statusText: 'Not found' })
 
 conversationToken = response.conversation.token
 query = tokensToText(

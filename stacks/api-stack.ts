@@ -52,7 +52,7 @@ export function API({ stack }: StackContext) {
     SHORT_LINK_URL: isProd ? 'https://statm.us/' : 'https://stage.statm.us/',
   }
 
-  if (isDev && process.env.NODE_ENV === 'development') {
+  if (isDev) {
     environment['POSTGRES_HOST'] = 'localhost'
     environment['POSTGRES_PORT'] = '5432'
     environment['POSTGRES_DATABASE'] = 'mothra_dev'

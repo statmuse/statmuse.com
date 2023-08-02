@@ -6,13 +6,13 @@ import Visuals from '@components/visuals.astro'
 import { handleResponse } from '@statmuse/core/gamera'
 import { ask, getHeroProps } from '@lib/gamera'
 
-const { league: preferredDomain } = Astro.params
+const { league } = Astro.params
 const question = Astro.url.searchParams.get('q')
 if (!question) return Astro.redirect('/questions')
 
 const query = question.replaceAll('-', ' ')
-const response = await ask({ query, preferredDomain })
-if (!response) return Astro.halt({ status: 404 })
+const response = await ask({ query, league })
+if (!response) return new Response(null, { status: 404, statusText: 'Not found' })
 
 const { subject, redirectUrl, conversationToken } = handleResponse(response)
 if (redirectUrl) return Astro.redirect(redirectUrl)
@@ -23,8 +23,8 @@ const heroProps = getHeroProps({ imageAlt: query, response })
 <Layout colors={subject?.colors}>
   <Header
     {query}
-    {preferredDomain}
     {conversationToken}
+    preferredDomain={league}
     share={{ type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
   />
   {heroProps ? <Hero {...heroProps} /> : null}
