@@ -78,7 +78,7 @@ const keywords = `${getLeagueKeywords(domain)} ${
                 <span>
                   {bio.heightFeetInches}, {bio.weightLbs} lbs
                 </span>
-                <span class="last:hidden">•</span>
+                <span class="last:hidden" set:text=" • " />
               </>
             )
           }
@@ -93,14 +93,14 @@ const keywords = `${getLeagueKeywords(domain)} ${
               <>{bio.team.nickname || bio.team.name}</>
             )
           }
-          <span class="last:hidden">•</span>
+          <span class="last:hidden" set:text=" • " />
           {
             bio.position && (
               <>
                 <span>
                   {bio.jerseyNumber && `#${bio.jerseyNumber}`} {bio.position}
                 </span>
-                <span class="last:hidden">•</span>
+                <span class="last:hidden" set:text=" • " />
               </>
             )
           }

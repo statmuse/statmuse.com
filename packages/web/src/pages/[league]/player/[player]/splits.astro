@@ -14,11 +14,17 @@ if (!player || !league) {
 }
 
 const domain = league.toUpperCase() as GameraDomain
-const bio = await getPlayerBio(domain, player)
 const params = Astro.url.searchParams
 const splits = await getPlayerSplits({ domain, player, params })
-const { grids, parameters } = splits
+const bio = await getPlayerBio(domain, player)
+if (!splits || !bio) {
+  return new Response(null, {
+    status: 404,
+    statusText: 'Not found',
+  })
+}
 
+const { grids, parameters } = splits
 const leagueKeywords = getLeagueKeywords(domain)
 const seasonYear = Astro.url.searchParams.get('seasonYear')
 const year = seasonYear ? ` ${seasonYear}` : ''

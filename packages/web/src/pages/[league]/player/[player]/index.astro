@@ -19,6 +19,10 @@ if (!player || !league) {
 
 const domain = league.toUpperCase() as GameraDomain
 const profile = await getPlayerProfile(domain, player)
+if (!profile) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
 const { bio, stats, recentGames, nextGame } = profile
 const isNextGameHome =
   profile.bio.team.abbreviation === nextGame?.homeTeam.abbreviation

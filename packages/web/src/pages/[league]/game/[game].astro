@@ -15,6 +15,9 @@ if (!game || !league) {
 
 const domain = league.toUpperCase() as GameraDomain
 const data = await getGame({ domain, game })
+if (!data) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
 ---
 
 <GameLayout {data}>

@@ -25,11 +25,16 @@ export async function getGame<T extends GameraDomain>(props: {
   if (props.domain === 'PGA')
     throw new Error('There are no PGA boxscores, dummy!')
 
-  const gameId = parseGameId(props.game)
-  let requestUrl = `${gameraApiUrl}${props.domain}/games/${gameId}/answer`
-  if (props.params) requestUrl += `?${props.params.toString()}`
-  const response = await fetch(requestUrl)
-  const data = (await response.json()) as Response[T]
-  data.domain = props.domain
-  return data
+  try {
+    const gameId = parseGameId(props.game)
+    let requestUrl = `${gameraApiUrl}${props.domain}/games/${gameId}/answer`
+    if (props.params) requestUrl += `?${props.params.toString()}`
+    const response = await fetch(requestUrl)
+    const data = (await response.json()) as Response[T]
+    data.domain = props.domain
+    return data
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
 }
