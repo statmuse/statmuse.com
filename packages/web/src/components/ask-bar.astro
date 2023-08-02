@@ -58,20 +58,22 @@ interface Props {
 </form>
 
 <script>
-  const forms = document.querySelectorAll<HTMLFormElement>('form.ask-form')
+  document.addEventListener('astro:load', () => {
+    const forms = document.querySelectorAll<HTMLFormElement>('form.ask-form')
 
-  const textareas = document.querySelectorAll('textarea.ask-textarea')
-  textareas.forEach((textarea) => {
-    textarea.addEventListener('keydown', (e) => {
-      const event = e as KeyboardEvent
+    const textareas = document.querySelectorAll('textarea.ask-textarea')
+    textareas.forEach((textarea) => {
+      textarea.addEventListener('keydown', (e) => {
+        const event = e as KeyboardEvent
 
-      if (event.keyCode === 13) {
-        if (!event.repeat) {
-          forms.forEach((form) => form.submit())
+        if (event.keyCode === 13) {
+          if (!event.repeat) {
+            forms.forEach((form) => form.submit())
+          }
+
+          e.preventDefault() // Prevents the addition of a new line in the text field
         }
-
-        e.preventDefault() // Prevents the addition of a new line in the text field
-      }
+      })
     })
   })
 </script>
