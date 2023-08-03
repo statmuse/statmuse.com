@@ -305,13 +305,15 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
 </div>
 
 <script>
-  const selects = document.querySelectorAll('select.grid-filter')
-  selects.forEach((select) => {
-    select.addEventListener('change', (event) => {
-      const select = event.target as HTMLSelectElement
-      const url = new URL(window.location.href)
-      url.searchParams.set(select.name, select.value)
-      window.location.href = url.toString()
+  document.addEventListener('astro:load', () => {
+    const selects = document.querySelectorAll('select.grid-filter')
+    selects.forEach((select) => {
+      select.addEventListener('change', (event) => {
+        const select = event.target as HTMLSelectElement
+        const url = new URL(window.location.href)
+        url.searchParams.set(select.name, select.value)
+        window.location.href = url.toString()
+      })
     })
   })
 </script>

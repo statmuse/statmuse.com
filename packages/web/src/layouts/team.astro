@@ -232,13 +232,15 @@ const keywords = `${getLeagueKeywords(domain)} ${
 </Layout>
 
 <script>
-  const selects = document.querySelectorAll('select.team-season-select')
-  selects.forEach((select) => {
-    select.addEventListener('change', (event) => {
-      const select = event.target as HTMLSelectElement
-      if (!select.selectedOptions) return
-      const newUrl = select.selectedOptions[0].dataset['url'] as string
-      window.location.href = newUrl
+  document.addEventListener('astro:load', () => {
+    const selects = document.querySelectorAll('select.team-season-select')
+    selects.forEach((select) => {
+      select.addEventListener('change', (event) => {
+        const select = event.target as HTMLSelectElement
+        if (!select.selectedOptions) return
+        const newUrl = select.selectedOptions[0].dataset['url'] as string
+        window.location.href = newUrl
+      })
     })
   })
 </script>

@@ -81,32 +81,36 @@ const { url } = Astro.props
   </ul>
 </div>
 <script>
-  // close dropdown when clicking outside
-  window.addEventListener('click', () => {
-    document.querySelectorAll('[data-dropdown] input:checked').forEach((el) => {
-      ;(el as HTMLInputElement).checked = false
+  document.addEventListener('astro:load', () => {
+    // close dropdown when clicking outside
+    window.addEventListener('click', () => {
+      document
+        .querySelectorAll('[data-dropdown] input:checked')
+        .forEach((el) => {
+          ;(el as HTMLInputElement).checked = false
+        })
     })
-  })
-  // clear previous dropwdown when clicking on another share button
-  document.querySelectorAll('[data-dropdown] label').forEach((el) => {
-    el.addEventListener('click', () => {
-      const input = document.querySelector(
-        '[data-dropdown] input:checked'
-      ) as HTMLInputElement | null
-      if (input && input.parentNode !== el.parentElement) {
-        input.checked = false
-      }
+    // clear previous dropwdown when clicking on another share button
+    document.querySelectorAll('[data-dropdown] label').forEach((el) => {
+      el.addEventListener('click', () => {
+        const input = document.querySelector(
+          '[data-dropdown] input:checked'
+        ) as HTMLInputElement | null
+        if (input && input.parentNode !== el.parentElement) {
+          input.checked = false
+        }
+      })
     })
-  })
-  // copy clipboard bind & event handler
-  document.querySelectorAll('[data-share-url]').forEach((el) => {
-    el.addEventListener('click', async () => {
-      ;(el.nextSibling as HTMLInputElement).select()
-      try {
-        await navigator.clipboard.writeText(
-          (el as HTMLElement).dataset.shareUrl || ''
-        )
-      } catch (err) {}
+    // copy clipboard bind & event handler
+    document.querySelectorAll('[data-share-url]').forEach((el) => {
+      el.addEventListener('click', async () => {
+        ;(el.nextSibling as HTMLInputElement).select()
+        try {
+          await navigator.clipboard.writeText(
+            (el as HTMLElement).dataset.shareUrl || ''
+          )
+        } catch (err) {}
+      })
     })
   })
 </script>

@@ -102,8 +102,10 @@ const productPages = [
   </Container>
 </Layout>
 <script define:vars={{ prefixPath }}>
-  const onChange = (e) => {
-    window.location.pathname = `${prefixPath}/${e.target.value}`
-  }
-  document.getElementById('select')?.addEventListener('change', onChange)
+  document.addEventListener('astro:load', () => {
+    const onChange = (e) => {
+      window.location.pathname = `${prefixPath}/${e.target.value}`
+    }
+    document.getElementById('select')?.addEventListener('change', onChange)
+  })
 </script>
