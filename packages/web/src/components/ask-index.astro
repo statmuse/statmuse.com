@@ -4,7 +4,7 @@ import Header from '@components/header.astro'
 import Container from '@components/container.astro'
 import { ASK_LIMIT, type FinanceAsk, type Ask } from '@statmuse/core/asks'
 import { createAskPath } from '@lib/path'
-import { formatDate } from '@statmuse/core/time'
+import { formatDate, utc } from '@statmuse/core/time'
 import type { Metadata } from '@lib/meta'
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 const { domain, fetchAsks, meta } = Astro.props
 
 const dateFromString = (x: string) => {
-  const date = new Date(x)
+  const date = utc(x)
   if (date.toString() !== 'Invalid Date') {
     return date
   }
@@ -99,7 +99,7 @@ let asks = await fetchAsks(searchParams)
 
 const overflow = asks.length > ASK_LIMIT
 
-if (searchParams.p || (searchParams.page && searchParams.page === 'last')) {
+if (overflow && (searchParams.p || searchParams.page === 'last')) {
   asks = asks.slice(1)
 } else {
   asks = asks.slice(0, ASK_LIMIT)
