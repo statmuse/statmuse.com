@@ -49,3 +49,12 @@ export function formatDateString(date: string, format = 'LL') {
 export function formatDate(date: Date, format = 'LL') {
   return dayjs(date).format(format)
 }
+
+export const utc = (s?: string): Date => {
+  if (s === undefined) return new Date(new Date().toISOString().slice(0, -1))
+  try {
+    return new Date(new Date(s).toISOString().slice(0, -1))
+  } catch (e) {
+    return new Date(s)
+  }
+}
