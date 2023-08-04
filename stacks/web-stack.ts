@@ -17,6 +17,27 @@ export function Web({ stack }: StackContext) {
   const api = use(API)
   const imports = use(Imports)
 
+  const sitemapHeaders = new ResponseHeadersPolicy(stack, 'sitemap-headers', {
+    customHeadersBehavior: {
+      customHeaders: [
+        {
+          header: 'Cache-Control',
+          value: 'public, max-age=0, must-revalidate',
+          override: false,
+        },
+      ],
+    },
+  })
+
+  const sitemapProps = {
+    viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+    allowedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+    cachedMethods: CachedMethods.CACHE_GET_HEAD_OPTIONS,
+    cachePolicy: CachePolicy.CACHING_OPTIMIZED,
+    responseHeadersPolicy: sitemapHeaders,
+    compress: true,
+  }
+
   const astroSite = new AstroSite(stack, 'astro-site', {
     path: 'packages/web',
     bind: [
@@ -34,30 +55,15 @@ export function Web({ stack }: StackContext) {
       },
       distribution: {
         additionalBehaviors: {
-          'sitemap*': {
+          'sitemap.xml': {
             origin: new S3Origin(imports.statmuseProdBucket, {
               originPath: '/sitemaps',
             }),
-            viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-            allowedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
-            cachedMethods: CachedMethods.CACHE_GET_HEAD_OPTIONS,
-            cachePolicy: CachePolicy.CACHING_OPTIMIZED,
-            responseHeadersPolicy: new ResponseHeadersPolicy(
-              stack,
-              'sitemap-headers',
-              {
-                customHeadersBehavior: {
-                  customHeaders: [
-                    {
-                      header: 'Cache-Control',
-                      value: 'public, max-age=0, must-revalidate',
-                      override: false,
-                    },
-                  ],
-                },
-              }
-            ),
-            compress: true,
+            ...sitemapProps,
+          },
+          'sitemaps/*': {
+            origin: new S3Origin(imports.statmuseProdBucket),
+            ...sitemapProps,
           },
         },
       },

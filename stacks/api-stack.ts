@@ -1,15 +1,10 @@
 import { StackContext, Api, Config, Function, use } from 'sst/constructs'
 import { Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2'
 import { Imports } from './imports-stack'
+import { Secrets } from './secrets-stack'
 
 export function API({ stack }: StackContext) {
-  const secrets = Config.Secret.create(
-    stack,
-    'STRIPE_SECRET',
-    'STRIPE_WEBHOOK_SECRET',
-    'STRIPE_PRICE_ID',
-    'API_KEY'
-  )
+  const { secrets } = use(Secrets)
 
   const { vpc, rdsCredentialsSecret, rdsProxySecurityGroup } = use(Imports)
 

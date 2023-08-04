@@ -169,6 +169,10 @@ Astro.response.headers.set(
     <slot />
     <Footer />
     <script>
+      document.addEventListener('astro:load', () => {
+        document.body.scrollTo({ top: 0, left: 0 })
+      })
+
       /**
        * Given window and document, add or remove "selected" class to league nav
        * links if current window location matches nav href. Note that the argument

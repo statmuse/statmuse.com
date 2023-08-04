@@ -5,6 +5,7 @@
 - [ ] money visuals
 - [ ] shot chart visuals (react island)
 - [ ] tabbed visuals
+- [ ] auth (visitors, users)
 - [ ] persist asks, cache logic from mothra, etc.
 - [ ] swr headers
 - [ ] analytics (provider?)
@@ -18,13 +19,13 @@
 - [x] gallery page
 - [ ] grid column sort
 - [ ] typeahead suggestions (ask-bar component)
-- [ ] auth (visitors, users)
 - [ ] statmuse+ (limit features for free users)
 - [x] image optimization (current site does none, should add a behavior to cdn.statmuse.com; how do we test?)
 - [x] swap out font for variable font
 - [x] navigation issue on team profiles (going to history and then back to another page)
-- [ ] expose siemap from s3
+- [x] expose sitemap from s3
 - [ ] error pages (404, gamera couldn't answer, etc)
+- [ ] security headers
 
 ## Launch
 
