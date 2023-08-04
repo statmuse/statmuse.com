@@ -1,19 +1,19 @@
-import dayjs from "dayjs"
-import localizedFormat from "dayjs/plugin/localizedFormat"
-import advancedFormat from "dayjs/plugin/advancedFormat"
+import dayjs from 'dayjs'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
+import advancedFormat from 'dayjs/plugin/advancedFormat'
 dayjs.extend(advancedFormat)
 dayjs.extend(localizedFormat)
 
 const units: { unit: Intl.RelativeTimeFormatUnit; ms: number }[] = [
-  { unit: "year", ms: 31536000000 },
-  { unit: "month", ms: 2628000000 },
-  { unit: "day", ms: 86400000 },
-  { unit: "hour", ms: 3600000 },
-  { unit: "minute", ms: 60000 },
-  { unit: "second", ms: 1000 },
+  { unit: 'year', ms: 31536000000 },
+  { unit: 'month', ms: 2628000000 },
+  { unit: 'day', ms: 86400000 },
+  { unit: 'hour', ms: 3600000 },
+  { unit: 'minute', ms: 60000 },
+  { unit: 'second', ms: 1000 },
 ]
 
-const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" })
+const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
 
 /**
  * Get language-sensitive relative time message from Dates.
@@ -24,7 +24,7 @@ export function relativeTimeFromDates(
   relative: Date | null,
   pivot: Date = new Date()
 ): string {
-  if (!relative) return ""
+  if (!relative) return ''
   const elapsed = relative.getTime() - pivot.getTime()
   return relativeTimeFromElapsed(elapsed)
 }
@@ -35,17 +35,17 @@ export function relativeTimeFromDates(
  */
 export function relativeTimeFromElapsed(elapsed: number): string {
   for (const { unit, ms } of units) {
-    if (Math.abs(elapsed) >= ms || unit === "second") {
+    if (Math.abs(elapsed) >= ms || unit === 'second') {
       return rtf.format(Math.round(elapsed / ms), unit)
     }
   }
-  return ""
+  return ''
 }
 
-export function formatDateString(date: string, format = "LL") {
+export function formatDateString(date: string, format = 'LL') {
   return formatDate(new Date(date), format)
 }
 
-export function formatDate(date: Date, format = "LL") {
+export function formatDate(date: Date, format = 'LL') {
   return dayjs(date).format(format)
 }
