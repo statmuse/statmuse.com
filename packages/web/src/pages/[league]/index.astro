@@ -1,8 +1,9 @@
 ---
-import Layout from '@layouts/main.astro'
+import Layout from '@layouts/default.astro'
 import Logo from '@components/logo.astro'
 import AskBar from '@components/ask-bar.astro'
 import Image from '@components/image.astro'
+import Footer from '@components/footer.astro'
 import { listOnboarding } from '@statmuse/core/examples'
 import { createAskPath } from '@lib/path'
 
@@ -818,6 +819,10 @@ Astro.response.headers.set(
           } searches
         </a>
       </h4>
+    </div>
+
+    <div class="main">
+      <Footer />
     </div>
   </main>
 </Layout>

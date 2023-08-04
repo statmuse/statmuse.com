@@ -1,9 +1,10 @@
 ---
-import Layout from '@layouts/main.astro'
+import Layout from '@layouts/default.astro'
 import Logo from '@components/logo.astro'
 import AskBar from '@components/ask-bar.astro'
 import Image from '@components/image.astro'
 import Musings from '@components/musings.astro'
+import Footer from '@components/footer.astro'
 import { listOnboarding } from '@statmuse/core/examples'
 
 const examples = await listOnboarding()
@@ -259,6 +260,10 @@ Astro.response.headers.set(
       <h4 class="font-semibold text-right py-4">
         <a href="/questions">See trending searches</a>
       </h4>
+    </div>
+
+    <div class="main">
+      <Footer />
     </div>
   </main>
 </Layout>
