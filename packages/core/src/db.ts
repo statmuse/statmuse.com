@@ -1,5 +1,4 @@
-import pg from 'pg'
-const { Pool } = pg
+import { Pool, types } from 'pg'
 
 import { Kysely, PostgresDialect, Generated, ColumnType } from 'kysely'
 import {
@@ -283,6 +282,21 @@ export interface Database {
   leagues: LeagueTable
   players: PlayerTable
 }
+
+types.setTypeParser(types.builtins.TIMESTAMP, (datetimeString) => {
+  const temp = new Date(datetimeString)
+  return new Date(
+    Date.UTC(
+      temp.getFullYear(),
+      temp.getMonth(),
+      temp.getDate(),
+      temp.getHours(),
+      temp.getMinutes(),
+      temp.getSeconds(),
+      temp.getMilliseconds()
+    )
+  )
+})
 
 export const db = new Kysely<Database>({
   dialect: new PostgresDialect({
