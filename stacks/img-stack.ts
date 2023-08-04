@@ -1,4 +1,4 @@
-import { StackContext, Config, Function, Bucket, use } from "sst/constructs"
+import { StackContext, Config, Function, Bucket, use } from 'sst/constructs'
 import {
   CachePolicy,
   CacheQueryStringBehavior,
@@ -6,77 +6,69 @@ import {
   FunctionEventType,
   ResponseHeadersPolicy,
   ViewerProtocolPolicy,
-} from "aws-cdk-lib/aws-cloudfront"
+} from 'aws-cdk-lib/aws-cloudfront'
 import {
   Code,
   FunctionUrlAuthType,
   HttpMethod,
   InvokeMode,
   LayerVersion,
-} from "aws-cdk-lib/aws-lambda"
-import { Bucket as CdkBucket } from "aws-cdk-lib/aws-s3"
-import { Web } from "./web-stack"
-import { Duration, Fn, RemovalPolicy } from "aws-cdk-lib/core"
+} from 'aws-cdk-lib/aws-lambda'
+import { Web } from './web-stack'
+import { Duration, Fn, RemovalPolicy } from 'aws-cdk-lib/core'
 import {
   HttpOrigin,
   OriginGroup,
   S3Origin,
-} from "aws-cdk-lib/aws-cloudfront-origins"
-import { Function as CfFunction } from "aws-cdk-lib/aws-cloudfront"
-import { createHash } from "crypto"
+} from 'aws-cdk-lib/aws-cloudfront-origins'
+import { Function as CfFunction } from 'aws-cdk-lib/aws-cloudfront'
+import { createHash } from 'crypto'
+import { Imports } from './imports-stack'
 
 // Region to Origin Shield mapping based on latency. to be updated when new Regional Edge Caches are added to CloudFront.
 const ORIGIN_SHIELD_MAPPING = new Map([
-  ["af-south-1", "eu-west-2"],
-  ["ap-east-1", "ap-northeast-2"],
-  ["ap-northeast-1", "ap-northeast-1"],
-  ["ap-northeast-2", "ap-northeast-2"],
-  ["ap-northeast-3", "ap-northeast-1"],
-  ["ap-south-1", "ap-south-1"],
-  ["ap-southeast-1", "ap-southeast-1"],
-  ["ap-southeast-2", "ap-southeast-2"],
-  ["ca-central-1", "us-east-1"],
-  ["eu-central-1", "eu-central-1"],
-  ["eu-north-1", "eu-central-1"],
-  ["eu-south-1", "eu-central-1"],
-  ["eu-west-1", "eu-west-1"],
-  ["eu-west-2", "eu-west-2"],
-  ["eu-west-3", "eu-west-2"],
-  ["me-south-1", "ap-south-1"],
-  ["sa-east-1", "sa-east-1"],
-  ["us-east-1", "us-east-1"],
-  ["us-east-2", "us-east-2"],
-  ["us-west-1", "us-west-1"],
-  ["us-west-2", "us-west-2"],
+  ['af-south-1', 'eu-west-2'],
+  ['ap-east-1', 'ap-northeast-2'],
+  ['ap-northeast-1', 'ap-northeast-1'],
+  ['ap-northeast-2', 'ap-northeast-2'],
+  ['ap-northeast-3', 'ap-northeast-1'],
+  ['ap-south-1', 'ap-south-1'],
+  ['ap-southeast-1', 'ap-southeast-1'],
+  ['ap-southeast-2', 'ap-southeast-2'],
+  ['ca-central-1', 'us-east-1'],
+  ['eu-central-1', 'eu-central-1'],
+  ['eu-north-1', 'eu-central-1'],
+  ['eu-south-1', 'eu-central-1'],
+  ['eu-west-1', 'eu-west-1'],
+  ['eu-west-2', 'eu-west-2'],
+  ['eu-west-3', 'eu-west-2'],
+  ['me-south-1', 'ap-south-1'],
+  ['sa-east-1', 'sa-east-1'],
+  ['us-east-1', 'us-east-1'],
+  ['us-east-2', 'us-east-2'],
+  ['us-west-1', 'us-west-1'],
+  ['us-west-2', 'us-west-2'],
 ])
 
 const CLOUDFRONT_ORIGIN_SHIELD_REGION = ORIGIN_SHIELD_MAPPING.get(
-  process.env.AWS_REGION || process.env.CDK_DEFAULT_REGION || "us-east-1"
+  process.env.AWS_REGION || process.env.CDK_DEFAULT_REGION || 'us-east-1'
 )
 
 export function ImageOptimization({ stack }: StackContext) {
   const { astroSite } = use(Web)
+  const { statmuseProdBucket } = use(Imports)
 
-  const SECRET_KEY = new Config.Parameter(stack, "SECRET_KEY", {
-    value: createHash("md5").update(stack.node.addr).digest("hex"),
+  const SECRET_KEY = new Config.Parameter(stack, 'SECRET_KEY', {
+    value: createHash('md5').update(stack.node.addr).digest('hex'),
   })
-
-  const originalImageBucket = CdkBucket.fromBucketAttributes(
-    stack,
-    "original-bucket",
-    {
-      bucketArn: "arn:aws:s3:::statmuse-prod",
-      bucketName: "statmuse-prod",
-    }
-  )
 
   const ORIGINAL_BUCKET_NAME = new Config.Parameter(
     stack,
-    "ORIGINAL_BUCKET_NAME",
-    { value: originalImageBucket.bucketName }
+    'ORIGINAL_BUCKET_NAME',
+    { value: statmuseProdBucket.bucketName }
   )
 
-  const transformedImageBucket = new Bucket(stack, "transformed-image-bucket", {
+  const transformedImageBucket = new Bucket(stack, 'transformed-image-bucket', {
     cdk: {
       bucket: {
         removalPolicy: RemovalPolicy.DESTROY,
@@ -86,29 +78,29 @@ export function ImageOptimization({ stack }: StackContext) {
     },
   })
 
-  const imageProcessingFunction = new Function(stack, "image-processing", {
-    handler: "packages/functions/src/image/processing.handler",
-    runtime: "nodejs18.x",
-    timeout: "60 seconds",
+  const imageProcessingFunction = new Function(stack, 'image-processing', {
+    handler: 'packages/functions/src/image/processing.handler',
+    runtime: 'nodejs18.x',
+    timeout: '60 seconds',
     memorySize: 1500,
-    logRetention: "one_day",
+    logRetention: 'one_day',
     bind: [transformedImageBucket, ORIGINAL_BUCKET_NAME, SECRET_KEY],
-    permissions: [[originalImageBucket, "grantRead"], transformedImageBucket],
+    permissions: [[statmuseProdBucket, 'grantRead'], transformedImageBucket],
     layers: [
-      new LayerVersion(stack, "sharp-layer", {
-        code: Code.fromAsset("layers/sharp"),
+      new LayerVersion(stack, 'sharp-layer', {
+        code: Code.fromAsset('layers/sharp'),
       }),
     ],
-    nodejs: { esbuild: { external: ["sharp"] } },
+    nodejs: { esbuild: { external: ['sharp'] } },
   })
 
   const { url } = imageProcessingFunction.addFunctionUrl({
     authType: FunctionUrlAuthType.NONE,
     cors: {
       // allowCredentials: cors.allowCredentials,
-      allowedHeaders: ["*"],
+      allowedHeaders: ['*'],
       allowedMethods: [HttpMethod.ALL],
-      allowedOrigins: ["*"],
+      allowedOrigins: ['*'],
       // exposedHeaders: cors.exposeHeaders,
       // maxAge: cors.maxAge && toCdkDuration(cors.maxAge),
     },
@@ -121,14 +113,14 @@ export function ImageOptimization({ stack }: StackContext) {
     }),
     fallbackOrigin: new HttpOrigin(Fn.parseDomainName(url), {
       originShieldRegion: CLOUDFRONT_ORIGIN_SHIELD_REGION,
-      customHeaders: { "x-origin-secret-header": SECRET_KEY.value },
+      customHeaders: { 'x-origin-secret-header': SECRET_KEY.value },
     }),
     fallbackStatusCodes: [403],
   })
 
-  const urlRewriteFunction = new CfFunction(stack, "url-rewrite-function", {
+  const urlRewriteFunction = new CfFunction(stack, 'url-rewrite-function', {
     code: FunctionCode.fromFile({
-      filePath: "packages/functions/src/image/viewer-request.js",
+      filePath: 'packages/functions/src/image/viewer-request.js',
     }),
     functionName: `urlRewriteFunction${stack.node.addr}`,
   })
@@ -150,9 +142,9 @@ export function ImageOptimization({ stack }: StackContext) {
     {
       corsBehavior: {
         accessControlAllowCredentials: false,
-        accessControlAllowHeaders: ["*"],
-        accessControlAllowMethods: ["GET"],
-        accessControlAllowOrigins: ["*"],
+        accessControlAllowHeaders: ['*'],
+        accessControlAllowMethods: ['GET'],
+        accessControlAllowOrigins: ['*'],
         accessControlMaxAge: Duration.seconds(600),
         originOverride: false,
       },
@@ -160,14 +152,14 @@ export function ImageOptimization({ stack }: StackContext) {
       customHeadersBehavior: {
         customHeaders: [
           {
-            header: "x-aws-image-optimization",
-            value: "v1.0",
+            header: 'x-aws-image-optimization',
+            value: 'v1.0',
             override: true,
           },
-          { header: "vary", value: "accept", override: true },
+          { header: 'vary', value: 'accept', override: true },
           {
-            header: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
+            header: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
             override: true,
           },
         ],
@@ -187,24 +179,24 @@ export function ImageOptimization({ stack }: StackContext) {
     responseHeadersPolicy,
   }
 
-  astroSite.cdk?.distribution.addBehavior("img/*", imageOrigin, params)
+  astroSite.cdk?.distribution.addBehavior('img/*', imageOrigin, params)
   astroSite.cdk?.distribution.addBehavior(
-    "app/media/*.jpg",
+    'app/media/*.jpg',
     imageOrigin,
     params
   )
   astroSite.cdk?.distribution.addBehavior(
-    "app/media/*.jpeg",
+    'app/media/*.jpeg',
     imageOrigin,
     params
   )
   astroSite.cdk?.distribution.addBehavior(
-    "app/media/*.png",
+    'app/media/*.png',
     imageOrigin,
     params
   )
   astroSite.cdk?.distribution.addBehavior(
-    "finance/asset_img/*",
+    'finance/asset_img/*',
     imageOrigin,
     params
   )

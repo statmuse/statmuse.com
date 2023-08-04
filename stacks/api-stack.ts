@@ -1,12 +1,8 @@
-import { StackContext, Api, Config, Function } from 'sst/constructs'
-import { Port, SecurityGroup, SubnetType, Vpc } from 'aws-cdk-lib/aws-ec2'
-import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
+import { StackContext, Api, Config, Function, use } from 'sst/constructs'
+import { Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2'
+import { Imports } from './imports-stack'
 
 export function API({ stack }: StackContext) {
-  const vpc = Vpc.fromLookup(stack, 'vpc', {
-    isDefault: true,
-  })
-
   const secrets = Config.Secret.create(
     stack,
     'STRIPE_SECRET',
@@ -15,21 +11,12 @@ export function API({ stack }: StackContext) {
     'API_KEY'
   )
 
+  const { vpc, rdsCredentialsSecret, rdsProxySecurityGroup } = use(Imports)
+
   const isStaging = stack.stage === 'staging'
   const isProd = stack.stage === 'production'
   const isDev = !isStaging && !isProd
 
-  const rdsCredentialsSecret = Secret.fromSecretNameV2(
-    stack,
-    'rds-credentials-secret',
-    isProd ? 'mothra-prod-db-astro' : 'mothra-stage-db-astro'
-  )
-
-  const rdsProxySecurityGroup = SecurityGroup.fromSecurityGroupId(
-    stack,
-    'rds-proxy-sg',
-    isProd ? 'sg-0de7a55637720b011' : 'sg-071ce3a4bc11c29b1'
-  )
   const lambdaSecurityGroup = new SecurityGroup(stack, 'lambda-sg', { vpc })
 
   rdsProxySecurityGroup.addIngressRule(
