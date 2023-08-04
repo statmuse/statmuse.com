@@ -1,4 +1,5 @@
-import { Pool, types } from 'pg'
+import pg from 'pg'
+const { Pool, types } = pg
 
 import { Kysely, PostgresDialect, Generated, ColumnType } from 'kysely'
 import {
