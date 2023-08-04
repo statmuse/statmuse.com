@@ -284,7 +284,7 @@ export interface Database {
 }
 
 types.setTypeParser(types.builtins.TIMESTAMP, (datetimeString) => {
-  var temp = new Date(datetimeString)
+  const temp = new Date(datetimeString)
   return new Date(
     Date.UTC(
       temp.getFullYear(),
