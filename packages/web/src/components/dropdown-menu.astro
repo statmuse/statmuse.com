@@ -1,0 +1,178 @@
+---
+import ElephantIcon from '@components/icons/elephant.astro'
+import HamburgerIcon from '@components/icons/hamburger.astro'
+import CloseIcon from '@components/icons/x.astro'
+
+const menuLinks = [
+  {
+    links: [
+      {
+        text: 'Home',
+        icon: 'home',
+        url: '/',
+        matchUrls: ['/', '/nba', '/nfl', '/mlb', '/nhl', '/pga'],
+      },
+      {
+        text: 'Money Search',
+        icon: 'money',
+        url: '/money',
+        matchUrls: ['/money'],
+      },
+      {
+        text: 'Trending',
+        icon: 'trending',
+        url: '/questions',
+        matchUrls: [
+          '/questions',
+          '/nba/questions',
+          '/nfl/questions',
+          '/mlb/questions',
+          '/nhl/questions',
+          '/pga/questions',
+          '/money/questions',
+        ],
+      },
+      {
+        text: 'Gallery',
+        icon: 'gallery',
+        url: '/players',
+        matchUrls: [
+          '/players',
+          '/nba/players',
+          '/nfl/players',
+          '/mlb/players',
+          '/nhl/players',
+          '/pga/players',
+        ],
+      },
+      {
+        text: 'Shop',
+        icon: 'shop',
+        url: 'https://shop.statmuse.com',
+        external: true,
+      },
+      {
+        text: 'Blog',
+        icon: 'blog',
+        url: 'https://blog.statmuse.com/',
+        external: true,
+      },
+    ],
+  },
+  {
+    header: 'Search',
+    links: [
+      {
+        text: 'Examples',
+        icon: 'example',
+        url: '/product/examples',
+        matchUrls: ['/product/examples'],
+      },
+      {
+        text: 'Data & Glossary',
+        icon: 'data-coverage',
+        url: '/product/data',
+        matchUrls: ['/product/data'],
+      },
+      // {
+      //   text: 'Authentic Voices',
+      //   icon: 'voice',
+      //   url: '/product/voices',
+      //   matchUrls: ['/product/voices'],
+      // },
+      // {
+      //   text: 'Tutorials',
+      //   icon: 'glossary',
+      //   url: 'https://blog.statmuse.com/tagged/tutorial',
+      // },
+    ],
+  },
+  {
+    header: 'Play',
+    links: [
+      {
+        text: 'Elements of Bball',
+        icon: 'elements-bball',
+        url: 'https://elementsofbasketball.com/',
+        external: true,
+      },
+      {
+        text: 'Harden Maze',
+        icon: 'harden-maze',
+        url: 'https://hardenmaze.com/',
+        external: true,
+      },
+    ],
+  },
+  {
+    header: 'Company',
+    links: [
+      {
+        text: 'About',
+        icon: 'about',
+        url: '/company/about',
+        matchUrls: ['/company/about'],
+      },
+    ],
+  },
+] as {
+  header?: string
+  links: { text: string; icon: string; url: string; external?: boolean }[]
+}[]
+---
+
+<input id="menu" type="checkbox" class="hidden peer" />
+<label for="menu">
+  <ElephantIcon
+    class="block relative w-[38px] h-[38px] cursor-pointer mr-2 md:hidden"
+  />
+</label>
+<label for="menu">
+  <HamburgerIcon
+    class="hidden w-[25px] h-[25px] relative cursor-pointer fill-team-secondary md:block"
+  />
+</label>
+<div class="hidden peer-checked:block">
+  <label for="menu">
+    <div
+      class="absolute top-0 left-0 w-screen h-screen bg-white opacity-80 z-[5]"
+    >
+    </div>
+  </label>
+  <div
+    class="absolute top-0 left-0 h-screen w-3/4 md:w-[237px] bg-[#f9f9f9] z-[5]"
+  >
+    <div class="flex items-center h-[55px] md:h-[64px] px-3 md:px-5">
+      <label for="menu">
+        <CloseIcon
+          class="block w-5 h-5 cursor-pointer relative ml-1 md:ml-0.5"
+        />
+      </label>
+    </div>
+    {
+      menuLinks.map(({ header, links }) => (
+        <div class="mb-7">
+          {header && (
+            <h3 class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-3 md:ml-5">
+              {header}
+            </h3>
+          )}
+          <ul>
+            {links.map(({ icon, text, url, external }) => (
+              <li class="flex items-center my-0.5 py-1.5">
+                <a
+                  class="group flex items-center text-black hover:text-primary hover:no-underline ml-3 md:ml-5 flex-1 md:flex-initial"
+                  href={url}
+                  target={external ? '_blank' : null}
+                >
+                  <span class={`block w-[29px] h-[29px] mr-2 ${icon}-icon`} />
+                  {text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</div>
