@@ -8,52 +8,45 @@ const menuLinks = [
     links: [
       {
         text: 'Home',
-        icon: 'home',
+        icon: '/menu-icons/icon-home.svg',
+        tealIcon: '/menu-icons/teal/icon-home.svg',
         url: '/',
-        matchUrls: ['/', '/nba', '/nfl', '/mlb', '/nhl', '/pga'],
+        currentUrl: new RegExp('^/(nba|nfl|nhlmlb|pga)?$'),
       },
       {
         text: 'Money Search',
-        icon: 'money',
+        icon: '/menu-icons/icon-money.svg',
+        tealIcon: '/menu-icons/teal/icon-money.svg',
         url: '/money',
-        matchUrls: ['/money'],
+        currentUrl: new RegExp('^/money$'),
       },
       {
         text: 'Trending',
-        icon: 'trending',
+        icon: '/menu-icons/icon-trending.svg',
+        tealIcon: '/menu-icons/teal/icon-trending.svg',
         url: '/questions',
-        matchUrls: [
-          '/questions',
-          '/nba/questions',
-          '/nfl/questions',
-          '/mlb/questions',
-          '/nhl/questions',
-          '/pga/questions',
-          '/money/questions',
-        ],
+        currentUrl: new RegExp(
+          '^(/(nba|nfl|nhl|mlb|pga|fantasy|money))?/questions$'
+        ),
       },
       {
         text: 'Gallery',
-        icon: 'gallery',
+        icon: '/menu-icons/icon-gallery.svg',
+        tealIcon: '/menu-icons/teal/icon-gallery.svg',
         url: '/players',
-        matchUrls: [
-          '/players',
-          '/nba/players',
-          '/nfl/players',
-          '/mlb/players',
-          '/nhl/players',
-          '/pga/players',
-        ],
+        currentUrl: new RegExp('^(/(nba|nfl|nhl|mlb|pga))?/players$'),
       },
       {
         text: 'Shop',
-        icon: 'shop',
+        icon: '/menu-icons/icon-shop.svg',
+        tealIcon: '/menu-icons/teal/icon-shop.svg',
         url: 'https://shop.statmuse.com',
         external: true,
       },
       {
         text: 'Blog',
-        icon: 'blog',
+        icon: '/menu-icons/icon-blog.svg',
+        tealIcon: '/menu-icons/teal/icon-blog.svg',
         url: 'https://blog.statmuse.com/',
         external: true,
       },
@@ -64,25 +57,29 @@ const menuLinks = [
     links: [
       {
         text: 'Examples',
-        icon: 'example',
+        icon: '/menu-icons/icon-examples.svg',
+        tealIcon: '/menu-icons/teal/icon-examples.svg',
         url: '/product/examples',
-        matchUrls: ['/product/examples'],
+        currentUrl: new RegExp('^/product/examples(/(nba|nfl|nhl|mlb|pga))?$'),
       },
       {
         text: 'Data & Glossary',
-        icon: 'data-coverage',
+        icon: '/menu-icons/icon-data-coverage.svg',
+        tealIcon: '/menu-icons/teal/icon-data-coverage.svg',
         url: '/product/data',
-        matchUrls: ['/product/data'],
+        currentUrl: new RegExp('^/product/data(/(nba|nfl|nhl|mlb|pga))?$'),
       },
       // {
       //   text: 'Authentic Voices',
-      //   icon: 'voice',
+      //   icon: '/menu-icons/icon-voice.svg',
+      //   icon: '/menu-icons/teal/icon-voice.svg',
       //   url: '/product/voices',
-      //   matchUrls: ['/product/voices'],
+      //   currentUrl: ['/product/voices'],
       // },
       // {
       //   text: 'Tutorials',
-      //   icon: 'glossary',
+      //   icon: '/menu-icons/icon-glossary.svg',
+      //   icon: '/menu-icons/teal/icon-glossary.svg',
       //   url: 'https://blog.statmuse.com/tagged/tutorial',
       // },
     ],
@@ -92,13 +89,15 @@ const menuLinks = [
     links: [
       {
         text: 'Elements of Bball',
-        icon: 'elements-bball',
+        icon: '/menu-icons/icon-elements-of-bball.svg',
+        tealIcon: '/menu-icons/teal/icon-elements-of-bball.svg',
         url: 'https://elementsofbasketball.com/',
         external: true,
       },
       {
         text: 'Harden Maze',
-        icon: 'harden-maze',
+        icon: '/menu-icons/icon-harden-maze.svg',
+        tealIcon: '/menu-icons/teal/icon-harden-maze.svg',
         url: 'https://hardenmaze.com/',
         external: true,
       },
@@ -109,15 +108,23 @@ const menuLinks = [
     links: [
       {
         text: 'About',
-        icon: 'about',
+        icon: '/menu-icons/icon-about.svg',
+        tealIcon: '/menu-icons/teal/icon-about.svg',
         url: '/company/about',
-        matchUrls: ['/company/about'],
+        currentUrl: new RegExp('^/company/about$'),
       },
     ],
   },
 ] as {
   header?: string
-  links: { text: string; icon: string; url: string; external?: boolean }[]
+  links: {
+    text: string
+    icon: string
+    tealIcon: string
+    url: string
+    external?: boolean
+    currentUrl: RegExp
+  }[]
 }[]
 ---
 
@@ -158,18 +165,42 @@ const menuLinks = [
             </h3>
           )}
           <ul>
-            {links.map(({ icon, text, url, external }) => (
-              <li class="flex items-center my-0.5 py-1.5">
-                <a
-                  class="group flex items-center text-black hover:text-primary hover:no-underline ml-3 md:ml-5 flex-1 md:flex-initial"
-                  href={url}
-                  target={external ? '_blank' : null}
+            {links.map(
+              ({ icon, tealIcon, text, url, external, currentUrl }) => (
+                <li
+                  class={`my-0.5 py-1.5 ${
+                    currentUrl && currentUrl.test(Astro.url.pathname)
+                      ? 'bg-white font-semibold'
+                      : ''
+                  }`}
                 >
-                  <span class={`block w-[29px] h-[29px] mr-2 ${icon}-icon`} />
-                  {text}
-                </a>
-              </li>
-            ))}
+                  <a
+                    class="group flex items-center text-black hover:text-primary hover:no-underline ml-3 md:ml-5 flex-1 md:flex-initial"
+                    href={url}
+                    target={external ? '_blank' : null}
+                  >
+                    {currentUrl && currentUrl.test(Astro.url.pathname) ? (
+                      <img
+                        src={tealIcon}
+                        class="block w-[29px] h-[29px] mr-2 object-cover"
+                      />
+                    ) : (
+                      <>
+                        <img
+                          src={icon}
+                          class="block group-hover:hidden w-[29px] h-[29px] mr-2 object-cover "
+                        />
+                        <img
+                          src={tealIcon}
+                          class="hidden group-hover:block w-[29px] h-[29px] mr-2 object-cover"
+                        />
+                      </>
+                    )}
+                    {text}
+                  </a>
+                </li>
+              )
+            )}
           </ul>
         </div>
       ))
