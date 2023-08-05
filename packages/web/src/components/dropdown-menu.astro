@@ -4,7 +4,11 @@ import HamburgerIcon from '@components/icons/hamburger.astro'
 import CloseIcon from '@components/icons/x.astro'
 import Logo from '@components/logo.astro'
 
-Logo
+interface Props {
+  showElephant?: boolean
+}
+
+const { showElephant } = Astro.props
 
 const menuLinks = [
   {
@@ -132,14 +136,18 @@ const menuLinks = [
 ---
 
 <input id="menu" type="checkbox" class="hidden peer" />
-<label for="menu">
-  <ElephantIcon
-    class="block relative w-[38px] h-[38px] cursor-pointer mr-2 md:hidden"
-  />
-</label>
+{
+  showElephant && (
+    <label for="menu">
+      <ElephantIcon class="block relative w-[38px] h-[38px] cursor-pointer mr-2 md:hidden" />
+    </label>
+  )
+}
 <label for="menu">
   <HamburgerIcon
-    class="hidden w-[25px] h-[25px] relative cursor-pointer fill-team-secondary md:block"
+    class={`${
+      showElephant ? 'hidden md:block' : 'block'
+    } w-[25px] h-[25px] relative cursor-pointer fill-team-secondary mr-2 md:mr-0`}
   />
 </label>
 <div class="hidden peer-checked:block">
