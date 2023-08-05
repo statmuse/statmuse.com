@@ -4,6 +4,7 @@ import Logo from '@components/logo.astro'
 import AskBar from '@components/ask-bar.astro'
 import Image from '@components/image.astro'
 import Footer from '@components/footer.astro'
+import DropdownMenu from '@components/dropdown-menu.astro'
 import { createAskPath } from '@lib/path'
 
 const examples = [
@@ -293,8 +294,8 @@ const meta = {
     <div
       class="main h-[var(--header-height)] px-3 md:px-[21px] bg-white flex items-center sticky md:relative top-0 z-20"
     >
-      <div class="min-w-[25px] md:hidden">
-        <dropdown-menu hamburger="true"></dropdown-menu>
+      <div class="md:hidden">
+        <DropdownMenu />
       </div>
 
       <div class="flex space-x-5 items-center flex-1 justify-end"></div>

@@ -2,6 +2,7 @@
 import Logo from '@components/logo.astro'
 import AskBar from '@components/ask-bar.astro'
 import AnswerShare from '@components/answer-share.astro'
+import DropdownMenu from '@components/dropdown-menu.astro'
 import { clean } from '@lib/meta'
 
 interface Props {
@@ -27,7 +28,9 @@ const share = Astro.props.share
   class="grid grid-cols-[1fr_minmax(auto,_1250px)_1fr] items-center min-h-[62px] md:min-h-[70px] py-2 md:py-3 px-3 md:px-5 z-[5] bg-team-primary sticky top-0"
 >
   <div class="flex col-start-1 col-span-1">
-    <div class="min-w-[25px]"></div>
+    <div>
+      <DropdownMenu showElephant />
+    </div>
     <a href="/" class="hidden md:block">
       <Logo class="w-[150px] mx-5" />
     </a>
