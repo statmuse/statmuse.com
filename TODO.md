@@ -9,7 +9,7 @@
 - [ ] swr headers
 - [ ] analytics (provider?)
 - [ ] meta tags
-- [ ] fix home layout (move footer out of base layout, into sub layouts)
+- [x] fix home layout (move footer out of base layout, into sub layouts)
 - [x] mlb: issue with inning table at top (whitespace issue in html)
 - [x] share components
 - [x] trending pages
