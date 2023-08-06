@@ -4,6 +4,7 @@ import { Web } from './stacks/web-stack'
 import { DNS } from './stacks/dns-stack'
 import { ImageOptimization } from './stacks/img-stack'
 import { Imports } from './stacks/imports-stack'
+import { Secrets } from './stacks/secrets-stack'
 
 export default {
   config(_input) {
@@ -14,6 +15,12 @@ export default {
     }
   },
   stacks(app) {
-    app.stack(Imports).stack(DNS).stack(API).stack(Web).stack(ImageOptimization)
+    app
+      .stack(Imports)
+      .stack(Secrets)
+      .stack(DNS)
+      .stack(API)
+      .stack(Web)
+      .stack(ImageOptimization)
   },
 } satisfies SSTConfig
