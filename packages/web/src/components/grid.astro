@@ -260,7 +260,7 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                       'first:bg-[#e9f9ff]':
                         alternateStyle &&
                         highlight === row[Object.keys(row)[0]].value,
-                      'bg-white': !alternateStyle, // TODO: support highlight on sort
+                      'bg-white': !alternateStyle,
                       'sticky left-0': x === 0 && !alternateStyle,
                       'w-2': !!imageUrl && !alternateStyle,
                       [textColumnStyles]: !alternateStyle && !!textColumnStyles,
@@ -355,7 +355,12 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
           return result
         })
         .forEach((tr) => {
-          if (tbody) tbody.append(tr)
+          if (tbody) {
+            if (prevIdx > -1)
+              tr.children[prevIdx].classList.remove('bg-[#fffbec]')
+            tr.children[idx].classList.add('bg-[#fffbec]')
+            tbody.append(tr)
+          }
         })
 
       prevIdx = idx
