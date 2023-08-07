@@ -241,13 +241,14 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                   return row.display
                 }
 
-                const { entity, imageUrl } = row[col.rowItemKey]
+                const { entity, imageUrl, value } = row[col.rowItemKey]
                 const content = getCellContent(row[col.rowItemKey])
                 const textColumnStyles = getTextColumnStyles(col)
                 const href = entity ? getUrlForEntity(entity) : undefined
 
                 return (
                   <td
+                    data-value={value}
                     class:list={{
                       'px-2 py-1': !alternateStyle && !imageUrl,
                       'px-2': !alternateStyle && !!imageUrl,
@@ -259,7 +260,7 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                       'first:bg-[#e9f9ff]':
                         alternateStyle &&
                         highlight === row[Object.keys(row)[0]].value,
-                      'bg-white': !alternateStyle, // TODO: support highlight on sort
+                      'bg-white': !alternateStyle,
                       'sticky left-0': x === 0 && !alternateStyle,
                       'w-2': !!imageUrl && !alternateStyle,
                       [textColumnStyles]: !alternateStyle && !!textColumnStyles,
@@ -314,6 +315,55 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
         url.searchParams.set(select.name, select.value)
         window.location.href = url.toString()
       })
+    })
+  })
+
+  const getValue = (tr: HTMLTableRowElement, index: number) => {
+    const x = tr.children[index] as HTMLTableCellElement
+    if (!Number.isNaN(Number(x.dataset.value))) {
+      return Number(x.dataset.value)
+    }
+    return x.dataset.value
+  }
+
+  let prevIdx = -1
+  document.querySelectorAll('th').forEach((th) => {
+    th.addEventListener('click', () => {
+      const idx = Array.from(th.parentElement?.children || []).indexOf(th)
+      const table = th.closest('table')
+      const tbody = table?.querySelector('tbody')
+      const desc = idx !== prevIdx
+      Array.from(table?.querySelectorAll<HTMLTableRowElement>('tbody tr') || [])
+        .sort((a, b) => {
+          let result = 0
+          const sortOptions = [
+            { idx, desc },
+            { idx: 0, desc: false },
+          ]
+          for (const i in sortOptions) {
+            const { idx, desc } = sortOptions[i]
+            const ax = getValue(a, idx) ?? (desc ? -1000000 : 1000000)
+            const bx = getValue(b, idx) ?? (desc ? -1000000 : 1000000)
+            if (typeof ax === 'number' && typeof bx === 'number') {
+              result = desc ? bx - ax : ax - bx
+            }
+            if (typeof ax === 'string' && typeof bx === 'string') {
+              result = desc ? bx.localeCompare(ax) : ax.localeCompare(bx)
+            }
+            if (result !== 0) return result
+          }
+          return result
+        })
+        .forEach((tr) => {
+          if (tbody) {
+            if (prevIdx > -1)
+              tr.children[prevIdx].classList.remove('bg-[#fffbec]')
+            tr.children[idx].classList.add('bg-[#fffbec]')
+            tbody.append(tr)
+          }
+        })
+
+      prevIdx = idx
     })
   })
 </script>

@@ -17,7 +17,7 @@
 - [x] league index pages
 - [x] money index page
 - [x] gallery page
-- [ ] grid column sort
+- [x] grid column sort
 - [ ] typeahead suggestions (ask-bar component)
 - [ ] statmuse+ (limit features for free users)
 - [x] image optimization (current site does none, should add a behavior to cdn.statmuse.com; how do we test?)
