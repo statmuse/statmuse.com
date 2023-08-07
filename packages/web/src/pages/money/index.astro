@@ -1,8 +1,11 @@
 ---
-import Layout from '@layouts/main.astro'
+import Layout from '@layouts/default.astro'
 import Logo from '@components/logo.astro'
 import AskBar from '@components/ask-bar.astro'
 import Image from '@components/image.astro'
+import Footer from '@components/footer.astro'
+import DropdownMenu from '@components/dropdown-menu.astro'
+import MenuLinks from '@components/menu-links.astro'
 import { createAskPath } from '@lib/path'
 
 const examples = [
@@ -144,156 +147,22 @@ const meta = {
     class="home-layout [--header-height:55px] md:[--header-height:64px]"
   >
     <div class="sidebar hidden md:block min-w-[75px] bg-[#f9f9f9]">
-      <sidebar-menu>
-        <div
-          class="sticky top-0 bg-[#f9f9f9] border-t border-transparent w-[237px]"
-        >
-          <span
-            class="sidebar-hamburger-icon block w-[33px] h-[33px] my-[15.5px] ml-5 cursor-pointer"
-          >
-          </span><div class="mb-[22px]">
-            <ul>
-              <li
-                class="flex items-center my-0.5 py-1.5 highlight bg-white font-semibold"
-              >
-                <a
-                  class="group flex items-center text-black hover:text-primary hover:no-underline"
-                  href="/"
-                  style="margin-left: 21px;"
-                >
-                  <span class="block w-[29px] h-[29px] mr-2 home-icon"></span> Home
-                </a>
-              </li><li class="flex items-center my-0.5 py-1.5">
-                <a
-                  class="group flex items-center text-black hover:text-primary hover:no-underline"
-                  href="/money"
-                  style="margin-left: 21px;"
-                >
-                  <span class="block w-[29px] h-[29px] mr-2 money-icon"></span> Money
-                  Search
-                </a>
-              </li><li class="flex items-center my-0.5 py-1.5">
-                <a
-                  class="group flex items-center text-black hover:text-primary hover:no-underline"
-                  href="/questions"
-                  style="margin-left: 21px;"
-                >
-                  <span class="block w-[29px] h-[29px] mr-2 trending-icon">
-                  </span> Trending
-                </a>
-              </li><li class="flex items-center my-0.5 py-1.5">
-                <a
-                  class="group flex items-center text-black hover:text-primary hover:no-underline"
-                  href="/players"
-                  style="margin-left: 21px;"
-                >
-                  <span class="block w-[29px] h-[29px] mr-2 gallery-icon">
-                  </span> Gallery
-                </a>
-              </li><li class="flex items-center my-0.5 py-1.5">
-                <a
-                  class="group flex items-center text-black hover:text-primary hover:no-underline"
-                  href="https://shop.statmuse.com"
-                  style="margin-left: 21px;"
-                >
-                  <span class="block w-[29px] h-[29px] mr-2 shop-icon"></span> Shop
-                </a>
-              </li><li class="flex items-center my-0.5 py-1.5">
-                <a
-                  class="group flex items-center text-black hover:text-primary hover:no-underline"
-                  href="https://blog.statmuse.com/"
-                  target="_blank"
-                  style="margin-left: 21px;"
-                >
-                  <span class="block w-[29px] h-[29px] mr-2 blog-icon"></span> Blog
-                </a>
-              </li>
-            </ul>
-          </div><div class="mb-[22px]">
-            <h3
-              class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
-              style="margin-left: 22.5px;"
-            >
-              Search
-            </h3><ul>
-              <li class="flex items-center my-0.5 py-1.5">
-                <a
-                  class="group flex items-center text-black hover:text-primary hover:no-underline"
-                  href="/product/examples"
-                  style="margin-left: 21px;"
-                >
-                  <span class="block w-[29px] h-[29px] mr-2 example-icon">
-                  </span> Examples
-                </a>
-              </li><li class="flex items-center my-0.5 py-1.5">
-                <a
-                  class="group flex items-center text-black hover:text-primary hover:no-underline"
-                  href="/product/data"
-                  style="margin-left: 21px;"
-                >
-                  <span class="block w-[29px] h-[29px] mr-2 data-coverage-icon">
-                  </span> Data &amp; Glossary
-                </a>
-              </li>
-            </ul>
-          </div><div class="mb-[22px]">
-            <h3
-              class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
-              style="margin-left: 22.5px;"
-            >
-              Play
-            </h3><ul>
-              <li class="flex items-center my-0.5 py-1.5">
-                <a
-                  class="group flex items-center text-black hover:text-primary hover:no-underline"
-                  href="https://elementsofbasketball.com/"
-                  target="_blank"
-                  style="margin-left: 21px;"
-                >
-                  <span
-                    class="block w-[29px] h-[29px] mr-2 elements-bball-icon"
-                  >
-                  </span> Elements of Bball
-                </a>
-              </li><li class="flex items-center my-0.5 py-1.5">
-                <a
-                  class="group flex items-center text-black hover:text-primary hover:no-underline"
-                  href="https://hardenmaze.com/"
-                  target="_blank"
-                  style="margin-left: 21px;"
-                >
-                  <span class="block w-[29px] h-[29px] mr-2 harden-maze-icon">
-                  </span> Harden Maze
-                </a>
-              </li>
-            </ul>
-          </div><div class="mb-[22px]">
-            <h3
-              class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
-              style="margin-left: 22.5px;"
-            >
-              Company
-            </h3><ul>
-              <li class="flex items-center my-0.5 py-1.5">
-                <a
-                  class="group flex items-center text-black hover:text-primary hover:no-underline"
-                  href="/company/about"
-                  style="margin-left: 21px;"
-                >
-                  <span class="block w-[29px] h-[29px] mr-2 about-icon"></span> About
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div></sidebar-menu
+      <div
+        class="sticky top-0 bg-[#f9f9f9] border-t border-transparent w-[237px]"
       >
+        <span
+          class="sidebar-hamburger-icon block w-[33px] h-[33px] my-[15.5px] ml-5 cursor-pointer"
+        >
+        </span>
+        <MenuLinks />
+      </div>
     </div>
 
     <div
       class="main h-[var(--header-height)] px-3 md:px-[21px] bg-white flex items-center sticky md:relative top-0 z-20"
     >
-      <div class="min-w-[25px] md:hidden">
-        <dropdown-menu hamburger="true"></dropdown-menu>
+      <div class="md:hidden">
+        <DropdownMenu />
       </div>
 
       <div class="flex space-x-5 items-center flex-1 justify-end"></div>
@@ -359,6 +228,10 @@ const meta = {
         allowfullscreen
       >
       </iframe>
+    </div>
+
+    <div class="main">
+      <Footer />
     </div>
   </main>
 </Layout>

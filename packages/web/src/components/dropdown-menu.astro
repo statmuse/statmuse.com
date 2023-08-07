@@ -1,0 +1,55 @@
+---
+import ElephantIcon from '@components/icons/elephant.astro'
+import HamburgerIcon from '@components/icons/hamburger.astro'
+import CloseIcon from '@components/icons/x.astro'
+import Logo from '@components/logo.astro'
+import MenuLinks from '@components/menu-links.astro'
+
+interface Props {
+  showElephant?: boolean
+}
+
+const { showElephant } = Astro.props
+---
+
+<input id="menu" type="checkbox" class="hidden peer" />
+{
+  showElephant && (
+    <label for="menu">
+      <ElephantIcon class="block relative w-[38px] h-[38px] cursor-pointer mr-2 md:hidden" />
+    </label>
+  )
+}
+<label for="menu">
+  <HamburgerIcon
+    class={`${
+      showElephant ? 'hidden md:block' : 'block'
+    } w-[25px] h-[25px] relative cursor-pointer fill-team-secondary mr-2 md:mr-0`}
+  />
+</label>
+<div class="hidden peer-checked:block">
+  <label for="menu">
+    <div
+      class="absolute top-0 left-0 w-screen h-screen bg-white opacity-80 z-[5]"
+    >
+    </div>
+  </label>
+  <a
+    href="/"
+    class="absolute top-[15px] left-1/2 -translate-x-1/2 md:top-[22px] md:left-[65px] md:transform-none [--team-primary-color:initial] [--team-secondary-color:initial] z-10"
+  >
+    <Logo class="w-[150px] fill-black" />
+  </a>
+  <div
+    class="absolute top-0 left-0 h-screen w-3/4 md:w-[237px] bg-[#f9f9f9] z-[5]"
+  >
+    <div class="flex items-center h-[55px] md:h-[70px] px-3 md:px-5">
+      <label for="menu">
+        <CloseIcon
+          class="block w-5 h-5 cursor-pointer relative ml-1 md:ml-0.5"
+        />
+      </label>
+    </div>
+    <MenuLinks />
+  </div>
+</div>
