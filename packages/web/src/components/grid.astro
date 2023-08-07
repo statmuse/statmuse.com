@@ -358,9 +358,12 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
           })
           .forEach((tr) => {
             if (tbody) {
-              if (prevIdx > -1)
+              if (prevIdx > -1) {
                 tr.children[prevIdx].classList.remove('bg-[#fffbec]')
+                tr.children[prevIdx].classList.add('bg-white')
+              }
               tr.children[idx].classList.add('bg-[#fffbec]')
+              tr.children[idx].classList.remove('bg-white')
               tbody.append(tr)
             }
           })
