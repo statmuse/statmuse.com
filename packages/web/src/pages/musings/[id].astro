@@ -6,11 +6,11 @@ import Visuals from '@components/visuals.astro'
 import { getMusing } from '@statmuse/core/musings'
 import { rgbToHex } from '@statmuse/core/color'
 import { getHeroProps } from '@lib/gamera'
+import type { Metadata } from '@lib/meta'
 
 const { id } = Astro.params
 const musing = await getMusing(id).executeTakeFirst()
-if (!musing)
-  return new Response(null, { status: 404, statusText: 'Not found' })
+if (!musing) return new Response(null, { status: 404, statusText: 'Not found' })
 
 const query = musing.text ?? ''
 const conversationToken = musing.input_conversation_token
@@ -24,9 +24,17 @@ const background = musing.background_rgba
   : undefined
 
 const heroProps = getHeroProps({ imageAlt: query, musing })
+
+const capitalizeWord = ([first, ...rest]: string) =>
+  first.toUpperCase() + rest.join('')
+
+const meta: Metadata = {
+  title: query.split(' ').map(capitalizeWord).join(' '),
+  description: musing.text_plain ?? '',
+}
 ---
 
-<Layout colors={{ foreground, background }}>
+<Layout {meta} colors={{ foreground, background }}>
   <Header
     {query}
     {conversationToken}
