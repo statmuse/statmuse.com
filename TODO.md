@@ -11,6 +11,17 @@
 - [ ] swr headers
 - [ ] analytics (provider?)
 - [ ] meta tags
+- [ ] typeahead suggestions (ask-bar component)
+- [ ] error pages (404, gamera couldn't answer, etc)
+- [ ] additional questions not rendered everywhere
+- [ ] security headers
+- [ ] use astro middleware for cache control headers?
+- [ ] color coded rank values on team profile stats pages (in the grids)
+- [ ] video ads
+- [x] image optimization (current site does none, should add a behavior to cdn.statmuse.com; how do we test?)
+- [x] swap out font for variable font
+- [x] navigation issue on team profiles (going to history and then back to another page)
+- [x] expose sitemap from s3
 - [x] fix home layout (move footer out of base layout, into sub layouts)
 - [x] mlb: issue with inning table at top (whitespace issue in html)
 - [x] share components
@@ -19,15 +30,6 @@
 - [x] money index page
 - [x] gallery page
 - [x] grid column sort
-- [ ] typeahead suggestions (ask-bar component)
-- [x] image optimization (current site does none, should add a behavior to cdn.statmuse.com; how do we test?)
-- [x] swap out font for variable font
-- [x] navigation issue on team profiles (going to history and then back to another page)
-- [x] expose sitemap from s3
-- [ ] error pages (404, gamera couldn't answer, etc)
-- [ ] security headers
-- [ ] use astro middleware for cache control headers?
-- [ ] color coded rank values on team profile stats pages (in the grids)
 
 ## Launch
 
