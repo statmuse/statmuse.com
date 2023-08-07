@@ -326,12 +326,13 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
     }
 
     let prevIdx = -1
+    let desc = true
     document.querySelectorAll('th').forEach((th) => {
       th.addEventListener('click', () => {
         const idx = Array.from(th.parentElement?.children || []).indexOf(th)
         const table = th.closest('table')
         const tbody = table?.querySelector('tbody')
-        const desc = idx !== prevIdx
+        desc = idx !== prevIdx || !desc
         Array.from(
           table?.querySelectorAll<HTMLTableRowElement>('tbody tr') || []
         )
@@ -357,9 +358,12 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
           })
           .forEach((tr) => {
             if (tbody) {
-              if (prevIdx > -1)
+              if (prevIdx > -1) {
                 tr.children[prevIdx].classList.remove('bg-[#fffbec]')
+                tr.children[prevIdx].classList.add('bg-white')
+              }
               tr.children[idx].classList.add('bg-[#fffbec]')
+              tr.children[idx].classList.remove('bg-white')
               tbody.append(tr)
             }
           })
