@@ -34,11 +34,18 @@ const handled = handleResponse(response)
 if (handled.redirectUrl) return Astro.redirect(handled.redirectUrl)
 
 const subject = handled.subject
-
 query = clean(query)
 const path = encodeURIComponent(query.replace(/\s/g, '-'))
 
+const capitalizeWord = ([first, ...rest]: string) =>
+  first.toUpperCase() + rest.join('')
+
 const meta = {
+  title: query.split(' ').map(capitalizeWord).join(' '),
+  description:
+    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
+      ? tokensToText(response.nlg.text.answer)
+      : '',
   canonical:
     response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
       ? {
