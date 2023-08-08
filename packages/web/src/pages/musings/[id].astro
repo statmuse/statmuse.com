@@ -6,7 +6,7 @@ import Visuals from '@components/visuals.astro'
 import { getMusing } from '@statmuse/core/musings'
 import { rgbToHex } from '@statmuse/core/color'
 import { getHeroProps } from '@lib/gamera'
-import type { Metadata } from '@lib/meta'
+import { title } from '@lib/meta'
 
 const { id } = Astro.params
 const musing = await getMusing(id).executeTakeFirst()
@@ -25,11 +25,8 @@ const background = musing.background_rgba
 
 const heroProps = getHeroProps({ imageAlt: query, musing })
 
-const capitalizeWord = ([first, ...rest]: string) =>
-  first.toUpperCase() + rest.join('')
-
-const meta: Metadata = {
-  title: query.split(' ').map(capitalizeWord).join(' '),
+const meta = {
+  title: title(query),
   description: musing.text_plain ?? '',
 }
 ---

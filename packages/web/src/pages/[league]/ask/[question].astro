@@ -3,8 +3,9 @@ import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals.astro'
-import { handleResponse, tokensToText } from '@statmuse/core/gamera'
+import { handleResponse } from '@statmuse/core/gamera'
 import { ask, getHeroProps } from '@lib/gamera'
+import { description, title } from '@lib/meta'
 
 const { league, question } = Astro.params
 if (!question) return Astro.redirect('/questions')
@@ -17,15 +18,9 @@ if (redirectUrl) return Astro.redirect(redirectUrl)
 
 const heroProps = getHeroProps({ imageAlt: query, response })
 
-const capitalizeWord = ([first, ...rest]: string) =>
-  first.toUpperCase() + rest.join('')
-
 const meta = {
-  title: query.split(' ').map(capitalizeWord).join(' '),
-  description:
-    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
-      ? tokensToText(response.nlg.text.answer)
-      : '',
+  title: title(query),
+  description: description(response),
 }
 ---
 

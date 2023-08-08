@@ -5,7 +5,7 @@ import Header from '@components/header.astro'
 import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals.astro'
 import { handleResponse, tokensToText } from '@statmuse/core/gamera'
-import { clean } from '@lib/meta'
+import { clean, title, description } from '@lib/meta'
 
 if (Astro.request.method !== 'POST') {
   return Astro.redirect('/questions')
@@ -37,15 +37,9 @@ const subject = handled.subject
 query = clean(query)
 const path = encodeURIComponent(query.replace(/\s/g, '-'))
 
-const capitalizeWord = ([first, ...rest]: string) =>
-  first.toUpperCase() + rest.join('')
-
 const meta = {
-  title: query.split(' ').map(capitalizeWord).join(' '),
-  description:
-    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
-      ? tokensToText(response.nlg.text.answer)
-      : '',
+  title: title(query),
+  description: description(response),
   canonical:
     response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
       ? {
