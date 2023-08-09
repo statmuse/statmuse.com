@@ -42,8 +42,8 @@ export type Series = Omit<SeriesOptionsType, 'type'> & {
 }
 export type AssetPair = {
   isDefaultQuoteAsset: boolean
-  baseAsset: { symbol: string }
-  quoteAsset: { symbol: string }
+  baseAsset: { symbol: string; name?: string }
+  quoteAsset: { symbol: string; name?: string }
 }
 export type AssetPriceData = {
   assetPair: AssetPair

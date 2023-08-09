@@ -1,39 +1,27 @@
 ---
 import type { AssetPriceDataDetail, Timeframe } from '@statmuse/core/kanedama'
-import {
-  addTimeframeDisplay,
-  getAssetPriceData,
-  getFrequencyKey,
-  getInitialClose,
-  addClosePercentChange,
-} from '@lib/kanedama'
 import type {
   RenderTarget,
   Asset,
   AssetPair,
   Series,
   ChartType,
-  AssetPriceData,
-  Price,
 } from '@lib/kanedama'
 import dayjs from 'dayjs'
 import type { Options, SeriesOptionsType } from 'highcharts'
 import type { SeriesTooltipOptionsObject } from 'highcharts'
 import type { XAxisOptions } from 'highcharts'
 import type { YAxisOptions } from 'highcharts'
-import { frequencyMap, type FrequencyKey } from '@statmuse/core/frequency'
-import sortBy from 'lodash/fp/sortBy'
-import map from 'lodash/fp/map'
-import pipe from 'lodash/fp/pipe'
-import filter from 'lodash/fp/filter'
-import flatMap from 'lodash/fp/flatMap'
-import min from 'lodash/fp/min'
-import reduce from 'lodash/fp/reduce'
 import numeral from 'numeral'
 
 interface Props {
   detail: AssetPriceDataDetail
+  assets: Asset[]
+  notableTimestamps: Timeframe[]
+  renderTarget: string
+  priceFormatString: string
   color: string
+  preferCandlestick: boolean
 }
 
 const color = Astro.props.color
@@ -324,89 +312,16 @@ const mapChartOptions = (
   }
 }
 
-const detail = Astro.props.detail
-const { assetPairs, notableTimestamps, renderTarget, ...props } =
-  detail.assetPriceData
-const frequencyName = detail.assetPriceData.frequency
-const frequencyKey = getFrequencyKey(
-  frequencyName,
-  detail.assetPriceData.startTimestamp,
-  detail.assetPriceData.endTimestamp
-)
-const frequency = frequencyMap[frequencyKey]
-const responses = await Promise.all(
-  assetPairs.map((p) =>
-    getAssetPriceData({
-      frequency: frequency.name as FrequencyKey,
-      ...p,
-      ...props,
-    })
-  )
-)
-
-const assets = responses
-  .filter((r) => !!r)
-  .map((r) => r as AssetPriceData)
-  .map((r) => {
-    const { assetPair, prices, redacted } = r
-    const sortedPrices = sortBy(
-      (p) => p.timeframe.timestamp ?? p.timeframe.endTimestamp,
-      prices
-    )
-    const initialClose = getInitialClose(sortedPrices)
-    return {
-      redacted,
-      assetPair,
-      color,
-      prices: map(
-        pipe(
-          addTimeframeDisplay(frequency),
-          addClosePercentChange(initialClose)
-        ),
-        sortedPrices
-      ) as unknown as Price[],
-    }
-  })
-
 // if (isEmpty(assets)) {
 //   return null
 // }
 
-// When price response indicates a specific frequency, prefer a candlestick
-// chart over a line chart. Example: apple weekly price (show weekly candles)
-const preferCandlestick = !!frequencyName
+const renderTarget = Astro.props.renderTarget
+const assets = Astro.props.assets
+const notableTimestamps = Astro.props.notableTimestamps
+const priceFormatString = Astro.props.priceFormatString
+const preferCandlestick = Astro.props.preferCandlestick
 const renderTargetName = renderTarget ?? 'close'
-const getPriceValueFormatString = (() => {
-  const minDecimals = 2
-  const maxDecimals = 6
-
-  const getDecimals = (value: number) => {
-    const impl: (d: number) => number = (d: number) => {
-      if (d >= maxDecimals) return maxDecimals
-      return value < 1 / 10 ** d ? impl(d + 1) : d
-    }
-    return value ? impl(minDecimals) : 0
-  }
-
-  return (assets: Asset[]) => {
-    const minValue = pipe(
-      flatMap('prices'),
-      reduce<Price, number>(
-        (value, { open, high, low, close }) =>
-          // @ts-ignore
-          pipe(
-            map<number, number>((x) => Math.abs(x)),
-            filter((x) => x > 0),
-            min
-          )([value, open, high, low, close]),
-        Number.MAX_VALUE
-      )
-    )(assets)
-
-    return `0,0.${'0'.repeat(getDecimals(minValue))}`
-  }
-})()
-const priceFormatString = getPriceValueFormatString(assets)
 
 const options = mapChartOptions(
   assets,

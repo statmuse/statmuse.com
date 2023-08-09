@@ -1,8 +1,26 @@
 ---
-import Grid from '@components/grid.astro'
 import Container from '@components/container.astro'
-import AssetPriceReturnsChart from '@components/asset-price-returns-chart.astro'
+import AssetPriceReturnsChart from '@components/asset-price-chart.astro'
+import AssetPriceGrid from '@components/asset-price-grid.astro'
 import { type KanedamaResponse, tokensToHtml } from '@statmuse/core/kanedama'
+import {
+  type AssetPriceData,
+  type Price,
+  getFrequencyKey,
+  getAssetPriceData,
+  getInitialClose,
+  addTimeframeDisplay,
+  addClosePercentChange,
+} from '@lib/kanedama'
+import { frequencyMap, type FrequencyKey } from '@statmuse/core/frequency'
+import { color } from 'highcharts'
+import map from 'lodash/fp/map'
+import pipe from 'lodash/fp/pipe'
+import flatMap from 'lodash/fp/flatMap'
+import reduce from 'lodash/fp/reduce'
+import sortBy from 'lodash/fp/sortBy'
+import filter from 'lodash/fp/filter'
+import min from 'lodash/fp/min'
 
 interface Props {
   response: KanedamaResponse
@@ -14,7 +32,7 @@ const query = Astro.props.query
 const conversationToken = Astro.props.conversationToken
 
 const response = Astro.props.response
-const summary = tokensToHtml(response.visual.summaryTokens)
+// const summary = tokensToHtml(response.visual.summaryTokens)
 const ignoreGenericGrids =
   response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' // &&
 // response.visual.detail?.find((d) => d.type === 'assetPriceData')
@@ -74,25 +92,108 @@ const details =
   }
   {
     response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' &&
-      details?.map((detail) => {
+      details?.map(async (detail) => {
         switch (detail.type) {
           case 'assetPriceData':
+            const { assetPairs, notableTimestamps, renderTarget, ...props } =
+              detail.assetPriceData
+            const frequencyName = detail.assetPriceData.frequency
+            const frequencyKey = getFrequencyKey(
+              frequencyName,
+              detail.assetPriceData.startTimestamp,
+              detail.assetPriceData.endTimestamp
+            )
+            const frequency = frequencyMap[frequencyKey]
+            const responses = await Promise.all(
+              assetPairs.map((p) =>
+                getAssetPriceData({
+                  frequency: frequency.name as FrequencyKey,
+                  ...p,
+                  ...props,
+                })
+              )
+            )
+
+            const assets = responses
+              .filter((r) => !!r)
+              .map((r) => r as AssetPriceData)
+              .map((r) => {
+                const { assetPair, prices, redacted } = r
+                const sortedPrices = sortBy(
+                  (p) => p.timeframe.timestamp ?? p.timeframe.endTimestamp,
+                  prices
+                )
+                const initialClose = getInitialClose(sortedPrices)
+                return {
+                  redacted,
+                  assetPair,
+                  color,
+                  prices: map(
+                    pipe(
+                      addTimeframeDisplay(frequency),
+                      addClosePercentChange(initialClose)
+                    ),
+                    sortedPrices
+                  ) as unknown as Price[],
+                }
+              })
+
+            const getPriceValueFormatString = (() => {
+              const minDecimals = 2
+              const maxDecimals = 6
+
+              const getDecimals = (value: number) => {
+                const impl: (d: number) => number = (d: number) => {
+                  if (d >= maxDecimals) return maxDecimals
+                  return value < 1 / 10 ** d ? impl(d + 1) : d
+                }
+                return value ? impl(minDecimals) : 0
+              }
+
+              return (assets: Asset[]) => {
+                const minValue = pipe(
+                  flatMap('prices'),
+                  reduce(
+                    (value, { open, high, low, close }) =>
+                      pipe(
+                        map((x) => Math.abs(x)),
+                        filter((x) => x > 0),
+                        min
+                      )([value, open, high, low, close]),
+                    Number.MAX_VALUE
+                  )
+                )(assets)
+
+                return `0,0.${'0'.repeat(getDecimals(minValue))}`
+              }
+            })()
+
+            const priceFormatString = getPriceValueFormatString(assets)
+
+            // When price response indicates a specific frequency, prefer a candlestick
+            // chart over a line chart. Example: apple weekly price (show weekly candles)
+
+            const preferCandlestick = !!frequencyName
+
             return (
               <Fragment>
                 <AssetPriceReturnsChart
                   {detail}
+                  {notableTimestamps}
+                  {assets}
+                  {renderTarget}
+                  {priceFormatString}
+                  {preferCandlestick}
                   color={response.visual.summary.subject.colors.background}
                 />
-                {/* {detail.columnCharts.map((chart) => ( */}
-                {/*   <Chart */}
-                {/*     model={chart} */}
-                {/*     totalWidth={1495} */}
-                {/*     isSuperlative={response.visual.isSuperlative} */}
-                {/*   /> */}
-                {/* ))} */}
-                {/* {detail.grids.map((grid) => ( */}
-                {/*   <Grid data={grid} hideTitle /> */}
-                {/* ))} */}
+                <AssetPriceGrid
+                  {detail}
+                  {assets}
+                  {frequency}
+                  {notableTimestamps}
+                  {renderTarget}
+                  {priceFormatString}
+                />
               </Fragment>
             )
           // case 'genericGrids':

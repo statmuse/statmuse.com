@@ -20,6 +20,7 @@
 - [ ] use astro middleware for cache control headers?
 - [ ] color coded rank values on team profile stats pages (in the grids)
 - [ ] focus should start in the search bar on every page right?
+- [ ] newsletter signup
 - [x] image optimization (current site does none, should add a behavior to cdn.statmuse.com; how do we test?)
 - [x] swap out font for variable font
 - [x] navigation issue on team profiles (going to history and then back to another page)

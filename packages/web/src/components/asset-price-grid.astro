@@ -1,0 +1,419 @@
+---
+import numeral from 'numeral'
+import keyBy from 'lodash/fp/keyBy'
+import map from 'lodash/fp/map'
+import orderBy from 'lodash/fp/orderBy'
+import pipe from 'lodash/fp/pipe'
+import reduce from 'lodash/fp/reduce'
+import Grid from '@components/grid.astro'
+import type { Frequency } from '@statmuse/core/frequency'
+import type { AssetPriceDataDetail, Timeframe } from '@statmuse/core/kanedama'
+import type { AssetPair, AssetPriceData, Price } from '@lib/kanedama'
+import type { GameraGrid } from '@statmuse/core/gamera'
+
+interface Props {
+  detail: AssetPriceDataDetail
+  assets: AssetPriceData[]
+  frequency: Frequency
+  notableTimestamps: Timeframe[]
+  renderTarget: string
+  priceFormatString: string
+}
+
+type Cell =
+  | {
+      display?: string | number
+      value?: string | null | {}
+    }
+  | boolean
+
+type ExtendedPrice = Price & {
+  frequency: Frequency
+  assetPair: AssetPair
+  redacted: boolean
+}
+
+type TableRenderTarget = {
+  getColumns: () => {
+    rowItemKey: string
+    title: string
+    type: string
+  }[]
+  getRow: (
+    price: ExtendedPrice,
+    getPriceCell: (value: unknown) => Cell
+  ) => Record<string, Cell>
+}
+
+const renderTargetMap: Record<string, TableRenderTarget> = {
+  close: {
+    getColumns: () => [
+      {
+        rowItemKey: 'DATE',
+        title: 'DATE',
+        type: 'date',
+      },
+      {
+        rowItemKey: 'OPEN',
+        title: 'OPEN',
+        type: 'number',
+      },
+      {
+        rowItemKey: 'HIGH',
+        title: 'HIGH',
+        type: 'number',
+      },
+      {
+        rowItemKey: 'LOW',
+        title: 'LOW',
+        type: 'number',
+      },
+      {
+        rowItemKey: 'CLOSE',
+        title: 'CLOSE',
+        type: 'number',
+      },
+    ],
+    getRow: (
+      { close, frequency, high, low, open, timeframe },
+      getPriceCell
+    ) => ({
+      DATE: timeframeCell(timeframe, frequency),
+      OPEN: getPriceCell(open),
+      HIGH: getPriceCell(high),
+      LOW: getPriceCell(low),
+      CLOSE: getPriceCell(close),
+    }),
+  },
+  marketCap: {
+    getColumns: () => [
+      {
+        rowItemKey: 'DATE',
+        title: 'DATE',
+        type: 'date',
+      },
+      {
+        rowItemKey: 'CLOSE',
+        title: 'CLOSE',
+        type: 'number',
+      },
+      {
+        rowItemKey: 'OUTSTANDING',
+        title: 'OUTSTANDING',
+        type: 'number',
+      },
+      {
+        rowItemKey: 'MARKETCAP',
+        title: 'MARKET CAP',
+        type: 'number',
+      },
+    ],
+    getRow: (
+      { close, frequency, timeframe, unitsOutstanding, redacted },
+      getPriceCell
+    ) => ({
+      DATE: timeframeCell(timeframe, frequency),
+      CLOSE: getPriceCell(close),
+      OUTSTANDING: intCell(unitsOutstanding, redacted),
+      MARKETCAP: getPriceCell(close ? close * (unitsOutstanding ?? 0) : null),
+    }),
+  },
+}
+
+const volumeColumn = {
+  rowItemKey: 'VOLUME',
+  title: 'VOLUME',
+  type: 'number',
+}
+
+const emptyCell = () => ({
+  value: null,
+  display: '—',
+})
+
+const timeframeCell = (timeframe: Timeframe, frequency: Frequency) => ({
+  value: timeframe.timestamp ?? timeframe.endTimestamp,
+  display: frequency.getDateDisplay(
+    timeframe.timestamp ?? timeframe.endTimestamp ?? ''
+  ),
+})
+
+const priceCell = (
+  { isDefaultQuoteAsset, quoteAsset }: AssetPair,
+  formatString: string,
+  value: unknown,
+  redacted: boolean
+) => {
+  if (value === null && redacted) return { display: '' }
+  if (!value) return emptyCell()
+  const prefix = isDefaultQuoteAsset && quoteAsset.symbol === 'USD' ? '$' : ''
+  return {
+    value,
+    display: prefix + numeral(value).format(formatString),
+  }
+}
+
+const intCell = (value: unknown, redacted: boolean) => {
+  if (!value && redacted) return { display: '' }
+  if (!value) return emptyCell()
+  return {
+    value,
+    display: numeral(value).format('0,0'),
+  }
+}
+
+const mapGridForSingleAsset = (
+  frequency: Frequency,
+  priceFormatString: string,
+  renderTargetName: string,
+  { prices, assetPair, redacted }: AssetPriceData,
+  notableTimestamps: Timeframe[]
+) => {
+  const renderTarget = (() => {
+    const renderTargetKey = renderTargetName?.toLowerCase()
+
+    for (const currentKey in renderTargetMap) {
+      if (currentKey.toLowerCase() === renderTargetKey) {
+        return renderTargetMap[currentKey]
+      }
+    }
+
+    return renderTargetMap.close
+  })()
+
+  const columns = renderTarget.getColumns()
+  const includeVolume = prices.some((price) => price.volume)
+
+  if (includeVolume) {
+    const closeColumnIndex = columns.findIndex((x) => x.rowItemKey === 'CLOSE')
+
+    if (closeColumnIndex >= 0) {
+      columns.splice(closeColumnIndex + 1, 0, volumeColumn)
+    }
+  }
+
+  // Ideally we'd query the /asset/{id} endpoint to see if the asset is a
+  // cryptocurrency instead of hardcoding this bitcoin check. We'd want to
+  // leverage something like local storage to prevent making that call repeatedly.
+  if (assetPair.baseAsset.name?.toUpperCase() === 'BITCOIN') {
+    const outstandingColumnIndex = columns.findIndex(
+      (x) => x.rowItemKey === 'OUTSTANDING'
+    )
+
+    if (outstandingColumnIndex >= 0) {
+      columns[outstandingColumnIndex].title = 'BTC MINED'
+    }
+  }
+
+  const notableTimestampMap = keyBy('timestamp', notableTimestamps)
+  const getPriceCell = (value: unknown) =>
+    priceCell(assetPair, priceFormatString, value, redacted)
+
+  return {
+    columns,
+    rows: orderBy(
+      (x: Price) => x.timeframe.timestamp ?? x.timeframe.endTimestamp,
+      'desc'
+    )(prices)
+      .map((price, i) => {
+        if (redacted && i > 25) {
+          return Object.entries(price).reduce((acc, x) => {
+            const [key, value] = x
+            if (key === 'timeframe') {
+              return {
+                ...acc,
+                [key]: value,
+              }
+            }
+            return {
+              ...acc,
+              [key]: null,
+            }
+          }, {}) as Price
+        }
+        return price
+      })
+      .map((price) => {
+        const row = renderTarget.getRow(
+          { ...price, frequency, assetPair, redacted },
+          getPriceCell
+        )
+
+        if (includeVolume) {
+          row.VOLUME = intCell(price.volume, redacted)
+        }
+
+        if (
+          notableTimestampMap[
+            price.timeframe.timestamp ?? price.timeframe.endTimestamp ?? ''
+          ]
+        ) {
+          row.HIGHLIGHT = true
+        }
+
+        return row
+      }),
+  }
+}
+
+const getTimestamp = (p: Price) =>
+  p.timeframe.timestamp ?? (p.timeframe.endTimestamp as string)
+
+const groupPricesByTimestamp = (assets: AssetPriceData[]) =>
+  assets.reduce(
+    (
+      byTimestamp,
+      {
+        prices,
+        assetPair: {
+          baseAsset: { symbol },
+        },
+      }
+    ) =>
+      prices.reduce((byTimestamp, price) => {
+        const timestamp = getTimestamp(price)
+
+        // @ts-ignore
+        if (byTimestamp[timestamp]) {
+          return {
+            ...byTimestamp,
+            [timestamp]: {
+              // @ts-ignore
+              ...byTimestamp[timestamp],
+              [symbol]: price.close,
+            },
+          }
+        }
+        return {
+          ...byTimestamp,
+          [timestamp]: {
+            [symbol]: price.close,
+            timeframe: price.timeframe,
+          },
+        }
+      }, byTimestamp),
+    {}
+  )
+
+type TimestampPriceMap = Record<string, object> &
+  AssetPriceData & {
+    timeframe: Timeframe
+  }
+
+const mapValuesIntoGridRow = (
+  assets: TimestampPriceMap[],
+  frequency: Frequency,
+  priceFormatString: string
+) =>
+  map((priceMap: TimestampPriceMap) =>
+    reduce(
+      (obj, { assetPair, redacted }) => {
+        const {
+          baseAsset: { symbol },
+        } = assetPair
+        return {
+          ...obj,
+          [symbol]: priceCell(
+            assetPair,
+            priceFormatString,
+            priceMap[symbol],
+            redacted
+          ),
+        }
+      },
+      { DATE: timeframeCell(priceMap.timeframe, frequency) }
+    )(assets)
+  )
+
+const scrubValuesAfterN =
+  (n: number, redacted: boolean) => (timestampPriceMap: TimestampPriceMap) => {
+    if (redacted) {
+      const timestampKeys = Object.keys(timestampPriceMap)
+        .sort()
+        .reverse()
+        .slice(n)
+
+      timestampKeys.forEach((t) => {
+        const priceMap = Object.entries(timestampPriceMap[t])
+
+        const newPriceMap = priceMap.reduce((acc, price) => {
+          const [key, value] = price
+          if (key === 'timeframe') {
+            return {
+              ...acc,
+              [key]: value,
+            }
+          }
+          return {
+            ...acc,
+            [key]: null,
+          }
+        }, {})
+
+        timestampPriceMap[t] = newPriceMap
+      })
+    }
+
+    return timestampPriceMap
+  }
+
+const mapGridForMultipleAssets = (
+  frequency: Frequency,
+  priceFormatString: string,
+  assets: AssetPriceData[]
+) => ({
+  columns: [
+    {
+      rowItemKey: 'DATE',
+      title: 'DATE',
+      type: 'date',
+    },
+    ...assets.map(
+      ({
+        assetPair: {
+          baseAsset: { name, symbol },
+        },
+      }) => ({
+        rowItemKey: symbol,
+        title: name,
+        display: symbol,
+        type: 'string',
+      })
+    ),
+  ],
+  rows: pipe(
+    groupPricesByTimestamp,
+    scrubValuesAfterN(25, assets[0].redacted),
+    mapValuesIntoGridRow(
+      assets as TimestampPriceMap[],
+      frequency,
+      priceFormatString
+    )
+  )(assets),
+})
+
+const frequency = Astro.props.frequency
+const assets = Astro.props.assets
+const priceFormatString = Astro.props.priceFormatString
+const renderTarget = Astro.props.renderTarget
+const notableTimestamps = Astro.props.notableTimestamps
+
+const grid =
+  assets.length > 1
+    ? mapGridForMultipleAssets(frequency, priceFormatString, assets)
+    : mapGridForSingleAsset(
+        frequency,
+        priceFormatString,
+        renderTarget,
+        assets[0],
+        notableTimestamps
+      )
+
+grid.rows = orderBy('DATE.value', 'desc')(grid.rows)
+---
+
+<Grid
+  class="w-full text-[15px] whitespace-nowrap"
+  data={grid as GameraGrid}
+  columnStyles={{ DATE: 'text-left' }}
+/>
