@@ -3,13 +3,14 @@ import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals.astro'
-import { handleResponse } from '@statmuse/core/gamera'
+import { handleResponse, tokensToText } from '@statmuse/core/gamera'
 import { ask, getHeroProps } from '@lib/gamera'
 import { description, title } from '@lib/meta'
+import { clean } from '@lib/path'
 
 const { league, question } = Astro.params
 if (!question) return Astro.redirect('/questions')
-const query = question.replaceAll('-', ' ')
+let query = question.replaceAll('-', ' ')
 const response = await ask({ league, query })
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })
@@ -17,6 +18,11 @@ const { subject, redirectUrl, conversationToken } = handleResponse(response)
 if (redirectUrl) return Astro.redirect(redirectUrl)
 
 const heroProps = getHeroProps({ imageAlt: query, response })
+query = clean(
+  tokensToText(
+    response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
+  )
+)
 
 const meta = {
   title: title(query),

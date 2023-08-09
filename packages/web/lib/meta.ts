@@ -67,6 +67,7 @@ export const description = (resp: GameraResponse): string => {
 }
 
 const capitalizeWord = (word: string) => {
+  if (new RegExp('(nba|nfl|nhl|mlb|pga)').test(word)) return word.toUpperCase()
   if (word === '') return word
   const [first, ...rest] = word
   return first.toUpperCase() + rest.join('')

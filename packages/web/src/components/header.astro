@@ -3,7 +3,6 @@ import Logo from '@components/logo.astro'
 import AskBar from '@components/ask-bar.astro'
 import AnswerShare from '@components/answer-share.astro'
 import DropdownMenu from '@components/dropdown-menu.astro'
-import { clean } from '@lib/meta'
 
 interface Props {
   query?: string
@@ -18,7 +17,7 @@ interface Props {
   }
 }
 
-const query = Astro.props.query ? clean(Astro.props.query) : undefined
+const query = Astro.props.query ?? ''
 const conversationToken = Astro.props.conversationToken
 const preferredDomain = Astro.props.preferredDomain
 const share = Astro.props.share

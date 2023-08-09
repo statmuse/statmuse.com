@@ -1,4 +1,4 @@
-const clean = (x: string) =>
+export const clean = (x: string) =>
   x
     .toLowerCase()
     // remove duplicate whitespace
@@ -10,6 +10,7 @@ const clean = (x: string) =>
     .replaceAll('”', '"')
     // remove trailing ?
     .replace(/\?+$/, '')
+    .trim()
 
 const contains = (s: string, chars: string[]) => {
   let res = false
