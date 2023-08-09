@@ -431,9 +431,8 @@ const options = mapChartOptions(
   import forEach from 'lodash/fp/forEach'
   import invokeArgs from 'lodash/fp/invokeArgs'
   import shuffle from 'lodash/fp/shuffle'
-  import Highcharts, {
-    TooltipFormatterContextObject,
-  } from 'highcharts/highstock'
+  import * as Highcharts from 'highcharts'
+  import Stock from 'highcharts/modules/stock'
   import Exporting from 'highcharts/modules/exporting'
   import OfflineExporting from 'highcharts/modules/offline-exporting'
   import type {
@@ -444,6 +443,7 @@ const options = mapChartOptions(
     RenderTarget,
   } from '@lib/kanedama'
 
+  Stock(Highcharts)
   Exporting(Highcharts)
   OfflineExporting(Highcharts)
 
@@ -475,7 +475,6 @@ const options = mapChartOptions(
   const options = JSON.parse(
     chart.dataset.options as string
   ) as Highcharts.Options
-  console.log(options)
 
   const renderTargetMap: Record<string, RenderTarget> = {
     close: {
@@ -588,7 +587,7 @@ const options = mapChartOptions(
   Highcharts.chart('chart', {
     ...options,
     tooltip: {
-      formatter(this: TooltipFormatterContextObject) {
+      formatter(this: Highcharts.TooltipFormatterContextObject) {
         const formatYAxisValue = (value: unknown) =>
           renderTarget.formatYAxisValue(priceFormatString, value)
 
