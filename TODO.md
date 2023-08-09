@@ -12,12 +12,14 @@
 - [ ] analytics (provider?)
 - [ ] meta tags
 - [ ] typeahead suggestions (ask-bar component)
+- [ ] video ads
+- [ ] short code redirects
 - [ ] error pages (404, gamera couldn't answer, etc)
 - [ ] additional questions not rendered everywhere
 - [ ] security headers
 - [ ] use astro middleware for cache control headers?
 - [ ] color coded rank values on team profile stats pages (in the grids)
-- [ ] video ads
+- [ ] focus should start in the search bar on every page right?
 - [x] image optimization (current site does none, should add a behavior to cdn.statmuse.com; how do we test?)
 - [x] swap out font for variable font
 - [x] navigation issue on team profiles (going to history and then back to another page)

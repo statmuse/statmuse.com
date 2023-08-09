@@ -16,6 +16,7 @@ interface Props {
     query?: string
     domain?: string
   }
+  money?: boolean
 }
 
 const query = Astro.props.query ? clean(Astro.props.query) : undefined
@@ -37,7 +38,12 @@ const share = Astro.props.share
   </div>
   <div class="col-start-2 col-span-1 max-w-[780px] flex">
     <div class="flex-1">
-      <AskBar {query} {conversationToken} {preferredDomain} />
+      <AskBar
+        {query}
+        {conversationToken}
+        {preferredDomain}
+        money={Astro.props.money}
+      />
     </div>
     <div
       class="md:flex md:w-fit w-0 items-center ml-4 space-x-4 overflow-hidden"

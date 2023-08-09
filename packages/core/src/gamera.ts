@@ -1,22 +1,22 @@
-export const cdnBaseUrl = "https://cdn.statmuse.com"
+export const cdnBaseUrl = 'https://cdn.statmuse.com'
 
 export function handleResponse(response: GameraResponse) {
   const subject = response.visual.summary.subject
   const conversationToken = response.conversation.token
-  if (response.type === "nlgPromptForMoreInfoVisualChoicesOptional") {
+  if (response.type === 'nlgPromptForMoreInfoVisualChoicesOptional') {
     return { subject, conversationToken }
   }
 
-  let redirectUrl = ""
+  let redirectUrl = ''
   const playerProfile = response.visual.detail?.find(
-    (d) => d.type === "playerProfile"
+    (d) => d.type === 'playerProfile'
   ) as PlayerProfileDetail
   if (playerProfile) {
     redirectUrl = getUrlForEntity(playerProfile.entity)
   }
 
   const teamProfile = response.visual.detail?.find(
-    (d) => d.type === "teamProfile"
+    (d) => d.type === 'teamProfile'
   ) as TeamProfileDetail
   if (teamProfile) {
     redirectUrl = getUrlForEntity(teamProfile.entity)
@@ -30,98 +30,98 @@ export function handleResponse(response: GameraResponse) {
 }
 
 export const tokensToHtml = (tokens: GameraToken[]) => {
-  return tokens.map(formatToken).join("").trim()
+  return tokens.map(formatToken).join('').trim()
 }
 
 export const tokensToText = (tokens: GameraToken[]) => {
-  return tokens.map(formatTokenTextOnly).join("").trim()
+  return tokens.map(formatTokenTextOnly).join('').trim()
 }
 
 const parameterize = (text: string) => {
-  return text.replaceAll(" ", "-").replaceAll("/", "-").toLowerCase()
+  return text.replaceAll(' ', '-').replaceAll('/', '-').toLowerCase()
 }
 
 export const fallbackIcon = (league: string) => {
   switch (league) {
-    case "mlb":
-      return "/icons/icon-mlb.svg"
-    case "nba":
-      return "/icons/icon-nba.svg"
-    case "nfl":
-      return "/icons/icon-nfl.svg"
-    case "nhl":
-      return "/icons/icon-nhl.svg"
-    case "pga":
-      return "/icons/icon-pga.svg"
+    case 'mlb':
+      return '/icons/icon-mlb.svg'
+    case 'nba':
+      return '/icons/icon-nba.svg'
+    case 'nfl':
+      return '/icons/icon-nfl.svg'
+    case 'nhl':
+      return '/icons/icon-nhl.svg'
+    case 'pga':
+      return '/icons/icon-pga.svg'
     default:
-      throw new Error("Unknown league")
+      throw new Error('Unknown league')
   }
 }
 
 export const getDefaultBustImageUrl = (domain: GameraDomain) => {
   switch (domain) {
-    case "NBA":
+    case 'NBA':
       return `${cdnBaseUrl}/img/player_profile/generic-basketball-player-silhouette.png`
-    case "MLB":
+    case 'MLB':
       return `${cdnBaseUrl}/img/player_profile/sm-baseball-player-lg.png`
-    case "NHL":
+    case 'NHL':
       return `${cdnBaseUrl}/img/player_profile/sm-hockey-player-lg.png`
-    case "NFL":
+    case 'NFL':
       return `${cdnBaseUrl}/img/player_profile/sm-football-player-lg.png`
     default:
-      throw new Error("Unknown domain")
+      throw new Error('Unknown domain')
   }
 }
 
 export const getDefaultTeamLogoUrl = (domain: GameraDomain) => {
   switch (domain) {
-    case "NBA":
+    case 'NBA':
       return `${cdnBaseUrl}/img/team_profile/sm-basketball-team-lg.png`
-    case "MLB":
+    case 'MLB':
       return `${cdnBaseUrl}/img/team_profile/sm-baseball-team-lg.png`
-    case "NHL":
+    case 'NHL':
       return `${cdnBaseUrl}/img/team_profile/sm-hockey-team-lg.png`
-    case "NFL":
+    case 'NFL':
       return `${cdnBaseUrl}/img/team_profile/sm-football-team-lg.png`
     default:
-      throw new Error("Unknown domain")
+      throw new Error('Unknown domain')
   }
 }
 
 export const getUrlForEntity = (entity: GameraEntity) => {
   const { display, domain, type, parameters, id } = entity
-  const isPga = domain.toUpperCase() === "PGA"
-  const [teamId, yearId] = id.split("/")
-  const isPostseason = parameters?.seasonType === "postseason"
-  let url = ""
+  const isPga = domain.toUpperCase() === 'PGA'
+  const [teamId, yearId] = id.split('/')
+  const isPostseason = parameters?.seasonType === 'postseason'
+  let url = ''
 
   switch (type) {
-    case "player":
+    case 'player':
       url = isPga
         ? `/pga/ask/${parameterize(display)}-career-stats`
         : `/${domain.toLowerCase()}/player/${parameterize(display)}-${id}${
-            parameters && parameters["seasonYear"] ? "/game-log" : ""
+            parameters && parameters['seasonYear'] ? '/game-log' : ''
           }`
       break
-    case "teamSeason":
+    case 'teamSeason':
       url = `/${domain.toLowerCase()}/team/${parameterize(
-        display.replaceAll(".", "")
-      )}-${teamId}${isPostseason ? "/schedule" : ""}${
-        yearId ? `/${yearId}` : ""
+        display.replaceAll('.', '')
+      )}-${teamId}${isPostseason ? '/schedule' : ''}${
+        yearId ? `/${yearId}` : ''
       }`
       break
-    case "teamFranchise":
+    case 'teamFranchise':
       url = `/${domain.toLowerCase()}/team/${parameterize(
-        display.replaceAll(".", "")
+        display.replaceAll('.', '')
       )}-${id}/history`
       break
-    case "game":
+    case 'game':
       url = `/${domain.toLowerCase()}/game/${parameterize(
-        display.replaceAll(" @ ", " at ")
+        display.replaceAll(' @ ', ' at ')
       )}-${id}`
       break
     default:
-      throw new Error("Unknown entity type")
+      throw new Error('Unknown entity type')
   }
 
   if (parameters && !isPga) {
@@ -133,7 +133,7 @@ export const getUrlForEntity = (entity: GameraEntity) => {
 
 const formatToken = (token: GameraToken) => {
   let text = token.text
-  if (token.type === "entity") {
+  if (token.type === 'entity') {
     const url = getUrlForEntity(token.entity)
 
     text =
@@ -142,32 +142,32 @@ const formatToken = (token: GameraToken) => {
         : `<a href="${url}" title="${token.entity.display}">${text}</a>`
   }
 
-  if (token.type === "inferred") {
+  if (token.type === 'inferred') {
     text = `<span class="visual-inferred-token">${text}</span>`
   }
 
-  return token.omitLeadingSpace ? text : " " + text
+  return token.omitLeadingSpace ? text : ' ' + text
 }
 
 const formatTokenTextOnly = (token: GameraToken) => {
   const text = token.text
-  return token.omitLeadingSpace ? text : " " + text
+  return token.omitLeadingSpace ? text : ' ' + text
 }
 
-export type GameraDomain = "NBA" | "NFL" | "MLB" | "NHL" | "PGA"
+export type GameraDomain = 'NBA' | 'NFL' | 'MLB' | 'NHL' | 'PGA'
 
 export type GameraToken = {
   text: string
   omitLeadingSpace: boolean
 } & (
   | {
-      type: "general"
+      type: 'general'
     }
   | {
-      type: "inferred"
+      type: 'inferred'
     }
   | {
-      type: "entity"
+      type: 'entity'
       entity: GameraEntity
     }
 )
@@ -175,7 +175,7 @@ export type GameraToken = {
 export type GameraEntity = {
   display: string
   domain: GameraDomain
-  type: "player" | "teamFranchise" | "teamSeason" | "game" | "player-ask"
+  type: 'player' | 'teamFranchise' | 'teamSeason' | 'game' | 'player-ask'
   id: string
   parameters?: Record<string, string>
   baseResourcePath?: string
@@ -541,18 +541,18 @@ export interface AdditionalQuestion {
 
 export interface DetailBase {
   type:
-    | "genericGrids"
-    | "mlbHistoricalBoxScore"
-    | "nbaHistoricalBoxScore"
-    | "nflHistoricalBoxScore"
-    | "nhlHistoricalBoxScore"
-    | "playerProfile"
-    | "teamProfile"
-    | "stats"
-    | "standings"
-    | "schedule"
-    | "nbaShots"
-    | "gameOddsIndicator"
+    | 'genericGrids'
+    | 'mlbHistoricalBoxScore'
+    | 'nbaHistoricalBoxScore'
+    | 'nflHistoricalBoxScore'
+    | 'nhlHistoricalBoxScore'
+    | 'playerProfile'
+    | 'teamProfile'
+    | 'stats'
+    | 'standings'
+    | 'schedule'
+    | 'nbaShots'
+    | 'gameOddsIndicator'
 }
 
 export interface Standings {
@@ -566,7 +566,7 @@ export interface Standings {
 }
 
 export interface StandingsDetail extends DetailBase {
-  type: "standings"
+  type: 'standings'
   topic?: { group?: string; team?: string }
   standings: Standings[]
 }
@@ -590,28 +590,28 @@ export interface ScheduledGame {
     entity: GameraEntity
   }
   entity: GameraEntity
-  completedGameStatus?: "Final"
+  completedGameStatus?: 'Final'
 }
 
 export interface ScheduleDetail extends DetailBase {
   scheduled: ScheduledGame[]
   inProgress: ScheduledGame[]
   completed: ScheduledGame[]
-  type: "schedule"
+  type: 'schedule'
 }
 
 export interface PlayerProfileDetail extends DetailBase {
-  type: "playerProfile"
+  type: 'playerProfile'
   entity: GameraEntity
 }
 
 export interface TeamProfileDetail extends DetailBase {
-  type: "teamProfile"
+  type: 'teamProfile'
   entity: GameraEntity
 }
 
 export interface StatsDetail extends DetailBase {
-  type: "stats"
+  type: 'stats'
   grids: GameraGrid[]
   columnCharts: GameraChart[]
 }
@@ -643,9 +643,9 @@ export interface Team {
 }
 
 export interface NbaHistoricalBoxScore extends DetailBase {
-  type: "nbaHistoricalBoxScore"
+  type: 'nbaHistoricalBoxScore'
   gameId: number
-  completedGameStatus: "Final"
+  completedGameStatus: 'Final'
   homeTeam: Team
   awayTeam: Team
   summary: GameraGrid
@@ -700,9 +700,9 @@ export interface NflTeamGameStats {
 }
 
 export interface NflHistoricalBoxScore extends DetailBase {
-  type: "nflHistoricalBoxScore"
+  type: 'nflHistoricalBoxScore'
   gameId: number
-  completedGameStatus: "Final"
+  completedGameStatus: 'Final'
   homeTeam: Team
   awayTeam: Team
   summary: GameraGrid
@@ -730,9 +730,9 @@ export interface NflHistoricalBoxScore extends DetailBase {
 }
 
 export interface MlbHistoricalBoxScore extends DetailBase {
-  type: "mlbHistoricalBoxScore"
+  type: 'mlbHistoricalBoxScore'
   gameId: number
-  completedGameStatus: "Final"
+  completedGameStatus: 'Final'
   homeTeam: Team
   awayTeam: Team
   stats: {
@@ -770,9 +770,9 @@ export interface NhlTeamGameStats {
 }
 
 export interface NhlHistoricalBoxScore extends DetailBase {
-  type: "nhlHistoricalBoxScore"
+  type: 'nhlHistoricalBoxScore'
   gameId: number
-  completedGameStatus: "Final"
+  completedGameStatus: 'Final'
   homeTeam: Team
   awayTeam: Team
   summary: GameraGrid
@@ -801,7 +801,7 @@ export interface NhlHistoricalBoxScore extends DetailBase {
 }
 
 export interface GameraGenericGridsDetail extends DetailBase {
-  type: "genericGrids"
+  type: 'genericGrids'
   grids: GameraGrid[]
 }
 
@@ -882,22 +882,22 @@ export interface Visual {
 }
 
 export interface NbaVisual extends Visual {
-  domain: "NBA"
+  domain: 'NBA'
   detail: [NbaHistoricalBoxScore, GameraGenericGridsDetail]
 }
 
 export interface NflVisual extends Visual {
-  domain: "NFL"
+  domain: 'NFL'
   detail: [NflHistoricalBoxScore, GameraGenericGridsDetail]
 }
 
 export interface MlbVisual extends Visual {
-  domain: "MLB"
+  domain: 'MLB'
   detail: [MlbHistoricalBoxScore, GameraGenericGridsDetail]
 }
 
 export interface NhlVisual extends Visual {
-  domain: "NHL"
+  domain: 'NHL'
   detail: [NhlHistoricalBoxScore, GameraGenericGridsDetail]
 }
 
@@ -927,15 +927,15 @@ export interface GameraResponseBase {
 
 export interface GameraDefaultResponse extends GameraResponseBase {
   type:
-    | "fullNlgAnswerVisualsOptional"
-    | "nlgAnswerNotPossibleVisualsRequired"
-    | "error"
+    | 'fullNlgAnswerVisualsOptional'
+    | 'nlgAnswerNotPossibleVisualsRequired'
+    | 'error'
   visual: Visual
   nlg: Nlg
 }
 
 export interface GameraChoicesResponse extends GameraResponseBase {
-  type: "nlgPromptForMoreInfoVisualChoicesOptional"
+  type: 'nlgPromptForMoreInfoVisualChoicesOptional'
   visual: ChoicesVisual
   nlg: ChoicesNlg
 }
@@ -943,11 +943,11 @@ export interface GameraChoicesResponse extends GameraResponseBase {
 export interface ChoicesVisual
   extends Omit<
     Visual,
-    | "domain"
-    | "detail"
-    | "disclaimers"
-    | "additionalQuestions"
-    | "isSuperlative"
+    | 'domain'
+    | 'detail'
+    | 'disclaimers'
+    | 'additionalQuestions'
+    | 'isSuperlative'
   > {
   choices: [
     {
@@ -971,22 +971,22 @@ export interface ChoicesNlg {
 export type GameraResponse = GameraDefaultResponse | GameraChoicesResponse
 
 export interface GameraNbaBoxScore extends GameraResponseBase {
-  domain: "NBA"
+  domain: 'NBA'
   visual: NbaVisual
   nlg: Nlg
 }
 export interface GameraNflBoxScore extends GameraResponseBase {
-  domain: "NFL"
+  domain: 'NFL'
   visual: NflVisual
   nlg: Nlg
 }
 export interface GameraMlbBoxScore extends GameraResponseBase {
-  domain: "MLB"
+  domain: 'MLB'
   visual: MlbVisual
   nlg: Nlg
 }
 export interface GameraNhlBoxScore extends GameraResponseBase {
-  domain: "NHL"
+  domain: 'NHL'
   visual: NhlVisual
   nlg: Nlg
 }

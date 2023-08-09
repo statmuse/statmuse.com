@@ -136,6 +136,9 @@ importers:
       dayjs:
         specifier: ^1.11.8
         version: 1.11.9
+      highcharts:
+        specifier: 9.0.0
+        version: 9.0.0
       kysely:
         specifier: ^0.25.0
         version: 0.25.0
@@ -6490,6 +6493,10 @@ packages:
     dependencies:
       glob: 7.2.3
       readable-stream: 3.6.2
+
+  /highcharts@9.0.0:
+    resolution: {integrity: sha512-MJCtidFytGSQvsV3OEM+vFTLpjUcp7jmFpLn8h3oL4WKp0gxUOQg6Nw00sqMWGdiadst0gOZO4804zynTcYjZQ==}
+    dev: false
 
   /html-entities@2.3.3:
     resolution: {integrity: sha512-DV5Ln36z34NNTDgnz0EWGBLZENelNAtkiFA4kyNOG2tDI6Mz1uSWiq1wAKdyjnJwyDiDO7Fa2SO1CTxPXL8VxA==}

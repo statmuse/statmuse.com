@@ -1,0 +1,114 @@
+---
+import Grid from '@components/grid.astro'
+import Container from '@components/container.astro'
+import AssetPriceReturnsChart from '@components/asset-price-returns-chart.astro'
+import { type KanedamaResponse, tokensToHtml } from '@statmuse/core/kanedama'
+
+interface Props {
+  response: KanedamaResponse
+  query?: string
+  conversationToken?: string
+}
+
+const query = Astro.props.query
+const conversationToken = Astro.props.conversationToken
+
+const response = Astro.props.response
+const summary = tokensToHtml(response.visual.summaryTokens)
+const ignoreGenericGrids =
+  response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' // &&
+// response.visual.detail?.find((d) => d.type === 'assetPriceData')
+const details =
+  response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
+    ? response.visual.detail?.filter((d) =>
+        ignoreGenericGrids ? d.type !== 'genericGrids' : true
+      )
+    : undefined
+
+// console.log(JSON.stringify(details, null, 2))
+---
+
+<Container>
+  {
+    response.type === 'nlgPromptForMoreInfoVisualChoicesOptional' ? (
+      <div class="h-screen w-full flex flex-col justify-center items-center">
+        <h1
+          class="text-3xl my-5 font-semibold"
+          set:html={tokensToHtml(response.visual.summary.answer)}
+        />
+        <div class="w-full flex flex-col sm:flex-row sm:justify-center my-5 gap-2">
+          {response.visual.choices.map((choice) => (
+            <form action="/ask" method="post">
+              <input name="_method" type="hidden" value="POST" />
+              <input
+                id="question_conversation_token"
+                name="question[conversation_token]"
+                type="hidden"
+                value={conversationToken}
+              />
+              <input
+                id="question_query"
+                name="question[query]"
+                required=""
+                type="hidden"
+                value={choice.input}
+              />
+              <input
+                id="question_query_clarification_for"
+                name="question[query_clarification_for]"
+                type="hidden"
+                value={query}
+              />
+              <button
+                data-cy-choice-btn
+                class="w-full text-xl border-2 border-black rounded-md cursor-pointer p-7"
+                type="submit"
+              >
+                {choice.display}
+              </button>
+            </form>
+          ))}
+        </div>
+      </div>
+    ) : null
+  }
+  {
+    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' &&
+      details?.map((detail) => {
+        switch (detail.type) {
+          case 'assetPriceData':
+            return (
+              <Fragment>
+                <AssetPriceReturnsChart
+                  {detail}
+                  color={response.visual.summary.subject.colors.background}
+                />
+                {/* {detail.columnCharts.map((chart) => ( */}
+                {/*   <Chart */}
+                {/*     model={chart} */}
+                {/*     totalWidth={1495} */}
+                {/*     isSuperlative={response.visual.isSuperlative} */}
+                {/*   /> */}
+                {/* ))} */}
+                {/* {detail.grids.map((grid) => ( */}
+                {/*   <Grid data={grid} hideTitle /> */}
+                {/* ))} */}
+              </Fragment>
+            )
+          // case 'genericGrids':
+          //   return detail.grids.map((grid) => <Grid data={grid} hideTitle />)
+          default:
+            return null
+        }
+      })
+  }
+  {
+    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && details ? (
+      <div class="my-2.5">
+        {response.visual.disclaimers?.map((d) => (
+          <div class="text-sm italic font-light" set:html={d} />
+        ))}
+      </div>
+    ) : null
+  }
+</Container>
