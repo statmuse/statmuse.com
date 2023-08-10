@@ -1,5 +1,5 @@
 ---
-import Layout from '@layouts/default.astro'
+import BaseLayout from '@layouts/base.astro'
 import Logo from '@components/logo.astro'
 import AskBar from '@components/ask-bar.astro'
 import Image from '@components/image.astro'
@@ -141,7 +141,7 @@ const meta = {
 }
 ---
 
-<Layout {meta}>
+<BaseLayout {meta}>
   <main
     id="home"
     class="home-layout [--header-height:55px] md:[--header-height:64px]"
@@ -234,4 +234,4 @@ const meta = {
       <Footer />
     </div>
   </main>
-</Layout>
+</BaseLayout>
