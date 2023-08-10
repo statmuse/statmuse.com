@@ -1,19 +1,19 @@
-export const cdnBaseUrl = "https://cdn.statmuse.com"
+export const cdnBaseUrl = 'https://cdn.statmuse.com'
 
 export function handleResponse(response: KanedamaResponse) {
   const subject = response.visual.summary.subject
   const conversationToken = response.conversation.token
 
-  if (response.type === "nlgPromptForMoreInfoVisualChoicesOptional") {
+  if (response.type === 'nlgPromptForMoreInfoVisualChoicesOptional') {
     return { subject, conversationToken }
   }
-  const entity = response.visual.summary.answer.find((t) => t.type === "entity")
+  const entity = response.visual.summary.answer.find((t) => t.type === 'entity')
 
-  let redirectUrl = ""
+  let redirectUrl = ''
   const assetEntityData = response.visual.detail?.find(
-    (d) => d.type === "assetEntityData"
+    (d) => d.type === 'assetEntityData'
   ) as AssetEntityData | undefined
-  if (assetEntityData && entity?.type === "entity") {
+  if (assetEntityData && entity?.type === 'entity') {
     const symbol = entity.entity.id.toLowerCase()
     redirectUrl = `/money/symbol/${symbol}`
   }
@@ -25,22 +25,69 @@ export function handleResponse(response: KanedamaResponse) {
   }
 }
 
+export const tokensToHtml = (tokens: KanedamaToken[]) => {
+  return tokens.map(formatToken).join('').trim()
+}
+
+export const tokensToText = (tokens: KanedamaToken[]) => {
+  return tokens.map(formatTokenTextOnly).join('').trim()
+}
+
+export const getUrlForEntity = (entity: KanedamaEntity) => {
+  const { type, id } = entity
+  let url = ''
+
+  switch (type) {
+    case 'assetProfile':
+      const symbol = id.toLowerCase()
+      url = `/money/symbol/${symbol}`
+      break
+    default:
+      throw new Error('Unknown entity type')
+  }
+
+  return url
+}
+
+const formatToken = (token: KanedamaToken) => {
+  let text = token.text
+  if (token.type === 'entity') {
+    const url = getUrlForEntity(token.entity)
+
+    text =
+      text === token.entity?.display
+        ? `<a href="${url}">${text}</a>`
+        : `<a href="${url}" title="${token.entity.display}">${text}</a>`
+  }
+
+  // if (token.type === 'inferred') {
+  //   text = `<span class="visual-inferred-token">${text}</span>`
+  // }
+
+  return token.omitLeadingSpace ? text : ' ' + text
+}
+
+const formatTokenTextOnly = (token: KanedamaToken) => {
+  const text = token.text
+  return token.omitLeadingSpace ? text : ' ' + text
+}
+
 export type KanedamaToken = {
   text: string
   omitLeadingSpace: boolean
 } & (
   | {
-      type: "general"
+      type: 'general'
     }
   | {
-      type: "entity"
+      type: 'entity'
       entity: KanedamaEntity
     }
 )
 
 export type KanedamaEntity = {
   display: string
-  type: "assetProfile"
+  type: 'assetProfile'
   id: string
 }
 
@@ -153,23 +200,42 @@ export interface AdditionalQuestion {
 }
 
 export interface DetailBase {
-  type: "genericGrids" | "charts" | "assetPriceData" | "assetEntityData"
+  type: 'genericGrids' | 'charts' | 'assetPriceData' | 'assetEntityData'
+}
+
+export type Timeframe = {
+  label?: string
+  display?: string
+  description?: string
+  xTooltipDisplay?: string
+  timestamp?: string
+  endTimestamp?: string
 }
 
 export interface AssetPriceDataDetail extends DetailBase {
-  type: "assetPriceData"
+  type: 'assetPriceData'
   assetPriceData: {
-    assetPairs: [
-      {
-        baseAssetId: string
-        quoteAssetId: string
-      }
-    ]
+    assetPairs: {
+      baseAssetId: string
+      quoteAssetId: string
+    }[]
+    frequency?:
+      | 'hour'
+      | 'day'
+      | 'week'
+      | 'month'
+      | 'quarter'
+      | 'year'
+      | 'decade'
+    startTimestamp: string
+    endTimestamp: string
+    renderTarget: string
+    notableTimestamps: Timeframe[]
   }
 }
 
 export interface AssetEntityData extends DetailBase {
-  type: "assetEntityData"
+  type: 'assetEntityData'
   assetEntity: {
     ids: {
       id: string
@@ -179,7 +245,7 @@ export interface AssetEntityData extends DetailBase {
 }
 
 export interface KanedamaGenericGridsDetail extends DetailBase {
-  type: "genericGrids"
+  type: 'genericGrids'
   grids: KanedamaGrid[]
 }
 
@@ -222,15 +288,15 @@ export interface KanedamaResponseBase {
 
 export interface KanedamaDefaultResponse extends KanedamaResponseBase {
   type:
-    | "fullNlgAnswerVisualsOptional"
-    | "nlgAnswerNotPossibleVisualsRequired"
-    | "error"
+    | 'fullNlgAnswerVisualsOptional'
+    | 'nlgAnswerNotPossibleVisualsRequired'
+    | 'error'
   visual: Visual
   nlg: Nlg
 }
 
 export interface KanedamaChoicesResponse extends KanedamaResponseBase {
-  type: "nlgPromptForMoreInfoVisualChoicesOptional"
+  type: 'nlgPromptForMoreInfoVisualChoicesOptional'
   visual: ChoicesVisual
   nlg: ChoicesNlg
 }
@@ -238,11 +304,11 @@ export interface KanedamaChoicesResponse extends KanedamaResponseBase {
 export interface ChoicesVisual
   extends Omit<
     Visual,
-    | "domain"
-    | "detail"
-    | "disclaimers"
-    | "additionalQuestions"
-    | "isSuperlative"
+    | 'domain'
+    | 'detail'
+    | 'disclaimers'
+    | 'additionalQuestions'
+    | 'isSuperlative'
   > {
   choices: [
     {

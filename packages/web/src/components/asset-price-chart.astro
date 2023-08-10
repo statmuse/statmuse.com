@@ -1,0 +1,552 @@
+---
+import type { AssetPriceDataDetail, Timeframe } from '@statmuse/core/kanedama'
+import type {
+  RenderTarget,
+  Asset,
+  AssetPair,
+  Series,
+  ChartType,
+} from '@lib/kanedama'
+import dayjs from 'dayjs'
+import type { Options, SeriesOptionsType } from 'highcharts'
+import type { SeriesTooltipOptionsObject } from 'highcharts'
+import type { XAxisOptions } from 'highcharts'
+import type { YAxisOptions } from 'highcharts'
+import numeral from 'numeral'
+
+interface Props {
+  detail: AssetPriceDataDetail
+  assets: Asset[]
+  notableTimestamps: Timeframe[]
+  renderTarget: string
+  priceFormatString: string
+  color: string
+  preferCandlestick: boolean
+}
+
+const color = Astro.props.color
+
+const renderTargetMap: Record<string, RenderTarget> = {
+  close: {
+    formatYAxisValue: (formatString: string, value: unknown) =>
+      numeral(value).format(formatString),
+    getYAxisValue: ({ close }) => close,
+    seriesNameSuffix: 'Price',
+    showSeriesInLegend: true,
+    supportsCandlestick: true,
+  },
+  marketCap: {
+    formatYAxisValue: (_formatString: string, value: unknown) =>
+      numeral(value).format('0.0a').toUpperCase(),
+    getYAxisValue: ({ close, unitsOutstanding }) =>
+      close * (unitsOutstanding ?? 0),
+    seriesNameSuffix: 'Market Cap',
+    showSeriesInLegend: false,
+    supportsCandlestick: false,
+  },
+}
+
+const getXAxisValue = (timeframe: Timeframe) => {
+  const timestamp = timeframe.timestamp ?? timeframe.endTimestamp
+  return dayjs(timestamp).valueOf()
+}
+
+const getSymbolDisplay = ({
+  isDefaultQuoteAsset,
+  baseAsset,
+  quoteAsset,
+}: AssetPair) => {
+  return isDefaultQuoteAsset
+    ? baseAsset.symbol
+    : `${baseAsset.symbol}/${quoteAsset.symbol}`
+}
+
+const getSinglePriceSeries = (
+  { assetPair, prices }: Asset,
+  preferCandlestick: boolean,
+  renderTarget: RenderTarget,
+  includeVolume: boolean,
+  notableTimestamps: Timeframe[]
+) => {
+  const includeCandlestick =
+    assetPair?.isDefaultQuoteAsset && renderTarget.supportsCandlestick
+  preferCandlestick = (includeCandlestick && preferCandlestick) ?? false
+
+  const series: Series[] = []
+  const createSeries = (options: {
+    name: string
+    type: ChartType
+    data: Asset[]
+    showInLegend: boolean
+    visible: boolean
+    yAxisIndex: number
+    tooltip?: SeriesTooltipOptionsObject
+    onSeries?: string
+    shape?: string
+  }) => {
+    const {
+      name,
+      type,
+      data,
+      showInLegend,
+      tooltip,
+      visible,
+      yAxisIndex,
+      ...rest
+    } = options
+
+    series.push({
+      ...rest,
+      color,
+      data,
+      dataGrouping: { enabled: false },
+      dataLabels: { enabled: false },
+      id: name,
+      marker: { enabled: false },
+      name,
+      showInLegend,
+      tooltip,
+      type,
+      visible,
+      yAxis: yAxisIndex,
+    })
+  }
+
+  const yIndexPrice = 0
+  const yIndexVolume = 1
+  const priceData: Asset[] = []
+  const volumeData: { x: number; y: number; type: ChartType }[] = []
+  prices?.forEach((price) => {
+    const { timeframe, open, high, low, close, volume } = price
+    const x = getXAxisValue(timeframe)
+
+    priceData.push({
+      assetPair,
+      x,
+      y: renderTarget.getYAxisValue(price),
+      open,
+      high,
+      low,
+      close,
+      xTooltipDisplay: timeframe.display,
+      type: 'line',
+    })
+
+    if (includeVolume) {
+      volumeData.push({ x, y: volume, type: 'volume' })
+    }
+  })
+
+  createSeries({
+    name: `${getSymbolDisplay(assetPair!)} ${
+      renderTarget.seriesNameSuffix
+    } (Line)`,
+    type: 'line',
+    data: priceData,
+    showInLegend: renderTarget.showSeriesInLegend,
+    visible: !preferCandlestick,
+    yAxisIndex: yIndexPrice,
+  })
+
+  if (includeCandlestick) {
+    createSeries({
+      name: `${getSymbolDisplay(assetPair!)} ${
+        renderTarget.seriesNameSuffix
+      } (Candlestick)`,
+      type: 'candlestick',
+      data: priceData.map((price) => ({
+        ...price,
+        color: (price.open ?? 0) < (price.close ?? 0) ? '#0EA600' : '#FF0000',
+        type: 'candle',
+      })),
+      showInLegend: renderTarget.showSeriesInLegend,
+      visible: preferCandlestick,
+      yAxisIndex: yIndexPrice,
+    })
+  }
+
+  if (includeVolume) {
+    createSeries({
+      name: `${getSymbolDisplay(assetPair!)} Volume`,
+      type: 'column',
+      data: volumeData,
+      showInLegend: false,
+      visible: true,
+      yAxisIndex: yIndexVolume,
+    })
+  }
+
+  if (notableTimestamps && notableTimestamps.length) {
+    createSeries({
+      name: `${getSymbolDisplay(assetPair!)} ${renderTarget.seriesNameSuffix}`,
+      type: 'flags',
+      data: notableTimestamps.map((t) => ({
+        x: getXAxisValue(t),
+        title: t.label,
+        text: t.description,
+        xTooltipDisplay: t.xTooltipDisplay,
+        assetPair,
+      })),
+      showInLegend: false,
+      visible: true,
+      yAxisIndex: yIndexPrice,
+      onSeries: series[0].id,
+      shape: 'squarepin',
+    })
+  }
+
+  return series
+}
+
+const getMultiPriceSeries = (assets: Asset[]) => {
+  return assets.map(({ assetPair, prices }) => {
+    return {
+      color,
+      data: prices?.map(({ close, closePercentChange, timeframe }) => ({
+        assetPair,
+        type: 'returns',
+        x: getXAxisValue(timeframe),
+        xTooltipDisplay: timeframe.display,
+        y: closePercentChange,
+        close, // needed for tooltip
+      })),
+      dataGrouping: { enabled: false },
+      dataLabels: { enabled: false },
+      marker: { enabled: false },
+      name: assetPair?.baseAsset.symbol,
+      showInLegend: true,
+      type: 'line',
+    }
+  })
+}
+
+const mapChartOptions = (
+  assets: Asset[],
+  preferCandlestick: boolean,
+  renderTargetName: string,
+  notableTimestamps: Timeframe[]
+): Options => {
+  const includeVolume =
+    (assets.length === 1 && assets[0].prices?.some((price) => price.volume)) ??
+    false
+
+  const renderTarget = (() => {
+    const renderTargetKey = renderTargetName.toLowerCase()
+
+    for (const currentKey in renderTargetMap) {
+      if (currentKey.toLowerCase() === renderTargetKey) {
+        return renderTargetMap[currentKey]
+      }
+    }
+
+    return renderTargetMap.close
+  })()
+
+  const series =
+    assets.length === 1
+      ? getSinglePriceSeries(
+          assets[0],
+          preferCandlestick,
+          renderTarget,
+          includeVolume,
+          notableTimestamps
+        )
+      : getMultiPriceSeries(assets)
+
+  const xAxis: XAxisOptions = (() => {
+    let min: number | null = null
+    let max: number | null = null
+
+    series.forEach((s) => {
+      if (s.data?.length) {
+        // Assumes data has been ordered (a requirement of 'datetime' charting)
+        const first = s.data[0].x
+        const last = s.data[s.data.length - 1].x
+        min = Math.min(min ?? first ?? 0, first ?? 0)
+        max = Math.max(max ?? last ?? 0, last ?? 0)
+      }
+    })
+
+    return {
+      max,
+      min,
+      type: 'datetime',
+    }
+  })()
+
+  const yAxis = (() => {
+    const createAxis = (visible: boolean): YAxisOptions => ({
+      gridLineColor: 'transparent',
+      title: { text: null },
+      visible,
+    })
+
+    if (!includeVolume) {
+      const yAxis = createAxis(true)
+      yAxis.height = '100%'
+      return yAxis
+    }
+
+    const yAxisPrice = createAxis(true)
+    yAxisPrice.height = '75%'
+
+    const yAxisVolume = createAxis(false)
+    yAxisVolume.height = '25%'
+    yAxisVolume.top = yAxisPrice.height
+
+    return [yAxisPrice, yAxisVolume]
+  })()
+
+  return {
+    chart: { marginTop: 30 },
+    credits: { enabled: false },
+    legend: { enabled: series.some((s) => s.showInLegend) },
+    navigator: { enabled: true },
+    plotOptions: { series: { turboThreshold: 100000 } },
+    rangeSelector: { enabled: 'true' },
+    series: series as SeriesOptionsType[],
+    time: { useUTC: false },
+    title: { text: '' },
+    xAxis,
+    yAxis,
+  }
+}
+
+// if (isEmpty(assets)) {
+//   return null
+// }
+
+const renderTarget = Astro.props.renderTarget
+const assets = Astro.props.assets
+const notableTimestamps = Astro.props.notableTimestamps
+const priceFormatString = Astro.props.priceFormatString
+const preferCandlestick = Astro.props.preferCandlestick
+const renderTargetName = renderTarget ?? 'close'
+
+const options = mapChartOptions(
+  assets,
+  preferCandlestick,
+  renderTargetName,
+  notableTimestamps
+)
+---
+
+<div
+  id="chart"
+  class="h-[400px] overflow-hidden"
+  data-options={JSON.stringify(options)}
+  data-price-format-string={priceFormatString}
+  data-render-target={renderTargetName}
+  data-color={color}
+>
+</div>
+
+<script>
+  import numeral from 'numeral'
+  import forEach from 'lodash/fp/forEach'
+  import invokeArgs from 'lodash/fp/invokeArgs'
+  import shuffle from 'lodash/fp/shuffle'
+  import * as Highcharts from 'highcharts'
+  import Stock from 'highcharts/modules/stock'
+  import Exporting from 'highcharts/modules/exporting'
+  import OfflineExporting from 'highcharts/modules/offline-exporting'
+  import type {
+    Asset,
+    AssetPair,
+    Series,
+    NumericFormatter,
+    RenderTarget,
+  } from '@lib/kanedama'
+
+  document.addEventListener('astro:load', () => {
+    Stock(Highcharts)
+    Exporting(Highcharts)
+    OfflineExporting(Highcharts)
+
+    // set default chart colors
+    forEach(
+      invokeArgs('setOptions', [
+        {
+          colors: shuffle([
+            '#001F3F',
+            '#2A3491',
+            '#0000AA',
+            '#295CA7',
+            '#2742D1',
+            '#0074D9',
+            '#5293BD',
+            '#28C6F9',
+            '#7FDBFF',
+            '#8EC1DD',
+          ]),
+          lang: { numericSymbols: ['k', 'M', 'B', 'T', 'P', 'E'] },
+        },
+      ])
+    )([Highcharts])
+
+    const chart = document.getElementById('chart') as HTMLElement
+    const priceFormatString = chart.dataset.priceFormatString as string
+    const renderTargetName = chart.dataset.renderTarget as string
+    const color = chart.dataset.color as string
+    const options = JSON.parse(
+      chart.dataset.options as string
+    ) as Highcharts.Options
+
+    const renderTargetMap: Record<string, RenderTarget> = {
+      close: {
+        formatYAxisValue: (formatString: string, value: unknown) =>
+          numeral(value).format(formatString),
+        getYAxisValue: ({ close }) => close,
+        seriesNameSuffix: 'Price',
+        showSeriesInLegend: true,
+        supportsCandlestick: true,
+      },
+      marketCap: {
+        formatYAxisValue: (_formatString: string, value: unknown) =>
+          numeral(value).format('0.0a').toUpperCase(),
+        getYAxisValue: ({ close, unitsOutstanding }) =>
+          close * (unitsOutstanding ?? 0),
+        seriesNameSuffix: 'Market Cap',
+        showSeriesInLegend: false,
+        supportsCandlestick: false,
+      },
+    }
+
+    const renderTarget = (() => {
+      const renderTargetKey = renderTargetName.toLowerCase()
+
+      for (const currentKey in renderTargetMap) {
+        if (currentKey.toLowerCase() === renderTargetKey) {
+          return renderTargetMap[currentKey]
+        }
+      }
+
+      return renderTargetMap.close
+    })()
+
+    const candleTooltip = (
+      { assetPair, close, high, low, open, series }: Asset,
+      numericFormatter: NumericFormatter
+    ) => {
+      const seriesName = series?.name?.replace('(Candlestick)', '').trim()
+      return `<span style="color:${series?.color}">${seriesName}</span>: <br/>\
+        Open: <b>${formatPriceForTooltip(
+          open,
+          assetPair!,
+          numericFormatter
+        )}</b> <br/>\
+        High: <b>${formatPriceForTooltip(
+          high,
+          assetPair!,
+          numericFormatter
+        )}</b> <br/>\
+        Low: <b>${formatPriceForTooltip(
+          low,
+          assetPair!,
+          numericFormatter
+        )}</b> <br/>\
+        Close: <b>${formatPriceForTooltip(
+          close,
+          assetPair!,
+          numericFormatter
+        )}</b>`
+    }
+
+    const formatPriceForTooltip = (
+      value: unknown,
+      assetPair: AssetPair,
+      numericFormatter: NumericFormatter
+    ) => {
+      return getTooltipText(value, assetPair, numericFormatter)
+    }
+
+    const volumeTooltip = ({ series, y }: { series: Series; y: number }) => {
+      const value = numeral(y).format('0,0')
+      return `<span style="color:${series.color}">${series.name}</span>: <b>${value}</b> <br/>`
+    }
+
+    const lineTooltip = (
+      { assetPair, series, y }: Asset,
+      numericFormatter: NumericFormatter
+    ) => {
+      const seriesName = series?.name?.replace('(Line)', '').trim()
+      return `<span style="color:${
+        series?.color
+      }">${seriesName}</span>: <b>${formatPriceForTooltip(
+        y,
+        assetPair!,
+        numericFormatter
+      )}</b> <br/>`
+    }
+
+    const returnsTooltip = ({ assetPair, close, series, y }: Asset) => {
+      const numericFormatter = (value: unknown) =>
+        numeral(value).format('0,0.00')
+      const value = getTooltipText(close, assetPair!, numericFormatter)
+      const percentChange = numeral(y).subtract(100).format('+0.0')
+      return `<span style="color:${color}">${series?.name}</span>: <b>${value}</b> (${percentChange}%)<br/>`
+    }
+
+    const getTooltipText = (
+      value: unknown,
+      { isDefaultQuoteAsset, quoteAsset }: AssetPair,
+      numericFormatter: NumericFormatter
+    ) => {
+      if (value) {
+        const formattedNumericValue = numericFormatter(value)
+        const prefix =
+          isDefaultQuoteAsset && quoteAsset.symbol === 'USD' ? '$' : ''
+        return `${prefix}${formattedNumericValue}`
+      }
+      return '—'
+    }
+
+    Highcharts.chart('chart', {
+      ...options,
+      tooltip: {
+        formatter(this: Highcharts.TooltipFormatterContextObject) {
+          const formatYAxisValue = (value: unknown) =>
+            renderTarget.formatYAxisValue(priceFormatString, value)
+
+          if (!this.points) {
+            // @ts-ignore
+            return [this.point.xTooltipDisplay].concat(
+              // @ts-ignore
+              this.point.text ? [this.point.text] : []
+            )
+          }
+
+          const {
+            // @ts-ignore
+            point: { xTooltipDisplay },
+          } = this.points[0]
+
+          return [xTooltipDisplay].concat(
+            this.points
+              ? this.points.map((point) => {
+                  // @ts-ignore
+                  switch (point.point.type) {
+                    case 'candle':
+                      // @ts-ignore
+                      return candleTooltip(point.point, formatYAxisValue)
+                    case 'line':
+                      // @ts-ignore
+                      return lineTooltip(point.point, formatYAxisValue)
+                    case 'returns':
+                      // @ts-ignore
+                      return returnsTooltip(point.point)
+                    case 'volume':
+                      // @ts-ignore
+                      return volumeTooltip(point.point)
+                    default:
+                      return `${point.series.name}: ${point.y}`
+                  }
+                })
+              : []
+          )
+        },
+        split: true,
+      },
+    })
+  })
+</script>

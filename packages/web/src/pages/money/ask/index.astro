@@ -2,27 +2,52 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Hero from '@components/hero.astro'
-import Visuals from '@components/visuals.astro'
-import { handleResponse } from '@statmuse/core/gamera'
-import { ask, getHeroProps } from '@lib/gamera'
+import Visuals from '@components/visuals-money.astro'
+import { handleResponse } from '@statmuse/core/kanedama'
+import { ask, getHeroProps } from '@lib/kanedama'
+import { clean } from '@lib/meta'
 
-const { league: preferredDomain } = Astro.params
-const question = Astro.url.searchParams.get('q')
-if (!question) return Astro.redirect('/questions')
+let question: string | undefined
+let conversationToken: string | undefined
 
-const query = question.replaceAll('-', ' ')
-const response = await ask({ query, preferredDomain })
+if (Astro.request.method === 'POST') {
+  const data = await Astro.request.formData()
+  question = data.get('question[query]')?.toString()
+  conversationToken = data.get('question[conversation_token]')?.toString()
+  if (!question) throw new Error('No query provided')
+} else {
+  question = Astro.url.searchParams.get('q') ?? undefined
+  if (!question) return Astro.redirect('/money/questions')
+}
+
+let query = question.replaceAll('-', ' ')
+const response = await ask({ query })
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })
 
-const { subject, redirectUrl, conversationToken } = handleResponse(response)
+const handled = handleResponse(response)
+const { subject, redirectUrl } = handled
+conversationToken = handled.conversationToken ?? conversationToken
 if (redirectUrl) return Astro.redirect(redirectUrl)
+
+query = clean(query)
+const path = encodeURIComponent(query.replace(/\s/g, '-'))
+
+const meta = {
+  canonical:
+    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
+      ? {
+          url: `/money/ask/${path}`,
+          rewrite: true,
+        }
+      : undefined,
+}
 
 const heroProps = getHeroProps({ imageAlt: query, response })
 ---
 
-<Layout colors={subject?.colors}>
-  <Header {query} {preferredDomain} {conversationToken} />
+<Layout colors={subject?.colors} {meta}>
+  <Header money={true} {query} {conversationToken} />
   {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals {response} {conversationToken} />
 </Layout>

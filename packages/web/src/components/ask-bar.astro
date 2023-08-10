@@ -3,10 +3,16 @@ interface Props {
   query?: string
   conversationToken?: string
   preferredDomain?: string
+  money?: boolean
 }
 ---
 
-<form class="ask-form" action="/ask" accept-charset="UTF-8" method="post">
+<form
+  class="ask-form"
+  action={Astro.props.money ? '/money/ask' : '/ask'}
+  accept-charset="UTF-8"
+  method="post"
+>
   <div
     role="combobox"
     aria-haspopup="listbox"
@@ -21,7 +27,9 @@ interface Props {
         aria-autocomplete="list"
         aria-controls="react-autowhatever-1"
         name="question[query]"
-        placeholder="Search players, stats or odds"
+        placeholder={Astro.props.money
+          ? 'Search stocks, FX or bitcoin'
+          : 'Search players, stats or odds'}
         required=""
         enterkeyhint="search"
         style="height: 46px !important;"
