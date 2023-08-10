@@ -1,5 +1,6 @@
 ---
-import Layout from '@layouts/main.astro'
+import MainLayout from '@layouts/main.astro'
+import MoneyMainLayout from '@layouts/money-main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
 import { ASK_LIMIT, type FinanceAsk, type Ask } from '@statmuse/core/asks'
@@ -158,6 +159,8 @@ const askPath = (ask: Ask | FinanceAsk, domain = '') => {
 }
 
 const leagues = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
+
+const Layout = domain === 'money' ? MoneyMainLayout : MainLayout
 ---
 
 <Layout {meta}>

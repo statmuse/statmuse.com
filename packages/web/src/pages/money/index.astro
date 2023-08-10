@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '@layouts/base.astro'
+import MoneyBaseLayout from '@layouts/money-base.astro'
 import Logo from '@components/logo.astro'
 import AskBar from '@components/ask-bar.astro'
 import Image from '@components/image.astro'
@@ -131,17 +131,9 @@ const imgs = [
 ]
 
 const img = imgs[Math.floor(Math.random() * imgs.length)]
-
-const meta = {
-  title: 'StatMuse Money',
-  description:
-    'Search stock prices, currency pairs, Bitcoin returns and more — just ask.',
-  keywords:
-    'StatMuse, finance, financial information, finance search, stocks, money, Bitcoin, gold, currencies, markets, FX, stock prices, bitcoin prices, stock returns, Bitcoin returns, currency pairs, index funds, ETFs, BTC, USD, EUR, GBP, NASDAQ stocks, NYSE stocks',
-}
 ---
 
-<BaseLayout {meta}>
+<MoneyBaseLayout>
   <main
     id="home"
     class="home-layout [--header-height:55px] md:[--header-height:64px]"
@@ -234,4 +226,4 @@ const meta = {
       <Footer />
     </div>
   </main>
-</BaseLayout>
+</MoneyBaseLayout>
