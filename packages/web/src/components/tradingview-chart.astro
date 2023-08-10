@@ -19,10 +19,7 @@ const profile = Astro.props.profile
       <span class="blue-text">Track all markets on TradingView</span>
     </a>
   </div>
-  <!-- should we move this to <head>? priority loading?  -->
-  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"
-  ></script>
-  <script type="text/javascript" define:vars={{ profile }}>
+  <script is:inline type="text/javascript" define:vars={{ profile }}>
     new TradingView.widget({
       autosize: true,
       symbol: `${profile.asset.exchange}:${profile.asset.symbol}`,
@@ -39,9 +36,7 @@ const profile = Astro.props.profile
       toolbar_bg: '#F1F3F6',
       widgetType: 'widget',
       withdateranges: false,
-      // allow_symbol_change: true,
       container_id: 'tradingview_f8029',
-      // hidesidetoolbar: 1,
     })
   </script>
 </div>

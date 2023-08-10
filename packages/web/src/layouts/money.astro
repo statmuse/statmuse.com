@@ -15,7 +15,7 @@ interface Props {
 
 const { profile, meta } = Astro.props
 
-const assetUrl = getUrlForEntity({
+const assetPath = getUrlForEntity({
   type: 'assetProfile',
   id: profile.asset.symbol,
   display: profile.asset.officialName,
@@ -27,10 +27,10 @@ const path = Astro.url.pathname
 const canonical = { url: Astro.url.pathname + Astro.url.search }
 
 const links = [
-  { text: 'Overview', href: path },
-  { text: 'Stats', href: `${path}/stats` },
-  { text: 'Financials', href: `${path}/financials` },
-  { text: 'News', href: `${path}/news` },
+  { text: 'Overview', href: assetPath },
+  { text: 'Stats', href: `${assetPath}/stats` },
+  { text: 'Financials', href: `${assetPath}/financials` },
+  { text: 'News', href: `${assetPath}/news` },
 ]
 
 const title = `${profile.asset.officialName} Overview`
@@ -41,6 +41,7 @@ const keywords =
 ---
 
 <Layout
+  money
   colors={profile.images[0].colors[0]}
   meta={{ title, description, keywords, canonical, ...(meta || {}) }}
 >

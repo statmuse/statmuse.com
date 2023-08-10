@@ -1,0 +1,57 @@
+---
+import Grid from '@components/grid.astro'
+import MoneyLayout from '@layouts/money.astro'
+import { getAssetProfile } from '@lib/kanedama'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+dayjs.extend(relativeTime)
+
+const { symbol } = Astro.params
+if (!symbol) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
+const profile = await getAssetProfile(symbol)
+if (!profile) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
+const { annualFinancials, quarterlyFinancials, earningsCalls } =
+  profile.stockProfile.financials
+---
+
+<MoneyLayout {profile}>
+  <div>
+      <div>
+        {
+          quarterlyFinancials ? (
+            <div class="mb-5">
+              <Grid
+                padding="py-1"
+                title="Quarterly Financials"
+                data={quarterlyFinancials}
+              />
+            </div>
+          ) : null
+        }
+        {
+          annualFinancials ? (
+            <div class="mb-5">
+              <Grid
+                padding="py-1"
+                title="Annual Financials"
+                data={annualFinancials}
+              />
+            </div>
+          ) : null
+        }
+        {
+          earningsCalls ? (
+            <div class="mb-5">
+              <Grid padding="py-1" data={earningsCalls} />
+            </div>
+          ) : null
+        }
+      </div>
+  </div>
+</MoneyLayout>

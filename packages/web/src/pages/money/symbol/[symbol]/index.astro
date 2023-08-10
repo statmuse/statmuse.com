@@ -51,11 +51,7 @@ const companyProfile = profile.stockProfile.profile.profile
         {
           stats ? (
             <div class="mb-5">
-              <Grid
-                hideHead
-                padding="py-1"
-                data={profile.stockProfile.overview.stats}
-              >
+              <Grid hideHead padding="py-1" data={stats}>
                 <a href={statsPath} set:text="See more" />
               </Grid>
             </div>
@@ -64,11 +60,7 @@ const companyProfile = profile.stockProfile.profile.profile
         {
           financials ? (
             <div class="mb-5">
-              <Grid
-                hideHead
-                padding="py-1"
-                data={profile.stockProfile.overview.financials}
-              >
+              <Grid hideHead padding="py-1" data={financials}>
                 <a href={financialsPath} set:text="See more" />
               </Grid>
             </div>
@@ -84,7 +76,7 @@ const companyProfile = profile.stockProfile.profile.profile
                 <a href={newsPath}>See more</a>
               </div>
               <div class="divide-y divide-[#c7c8ca]">
-                {profile.news.slice(0, 4).map((n) => (
+                {news.map((n) => (
                   <div class="gap-2 py-2">
                     <p class="text-xs">
                       Yahoo Finance • {dayjs(n.timestamp).fromNow()}
@@ -107,7 +99,7 @@ const companyProfile = profile.stockProfile.profile.profile
                 hideHead
                 padding="py-1"
                 title="About"
-                data={profile.stockProfile.profile.profile}
+                data={companyProfile}
               />
             </div>
           ) : null

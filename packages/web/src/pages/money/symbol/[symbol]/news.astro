@@ -1,0 +1,45 @@
+---
+import Grid from '@components/grid.astro'
+import MoneyLayout from '@layouts/money.astro'
+import { getAssetProfile } from '@lib/kanedama'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+dayjs.extend(relativeTime)
+
+const { symbol } = Astro.params
+if (!symbol) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
+const profile = await getAssetProfile(symbol)
+if (!profile) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
+const news = profile.news
+const truncate = (str: string, n: number) =>
+  str.length > n ? str.substr(0, n - 1).trim() : str;
+---
+
+<MoneyLayout {profile}>
+    <div class="divide-y divide-[#c7c8ca]">
+    {news.map((newsItem) => (
+      <div class="py-2">
+        <p class="text-xs">
+          Yahoo Finance • {dayjs(newsItem.timestamp).fromNow()}
+        </p>
+        <h3>
+          <a href={newsItem.link} target="_blank" rel="noreferrer">
+            {newsItem.title}
+          </a>
+        </h3>
+        <p>
+          {truncate(newsItem.content, 120)}...{' '}
+          <a href={newsItem.link} target="_blank" rel="noreferrer">
+            Full story
+          </a>
+        </p>
+      </div>
+    ))}
+  </div>
+</MoneyLayout>
