@@ -18,6 +18,8 @@ interface Props extends HTMLAttributes<'div'> {
   parameters?: Record<string, GameraParameter>
   alternateStyle?: boolean
   highlight?: string
+  hideHead?: boolean
+  padding?: string
 }
 
 const {
@@ -30,6 +32,8 @@ const {
   hideTitle,
   alternateStyle,
   highlight,
+  hideHead,
+  padding,
 } = Astro.props
 
 type Column = GameraGrid['columns'][0]
@@ -75,7 +79,12 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
 ---
 
 <div class={Astro.props.class}>
-  <div class="flex justify-between mb-0.5">
+  <div
+    class:list={{
+      'flex justify-between mb-0.5': true,
+      'border-b border-[#c7c8ca]': hideHead,
+    }}
+  >
     {
       !hideTitle && (
         <h3 class="font-semibold text-team-primary">{title || data.name}</h3>
@@ -134,43 +143,45 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
         'w-full': fullWidth,
       }}
     >
-      <thead>
-        <tr
-          class:list={{
-            'text-xs text-team-secondary uppercase tracking-[0.07rem]':
-              !alternateStyle,
-            'border-b border-[#e4e4e4]': alternateStyle,
-          }}
-        >
-          {
-            data.columns.map((col, index) => {
-              const textColumnStyles = getTextColumnStyles(col)
-              const textColumnHeaderStyles = getTextColumnHeaderStyles(col)
-              const hasImage = data.rows.some(
-                (row) => row[col.rowItemKey].imageUrl
-              )
+      {
+        hideHead ? null : (
+          <thead>
+            <tr
+              class:list={{
+                'text-xs text-team-secondary uppercase tracking-[0.07rem]':
+                  !alternateStyle,
+                'border-b border-[#e4e4e4]': alternateStyle,
+              }}
+            >
+              {data.columns.map((col, index) => {
+                const textColumnStyles = getTextColumnStyles(col)
+                const textColumnHeaderStyles = getTextColumnHeaderStyles(col)
+                const hasImage = data.rows.some(
+                  (row) => row[col.rowItemKey].imageUrl
+                )
 
-              return (
-                <th
-                  class:list={{
-                    'first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5':
-                      !alternateStyle,
-                    'text-[#a8a8a8] font-normal px-3 py-2.5 text-center whitespace-nowrap first:border-r first:border-[#e4e4e4] first:min-w-[175px] first:w-[175px] first:sticky first:left-0 first:bg-white':
-                      alternateStyle,
-                    'pl-8': hasImage && !alternateStyle,
-                    'sticky left-0': index === 0 && !alternateStyle,
-                    [textColumnStyles]: !alternateStyle && !!textColumnStyles,
-                    [textColumnHeaderStyles]:
-                      !alternateStyle && !!textColumnHeaderStyles,
-                  }}
-                >
-                  {col.title}
-                </th>
-              )
-            })
-          }
-        </tr>
-      </thead>
+                return (
+                  <th
+                    class:list={{
+                      'first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5':
+                        !alternateStyle,
+                      'text-[#a8a8a8] font-normal px-3 py-2.5 text-center whitespace-nowrap first:border-r first:border-[#e4e4e4] first:min-w-[175px] first:w-[175px] first:sticky first:left-0 first:bg-white':
+                        alternateStyle,
+                      'pl-8': hasImage && !alternateStyle,
+                      'sticky left-0': index === 0 && !alternateStyle,
+                      [textColumnStyles]: !alternateStyle && !!textColumnStyles,
+                      [textColumnHeaderStyles]:
+                        !alternateStyle && !!textColumnHeaderStyles,
+                    }}
+                  >
+                    {col.title}
+                  </th>
+                )
+              })}
+            </tr>
+          </thead>
+        )
+      }
       <tbody
         class:list={{
           'divide-y divide-[#c7c8ca] leading-[22px]': !alternateStyle,
@@ -250,8 +261,8 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                   <td
                     data-value={value}
                     class:list={{
-                      'px-2 py-1': !alternateStyle && !imageUrl,
-                      'px-2': !alternateStyle && !!imageUrl,
+                      'px-2 py-1': !padding && !alternateStyle && !imageUrl,
+                      'px-2': !padding && !alternateStyle && !!imageUrl,
                       'px-3 py-2.5 text-center whitespace-nowrap first:border-r first:border-[#e4e4e4] first:min-w-[175px] first:w-[175px] first:sticky first:left-0 first:bg-white first:text-left':
                         alternateStyle,
                       'first:bg-white':
@@ -264,6 +275,7 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                       'sticky left-0': x === 0 && !alternateStyle,
                       'w-2': !!imageUrl && !alternateStyle,
                       [textColumnStyles]: !alternateStyle && !!textColumnStyles,
+                      [padding ?? '']: !!padding,
                     }}
                   >
                     {entity ? (

@@ -9,8 +9,7 @@ import { getHeroProps } from '@lib/gamera'
 
 const { id } = Astro.params
 const musing = await getMusing(id).executeTakeFirst()
-if (!musing)
-  return new Response(null, { status: 404, statusText: 'Not found' })
+if (!musing) return new Response(null, { status: 404, statusText: 'Not found' })
 
 const query = musing.text ?? ''
 const conversationToken = musing.input_conversation_token

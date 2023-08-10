@@ -1,0 +1,72 @@
+---
+import type { AssetProfile } from '@statmuse/core/kanedama'
+
+interface Props {
+  profile: AssetProfile
+}
+
+const profile = Astro.props.profile
+const baseUrl =
+  'https://s.tradingview.com/embed-widget/single-quote/?locale=en#'
+const params = {
+  symbol: `${profile.asset.exchange}:${profile.asset.symbol}`,
+  'page-uri': `www.statmuse.com/money/symbol/${profile.asset.symbol}`,
+  width: 350,
+  height: 126,
+  colorTheme: 'light',
+  utm_source: 'www.statmuse.com',
+  utm_medium: 'widget',
+  utm_campaign: 'single-quote',
+}
+const widgetUrl = `${baseUrl}${encodeURIComponent(JSON.stringify(params))}`
+---
+
+<div class="tradingview-widget-container w-[350px] h-[126px]">
+  <style>
+    .tradingview-widget-copyright {
+      font-size: 13px !important;
+      line-height: 32px !important;
+      text-align: center !important;
+      vertical-align: middle !important;
+      /* @mixin sf-pro-display-font; */
+      font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto,
+        Ubuntu, sans-serif !important;
+      color: #9db2bd !important;
+    }
+
+    .tradingview-widget-copyright .blue-text {
+      color: #2962ff !important;
+    }
+
+    .tradingview-widget-copyright a {
+      text-decoration: none !important;
+      color: #9db2bd !important;
+    }
+
+    .tradingview-widget-copyright a:visited {
+      color: #9db2bd !important;
+    }
+
+    .tradingview-widget-copyright a:hover .blue-text {
+      color: #1e53e5 !important;
+    }
+
+    .tradingview-widget-copyright a:active .blue-text {
+      color: #1848cc !important;
+    }
+
+    .tradingview-widget-copyright a:visited .blue-text {
+      color: #2962ff !important;
+    }
+  </style>
+  <iframe
+    scrolling="no"
+    allowtransparency="true"
+    frameborder="0"
+    src={widgetUrl}
+    title="single quote TradingView widget"
+    lang="en"
+    style="user-select: none; box-sizing: border-box; display: block; height: 126px; width: 350px;"
+  >
+  </iframe>
+</div>

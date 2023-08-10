@@ -1,0 +1,47 @@
+---
+import type { AssetProfile } from '@statmuse/core/kanedama'
+
+interface Props {
+  profile: AssetProfile
+}
+
+const profile = Astro.props.profile
+---
+
+<div class="tradingview-widget-container">
+  <div id="tradingview_f8029" class="w-full h-[400px]"></div>
+  <div class="tradingview-widget-copyright">
+    <a
+      href="https://www.tradingview.com/"
+      rel="noopener nofollow"
+      target="_blank"
+    >
+      <span class="blue-text">Track all markets on TradingView</span>
+    </a>
+  </div>
+  <!-- should we move this to <head>? priority loading?  -->
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js">
+  </script>
+  <script type="text/javascript" define:vars={{ profile }}>
+    new TradingView.widget({
+      autosize: true,
+      symbol: `${profile.asset.exchange}:${profile.asset.symbol}`,
+      interval: 'D',
+      timezone: 'Etc/UTC',
+      theme: 'light',
+      style: '3',
+      locale: 'en',
+      enable_publishing: false,
+      hideideas: true,
+      hide_legend: false,
+      hide_side_toolbar: true,
+      hide_top_toolbar: false,
+      toolbar_bg: '#F1F3F6',
+      widgetType: 'widget',
+      withdateranges: false,
+      // allow_symbol_change: true,
+      container_id: 'tradingview_f8029',
+      // hidesidetoolbar: 1,
+    })
+  </script>
+</div>

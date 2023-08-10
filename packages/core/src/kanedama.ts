@@ -1,4 +1,7 @@
+import { GameraGrid } from './gamera'
+
 export const cdnBaseUrl = 'https://cdn.statmuse.com'
+export type KanedamaGrid = GameraGrid
 
 export function handleResponse(response: KanedamaResponse) {
   const subject = response.visual.summary.subject
@@ -91,58 +94,70 @@ export type KanedamaEntity = {
   id: string
 }
 
-export interface KanedamaGrid {
-  name: string
-  columns: [
-    {
-      rowItemKey: string
-      title: string
-      type: string
-    }
-  ]
-  rows: Record<
-    string,
-    {
-      display: string
-      value: unknown
-      imageUrl?: string
-      entity?: KanedamaEntity
-    }
-  >[]
-  aggregations: Record<
-    string,
-    {
-      display: string
-      value: unknown
-      imageUrl?: string
-      entity?: KanedamaEntity
-    }
-  >[]
+export interface AssetBySymbolResponse {
+  assetId: string
 }
 
-export interface KanedamaChart {
-  name: string
-  series: [
-    {
+export interface AssetProfile {
+  asset: {
+    assetId: string
+    officialName: string
+    canonicalName: string
+    symbol: string
+    exchange: string
+    class: string
+    type: string
+    shouldSyncPrice: boolean
+    isActive: boolean
+    dataCoverage: {
+      minDailyTimestamp: number
+      maxDailyTimestamp: number
+      minIntradayTimestamp: number
+      maxIntradayTimestamp: number
+    }
+  }
+  aliases: { aliasName: string }[]
+  stockProfile: {
+    overview: {
+      stats: KanedamaGrid
+      financials: KanedamaGrid
+    }
+    stats: {
+      priceHistory: KanedamaGrid
+      shareStats: KanedamaGrid
+      shortStats: KanedamaGrid
+      valuation: KanedamaGrid
+    }
+    financials: {
+      quarterlyFinancials: KanedamaGrid
+      annualFinancials: KanedamaGrid
+      earningsCalls: KanedamaGrid
+    }
+    profile: {
+      profile: KanedamaGrid
+    }
+  }
+  images: {
+    imageId: string
+    imageUrl: string
+    colors: {
+      colorId: string
+      background: string
+      foreground: string
+    }[]
+  }[]
+  news: {
+    timestamp: string
+    title: string
+    content: string
+    link: string
+    relatedAssets: {
+      assetId: string
       name: string
-      data: [
-        {
-          nameLines: [string]
-          y: number
-          label: string
-          color: string
-          series?: string
-          float?: boolean
-        }
-      ]
-      color: string
-    }
-  ]
-  categories: [
-    {
-      nameLines: [string]
-    }
-  ]
+      symbol: string
+      type: string
+    }[]
+  }[]
 }
 
 export interface Nlg {

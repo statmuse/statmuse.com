@@ -2,7 +2,7 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Hero from '@components/hero.astro'
-import Visuals from "@components/visuals-money.astro"
+import Visuals from '@components/visuals-money.astro'
 import { handleResponse } from '@statmuse/core/kanedama'
 import { ask, getHeroProps } from '@lib/kanedama'
 
@@ -10,7 +10,8 @@ const { question } = Astro.params
 if (!question) return Astro.redirect('/money/questions')
 const query = question.replaceAll('-', ' ')
 const response = await ask({ query })
-if (!response) return new Response(null, { status: 404, statusText: 'Not found' })
+if (!response)
+  return new Response(null, { status: 404, statusText: 'Not found' })
 
 const { subject, redirectUrl, conversationToken } = handleResponse(response)
 if (redirectUrl) return Astro.redirect(redirectUrl)
