@@ -1,0 +1,241 @@
+---
+import '@styles/global.css'
+import type { Metadata } from '@lib/meta'
+import { ViewTransitions } from 'astro:transitions'
+
+interface Props {
+  meta?: Metadata
+  colors?: {
+    foreground?: string
+    background?: string
+    foregroundColor?: string
+    backgroundColor?: string
+  }
+}
+
+const { meta, colors } = Astro.props
+const foreground = colors?.foreground || colors?.foregroundColor
+const background = colors?.background || colors?.backgroundColor
+
+const style = colors
+  ? ` :root {
+        --team-primary-color: ${background};
+        --team-secondary-color: ${foreground};
+      }
+      .dynamic-color {
+        background-color: ${background};
+        color: ${foreground};
+        fill: ${foreground};
+      }
+      .loading-bar-animate {
+        background-color: initial;
+      }
+    `
+  : undefined
+
+const title = meta?.title
+  ? `${meta.title} | StatMuse Money`
+  : 'StatMuse Money | Save time searching for financial information'
+const description =
+  meta?.description ||
+  'Search stock prices, currency pairs, Bitcoin returns and more — just ask.'
+const keywords =
+  meta?.keywords ||
+  'StatMuse, finance, financial information, finance search, stocks, money, Bitcoin, gold, currencies, markets, FX, stock prices, bitcoin prices, stock returns, Bitcoin returns, currency pairs, index funds, ETFs, BTC, USD, EUR, GBP, NASDAQ stocks, NYSE stocks'
+const defaultImageUrl = '/images/sm-meta-banner.jpg'
+
+Astro.response.headers.set(
+  'Cache-Control',
+  'public, s-maxage=60, stale-while-revalidate=86400'
+)
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="color-scheme" content="light only" />
+    <meta
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+      name="viewport"
+    />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="apple-itunes-app" content="app-id=1234654160" />
+    <title>{title}</title>
+    <ViewTransitions />
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta property="fb:app_id" content="915991831757165" />
+    <meta property="og:site_name" content="StatMuse" />
+    <meta property="og:title" content={meta?.facebook?.title || title} />
+    <meta
+      property="og:description"
+      content={meta?.facebook?.description || description}
+    />
+    <meta property="og:locale" content="en_US" />
+    <meta
+      property="og:image"
+      content={meta?.facebook?.imageUrl || defaultImageUrl}
+    />
+    <meta property="twitter:site" content="@StatMuse" />
+    <meta property="twitter:creator" content="@StatMuse" />
+    <meta property="twitter:title" content={meta?.twitter?.title || title} />
+    <meta
+      property="twitter:description"
+      content={meta?.twitter?.description || description}
+    />
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta
+      property="twitter:image"
+      content={meta?.twitter?.imageUrl || defaultImageUrl}
+    />
+    <!-- <meta name="page-type" content="player" /> -->
+    <!-- <meta name="uid" content="v:10f20462-9e37-40d7-9ff7-91e66a9843f6" /> -->
+    {
+      meta?.canonical && (
+        <link
+          rel="canonical"
+          href={meta.canonical.url}
+          data-should-rewrite={meta.canonical.rewrite?.toString()}
+        />
+      )
+    }
+    <link
+      href="https://www.statmuse.com/opensearch.xml"
+      rel="search"
+      title="StatMuse Search"
+      type="application/opensearchdescription+xml"
+    />
+    <link
+      href="https://www.statmuse.com/favicon.ico"
+      rel="icon"
+      type="image/x-icon"
+    />
+
+    <!-- Set css variables for dynamic colors -->
+    {style && <style set:html={style} />}
+
+    <!-- Font face definitions -->
+    <style>
+      @font-face {
+        font-family: 'canada-type-gibson';
+        src: url('/fonts/gibson-normal-subset.woff2') format('woff2'),
+          url('/fonts/gibson-normal-subset.zopfli.woff') format('woff'),
+          url('/fonts/gibson-normal-subset.ttf') format('truetype');
+        unicode-range: U+0-FF;
+        font-display: swap;
+        font-style: normal;
+        font-stretch: normal;
+      }
+
+      @font-face {
+        font-family: 'canada-type-gibson';
+        src: url('/fonts/gibson-italic-subset.woff2') format('woff2'),
+          url('/fonts/gibson-italic-subset.zopfli.woff') format('woff'),
+          url('/fonts/gibson-italic-subset.ttf') format('truetype');
+        unicode-range: U+0-FF;
+        font-display: swap;
+        font-style: italic;
+        font-stretch: normal;
+      }
+
+      @font-face {
+        font-family: 'canada-type-gibson-fallback';
+        src: local('Arial');
+        ascent-override: 89.13%;
+        descent-override: 22.28%;
+        line-gap-override: 0%;
+        size-adjust: 89.76%;
+      }
+    </style>
+
+    <!-- Preload custom fonts -->
+    <link
+      rel="preload"
+      href={`/fonts/gibson-normal-subset.woff2`}
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href={`/fonts/gibson-italic-subset.woff2`}
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <slot />
+    <script>
+      /**
+       * Given window and document, add or remove "selected" class to league nav
+       * links if current window location matches nav href. Note that the argument
+       * tests are more comprehensive to protect functions downstream of this.
+       *
+       * @param {Window} win - DOM window
+       * @param {Element} ctag - Node Element with data for canonical link
+       *
+       */
+      const shouldRewriteUrl = (win: Window, ctag: HTMLLinkElement) => {
+        return (
+          win instanceof Window &&
+          win.history instanceof History &&
+          win.location instanceof Location &&
+          ctag.href !== win.location.href &&
+          ctag.dataset.shouldRewrite === 'true'
+        )
+      }
+
+      /**
+       * Rewrite URL.
+       *
+       * @param {Window} win - DOM window
+       * @param {HTMLDocument} doc - DOM document
+       * @param {String} newUrl - Destination URL
+       *
+       */
+      const rewriteUrl = (win: Window, doc: Document, newUrl: string) =>
+        win.history.replaceState(null, doc.title, newUrl)
+
+      /**
+       * Given window and document, add or remove "selected" class to league nav
+       * links if current window location matches nav href.
+       *
+       * @param {Window} win - DOM window
+       * @param {HTMLDocument} doc - DOM document
+       *
+       */
+      const updateLeagueNav = (win: Window, doc: Document) => {
+        Array.from(doc.querySelectorAll('nav.nav-league a')).forEach((e) => {
+          const nav = e as HTMLAnchorElement
+
+          nav.href === win.location.href
+            ? nav.classList.add('selected')
+            : nav.classList.remove('selected')
+        })
+      }
+
+      /**
+       * Given window and document, get canonical link tag and check if URL should be
+       * rewritten, in which case call rewriteUrl and updateLeagueNav.
+       *
+       * @param {Window} win - DOM window
+       * @param {HTMLDocument} doc - DOM document
+       *
+       */
+      const maybeRewriteUrl = (win: Window, doc: Document) => {
+        const canonicalTag = doc.querySelector(
+          'link[rel="canonical"]'
+        ) as HTMLLinkElement | null
+        if (!canonicalTag) return
+
+        if (shouldRewriteUrl(win, canonicalTag)) {
+          rewriteUrl(win, doc, canonicalTag.href)
+          updateLeagueNav(win, doc)
+        }
+      }
+
+      maybeRewriteUrl(window, document)
+    </script>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+---
+import MoneyBaseLayout from '@layouts/money-base.astro'
+import Footer from '@components/footer.astro'
+import type { Metadata } from '@lib/meta'
+
+interface Props {
+  meta?: Metadata
+  colors?: {
+    foreground?: string
+    background?: string
+    foregroundColor?: string
+    backgroundColor?: string
+  }
+}
+---
+
+<MoneyBaseLayout {...Astro.props}>
+  <slot />
+  <Footer />
+</MoneyBaseLayout>
