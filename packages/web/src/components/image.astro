@@ -18,7 +18,7 @@ const getImageUrl = (src: string | { answer: Answer }) => {
   const raw = getUrl(src)
   const url = raw.startsWith('http') ? raw : `${cdnBaseUrl}/${raw}`
   if (import.meta.env.DEV) return url
-  if (typeof src === 'string') return new URL(src).pathname
+  if (typeof src === 'string') return new URL(url).pathname
   return new URL(url).pathname
 }
 
