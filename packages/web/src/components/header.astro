@@ -32,7 +32,7 @@ const share = Astro.props.share
     <div>
       <DropdownMenu showElephant />
     </div>
-    <a href="/" class="hidden md:block">
+    <a href={Astro.props.money ? '/money' : '/'} class="hidden md:block">
       <Logo class="w-[150px] mx-5" />
     </a>
   </div>
