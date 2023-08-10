@@ -20,8 +20,8 @@ const profile = Astro.props.profile
     </a>
   </div>
   <!-- should we move this to <head>? priority loading?  -->
-  <script type="text/javascript" src="https://s3.tradingview.com/tv.js">
-  </script>
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"
+  ></script>
   <script type="text/javascript" define:vars={{ profile }}>
     new TradingView.widget({
       autosize: true,

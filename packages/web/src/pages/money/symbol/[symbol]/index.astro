@@ -31,6 +31,7 @@ const newsPath = `${assetUrl}/news`
 const stats = profile.stockProfile.overview.stats
 const financials = profile.stockProfile.overview.financials
 const news = profile.news?.slice(0, 4)
+const companyProfile = profile.stockProfile.profile.profile
 ---
 
 <MoneyLayout {profile}>
@@ -99,14 +100,18 @@ const news = profile.news?.slice(0, 4)
             </div>
           ) : null
         }
-        <div class="mb-5">
-          <Grid
-            hideHead
-            padding="py-1"
-            title="About"
-            data={profile.stockProfile.profile.profile}
-          />
-        </div>
+        {
+          companyProfile ? (
+            <div class="mb-5">
+              <Grid
+                hideHead
+                padding="py-1"
+                title="About"
+                data={profile.stockProfile.profile.profile}
+              />
+            </div>
+          ) : null
+        }
       </div>
     </div>
   </div>
