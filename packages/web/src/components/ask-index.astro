@@ -1,7 +1,8 @@
 ---
-import MainLayout from '@layouts/main.astro'
-import MoneyMainLayout from '@layouts/money-main.astro'
+import BaseLayout from '@layouts/base.astro'
+import MoneyBaseLayout from '@layouts/money-base.astro'
 import Header from '@components/header.astro'
+import Footer from '@components/footer.astro'
 import Container from '@components/container.astro'
 import Image from '@components/image.astro'
 import { ASK_LIMIT, type FinanceAsk, type Ask } from '@statmuse/core/asks'
@@ -161,7 +162,7 @@ const askPath = (ask: Ask | FinanceAsk, domain = '') => {
 
 const leagues = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
 
-const Layout = domain === 'money' ? MoneyMainLayout : MainLayout
+const Layout = domain === 'money' ? MoneyBaseLayout : BaseLayout
 ---
 
 <Layout {meta}>
@@ -284,4 +285,5 @@ const Layout = domain === 'money' ? MoneyMainLayout : MainLayout
       </li>
     </ul>
   </Container>
+  <Footer />
 </Layout>

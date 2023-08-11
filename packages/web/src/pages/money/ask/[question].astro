@@ -1,6 +1,7 @@
 ---
-import MoneyMainLayout from '@layouts/money-main.astro'
+import MoneyBaseLayout from '@layouts/money-base.astro'
 import Header from '@components/header.astro'
+import Footer from '@components/footer.astro'
 import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals-money.astro'
 import { handleResponse, tokensToText } from '@statmuse/core/kanedama'
@@ -31,8 +32,9 @@ const meta = {
 }
 ---
 
-<MoneyMainLayout {meta} colors={subject?.colors}>
+<MoneyBaseLayout {meta} colors={subject?.colors}>
   <Header money {query} {conversationToken} />
   {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals {response} {conversationToken} />
-</MoneyMainLayout>
+  <Footer />
+</MoneyBaseLayout>
