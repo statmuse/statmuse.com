@@ -10,7 +10,7 @@
 - [ ] persist asks, cache logic from mothra, etc.
 - [ ] swr headers
 - [ ] analytics (provider?)
-- [ ] meta tags
+- [x] meta tags
 - [ ] typeahead suggestions (ask-bar component)
 - [ ] video ads
 - [x] short code redirects
