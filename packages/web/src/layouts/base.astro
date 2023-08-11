@@ -14,11 +14,10 @@ interface Props {
 }
 
 const { meta, colors } = Astro.props
-const foreground = colors?.foreground || colors?.foregroundColor
-const background = colors?.background || colors?.backgroundColor
+const foreground = colors?.foreground || colors?.foregroundColor || '#fff'
+const background = colors?.background || colors?.backgroundColor || '#00c1d8'
 
-const style = colors
-  ? ` :root {
+const style = `:root {
         --team-primary-color: ${background};
         --team-secondary-color: ${foreground};
       }
@@ -31,7 +30,6 @@ const style = colors
         background-color: initial;
       }
     `
-  : undefined
 
 const title = meta?.title
   ? `${meta.title} | StatMuse`

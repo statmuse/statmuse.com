@@ -270,7 +270,7 @@ export function getHeroProps(props: {
     return undefined
 
   const content = tokensToHtml(answer.nlg.text.answer)
-  const imageUrl = answer.visual.summary.subject.imageUrl
+  const imageUrl = answer.visual.summary.subject?.imageUrl
   const imageAlt = props.imageAlt
 
   return {

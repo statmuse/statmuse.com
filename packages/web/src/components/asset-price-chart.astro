@@ -20,7 +20,7 @@ interface Props {
   notableTimestamps: Timeframe[]
   renderTarget: string
   priceFormatString: string
-  color: string
+  color?: string
   preferCandlestick: boolean
 }
 
@@ -384,51 +384,52 @@ const options = mapChartOptions(
   )([Highcharts])
 
   const chart = document.getElementById('chart') as HTMLElement
-  const priceFormatString = chart.dataset.priceFormatString as string
-  const renderTargetName = chart.dataset.renderTarget as string
-  const color = chart.dataset.color as string
-  const options = JSON.parse(
-    chart.dataset.options as string
-  ) as Highcharts.Options
+  if (chart) {
+    const priceFormatString = chart.dataset.priceFormatString as string
+    const renderTargetName = chart.dataset.renderTarget as string
+    const color = chart.dataset.color as string
+    const options = JSON.parse(
+      chart.dataset.options as string
+    ) as Highcharts.Options
 
-  const renderTargetMap: Record<string, RenderTarget> = {
-    close: {
-      formatYAxisValue: (formatString: string, value: unknown) =>
-        numeral(value).format(formatString),
-      getYAxisValue: ({ close }) => close,
-      seriesNameSuffix: 'Price',
-      showSeriesInLegend: true,
-      supportsCandlestick: true,
-    },
-    marketCap: {
-      formatYAxisValue: (_formatString: string, value: unknown) =>
-        numeral(value).format('0.0a').toUpperCase(),
-      getYAxisValue: ({ close, unitsOutstanding }) =>
-        close * (unitsOutstanding ?? 0),
-      seriesNameSuffix: 'Market Cap',
-      showSeriesInLegend: false,
-      supportsCandlestick: false,
-    },
-  }
-
-  const renderTarget = (() => {
-    const renderTargetKey = renderTargetName.toLowerCase()
-
-    for (const currentKey in renderTargetMap) {
-      if (currentKey.toLowerCase() === renderTargetKey) {
-        return renderTargetMap[currentKey]
-      }
+    const renderTargetMap: Record<string, RenderTarget> = {
+      close: {
+        formatYAxisValue: (formatString: string, value: unknown) =>
+          numeral(value).format(formatString),
+        getYAxisValue: ({ close }) => close,
+        seriesNameSuffix: 'Price',
+        showSeriesInLegend: true,
+        supportsCandlestick: true,
+      },
+      marketCap: {
+        formatYAxisValue: (_formatString: string, value: unknown) =>
+          numeral(value).format('0.0a').toUpperCase(),
+        getYAxisValue: ({ close, unitsOutstanding }) =>
+          close * (unitsOutstanding ?? 0),
+        seriesNameSuffix: 'Market Cap',
+        showSeriesInLegend: false,
+        supportsCandlestick: false,
+      },
     }
 
-    return renderTargetMap.close
-  })()
+    const renderTarget = (() => {
+      const renderTargetKey = renderTargetName.toLowerCase()
 
-  const candleTooltip = (
-    { assetPair, close, high, low, open, series }: Asset,
-    numericFormatter: NumericFormatter
-  ) => {
-    const seriesName = series?.name?.replace('(Candlestick)', '').trim()
-    return `<span style="color:${series?.color}">${seriesName}</span>: <br/>\
+      for (const currentKey in renderTargetMap) {
+        if (currentKey.toLowerCase() === renderTargetKey) {
+          return renderTargetMap[currentKey]
+        }
+      }
+
+      return renderTargetMap.close
+    })()
+
+    const candleTooltip = (
+      { assetPair, close, high, low, open, series }: Asset,
+      numericFormatter: NumericFormatter
+    ) => {
+      const seriesName = series?.name?.replace('(Candlestick)', '').trim()
+      return `<span style="color:${series?.color}">${seriesName}</span>: <br/>\
         Open: <b>${formatPriceForTooltip(
           open,
           assetPair!,
@@ -449,101 +450,103 @@ const options = mapChartOptions(
           assetPair!,
           numericFormatter
         )}</b>`
-  }
-
-  const formatPriceForTooltip = (
-    value: unknown,
-    assetPair: AssetPair,
-    numericFormatter: NumericFormatter
-  ) => {
-    return getTooltipText(value, assetPair, numericFormatter)
-  }
-
-  const volumeTooltip = ({ series, y }: { series: Series; y: number }) => {
-    const value = numeral(y).format('0,0')
-    return `<span style="color:${series.color}">${series.name}</span>: <b>${value}</b> <br/>`
-  }
-
-  const lineTooltip = (
-    { assetPair, series, y }: Asset,
-    numericFormatter: NumericFormatter
-  ) => {
-    const seriesName = series?.name?.replace('(Line)', '').trim()
-    return `<span style="color:${
-      series?.color
-    }">${seriesName}</span>: <b>${formatPriceForTooltip(
-      y,
-      assetPair!,
-      numericFormatter
-    )}</b> <br/>`
-  }
-
-  const returnsTooltip = ({ assetPair, close, series, y }: Asset) => {
-    const numericFormatter = (value: unknown) => numeral(value).format('0,0.00')
-    const value = getTooltipText(close, assetPair!, numericFormatter)
-    const percentChange = numeral(y).subtract(100).format('+0.0')
-    return `<span style="color:${color}">${series?.name}</span>: <b>${value}</b> (${percentChange}%)<br/>`
-  }
-
-  const getTooltipText = (
-    value: unknown,
-    { isDefaultQuoteAsset, quoteAsset }: AssetPair,
-    numericFormatter: NumericFormatter
-  ) => {
-    if (value) {
-      const formattedNumericValue = numericFormatter(value)
-      const prefix =
-        isDefaultQuoteAsset && quoteAsset.symbol === 'USD' ? '$' : ''
-      return `${prefix}${formattedNumericValue}`
     }
-    return '—'
-  }
 
-  Highcharts.chart('chart', {
-    ...options,
-    tooltip: {
-      formatter(this: Highcharts.TooltipFormatterContextObject) {
-        const formatYAxisValue = (value: unknown) =>
-          renderTarget.formatYAxisValue(priceFormatString, value)
+    const formatPriceForTooltip = (
+      value: unknown,
+      assetPair: AssetPair,
+      numericFormatter: NumericFormatter
+    ) => {
+      return getTooltipText(value, assetPair, numericFormatter)
+    }
 
-        if (!this.points) {
-          // @ts-ignore
-          return [this.point.xTooltipDisplay].concat(
+    const volumeTooltip = ({ series, y }: { series: Series; y: number }) => {
+      const value = numeral(y).format('0,0')
+      return `<span style="color:${series.color}">${series.name}</span>: <b>${value}</b> <br/>`
+    }
+
+    const lineTooltip = (
+      { assetPair, series, y }: Asset,
+      numericFormatter: NumericFormatter
+    ) => {
+      const seriesName = series?.name?.replace('(Line)', '').trim()
+      return `<span style="color:${
+        series?.color
+      }">${seriesName}</span>: <b>${formatPriceForTooltip(
+        y,
+        assetPair!,
+        numericFormatter
+      )}</b> <br/>`
+    }
+
+    const returnsTooltip = ({ assetPair, close, series, y }: Asset) => {
+      const numericFormatter = (value: unknown) =>
+        numeral(value).format('0,0.00')
+      const value = getTooltipText(close, assetPair!, numericFormatter)
+      const percentChange = numeral(y).subtract(100).format('+0.0')
+      return `<span style="color:${color}">${series?.name}</span>: <b>${value}</b> (${percentChange}%)<br/>`
+    }
+
+    const getTooltipText = (
+      value: unknown,
+      { isDefaultQuoteAsset, quoteAsset }: AssetPair,
+      numericFormatter: NumericFormatter
+    ) => {
+      if (value) {
+        const formattedNumericValue = numericFormatter(value)
+        const prefix =
+          isDefaultQuoteAsset && quoteAsset.symbol === 'USD' ? '$' : ''
+        return `${prefix}${formattedNumericValue}`
+      }
+      return '—'
+    }
+
+    Highcharts.chart('chart', {
+      ...options,
+      tooltip: {
+        formatter(this: Highcharts.TooltipFormatterContextObject) {
+          const formatYAxisValue = (value: unknown) =>
+            renderTarget.formatYAxisValue(priceFormatString, value)
+
+          if (!this.points) {
             // @ts-ignore
-            this.point.text ? [this.point.text] : []
+            return [this.point.xTooltipDisplay].concat(
+              // @ts-ignore
+              this.point.text ? [this.point.text] : []
+            )
+          }
+
+          const {
+            // @ts-ignore
+            point: { xTooltipDisplay },
+          } = this.points[0]
+
+          return [xTooltipDisplay].concat(
+            this.points
+              ? this.points.map((point) => {
+                  // @ts-ignore
+                  switch (point.point.type) {
+                    case 'candle':
+                      // @ts-ignore
+                      return candleTooltip(point.point, formatYAxisValue)
+                    case 'line':
+                      // @ts-ignore
+                      return lineTooltip(point.point, formatYAxisValue)
+                    case 'returns':
+                      // @ts-ignore
+                      return returnsTooltip(point.point)
+                    case 'volume':
+                      // @ts-ignore
+                      return volumeTooltip(point.point)
+                    default:
+                      return `${point.series.name}: ${point.y}`
+                  }
+                })
+              : []
           )
-        }
-
-        const {
-          // @ts-ignore
-          point: { xTooltipDisplay },
-        } = this.points[0]
-
-        return [xTooltipDisplay].concat(
-          this.points
-            ? this.points.map((point) => {
-                // @ts-ignore
-                switch (point.point.type) {
-                  case 'candle':
-                    // @ts-ignore
-                    return candleTooltip(point.point, formatYAxisValue)
-                  case 'line':
-                    // @ts-ignore
-                    return lineTooltip(point.point, formatYAxisValue)
-                  case 'returns':
-                    // @ts-ignore
-                    return returnsTooltip(point.point)
-                  case 'volume':
-                    // @ts-ignore
-                    return volumeTooltip(point.point)
-                  default:
-                    return `${point.series.name}: ${point.y}`
-                }
-              })
-            : []
-        )
+        },
+        split: true,
       },
-      split: true,
-    },
-  })
+    })
+  }
 </script>

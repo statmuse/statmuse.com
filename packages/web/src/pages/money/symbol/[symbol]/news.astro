@@ -1,5 +1,4 @@
 ---
-import Grid from '@components/grid.astro'
 import MoneyLayout from '@layouts/money.astro'
 import { getAssetProfile } from '@lib/kanedama'
 import dayjs from 'dayjs'
@@ -29,8 +28,8 @@ const meta = {
   <div class="divide-y divide-[#c7c8ca]">
     {
       news.map((newsItem) => (
-        <div class="py-2">
-          <p class="text-xs">
+        <div class="py-4">
+          <p class="text-xs text-[#969ca1]">
             Yahoo Finance • {dayjs(newsItem.timestamp).fromNow()}
           </p>
           <h3>
@@ -39,11 +38,23 @@ const meta = {
             </a>
           </h3>
           <p>
-            {truncate(newsItem.content, 120)}...{' '}
+            {truncate(newsItem.content, 240)}...{' '}
             <a href={newsItem.link} target="_blank" rel="noreferrer">
               Full story
             </a>
           </p>
+          {newsItem.relatedAssets.length ? (
+            <ul class="pt-3 space-x-2 text-xs flex flex-row flex-wrap">
+              <h4 class="text-[#969ca1]">Mentioned: </h4>
+              {newsItem.relatedAssets.map((related) => (
+                <li>
+                  <a href={`/money/symbol/${related.symbol.toLowerCase()}`}>
+                    {related.symbol}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
       ))
     }

@@ -1,0 +1,57 @@
+---
+import type { KanedamaTimeSeriesLineChart } from '@statmuse/core/kanedama'
+
+interface Props {
+  chart: KanedamaTimeSeriesLineChart
+}
+
+const chart = Astro.props.chart
+
+const options = {
+  name: chart.name,
+  chart: { type: 'line', marginTop: 30 },
+  credits: { enabled: false },
+  tooltip: { style: { padding: 10 } },
+  legend: { enabled: chart.series.length > 1 },
+  title: { text: null },
+  series: chart.series.map((series) => ({
+    type: 'line',
+    name: series.name,
+    animation: false,
+    pointPadding: 0,
+    groupPadding: 0.1,
+    data: series.data.map((datum) => {
+      const epoch = new Date(datum.timestamp).getTime()
+      return [epoch, datum.y]
+    }),
+  })),
+  xAxis: { type: 'datetime' },
+  yAxis: { visible: false },
+  size: { height: 400 },
+}
+---
+
+<div
+  id="time-series-line-chart"
+  class="h-[400px] overflow-hidden"
+  data-options={JSON.stringify(options)}
+>
+</div>
+
+<script>
+  import * as Highcharts from 'highcharts'
+  import Exporting from 'highcharts/modules/exporting'
+  import OfflineExporting from 'highcharts/modules/offline-exporting'
+
+  Exporting(Highcharts)
+  OfflineExporting(Highcharts)
+
+  const chart = document.getElementById('time-series-line-chart') as HTMLElement
+  if (chart) {
+    const options = JSON.parse(
+      chart?.dataset.options as string
+    ) as Highcharts.Options
+
+    Highcharts.chart('time-series-line-chart', options)
+  }
+</script>

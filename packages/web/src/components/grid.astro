@@ -2,8 +2,12 @@
 import {
   type GameraGrid,
   GameraParameter,
-  getUrlForEntity,
+  getUrlForEntity as getUrlForEntityGamera,
 } from '@statmuse/core/gamera'
+import {
+  KanedamaEntity,
+  getUrlForEntity as getUrlForEntityKanedama,
+} from '@statmuse/core/kanedama'
 import type { HTMLAttributes } from 'astro/types'
 import Image from '@components/image.astro'
 
@@ -20,6 +24,7 @@ interface Props extends HTMLAttributes<'div'> {
   highlight?: string
   hideHead?: boolean
   padding?: string
+  kanedama?: boolean
 }
 
 const {
@@ -34,6 +39,7 @@ const {
   highlight,
   hideHead,
   padding,
+  kanedama,
 } = Astro.props
 
 type Column = GameraGrid['columns'][0]
@@ -255,7 +261,13 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                 const { entity, imageUrl, value } = row[col.rowItemKey]
                 const content = getCellContent(row[col.rowItemKey])
                 const textColumnStyles = getTextColumnStyles(col)
-                const href = entity ? getUrlForEntity(entity) : undefined
+                const href = entity
+                  ? kanedama
+                    ? getUrlForEntityKanedama(
+                        entity as unknown as KanedamaEntity
+                      )
+                    : getUrlForEntityGamera(entity)
+                  : undefined
 
                 return (
                   <td

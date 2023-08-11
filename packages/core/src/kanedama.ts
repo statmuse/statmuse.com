@@ -3,6 +3,47 @@ import { GameraGrid } from './gamera'
 export const cdnBaseUrl = 'https://cdn.statmuse.com'
 export type KanedamaGrid = GameraGrid
 
+export type KanedamaChartBase = {
+  name: string
+  type: 'categoricalColumn' | 'timeSeriesLine'
+}
+
+export type KanedamaCategoricalColumnChart = KanedamaChartBase & {
+  type: 'categoricalColumn'
+  series: [
+    {
+      name: string
+      data: {
+        y: number
+        label: string
+        nameLines: string[]
+        color: string
+      }[]
+    }
+  ]
+  categories: {
+    nameLines: string[]
+  }[]
+}
+
+export type KanedamaTimeSeriesLineChart = KanedamaChartBase & {
+  type: 'timeSeriesLine'
+  series: [
+    {
+      name: string
+      data: {
+        timestamp: string
+        y: number
+        label: string
+      }[]
+    }
+  ]
+}
+
+export type KanedamaChart =
+  | KanedamaCategoricalColumnChart
+  | KanedamaTimeSeriesLineChart
+
 export function handleResponse(response: KanedamaResponse) {
   const subject = response.visual.summary.subject
   const conversationToken = response.conversation.token
@@ -204,8 +245,8 @@ export interface Narrator {
 
 export interface Summary {
   answer: KanedamaToken[]
-  subject: Subject
-  narrator: Narrator
+  subject?: Subject
+  narrator?: Narrator
   text: Text[]
 }
 
@@ -264,6 +305,11 @@ export interface KanedamaGenericGridsDetail extends DetailBase {
   grids: KanedamaGrid[]
 }
 
+export interface KanedamaChartsDetail extends DetailBase {
+  type: 'charts'
+  charts: KanedamaChart[]
+}
+
 export interface Visual {
   summary: Summary
   summaryTokens: KanedamaToken[]
@@ -277,6 +323,7 @@ export type Detail =
   | AssetEntityData
   | AssetPriceDataDetail
   | KanedamaGenericGridsDetail
+  | KanedamaChartsDetail
 
 export interface Conversation {
   token: string

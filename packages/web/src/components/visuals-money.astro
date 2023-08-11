@@ -2,6 +2,9 @@
 import Container from '@components/container.astro'
 import AssetPriceReturnsChart from '@components/asset-price-chart.astro'
 import AssetPriceGrid from '@components/asset-price-grid.astro'
+import CategoricalColumnChart from '@components/categorical-column-chart.astro'
+import TimeSeriesLineChart from '@components/time-series-line-chart.astro'
+import Grid from '@components/grid.astro'
 import { type KanedamaResponse, tokensToHtml } from '@statmuse/core/kanedama'
 import {
   type AssetPriceData,
@@ -32,15 +35,9 @@ const query = Astro.props.query
 const conversationToken = Astro.props.conversationToken
 
 const response = Astro.props.response
-// const summary = tokensToHtml(response.visual.summaryTokens)
-const ignoreGenericGrids =
-  response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' // &&
-// response.visual.detail?.find((d) => d.type === 'assetPriceData')
 const details =
   response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
-    ? response.visual.detail?.filter((d) =>
-        ignoreGenericGrids ? d.type !== 'genericGrids' : true
-      )
+    ? response.visual.detail
     : undefined
 
 // console.log(JSON.stringify(details, null, 2))
@@ -169,10 +166,8 @@ const details =
             })()
 
             const priceFormatString = getPriceValueFormatString(assets)
-
             // When price response indicates a specific frequency, prefer a candlestick
             // chart over a line chart. Example: apple weekly price (show weekly candles)
-
             const preferCandlestick = !!frequencyName
 
             return (
@@ -184,7 +179,7 @@ const details =
                   {renderTarget}
                   {priceFormatString}
                   {preferCandlestick}
-                  color={response.visual.summary.subject.colors.background}
+                  color={response.visual.summary.subject?.colors.background}
                 />
                 <AssetPriceGrid
                   {detail}
@@ -196,6 +191,27 @@ const details =
                 />
               </Fragment>
             )
+          case 'genericGrids':
+            return detail.grids.map((grid) => (
+              <Grid
+                kanedama
+                data={grid}
+                hideTitle
+                columnStyles={{ DATE: 'text-left' }}
+              />
+            ))
+          case 'charts':
+            return detail.charts.map((chart) => {
+              switch (chart.type) {
+                case 'categoricalColumn':
+                  return <CategoricalColumnChart {chart} />
+                case 'timeSeriesLine':
+                  return <TimeSeriesLineChart {chart} />
+                default:
+                  return null
+              }
+            })
+
           default:
             return null
         }
