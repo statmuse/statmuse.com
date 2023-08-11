@@ -18,28 +18,34 @@ if (!profile) {
 
 const news = profile.news
 const truncate = (str: string, n: number) =>
-  str.length > n ? str.substr(0, n - 1).trim() : str;
+  str.length > n ? str.substr(0, n - 1).trim() : str
+
+const meta = {
+  title: `${profile.asset.canonicalName || profile.asset.officialName} News`,
+}
 ---
 
-<MoneyLayout {profile}>
-    <div class="divide-y divide-[#c7c8ca]">
-    {news.map((newsItem) => (
-      <div class="py-2">
-        <p class="text-xs">
-          Yahoo Finance • {dayjs(newsItem.timestamp).fromNow()}
-        </p>
-        <h3>
-          <a href={newsItem.link} target="_blank" rel="noreferrer">
-            {newsItem.title}
-          </a>
-        </h3>
-        <p>
-          {truncate(newsItem.content, 120)}...{' '}
-          <a href={newsItem.link} target="_blank" rel="noreferrer">
-            Full story
-          </a>
-        </p>
-      </div>
-    ))}
+<MoneyLayout {meta} {profile}>
+  <div class="divide-y divide-[#c7c8ca]">
+    {
+      news.map((newsItem) => (
+        <div class="py-2">
+          <p class="text-xs">
+            Yahoo Finance • {dayjs(newsItem.timestamp).fromNow()}
+          </p>
+          <h3>
+            <a href={newsItem.link} target="_blank" rel="noreferrer">
+              {newsItem.title}
+            </a>
+          </h3>
+          <p>
+            {truncate(newsItem.content, 120)}...{' '}
+            <a href={newsItem.link} target="_blank" rel="noreferrer">
+              Full story
+            </a>
+          </p>
+        </div>
+      ))
+    }
   </div>
 </MoneyLayout>

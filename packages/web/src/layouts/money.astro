@@ -34,7 +34,9 @@ const links = [
   { text: 'News', href: `${assetPath}/news` },
 ]
 
-const title = `${profile.asset.officialName} Overview`
+const title = `${
+  profile.asset.canonicalName || profile.asset.officialName
+} Overview`
 ---
 
 <MoneyBaseLayout
