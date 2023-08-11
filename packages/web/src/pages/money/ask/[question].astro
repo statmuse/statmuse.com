@@ -33,7 +33,12 @@ const meta = {
 ---
 
 <MoneyBaseLayout {meta} colors={subject?.colors}>
-  <Header money {query} {conversationToken} />
+  <Header
+    money
+    {query}
+    {conversationToken}
+    share={{ type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
+  />
   {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals {response} {conversationToken} />
   <Footer />

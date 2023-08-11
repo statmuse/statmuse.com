@@ -53,7 +53,14 @@ const heroProps = getHeroProps({ imageAlt: query, response })
 ---
 
 <MoneyBaseLayout {meta} colors={subject?.colors}>
-  <Header money {query} {conversationToken} />
+  <Header
+    money
+    {query}
+    {conversationToken}
+    share={Astro.request.method === 'POST'
+      ? { type: 'ask', shortCode: 'CODE', domain: 'money', query }
+      : { type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
+  />
   {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals {response} {conversationToken} />
   <Footer />
