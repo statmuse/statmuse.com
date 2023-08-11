@@ -7,6 +7,7 @@ import { getMusing } from '@statmuse/core/musings'
 import { rgbToHex } from '@statmuse/core/color'
 import { getHeroProps } from '@lib/gamera'
 import { title } from '@lib/meta'
+import { imageForgeUrl } from '@lib/path'
 
 const { id } = Astro.params
 const musing = await getMusing(id).executeTakeFirst()
@@ -14,7 +15,7 @@ if (!musing) return new Response(null, { status: 404, statusText: 'Not found' })
 
 const query = musing.text ?? ''
 const conversationToken = musing.input_conversation_token
-const preferredDomain = musing.name
+const preferredDomain = musing.domain
 
 const foreground = musing.foreground_rgba
   ? rgbToHex(musing.foreground_rgba)
@@ -28,6 +29,20 @@ const heroProps = getHeroProps({ imageAlt: query, musing })
 const meta = {
   title: title(query),
   description: musing.text_plain ?? '',
+  facebook: {
+    imageUrl: imageForgeUrl({
+      url: musing.image_url || '',
+      bgColor: background,
+      type: 'facebook',
+    }),
+  },
+  twitter: {
+    imageUrl: imageForgeUrl({
+      url: musing.image_url || '',
+      bgColor: background,
+      type: 'twitter',
+    }),
+  },
 }
 ---
 

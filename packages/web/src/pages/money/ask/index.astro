@@ -6,7 +6,7 @@ import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals-money.astro'
 import { handleResponse } from '@statmuse/core/kanedama'
 import { ask, getHeroProps } from '@lib/kanedama'
-import { clean, createAskPath } from '@lib/path'
+import { clean, createAskPath, imageForgeUrl } from '@lib/path'
 import { tokensToText } from '@statmuse/core/kanedama'
 import { title } from '@lib/meta'
 
@@ -34,6 +34,8 @@ if (redirectUrl) return Astro.redirect(redirectUrl)
 
 const query = clean(tokensToText(response.visual.summaryTokens))
 
+const heroProps = getHeroProps({ imageAlt: query, response })
+
 const meta = {
   title: title(query),
   description:
@@ -47,9 +49,21 @@ const meta = {
           rewrite: true,
         }
       : undefined,
+  facebook: {
+    imageUrl: imageForgeUrl({
+      url: heroProps?.imageUrl || '',
+      bgColor: subject?.colors.background,
+      type: 'facebook',
+    }),
+  },
+  twitter: {
+    imageUrl: imageForgeUrl({
+      url: heroProps?.imageUrl || '',
+      bgColor: subject?.colors.background,
+      type: 'twitter',
+    }),
+  },
 }
-
-const heroProps = getHeroProps({ imageAlt: query, response })
 ---
 
 <MoneyBaseLayout {meta} colors={subject?.colors}>

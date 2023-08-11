@@ -8,7 +8,8 @@ export const getMusing = (musing?: string) =>
     .innerJoin('leagues', 'leagues.id', 'musings.league_id')
     .innerJoin('links', 'links.musing_id', 'musings.id')
     .where('musings.friendly_id', '=', musing || null)
-    .selectAll(['musings', 'questions', 'leagues'])
+    .selectAll(['musings', 'questions'])
+    .select('leagues.name as domain')
     .select('links.short_code')
     .limit(1)
 

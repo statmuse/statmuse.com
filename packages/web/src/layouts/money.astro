@@ -8,6 +8,8 @@ import TradingviewTicker from '@components/tradingview-ticker.astro'
 import AnswerShare from '@components/answer-share.astro'
 import type { Metadata } from '@lib/meta'
 import { getUrlForEntity, type AssetProfile } from '@statmuse/core/kanedama'
+import { imageForgeUrl } from '@lib/path'
+import { cdnBaseUrl } from '@statmuse/core/gamera'
 
 interface Props {
   profile: AssetProfile
@@ -39,12 +41,27 @@ const links = [
 const title = `${
   profile.asset.canonicalName || profile.asset.officialName
 } Overview`
+
+const facebook = {
+  imageUrl: imageForgeUrl({
+    url: `${cdnBaseUrl}/${bustImageUrl || ''}`,
+    bgColor: colors?.background,
+    type: 'facebook',
+  }),
+}
+const twitter = {
+  imageUrl: imageForgeUrl({
+    url: `${cdnBaseUrl}/${bustImageUrl || ''}`,
+    bgColor: colors?.background,
+    type: 'twitter',
+  }),
+}
 ---
 
 <MoneyBaseLayout
   tradingview
   {colors}
-  meta={{ title, canonical, ...(meta || {}) }}
+  meta={{ title, canonical, facebook, twitter, ...(meta || {}) }}
 >
   <Header money share={{ type: 'profile', url: Astro.url.href }} />
   <Container class="mb-5 bg-team-primary text-team-secondary">
