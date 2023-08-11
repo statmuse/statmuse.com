@@ -2,7 +2,6 @@
 
 ## Parity
 
-- [ ] money visuals
 - [ ] shot chart visuals (react island)
 - [ ] tabbed visuals
 - [ ] auth (visitors, users)
@@ -10,10 +9,8 @@
 - [ ] persist asks, cache logic from mothra, etc.
 - [ ] swr headers
 - [ ] analytics (provider?)
-- [x] meta tags
 - [ ] typeahead suggestions (ask-bar component)
 - [ ] video ads
-- [x] short code redirects
 - [ ] error pages (404, gamera couldn't answer, etc)
 - [ ] additional questions not rendered everywhere
 - [ ] security headers
@@ -22,6 +19,9 @@
 - [ ] focus should start in the search bar on every page right? also, focus state doesn't have blue outline
 - [ ] newsletter signup
 - [ ] cookie banner
+- [x] money visuals
+- [x] meta tags
+- [x] short code redirects
 - [x] image optimization (current site does none, should add a behavior to cdn.statmuse.com; how do we test?)
 - [x] swap out font for variable font
 - [x] navigation issue on team profiles (going to history and then back to another page)
