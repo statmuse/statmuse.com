@@ -17,7 +17,8 @@ const { meta, colors } = Astro.props
 const foreground = colors?.foreground || colors?.foregroundColor || '#fff'
 const background = colors?.background || colors?.backgroundColor || '#00c1d8'
 
-const style = `:root {
+const style = colors
+  ? `:root {
         --team-primary-color: ${background};
         --team-secondary-color: ${foreground};
       }
@@ -30,6 +31,7 @@ const style = `:root {
         background-color: initial;
       }
     `
+  : undefined
 
 const title = meta?.title
   ? `${meta.title} | StatMuse`
