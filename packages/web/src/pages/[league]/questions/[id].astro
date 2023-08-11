@@ -1,0 +1,15 @@
+---
+import { createAskPath } from '@lib/path'
+import { getQuestionByIdOrFriendlyId } from '@statmuse/core/questions'
+
+const id = Astro.params.id as string
+const question = await getQuestionByIdOrFriendlyId(id)
+
+if (question && question.is_successful) {
+  return Astro.redirect(
+    createAskPath({ domain: question.domain, query: question.text })
+  )
+}
+
+return new Response(null, { status: 404, statusText: 'Not found' })
+---
