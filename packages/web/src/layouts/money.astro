@@ -1,6 +1,7 @@
 ---
-import Layout from '@layouts/main.astro'
+import MoneyBaseLayout from '@layouts/money-base.astro'
 import Header from '@components/header.astro'
+import Footer from '@components/footer.astro'
 import Image from '@components/image.astro'
 import Container from '@components/container.astro'
 import TradingviewTicker from '@components/tradingview-ticker.astro'
@@ -34,16 +35,12 @@ const links = [
 ]
 
 const title = `${profile.asset.officialName} Overview`
-const description =
-  'Search stock prices, currency pairs, Bitcoin returns and more — just ask.'
-const keywords =
-  'StatMuse, finance, financial information, finance search, stocks, money, Bitcoin, gold, currencies, markets, FX, stock prices, bitcoin prices, stock returns, Bitcoin returns, currency pairs, index funds, ETFs, BTC, USD, EUR, GBP, NASDAQ stocks, NYSE stocks'
 ---
 
-<Layout
-  money
+<MoneyBaseLayout
+  tradingview
   colors={profile.images[0].colors[0]}
-  meta={{ title, description, keywords, canonical, ...(meta || {}) }}
+  meta={{ title, canonical, ...(meta || {}) }}
 >
   <Header money share={{ type: 'profile', url: Astro.url.href }} />
   <Container class="mb-5 bg-team-primary text-team-secondary">
@@ -76,6 +73,11 @@ const keywords =
         height={200}
         loading="eager"
       />
+      <div
+        class="md:hidden flex flex-col items-center absolute right-0 bottom-2.5 space-y-2.5"
+      >
+        <AnswerShare onlyIcon />
+      </div>
     </div>
   </Container>
   <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
@@ -101,4 +103,5 @@ const keywords =
     </div>
     <slot />
   </Container>
-</Layout>
+  <Footer />
+</MoneyBaseLayout>
