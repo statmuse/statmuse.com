@@ -174,68 +174,65 @@ const socialButtons = [
   )
 }
 <script>
-  document.addEventListener('astro:load', () => {
-    const toggle = document.getElementById(
-      'answer-share'
-    ) as HTMLInputElement | null
-    const input = document.querySelector<HTMLInputElement>('[data-share-input]')
-    const inputLabel = input?.parentNode?.querySelector('span')
-    const checkbox =
-      document.querySelector<HTMLInputElement>('[data-share-url]')
-    const disclaimer = document.querySelector<HTMLElement>(
-      '[data-share-disclaimer]'
-    )
-    if (input && inputLabel && toggle) {
-      // copy to clipboard
-      input.addEventListener('click', async () => {
-        try {
-          await navigator.clipboard.writeText(input.value)
-          inputLabel.innerText = 'COPIED'
-        } catch (err) {}
-      })
-      // listen to changes on checkbox and set share url on input
-      checkbox?.addEventListener('change', () => {
-        if (checkbox.dataset.shareType === 'ask') {
+  const toggle = document.getElementById(
+    'answer-share'
+  ) as HTMLInputElement | null
+  const input = document.querySelector<HTMLInputElement>('[data-share-input]')
+  const inputLabel = input?.parentNode?.querySelector('span')
+  const checkbox = document.querySelector<HTMLInputElement>('[data-share-url]')
+  const disclaimer = document.querySelector<HTMLElement>(
+    '[data-share-disclaimer]'
+  )
+  if (input && inputLabel && toggle) {
+    // copy to clipboard
+    input.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(input.value)
+        inputLabel.innerText = 'COPIED'
+      } catch (err) {}
+    })
+    // listen to changes on checkbox and set share url on input
+    checkbox?.addEventListener('change', () => {
+      if (checkbox.dataset.shareType === 'ask') {
+        checkbox.checked
+          ? (input.value = checkbox.dataset.shortLink || '')
+          : (input.value = checkbox.dataset.shareUrl || '')
+      } else {
+        checkbox.checked
+          ? (input.value = checkbox.dataset.shareUrl || '')
+          : (input.value = checkbox.dataset.shortLink || '')
+        // set disclaimer messsage
+        if (disclaimer) {
           checkbox.checked
-            ? (input.value = checkbox.dataset.shortLink || '')
-            : (input.value = checkbox.dataset.shareUrl || '')
-        } else {
-          checkbox.checked
-            ? (input.value = checkbox.dataset.shareUrl || '')
-            : (input.value = checkbox.dataset.shortLink || '')
-          // set disclaimer messsage
-          if (disclaimer) {
-            checkbox.checked
-              ? (disclaimer.innerText =
-                  'This answer is live and will keep updating')
-              : (disclaimer.innerText =
-                  'This answer is static and will not update')
+            ? (disclaimer.innerText =
+                'This answer is live and will keep updating')
+            : (disclaimer.innerText =
+                'This answer is static and will not update')
+        }
+      }
+      // reset input label
+      inputLabel.innerText = 'COPY'
+      // set the social button hrefs with new share url
+      document
+        .querySelectorAll<HTMLAnchorElement>('[data-social]')
+        .forEach((el) => {
+          if (el.dataset.social === 'Facebook') {
+            el.href =
+              'https://www.facebook.com/sharer/sharer.php?' +
+              new URLSearchParams({ u: input.value }).toString()
           }
-        }
-        // reset input label
+          if (el.dataset.social === 'Twitter') {
+            el.href =
+              'https://twitter.com/share?' +
+              new URLSearchParams({ url: input.value }).toString()
+          }
+        })
+    })
+    toggle.addEventListener('change', () => {
+      if (!toggle.checked) {
         inputLabel.innerText = 'COPY'
-        // set the social button hrefs with new share url
-        document
-          .querySelectorAll<HTMLAnchorElement>('[data-social]')
-          .forEach((el) => {
-            if (el.dataset.social === 'Facebook') {
-              el.href =
-                'https://www.facebook.com/sharer/sharer.php?' +
-                new URLSearchParams({ u: input.value }).toString()
-            }
-            if (el.dataset.social === 'Twitter') {
-              el.href =
-                'https://twitter.com/share?' +
-                new URLSearchParams({ url: input.value }).toString()
-            }
-          })
-      })
-      toggle.addEventListener('change', () => {
-        if (!toggle.checked) {
-          inputLabel.innerText = 'COPY'
-          checkbox?.checked && checkbox.click()
-        }
-      })
-    }
-  })
+        checkbox?.checked && checkbox.click()
+      }
+    })
+  }
 </script>
