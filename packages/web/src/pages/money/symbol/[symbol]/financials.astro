@@ -18,40 +18,46 @@ if (!profile) {
 
 const { annualFinancials, quarterlyFinancials, earningsCalls } =
   profile.stockProfile.financials
+
+const meta = {
+  title: `${
+    profile.asset.canonicalName || profile.asset.officialName
+  } Financials`,
+}
 ---
 
-<MoneyLayout {profile}>
+<MoneyLayout {meta} {profile}>
   <div>
-      <div>
-        {
-          quarterlyFinancials ? (
-            <div class="mb-5">
-              <Grid
-                padding="py-1"
-                title="Quarterly Financials"
-                data={quarterlyFinancials}
-              />
-            </div>
-          ) : null
-        }
-        {
-          annualFinancials ? (
-            <div class="mb-5">
-              <Grid
-                padding="py-1"
-                title="Annual Financials"
-                data={annualFinancials}
-              />
-            </div>
-          ) : null
-        }
-        {
-          earningsCalls ? (
-            <div class="mb-5">
-              <Grid padding="py-1" data={earningsCalls} />
-            </div>
-          ) : null
-        }
-      </div>
+    <div>
+      {
+        quarterlyFinancials ? (
+          <div class="mb-5">
+            <Grid
+              padding="py-1"
+              title="Quarterly Financials"
+              data={quarterlyFinancials}
+            />
+          </div>
+        ) : null
+      }
+      {
+        annualFinancials ? (
+          <div class="mb-5">
+            <Grid
+              padding="py-1"
+              title="Annual Financials"
+              data={annualFinancials}
+            />
+          </div>
+        ) : null
+      }
+      {
+        earningsCalls ? (
+          <div class="mb-5">
+            <Grid padding="py-1" data={earningsCalls} />
+          </div>
+        ) : null
+      }
+    </div>
   </div>
 </MoneyLayout>

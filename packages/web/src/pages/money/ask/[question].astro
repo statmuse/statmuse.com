@@ -1,14 +1,17 @@
 ---
-import Layout from '@layouts/main.astro'
+import MoneyBaseLayout from '@layouts/money-base.astro'
 import Header from '@components/header.astro'
+import Footer from '@components/footer.astro'
 import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals-money.astro'
-import { handleResponse } from '@statmuse/core/kanedama'
+import { handleResponse, tokensToText } from '@statmuse/core/kanedama'
 import { ask, getHeroProps } from '@lib/kanedama'
+import { clean } from '@lib/path'
+import { title } from '@lib/meta'
 
 const { question } = Astro.params
 if (!question) return Astro.redirect('/money/questions')
-const query = question.replaceAll('-', ' ')
+let query = question.replaceAll('-', ' ')
 const response = await ask({ query })
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })
@@ -16,11 +19,27 @@ if (!response)
 const { subject, redirectUrl, conversationToken } = handleResponse(response)
 if (redirectUrl) return Astro.redirect(redirectUrl)
 
+query = clean(tokensToText(response.visual.summaryTokens))
+
 const heroProps = getHeroProps({ imageAlt: query, response })
+
+const meta = {
+  title: title(query),
+  description:
+    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
+      ? tokensToText(response.nlg.text.answer)
+      : '',
+}
 ---
 
-<Layout colors={subject?.colors}>
-  <Header money {query} {conversationToken} />
+<MoneyBaseLayout {meta} colors={subject?.colors}>
+  <Header
+    money
+    {query}
+    {conversationToken}
+    share={{ type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
+  />
   {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals {response} {conversationToken} />
-</Layout>
+  <Footer />
+</MoneyBaseLayout>

@@ -131,6 +131,11 @@ export const getUrlForEntity = (entity: GameraEntity) => {
   return url
 }
 
+export const isGameraDefaultResponse = (
+  resp: GameraResponse
+): resp is GameraDefaultResponse =>
+  resp.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
+
 const formatToken = (token: GameraToken) => {
   let text = token.text
   if (token.type === 'entity') {

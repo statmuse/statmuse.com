@@ -1,0 +1,76 @@
+---
+import BaseLayout from '@layouts/base.astro'
+import type { Metadata } from '@lib/meta'
+import type { HTMLAttributes } from 'astro/types'
+
+interface Props {
+  meta?: Metadata
+  colors?: {
+    foreground?: string
+    background?: string
+    foregroundColor?: string
+    backgroundColor?: string
+  }
+  tradingview?: boolean
+}
+
+const { meta } = Astro.props
+
+const title = meta?.title
+  ? `${meta.title} | StatMuse Money`
+  : 'StatMuse Money | Save time searching for financial information'
+const description =
+  meta?.description ||
+  'Search stock prices, currency pairs, Bitcoin returns and more — just ask.'
+const keywords =
+  meta?.keywords ||
+  'StatMuse, finance, financial information, finance search, stocks, money, Bitcoin, gold, currencies, markets, FX, stock prices, bitcoin prices, stock returns, Bitcoin returns, currency pairs, index funds, ETFs, BTC, USD, EUR, GBP, NASDAQ stocks, NYSE stocks'
+const defaultImageUrl = '/images/sm-meta-banner.jpg'
+
+const metaTags = [
+  { name: 'description', content: description },
+  { name: 'keywords', content: keywords },
+  { property: 'fb:app_id', content: '915991831757165' },
+  { property: 'og:site_name', content: 'StatMuse' },
+  { property: 'og:title', content: meta?.facebook?.title || title },
+  {
+    property: 'og:description',
+    content: meta?.facebook?.description || description,
+  },
+  { property: 'og:locale', content: 'en_US' },
+  {
+    property: 'og:image',
+    content: meta?.facebook?.imageUrl || defaultImageUrl,
+  },
+  { property: 'twitter:site', content: '@StatMuse' },
+  { property: 'twitter:creator', content: '@StatMuse' },
+  { property: 'twitter:title', content: meta?.twitter?.title || title },
+  {
+    property: 'twitter:description',
+    content: meta?.twitter?.description || description,
+  },
+  { property: 'twitter:card', content: 'summary_large_image' },
+  {
+    property: 'twitter:image',
+    content: meta?.twitter?.imageUrl || defaultImageUrl,
+  },
+] as HTMLAttributes<'meta'>[]
+---
+
+<BaseLayout {...Astro.props}>
+  <title slot="head">{title}</title>
+  {metaTags.map((meta) => <meta slot="head" {...meta} />)}
+  {
+    Astro.props.tradingview ? (
+      <Fragment name="tradingview">
+        <link
+          rel="preload"
+          href="https://s3.tradingview.com/tv.js"
+          as="script"
+        />
+        <script type="text/javascript" src="https://s3.tradingview.com/tv.js" />
+      </Fragment>
+    ) : null
+  }
+  <slot />
+</BaseLayout>

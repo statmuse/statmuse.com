@@ -1,5 +1,5 @@
 ---
-import Layout from '@layouts/default.astro'
+import BaseLayout from '@layouts/base.astro'
 import Logo from '@components/logo.astro'
 import AskBar from '@components/ask-bar.astro'
 import Image from '@components/image.astro'
@@ -18,7 +18,7 @@ Astro.response.headers.set(
 )
 ---
 
-<Layout>
+<BaseLayout>
   <main
     id="home"
     class="home-layout [--header-height:55px] md:[--header-height:64px]"
@@ -134,4 +134,4 @@ Astro.response.headers.set(
       <Footer />
     </div>
   </main>
-</Layout>
+</BaseLayout>

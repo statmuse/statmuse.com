@@ -11,7 +11,6 @@ interface Props {
     foregroundColor?: string
     backgroundColor?: string
   }
-  money?: boolean
 }
 
 const { meta, colors } = Astro.props
@@ -61,36 +60,37 @@ Astro.response.headers.set(
     />
     <meta name="generator" content={Astro.generator} />
     <meta name="apple-itunes-app" content="app-id=1234654160" />
-    <title>{title}</title>
-    <ViewTransitions />
-    <meta name="description" content={description} />
-    <meta name="keywords" content={keywords} />
-    <meta property="fb:app_id" content="915991831757165" />
-    <meta property="og:site_name" content="StatMuse" />
-    <meta property="og:title" content={meta?.facebook?.title || title} />
-    <meta
-      property="og:description"
-      content={meta?.facebook?.description || description}
-    />
-    <meta property="og:locale" content="en_US" />
-    <meta
-      property="og:image"
-      content={meta?.facebook?.imageUrl || defaultImageUrl}
-    />
-    <meta property="twitter:site" content="@StatMuse" />
-    <meta property="twitter:creator" content="@StatMuse" />
-    <meta property="twitter:title" content={meta?.twitter?.title || title} />
-    <meta
-      property="twitter:description"
-      content={meta?.twitter?.description || description}
-    />
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta
-      property="twitter:image"
-      content={meta?.twitter?.imageUrl || defaultImageUrl}
-    />
-    <!-- <meta name="page-type" content="player" /> -->
-    <!-- <meta name="uid" content="v:10f20462-9e37-40d7-9ff7-91e66a9843f6" /> -->
+    <slot name="head">
+      <title>{title}</title>
+      <meta name="description" content={description} />
+      <meta name="keywords" content={keywords} />
+      <meta property="fb:app_id" content="915991831757165" />
+      <meta property="og:site_name" content="StatMuse" />
+      <meta property="og:title" content={meta?.facebook?.title || title} />
+      <meta
+        property="og:description"
+        content={meta?.facebook?.description || description}
+      />
+      <meta property="og:locale" content="en_US" />
+      <meta
+        property="og:image"
+        content={meta?.facebook?.imageUrl || defaultImageUrl}
+      />
+      <meta property="twitter:site" content="@StatMuse" />
+      <meta property="twitter:creator" content="@StatMuse" />
+      <meta property="twitter:title" content={meta?.twitter?.title || title} />
+      <meta
+        property="twitter:description"
+        content={meta?.twitter?.description || description}
+      />
+      <meta property="twitter:card" content="summary_large_image" />
+      <meta
+        property="twitter:image"
+        content={meta?.twitter?.imageUrl || defaultImageUrl}
+      />
+      <!-- <meta name="page-type" content="player" /> -->
+      <!-- <meta name="uid" content="v:10f20462-9e37-40d7-9ff7-91e66a9843f6" /> -->
+    </slot>
     {
       meta?.canonical && (
         <link
@@ -100,6 +100,7 @@ Astro.response.headers.set(
         />
       )
     }
+    <ViewTransitions />
     <link
       href="https://www.statmuse.com/opensearch.xml"
       rel="search"
@@ -164,22 +165,7 @@ Astro.response.headers.set(
       type="font/woff2"
       crossorigin="anonymous"
     />
-
-    {
-      Astro.props.money ? (
-        <Fragment>
-          <link
-            rel="preload"
-            href="https://s3.tradingview.com/tv.js"
-            as="script"
-          />
-          <script
-            type="text/javascript"
-            src="https://s3.tradingview.com/tv.js"
-          />
-        </Fragment>
-      ) : null
-    }
+    <slot name="tradingview" />
   </head>
   <body>
     <slot />

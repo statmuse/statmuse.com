@@ -1,4 +1,9 @@
-import type { GameraDomain } from '@statmuse/core/gamera'
+import {
+  isGameraDefaultResponse,
+  type GameraDomain,
+  type GameraResponse,
+  tokensToText,
+} from '@statmuse/core/gamera'
 
 export interface Metadata {
   title?: string
@@ -49,6 +54,23 @@ export const clean = (url: string) => {
     .replace(/\?$/, '')
 
   return handlePlusSigns(cleaned)
+}
+
+export const title = (str: string) =>
+  str.split(' ').map(capitalizeWord).join(' ')
+
+export const description = (resp: GameraResponse): string => {
+  if (isGameraDefaultResponse(resp)) {
+    return tokensToText(resp.nlg.text.answer)
+  }
+  return ''
+}
+
+const capitalizeWord = (word: string) => {
+  if (new RegExp('(nba|nfl|nhl|mlb|pga)').test(word)) return word.toUpperCase()
+  if (word === '') return word
+  const [first, ...rest] = word
+  return first.toUpperCase() + rest.join('')
 }
 
 const handlePlusSigns = (text: string) => {

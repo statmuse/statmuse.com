@@ -1,11 +1,14 @@
 ---
-import Layout from '@layouts/main.astro'
+import MoneyBaseLayout from '@layouts/money-base.astro'
 import Header from '@components/header.astro'
+import Footer from '@components/footer.astro'
 import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals-money.astro'
 import { handleResponse } from '@statmuse/core/kanedama'
 import { ask, getHeroProps } from '@lib/kanedama'
-import { clean } from '@lib/meta'
+import { clean, createAskPath } from '@lib/path'
+import { tokensToText } from '@statmuse/core/kanedama'
+import { title } from '@lib/meta'
 
 let question: string | undefined
 let conversationToken: string | undefined
@@ -20,8 +23,7 @@ if (Astro.request.method === 'POST') {
   if (!question) return Astro.redirect('/money/questions')
 }
 
-let query = question.replaceAll('-', ' ')
-const response = await ask({ query })
+const response = await ask({ query: question })
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })
 
@@ -30,14 +32,18 @@ const { subject, redirectUrl } = handled
 conversationToken = handled.conversationToken ?? conversationToken
 if (redirectUrl) return Astro.redirect(redirectUrl)
 
-query = clean(query)
-const path = encodeURIComponent(query.replace(/\s/g, '-'))
+const query = clean(tokensToText(response.visual.summaryTokens))
 
 const meta = {
+  title: title(query),
+  description:
+    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
+      ? tokensToText(response.nlg.text.answer)
+      : '',
   canonical:
     response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
       ? {
-          url: `/money/ask/${path}`,
+          url: createAskPath({ domain: 'money', query }),
           rewrite: true,
         }
       : undefined,
@@ -46,8 +52,16 @@ const meta = {
 const heroProps = getHeroProps({ imageAlt: query, response })
 ---
 
-<Layout colors={subject?.colors} {meta}>
-  <Header money {query} {conversationToken} />
+<MoneyBaseLayout {meta} colors={subject?.colors}>
+  <Header
+    money
+    {query}
+    {conversationToken}
+    share={Astro.request.method === 'POST'
+      ? { type: 'ask', shortCode: 'CODE', domain: 'money', query }
+      : { type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
+  />
   {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals {response} {conversationToken} />
-</Layout>
+  <Footer />
+</MoneyBaseLayout>
