@@ -1,0 +1,67 @@
+---
+import Grid from '@components/grid.astro'
+import MoneyLayout from '@layouts/money.astro'
+import { getAssetProfile } from '@lib/kanedama'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+dayjs.extend(relativeTime)
+
+const { symbol } = Astro.params
+if (!symbol) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
+const profile = await getAssetProfile(symbol)
+if (!profile) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
+const { priceHistory, valuation, shortStats, shareStats } =
+  profile.stockProfile.stats
+---
+
+<MoneyLayout {profile}>
+  <div>
+    <div
+      class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-x-5 mb-5"
+    >
+      <div>
+        {
+          priceHistory ? (
+            <div class="mb-5">
+              <Grid
+                hideHead
+                padding="py-1"
+                data={priceHistory}
+                columnStyles={{ value: 'text-right' }}
+              />
+            </div>
+          ) : null
+        }
+        {
+          shareStats ? (
+            <div class="mb-5">
+              <Grid hideHead padding="py-1" data={shareStats} />
+            </div>
+          ) : null
+        }
+        {
+          shortStats ? (
+            <div class="mb-5">
+              <Grid hideHead padding="py-1" data={shortStats} />
+            </div>
+          ) : null
+        }
+      </div>
+      <div>
+        {
+          valuation ? (
+            <div class="mb-5">
+              <Grid hideHead padding="py-1" data={valuation} />
+            </div>
+          ) : null
+        }
+      </div>
+    </div>
+  </div>
+</MoneyLayout>

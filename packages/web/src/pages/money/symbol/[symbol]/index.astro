@@ -1,5 +1,110 @@
 ---
-const symbol = Astro.params.symbol
+import Grid from '@components/grid.astro'
+import MoneyLayout from '@layouts/money.astro'
+import TradingviewChart from '@components/tradingview-chart.astro'
+import { getAssetProfile } from '@lib/kanedama'
+import { getUrlForEntity } from '@statmuse/core/kanedama'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+dayjs.extend(relativeTime)
+
+const { symbol } = Astro.params
+if (!symbol) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
+const profile = await getAssetProfile(symbol)
+if (!profile) {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
+const assetUrl = getUrlForEntity({
+  type: 'assetProfile',
+  id: profile.asset.symbol,
+  display: profile.asset.officialName,
+})
+
+const statsPath = `${assetUrl}/stats`
+const financialsPath = `${assetUrl}/financials`
+const newsPath = `${assetUrl}/news`
+
+const stats = profile.stockProfile.overview.stats
+const financials = profile.stockProfile.overview.financials
+const news = profile.news?.slice(0, 4)
+const companyProfile = profile.stockProfile.profile.profile
 ---
 
-<h1>{symbol}</h1>
+<MoneyLayout {profile}>
+  <div>
+    <div class="mb-5">
+      <div class="flex justify-between mb-0.5">
+        <h3 class="font-semibold text-team-primary">Price &amp; Volume</h3>
+      </div>
+      <article id="tradingview-chart">
+        <TradingviewChart {profile} />
+      </article>
+    </div>
+    <div
+      class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-x-5 mb-5"
+    >
+      <div>
+        {
+          stats ? (
+            <div class="mb-5">
+              <Grid hideHead padding="py-1" data={stats}>
+                <a href={statsPath} set:text="See more" />
+              </Grid>
+            </div>
+          ) : null
+        }
+        {
+          financials ? (
+            <div class="mb-5">
+              <Grid hideHead padding="py-1" data={financials}>
+                <a href={financialsPath} set:text="See more" />
+              </Grid>
+            </div>
+          ) : null
+        }
+      </div>
+      <div>
+        {
+          news && news.length ? (
+            <div class="mb-5">
+              <div class="flex justify-between mb-0.5 border-b border-[#c7c8ca]">
+                <h3 class="font-semibold text-team-primary">News</h3>
+                <a href={newsPath}>See more</a>
+              </div>
+              <div class="divide-y divide-[#c7c8ca]">
+                {news.map((n) => (
+                  <div class="gap-2 py-2">
+                    <p class="text-xs">
+                      Yahoo Finance • {dayjs(n.timestamp).fromNow()}
+                    </p>
+                    <h3>
+                      <a href={n.link} target="_blank" rel="noreferrer">
+                        {n.title}
+                      </a>
+                    </h3>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null
+        }
+        {
+          companyProfile ? (
+            <div class="mb-5">
+              <Grid
+                hideHead
+                padding="py-1"
+                title="About"
+                data={companyProfile}
+              />
+            </div>
+          ) : null
+        }
+      </div>
+    </div>
+  </div>
+</MoneyLayout>

@@ -11,6 +11,7 @@ interface Props {
     foregroundColor?: string
     backgroundColor?: string
   }
+  money?: boolean
 }
 
 const { meta, colors } = Astro.props
@@ -165,6 +166,22 @@ Astro.response.headers.set(
       type="font/woff2"
       crossorigin="anonymous"
     />
+
+    {
+      Astro.props.money ? (
+        <Fragment>
+          <link
+            rel="preload"
+            href="https://s3.tradingview.com/tv.js"
+            as="script"
+          />
+          <script
+            type="text/javascript"
+            src="https://s3.tradingview.com/tv.js"
+          />
+        </Fragment>
+      ) : null
+    }
   </head>
   <body>
     <slot />

@@ -13,7 +13,7 @@
 - [ ] meta tags
 - [ ] typeahead suggestions (ask-bar component)
 - [ ] video ads
-- [ ] short code redirects
+- [x] short code redirects
 - [ ] error pages (404, gamera couldn't answer, etc)
 - [ ] additional questions not rendered everywhere
 - [ ] security headers

@@ -1,6 +1,6 @@
 ---
 import { Image as AstroImage, RemoteImageProps } from 'astro:assets'
-import type { GameraResponse } from '@statmuse/core/gamera'
+import { cdnBaseUrl, type GameraResponse } from '@statmuse/core/gamera'
 import type { Answer } from '@statmuse/core/questions'
 
 interface Props extends Omit<RemoteImageProps, 'src'> {
@@ -15,9 +15,9 @@ const getUrl = (src: string | { answer: Answer }) => {
 }
 
 const getImageUrl = (src: string | { answer: Answer }) => {
-  const url = getUrl(src)
+  const raw = getUrl(src)
+  const url = raw.startsWith('http') ? raw : `${cdnBaseUrl}/${raw}`
   if (import.meta.env.DEV) return url
-  if (typeof src === 'string') return new URL(src).pathname
   return new URL(url).pathname
 }
 

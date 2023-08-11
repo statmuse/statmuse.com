@@ -2,6 +2,8 @@ import {
   type KanedamaResponse,
   tokensToHtml,
   Timeframe,
+  AssetBySymbolResponse,
+  AssetProfile,
 } from '@statmuse/core/kanedama'
 import type { HeroProps } from './props'
 import {
@@ -114,6 +116,32 @@ export async function ask(options: {
   }
 }
 
+export async function lookup(symbol: string) {
+  const requestUrl = `${kanedamaApiUrl}asset/symbol/${symbol}`
+
+  try {
+    const response = await fetch(requestUrl)
+    return response.json() as Promise<AssetBySymbolResponse>
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export async function getAssetProfile(symbol: string) {
+  const lookupResponse = await lookup(symbol)
+  if (!lookupResponse) return undefined
+
+  const assetId = lookupResponse.assetId
+  const requestUrl = `${kanedamaApiUrl}asset/${assetId}`
+
+  try {
+    const response = await fetch(requestUrl)
+    return response.json() as Promise<AssetProfile>
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 export async function getAssetPriceData(options: {
   baseAssetId: string
   quoteAssetId?: string
@@ -210,23 +238,6 @@ export const maybeIncludeComposite = (assets: Asset[]) => {
   }
   return assets
 }
-
-// const getAssetPriceData = ({
-//   baseAssetId,
-//   quoteAssetId,
-//   frequencyKey,
-//   startTimestamp,
-//   endTimestamp,
-// }) =>
-//   mothra.get(`/assets/${baseAssetId}/price`, {
-//     params: {
-//       frequency: frequencyMap[frequencyKey].name,
-//       limit: 1000,
-//       quoteAssetId,
-//       startTimestamp,
-//       endTimestamp,
-//     },
-//   });
 
 export const getInitialClose = pipe(head, get('close'))
 

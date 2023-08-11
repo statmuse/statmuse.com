@@ -1,0 +1,104 @@
+---
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Image from '@components/image.astro'
+import Container from '@components/container.astro'
+import TradingviewTicker from '@components/tradingview-ticker.astro'
+import AnswerShare from '@components/answer-share.astro'
+import type { Metadata } from '@lib/meta'
+import { getUrlForEntity, type AssetProfile } from '@statmuse/core/kanedama'
+
+interface Props {
+  profile: AssetProfile
+  meta?: Metadata
+}
+
+const { profile, meta } = Astro.props
+
+const assetPath = getUrlForEntity({
+  type: 'assetProfile',
+  id: profile.asset.symbol,
+  display: profile.asset.officialName,
+})
+const bustImageUrl = profile.images[0].imageUrl // default image fallback?
+const bustImageAlt = 'TODO'
+
+const path = Astro.url.pathname
+const canonical = { url: Astro.url.pathname + Astro.url.search }
+
+const links = [
+  { text: 'Overview', href: assetPath },
+  { text: 'Stats', href: `${assetPath}/stats` },
+  { text: 'Financials', href: `${assetPath}/financials` },
+  { text: 'News', href: `${assetPath}/news` },
+]
+
+const title = `${profile.asset.officialName} Overview`
+const description =
+  'Search stock prices, currency pairs, Bitcoin returns and more — just ask.'
+const keywords =
+  'StatMuse, finance, financial information, finance search, stocks, money, Bitcoin, gold, currencies, markets, FX, stock prices, bitcoin prices, stock returns, Bitcoin returns, currency pairs, index funds, ETFs, BTC, USD, EUR, GBP, NASDAQ stocks, NYSE stocks'
+---
+
+<Layout
+  money
+  colors={profile.images[0].colors[0]}
+  meta={{ title, description, keywords, canonical, ...(meta || {}) }}
+>
+  <Header money share={{ type: 'profile', url: Astro.url.href }} />
+  <Container class="mb-5 bg-team-primary text-team-secondary">
+    <div
+      class="relative flex flex-col md:flex-row md:flex-wrap justify-center items-center md:items-stretch"
+    >
+      <div class="flex-1 mt-5 mb-7">
+        <h2 class="text-5xl font-semibold mb-2 text-center md:text-left">
+          {profile.asset.canonicalName}
+        </h2>
+        <div class="whitespace-nowrap text-center md:text-left">
+          <span>{profile.asset.symbol}</span>
+          <span class="last:hidden" set:text=" • " />
+
+          <span>{profile.asset.exchange}</span>
+          <span class="last:hidden" set:text=" • " />
+        </div>
+        <div
+          class="hidden md:block mt-6"
+          style="height: 94px; overflow: hidden;"
+        >
+          <TradingviewTicker {profile} />
+        </div>
+      </div>
+      <Image
+        class="self-center md:self-end h-44 md:h-52 object-cover object-bottom overflow-visible"
+        src={bustImageUrl}
+        alt={bustImageAlt}
+        width={200}
+        height={200}
+        loading="eager"
+      />
+    </div>
+  </Container>
+  <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
+    <TradingviewTicker {profile} />
+  </div>
+  <Container>
+    <div class="flex flex-nowrap overflow-auto mb-5 space-x-5">
+      {
+        links.map(({ href, text }) => (
+          <a
+            aria-current={href === path ? 'page' : undefined}
+            class:list={{
+              'text-3xl font-semibold shrink-0': true,
+              'text-team-primary active': href === path,
+              'text-black': href !== path,
+            }}
+            {href}
+          >
+            {text}
+          </a>
+        ))
+      }
+    </div>
+    <slot />
+  </Container>
+</Layout>

@@ -51,8 +51,8 @@ const meta = {
 const heroProps = getHeroProps({ imageAlt: query, response })
 ---
 
-<MoneyMainLayout colors={subject?.colors} {meta}>
-  <Header money={true} {query} {conversationToken} />
+<MoneyMainLayout {meta} colors={subject?.colors}>
+  <Header money {query} {conversationToken} />
   {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals {response} {conversationToken} />
 </MoneyMainLayout>

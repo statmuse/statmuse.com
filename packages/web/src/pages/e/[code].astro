@@ -1,0 +1,41 @@
+---
+import { createAskPath } from '@lib/path'
+import { getLink } from '@statmuse/core/links'
+
+const code = Astro.params.code as string
+
+const link = await getLink(code)
+if (!link) return new Response(null, { status: 404, statusText: 'Not found' })
+
+if (link.linkable_type === 'ask' && link.is_in_index) {
+  return Astro.redirect(
+    createAskPath({
+      domain: link.is_fantasy_query ? 'fantasy' : link.domain,
+      query: link.query,
+    })
+  )
+}
+
+if (link.linkable_type === 'finance_ask' && link.is_in_index) {
+  return Astro.redirect(
+    createAskPath({
+      domain: 'money',
+      query: link.query,
+    })
+  )
+}
+
+if (link.linkable_type === 'musing') {
+  return Astro.redirect(`/musings/${link.friendly_id || link.id}`)
+}
+
+if (link.linkable_type === 'question' && link.is_successful) {
+  return Astro.redirect(`/questions/${link.friendly_id || link.id}`)
+}
+
+if (link.linkable_type === 'url') {
+  return Astro.redirect(link.url)
+}
+
+return new Response(null, { status: 404, statusText: 'Not found' })
+---
