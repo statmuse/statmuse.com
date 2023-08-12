@@ -2,7 +2,7 @@
 import TeamLayout from '@layouts/team.astro'
 import Grid from '@components/grid.astro'
 
-import { GameraDomain, tokensToText } from '@statmuse/core/gamera'
+import type { GameraDomain } from '@statmuse/core/gamera'
 import { getTeamSeasonBio, getTeamSeasonGameResults } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
 
@@ -18,11 +18,11 @@ if (!bio || !gameResults) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
 
-const title = `${bio.name} Overview`
-const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
-const keywords = `${getLeagueKeywords(domain)} ${
+const title = `${year} ${bio.name} Schedule & Results`
+const description = `The ${year} ${bio.name} schedule and results for the ${domain} regular season and playoffs`
+const keywords = `${getLeagueKeywords(domain)} ${year} ${
   bio.name
-} career stats statistics`
+} team schedule results stats statistics`
 const meta = { title, description, keywords }
 ---
 
