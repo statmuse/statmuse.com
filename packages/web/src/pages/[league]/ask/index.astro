@@ -6,7 +6,7 @@ import Visuals from '@components/visuals.astro'
 import { handleResponse, tokensToText } from '@statmuse/core/gamera'
 import { ask, getHeroProps } from '@lib/gamera'
 import { description, title } from '@lib/meta'
-import { clean } from '@lib/path'
+import { clean, imageForgeUrl } from '@lib/path'
 
 const { league } = Astro.params
 const question = Astro.url.searchParams.get('q')
@@ -29,6 +29,20 @@ const heroProps = getHeroProps({ imageAlt: query, response })
 const meta = {
   title: title(query),
   description: description(response),
+  facebook: {
+    imageUrl: imageForgeUrl({
+      url: heroProps?.imageUrl || '',
+      bgColor: subject.colors.background,
+      type: 'facebook',
+    }),
+  },
+  twitter: {
+    imageUrl: imageForgeUrl({
+      url: heroProps?.imageUrl || '',
+      bgColor: subject.colors.background,
+      type: 'twitter',
+    }),
+  },
 }
 ---
 

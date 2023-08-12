@@ -11,6 +11,7 @@ import {
   getUrlForEntity,
 } from '@statmuse/core/gamera'
 import { getLeagueKeywords, Metadata } from '@lib/meta'
+import { imageForgeUrl } from '@lib/path'
 
 interface Props {
   overview: GameraTeamFranchiseOverview
@@ -46,11 +47,34 @@ const description = `View ${bio.name} career stats, including game logs, splits,
 const keywords = `${getLeagueKeywords(domain)} ${
   bio.name
 } career stats statistics`
+
+const facebook = {
+  imageUrl: imageForgeUrl({
+    url: bio.logoImageUrl,
+    bgColor: domain === 'NFL' ? 'EFF4F8' : bio.colors.backgroundColor,
+    type: 'facebook',
+  }),
+}
+const twitter = {
+  imageUrl: imageForgeUrl({
+    url: bio.logoImageUrl,
+    bgColor: domain === 'NFL' ? 'EFF4F8' : bio.colors.backgroundColor,
+    type: 'twitter',
+  }),
+}
 ---
 
 <Layout
   colors={bio.colors}
-  meta={{ title, description, keywords, canonical, ...(meta || {}) }}
+  meta={{
+    title,
+    description,
+    keywords,
+    canonical,
+    facebook,
+    twitter,
+    ...(meta || {}),
+  }}
 >
   <Header {preferredDomain} share={{ type: 'profile', url: Astro.url.href }} />
   <Container class="mb-5 bg-team-primary text-team-secondary overflow-hidden">

@@ -1,3 +1,5 @@
+import { cdnBaseUrl } from '@statmuse/core/gamera'
+
 export const clean = (x: string) =>
   x
     .toLowerCase()
@@ -51,4 +53,23 @@ export const createAskPath = ({
     return `/${domain}/ask?q=${encodeRFC3986URIComponent(clean(query))}`
   }
   return `/${domain}/ask/${createSlug(query)}`
+}
+
+export const imageForgeUrl = ({
+  bgColor = 'FFFFFF',
+  type,
+  url,
+}: {
+  bgColor: string
+  type: 'facebook' | 'twitter'
+  url: string
+}) => {
+  const bg =
+    bgColor[0] === '#' ? bgColor.slice(1).toUpperCase() : bgColor.toUpperCase()
+  return `${cdnBaseUrl}/forge-v2/${btoa(
+    `${url}?${new URLSearchParams({
+      bg,
+      t: type,
+    }).toString()}`
+  ).replaceAll('/', '_')}.png`
 }

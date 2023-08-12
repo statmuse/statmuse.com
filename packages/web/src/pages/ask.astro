@@ -6,7 +6,7 @@ import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals.astro'
 import { handleResponse, tokensToText } from '@statmuse/core/gamera'
 import { title, description } from '@lib/meta'
-import { clean, createAskPath } from '@lib/path'
+import { clean, createAskPath, imageForgeUrl } from '@lib/path'
 
 if (Astro.request.method !== 'POST') {
   return Astro.redirect('/questions')
@@ -38,6 +38,8 @@ if (handled.redirectUrl) return Astro.redirect(handled.redirectUrl)
 
 const subject = handled.subject
 
+const heroProps = getHeroProps({ imageAlt: query, response })
+
 const meta = {
   title: title(query),
   description: description(response),
@@ -51,9 +53,21 @@ const meta = {
           rewrite: true,
         }
       : undefined,
+  facebook: {
+    imageUrl: imageForgeUrl({
+      url: heroProps?.imageUrl || '',
+      bgColor: subject.colors.background,
+      type: 'facebook',
+    }),
+  },
+  twitter: {
+    imageUrl: imageForgeUrl({
+      url: heroProps?.imageUrl || '',
+      bgColor: subject.colors.background,
+      type: 'twitter',
+    }),
+  },
 }
-
-const heroProps = getHeroProps({ imageAlt: query, response })
 ---
 
 <Layout colors={subject?.colors} {meta}>

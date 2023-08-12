@@ -2,9 +2,14 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
-import { GameraBoxScore, tokensToHtml } from '@statmuse/core/gamera'
+import {
+  GameraBoxScore,
+  tokensToHtml,
+  tokensToText,
+} from '@statmuse/core/gamera'
 import type { Metadata } from '@lib/meta'
 import Hero from '@components/hero.astro'
+import { imageForgeUrl } from '@lib/path'
 
 interface Props {
   data: GameraBoxScore
@@ -22,9 +27,27 @@ if (!game || !preferredDomain) {
 // const canonical = Astro.url.pathname + Astro.url.search
 const answer = tokensToHtml(data.nlg.text.answer)
 const subject = data.visual.summary.subject
+
+const meta = {
+  title: tokensToText(data.nlg.text.answer),
+  facebook: {
+    imageUrl: imageForgeUrl({
+      url: data.visual.summary.subject.imageUrl,
+      bgColor: subject.colors.background,
+      type: 'facebook',
+    }),
+  },
+  twitter: {
+    imageUrl: imageForgeUrl({
+      url: data.visual.summary.subject.imageUrl,
+      bgColor: subject.colors.background,
+      type: 'twitter',
+    }),
+  },
+}
 ---
 
-<Layout colors={subject?.colors} {...Astro.props.meta ?? {}}>
+<Layout {meta} colors={subject?.colors} {...Astro.props.meta ?? {}}>
   <Header {preferredDomain} />
   <Hero
     content={answer}

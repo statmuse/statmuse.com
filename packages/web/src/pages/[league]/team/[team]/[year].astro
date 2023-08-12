@@ -28,11 +28,13 @@ const { bio, scoresAndSchedule, teamLeaders, standings, stats, playerGallery } =
 
 const summary = bio.summaryNlg ? tokensToHtml(bio.summaryNlg) : undefined
 
-const title = `${bio.name} Overview`
-const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
-const keywords = `${getLeagueKeywords(domain)} ${
+const title = `${year} ${bio.name} Team & Player Stats`
+const description = bio.summaryNlg
+  ? tokensToText(bio.summaryNlg)
+  : `The ${year} ${bio.name} team and player stats for the ${domain} regular season and playoffs`
+const keywords = `${getLeagueKeywords(domain)} ${year} ${
   bio.name
-} career stats statistics`
+} team player stats statistics`
 const meta = { title, description, keywords }
 ---
 

@@ -12,6 +12,7 @@ import {
   GameraDomain,
 } from '@statmuse/core/gamera'
 import { Metadata, getLeagueKeywords } from '@lib/meta'
+import { imageForgeUrl } from '@lib/path'
 
 interface Props {
   bio: GameraPlayerBio
@@ -54,11 +55,34 @@ const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
 const keywords = `${getLeagueKeywords(domain)} ${
   bio.usedName
 } career stats statistics`
+
+const facebook = {
+  imageUrl: imageForgeUrl({
+    url: bustImageUrl,
+    bgColor: bio.team.colors.backgroundColor,
+    type: 'facebook',
+  }),
+}
+const twitter = {
+  imageUrl: imageForgeUrl({
+    url: bustImageUrl,
+    bgColor: bio.team.colors.backgroundColor,
+    type: 'twitter',
+  }),
+}
 ---
 
 <Layout
   colors={bio.team.colors}
-  meta={{ title, description, keywords, canonical, ...(meta || {}) }}
+  meta={{
+    title,
+    description,
+    keywords,
+    canonical,
+    facebook,
+    twitter,
+    ...(meta || {}),
+  }}
 >
   <Header {preferredDomain} share={{ type: 'profile', url: Astro.url.href }} />
   <Container class="mb-5 bg-team-primary text-team-secondary">
