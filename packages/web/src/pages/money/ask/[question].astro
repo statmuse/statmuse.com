@@ -6,12 +6,22 @@ import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals-money.astro'
 import { handleResponse, tokensToText } from '@statmuse/core/kanedama'
 import { ask, getHeroProps } from '@lib/kanedama'
-import { clean, imageForgeUrl } from '@lib/path'
+import { clean, createAskPath, imageForgeUrl } from '@lib/path'
 import { title } from '@lib/meta'
+
+const isLegacyParam = (param: string) => param.includes('+')
+const parseLegacyParam = (path: string) => {
+  const param = path.split('/')[path.split('/').length - 1]
+  return decodeURIComponent(param.replaceAll('+', ' '))
+}
 
 const { question } = Astro.params
 if (!question) return Astro.redirect('/money/questions')
-let query = question.replaceAll('-', ' ')
+
+let query = isLegacyParam(question)
+  ? parseLegacyParam(Astro.url.pathname)
+  : question.replaceAll('-', ' ')
+
 const response = await ask({ query })
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })
@@ -29,6 +39,10 @@ const meta = {
     response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
       ? tokensToText(response.nlg.text.answer)
       : '',
+  canonical: {
+    url: createAskPath({ domain: 'money', query }),
+    rewrite: true,
+  },
   facebook: {
     imageUrl: imageForgeUrl({
       url: heroProps?.imageUrl || '',
@@ -51,7 +65,11 @@ const meta = {
     money
     {query}
     {conversationToken}
-    share={{ type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
+    share={{
+      type: 'ask',
+      shortCode: 'CODE',
+      url: Astro.url.origin + createAskPath({ domain: 'money', query }),
+    }}
   />
   {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals {response} {conversationToken} />
