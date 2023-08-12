@@ -69,14 +69,14 @@ const keywords = `${getLeagueKeywords(domain)} ${
 const facebook = {
   imageUrl: imageForgeUrl({
     url: bio.logoImageUrl,
-    bgColor: bio.colors.backgroundColor,
+    bgColor: domain === 'NFL' ? 'EFF4F8' : bio.colors.backgroundColor,
     type: 'facebook',
   }),
 }
 const twitter = {
   imageUrl: imageForgeUrl({
     url: bio.logoImageUrl,
-    bgColor: bio.colors.backgroundColor,
+    bgColor: domain === 'NFL' ? 'EFF4F8' : bio.colors.backgroundColor,
     type: 'twitter',
   }),
 }

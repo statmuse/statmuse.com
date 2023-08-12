@@ -56,13 +56,13 @@ export const createAskPath = ({
 }
 
 export const imageForgeUrl = ({
+  bgColor = 'FFFFFF',
   type,
   url,
-  bgColor = 'FFFFFF',
 }: {
-  type: string
+  bgColor: string
+  type: 'facebook' | 'twitter'
   url: string
-  bgColor?: string
 }) => {
   const bg =
     bgColor[0] === '#' ? bgColor.slice(1).toUpperCase() : bgColor.toUpperCase()
