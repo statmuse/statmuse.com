@@ -60,7 +60,7 @@ export const imageForgeUrl = ({
   type,
   url,
 }: {
-  bgColor: string
+  bgColor?: string
   type: 'facebook' | 'twitter'
   url: string
 }) => {
