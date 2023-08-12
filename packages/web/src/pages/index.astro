@@ -8,6 +8,7 @@ import Footer from '@components/footer.astro'
 import DropdownMenu from '@components/dropdown-menu.astro'
 import { listOnboarding } from '@statmuse/core/examples'
 import MenuLinks from '@components/menu-links.astro'
+import NewsletterSignup from '@components/newsletter-signup.astro'
 
 const examples = await listOnboarding()
 const banner = examples[Math.floor(Math.random() * examples.length)]
@@ -128,6 +129,7 @@ Astro.response.headers.set(
       <h4 class="font-semibold text-right py-4">
         <a href="/questions">See trending searches</a>
       </h4>
+      <NewsletterSignup />
     </div>
 
     <div class="main">
