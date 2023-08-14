@@ -1,0 +1,103 @@
+---
+import BaseLayout from '@layouts/base.astro'
+
+const backgroundColor = ''
+const foregroundColor = ''
+const musing = {
+  text: '',
+  image_url: '',
+  question: { text: '' },
+}
+const appStoreImgSrc = ''
+---
+
+<BaseLayout>
+  <div
+    class="min-h-screen w-full flex flex-col justify-center items-center"
+    style={{
+      backgroundColor,
+    }}
+  >
+    <header class="w-full h-12 p-4 flex justify-center items-center">
+      <a href="https://www.statmuse.com">
+        <!-- <Logo class="h-8" /> -->
+      </a>
+    </header>
+    <div
+      class="flex flex-col items-center justify-between relative min-h-[500px] md:min-h-[700px] w-full max-w-[500px] px-2 md:px-0"
+    >
+      <div
+        class="flex flex-col justify-center items-center relative my-5"
+        style={{
+          color: foregroundColor,
+        }}
+      >
+        <h1
+          class="text-2xl md:text-4xl font-semibold pb-4 mb-5 border-b"
+          style={{ borderColor: foregroundColor }}
+        >
+          {musing.text}
+        </h1>
+        <div
+          class="flex flex-wrap md:flex-nowrap items-center justify-center pb-5"
+        >
+          <p class="text-lg pr-5 m-auto">
+            Download the StatMuse app and listen to your favorite players read
+            out their own stats.
+          </p>
+          <a
+            class="shrink-0"
+            href="https://itunes.apple.com/us/app/statmuse/id1234654160?mt=8"
+          >
+            <img
+              class="h-10 mt-5 md:m-0"
+              src={appStoreImgSrc}
+              alt="App Store"
+            />
+          </a>
+        </div>
+      </div>
+      <div class="flex-1 flex items-end">
+        <img
+          class="w-full object-contain object-bottom"
+          src={musing.image_url}
+          alt={musing?.question?.text || 'player illustration'}
+        />
+      </div>
+    </div>
+    <footer
+      style={{ borderColor: foregroundColor }}
+      class="flex items-center justify-center min-h-[100px] w-full border-t"
+    >
+      <p
+        class="m-auto text-center p-2"
+        style={{
+          color: foregroundColor,
+        }}
+      >
+        StatMuse gives fans personalized stats, stories and original content
+        narrated by more than 20 NFL player voices.
+        <br />
+        Available on{' '}
+        <a
+          class="text-inherit underline"
+          href="https://itunes.apple.com/us/app/statmuse/id1234654160?mt=8"
+        >
+          iOS
+        </a>
+        ,{' '}
+        <a
+          class="text-inherit underline"
+          href="https://www.statmuse.com/alexa/"
+        >
+          Alexa
+        </a>
+        , and{' '}
+        <a class="text-inherit underline" href="https://labs.statmuse.com">
+          web
+        </a>
+        .
+      </p>
+    </footer>
+  </div>
+</BaseLayout>
