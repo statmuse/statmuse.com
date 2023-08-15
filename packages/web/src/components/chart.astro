@@ -157,7 +157,12 @@ categories.forEach((cat, i) => {
 })
 ---
 
-<div class="relative bg-white mb-2">
+<div
+  class:list={{
+    'relative bg-white mb-2': true,
+    [Astro.props.class || '']: !!Astro.props.class,
+  }}
+>
   <div class="relative bg-white overflow-x-auto">
     <svg
       id="chart"

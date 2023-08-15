@@ -114,13 +114,25 @@ const details =
           case 'stats':
             return (
               <Fragment>
-                {detail.columnCharts.map((chart) => (
-                  <Chart
-                    model={chart}
-                    totalWidth={1495}
-                    isSuperlative={response.visual.isSuperlative}
-                  />
-                ))}
+                {detail.columnCharts
+                  .filter((c) => c.categories.length > 5)
+                  .map((chart) => (
+                    <Fragment>
+                      {detail.columnCharts.length > 1 ? (
+                        <h3 class="text-[#2196f3] text-center text-lg font-semibold">
+                          {chart.name}
+                        </h3>
+                      ) : null}
+                      <Chart
+                        model={chart}
+                        totalWidth={1495}
+                        isSuperlative={response.visual.isSuperlative}
+                        class={
+                          detail.columnCharts.length > 1 ? 'mb-8' : undefined
+                        }
+                      />
+                    </Fragment>
+                  ))}
                 {detail.grids.map((grid) => (
                   <Grid data={grid} hideTitle />
                 ))}
