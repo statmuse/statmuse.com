@@ -1,10 +1,11 @@
 import tailwind from '@astrojs/tailwind'
+import react from '@astrojs/react'
 import aws from 'astro-sst/lambda'
 import { defineConfig } from 'astro/config'
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind({ config: { applyBaseStyles: false } })],
+  integrations: [tailwind({ config: { applyBaseStyles: false } }), react()],
   output: 'server',
   adapter: aws(),
   compressHTML: true,

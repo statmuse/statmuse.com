@@ -11,6 +11,7 @@ import NbaBoxscore from '@components/nba-boxscore.astro'
 import NflBoxscore from '@components/nfl-boxscore.astro'
 import NhlBoxscore from '@components/nhl-boxscore.astro'
 import Schedule from '@components/schedule.astro'
+import NbaShotChart from '@components/nba-shotchart'
 import {
   type GameraResponse,
   type GameraToken,
@@ -151,6 +152,16 @@ const details =
             return <NflBoxscore {detail} />
           case 'nhlHistoricalBoxScore':
             return <NhlBoxscore {detail} />
+          case 'nbaShots':
+            return (
+              <div>
+                <NbaShotChart
+                  client:load
+                  model={detail.charts[0]}
+                  widthAvailable={800}
+                />
+              </div>
+            )
           default:
             return null
         }

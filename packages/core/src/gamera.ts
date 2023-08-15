@@ -576,6 +576,41 @@ export interface StandingsDetail extends DetailBase {
   standings: Standings[]
 }
 
+export interface NbaShotChart {
+  name: string
+  cumulative: boolean
+  series: {
+    name: string
+    zones: {
+      Z: number
+      lFGM: number
+      lFGA: number
+      lFGPCT: number
+      lPTS: number
+      lPPS: number
+      FGM: number
+      FGA: number
+      FGPCT: number
+      PTS: number
+      PPS: number
+      FGPCT_Delta: number
+      PPS_Delta: number
+    }[]
+    colors: string[]
+    shots: {
+      X: number
+      Y: number
+      M: number
+      Z: number
+    }[]
+  }[]
+}
+
+export interface NbaShotsDetail extends DetailBase {
+  type: 'nbaShots'
+  charts: NbaShotChart[]
+}
+
 export interface ScheduledGame {
   date: string
   time?: string
@@ -1055,3 +1090,4 @@ export type Detail =
   | TeamProfileDetail
   | StandingsDetail
   | ScheduleDetail
+  | NbaShotsDetail
