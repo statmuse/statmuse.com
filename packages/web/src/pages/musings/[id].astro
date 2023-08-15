@@ -30,18 +30,22 @@ const meta = {
   title: title(query),
   description: musing.text_plain ?? '',
   facebook: {
-    imageUrl: imageForgeUrl({
-      url: musing.image_url || '',
-      bgColor: background,
-      type: 'facebook',
-    }),
+    imageUrl: musing.image_url
+      ? imageForgeUrl({
+          url: musing.image_url,
+          bgColor: background,
+          type: 'facebook',
+        })
+      : undefined,
   },
   twitter: {
-    imageUrl: imageForgeUrl({
-      url: musing.image_url || '',
-      bgColor: background,
-      type: 'twitter',
-    }),
+    imageUrl: musing.image_url
+      ? imageForgeUrl({
+          url: musing.image_url,
+          bgColor: background,
+          type: 'twitter',
+        })
+      : undefined,
   },
 }
 ---

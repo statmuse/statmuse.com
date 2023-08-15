@@ -53,7 +53,9 @@ export function getHeroProps(props: {
   const content = musing
     ? musing.text_markdown ?? (musing.text_plain as string)
     : tokensToHtml(answer.nlg.text.answer)
-  const imageUrl = answer.visual.summary.subject.imageUrl
+  const imageUrl = musing
+    ? musing.image_url ?? undefined
+    : answer.visual.summary.subject.imageUrl
   const answered = musing ? relativeTimeFromDates(musing.publish_at) : undefined
   const imageAlt = props.imageAlt
 

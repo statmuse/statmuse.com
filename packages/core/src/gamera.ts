@@ -29,8 +29,8 @@ export function handleResponse(response: GameraResponse) {
   }
 }
 
-export const tokensToHtml = (tokens: GameraToken[]) => {
-  return tokens.map(formatToken).join('').trim()
+export const tokensToHtml = (tokens?: GameraToken[]) => {
+  return tokens ? tokens.map(formatToken).join('').trim() : ''
 }
 
 export const tokensToText = (tokens: GameraToken[]) => {
