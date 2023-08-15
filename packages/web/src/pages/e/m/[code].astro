@@ -1,42 +1,36 @@
 ---
 import BaseLayout from '@layouts/base.astro'
+import Logo from '@components/logo.astro'
+import { getMusingByShortcode } from '@statmuse/core/musings'
+import { rgbToHex } from '@statmuse/core/color'
 
-const backgroundColor = ''
-const foregroundColor = ''
-const musing = {
-  text: '',
-  image_url: '',
-  question: { text: '' },
-}
-const appStoreImgSrc = ''
+const code = Astro.params.code as string
+const musing = await getMusingByShortcode(code)
+if (!musing) return Astro.redirect('/')
+
+const background = rgbToHex(musing.background_rgba)
+const foreground = rgbToHex(musing.foreground_rgba)
 ---
 
-<BaseLayout>
+<BaseLayout colors={{ background, foreground }}>
   <div
-    class="min-h-screen w-full flex flex-col justify-center items-center"
-    style={{
-      backgroundColor,
-    }}
+    class="bg-team-primary min-h-screen w-full flex flex-col justify-center items-center"
   >
     <header class="w-full h-12 p-4 flex justify-center items-center">
       <a href="https://www.statmuse.com">
-        <!-- <Logo class="h-8" /> -->
+        <Logo class="h-8" />
       </a>
     </header>
     <div
       class="flex flex-col items-center justify-between relative min-h-[500px] md:min-h-[700px] w-full max-w-[500px] px-2 md:px-0"
     >
       <div
-        class="flex flex-col justify-center items-center relative my-5"
-        style={{
-          color: foregroundColor,
-        }}
+        class="text-team-secondary flex flex-col justify-center items-center relative my-5"
       >
         <h1
-          class="text-2xl md:text-4xl font-semibold pb-4 mb-5 border-b"
-          style={{ borderColor: foregroundColor }}
+          class="text-2xl md:text-4xl font-semibold pb-4 mb-5 border-b border-team-secondary"
         >
-          {musing.text}
+          {musing.text_plain}
         </h1>
         <div
           class="flex flex-wrap md:flex-nowrap items-center justify-center pb-5"
@@ -51,7 +45,7 @@ const appStoreImgSrc = ''
           >
             <img
               class="h-10 mt-5 md:m-0"
-              src={appStoreImgSrc}
+              src="/ios-app-banner/app-store.png"
               alt="App Store"
             />
           </a>
@@ -61,20 +55,14 @@ const appStoreImgSrc = ''
         <img
           class="w-full object-contain object-bottom"
           src={musing.image_url}
-          alt={musing?.question?.text || 'player illustration'}
+          alt={musing.question_text || 'player illustration'}
         />
       </div>
     </div>
     <footer
-      style={{ borderColor: foregroundColor }}
-      class="flex items-center justify-center min-h-[100px] w-full border-t"
+      class="flex items-center justify-center min-h-[100px] w-full border-t border-team-secondary"
     >
-      <p
-        class="m-auto text-center p-2"
-        style={{
-          color: foregroundColor,
-        }}
-      >
+      <p class="text-team-secondary m-auto text-center p-2">
         StatMuse gives fans personalized stats, stories and original content
         narrated by more than 20 NFL player voices.
         <br />
