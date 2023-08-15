@@ -2,7 +2,6 @@
 
 ## Parity
 
-- [ ] shot chart visuals (react island)
 - [ ] tabbed visuals
 - [ ] auth (visitors, users)
 - [ ] statmuse+ (limit features for free users)
@@ -33,6 +32,7 @@
 - [x] money index page
 - [x] gallery page
 - [x] grid column sort
+- [x] shot chart visuals (react island)
 
 ## Launch
 
