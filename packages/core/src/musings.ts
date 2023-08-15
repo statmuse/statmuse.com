@@ -13,8 +13,17 @@ export const getMusing = (musing?: string) =>
     .select('links.short_code')
     .limit(1)
 
-const getMusingQuery = getMusing()
-export type Musing = InferResult<typeof getMusingQuery>[number]
+export const getMusingByShortcode = (code: string) =>
+  db
+    .selectFrom('musings')
+    .innerJoin('links', 'links.musing_id', 'musings.id')
+    .innerJoin('questions', 'questions.id', 'musings.question_id')
+    .where('links.short_code', '=', code)
+    .selectAll('musings')
+    .select('questions.text as question_text')
+    .executeTakeFirst()
+
+export type Musing = InferResult<ReturnType<typeof getMusing>>[number]
 
 export const listLatestMusings = db
   .selectFrom('musings')
