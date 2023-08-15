@@ -3,6 +3,8 @@ import BaseLayout from '@layouts/base.astro'
 import Logo from '@components/logo.astro'
 import { getMusingByShortcode } from '@statmuse/core/musings'
 import { rgbToHex } from '@statmuse/core/color'
+import { title } from '@lib/meta'
+import { imageForgeUrl } from '@lib/path'
 
 const code = Astro.params.code as string
 const musing = await getMusingByShortcode(code)
@@ -10,9 +12,32 @@ if (!musing) return Astro.redirect('/')
 
 const background = rgbToHex(musing.background_rgba)
 const foreground = rgbToHex(musing.foreground_rgba)
+
+const meta = {
+  title: title(musing.question_text),
+  description: musing.text_plain || undefined,
+  facebook: {
+    imageUrl: musing.image_url
+      ? imageForgeUrl({
+          url: musing.image_url,
+          bgColor: background,
+          type: 'facebook',
+        })
+      : undefined,
+  },
+  twitter: {
+    imageUrl: musing.image_url
+      ? imageForgeUrl({
+          url: musing.image_url,
+          bgColor: background,
+          type: 'twitter',
+        })
+      : undefined,
+  },
+}
 ---
 
-<BaseLayout colors={{ background, foreground }}>
+<BaseLayout {meta} colors={{ background, foreground }}>
   <div
     class="bg-team-primary min-h-screen w-full flex flex-col justify-center items-center"
   >
