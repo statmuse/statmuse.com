@@ -3,14 +3,14 @@ import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals.astro'
-import { getMusing } from '@statmuse/core/musings'
+import { getMusingByIdOrFriendlyId } from '@statmuse/core/musings'
 import { rgbToHex } from '@statmuse/core/color'
 import { getHeroProps } from '@lib/gamera'
 import { title } from '@lib/meta'
 import { imageForgeUrl } from '@lib/path'
 
-const { id } = Astro.params
-const musing = await getMusing(id).executeTakeFirst()
+const id = Astro.params.id as string
+const musing = await getMusingByIdOrFriendlyId(id).executeTakeFirst()
 if (!musing) return new Response(null, { status: 404, statusText: 'Not found' })
 
 const query = musing.text ?? ''

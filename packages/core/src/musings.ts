@@ -1,17 +1,28 @@
 import { db } from './db'
 import { InferResult } from 'kysely'
+import { isUUID } from './questions'
 
-export const getMusing = (musing?: string) =>
-  db
+export const getMusingByIdOrFriendlyId = (id: string) => {
+  let query = db
     .selectFrom('musings')
     .innerJoin('questions', 'questions.id', 'musings.question_id')
     .innerJoin('leagues', 'leagues.id', 'musings.league_id')
     .innerJoin('links', 'links.musing_id', 'musings.id')
-    .where('musings.friendly_id', '=', musing || null)
+
+  if (isUUID(id)) {
+    query = query.where(({ cmpr, or }) =>
+      or([cmpr('musings.id', '=', id), cmpr('musings.friendly_id', '=', id)])
+    )
+  } else {
+    query = query.where('musings.friendly_id', '=', id)
+  }
+
+  return query
     .selectAll(['musings', 'questions'])
     .select('leagues.name as domain')
     .select('links.short_code')
     .limit(1)
+}
 
 export const getMusingByShortcode = (code: string) =>
   db
@@ -23,7 +34,9 @@ export const getMusingByShortcode = (code: string) =>
     .select('questions.text as question_text')
     .executeTakeFirst()
 
-export type Musing = InferResult<ReturnType<typeof getMusing>>[number]
+export type Musing = InferResult<
+  ReturnType<typeof getMusingByIdOrFriendlyId>
+>[number]
 
 export const listLatestMusings = db
   .selectFrom('musings')

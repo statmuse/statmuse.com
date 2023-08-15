@@ -4,7 +4,7 @@ import { db } from './db'
 export const getQuestion = (id: string) =>
   db.selectFrom('questions').where('questions.id', '=', id).selectAll().limit(1)
 
-const isUUID = (s: string) =>
+export const isUUID = (s: string) =>
   new RegExp(
     '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
   ).test(s)
