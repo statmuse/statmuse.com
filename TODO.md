@@ -13,10 +13,10 @@
 - [ ] error pages (404, gamera couldn't answer, etc)
 - [ ] additional questions not rendered everywhere
 - [ ] security headers
-- [ ] color coded rank values on team profile stats pages (in the grids)
 - [ ] focus should start in the search bar on every page right? also, focus state doesn't have blue outline
-- [ ] newsletter signup
 - [ ] cookie banner
+- [x] newsletter signup
+- [x] color coded rank values on team profile stats pages (in the grids)
 - [x] money visuals
 - [x] meta tags
 - [x] short code redirects

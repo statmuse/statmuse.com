@@ -79,6 +79,21 @@ const getTextColumnHeaderStyles = (col: Column) => {
   return ''
 }
 
+const getRankingColor = ({
+  isRanking,
+  display,
+}: {
+  isRanking: boolean
+  display: string
+}) => {
+  if (isRanking && display.match(/(\d+).*/)) {
+    const [, num] = Array.from(display.match(/(\d+).*/) || [])
+    if (Number(num) <= 10) return 'text-[#009444]'
+    if (Number(num) >= 20) return 'text-[#BF1D2D]'
+  }
+  return ''
+}
+
 const dateRegex = /(Sun|Mon|Tue|Wed|Thu|Fri|Sat)\s(\d+\/\d+)/
 const scoreRegex = /(W|L)\s(\d+-\d+)/
 // (comment left for treesitter :/)
@@ -258,7 +273,7 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                   return row.display
                 }
 
-                const { entity, imageUrl, value } = row[col.rowItemKey]
+                const { entity, imageUrl, value, display } = row[col.rowItemKey]
                 const content = getCellContent(row[col.rowItemKey])
                 const textColumnStyles = getTextColumnStyles(col)
                 const href = entity
@@ -268,6 +283,11 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                       )
                     : getUrlForEntityGamera(entity)
                   : undefined
+
+                const firstColumn = data.columns[0]
+                const isRanking =
+                  row[firstColumn.rowItemKey].display.includes('Rank')
+                const color = getRankingColor({ isRanking, display })
 
                 return (
                   <td
@@ -288,6 +308,7 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                       'w-2': !!imageUrl && !alternateStyle,
                       [textColumnStyles]: !alternateStyle && !!textColumnStyles,
                       [padding ?? '']: !!padding,
+                      [color]: isRanking,
                     }}
                   >
                     {entity ? (
