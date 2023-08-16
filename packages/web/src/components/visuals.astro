@@ -12,7 +12,11 @@ import NflBoxscore from '@components/nfl-boxscore.astro'
 import NhlBoxscore from '@components/nhl-boxscore.astro'
 import Schedule from '@components/schedule.astro'
 import NbaShotChart from '@components/nba-shotchart'
-import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
+import {
+  type GameraResponse,
+  type GameraToken,
+  tokensToHtml,
+} from '@statmuse/core/gamera'
 
 interface Props {
   response: GameraResponse
@@ -24,7 +28,9 @@ const query = Astro.props.query
 const conversationToken = Astro.props.conversationToken
 
 const response = Astro.props.response
-const summary = tokensToHtml(response.visual.summaryTokens)
+const summary = tokensToHtml(
+  response.visual.summaryTokens as GameraToken[] | undefined
+)
 const showSummary = !!response.visual.summaryTokens?.find(
   (t) => t.type === 'inferred'
 )
@@ -169,5 +175,12 @@ const details =
         ))}
       </div>
     ) : null
+  }
+  {
+    details === undefined && (
+      <div style="font-size: 16px; color: rgb(189, 189, 189); text-align: center; display: flex; justify-content: center; align-items: center; width: 100%; height: 250px;">
+        No chart or data table available
+      </div>
+    )
   }
 </Container>
