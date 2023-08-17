@@ -1,12 +1,5 @@
 ---
-import MoneyBaseLayout from '@layouts/money-base.astro'
-import Logo from '@components/logo-money.astro'
-import AskBar from '@components/ask-bar.astro'
-import Image from '@components/image.astro'
-import Footer from '@components/footer.astro'
-import DropdownMenu from '@components/dropdown-menu.astro'
-import MenuLinks from '@components/menu-links.astro'
-import FreestarVideo from '@components/freestar-video.astro'
+import HomeLayout from '@layouts/home.astro'
 import { createAskPath } from '@lib/path'
 
 const examples = [
@@ -131,105 +124,45 @@ const imgs = [
   'https://cdn.statmuse.com/finance/asset_img/kanedama-cyborg-01-min--fc2wcyxt.png',
 ]
 
-const img = imgs[Math.floor(Math.random() * imgs.length)]
+const imgSrc = imgs[Math.floor(Math.random() * imgs.length)]
 ---
 
-<MoneyBaseLayout>
-  <main
-    id="home"
-    class="home-layout [--header-height:55px] md:[--header-height:64px]"
-  >
-    <div class="sidebar hidden md:block min-w-[75px] bg-[#f9f9f9]">
-      <div
-        class="sticky top-0 bg-[#f9f9f9] border-t border-transparent w-[237px]"
-      >
-        <span
-          class="sidebar-hamburger-icon block w-[33px] h-[33px] my-[15.5px] ml-5 cursor-pointer"
-        >
-        </span>
-        <MenuLinks />
-      </div>
-    </div>
-
-    <div
-      class="main h-[var(--header-height)] px-3 md:px-[21px] bg-white flex items-center sticky md:relative top-0 z-20"
-    >
-      <div class="md:hidden">
-        <DropdownMenu />
-      </div>
-
-      <div class="flex space-x-5 items-center flex-1 justify-end"></div>
-    </div>
-
-    <div class="main content-layout">
-      <div class="-mb-[5px] z-10">
-        <div class="flex flex-col md:flex-row items-center mt-[55px] md:mt-0">
-          <div
-            class="flex-1 mb-[34px] md:-mr-[20px] md:mb-0 border-black border-3"
-          >
-            <Logo />
-          </div>
-          <Image
-            src={img}
-            class="max-w-[70%] md:max-w-none md:h-[205px] md:pr-[10px] object-contain object-bottom"
-            alt="magic money man"
-            width={260}
-            height={260}
-            loading="eager"
-          />
-        </div>
-      </div>
-      <div
-        class="content-item-full content-layout mb-5 md:mb-[30px] sticky top-[var(--header-height)] md:top-0 py-[5px] bg-white z-[5]"
-      >
-        <div class="min-h-[46px]">
-          <AskBar money />
-        </div>
-      </div>
-      <!-- <div class="mb-[30px] mt-[32px] w-full md:w-[400px]">
-        <FreestarVideo domain="money" />
-      </div> -->
-      <div class="divide-y divide-[#e4e4e4]">
-        {
-          examples.map(([title, queries]) => (
-            <div class="py-4">
-              <h2 class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3">
-                {title}
-              </h2>
-              <ul>
-                {queries.map(({ query, path }) => (
-                  <li class="my-3">
-                    <a href={path}>{query}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))
-        }
-        <div class="py-6 md:py-8" style="margin-bottom: 24px;">
-          <h3
-            class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
-          >
-            DATA COVERAGE
-          </h3>
-          <ul class="list-disc list-inside">
-            {dataCoverage.map((data) => <li class="my-3" set:html={data} />)}
+<HomeLayout domain="money" img={{ src: imgSrc, text: 'magic money man' }}>
+  <div class="divide-y divide-[#e4e4e4]">
+    {
+      examples.map(([title, queries]) => (
+        <div class="py-4">
+          <h2 class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3">
+            {title}
+          </h2>
+          <ul>
+            {queries.map(({ query, path }) => (
+              <li class="my-3">
+                <a href={path}>{query}</a>
+              </li>
+            ))}
           </ul>
         </div>
-      </div>
-      <iframe
-        class="w-full aspect-video mb-6 md:mb-8"
-        src="https://player.vimeo.com/video/554757123"
-        width="100%"
-        frameborder="0"
-        allow="autoplay; fullscreen"
-        allowfullscreen
+      ))
+    }
+    <div class="py-6 md:py-8" style="margin-bottom: 24px;">
+      <h3
+        class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
       >
-      </iframe>
+        DATA COVERAGE
+      </h3>
+      <ul class="list-disc list-inside">
+        {dataCoverage.map((data) => <li class="my-3" set:html={data} />)}
+      </ul>
     </div>
-
-    <div class="main">
-      <Footer />
-    </div>
-  </main>
-</MoneyBaseLayout>
+  </div>
+  <iframe
+    class="w-full aspect-video mb-6 md:mb-8"
+    src="https://player.vimeo.com/video/554757123"
+    width="100%"
+    frameborder="0"
+    allow="autoplay; fullscreen"
+    allowfullscreen
+  >
+  </iframe>
+</HomeLayout>
