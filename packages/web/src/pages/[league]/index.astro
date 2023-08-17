@@ -80,8 +80,8 @@ const nbaExamples = [
   [
     'Recaps',
     [
-      'How did LeBron do?',
-      'Did Russell Westbrook have a good season this year?',
+      'How did Jokic do?',
+      'Is Ja Morant having a good season this year?',
       'How did MJ do in his rookie season?',
     ].map((q) => ({
       query: q,
@@ -101,7 +101,7 @@ const nbaExamples = [
     'Beyond the Box Score',
     [
       "What is Steph Curry's career true shooting percentage?",
-      'Who had the most DraftKings points in the last NBA Finals?',
+      'Who had the most DraftKings points in the last playoffs?',
       'Kevin Durant shot chart in 2013-14?',
     ].map((q) => ({
       query: q,
@@ -159,7 +159,7 @@ const nflExamples = [
     'Bios',
     [
       'Tell me about the 49ers',
-      'Where did Todd Gurley go to college?',
+      'Where did Peyton Manning go to college?',
       'Dan Marino career stats?',
     ].map((q) => ({
       query: q,
@@ -169,8 +169,8 @@ const nflExamples = [
   [
     'Recaps',
     [
-      'How did Case Keenum do?',
-      'Did Julio Jones have a good season last year?',
+      'How did Justin Jefferson do?',
+      'Did Justin Herbert have a good season last year?',
       'How did Randy Moss do in his rookie season?',
     ].map((q) => ({
       query: q,
@@ -187,7 +187,7 @@ const nflExamples = [
     'Beyond the Box Score',
     [
       'Which team has the most career ties in the NFL?',
-      'Who had the most DraftKings points in the last Super Bowl?',
+      'Who had the most DraftKings points in the last playoffs?',
       'Which team had the most third down conversions last season?',
     ].map((q) => ({
       query: q,
@@ -223,7 +223,7 @@ const mlbExamples = [
     'Standings',
     [
       "What is the Cubs' record?",
-      "What was the Cubs' record last season?",
+      "What was the White Sox' record last season?",
       'Who had the best record in the American League last season?',
     ].map((q) => ({
       query: q,
@@ -255,7 +255,7 @@ const mlbExamples = [
   [
     'Recaps',
     [
-      'How did Mike Trout do?',
+      'How did Shohei do?',
       'How did the Blue Jays do last season?',
       'How did Jose Altuve do in his rookie season?',
     ].map((q) => ({
@@ -333,7 +333,7 @@ const nhlExamples = [
   [
     'Bios',
     [
-      'How old is Patrik Laine?',
+      'How old is Matty Beniers?',
       'How tall is Wayne Gretzky?',
       "What are Mario Lemieux's career stats?",
     ].map((q) => ({
@@ -378,7 +378,7 @@ const pgaExamples = [
   [
     'Scores',
     [
-      'Did Tiger win The Masters last year?',
+      'Who won the Masters last year?',
       'Who won the PGA Championship in 1980?',
       'Who won the US Open in 2000?',
     ].map((q) => ({
@@ -401,7 +401,7 @@ const pgaExamples = [
     'Standings',
     [
       'FedEx Cup rankings in 2013?',
-      'What was The Masters leaderboard in 2016?',
+      '2016 Masters standings',
       'Who led the FedEx rankings last year?',
     ].map((q) => ({
       query: q,
@@ -434,7 +434,7 @@ const pgaExamples = [
     'Recaps',
     [
       'How did Tiger Woods do in 2000?',
-      'Did Jordan Spieth have a good season last year?',
+      'Did Justin Thomas have a good season last year?',
       'How did Jordan Spieth do in his first season?',
     ].map((q) => ({
       query: q,
@@ -458,27 +458,16 @@ const fantasyExamples = [
   [
     'Player Outlooks & Projections',
     [
-      'What is your projection for Davante Adams?',
-      'What is your outlook for Ezekiel Elliott this week?',
-      'Give me your projection for Pat Mahomes.',
-      'Where do you rank Matt Ryan?',
+      'What is your projection for Justin Jefferson?',
+      'What is your outlook for Christian McCaffrey this week?',
+      'Where do you rank Joe Burrow?',
       'Tell me about Russell Wilson.',
-      'How will Kyler Murray do?',
-      'What are your thoughts on Tom Brady this week?',
-      'Should I start Ezekiel Elliott?',
-      'How do you feel about James Conner?',
-      'Should I sit Keenan Allen?',
-      "What's the deal with Melvin Gordon?",
-      'Should I play Amari Cooper?',
-      'What do you think about Gronk?',
-      'Will Jared Goff be a good fantasy quarterback this week?',
+      'Should I start Jonathan Taylor?',
+      'Should I sit Mike Williams?',
+      "What's the deal with Mark Andrews?",
       'Who is the top-ranked quarterback?',
       'Who will be the best fantasy wide receiver this week?',
       'How will the Rams defense do this week?',
-      'Are the Cowboys going to be a good defense?',
-      'Will A.J. Green be a factor?',
-      'Will Cooper Kupp be a worthwhile start?',
-      'How has Kareem Hunt been doing?',
     ].map((q) => ({
       query: q,
       path: createAskPath({ domain: 'fantasy', query: q }),
@@ -487,24 +476,15 @@ const fantasyExamples = [
   [
     'Player Comparisons',
     [
-      'Who should I start between Josh Jacobs and Aaron Jones?',
-      'Should I start Aaron Rodgers or Lamar Jackson?',
-      'Should I start Alvin Kamara or Nick Chubb?',
-      'Who would you start out of Antonio Brown, DK Metcalf and Amari Cooper?',
-      'Would you start Dalvin Cook or Derrick Henry?',
-      'Tell me who to start from Josh Allen, Kyler Murray or Lamar Jackson?',
-      'T.J. Hockenson, Jimmy Graham or Evan Engram?',
-      'Who should I start from Robert Woods and A.J. Brown?',
+      'Alvin Kamara or Nick Chubb?',
+      "Ja'Marr Chase, Cooper Kupp or Tyreek Hill?",
+      'Who had more fantasy points last season? Chubb or Saquon?',
       'Should I go with the Ravens defense or the Colts defense?',
-      'Start Tom Brady or Ryan Tannehill?',
-      'How about Phillip Lindsay or Miles Sanders?',
-      'James Robinson or Kenyan Drake?',
-      'Ronald Jones, Tyler Boyd or Baker Mayfield?',
-      'Jonathan Taylor, Julio Jones, Jared Cook or Kirk Cousins?',
-      'CeeDee Lamb or Marquez Valdes-Scantling?',
-      'JuJu or Tyreek?',
-      'Diggs or Thielen?',
-      'Chubb or Dalvin or Kamara?',
+      'Justin Herbert or Joe Burrow?',
+      'How about Josh Allen or Jalen Hurts?',
+      'Christian McCaffrey, Austin Ekeler fantasy points last 3 seasons.',
+      'Who has more fantasy points per game in their career? Stefon Diggs or AJ Brown?',
+      'Waddle or Tyreek?',
       'Kittle or Waller?',
     ].map((q) => ({
       query: q,
@@ -517,19 +497,13 @@ const fantasyExamples = [
       'Patrick Mahomes vs Chargers.',
       'Who scored the most fantasy points last season?',
       'Which running back averaged the most fantasy points per game last season?',
-      'Which WR had the most fantasy points last week?',
-      'Which QB had the most draftkings points?',
+      'Which QB had the most DraftKings points last year?',
       'Who has the most fantasy points per game in a season?',
-      'Which tight end scored the most fantasy points last season?',
-      'How many fantasy points per game is Derrick Henry averaging this season?',
-      'Which team defense has scored the fewest fantasy points in 2020?',
-      'Which tight end scored the most fantasy points?',
-      'Tell me about Stefon Diggs.',
+      "How many fantasy points per game is Ja'Marr Chase averaging this season?",
+      'Which team defense has scored the fewest fantasy points last year?',
       'How did Tyreek Hill do?',
-      'How is Brady doing this season?',
       'Which rookie has the most fantasy points per game this season?',
       'Which TE is leading in PPR this season?',
-      'How did Dalvin Cook do in Week 15?',
     ].map((q) => ({
       query: q,
       path: createAskPath({ domain: 'fantasy', query: q }),
