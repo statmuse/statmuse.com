@@ -8,6 +8,7 @@ import DropdownMenu from '@components/dropdown-menu.astro'
 import MenuLinks from '@components/menu-links.astro'
 import { listOnboarding } from '@statmuse/core/examples'
 import { createAskPath } from '@lib/path'
+import FreestarVideo from '@components/freestar-video.astro'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fantasy']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league)) {
@@ -661,6 +662,9 @@ Astro.response.headers.set(
             set:text="Money"
           />
         </div>
+      </div>
+      <div class="mb-[30px] mt-[32px] w-full md:w-[400px]">
+        <FreestarVideo domain={league} />
       </div>
       <div class="divide-y divide-[#e4e4e4]">
         {

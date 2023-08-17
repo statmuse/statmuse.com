@@ -9,6 +9,7 @@ import DropdownMenu from '@components/dropdown-menu.astro'
 import { listOnboarding } from '@statmuse/core/examples'
 import MenuLinks from '@components/menu-links.astro'
 import NewsletterSignup from '@components/newsletter-signup.astro'
+import FreestarVideo from '@components/freestar-video.astro'
 
 const examples = await listOnboarding()
 const banner = examples[Math.floor(Math.random() * examples.length)]
@@ -124,6 +125,9 @@ Astro.response.headers.set(
             set:text="Money"
           />
         </div>
+      </div>
+      <div class="mb-[30px] mt-[32px] w-full md:w-[400px]">
+        <FreestarVideo />
       </div>
       <Musings />
       <h4 class="font-semibold text-right py-4">

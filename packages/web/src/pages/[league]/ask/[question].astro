@@ -3,7 +3,13 @@ import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals.astro'
-import { handleResponse, tokensToText } from '@statmuse/core/gamera'
+import Explore from '@components/explore.astro'
+import Container from '@components/container.astro'
+import {
+  GameraDefaultResponse,
+  handleResponse,
+  tokensToText,
+} from '@statmuse/core/gamera'
 import { ask, getHeroProps } from '@lib/gamera'
 import { description, title } from '@lib/meta'
 import { clean, imageForgeUrl } from '@lib/path'
@@ -11,7 +17,9 @@ import { clean, imageForgeUrl } from '@lib/path'
 const { league, question } = Astro.params
 if (!question) return Astro.redirect('/questions')
 let query = question.replaceAll('-', ' ')
-const response = await ask({ league, query })
+const response = (await ask({ league, query })) as
+  | GameraDefaultResponse
+  | undefined
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })
 const { subject, redirectUrl, conversationToken } = handleResponse(response)
@@ -53,4 +61,10 @@ const meta = {
   />
   {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals {response} />
+  <Container>
+    <Explore
+      domain={league}
+      additionalQuestions={response.visual.additionalQuestions}
+    />
+  </Container>
 </Layout>

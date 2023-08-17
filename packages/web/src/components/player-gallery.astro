@@ -5,6 +5,7 @@ import Container from '@components/container.astro'
 import Image from '@components/image.astro'
 import type { PlayerGalleryItem } from '@lib/player'
 import { type GameraDomain, getUrlForEntity } from '@statmuse/core/gamera'
+import FreestarVideo from './freestar-video.astro'
 
 interface Props {
   league?: string
@@ -77,6 +78,9 @@ const meta = {
     </ul>
   </Container>
   <Container>
+    <div class="w-full md:w-[400px] mx-auto mt-4">
+      <FreestarVideo domain={league?.toLowerCase()} />
+    </div>
     <div
       class="flex justify-start md:justify-center py-4 overflow-auto bg-white"
     >
