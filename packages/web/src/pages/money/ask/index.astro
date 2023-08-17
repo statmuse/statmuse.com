@@ -79,7 +79,6 @@ const meta = {
   />
   {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals {response} {conversationToken} />
-  <Footer />
   {
     response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
       <Container>
@@ -90,4 +89,5 @@ const meta = {
       </Container>
     )
   }
+  <Footer />
 </MoneyBaseLayout>

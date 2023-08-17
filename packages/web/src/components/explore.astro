@@ -4,9 +4,10 @@ import FreestarVideo from './freestar-video.astro'
 interface Props {
   domain?: string
   additionalQuestions?: { domain?: string; text: string }[]
+  showVideo?: boolean
 }
 
-const { domain, additionalQuestions } = Astro.props
+const { domain, additionalQuestions, showVideo = false } = Astro.props
 ---
 
 <div class="mt-6 mb-4">
@@ -14,7 +15,7 @@ const { domain, additionalQuestions } = Astro.props
   <div
     class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-2 items-start"
   >
-    <FreestarVideo {domain} />
+    {showVideo && <FreestarVideo {domain} />}
     {
       additionalQuestions ? (
         <ul
@@ -45,7 +46,8 @@ const { domain, additionalQuestions } = Astro.props
         <div />
       )
     }
-    <!-- placeholder div -->
+    <!-- placeholder divs -->
+    {!showVideo && <div />}
     <div></div>
   </div>
 </div>
