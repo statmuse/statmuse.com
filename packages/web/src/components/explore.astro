@@ -1,0 +1,51 @@
+---
+import { createAskPath } from '@lib/path'
+import FreestarVideo from './freestar-video.astro'
+interface Props {
+  domain?: string
+  additionalQuestions?: { domain?: string; text: string }[]
+}
+
+const { domain, additionalQuestions } = Astro.props
+---
+
+<div class="mt-6 mb-4">
+  <h3 class="text-4xl font-semibold">Explore</h3>
+  <div
+    class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-2 items-start"
+  >
+    <FreestarVideo {domain} />
+    {
+      additionalQuestions ? (
+        <ul
+          class="p-4 border border-black rounded-md"
+          data-cy-related-questions
+        >
+          {additionalQuestions.slice(0, 3).map((question) => (
+            <li class="flex-1 min-w-[210px] my-1.5 sm:my-2.5 flex gap-1.5 leading-snug">
+              <i class="w-5 h-5 shrink-0 explore-search-icon" />
+              <a
+                href={createAskPath({
+                  domain: question.domain?.toLowerCase() || domain || '',
+                  query: question.text,
+                })}
+              >
+                {question.text}
+              </a>
+            </li>
+          ))}
+          <li class="flex-1 min-w-[210px] my-1.5 sm:my-2.5 flex gap-1.5 leading-snug">
+            <i class="w-5 h-5 shrink-0 explore-flame-icon" />
+            <a href={domain ? `/${domain}/questions` : '/questions'}>
+              See trending
+            </a>
+          </li>
+        </ul>
+      ) : (
+        <div />
+      )
+    }
+    <!-- placeholder div -->
+    <div></div>
+  </div>
+</div>
