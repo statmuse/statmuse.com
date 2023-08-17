@@ -7,6 +7,14 @@ const league = Astro.params.league as string
 const meta = {
   title: `${league.toUpperCase()} Stats`,
   description: `Instant answers to your ${league.toUpperCase()} questions. Stats, scores, schedules, standings, recaps and more — just ask.`,
+  facebook: {
+    imageUrl:
+      league === 'fantasy' ? '/images/sm-fantasy-meta-banner.jpg' : undefined,
+  },
+  twitter: {
+    imageUrl:
+      league === 'fantasy' ? '/images/sm-fantasy-meta-banner.jpg' : undefined,
+  },
 }
 ---
 

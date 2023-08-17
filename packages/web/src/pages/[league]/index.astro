@@ -529,6 +529,14 @@ const meta = {
   description: `Instant answers to your ${
     league === 'fantasy' ? 'fantasy football' : league.toUpperCase()
   } questions. Stats, projections, comparisons, outlooks, recaps and more — just ask.`,
+  facebook: {
+    imageUrl:
+      league === 'fantasy' ? '/images/sm-fantasy-meta-banner.jpg' : undefined,
+  },
+  twitter: {
+    imageUrl:
+      league === 'fantasy' ? '/images/sm-fantasy-meta-banner.jpg' : undefined,
+  },
 }
 
 Astro.response.headers.set(
