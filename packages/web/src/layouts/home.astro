@@ -1,0 +1,166 @@
+---
+import BaseLayout from '@layouts/base.astro'
+import MoneyBaseLayout from '@layouts/money-base.astro'
+import StandardLogo from '@components/logo.astro'
+import MoneyLogo from '@components/logo-money.astro'
+import AskBar from '@components/ask-bar.astro'
+import Image from '@components/image.astro'
+import Footer from '@components/footer.astro'
+import DropdownMenu from '@components/dropdown-menu.astro'
+import MenuLinks from '@components/menu-links.astro'
+import type { GameraResponse } from '@statmuse/core/gamera'
+import type { Metadata } from '@lib/meta'
+import NewsletterSignup from '@components/newsletter-signup.astro'
+
+interface Props {
+  domain?: string
+  img: {
+    src: string | { answer: GameraResponse }
+    text: string
+  }
+  meta?: Metadata
+  colors?: {
+    foreground?: string
+    background?: string
+    foregroundColor?: string
+    backgroundColor?: string
+  }
+}
+
+const { domain = 'All', img, ...rest } = Astro.props
+
+const leagues = ['All', 'nba', 'nfl', 'nhl', 'mlb', 'pga']
+
+const trendingLinkText = (domain: string) => {
+  switch (domain) {
+    case 'All':
+      return 'See trending searches'
+    case 'money':
+      return 'See trending Money searches'
+    case 'fantasy':
+      return 'See trending Fantasy Football searches'
+    default:
+      return `See trending ${domain.toUpperCase()} searches`
+  }
+}
+
+const Layout = domain === 'money' ? MoneyBaseLayout : BaseLayout
+const Logo = domain === 'money' ? MoneyLogo : StandardLogo
+
+Astro.response.headers.set(
+  'Cache-Control',
+  'public, s-maxage=60, stale-while-revalidate=86400'
+)
+---
+
+<Layout {...rest}>
+  <main
+    id="home"
+    class="home-layout [--header-height:55px] md:[--header-height:64px]"
+  >
+    <div class="sidebar hidden md:block min-w-[75px] bg-[#f9f9f9]">
+      <div
+        class="sticky top-0 bg-[#f9f9f9] border-t border-transparent w-[237px]"
+      >
+        <span
+          class="sidebar-hamburger-icon block w-[33px] h-[33px] my-[15.5px] ml-5 cursor-pointer"
+        >
+        </span>
+        <MenuLinks />
+      </div>
+    </div>
+
+    <div
+      class="main h-[var(--header-height)] px-3 md:px-[21px] bg-white flex items-center sticky md:relative top-0 z-20"
+    >
+      <div class="md:hidden">
+        <DropdownMenu />
+      </div>
+
+      <div class="flex space-x-5 items-center flex-1 justify-end"></div>
+    </div>
+
+    <div class="main content-layout">
+      <div class="-mb-[5px] z-10">
+        <div class="flex flex-col md:flex-row items-center mt-[55px] md:mt-0">
+          <div class="flex-1 mb-[34px] md:-mr-[20px] md:mb-0">
+            <Logo />
+          </div>
+          <Image
+            class="max-w-[70%] md:max-w-none md:h-[205px] md:pr-[10px] object-contain object-bottom"
+            src={img.src}
+            alt={img.text}
+            width={260}
+            height={260}
+            loading="eager"
+          />
+        </div>
+      </div>
+      <div
+        class="content-item-full content-layout mb-5 md:mb-[30px] sticky top-[var(--header-height)] md:top-0 py-[5px] bg-white z-[5]"
+      >
+        <div class="min-h-[46px]">
+          <AskBar money={domain === 'money'} />
+        </div>
+      </div>
+      <div>
+        <div class="flex flex-nowrap gap-[5px] mb-2.5">
+          {
+            leagues.map((league) => (
+              <a
+                class={`flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 ${
+                  league === domain && 'bg-primary text-white'
+                }`}
+                href={league === 'All' ? '/' : `/${league}`}
+                set:text={league === 'All' ? league : league.toUpperCase()}
+              />
+            ))
+          }
+          <a
+            class={`hidden md:flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 min-w-fit ${
+              domain === 'fantasy' && 'bg-secondary text-white'
+            }`}
+            href="/fantasy"
+            set:text="Fantasy"
+          />
+          <a
+            class={`hidden md:flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 min-w-fit ${
+              domain === 'money' && 'bg-[#003ca8] text-white'
+            }`}
+            href="/money"
+            set:text="Money"
+          />
+        </div>
+        <div class="flex flex-nowrap gap-[5px] mb-2.5 md:hidden">
+          <a
+            class={`flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 max-w-fit ${
+              domain === 'fantasy' && 'bg-secondary text-white'
+            }`}
+            href="/fantasy"
+            set:text="Fantasy"
+          />
+          <a
+            class={`flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 max-w-fit ${
+              domain === 'money' && 'bg-[#003ca8] text-white'
+            }`}
+            href="/money"
+            set:text="Money"
+          />
+        </div>
+      </div>
+      <!-- <div class="mb-[30px] mt-[32px] w-full md:w-[400px]">
+        <FreestarVideo />
+      </div> -->
+      <slot />
+      <h4 class="font-semibold text-right py-4">
+        <a href={domain === 'All' ? '/questions' : `/${domain}/questions`}>
+          {trendingLinkText(domain)}
+        </a>
+      </h4>
+      <NewsletterSignup />
+    </div>
+    <div class="main">
+      <Footer />
+    </div>
+  </main>
+</Layout>
