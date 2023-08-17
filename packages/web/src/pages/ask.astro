@@ -4,6 +4,8 @@ import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals.astro'
+import Explore from '@components/explore.astro'
+import Container from '@components/container.astro'
 import { handleResponse, tokensToText } from '@statmuse/core/gamera'
 import { title, description } from '@lib/meta'
 import { clean, createAskPath, imageForgeUrl } from '@lib/path'
@@ -81,4 +83,14 @@ const meta = {
   />
   {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals {response} {conversationToken} />
+  {
+    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
+      <Container>
+        <Explore
+          domain={preferredDomain?.toLowerCase()}
+          additionalQuestions={response.visual.additionalQuestions}
+        />
+      </Container>
+    )
+  }
 </Layout>

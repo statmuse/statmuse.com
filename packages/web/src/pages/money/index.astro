@@ -6,6 +6,7 @@ import Image from '@components/image.astro'
 import Footer from '@components/footer.astro'
 import DropdownMenu from '@components/dropdown-menu.astro'
 import MenuLinks from '@components/menu-links.astro'
+import FreestarVideo from '@components/freestar-video.astro'
 import { createAskPath } from '@lib/path'
 
 const examples = [
@@ -185,6 +186,9 @@ const img = imgs[Math.floor(Math.random() * imgs.length)]
           <AskBar money />
         </div>
       </div>
+      <!-- <div class="mb-[30px] mt-[32px] w-full md:w-[400px]">
+        <FreestarVideo domain="money" />
+      </div> -->
       <div class="divide-y divide-[#e4e4e4]">
         {
           examples.map(([title, queries]) => (

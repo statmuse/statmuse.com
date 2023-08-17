@@ -2,6 +2,7 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
+import Explore from '@components/explore.astro'
 import {
   GameraBoxScore,
   tokensToHtml,
@@ -56,31 +57,9 @@ const meta = {
   />
   <Container>
     <slot />
-    <div class="mt-6 mb-4">
-      <h3 class="text-4xl font-semibold">Explore</h3>
-      <ul class="flex flex-wrap gap-1.5" data-cy-related-questions>
-        {
-          data.visual.additionalQuestions?.map((question) => (
-            <li class="flex-1 min-w-[210px] my-1.5 flex gap-1.5 leading-snug">
-              <i class="w-5 h-5 shrink-0 explore-search-icon" />
-              <a
-                href={`/${question.domain.toLowerCase()}/ask?q=${question.text
-                  .replaceAll(' ', '+')
-                  .toLowerCase()}`}
-              >
-                {question.text}
-              </a>
-            </li>
-          ))
-        }
-
-        <li class="flex-1 min-w-[210px] my-1.5 flex gap-1.5">
-          <i class="w-5 h-5 shrink-0 explore-flame-icon"></i>
-          <a href={`/${data.visual.domain.toLowerCase()}/questions`}>
-            See trending
-          </a>
-        </li>
-      </ul>
-    </div>
+    <Explore
+      domain={preferredDomain}
+      additionalQuestions={data.visual.additionalQuestions}
+    />
   </Container>
 </Layout>

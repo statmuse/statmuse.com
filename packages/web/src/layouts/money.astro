@@ -6,6 +6,7 @@ import Image from '@components/image.astro'
 import Container from '@components/container.astro'
 import TradingviewTicker from '@components/tradingview-ticker.astro'
 import AnswerShare from '@components/answer-share.astro'
+import Explore from '@components/explore.astro'
 import type { Metadata } from '@lib/meta'
 import { getUrlForEntity, type AssetProfile } from '@statmuse/core/kanedama'
 import { imageForgeUrl } from '@lib/path'
@@ -127,6 +128,7 @@ const twitter = {
       }
     </div>
     <slot />
+    <!-- <Explore domain="money" /> -->
   </Container>
   <Footer />
 </MoneyBaseLayout>

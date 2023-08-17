@@ -9,12 +9,12 @@
 - [ ] swr headers (use astro middleware? works on sst?)
 - [ ] analytics (provider?)
 - [ ] typeahead suggestions (ask-bar component)
-- [ ] video ads
 - [ ] error pages (404, gamera couldn't answer, etc)
-- [ ] additional questions not rendered everywhere
 - [ ] security headers
 - [ ] focus should start in the search bar on every page right? also, focus state doesn't have blue outline
 - [ ] cookie banner
+- [x] additional questions not rendered everywhere
+- [x] video ads
 - [x] newsletter signup
 - [x] color coded rank values on team profile stats pages (in the grids)
 - [x] money visuals
