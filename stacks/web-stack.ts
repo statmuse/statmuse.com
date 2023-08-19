@@ -41,6 +41,7 @@ export function Web({ stack }: StackContext) {
   const astroSite = new AstroSite(stack, 'astro-site', {
     path: 'packages/web',
     bind: [
+      api.api,
       api.secrets.STRIPE_SECRET,
       api.secrets.STRIPE_WEBHOOK_SECRET,
       api.secrets.STRIPE_PRICE_ID,

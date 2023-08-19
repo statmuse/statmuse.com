@@ -302,11 +302,13 @@ types.setTypeParser(types.builtins.TIMESTAMP, (datetimeString) => {
 export const db = new Kysely<Database>({
   dialect: new PostgresDialect({
     pool: new Pool({
-      host: process.env.POSTGRES_HOST,
-      port: Number.parseInt(process.env.POSTGRES_PORT || '5432'),
-      database: process.env.POSTGRES_DATABASE || credentials.dbname,
-      user: process.env.POSTGRES_USER || credentials.username,
-      password: process.env.POSTGRES_PASSWORD || credentials.password,
+      host: credentials.host || process.env.POSTGRES_HOST,
+      port:
+        credentials.port ||
+        Number.parseInt(process.env.POSTGRES_PORT || '5432'),
+      database: credentials.dbname || process.env.POSTGRES_DATABASE,
+      user: credentials.username || process.env.POSTGRES_USER,
+      password: credentials.password || process.env.POSTGRES_PASSWORD,
     }),
   }),
 })
