@@ -1,4 +1,6 @@
 ---
+import { Api } from 'sst/node/api'
+
 interface Props {
   query?: string
   conversationToken?: string
@@ -12,6 +14,7 @@ interface Props {
   action={Astro.props.money ? '/money/ask' : '/ask'}
   accept-charset="UTF-8"
   method="post"
+  data-api-url={Api.api.url}
 >
   <div
     role="combobox"
@@ -44,7 +47,7 @@ interface Props {
     <div
       id="react-autowhatever-1"
       role="listbox"
-      class="suggestions-container hidden bg-white w-full px-2 absolute top-full border-x border-x-black border-b border-b-slate-400 rounded-b-lg shadow-md"
+      class="hidden bg-white w-full px-2 absolute top-full border-x border-x-black border-b border-b-black rounded-b-lg shadow-md"
     >
     </div>
   </div>
@@ -66,20 +69,203 @@ interface Props {
 </form>
 
 <script>
-  const forms = document.querySelectorAll<HTMLFormElement>('form.ask-form')
+  import { throttle } from 'lodash-es'
+  import type { AskDocument } from '@statmuse/core/elastic'
 
-  const textareas = document.querySelectorAll('textarea.ask-textarea')
-  textareas.forEach((textarea) => {
-    textarea.addEventListener('keydown', (e) => {
-      const event = e as KeyboardEvent
+  // UI Helpers
 
-      if (event.keyCode === 13) {
-        if (!event.repeat) {
-          forms.forEach((form) => form.submit())
-        }
+  const createElement = (
+    tag: string,
+    options: Record<string, string>
+  ): HTMLElement => {
+    const element = document.createElement(tag)
+    const { innerText, ...rest } = options
+    Object.entries(rest).forEach(([key, value]) => {
+      element.setAttribute(key, value)
+    })
+    if (innerText) element.innerText = innerText.toString()
+    return element
+  }
 
-        e.preventDefault() // Prevents the addition of a new line in the text field
+  const renderSuggestion = (
+    item: HTMLElement,
+    suggestion: Partial<AskDocument>
+  ) => {
+    const content = createElement('span', { class: 'flex items-center' })
+
+    switch (suggestion.type) {
+      case 'answer':
+        content.appendChild(
+          createElement('span', {
+            class: `suggestion-${suggestion.league?.toLowerCase()}-icon w-6 h-6 mr-2.5 shrink-0`,
+          })
+        )
+        break
+      case 'player':
+        content.appendChild(
+          createElement('div', {
+            class: 'w-7 h-7 mr-2.5 rounded-sm shrink-0',
+            style: `background: #c5c9cc url(${suggestion.image_url}) no-repeat center top/145%;`,
+          })
+        )
+        break
+      case 'team':
+        content.appendChild(
+          createElement('div', {
+            class: 'w-7 h-7 mr-2.5 rounded-sm shrink-0',
+            style: `background: #c5c9cc url(${suggestion.image_url}) no-repeat center / contain;`,
+          })
+        )
+        break
+      default:
+        content.appendChild(
+          createElement('span', {
+            class: 'suggestion-example-icon w-6 h-6 mr-2.5 shrink-0',
+          })
+        )
+    }
+
+    content.appendChild(
+      createElement('span', { innerText: suggestion.display || '' })
+    )
+
+    item.replaceChildren(content)
+    if (!item.parentNode) {
+      combobox.append(item)
+    }
+  }
+
+  const apiUrl = (document.querySelector('[data-api-url]') as HTMLElement)
+    .dataset.apiUrl
+  const league =
+    (
+      document.querySelector(
+        'input[name=question\\[preferred_domain\\]]'
+      ) as HTMLInputElement
+    ).value ?? ''
+
+  // State
+
+  const state = {
+    suggestions: [] as AskDocument[],
+    timestamp: new Date().toISOString(),
+    listItems: Array.from(new Array(10)).map(() =>
+      createElement('div', { class: 'py-1.5 px-1 cursor-pointer' })
+    ),
+    selectedIndex: -1,
+    query: '',
+  }
+
+  const form = document.querySelector('form.ask-form') as HTMLFormElement
+  const textarea = document.querySelector(
+    'textarea.ask-textarea'
+  ) as HTMLTextAreaElement
+  const combobox = document.getElementById(
+    'react-autowhatever-1'
+  ) as HTMLElement
+
+  textarea.addEventListener('input', () => {
+    if (state.selectedIndex !== -1) {
+      state.listItems[state.selectedIndex].classList.remove('bg-[#eee]')
+      state.selectedIndex = -1
+    }
+    state.query = textarea.value
+    loadSuggestions()
+  })
+
+  textarea.addEventListener('keydown', (e) => {
+    const event = e as KeyboardEvent
+
+    if (event.keyCode === 13) {
+      if (!event.repeat) {
+        form.submit()
+      }
+
+      return e.preventDefault() // Prevents the addition of a new line in the text field
+    }
+
+    if (event.key === 'ArrowUp') {
+      e.preventDefault()
+      const prev = state.selectedIndex
+      state.selectedIndex =
+        state.selectedIndex === -1
+          ? state.suggestions.length - 1
+          : state.selectedIndex - 1 >= 0
+          ? state.selectedIndex - 1
+          : -1
+      if (state.selectedIndex === -1) {
+        textarea.value = state.query
+        return state.listItems[prev].classList.remove('bg-[#eee]')
+      }
+      if (prev !== -1) state.listItems[prev].classList.remove('bg-[#eee]')
+      state.listItems[state.selectedIndex].classList.add('bg-[#eee]')
+      return (textarea.value = state.suggestions[state.selectedIndex].display)
+    }
+
+    if (event.key === 'ArrowDown') {
+      e.preventDefault()
+      const prev = state.selectedIndex
+      state.selectedIndex =
+        state.selectedIndex + 1 < state.suggestions.length
+          ? state.selectedIndex + 1
+          : -1
+      if (state.selectedIndex === -1) {
+        textarea.value = state.query
+        return state.listItems[prev].classList.remove('bg-[#eee]')
+      }
+      if (prev !== -1) state.listItems[prev].classList.remove('bg-[#eee]')
+      state.listItems[state.selectedIndex].classList.add('bg-[#eee]')
+      return (textarea.value = state.suggestions[state.selectedIndex].display)
+    }
+  })
+
+  state.listItems.forEach((item, i) => {
+    item.addEventListener('mouseenter', () => {
+      if (state.selectedIndex !== -1) {
+        state.listItems[state.selectedIndex].classList.remove('bg-[#eee]')
+      }
+      item.classList.add('bg-[#eee]')
+      state.selectedIndex = i
+    })
+
+    item.addEventListener('mouseleave', () => {
+      if (state.selectedIndex !== -1) {
+        state.listItems[state.selectedIndex].classList.remove('bg-[#eee]')
+        state.selectedIndex = -1
       }
     })
   })
+
+  const loadSuggestions = throttle(async () => {
+    const textarea = document.querySelector('textarea')
+    const query = textarea?.value ?? ''
+    const response = await fetch(
+      `${apiUrl}/search/suggest?${new URLSearchParams({
+        query,
+        league,
+      })}`
+    )
+    const results = await response.json()
+
+    if (results.timestamp > state.timestamp) {
+      state.timestamp = results.timestamp
+      state.suggestions = results.suggestions
+
+      const total = state.suggestions.length
+      for (const i in state.listItems) {
+        const item = state.listItems[i]
+        if (Number(i) < total) {
+          renderSuggestion(item, state.suggestions[i])
+        } else {
+          item.remove()
+        }
+      }
+
+      if (total > 0) {
+        combobox.classList.remove('hidden')
+      } else {
+        combobox.classList.add('hidden')
+      }
+    }
+  }, 300)
 </script>
