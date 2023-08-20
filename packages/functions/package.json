@@ -23,6 +23,7 @@
     "stripe": "^12.9.0"
   },
   "prettier": {
-    "semi": false
+    "semi": false,
+    "singleQuote": true
   }
 }
