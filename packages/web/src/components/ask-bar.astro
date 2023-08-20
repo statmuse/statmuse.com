@@ -219,6 +219,11 @@ interface Props {
     }
   })
 
+  textarea.addEventListener('click', (e) => {
+    e.preventDefault()
+    loadSuggestions()
+  })
+
   state.listItems.forEach((item, i) => {
     item.addEventListener('mouseenter', () => {
       if (state.selectedIndex !== -1) {
