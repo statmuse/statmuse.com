@@ -51,6 +51,9 @@ export function API({ stack }: StackContext) {
       'GET /search/suggest': {
         function: 'packages/functions/src/search/autosuggest.handler',
       },
+      'GET /money/search/suggest': {
+        function: 'packages/functions/src/search/autosuggest.moneyHandler',
+      },
       'POST /stripe/manage': {
         authorizer: 'simple',
         function: 'packages/functions/src/stripe/manage.handler',
