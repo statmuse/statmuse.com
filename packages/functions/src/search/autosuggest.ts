@@ -1,14 +1,86 @@
-import { ApiHandler, useQueryParam } from "sst/node/api"
-import { autosuggest } from "@statmuse/core/elastic"
+import { ApiHandler, useQueryParam } from 'sst/node/api'
+import { autosuggest } from '@statmuse/core/elastic'
+
+const fantasyExamples = [
+  'Should I start Ezekiel Elliott?',
+  'Who will be the best fantasy wide receiver this week?',
+  'Chubb or Dalvin or Kamara?',
+  'Which TE is leading in PPR this season?',
+  'Who scored the most fantasy points last season?',
+].map((display) => ({ type: 'answer', league: 'nfl', display }))
+
+const nbaExamples = [
+  'Who leads the NBA in scoring?',
+  "What is Steph's career true shooting percentage?",
+  'Kevin Durant shot chart in 2013-14',
+  'How tall is Yao Ming?',
+  'Kobe playoff stats',
+].map((display) => ({ type: 'answer', league: 'nba', display }))
+
+const nflExamples = [
+  'Did the Chiefs win?',
+  'Most rushing touchdowns in a game ever?',
+  'Which team has the most two-point conversions?',
+  'Who had the most fantasy points last season?',
+  'How did Randy Moss do as a rookie?',
+].map((display) => ({ type: 'answer', league: 'nfl', display }))
+
+const nhlExamples = [
+  'Tell me about Wayne Gretzky',
+  'Who won the Stanley Cup last season?',
+  'NHL standings',
+  'Who had the most game winning goals in the playoffs?',
+  'Which team had the most power play points last year?',
+].map((display) => ({ type: 'answer', league: 'nhl', display }))
+
+const mlbExamples = [
+  "What is the Dodgers' record?",
+  'Who has the most RBI in a World Series?',
+  'Who has the highest career strikeouts per 9 innings?',
+  'Bartolo Colon weight?',
+  'Which team has won the most World Series?',
+].map((display) => ({ type: 'answer', league: 'mlb', display }))
+
+const pgaExamples = [
+  'PGA schedule',
+  'Tiger career stats',
+  'Who had the best putting average last season?',
+  'Who won the PGA Championship in 1980?',
+  'Highest FWY% by Phil Mickelson in a season?',
+].map((display) => ({ type: 'answer', league: 'pga', display }))
+
+const examples = {
+  fantasy: fantasyExamples,
+  nba: nbaExamples,
+  nfl: nflExamples,
+  nhl: nhlExamples,
+  mlb: mlbExamples,
+  pga: pgaExamples,
+}
+
+const getExampleSuggestions = (league?: string) => {
+  if (league) {
+    return examples[league]
+  }
+
+  return ['nba', 'nfl', 'nhl', 'mlb', 'pga'].map((key) => examples[key][0])
+}
 
 export const handler = ApiHandler(async (_evt) => {
-  const query = useQueryParam("query") as string
-  const league = useQueryParam("league")
+  const query = useQueryParam('query') as string
+  const league = useQueryParam('league')
 
-  console.log(league)
+  if (query === '') {
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        suggestions: getExampleSuggestions(league),
+        timestamp: new Date().toISOString(),
+      }),
+    }
+  }
 
   const suggestions = await autosuggest(query, league)
-
   return {
     statusCode: 200,
     body: JSON.stringify({
