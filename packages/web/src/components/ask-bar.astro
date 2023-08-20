@@ -228,6 +228,9 @@ interface Props {
     state.suggestions = []
     state.selectedIndex = -1
     combobox.classList.add('hidden')
+    textarea.classList.remove('border-b-transparent')
+    textarea.classList.remove('rounded-bl-none')
+    textarea.classList.remove('rounded-br-none')
   })
 
   state.listItems.forEach((item, i) => {
@@ -248,8 +251,7 @@ interface Props {
   })
 
   const loadSuggestions = throttle(async () => {
-    const textarea = document.querySelector('textarea')
-    const query = textarea?.value ?? ''
+    const query = textarea.value ?? ''
     const response = await fetch(
       `${apiUrl}/search/suggest?${new URLSearchParams({
         query,
@@ -274,8 +276,14 @@ interface Props {
 
       if (total > 0) {
         combobox.classList.remove('hidden')
+        textarea.classList.add('border-b-transparent')
+        textarea.classList.add('rounded-bl-none')
+        textarea.classList.add('rounded-br-none')
       } else {
         combobox.classList.add('hidden')
+        textarea.classList.remove('border-b-transparent')
+        textarea.classList.remove('rounded-bl-none')
+        textarea.classList.remove('rounded-br-none')
       }
     }
   }, 300)
