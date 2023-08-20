@@ -1,6 +1,9 @@
 import { ApiHandler, useQueryParam } from 'sst/node/api'
 import { autosuggest } from '@statmuse/core/elastic'
 
+const sample = <T>(items: [T]) =>
+  items[Math.floor(Math.random() * items.length)]
+
 const fantasyExamples = [
   'Should I start Ezekiel Elliott?',
   'Who will be the best fantasy wide receiver this week?',
@@ -63,7 +66,7 @@ const getExampleSuggestions = (league?: string) => {
     return examples[league]
   }
 
-  return ['nba', 'nfl', 'nhl', 'mlb', 'pga'].map((key) => examples[key][0])
+  return ['nba', 'nfl', 'nhl', 'mlb', 'pga'].map((key) => sample(examples[key]))
 }
 
 export const handler = ApiHandler(async (_evt) => {
