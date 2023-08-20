@@ -84,6 +84,9 @@ importers:
       lambda-stream:
         specifier: ^0.5.0
         version: 0.5.0
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
       pg:
         specifier: ^8.11.0
         version: 8.11.1
@@ -97,6 +100,9 @@ importers:
       '@types/aws-lambda':
         specifier: ^8.10.119
         version: 8.10.119
+      '@types/lodash-es':
+        specifier: ^4.17.8
+        version: 4.17.8
       '@types/node':
         specifier: ^20.3.1
         version: 20.4.5
@@ -5914,7 +5920,6 @@ packages:
     resolution: {integrity: sha512-euY3XQcZmIzSy7YH5+Unb3b2X12Wtk54YWINBvvGQ5SmMvwb11JQskGsfkH/5HXK77Kr8GF0wkVDIxzAisWtog==}
     dependencies:
       '@types/lodash': 4.14.196
-    dev: false
 
   /@types/lodash@4.14.196:
     resolution: {integrity: sha512-22y3o88f4a94mKljsZcanlNWPzO0uBsBdzLAngf2tp533LzZcQzb6+eZPJ+vCTt+bqF2XnvT9gejTLsAcJAJyQ==}
