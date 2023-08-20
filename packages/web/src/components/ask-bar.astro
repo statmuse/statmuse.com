@@ -248,6 +248,11 @@ interface Props {
         state.selectedIndex = -1
       }
     })
+
+    item.addEventListener('click', () => {
+      textarea.value = state.suggestions[i].display
+      form.submit()
+    })
   })
 
   const loadSuggestions = throttle(async () => {
