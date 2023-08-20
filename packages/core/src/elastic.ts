@@ -29,9 +29,14 @@ export type AskDocument = {
   updated_at: string
 }
 
+export type FinanceAskDocument = {
+  query: string
+}
+
 export const autosuggest = async (query: string, league?: string) => {
   const results: SearchResponse<AskDocument> = await client.search({
     index: 'asks.v2',
+    size: 5,
     query: {
       bool: {
         filter: [],
@@ -113,4 +118,33 @@ export const autosuggest = async (query: string, league?: string) => {
   }, {} as Record<string, Partial<AskDocument> & { score: number }>)
 
   return Object.values(x).sort((a, b) => b.score - a.score)
+}
+
+export const financeAutosuggest = async (query: string) => {
+  const results: SearchResponse<FinanceAskDocument> = await client.search({
+    index: 'finance_asks',
+    size: 10,
+    query: {
+      function_score: {
+        boost_mode: 'multiply',
+        functions: [
+          { gauss: { count_web_search: { origin: 1, scale: 10000 } } },
+          {
+            gauss: {
+              last_web_search_at: { offset: '1h', origin: 'now', scale: '3d' },
+            },
+          },
+        ],
+        query: { match: { query: `${query}` } },
+        score_mode: 'sum',
+      },
+    },
+  })
+
+  return results.hits.hits
+    .map((x) => ({
+      score: x._score || 0,
+      display: x._source?.query,
+    }))
+    .sort((a, b) => b.score - a.score)
 }
