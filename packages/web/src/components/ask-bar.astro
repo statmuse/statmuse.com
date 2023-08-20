@@ -224,6 +224,12 @@ interface Props {
     loadSuggestions()
   })
 
+  textarea.addEventListener('blur', () => {
+    state.suggestions = []
+    state.selectedIndex = -1
+    combobox.classList.add('hidden')
+  })
+
   state.listItems.forEach((item, i) => {
     item.addEventListener('mouseenter', () => {
       if (state.selectedIndex !== -1) {
