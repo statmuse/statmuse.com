@@ -33,7 +33,7 @@ query = clean(
 preferredDomain =
   response.type === 'nlgPromptForMoreInfoVisualChoicesOptional'
     ? undefined
-    : response.visual.domain
+    : response.visual.domain.toLowerCase()
 
 const handled = handleResponse(response)
 if (handled.redirectUrl) return Astro.redirect(handled.redirectUrl)

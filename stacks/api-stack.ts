@@ -1,4 +1,4 @@
-import { StackContext, Api, Config, Function, use } from 'sst/constructs'
+import { StackContext, Api, Function, use } from 'sst/constructs'
 import { Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2'
 import { Imports } from './imports-stack'
 import { Secrets } from './secrets-stack'
@@ -48,6 +48,12 @@ export function API({ stack }: StackContext) {
         authorizer: 'simple',
         function: 'packages/functions/src/stripe/checkout.handler',
       },
+      'GET /search/suggest': {
+        function: 'packages/functions/src/search/autosuggest.handler',
+      },
+      'GET /money/search/suggest': {
+        function: 'packages/functions/src/search/autosuggest.moneyHandler',
+      },
       'POST /stripe/manage': {
         authorizer: 'simple',
         function: 'packages/functions/src/stripe/manage.handler',
@@ -61,6 +67,7 @@ export function API({ stack }: StackContext) {
     defaults: {
       function: {
         bind: [
+          secrets.ELASTICSEARCH_CREDENTIALS,
           secrets.STRIPE_SECRET,
           secrets.STRIPE_WEBHOOK_SECRET,
           secrets.STRIPE_PRICE_ID,
@@ -93,6 +100,7 @@ export function API({ stack }: StackContext) {
   stack.addOutputs({ ApiEndpoint: api.url })
 
   return {
+    api,
     secrets,
     vpc,
     environment,

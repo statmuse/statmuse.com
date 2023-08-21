@@ -6,7 +6,8 @@ export function Secrets({ stack }: StackContext) {
     'STRIPE_SECRET',
     'STRIPE_WEBHOOK_SECRET',
     'STRIPE_PRICE_ID',
-    'API_KEY'
+    'API_KEY',
+    'ELASTICSEARCH_CREDENTIALS'
   )
 
   return {

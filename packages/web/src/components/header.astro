@@ -16,6 +16,7 @@ interface Props {
     domain?: string
   }
   money?: boolean
+  fantasy?: boolean
 }
 
 const query = Astro.props.query ?? ''
@@ -42,6 +43,7 @@ const share = Astro.props.share
         {conversationToken}
         {preferredDomain}
         money={Astro.props.money}
+        fantasy={Astro.props.fantasy}
       />
     </div>
     <div

@@ -15,7 +15,7 @@ if (!musing) return new Response(null, { status: 404, statusText: 'Not found' })
 
 const query = musing.text ?? ''
 const conversationToken = musing.input_conversation_token
-const preferredDomain = musing.domain
+const preferredDomain = musing.domain.toLowerCase()
 
 const foreground = musing.foreground_rgba
   ? rgbToHex(musing.foreground_rgba)
@@ -58,7 +58,7 @@ const meta = {
     share={{
       type: 'musing',
       query,
-      domain: preferredDomain.toLowerCase(),
+      domain: preferredDomain,
       shortCode: musing.short_code,
     }}
   />

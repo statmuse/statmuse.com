@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "^3.354.0",
+    "@elastic/elasticsearch": "^8.9.0",
     "dayjs": "^1.11.8",
     "kysely": "^0.25.0",
     "pg": "^8.11.0",
