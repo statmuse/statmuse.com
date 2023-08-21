@@ -34,6 +34,7 @@ const placeholder = money
     <div class="relative group">
       <textarea
         class="ask-textarea input appearance-none outline-none resize-none block w-full border border-black rounded-lg p-2.5 focus:shadow-md peer group-hover:shadow-md"
+        autofocus
         autocomplete="off"
         aria-autocomplete="list"
         name="question[query]"
@@ -167,6 +168,8 @@ const placeholder = money
           'input[name=question\\[preferred_domain\\]]'
         ) as HTMLInputElement
       ).value
+
+  textarea.setSelectionRange(textarea.value.length, textarea.value.length)
 
   // State
 
