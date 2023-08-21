@@ -46,6 +46,14 @@ const placeholder = money
         style="height: 46px !important;"
         set:text={Astro.props.query}
       />
+      <img
+        class={`w-5 h-5 absolute right-[46px] bottom-3 object-contain cursor-pointer ${
+          !Astro.props.query && 'hidden'
+        }`}
+        src="/public/icons/icon-x.svg"
+        alt="clear input"
+        data-clear
+      />
       <input
         type="submit"
         class="ask-bar-search-icon absolute bottom-3 right-2.5 block w-5 h-5 cursor-pointer"
@@ -152,6 +160,7 @@ const placeholder = money
   const combobox = document.getElementById(
     'react-autowhatever-1'
   ) as HTMLElement
+  const close = document.querySelector('[data-clear]') as HTMLElement
   const apiUrl = `${form.dataset.apiUrl}${
     form.action.includes('money') ? '/money/search/suggest' : '/search/suggest'
   }`
@@ -183,6 +192,7 @@ const placeholder = money
       state.selectedIndex = -1
     }
     state.query = textarea.value
+    if (state.query) close.classList.remove('hidden')
     loadSuggestions(state.query)
   })
 
@@ -263,6 +273,12 @@ const placeholder = money
       textarea.value = state.suggestions[i].display
       form.submit()
     })
+  })
+
+  close.addEventListener('click', () => {
+    state.query = textarea.value = ''
+    close.classList.add('hidden')
+    textarea.focus()
   })
 
   // Helpers
