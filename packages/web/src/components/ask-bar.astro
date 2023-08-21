@@ -6,12 +6,22 @@ interface Props {
   conversationToken?: string
   preferredDomain?: string
   money?: boolean
+  fantasy?: boolean
 }
+
+const { money, fantasy } = Astro.props
+
+const action = money ? '/money/ask' : fantasy ? '/fantasy/ask' : '/ask'
+const placeholder = money
+  ? 'Search stocks, FX or bitcoin'
+  : fantasy
+  ? 'Search fantasy projections or points'
+  : 'Search players, stats or odds'
 ---
 
 <form
   class="ask-form"
-  action={Astro.props.money ? '/money/ask' : '/ask'}
+  {action}
   accept-charset="UTF-8"
   method="post"
   data-api-url={Api.api.url}
@@ -30,9 +40,7 @@ interface Props {
         aria-autocomplete="list"
         aria-controls="react-autowhatever-1"
         name="question[query]"
-        placeholder={Astro.props.money
-          ? 'Search stocks, FX or bitcoin'
-          : 'Search players, stats or odds'}
+        {placeholder}
         required=""
         enterkeyhint="search"
         style="height: 46px !important;"
