@@ -58,18 +58,19 @@ export const autosuggest = async (query: string, league?: string) => {
                   boost: 1,
                 },
               },
-            ].concat(
-              query.length <= 3
-                ? {
-                    term: {
-                      abbrev: {
-                        boost: 1,
-                        value: query.toUpperCase(),
+              ...(query.length <= 3
+                ? [
+                    {
+                      term: {
+                        abbrev: {
+                          boost: 1,
+                          value: query.toUpperCase(),
+                        },
                       },
                     },
-                  }
-                : []
-            ),
+                  ]
+                : []),
+            ],
           },
         },
         should: [
@@ -80,18 +81,19 @@ export const autosuggest = async (query: string, league?: string) => {
               functions: [{ random_score: { field: '_seq_no' } }],
             },
           },
-        ].concat(
-          league
-            ? {
-                constant_score: {
-                  filter: {
-                    term: { league: league.toUpperCase() },
+          ...(league
+            ? [
+                {
+                  constant_score: {
+                    filter: {
+                      term: { league: league.toUpperCase() },
+                    },
+                    boost: 2,
                   },
-                  boost: 2,
                 },
-              }
-            : []
-        ),
+              ]
+            : []),
+        ],
       },
     },
   })
