@@ -135,14 +135,25 @@ interface Props {
     }
   }
 
-  const apiUrl = (document.querySelector('[data-api-url]') as HTMLElement)
-    .dataset.apiUrl
-  const league =
-    (
-      document.querySelector(
-        'input[name=question\\[preferred_domain\\]]'
-      ) as HTMLInputElement
-    ).value ?? ''
+  // Init
+
+  const form = document.querySelector('form.ask-form') as HTMLFormElement
+  const textarea = document.querySelector(
+    'textarea.ask-textarea'
+  ) as HTMLTextAreaElement
+  const combobox = document.getElementById(
+    'react-autowhatever-1'
+  ) as HTMLElement
+  const apiUrl = `${form.dataset.apiUrl}${
+    form.action.includes('money') ? '/money/search/suggest' : '/search/suggest'
+  }`
+  const league = form.action.includes('money')
+    ? undefined
+    : (
+        document.querySelector(
+          'input[name=question\\[preferred_domain\\]]'
+        ) as HTMLInputElement
+      ).value
 
   // State
 
@@ -156,13 +167,7 @@ interface Props {
     query: '',
   }
 
-  const form = document.querySelector('form.ask-form') as HTMLFormElement
-  const textarea = document.querySelector(
-    'textarea.ask-textarea'
-  ) as HTMLTextAreaElement
-  const combobox = document.getElementById(
-    'react-autowhatever-1'
-  ) as HTMLElement
+  // Listeners
 
   textarea.addEventListener('input', () => {
     if (state.selectedIndex !== -1) {
@@ -170,7 +175,7 @@ interface Props {
       state.selectedIndex = -1
     }
     state.query = textarea.value
-    loadSuggestions()
+    loadSuggestions(state.query)
   })
 
   textarea.addEventListener('keydown', (e) => {
@@ -221,16 +226,13 @@ interface Props {
 
   textarea.addEventListener('click', (e) => {
     e.preventDefault()
-    loadSuggestions()
+    loadSuggestions(state.query)
   })
 
   textarea.addEventListener('blur', () => {
     state.suggestions = []
     state.selectedIndex = -1
-    combobox.classList.add('hidden')
-    textarea.classList.remove('border-b-transparent')
-    textarea.classList.remove('rounded-bl-none')
-    textarea.classList.remove('rounded-br-none')
+    closeAutosuggest()
   })
 
   state.listItems.forEach((item, i) => {
@@ -255,12 +257,13 @@ interface Props {
     })
   })
 
-  const loadSuggestions = throttle(async () => {
-    const query = textarea.value ?? ''
+  // Helpers
+
+  const loadSuggestions = throttle(async (query: string) => {
     const response = await fetch(
-      `${apiUrl}/search/suggest?${new URLSearchParams({
+      `${apiUrl}?${new URLSearchParams({
         query,
-        league,
+        ...(league ? { league } : {}),
       })}`
     )
     const results = await response.json()
@@ -269,27 +272,31 @@ interface Props {
       state.timestamp = results.timestamp
       state.suggestions = results.suggestions
 
-      const total = state.suggestions.length
+      const count = state.suggestions.length
       for (const i in state.listItems) {
         const item = state.listItems[i]
-        if (Number(i) < total) {
+        if (Number(i) < count) {
           renderSuggestion(item, state.suggestions[i])
         } else {
           item.remove()
         }
       }
 
-      if (total > 0) {
-        combobox.classList.remove('hidden')
-        textarea.classList.add('border-b-transparent')
-        textarea.classList.add('rounded-bl-none')
-        textarea.classList.add('rounded-br-none')
-      } else {
-        combobox.classList.add('hidden')
-        textarea.classList.remove('border-b-transparent')
-        textarea.classList.remove('rounded-bl-none')
-        textarea.classList.remove('rounded-br-none')
-      }
+      count > 0 ? openAutosuggest() : closeAutosuggest()
     }
-  }, 300)
+  }, 600)
+
+  const closeAutosuggest = () => {
+    combobox.classList.add('hidden')
+    textarea.classList.remove('border-b-transparent')
+    textarea.classList.remove('rounded-bl-none')
+    textarea.classList.remove('rounded-br-none')
+  }
+
+  const openAutosuggest = () => {
+    combobox.classList.remove('hidden')
+    textarea.classList.add('border-b-transparent')
+    textarea.classList.add('rounded-bl-none')
+    textarea.classList.add('rounded-br-none')
+  }
 </script>
