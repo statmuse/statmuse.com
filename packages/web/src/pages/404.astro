@@ -1,12 +1,36 @@
 ---
-import ErrorLayout from '@layouts/error.astro'
+import MainLayout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Container from '@components/container.astro'
+import Image from '@components/image.astro'
 ---
 
-<ErrorLayout
-  errorMessage="We searched everywhere but can't seem to find the page you're looking for."
-  image={{
-    imageUrl: Astro.url.origin + '/error/confused-jr-smith.png',
-    imageAlt: 'Illustration of J.R. Smith with confused expression',
-  }}
-  meta={{ title: '404' }}
-/>
+<MainLayout
+  {...Astro.props}
+  colors={{ foreground: '#fff', background: '#0086ff' }}
+>
+  <Header />
+  <Container class="mb-5 bg-team-primary text-team-secondary">
+    <div class="flex flex-col md:flex-row pt-4 md:pt-6 relative">
+      <div
+        class="flex-1 flex flex-col justify-between text-center md:text-left"
+      >
+        <h1
+          data-cy-nlg
+          class="font-semibold text-xl md:text-2xl md:leading-snug lg:text-[1.75rem] xl:text-3xl xl:leading-snug my-auto"
+        >
+          We searched everywhere but can't seem to find the page you're looking
+          for.
+        </h1>
+      </div>
+      <Image
+        class="h-44 md:h-52 self-center md:self-end mt-2 md:mt-0 md:pl-6 md:pr-1.5 select-none object-contain object-bottom"
+        alt="Illustration of J.R. Smith with confused expression"
+        src={Astro.url.origin + '/error/confused-jr-smith.png'}
+        width={350}
+        height={300}
+        loading="eager"
+      />
+    </div>
+  </Container>
+</MainLayout>
