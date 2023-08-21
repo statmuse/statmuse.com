@@ -166,7 +166,7 @@ const Layout = domain === 'money' ? MoneyBaseLayout : BaseLayout
 ---
 
 <Layout {meta}>
-  <Header />
+  <Header money={domain === 'money'} preferredDomain={domain} />
   <Container>
     <nav style="margin-top: 15px;">
       <div style="display: flex; gap: 10px;">

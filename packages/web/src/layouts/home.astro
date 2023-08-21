@@ -100,7 +100,10 @@ Astro.response.headers.set(
         class="content-item-full content-layout mb-5 md:mb-[30px] sticky top-[var(--header-height)] md:top-0 py-[5px] bg-white z-[5]"
       >
         <div class="min-h-[46px]">
-          <AskBar money={domain === 'money'} />
+          <AskBar
+            money={domain === 'money'}
+            preferredDomain={domain !== 'All' ? domain : undefined}
+          />
         </div>
       </div>
       <div>
