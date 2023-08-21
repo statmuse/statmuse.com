@@ -1,0 +1,12 @@
+---
+import ErrorLayout from '@layouts/error.astro'
+---
+
+<ErrorLayout
+  errorMessage="Something went wrong. Try refreshing the page, or come back in a few minutes."
+  image={{
+    imageUrl: Astro.url.origin + '/error/crying-jordan.png',
+    imageAlt: 'Illustration of Michael Jordan, crying',
+  }}
+  meta={{ title: '500' }}
+/>
