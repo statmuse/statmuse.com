@@ -1,1 +1,12 @@
-404 not found, whaaa whaaaaaa
+---
+import ErrorLayout from '@layouts/error.astro'
+---
+
+<ErrorLayout
+  errorMessage="We searched everywhere but can't seem to find the page you're looking for."
+  image={{
+    imageUrl: Astro.url.origin + '/error/confused-jr-smith.png',
+    imageAlt: 'Illustration of J.R. Smith with confused expression',
+  }}
+  meta={{ title: '404' }}
+/>
