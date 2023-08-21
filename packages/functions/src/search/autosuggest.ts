@@ -102,6 +102,7 @@ export const handler = ApiHandler(async (_evt) => {
     return {
       statusCode: 200,
       body: JSON.stringify({
+        history: [], // TODO: query user history
         suggestions: getExampleSuggestions(league),
         timestamp: new Date().toISOString(),
       }),
@@ -113,6 +114,7 @@ export const handler = ApiHandler(async (_evt) => {
   return {
     statusCode: 200,
     body: JSON.stringify({
+      history: [], // TODO: query user history
       suggestions,
       timestamp: new Date().toISOString(),
     }),
@@ -126,6 +128,7 @@ export const moneyHandler = ApiHandler(async (_evt) => {
     return {
       statusCode: 200,
       body: JSON.stringify({
+        history: [], // TODO: query user history
         suggestions: sampleSize(financeExmaples, 5),
         timestamp: new Date().toISOString(),
       }),
@@ -137,6 +140,7 @@ export const moneyHandler = ApiHandler(async (_evt) => {
   return {
     statusCode: 200,
     body: JSON.stringify({
+      history: [], // TODO: query user history
       suggestions,
       timestamp: new Date().toISOString(),
     }),

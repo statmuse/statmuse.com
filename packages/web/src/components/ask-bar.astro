@@ -188,7 +188,9 @@ const placeholder = money
       state.selectedIndex = -1
     }
     state.query = textarea.value
-    if (state.query) close.classList.remove('hidden')
+    state.query
+      ? close.classList.remove('hidden')
+      : close.classList.add('hidden')
     loadSuggestions(state.query)
   })
 
@@ -286,11 +288,15 @@ const placeholder = money
         ...(league ? { league } : {}),
       })}`
     )
-    const results = await response.json()
+    const results: {
+      timestamp: string
+      suggestions: AskDocument[]
+      history: AskDocument[]
+    } = await response.json()
 
     if (results.timestamp > state.timestamp) {
       state.timestamp = results.timestamp
-      state.suggestions = results.suggestions
+      state.suggestions = [...results.suggestions, ...results.history]
 
       const count = state.suggestions.length
       for (const i in state.listItems) {
