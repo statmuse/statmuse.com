@@ -59,6 +59,8 @@ const examples = {
   pga: pgaExamples,
 }
 
+type League = keyof typeof examples
+
 const financeExmaples = [
   "What's the all-time high price of Apple?",
   "What's the return of DKNG since March 12, 2020?",
@@ -82,17 +84,19 @@ const financeExmaples = [
   "What's the best return between AAPL, DKNG, ZOOM and Amazon since march 12, 2020?",
 ].map((x) => ({ display: x }))
 
-const getExampleSuggestions = (league?: string) => {
+const getExampleSuggestions = (league?: League) => {
   if (league) {
     return examples[league]
   }
 
-  return ['nba', 'nfl', 'nhl', 'mlb', 'pga'].map((key) => sample(examples[key]))
+  return (['nba', 'nfl', 'nhl', 'mlb', 'pga'] as League[]).map((key) =>
+    sample(examples[key])
+  )
 }
 
 export const handler = ApiHandler(async (_evt) => {
   const query = useQueryParam('query') as string
-  const league = useQueryParam('league')
+  const league = useQueryParam('league') as League
 
   if (query === '') {
     return {
@@ -105,6 +109,7 @@ export const handler = ApiHandler(async (_evt) => {
   }
 
   const suggestions = await autosuggest(query, league)
+
   return {
     statusCode: 200,
     body: JSON.stringify({
