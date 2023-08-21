@@ -1,0 +1,12 @@
+---
+import ErrorLayout from '@layouts/error.astro'
+---
+
+<ErrorLayout
+  errorMessage="Looks like your browser sent a request we could not understand."
+  image={{
+    imageUrl: Astro.url.origin + '/error/angry-lebron.png',
+    imageAlt: 'Illustration of Lebron James with angry expression',
+  }}
+  meta={{ title: '400' }}
+/>
