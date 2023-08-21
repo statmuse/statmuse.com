@@ -242,6 +242,10 @@ const placeholder = money
       state.listItems[state.selectedIndex].classList.add('bg-[#eee]')
       return (textarea.value = state.suggestions[state.selectedIndex].display)
     }
+
+    if (event.key === 'Escape') {
+      return textarea.blur()
+    }
   })
 
   textarea.addEventListener('click', (e) => {
