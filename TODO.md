@@ -8,11 +8,11 @@
 - [ ] persist asks, cache logic from mothra, etc.
 - [ ] swr headers (use astro middleware? works on sst?)
 - [ ] analytics (provider?)
-- [ ] typeahead suggestions (ask-bar component)
 - [ ] error pages (404, gamera couldn't answer, etc)
 - [ ] security headers
-- [ ] focus should start in the search bar on every page right? also, focus state doesn't have blue outline
 - [ ] cookie banner
+- [x] typeahead suggestions (ask-bar component)
+- [x] focus should start in the search bar on every page right? also, focus state doesn't have blue outline
 - [x] additional questions not rendered everywhere
 - [x] video ads
 - [x] newsletter signup
