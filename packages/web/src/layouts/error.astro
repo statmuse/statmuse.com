@@ -6,6 +6,7 @@ import Image from '@components/image.astro'
 import sample from 'lodash/sample'
 
 interface Props {
+  status?: number
   render: boolean
   message?: string
   query?: string
@@ -30,7 +31,11 @@ const images = [
   },
 ]
 
-const { render, message, query, image = sample(images) } = Astro.props
+const { render, message, query, status, image = sample(images) } = Astro.props
+
+if (render) {
+  Astro.response.status = status
+}
 ---
 
 {
@@ -52,8 +57,8 @@ const { render, message, query, image = sample(images) } = Astro.props
           </div>
           <Image
             class="h-44 md:h-52 self-center md:self-end mt-2 md:mt-0 md:pl-6 md:pr-1.5 select-none object-contain object-bottom"
-            alt={image.alt}
-            src={image.url}
+            alt={image?.alt || ''}
+            src={image?.url || ''}
             width={350}
             height={300}
             loading="eager"
