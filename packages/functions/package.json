@@ -10,7 +10,7 @@
     "@types/aws-lambda": "^8.10.119",
     "@types/lodash-es": "^4.17.8",
     "@types/node": "^20.3.1",
-    "sst": "2.21.8",
+    "sst": "2.24.12",
     "stripe-event-types": "^2.3.0"
   },
   "dependencies": {
