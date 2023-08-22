@@ -77,7 +77,75 @@ Astro.response.headers.set(
         <DropdownMenu />
       </div>
 
-      <div class="flex space-x-5 items-center flex-1 justify-end"></div>
+      <div class="flex flex-1 justify-end">
+        <div id="auth-links" class="flex space-x-5 items-center hidden">
+          <a href="/signin" class="no-underline hover:underline text-primary">
+            Sign in
+          </a>
+          <a
+            href="/signup"
+            class="flex items-center justify-center border border-primary rounded-md hover:text-primary hover:bg-white hover:border-primary hover:border hover:no-underline py-1 px-4 bg-primary text-white"
+          >
+            Sign up
+          </a>
+        </div>
+        <div id="avatar-menu-container" class="relative ml-3 hidden">
+          <div>
+            <input id="avatar-menu" type="checkbox" class="hidden peer" />
+            <label for="avatar-menu">
+              <div
+                id="avatar-menu-button"
+                class="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-team-secondary-sm-default focus:ring-offset-2"
+                aria-haspopup="menu"
+                aria-expanded="false"
+              >
+                <span class="sr-only">Open user menu</span><span
+                  class="inline-block h-8 w-8 overflow-hidden rounded-full bg-gray-100"
+                >
+                  <svg
+                    class="h-full w-full text-gray-300"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"
+                    >
+                    </path>
+                  </svg>
+                </span>
+              </div>
+            </label>
+            <div
+              class="hidden peer-checked:block absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transform opacity-100 scale-100"
+              aria-labelledby="avatar-menu-button"
+              id="avatar-menu-panel"
+              role="menu"
+              tabindex="0"
+            >
+              <label for="avatar-menu">
+                <a
+                  href="/account"
+                  class="block px-4 py-2 text-sm text-gray-700 no-underline hover:no-underline hover:bg-gray-100"
+                  id="menu-item-2"
+                  role="menuitem"
+                  tabindex="-1"
+                >
+                  Your Account
+                </a>
+              </label>
+              <a
+                href="/auth/sign-out"
+                class="block px-4 py-2 text-sm text-gray-700 no-underline hover:no-underline hover:bg-gray-100"
+                id="menu-item-3"
+                role="menuitem"
+                tabindex="-1"
+              >
+                Sign out
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="main content-layout">
@@ -168,3 +236,21 @@ Astro.response.headers.set(
     </div>
   </main>
 </Layout>
+
+<script>
+  import type { Session } from '@lib/session'
+  const session = await fetch('/auth/session').then(
+    (s) => s.json() as unknown as Session
+  )
+
+  const authLinks = document.getElementById('auth-links')
+  const avatarMenu = document.getElementById('avatar-menu-container')
+
+  if (session.type === 'user') {
+    authLinks?.classList.add('hidden')
+    avatarMenu?.classList.remove('hidden')
+  } else {
+    authLinks?.classList.remove('hidden')
+    avatarMenu?.classList.add('hidden')
+  }
+</script>

@@ -10,19 +10,25 @@
     "@types/aws-lambda": "^8.10.119",
     "@types/lodash-es": "^4.17.8",
     "@types/node": "^20.3.1",
-    "sst": "2.25.0",
+    "sst": "2.25.1",
     "stripe-event-types": "^2.3.0"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.374.0",
     "@aws-sdk/client-secrets-manager": "^3.354.0",
+    "@aws-sdk/client-sesv2": "^3.391.0",
+    "@botpoison/node": "^0.1.10",
     "@elastic/elasticsearch": "^8.9.0",
+    "@sendgrid/client": "^7.7.0",
+    "@sendgrid/mail": "^7.7.0",
+    "client-sesv2": "link:@types/@aws-sdk/client-sesv2",
     "kysely": "^0.25.0",
     "lambda-stream": "^0.5.0",
     "lodash-es": "^4.17.21",
     "pg": "^8.11.0",
     "sharp": "^0.32.3",
-    "stripe": "^12.9.0"
+    "stripe": "^12.9.0",
+    "zod": "^3.22.1"
   },
   "prettier": {
     "semi": false,

@@ -17,6 +17,9 @@
       ],
       "@statmuse/core/*": [
         "../core/src/*"
+      ],
+      "@statmuse/functions/*": [
+        "../functions/src/*"
       ]
     },
     "jsx": "react-jsx",
