@@ -1,5 +1,6 @@
 ---
 import MoneyBaseLayout from '@layouts/money-base.astro'
+import Error from '@layouts/error.astro'
 import Header from '@components/header.astro'
 import Footer from '@components/footer.astro'
 import Hero from '@components/hero.astro'
@@ -38,56 +39,65 @@ const query = clean(tokensToText(response.visual.summaryTokens))
 
 const heroProps = getHeroProps({ imageAlt: query, response })
 
-const meta = {
-  title: title(query),
-  description:
-    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
-      ? tokensToText(response.nlg.text.answer)
-      : '',
-  canonical:
-    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
-      ? {
-          url: createAskPath({ domain: 'money', query }),
-          rewrite: true,
-        }
-      : undefined,
-  facebook: {
-    imageUrl: imageForgeUrl({
-      url: heroProps?.imageUrl || '',
-      bgColor: subject?.colors.background,
-      type: 'facebook',
-    }),
-  },
-  twitter: {
-    imageUrl: imageForgeUrl({
-      url: heroProps?.imageUrl || '',
-      bgColor: subject?.colors.background,
-      type: 'twitter',
-    }),
-  },
-}
+const meta =
+  response.type !== 'error'
+    ? {
+        title: title(query),
+        description:
+          response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
+            ? tokensToText(response.nlg.text.answer)
+            : '',
+        canonical:
+          response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
+            ? {
+                url: createAskPath({ domain: 'money', query }),
+                rewrite: true,
+              }
+            : undefined,
+        facebook: {
+          imageUrl: imageForgeUrl({
+            url: heroProps?.imageUrl || '',
+            bgColor: subject?.colors.background,
+            type: 'facebook',
+          }),
+        },
+        twitter: {
+          imageUrl: imageForgeUrl({
+            url: heroProps?.imageUrl || '',
+            bgColor: subject?.colors.background,
+            type: 'twitter',
+          }),
+        },
+      }
+    : {}
 ---
 
-<MoneyBaseLayout {meta} colors={subject?.colors}>
-  <Header
-    money
-    {query}
-    {conversationToken}
-    share={Astro.request.method === 'POST'
-      ? { type: 'ask', shortCode: 'CODE', domain: 'money', query }
-      : { type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
-  />
-  {heroProps ? <Hero {...heroProps} /> : null}
-  <Visuals {response} {conversationToken} />
-  {
-    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
-      <Container>
-        <Explore
-          domain="money"
-          additionalQuestions={response.visual.additionalQuestions}
-        />
-      </Container>
-    )
-  }
-  <Footer />
-</MoneyBaseLayout>
+<Error
+  render={response.type === 'error'}
+  message={tokensToText(response.visual.summary.answer)}
+  {query}
+>
+  <MoneyBaseLayout {meta} colors={subject?.colors}>
+    <Header
+      money
+      {query}
+      {conversationToken}
+      share={Astro.request.method === 'POST'
+        ? { type: 'ask', shortCode: 'CODE', domain: 'money', query }
+        : { type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
+    />
+    {heroProps ? <Hero {...heroProps} /> : null}
+    <Visuals {response} {conversationToken} />
+    {
+      response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
+        <Container>
+          <Explore
+            domain="money"
+            additionalQuestions={response.visual.additionalQuestions}
+          />
+        </Container>
+      )
+    }
+    <Footer />
+  </MoneyBaseLayout>
+</Error>

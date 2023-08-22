@@ -1,6 +1,7 @@
 ---
 import { ask, getHeroProps } from '@lib/gamera'
 import Layout from '@layouts/main.astro'
+import Error from '@layouts/error.astro'
 import Header from '@components/header.astro'
 import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals.astro'
@@ -42,55 +43,64 @@ const subject = handled.subject
 
 const heroProps = getHeroProps({ imageAlt: query, response })
 
-const meta = {
-  title: title(query),
-  description: description(response),
-  canonical:
-    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
-      ? {
-          url: createAskPath({
-            domain: response.visual.domain.toLowerCase(),
-            query,
+const meta =
+  response.type !== 'error'
+    ? {
+        title: title(query),
+        description: description(response),
+        canonical:
+          response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
+            ? {
+                url: createAskPath({
+                  domain: response.visual.domain.toLowerCase(),
+                  query,
+                }),
+                rewrite: true,
+              }
+            : undefined,
+        facebook: {
+          imageUrl: imageForgeUrl({
+            url: heroProps?.imageUrl || '',
+            bgColor: subject.colors.background,
+            type: 'facebook',
           }),
-          rewrite: true,
-        }
-      : undefined,
-  facebook: {
-    imageUrl: imageForgeUrl({
-      url: heroProps?.imageUrl || '',
-      bgColor: subject.colors.background,
-      type: 'facebook',
-    }),
-  },
-  twitter: {
-    imageUrl: imageForgeUrl({
-      url: heroProps?.imageUrl || '',
-      bgColor: subject.colors.background,
-      type: 'twitter',
-    }),
-  },
-}
+        },
+        twitter: {
+          imageUrl: imageForgeUrl({
+            url: heroProps?.imageUrl || '',
+            bgColor: subject.colors.background,
+            type: 'twitter',
+          }),
+        },
+      }
+    : {}
 ---
 
-<Layout colors={subject?.colors} {meta}>
-  <Header
-    {query}
-    {conversationToken}
-    {preferredDomain}
-    share={preferredDomain
-      ? { type: 'ask', shortCode: 'CODE', query, domain: preferredDomain }
-      : undefined}
-  />
-  {heroProps ? <Hero {...heroProps} /> : null}
-  <Visuals {response} {conversationToken} />
-  {
-    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
-      <Container>
-        <Explore
-          domain={preferredDomain?.toLowerCase()}
-          additionalQuestions={response.visual.additionalQuestions}
-        />
-      </Container>
-    )
-  }
-</Layout>
+<Error
+  render={response.type === 'error'}
+  message={tokensToText(response.visual.summary.answer)}
+  {query}
+>
+  <Layout colors={subject?.colors} {meta}>
+    <Header
+      {query}
+      {conversationToken}
+      {preferredDomain}
+      share={preferredDomain
+        ? { type: 'ask', shortCode: 'CODE', query, domain: preferredDomain }
+        : undefined}
+    />
+    {heroProps ? <Hero {...heroProps} /> : null}
+    <Visuals {response} {conversationToken} />
+    {
+      response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
+        <Container>
+          <Explore
+            domain={preferredDomain?.toLowerCase()}
+            additionalQuestions={response.visual.additionalQuestions}
+          />
+        </Container>
+      )
+    }
+  </Layout>
+</Error>

@@ -1,5 +1,6 @@
 ---
 import Layout from '@layouts/main.astro'
+import Error from '@layouts/error.astro'
 import Header from '@components/header.astro'
 import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals.astro'
@@ -34,39 +35,48 @@ const query = clean(
 )
 const heroProps = getHeroProps({ imageAlt: query, response })
 
-const meta = {
-  title: title(query),
-  description: description(response),
-  facebook: {
-    imageUrl: imageForgeUrl({
-      url: heroProps?.imageUrl || '',
-      bgColor: subject.colors.background,
-      type: 'facebook',
-    }),
-  },
-  twitter: {
-    imageUrl: imageForgeUrl({
-      url: heroProps?.imageUrl || '',
-      bgColor: subject.colors.background,
-      type: 'twitter',
-    }),
-  },
-}
+const meta =
+  response.type !== 'error'
+    ? {
+        title: title(query),
+        description: description(response),
+        facebook: {
+          imageUrl: imageForgeUrl({
+            url: heroProps?.imageUrl || '',
+            bgColor: subject.colors.background,
+            type: 'facebook',
+          }),
+        },
+        twitter: {
+          imageUrl: imageForgeUrl({
+            url: heroProps?.imageUrl || '',
+            bgColor: subject.colors.background,
+            type: 'twitter',
+          }),
+        },
+      }
+    : {}
 ---
 
-<Layout {meta} colors={subject?.colors}>
-  <Header
-    {query}
-    {conversationToken}
-    preferredDomain={league}
-    share={{ type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
-  />
-  {heroProps ? <Hero {...heroProps} /> : null}
-  <Visuals {response} {conversationToken} />
-  <Container>
-    <Explore
-      domain={league}
-      additionalQuestions={response.visual.additionalQuestions}
+<Error
+  render={response.type === 'error'}
+  message={tokensToText(response.visual.summary.answer)}
+  {query}
+>
+  <Layout {meta} colors={subject?.colors}>
+    <Header
+      {query}
+      {conversationToken}
+      preferredDomain={league}
+      share={{ type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
     />
-  </Container>
-</Layout>
+    {heroProps ? <Hero {...heroProps} /> : null}
+    <Visuals {response} {conversationToken} />
+    <Container>
+      <Explore
+        domain={league}
+        additionalQuestions={response.visual.additionalQuestions}
+      />
+    </Container>
+  </Layout>
+</Error>
