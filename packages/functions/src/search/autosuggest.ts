@@ -111,6 +111,8 @@ export const handler = ApiHandler(async (_evt) => {
 
   const suggestions = await autosuggest(query, league)
 
+  if (!suggestions) return { statusCode: 422, body: 'Unprocessable Content' }
+
   return {
     statusCode: 200,
     body: JSON.stringify({
@@ -136,6 +138,8 @@ export const moneyHandler = ApiHandler(async (_evt) => {
   }
 
   const suggestions = await financeAutosuggest(query)
+
+  if (!suggestions) return { statusCode: 422, body: 'Unprocessable Content' }
 
   return {
     statusCode: 200,

@@ -1,5 +1,6 @@
 ---
 import MoneyBaseLayout from '@layouts/money-base.astro'
+import Error from '@layouts/error.astro'
 import Header from '@components/header.astro'
 import Footer from '@components/footer.astro'
 import Hero from '@components/hero.astro'
@@ -39,48 +40,58 @@ query = clean(tokensToText(response.visual.summaryTokens))
 
 const heroProps = getHeroProps({ imageAlt: query, response })
 
-const meta = {
-  title: title(query),
-  description: tokensToText(response.nlg.text.answer),
-  canonical: {
-    url: createAskPath({ domain: 'money', query }),
-    rewrite: true,
-  },
-  facebook: {
-    imageUrl: imageForgeUrl({
-      url: heroProps?.imageUrl || '',
-      bgColor: subject?.colors.background,
-      type: 'facebook',
-    }),
-  },
-  twitter: {
-    imageUrl: imageForgeUrl({
-      url: heroProps?.imageUrl || '',
-      bgColor: subject?.colors.background,
-      type: 'twitter',
-    }),
-  },
-}
+const meta =
+  response.type !== 'error'
+    ? {
+        title: title(query),
+        description: tokensToText(response.nlg.text.answer),
+        canonical: {
+          url: createAskPath({ domain: 'money', query }),
+          rewrite: true,
+        },
+        facebook: {
+          imageUrl: imageForgeUrl({
+            url: heroProps?.imageUrl || '',
+            bgColor: subject?.colors.background,
+            type: 'facebook',
+          }),
+        },
+        twitter: {
+          imageUrl: imageForgeUrl({
+            url: heroProps?.imageUrl || '',
+            bgColor: subject?.colors.background,
+            type: 'twitter',
+          }),
+        },
+      }
+    : {}
 ---
 
-<MoneyBaseLayout {meta} colors={subject?.colors}>
-  <Header
-    money
-    {query}
-    {conversationToken}
-    share={{
-      type: 'ask',
-      shortCode: 'CODE',
-      url: Astro.url.origin + createAskPath({ domain: 'money', query }),
-    }}
-  />
-  {heroProps ? <Hero {...heroProps} /> : null}
-  <Visuals {response} {conversationToken} />
-  <Container>
-    <Explore
-      domain="money"
-      additionalQuestions={response.visual.additionalQuestions}
+<Error
+  render={response.type === 'error'}
+  status={422}
+  message={tokensToText(response.visual.summary.answer)}
+  {query}
+>
+  <MoneyBaseLayout {meta} colors={subject?.colors}>
+    <Header
+      money
+      {query}
+      {conversationToken}
+      share={{
+        type: 'ask',
+        shortCode: 'CODE',
+        url: Astro.url.origin + createAskPath({ domain: 'money', query }),
+      }}
     />
-  </Container>
-  <Footer />
-</MoneyBaseLayout>
+    {heroProps ? <Hero {...heroProps} /> : null}
+    <Visuals {response} {conversationToken} />
+    <Container>
+      <Explore
+        domain="money"
+        additionalQuestions={response.visual.additionalQuestions}
+      />
+    </Container>
+    <Footer />
+  </MoneyBaseLayout>
+</Error>

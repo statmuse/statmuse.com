@@ -1,1 +1,12 @@
-404 not found, whaaa whaaaaaa
+---
+import Error from '@layouts/error.astro'
+---
+
+<Error
+  render
+  message="We searched everywhere but can't seem to find the page you're looking for."
+  image={{
+    url: Astro.url.origin + '/error/confused-jr-smith.png',
+    alt: 'Illustration of J.R. Smith with confused expression',
+  }}
+/>

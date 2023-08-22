@@ -34,7 +34,7 @@ export type FinanceAskDocument = {
 }
 
 export const autosuggest = async (query: string, league?: string) => {
-  const results: SearchResponse<AskDocument> = await client.search({
+  const results: SearchResponse<AskDocument> | undefined = await client.search({
     index: 'asks.v2',
     size: 5,
     query: {
@@ -98,6 +98,8 @@ export const autosuggest = async (query: string, league?: string) => {
     },
   })
 
+  if (!results) return results
+
   const x = results.hits.hits.reduce((acc, x) => {
     if (x._source) {
       const score = x._score as number
@@ -123,25 +125,32 @@ export const autosuggest = async (query: string, league?: string) => {
 }
 
 export const financeAutosuggest = async (query: string) => {
-  const results: SearchResponse<FinanceAskDocument> = await client.search({
-    index: 'finance_asks',
-    size: 10,
-    query: {
-      function_score: {
-        boost_mode: 'multiply',
-        functions: [
-          { gauss: { count_web_search: { origin: 1, scale: 10000 } } },
-          {
-            gauss: {
-              last_web_search_at: { offset: '1h', origin: 'now', scale: '3d' },
+  const results: SearchResponse<FinanceAskDocument> | undefined =
+    await client.search({
+      index: 'finance_asks',
+      size: 10,
+      query: {
+        function_score: {
+          boost_mode: 'multiply',
+          functions: [
+            { gauss: { count_web_search: { origin: 1, scale: 10000 } } },
+            {
+              gauss: {
+                last_web_search_at: {
+                  offset: '1h',
+                  origin: 'now',
+                  scale: '3d',
+                },
+              },
             },
-          },
-        ],
-        query: { match: { query: `${query}` } },
-        score_mode: 'sum',
+          ],
+          query: { match: { query: `${query}` } },
+          score_mode: 'sum',
+        },
       },
-    },
-  })
+    })
+
+  if (!results) return results
 
   return results.hits.hits
     .map((x) => ({
