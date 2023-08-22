@@ -17,7 +17,7 @@
     "@types/node": "16",
     "aws-cdk-lib": "2.84.0",
     "constructs": "10.1.156",
-    "sst": "2.23.15",
+    "sst": "2.24.12",
     "typescript": "^5.0.4"
   },
   "workspaces": [
