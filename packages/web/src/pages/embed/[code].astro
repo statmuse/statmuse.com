@@ -1,0 +1,86 @@
+---
+import BaseLayout from '@layouts/base.astro'
+import Logo from '@components/logo.astro'
+import NbaShotchart from '@components/nba-shotchart'
+import Chart from '@components/chart.astro'
+import { getLink } from '@statmuse/core/links'
+import type {
+  GameraChart,
+  GameraResponse,
+  NbaShotChart,
+} from '@statmuse/core/gamera'
+
+const code = Astro.params.code as string
+
+const link = await getLink(code)
+if (!link || link.linkable_type !== 'question' || !link.is_successful)
+  return new Response(null, { status: 404, statusText: 'Not found' })
+
+const getColumnCharts = (answer: GameraResponse) => {
+  if (answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional')
+    return undefined
+  return answer.visual.detail?.reduce((out: GameraChart[] | undefined, d) => {
+    if (out !== undefined) return out
+    return d.type === 'stats' ? d.columnCharts : undefined
+  }, undefined)
+}
+
+const getShotcharts = (answer: GameraResponse) => {
+  if (answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional')
+    return undefined
+  return answer.visual.detail?.reduce((out: NbaShotChart[] | undefined, d) => {
+    if (out !== undefined) return out
+    return d.type === 'nbaShots' ? d.charts : undefined
+  }, undefined)
+}
+
+const getIsSuperlative = (answer: GameraResponse) => {
+  if (answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional') return false
+  return answer.visual.isSuperlative
+}
+
+// Legacy Gamera Payloads
+interface Data {
+  IsSuperlative: boolean
+  charts?: GameraChart[]
+  shotcharts?: NbaShotChart[]
+}
+
+const data = link.answer.Data as Data | undefined
+
+const charts: GameraChart[] | undefined =
+  data !== undefined ? data.charts : getColumnCharts(link.answer)
+const shotcharts: NbaShotChart[] | undefined =
+  data !== undefined ? data.shotcharts : getShotcharts(link.answer)
+const isSuperlative: boolean =
+  data !== undefined ? data.IsSuperlative : getIsSuperlative(link.answer)
+---
+
+<BaseLayout>
+  <a
+    href="https://www.statmuse.com"
+    class="absolute top-[5px] right-[10px] z-[1]"
+  >
+    <Logo class="w-[120px]" />
+  </a>
+  {
+    charts && (
+      <Chart
+        model={charts[0]}
+        totalWidth={1495}
+        isSuperlative={isSuperlative}
+      />
+    )
+  }
+  {
+    shotcharts && (
+      <NbaShotchart client:load model={shotcharts[0]} widthAvailable={800} />
+    )
+  }
+  <a
+    href={process.env.SHORT_LINK_URL + `e/${code}`}
+    class="text-black text-center font-extralight block"
+  >
+    {link.text}
+  </a>
+</BaseLayout>
