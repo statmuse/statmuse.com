@@ -1,0 +1,81 @@
+---
+import Layout from '@layouts/main.astro'
+import Error from '@layouts/error.astro'
+import Header from '@components/header.astro'
+import Hero from '@components/hero.astro'
+import Visuals from '@components/visuals.astro'
+import Explore from '@components/explore.astro'
+import Container from '@components/container.astro'
+import {
+  GameraDefaultResponse,
+  handleResponse,
+  tokensToText,
+} from '@statmuse/core/gamera'
+import { fantasyAsk, getHeroProps } from '@lib/gamera'
+import { description, title } from '@lib/meta'
+import { clean, imageForgeUrl } from '@lib/path'
+
+const { question } = Astro.params
+if (!question) return Astro.redirect('/questions')
+let query = question.replaceAll('-', ' ')
+const response = (await fantasyAsk({ query })) as
+  | GameraDefaultResponse
+  | undefined
+if (!response)
+  return new Response(null, { status: 404, statusText: 'Not found' })
+const { subject, redirectUrl, conversationToken } = handleResponse(response)
+if (redirectUrl) return Astro.redirect(redirectUrl)
+
+const heroProps = getHeroProps({ imageAlt: query, response })
+query = clean(
+  tokensToText(
+    response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
+  )
+)
+
+const meta =
+  response.type !== 'error'
+    ? {
+        title: title(query),
+        description: description(response),
+        facebook: {
+          imageUrl: imageForgeUrl({
+            url: heroProps?.imageUrl || '',
+            bgColor: subject.colors.background,
+            type: 'facebook',
+          }),
+        },
+        twitter: {
+          imageUrl: imageForgeUrl({
+            url: heroProps?.imageUrl || '',
+            bgColor: subject.colors.background,
+            type: 'twitter',
+          }),
+        },
+      }
+    : {}
+---
+
+<Error
+  render={response.type === 'error'}
+  status={422}
+  message={tokensToText(response.visual.summary.answer)}
+  {query}
+>
+  <Layout {meta} colors={subject?.colors}>
+    <Header
+      fantasy
+      {query}
+      {conversationToken}
+      share={{ type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
+    />
+    {heroProps ? <Hero {...heroProps} /> : null}
+    <Visuals {response} />
+    <Container>
+      <Explore
+        domain="fantasy"
+        additionalQuestions={response.visual.additionalQuestions}
+      />
+    </Container>
+  </Layout>
+</Error>
