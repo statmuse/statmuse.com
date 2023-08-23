@@ -31,6 +31,7 @@
     "d3-selection": "^3.0.0",
     "dayjs": "^1.11.8",
     "highcharts": "9.0.0",
+    "iframe-resizer": "^4.3.6",
     "kysely": "^0.25.0",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",

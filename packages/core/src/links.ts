@@ -1,4 +1,7 @@
 import { db } from './db'
+import type { Ask, FinanceAsk } from './asks'
+import type { Musing } from './musings'
+import type { Question } from './questions'
 
 export const getLink = async (code: string): Promise<Linkable | undefined> => {
   const link = await db
@@ -60,31 +63,20 @@ export const getLink = async (code: string): Promise<Linkable | undefined> => {
   return link as LinkableUrl
 }
 
-type LinkableAsk = {
+interface LinkableAsk extends Ask {
   linkable_type: 'ask'
-  domain: string
-  query: string
-  is_fantasy_query: boolean
-  is_in_index: boolean
 }
 
-type LinkableFinanceAsk = {
+interface LinkableFinanceAsk extends FinanceAsk {
   linkable_type: 'finance_ask'
-  query: string
-  is_in_index: boolean
 }
 
-type LinkableMusing = {
+interface LinkableMusing extends Musing {
   linkable_type: 'musing'
-  id: string
-  friendly_id?: string
 }
 
-type LinkableQuestion = {
+interface LinkableQuestion extends Question {
   linkable_type: 'question'
-  id: string
-  friendly_id?: string
-  is_successful: boolean
 }
 
 type LinkableUrl = {
