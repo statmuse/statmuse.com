@@ -37,6 +37,32 @@ export async function ask(options: {
   }
 }
 
+export async function fantasyAsk(options: {
+  query: string
+  conversationToken?: string
+}) {
+  const query = options.query
+
+  const params: Record<string, string> = {
+    input: query,
+  }
+
+  if (options.conversationToken) {
+    params['conversationToken'] = options.conversationToken
+  }
+
+  const requestUrl = `${gameraApiUrl}nfl/fantasy/answer?${new URLSearchParams(
+    params
+  ).toString()}`
+
+  try {
+    const response = await fetch(requestUrl)
+    return response.json() as Promise<GameraResponse>
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 export function getHeroProps(props: {
   response?: GameraResponse
   musing?: Musing
