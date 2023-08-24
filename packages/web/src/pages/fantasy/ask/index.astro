@@ -1,0 +1,104 @@
+---
+import { fantasyAsk, getHeroProps } from '@lib/gamera'
+import Layout from '@layouts/main.astro'
+import Error from '@layouts/error.astro'
+import Header from '@components/header.astro'
+import Hero from '@components/hero.astro'
+import Visuals from '@components/visuals.astro'
+import Explore from '@components/explore.astro'
+import Container from '@components/container.astro'
+import { handleResponse, tokensToText } from '@statmuse/core/gamera'
+import { title, description } from '@lib/meta'
+import { clean, createAskPath, imageForgeUrl } from '@lib/path'
+
+let query: string | undefined
+let conversationToken: string | undefined
+
+if (Astro.request.method === 'POST') {
+  const data = await Astro.request.formData()
+  query = data.get('question[query]')?.toString()
+  conversationToken = data.get('question[conversation_token]')?.toString()
+  if (!query) throw new Error('No query provided')
+} else {
+  query = Astro.url.searchParams.get('q') ?? undefined
+  if (!query) return Astro.redirect('/money/questions')
+}
+
+const response = await fantasyAsk({ query, conversationToken })
+if (!response)
+  return new Response(null, { status: 404, statusText: 'Not found' })
+
+conversationToken = response.conversation.token
+query = clean(
+  tokensToText(
+    response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
+  )
+)
+
+const handled = handleResponse(response)
+if (handled.redirectUrl) return Astro.redirect(handled.redirectUrl)
+
+const subject = handled.subject
+
+const heroProps = getHeroProps({ imageAlt: query, response })
+
+const meta =
+  response.type !== 'error'
+    ? {
+        title: title(query),
+        description: description(response),
+        canonical:
+          response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
+            ? {
+                url: createAskPath({
+                  domain: 'fantasy',
+                  query,
+                }),
+                rewrite: true,
+              }
+            : undefined,
+        facebook: {
+          imageUrl: imageForgeUrl({
+            url: heroProps?.imageUrl || '',
+            bgColor: subject.colors.background,
+            type: 'facebook',
+          }),
+        },
+        twitter: {
+          imageUrl: imageForgeUrl({
+            url: heroProps?.imageUrl || '',
+            bgColor: subject.colors.background,
+            type: 'twitter',
+          }),
+        },
+      }
+    : {}
+---
+
+<Error
+  render={response.type === 'error'}
+  status={422}
+  message={tokensToText(response.visual.summary.answer)}
+  {query}
+>
+  <Layout colors={subject?.colors} {meta}>
+    <Header
+      fantasy
+      {query}
+      {conversationToken}
+      share={{ type: 'ask', shortCode: 'CODE', query, domain: 'fantasy' }}
+    />
+    {heroProps ? <Hero {...heroProps} /> : null}
+    <Visuals {response} {conversationToken} />
+    {
+      response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
+        <Container>
+          <Explore
+            domain="fantasy"
+            additionalQuestions={response.visual.additionalQuestions}
+          />
+        </Container>
+      )
+    }
+  </Layout>
+</Error>
