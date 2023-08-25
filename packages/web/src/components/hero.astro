@@ -4,6 +4,7 @@ import Container from '@components/container.astro'
 import Image from '@components/image.astro'
 import type { HeroProps } from '@lib/props'
 import AnswerShare from './answer-share.astro'
+import AnswerAudio from './answer-audio.astro'
 
 interface Props extends HeroProps {}
 
@@ -62,6 +63,7 @@ const content = markdown
       class="md:hidden flex flex-col items-center absolute right-0 bottom-2.5 space-y-2.5"
     >
       <AnswerShare onlyIcon />
+      {Astro.props.audioUrl && <AnswerAudio src={Astro.props.audioUrl} />}
     </div>
   </div>
 </Container>

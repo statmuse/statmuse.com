@@ -84,6 +84,10 @@ export function getHeroProps(props: {
     : answer.visual.summary.subject.imageUrl
   const answered = musing ? relativeTimeFromDates(musing.publish_at) : undefined
   const imageAlt = props.imageAlt
+  const audioUrl =
+    props.musing?.audio_answer_url ||
+    answer.visual.summary.narrator?.answerWithIntroAudioUrl ||
+    answer.visual.summary.narrator?.answerAudioUrl
 
   return {
     content,
@@ -91,5 +95,6 @@ export function getHeroProps(props: {
     imageUrl,
     imageAlt,
     answered,
+    audioUrl,
   }
 }

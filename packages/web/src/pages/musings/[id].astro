@@ -61,6 +61,7 @@ const meta = {
       domain: preferredDomain,
       shortCode: musing.short_code,
     }}
+    audioUrl={musing.audio_answer_url || undefined}
   />
   {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals response={musing.answer} />
