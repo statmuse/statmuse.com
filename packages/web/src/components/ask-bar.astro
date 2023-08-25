@@ -203,6 +203,7 @@ const placeholder = money
 
     if (event.keyCode === 13) {
       if (!event.repeat) {
+        trackSuggestion()
         form.submit()
       }
 
@@ -282,6 +283,7 @@ const placeholder = money
 
     item.addEventListener('click', () => {
       textarea.value = state.suggestions[i].display
+      trackSuggestion()
       form.submit()
     })
 
@@ -341,5 +343,18 @@ const placeholder = money
     textarea.classList.add('border-b-transparent')
     textarea.classList.add('rounded-bl-none')
     textarea.classList.add('rounded-br-none')
+  }
+
+  const trackSuggestion = () => {
+    if (
+      state.selectedIndex !== -1 &&
+      state.suggestions[state.selectedIndex].display === textarea.value
+    ) {
+      // TODO: ANALYTICS
+      // analytics.track('Autosuggest Search',  {
+      //   query: textarea.value,
+      //   section: 'suggestion'
+      // })
+    }
   }
 </script>

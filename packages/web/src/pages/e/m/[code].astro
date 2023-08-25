@@ -67,6 +67,7 @@ const meta = {
           <a
             class="shrink-0"
             href="https://itunes.apple.com/us/app/statmuse/id1234654160?mt=8"
+            data-track-click="Musing - Click App Store link"
           >
             <img
               class="h-10 mt-5 md:m-0"
@@ -114,3 +115,14 @@ const meta = {
     </footer>
   </div>
 </BaseLayout>
+<script define:vars={{ id: musing.id, query: musing.question_text }}>
+  // TODO: ANALYTICS
+  // analytics.track('Musing - Web View', { id, text: query })
+
+  // const el = document.querySelector(
+  //   '[data-track-click="Musing - Click App Store link"]'
+  // )
+  // el.addEventListener('click', () => {
+  //   analytics.track(el.dataset.trackClick, { id, text: query })
+  // })
+</script>
