@@ -4,4 +4,5 @@ export type HeroProps = {
   imageAlt?: string
   answered?: string
   markdown?: boolean
+  audioUrl?: string
 }
