@@ -70,6 +70,8 @@ const meta =
       {conversationToken}
       preferredDomain={league}
       share={{ type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
+      audioUrl={response.visual.summary.narrator?.answerWithIntroAudioUrl ||
+        response.visual.summary.narrator?.answerAudioUrl}
     />
     {heroProps ? <Hero {...heroProps} /> : null}
     <Visuals {response} {conversationToken} />

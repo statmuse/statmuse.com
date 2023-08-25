@@ -90,6 +90,8 @@ const meta =
       share={preferredDomain
         ? { type: 'ask', shortCode: 'CODE', query, domain: preferredDomain }
         : undefined}
+      audioUrl={response.visual.summary.narrator?.answerWithIntroAudioUrl ||
+        response.visual.summary.narrator?.answerAudioUrl}
     />
     {heroProps ? <Hero {...heroProps} /> : null}
     <Visuals {response} {conversationToken} />
