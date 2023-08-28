@@ -535,7 +535,7 @@ export interface Narrator {
 export interface Summary {
   answer: GameraToken[]
   subject: Subject
-  narrator: Narrator
+  narrator?: Narrator
   text: Text[]
 }
 

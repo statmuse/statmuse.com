@@ -1,0 +1,85 @@
+---
+interface Props {
+  src: string
+}
+---
+
+<div class="flex items-center">
+  <button type="button" data-play-btn>
+    <svg
+      width="25px"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 22.7 22.7"
+      data-play
+    >
+      <polygon
+        style={{
+          fill: 'none',
+          stroke: 'var(--team-secondary-color, #c5c9cc)',
+          strokeWidth: 1.5,
+          strokeLinejoin: 'round',
+          strokeLinecap: 'round',
+          strokeMiterlimit: 10,
+        }}
+        points="3.2,3.2 3.2,19.5 19.5,11.4 "
+      >
+      </polygon>
+    </svg>
+    <svg
+      class="hidden"
+      width="25"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 22.7 22.7"
+      xml:space="preserve"
+      data-pause
+    >
+      <g
+        style={{
+          fill: 'none',
+          stroke: 'var(--team-secondary-color, #c5c9cc)',
+          strokeWidth: 1.5,
+          strokeLinejoin: 'round',
+          strokeLinecap: 'round',
+          strokeMiterlimit: 10,
+        }}
+      >
+        <line x1="7.8" y1="3.2" x2="7.8" y2="19.5"></line>
+        <line x1="14.9" y1="3.2" x2="14.9" y2="19.5"></line>
+      </g>
+    </svg>
+  </button>
+  <audio preload="none" src={Astro.props.src}></audio>
+</div>
+<script>
+  document.querySelectorAll('[data-play-btn]').forEach((el) => {
+    const state = {
+      playing: false,
+      progress: 0,
+    }
+
+    const audio = el.nextElementSibling as HTMLAudioElement
+
+    el.addEventListener('click', () => {
+      state.playing = !state.playing
+      if (state.playing) {
+        audio.play()
+        el.querySelector('[data-play]')?.classList.add('hidden')
+        el.querySelector('[data-pause]')?.classList.remove('hidden')
+      } else {
+        audio.pause()
+        el.querySelector('[data-play]')?.classList.remove('hidden')
+        el.querySelector('[data-pause]')?.classList.add('hidden')
+      }
+    })
+
+    audio.addEventListener('ended', () => {
+      state.playing = !state.playing
+      el.querySelector('[data-play]')?.classList.remove('hidden')
+      el.querySelector('[data-pause]')?.classList.add('hidden')
+    })
+
+    audio.addEventListener('timeupdate', () => {
+      state.progress = (audio.currentTime || 0) / (audio.duration || 1)
+    })
+  })
+</script>
