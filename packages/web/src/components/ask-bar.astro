@@ -350,11 +350,10 @@ const placeholder = money
       state.selectedIndex !== -1 &&
       state.suggestions[state.selectedIndex].display === textarea.value
     ) {
-      // TODO: ANALYTICS
-      // analytics.track('Autosuggest Search',  {
-      //   query: textarea.value,
-      //   section: 'suggestion'
-      // })
+      analytics.track('Autosuggest Search', {
+        query: textarea.value,
+        section: 'suggestion',
+      })
     }
   }
 </script>

@@ -125,9 +125,7 @@ const { domain = 'default' } = Astro.props
       ) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && video) {
-            // TODO: ANALYTICS add video view tracking
-            // analytics.track('View Video');
-            // console.log('View Video')
+            analytics.track('View Video')
             self.unobserve(entry.target)
           }
         })

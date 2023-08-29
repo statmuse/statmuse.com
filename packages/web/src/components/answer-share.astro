@@ -190,8 +190,7 @@ const socialButtons = [
       try {
         await navigator.clipboard.writeText(input.value)
         inputLabel.innerText = 'COPIED'
-        // TODO: ANALYTICS
-        // analytics.track('Copy Musing Share Link', { href: input.value })
+        analytics.track('Copy Musing Share Link', { href: input.value })
       } catch (err) {}
     })
     // listen to changes on checkbox and set share url on input
@@ -238,17 +237,15 @@ const socialButtons = [
       }
     })
   }
-  // TODO: ANALYTICS
   document
     .querySelectorAll<HTMLAnchorElement>(
       '[data-track-click="Click Musing Share Link"]'
     )
     .forEach((el) => {
       el.addEventListener('click', () => {
-        // analytics.track(el.dataset.trackClick, {
-        //   href: el.href
-        // })
-        // console.log(el.dataset.trackClick, { href: el.href })
+        analytics.track(el.dataset.trackClick, {
+          href: el.href,
+        })
       })
     })
 </script>

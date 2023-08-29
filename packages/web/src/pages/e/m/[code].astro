@@ -116,13 +116,12 @@ const meta = {
   </div>
 </BaseLayout>
 <script define:vars={{ id: musing.id, query: musing.question_text }}>
-  // TODO: ANALYTICS
-  // analytics.track('Musing - Web View', { id, text: query })
+  analytics.track('Musing - Web View', { id, text: query })
 
-  // const el = document.querySelector(
-  //   '[data-track-click="Musing - Click App Store link"]'
-  // )
-  // el.addEventListener('click', () => {
-  //   analytics.track(el.dataset.trackClick, { id, text: query })
-  // })
+  const el = document.querySelector(
+    '[data-track-click="Musing - Click App Store link"]'
+  )
+  el.addEventListener('click', () => {
+    analytics.track(el.dataset.trackClick, { id, text: query })
+  })
 </script>
