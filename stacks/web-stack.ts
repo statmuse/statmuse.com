@@ -42,6 +42,7 @@ export function Web({ stack }: StackContext) {
     path: 'packages/web',
     bind: [
       api.api,
+      api.secrets.SEGMENT_WRITE_KEY,
       api.secrets.STRIPE_SECRET,
       api.secrets.STRIPE_WEBHOOK_SECRET,
       api.secrets.STRIPE_PRICE_ID,

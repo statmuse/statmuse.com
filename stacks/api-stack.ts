@@ -68,6 +68,7 @@ export function API({ stack }: StackContext) {
       function: {
         bind: [
           secrets.ELASTICSEARCH_CREDENTIALS,
+          secrets.SEGMENT_WRITE_KEY,
           secrets.STRIPE_SECRET,
           secrets.STRIPE_WEBHOOK_SECRET,
           secrets.STRIPE_PRICE_ID,
