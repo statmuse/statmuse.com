@@ -1,7 +1,8 @@
 ---
 import '@styles/global.css'
 import type { Metadata } from '@lib/meta'
-// import { ViewTransitions } from 'astro:transitions'
+import { Config } from 'sst/node/config'
+// import { ViewTransitions } from 'astro :transitions'
 
 interface Props {
   meta?: Metadata
@@ -166,6 +167,87 @@ Astro.response.headers.set(
       crossorigin="anonymous"
     />
     <slot name="tradingview" />
+
+    {import.meta.env.NODE_ENV !== 'development' ? (
+      <script define:vars={{ writeKey: Config.SEGMENT_WRITE_KEY }}>
+        !(function () {
+          var analytics = (window.analytics = window.analytics || [])
+          if (!analytics.initialize)
+            if (analytics.invoked)
+              window.console &&
+                console.error &&
+                console.error('Segment snippet included twice.')
+            else {
+              analytics.invoked = !0
+              analytics.methods = [
+                'trackSubmit',
+                'trackClick',
+                'trackLink',
+                'trackForm',
+                'pageview',
+                'identify',
+                'reset',
+                'group',
+                'track',
+                'ready',
+                'alias',
+                'debug',
+                'page',
+                'once',
+                'off',
+                'on',
+                'addSourceMiddleware',
+                'addIntegrationMiddleware',
+                'setAnonymousId',
+                'addDestinationMiddleware',
+              ]
+              analytics.factory = function (e) {
+                return function () {
+                  var t = Array.prototype.slice.call(arguments)
+                  t.unshift(e)
+                  analytics.push(t)
+                  return analytics
+                }
+              }
+              for (var e = 0; e < analytics.methods.length; e++) {
+                var key = analytics.methods[e]
+                analytics[key] = analytics.factory(key)
+              }
+              analytics.load = function (key, e) {
+                var t = document.createElement('script')
+                t.type = 'text/javascript'
+                t.async = !0
+                t.src =
+                  'https://cdn.segment.com/analytics.js/v1/' +
+                  key +
+                  '/analytics.min.js'
+                var n = document.getElementsByTagName('script')[0]
+                n.parentNode.insertBefore(t, n)
+                analytics._loadOptions = e
+              }
+              analytics._writeKey = writeKey
+              analytics.SNIPPET_VERSION = '4.15.2'
+              analytics.load(writeKey)
+              analytics.page()
+            }
+        })()
+      </script>
+    ) : (
+      <script is:inline>
+          const analytics = (window.analytics = [
+            'identify',
+            'page',
+            'track',
+          ].reduce(
+            (stub, key) => ({
+              ...stub,
+              [key]: (...args) => console.debug(`analytics.${key}`, ...args),
+            }),
+            {}
+          ))
+          analytics.page()
+      </script>
+    )}
   </head>
   <body>
     <slot />
@@ -242,11 +324,10 @@ Astro.response.headers.set(
 
       // TODO: ANALYTICS
       // identify user in analytics, using uid from meta tag as userId if present
-      // ((userId) => {
-      //   const { identify } = getAnalytics();
-      //   const props = { origin: 'web' };
-      //   userId ? identify(userId, props) : identify(props);
-      // })(document.querySelector("meta[name='uid']").getAttribute('content'));
+      // !((userId) => {
+      //   const props = { origin: 'web' }
+      //   userId ? analytics.identify(userId, props) : analytics.identify(props)
+      // })(undefined)
     </script>
   </body>
 </html>
