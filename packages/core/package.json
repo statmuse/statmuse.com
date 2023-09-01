@@ -4,7 +4,10 @@
   "type": "module",
   "scripts": {
     "test": "sst bind vitest",
-    "typecheck": "tsc -noEmit"
+    "typecheck": "tsc -noEmit",
+    "db:init": "createdb -U postgres mothra_dev; psql -U postgres mothra_dev < migrations/structure.sql",
+    "db:migrate": "tsx migrate.ts",
+    "gen:migration": "cat migrations/template.txt > migrations/$(date -u +%Y%m%d%H%M%S).ts"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.119",
@@ -12,6 +15,8 @@
     "@types/pg": "^8.10.2",
     "sst": "2.24.12",
     "stripe-event-types": "^2.3.0",
+    "ts-node": "^10.9.1",
+    "tsx": "^3.12.7",
     "vitest": "^0.32.2"
   },
   "dependencies": {
