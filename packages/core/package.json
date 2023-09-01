@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "test": "sst bind vitest",
-    "typecheck": "tsc -noEmit"
+    "typecheck": "tsc -noEmit",
+    "db:init": "createdb -U postgres mothra_dev; psql -U postgres mothra_dev < migrations/structure.sql",
+    "db:migrate": "tsx migrate.ts"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.119",
