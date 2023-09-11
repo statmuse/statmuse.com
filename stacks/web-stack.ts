@@ -47,7 +47,7 @@ export function Web({ stack }: StackContext) {
       api.secrets.STRIPE_WEBHOOK_SECRET,
       api.secrets.STRIPE_PRICE_ID,
     ],
-    environment: api.environment,
+    environment: { PUBLIC_API_URL: api.api.url, ...api.environment },
     nodejs: { install: ['pg'] },
     cdk: {
       server: {
