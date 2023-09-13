@@ -1,9 +1,6 @@
 // @ts-ignore
 export async function onRequest(context, next) {
+  console.log(JSON.stringify(context.request.headers, undefined, 2))
   const response = await next()
-  const keys = Object.keys(context).filter((k) => k !== 'clientAddress')
-  for (const key of keys) {
-    console.log(key, JSON.stringify(context[key], undefined, 2))
-  }
   return response
 }
