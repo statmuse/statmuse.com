@@ -47,7 +47,6 @@ export function Web({ stack }: StackContext) {
       api.secrets.STRIPE_PRICE_ID,
     ],
     environment: api.environment,
-    runtime: 'nodejs18.x',
     nodejs: { install: ['pg'] },
     cdk: {
       server: {
