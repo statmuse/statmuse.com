@@ -17,6 +17,7 @@
     "@aws-sdk/client-s3": "^3.374.0",
     "@aws-sdk/client-secrets-manager": "^3.354.0",
     "@elastic/elasticsearch": "^8.9.0",
+    "@segment/analytics-node": "^1.1.1",
     "kysely": "^0.25.0",
     "lambda-stream": "^0.5.0",
     "lodash-es": "^4.17.21",

@@ -78,6 +78,9 @@ importers:
       '@elastic/elasticsearch':
         specifier: ^8.9.0
         version: 8.9.0
+      '@segment/analytics-node':
+        specifier: ^1.1.1
+        version: 1.1.1
       kysely:
         specifier: ^0.25.0
         version: 0.25.0
@@ -1380,7 +1383,7 @@ packages:
       '@smithy/util-retry': 2.0.0
       '@smithy/util-utf8': 2.0.0
       fast-xml-parser: 4.2.5
-      tslib: 2.6.1
+      tslib: 2.6.2
     transitivePeerDependencies:
       - aws-crt
     dev: false
@@ -1522,7 +1525,7 @@ packages:
       '@smithy/property-provider': 2.0.1
       '@smithy/shared-ini-file-loader': 2.0.1
       '@smithy/types': 2.0.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     transitivePeerDependencies:
       - aws-crt
     dev: false
@@ -1720,7 +1723,7 @@ packages:
       '@aws-sdk/types': 3.378.0
       '@smithy/protocol-http': 2.0.1
       '@smithy/types': 2.0.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@aws-sdk/middleware-host-header@3.391.0:
@@ -1757,7 +1760,7 @@ packages:
     dependencies:
       '@aws-sdk/types': 3.378.0
       '@smithy/types': 2.0.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@aws-sdk/middleware-logger@3.391.0:
@@ -1776,7 +1779,7 @@ packages:
       '@aws-sdk/types': 3.378.0
       '@smithy/protocol-http': 2.0.1
       '@smithy/types': 2.0.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@aws-sdk/middleware-recursion-detection@3.391.0:
@@ -1851,7 +1854,7 @@ packages:
       '@smithy/signature-v4': 2.0.1
       '@smithy/types': 2.0.2
       '@smithy/util-middleware': 2.0.0
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@aws-sdk/middleware-signing@3.391.0:
@@ -1893,7 +1896,7 @@ packages:
       '@aws-sdk/util-endpoints': 3.378.0
       '@smithy/protocol-http': 2.0.1
       '@smithy/types': 2.0.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@aws-sdk/middleware-user-agent@3.391.0:
@@ -2027,7 +2030,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@smithy/types': 2.0.2
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /@aws-sdk/types@3.391.0:
     resolution: {integrity: sha512-QpYVFKMOnzHz/JMj/b8wb18qxiT92U/5r5MmtRz2R3LOH6ooTO96k4ozXCrYr0qNed1PAnOj73rPrrH2wnCJKQ==}
@@ -2047,7 +2050,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@aws-sdk/types': 3.378.0
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@aws-sdk/util-endpoints@3.391.0:
@@ -2070,7 +2073,7 @@ packages:
       '@aws-sdk/types': 3.378.0
       '@smithy/types': 2.0.2
       bowser: 2.11.0
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@aws-sdk/util-user-agent-browser@3.391.0:
@@ -3270,6 +3273,19 @@ packages:
       - supports-color
     dev: false
 
+  /@segment/analytics-node@1.1.1:
+    resolution: {integrity: sha512-YNn32SfD8KrxIBowLz3MVav0GzhGIbBRgAtjW4Kv57oHwgaJNSLEp/z/ypnu7vAqUjm9jAwAW9Wfc24ssZI49g==}
+    engines: {node: '>=14'}
+    dependencies:
+      '@lukeed/uuid': 2.0.1
+      '@segment/analytics-core': 1.3.1
+      buffer: 6.0.3
+      node-fetch: 2.7.0
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /@segment/analytics.js-video-plugins@0.2.1:
     resolution: {integrity: sha512-lZwCyEXT4aaHBLNK433okEKdxGAuyrVmop4BpQqQSJuRz0DglPZgd9B/XjiiWs1UyOankg2aNYMN3VcS8t4eSQ==}
     dependencies:
@@ -3362,7 +3378,7 @@ packages:
       '@smithy/types': 2.0.2
       '@smithy/util-config-provider': 2.0.0
       '@smithy/util-middleware': 2.0.0
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@smithy/config-resolver@2.0.4:
@@ -3500,7 +3516,7 @@ packages:
       '@smithy/querystring-builder': 2.0.1
       '@smithy/types': 2.0.2
       '@smithy/util-base64': 2.0.0
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@smithy/fetch-http-handler@2.0.4:
@@ -3537,7 +3553,7 @@ packages:
       '@smithy/types': 2.0.2
       '@smithy/util-buffer-from': 2.0.0
       '@smithy/util-utf8': 2.0.0
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@smithy/hash-node@2.0.4:
@@ -3571,7 +3587,7 @@ packages:
     resolution: {integrity: sha512-2q/Eb0AE662zwyMV+z+TL7deBwcHCgaZZGc0RItamBE8kak3MzCi/EZCNoFWoBfxgQ4jfR12wm8KKsSXhJzJtQ==}
     dependencies:
       '@smithy/types': 2.0.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@smithy/invalid-dependency@2.0.4:
@@ -3615,7 +3631,7 @@ packages:
     dependencies:
       '@smithy/protocol-http': 2.0.1
       '@smithy/types': 2.0.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@smithy/middleware-content-length@2.0.4:
@@ -3634,7 +3650,7 @@ packages:
       '@smithy/types': 2.0.2
       '@smithy/url-parser': 2.0.1
       '@smithy/util-middleware': 2.0.0
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@smithy/middleware-endpoint@2.0.4:
@@ -3669,7 +3685,7 @@ packages:
       '@smithy/types': 2.0.2
       '@smithy/util-middleware': 2.0.0
       '@smithy/util-retry': 2.0.0
-      tslib: 2.6.1
+      tslib: 2.6.2
       uuid: 8.3.2
     dev: false
 
@@ -3690,7 +3706,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@smithy/types': 2.0.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@smithy/middleware-serde@2.0.4:
@@ -3711,7 +3727,7 @@ packages:
     resolution: {integrity: sha512-31XC1xNF65nlbc16yuh3wwTudmqs6qy4EseQUGF8A/p2m/5wdd/cnXJqpniy/XvXVwkHPz/GwV36HqzHtIKATQ==}
     engines: {node: '>=14.0.0'}
     dependencies:
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /@smithy/node-config-provider@2.0.1:
     resolution: {integrity: sha512-Zoel4CPkKRTQ2XxmozZUfqBYqjPKL53/SvTDhJHj+VBSiJy6MXRav1iDCyFPS92t40Uh+Yi+Km5Ch3hQ+c/zSA==}
@@ -3720,7 +3736,7 @@ packages:
       '@smithy/property-provider': 2.0.1
       '@smithy/shared-ini-file-loader': 2.0.1
       '@smithy/types': 2.0.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@smithy/node-config-provider@2.0.4:
@@ -3751,7 +3767,7 @@ packages:
       '@smithy/protocol-http': 2.0.1
       '@smithy/querystring-builder': 2.0.1
       '@smithy/types': 2.0.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@smithy/node-http-handler@2.0.4:
@@ -3792,7 +3808,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@smithy/types': 2.0.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@smithy/protocol-http@2.0.4:
@@ -3912,7 +3928,7 @@ packages:
       '@smithy/middleware-stack': 2.0.0
       '@smithy/types': 2.0.2
       '@smithy/util-stream': 2.0.1
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@smithy/smithy-client@2.0.4:
@@ -3935,7 +3951,7 @@ packages:
     resolution: {integrity: sha512-wcymEjIXQ9+NEfE5Yt5TInAqe1o4n+Nh+rh00AwoazppmUt8tdo6URhc5gkDcOYrcvlDVAZE7uG69nDpEGUKxw==}
     engines: {node: '>=14.0.0'}
     dependencies:
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /@smithy/types@2.2.1:
     resolution: {integrity: sha512-6nyDOf027ZeJiQVm6PXmLm7dR+hR2YJUkr4VwUniXA8xZUGAu5Mk0zfx2BPFrt+e5YauvlIqQoH0CsrM4tLkfg==}
@@ -3948,7 +3964,7 @@ packages:
     dependencies:
       '@smithy/querystring-parser': 2.0.1
       '@smithy/types': 2.0.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@smithy/url-parser@2.0.4:
@@ -3971,18 +3987,18 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@smithy/util-buffer-from': 2.0.0
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /@smithy/util-body-length-browser@2.0.0:
     resolution: {integrity: sha512-JdDuS4ircJt+FDnaQj88TzZY3+njZ6O+D3uakS32f2VNnDo3vyEuNdBOh/oFd8Df1zSZOuH1HEChk2AOYDezZg==}
     dependencies:
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /@smithy/util-body-length-node@2.0.0:
     resolution: {integrity: sha512-ZV7Z/WHTMxHJe/xL/56qZwSUcl63/5aaPAGjkfynJm4poILjdD4GmFI+V+YWabh2WJIjwTKZ5PNsuvPQKt93Mg==}
     engines: {node: '>=14.0.0'}
     dependencies:
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /@smithy/util-buffer-from@1.1.0:
     resolution: {integrity: sha512-9m6NXE0ww+ra5HKHCHig20T+FAwxBAm7DIdwc/767uGWbRcY720ybgPacQNB96JMOI7xVr/CDa3oMzKmW4a+kw==}
@@ -4019,7 +4035,7 @@ packages:
       '@smithy/property-provider': 2.0.1
       '@smithy/types': 2.0.2
       bowser: 2.11.0
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@smithy/util-defaults-mode-browser@2.0.4:
@@ -4040,7 +4056,7 @@ packages:
       '@smithy/node-config-provider': 2.0.1
       '@smithy/property-provider': 2.0.1
       '@smithy/types': 2.0.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@smithy/util-defaults-mode-node@2.0.4:
@@ -4093,7 +4109,7 @@ packages:
     engines: {node: '>= 14.0.0'}
     dependencies:
       '@smithy/service-error-classification': 2.0.0
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /@smithy/util-stream@1.1.0:
     resolution: {integrity: sha512-w3lsdGsntaLQIrwDWJkIFKrFscgZXwU/oxsse09aSTNv5TckPhDeYea3LhsDrU5MGAG3vprhVZAKr33S45coVA==}
@@ -4162,7 +4178,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@smithy/util-buffer-from': 2.0.0
-      tslib: 2.6.1
+      tslib: 2.6.2
 
   /@smithy/util-waiter@2.0.1:
     resolution: {integrity: sha512-bSyGFicPRYuGFFWAr72UvYI7tE7KmEeFJJ5iaLuTTdo8RGaNBZ2kE25coGtzrejYh9AhwSfckBvbxgEDxIxhlA==}
@@ -10886,6 +10902,7 @@ packages:
 
   /tslib@2.6.1:
     resolution: {integrity: sha512-t0hLfiEKfMUoqhG+U1oid7Pva4bbDPHYfJNiB7BiIjRkj1pyC++4N3huJfqY6aRH6VTB0rvtzQwjM4K6qpfOig==}
+    dev: false
 
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
