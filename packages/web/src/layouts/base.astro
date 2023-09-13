@@ -168,86 +168,7 @@ Astro.response.headers.set(
     />
     <slot name="tradingview" />
 
-    {import.meta.env.NODE_ENV !== 'development' ? (
-      <script define:vars={{ writeKey: Config.SEGMENT_WRITE_KEY }}>
-        !(function () {
-          var analytics = (window.analytics = window.analytics || [])
-          if (!analytics.initialize)
-            if (analytics.invoked)
-              window.console &&
-                console.error &&
-                console.error('Segment snippet included twice.')
-            else {
-              analytics.invoked = !0
-              analytics.methods = [
-                'trackSubmit',
-                'trackClick',
-                'trackLink',
-                'trackForm',
-                'pageview',
-                'identify',
-                'reset',
-                'group',
-                'track',
-                'ready',
-                'alias',
-                'debug',
-                'page',
-                'once',
-                'off',
-                'on',
-                'addSourceMiddleware',
-                'addIntegrationMiddleware',
-                'setAnonymousId',
-                'addDestinationMiddleware',
-              ]
-              analytics.factory = function (e) {
-                return function () {
-                  var t = Array.prototype.slice.call(arguments)
-                  t.unshift(e)
-                  analytics.push(t)
-                  return analytics
-                }
-              }
-              for (var e = 0; e < analytics.methods.length; e++) {
-                var key = analytics.methods[e]
-                analytics[key] = analytics.factory(key)
-              }
-              analytics.load = function (key, e) {
-                var t = document.createElement('script')
-                t.type = 'text/javascript'
-                t.async = !0
-                t.src =
-                  'https://cdn.segment.com/analytics.js/v1/' +
-                  key +
-                  '/analytics.min.js'
-                var n = document.getElementsByTagName('script')[0]
-                n.parentNode.insertBefore(t, n)
-                analytics._loadOptions = e
-              }
-              analytics._writeKey = writeKey
-              analytics.SNIPPET_VERSION = '4.15.2'
-              analytics.load(writeKey)
-              analytics.page()
-            }
-        })()
-      </script>
-    ) : (
-      <script is:inline>
-          const analytics = (window.analytics = [
-            'identify',
-            'page',
-            'track',
-          ].reduce(
-            (stub, key) => ({
-              ...stub,
-              [key]: (...args) => console.debug(`analytics.${key}`, ...args),
-            }),
-            {}
-          ))
-          analytics.page()
-      </script>
-    )}
+    <meta name="analytics" content={Config.SEGMENT_WRITE_KEY} />
   </head>
   <body>
     <slot />
@@ -331,3 +252,26 @@ Astro.response.headers.set(
     </script>
   </body>
 </html>
+<script>
+  import { AnalyticsBrowser } from '@segment/analytics-next'
+
+  const writeKey = document.querySelector<HTMLMetaElement>(
+    'meta[name="analytics"]'
+  )?.content
+
+  const segment =
+    import.meta.env.DEV || !writeKey
+      ? (['identify', 'page', 'track'].reduce(
+          (stub, key) => ({
+            ...stub,
+            [key]: (...args: [string]) =>
+              console.debug(`analytics.${key}`, ...args),
+          }),
+          {}
+        ) as AnalyticsBrowser)
+      : AnalyticsBrowser.load({ writeKey })
+
+  segment.page()
+
+  window.segment = segment
+</script>
