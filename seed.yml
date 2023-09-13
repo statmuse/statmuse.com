@@ -1,2 +1,2 @@
 before_compile:
-  - n 18.14.0
+  - n 18.14.1
