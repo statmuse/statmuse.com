@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@layouts/base.astro'
 import type { Metadata } from '@lib/meta'
+import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
 import type { HTMLAttributes } from 'astro/types'
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
     backgroundColor?: string
   }
   tradingview?: boolean
+  analytics?: AnalyticsPageviewProperties
 }
 
 const { meta } = Astro.props

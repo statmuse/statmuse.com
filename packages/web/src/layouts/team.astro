@@ -14,6 +14,7 @@ import {
 } from '@statmuse/core/gamera'
 import { getLeagueKeywords, Metadata } from '@lib/meta'
 import { imageForgeUrl } from '@lib/path'
+import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
 
 interface Props {
   bio: GameraTeamSeasonBio
@@ -93,6 +94,13 @@ const twitter = {
     facebook,
     twitter,
     ...(meta || {}),
+  }}
+  analytics={{
+    is_search: true,
+    page_domain:
+      domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
+    page_type: 'team',
+    disposition: bio.disposition,
   }}
 >
   <Header {preferredDomain} share={{ type: 'profile', url: Astro.url.href }} />

@@ -8,6 +8,7 @@ import { rgbToHex } from '@statmuse/core/color'
 import { getHeroProps } from '@lib/gamera'
 import { title } from '@lib/meta'
 import { imageForgeUrl } from '@lib/path'
+import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
 
 const id = Astro.params.id as string
 const musing = await getMusingByIdOrFriendlyId(id).executeTakeFirst()
@@ -50,7 +51,16 @@ const meta = {
 }
 ---
 
-<Layout {meta} colors={{ foreground, background }}>
+<Layout
+  {meta}
+  colors={{ foreground, background }}
+  analytics={{
+    page_type: 'musing',
+    page_domain:
+      musing.domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
+    query,
+  }}
+>
   <Header
     {query}
     {conversationToken}

@@ -61,8 +61,27 @@ const meta =
   status={422}
   message={tokensToText(response.visual.summary.answer)}
   {query}
+  analytics={{
+    is_search: true,
+    page_type: 'ask',
+    page_domain: 'nfl',
+    disposition: response.disposition,
+    tokenizationScore: response.tokenizationScore,
+    query,
+  }}
 >
-  <Layout {meta} colors={subject?.colors}>
+  <Layout
+    {meta}
+    colors={subject?.colors}
+    analytics={{
+      is_search: true,
+      page_type: 'ask',
+      page_domain: 'nfl',
+      disposition: response.disposition,
+      tokenizationScore: response.tokenizationScore,
+      query,
+    }}
+  >
     <Header
       fantasy
       {query}

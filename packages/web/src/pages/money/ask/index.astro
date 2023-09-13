@@ -1,6 +1,6 @@
 ---
 import MoneyBaseLayout from '@layouts/money-base.astro'
-import Error from '@layouts/error.astro'
+import ErrorLayout from '@layouts/error.astro'
 import Header from '@components/header.astro'
 import Footer from '@components/footer.astro'
 import Hero from '@components/hero.astro'
@@ -72,13 +72,28 @@ const meta =
     : {}
 ---
 
-<Error
+<ErrorLayout
   render={response.type === 'error'}
   status={422}
   message={tokensToText(response.visual.summary.answer)}
   {query}
+  analytics={{
+    is_search: true,
+    page_type: 'ask',
+    page_domain: 'finance',
+    query,
+  }}
 >
-  <MoneyBaseLayout {meta} colors={subject?.colors}>
+  <MoneyBaseLayout
+    {meta}
+    colors={subject?.colors}
+    analytics={{
+      is_search: true,
+      page_type: 'ask',
+      page_domain: 'finance',
+      query,
+    }}
+  >
     <Header
       money
       {query}
@@ -101,4 +116,4 @@ const meta =
     }
     <Footer />
   </MoneyBaseLayout>
-</Error>
+</ErrorLayout>

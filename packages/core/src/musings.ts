@@ -28,10 +28,12 @@ export const getMusingByShortcode = (code: string) =>
   db
     .selectFrom('musings')
     .innerJoin('links', 'links.musing_id', 'musings.id')
+    .innerJoin('leagues', 'leagues.id', 'musings.league_id')
     .innerJoin('questions', 'questions.id', 'musings.question_id')
     .where('links.short_code', '=', code)
     .selectAll('musings')
     .select('questions.text as question_text')
+    .select('leagues.name as domain')
     .executeTakeFirst()
 
 export type Musing = InferResult<

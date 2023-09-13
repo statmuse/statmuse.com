@@ -2,6 +2,7 @@
 import '@styles/global.css'
 import type { Metadata } from '@lib/meta'
 import { Config } from 'sst/node/config'
+import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
 // import { ViewTransitions } from 'astro :transitions'
 
 interface Props {
@@ -12,9 +13,10 @@ interface Props {
     foregroundColor?: string
     backgroundColor?: string
   }
+  analytics?: AnalyticsPageviewProperties
 }
 
-const { meta, colors } = Astro.props
+const { meta, colors, analytics = {} } = Astro.props
 const foreground = colors?.foreground || colors?.foregroundColor || '#fff'
 const background = colors?.background || colors?.backgroundColor || '#00c1d8'
 

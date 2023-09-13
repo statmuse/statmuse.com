@@ -63,6 +63,11 @@ const twitter = {
   tradingview
   {colors}
   meta={{ title, canonical, facebook, twitter, ...(meta || {}) }}
+  analytics={{
+    is_search: true,
+    page_domain: 'finance',
+    page_type: 'asset',
+  }}
 >
   <Header money share={{ type: 'profile', url: Astro.url.href }} />
   <Container class="mb-5 bg-team-primary text-team-secondary">

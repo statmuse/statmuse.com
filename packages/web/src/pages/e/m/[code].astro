@@ -5,6 +5,7 @@ import { getMusingByShortcode } from '@statmuse/core/musings'
 import { rgbToHex } from '@statmuse/core/color'
 import { title } from '@lib/meta'
 import { imageForgeUrl } from '@lib/path'
+import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
 
 const code = Astro.params.code as string
 const musing = await getMusingByShortcode(code)
@@ -37,7 +38,16 @@ const meta = {
 }
 ---
 
-<BaseLayout {meta} colors={{ background, foreground }}>
+<BaseLayout
+  {meta}
+  colors={{ background, foreground }}
+  analytics={{
+    page_type: 'musing',
+    page_domain:
+      musing.domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
+    query: musing.question_text,
+  }}
+>
   <div
     class="bg-team-primary min-h-screen w-full flex flex-col justify-center items-center"
   >

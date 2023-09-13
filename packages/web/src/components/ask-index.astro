@@ -9,6 +9,7 @@ import { ASK_LIMIT, type FinanceAsk, type Ask } from '@statmuse/core/asks'
 import { createAskPath } from '@lib/path'
 import { formatDate, utc } from '@statmuse/core/time'
 import type { Metadata } from '@lib/meta'
+import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
 
 interface Props {
   domain?: string
@@ -165,7 +166,19 @@ const leagues = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
 const Layout = domain === 'money' ? MoneyBaseLayout : BaseLayout
 ---
 
-<Layout {meta}>
+<Layout
+  {meta}
+  analytics={{
+    page_type: 'question',
+    page_domain: !domain
+      ? 'unknown'
+      : domain === 'fantasy'
+      ? 'nfl'
+      : domain === 'money'
+      ? 'finance'
+      : (domain as AnalyticsPageviewProperties['page_domain']),
+  }}
+>
   <Header
     money={domain === 'money'}
     fantasy={domain === 'fantasy'}
