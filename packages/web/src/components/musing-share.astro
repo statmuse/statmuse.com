@@ -108,7 +108,7 @@ const { url } = Astro.props
         ;(el.nextSibling as HTMLInputElement).select()
         try {
           await navigator.clipboard.writeText(el.dataset.shareUrl || '')
-          analytics.track('Copy Musing Share Link', {
+          window.segment.track('Copy Musing Share Link', {
             href: el.dataset.shareUrl,
           })
         } catch (err) {}
@@ -120,7 +120,7 @@ const { url } = Astro.props
     )
     .forEach((el) => {
       el.addEventListener('click', () => {
-        analytics.track(el.dataset.trackClick, {
+        window.segment.track(el.dataset.trackClick as string, {
           href: el.href,
         })
       })

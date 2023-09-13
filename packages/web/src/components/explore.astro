@@ -57,7 +57,7 @@ const { domain, additionalQuestions, showVideo = false } = Astro.props
     .querySelectorAll<HTMLElement>('[data-track-click="Click Try-Also Query"]')
     .forEach((el) => {
       el.addEventListener('click', () => {
-        analytics.track(el.dataset.trackClick, {
+        window.segment.track(el.dataset.trackClick as string, {
           query: el.innerText,
           referrer: window.location.href,
         })
