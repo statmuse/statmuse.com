@@ -27,10 +27,10 @@ export function API({ stack }: StackContext) {
       : 'mothra-staging.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com',
     GAMERA_API_URL: isProd
       ? 'http://gamera.statmuse.com/'
-      : 'http://gamera.staging.statmuse.com/',
+      : 'http://gamera-staging-load-test.ecs.statmuse.com/',
     KANEDAMA_API_URL: isProd
       ? 'http://kanedama.statmuse.com/'
-      : 'http://kanedama.staging.statmuse.com/',
+      : 'http://kanedama-staging-load-test.ecs.statmuse.com/',
     SHORT_LINK_URL: isProd ? 'https://statm.us/' : 'https://stage.statm.us/',
   }
 
