@@ -47,6 +47,26 @@ const keywords =
   'StatMuse, sports, stats, search, sports search, sports information, sports stats, statistics, fantasy stats, advanced stats, betting information, NBA stats, NFL stats, NHL stats, PGA stats, MLB stats'
 const defaultImageUrl = '/images/sm-meta-banner.jpg'
 
+const isError = (status?: number) => {
+  if (!status) return true
+  if (status >= 400) return true
+  return false
+}
+
+const analyticsProperties = Object.assign(
+  {
+    is_error: isError(Astro.response.status),
+    is_search: false,
+    method: Astro.request.method,
+    origin: 'web',
+    origin_scope: 'browser',
+    page_domain: 'unkown',
+    page_type: 'unknown',
+    query: null,
+  },
+  analytics
+)
+
 Astro.response.headers.set(
   'Cache-Control',
   'public, s-maxage=60, stale-while-revalidate=86400'
@@ -171,6 +191,10 @@ Astro.response.headers.set(
     <slot name="tradingview" />
 
     <meta name="analytics" content={Config.SEGMENT_WRITE_KEY} />
+    <meta
+      name="analytics:event:properties"
+      content={JSON.stringify(analyticsProperties)}
+    />
   </head>
   <body>
     <slot />
@@ -253,6 +277,34 @@ Astro.response.headers.set(
   //   const props = { origin: 'web' }
   //   userId ? analytics.identify(userId, props) : analytics.identify(props)
   // })(undefined)
+</script>
+<script>
+  const addContext = (props: object) => ({
+    ...props,
+    context: {
+      page: {
+        title: document.title,
+        path: document.location.pathname,
+        referrer: document.referrer,
+        search: document.location.search,
+        url: document.location.href,
+      },
+    },
+  })
+
+  const eventProps = document.querySelector<HTMLMetaElement>(
+    'meta[name="analytics:event:properties"]'
+  )?.content
+
+  if (eventProps) {
+    fetch(`${import.meta.env.PUBLIC_API_URL}/analytics/track`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(addContext(JSON.parse(eventProps))),
+    })
+  }
 </script>
 <script>
   import { AnalyticsBrowser } from '@segment/analytics-next'
