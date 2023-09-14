@@ -4,7 +4,12 @@ import Grid from '@components/grid.astro'
 import TeamLeaders from '@components/leaders.astro'
 import PlayerGallery from '@components/gallery.astro'
 
-import { GameraDomain, tokensToText, tokensToHtml } from '@statmuse/core/gamera'
+import {
+  GameraDomain,
+  tokensToText,
+  tokensToHtml,
+  getUrlForEntity,
+} from '@statmuse/core/gamera'
 import { getTeamSeasonOverview } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
 
@@ -35,7 +40,16 @@ const description = bio.summaryNlg
 const keywords = `${getLeagueKeywords(domain)} ${year} ${
   bio.name
 } team player stats statistics`
-const meta = { title, description, keywords }
+const canonical = {
+  url: `${getUrlForEntity({
+    type: 'teamSeason',
+    domain,
+    id: bio.teamId.toString(),
+    display: bio.name,
+  })}/${year}`,
+  rewrite: true,
+}
+const meta = { title, description, keywords, canonical }
 ---
 
 <TeamLayout {bio} {meta}>
