@@ -44,20 +44,18 @@ const subject = handled.subject
 const heroProps = getHeroProps({ imageAlt: query, response })
 
 const meta =
-  response.type !== 'error'
+  response.type !== 'error' &&
+  response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
     ? {
         title: title(query),
         description: description(response),
-        canonical:
-          response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
-            ? {
-                url: createAskPath({
-                  domain: response.visual.domain.toLowerCase(),
-                  query,
-                }),
-                rewrite: true,
-              }
-            : undefined,
+        canonical: {
+          url: createAskPath({
+            domain: response.visual.domain.toLowerCase(),
+            query,
+          }),
+          rewrite: true,
+        },
         facebook: {
           imageUrl: imageForgeUrl({
             url: heroProps?.imageUrl || '',
