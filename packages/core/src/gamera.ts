@@ -33,8 +33,8 @@ export const tokensToHtml = (tokens?: GameraToken[]) => {
   return tokens ? tokens.map(formatToken).join('').trim() : ''
 }
 
-export const tokensToText = (tokens: GameraToken[]) => {
-  return tokens.map(formatTokenTextOnly).join('').trim()
+export const tokensToText = (tokens?: GameraToken[]) => {
+  return tokens ? tokens.map(formatTokenTextOnly).join('').trim() : ''
 }
 
 const parameterize = (text: string) => {
