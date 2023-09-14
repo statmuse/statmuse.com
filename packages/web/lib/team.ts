@@ -1,5 +1,6 @@
 import type {
   GameraDomain,
+  GameraEntity,
   GameraTeamFranchiseOverview,
   GameraTeamSeasonBio,
   GameraTeamSeasonGameResults,
@@ -161,6 +162,25 @@ export const getTeamFranchiseOverview = async (props: {
     const requestUrl = `${gameraApiUrl}${domain}/teams/v2/${teamId}`
     const response = await fetch(requestUrl)
     const data = (await response.json()) as GameraTeamFranchiseOverview
+    return data
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
+}
+
+export const getTeamFranchiseLatestSeason = async (props: {
+  domain: GameraDomain
+  teamId: string
+}) => {
+  const { domain, teamId } = props
+  try {
+    const requestUrl = `${gameraApiUrl}${domain}/teams/${teamId}/latestseason`
+    const response = await fetch(requestUrl)
+    const data = (await response.json()) as {
+      name: string
+      entity: GameraEntity
+    }
     return data
   } catch (error) {
     console.error(error)

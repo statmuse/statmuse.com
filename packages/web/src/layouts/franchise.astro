@@ -14,6 +14,7 @@ import {
 import { getLeagueKeywords, Metadata } from '@lib/meta'
 import { imageForgeUrl } from '@lib/path'
 import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
+import { getTeamFranchiseLatestSeason } from '@lib/team'
 
 interface Props {
   overview: GameraTeamFranchiseOverview
@@ -33,7 +34,11 @@ const teamPath = getUrlForEntity({
   id: overview.teamId.toString(),
   display: bio.name,
 })
-const yearId = overview.seasons[0].name
+const latestSeason = await getTeamFranchiseLatestSeason({
+  domain,
+  teamId: overview.teamId.toString(),
+})
+const yearId = latestSeason?.entity.id.split('/')[1]
 
 const links = [
   { text: 'Overview', href: `${teamPath}/${yearId}` },
