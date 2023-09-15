@@ -9,6 +9,7 @@ import Container from '@components/container.astro'
 import { type GameraDefaultResponse, tokensToText } from '@statmuse/core/gamera'
 import { title, description } from '@lib/meta'
 import { clean, createAskPath, imageForgeUrl } from '@lib/path'
+import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
 
 interface Props {
   answer: GameraDefaultResponse
@@ -49,7 +50,19 @@ const meta = {
 }
 ---
 
-<Layout colors={subject?.colors} {meta}>
+<Layout
+  colors={subject?.colors}
+  {meta}
+  analytics={{
+    is_search: true,
+    page_type: 'ask',
+    page_domain:
+      answer.visual.domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
+    disposition: answer.disposition,
+    tokenizationScore: answer.tokenizationScore,
+    query,
+  }}
+>
   <Header
     {query}
     {conversationToken}

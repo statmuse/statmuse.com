@@ -19,7 +19,15 @@ const query = clean(
 )
 ---
 
-<Layout>
+<Layout
+  analytics={{
+    is_search: true,
+    page_type: 'ask',
+    disposition: answer.disposition,
+    tokenizationScore: answer.tokenizationScore,
+    query,
+  }}
+>
   <Header {query} {conversationToken} />
   <div class="h-screen w-full flex flex-col justify-center items-center">
     <h1

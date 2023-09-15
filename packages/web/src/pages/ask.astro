@@ -4,10 +4,11 @@ import ErrorLayout from '@layouts/error.astro'
 import Answer from '@components/answer.astro'
 import AnswerPrompt from '@components/answer-prompt.astro'
 import { handleAskResponseFromPost, tokensToText } from '@statmuse/core/gamera'
-
 import PlayerProfile from './[league]/player/[player]/index.astro'
 import TeamFranchiseProfile from './[league]/team/[team]/history.astro'
 import TeamSeasonProfile from './[league]/team/[team]/[year].astro'
+import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
+import { clean } from '@lib/path'
 
 if (Astro.request.method !== 'POST') {
   return Astro.redirect('/questions')
@@ -15,7 +16,7 @@ if (Astro.request.method !== 'POST') {
 
 const data = await Astro.request.formData()
 const preferredDomain = data.get('question[preferred_domain]')?.toString()
-const query = data.get('question[query]')?.toString()
+let query = data.get('question[query]')?.toString()
 const conversationToken = data.get('question[conversation_token]')?.toString()
 if (!query) throw new Error('No query provided')
 
@@ -24,6 +25,11 @@ if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })
 
 const handled = handleAskResponseFromPost(response)
+query = clean(
+  tokensToText(
+    response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
+  )
+)
 ---
 
 <ErrorLayout
@@ -31,6 +37,17 @@ const handled = handleAskResponseFromPost(response)
   status={422}
   message={tokensToText(response.visual.summary.answer)}
   {query}
+  analytics={{
+    is_search: true,
+    page_type: 'ask',
+    page_domain:
+      response.type === 'error'
+        ? (response.visual.domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'])
+        : undefined,
+    disposition: response.disposition,
+    tokenizationScore: response.tokenizationScore,
+    query,
+  }}
 >
   {
     response.type === 'nlgPromptForMoreInfoVisualChoicesOptional' ? (
