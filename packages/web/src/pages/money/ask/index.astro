@@ -1,10 +1,12 @@
 ---
 import ErrorLayout from '@layouts/error.astro'
-import { handleAskResponse } from '@statmuse/core/kanedama'
+import { handleResponse, handleAskResponse } from '@statmuse/core/kanedama'
 import { ask } from '@lib/kanedama'
 import { tokensToText } from '@statmuse/core/kanedama'
 import AnswerMoney from '@components/answer-money.astro'
 import { clean } from '@lib/path'
+
+import AssetProfile from '../symbol/[symbol]/index.astro'
 
 let question: string | undefined
 
@@ -20,6 +22,8 @@ if (Astro.request.method === 'POST') {
 const response = await ask({ query: question })
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })
+
+const handled = handleAskResponse(response)
 
 const query = clean(
   tokensToText(
@@ -41,8 +45,10 @@ const query = clean(
   }}
 >
   {
-    response.type === 'nlgAnswerNotPossibleVisualsRequired' ||
-    response.type === 'nlgPromptForMoreInfoVisualChoicesOptional' ? (
+    handled.type === 'assetEntityData' ? (
+      <AssetProfile query={handled.query} symbol={handled.symbol} />
+    ) : response.type === 'nlgAnswerNotPossibleVisualsRequired' ||
+      response.type === 'nlgPromptForMoreInfoVisualChoicesOptional' ? (
       <AnswerMoney answer={response} />
     ) : undefined
   }

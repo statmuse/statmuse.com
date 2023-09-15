@@ -8,7 +8,13 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
 
-const { symbol } = Astro.params
+interface Props {
+  query?: string
+  symbol?: string
+}
+
+const query = Astro.props.query
+const symbol = Astro.props.symbol || Astro.params.symbol
 if (!symbol) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
@@ -34,7 +40,11 @@ const news = profile.news?.slice(0, 4)
 const companyProfile = profile.stockProfile.profile.profile
 ---
 
-<MoneyLayout {profile}>
+<MoneyLayout
+  {profile}
+  {query}
+  meta={{ canonical: { url: assetUrl, rewrite: true } }}
+>
   <div>
     <div class="mb-5">
       <div class="flex justify-between mb-0.5">
