@@ -13,7 +13,18 @@ import {
 import { getTeamSeasonOverview } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
 
-const { league, team, year } = Astro.params
+interface Props {
+  league?: string
+  team?: string
+  year?: string
+  query?: string
+}
+
+const query = Astro.props.query
+const league = Astro.props.league || Astro.params.league
+const team = Astro.props.team || Astro.params.team
+const year = Astro.props.year || Astro.params.year
+
 if (!team || !league || !year) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
@@ -52,7 +63,7 @@ const canonical = {
 const meta = { title, description, keywords, canonical }
 ---
 
-<TeamLayout {bio} {meta}>
+<TeamLayout {bio} {meta} {query}>
   <div>
     <div class="mb-5 leading-snug">
       <p set:html={summary} />

@@ -7,6 +7,7 @@ import { handleAskResponseFromPost, tokensToText } from '@statmuse/core/gamera'
 
 import PlayerProfile from './[league]/player/[player]/index.astro'
 import TeamFranchiseProfile from './[league]/team/[team]/history.astro'
+import TeamSeasonProfile from './[league]/team/[team]/[year].astro'
 
 if (Astro.request.method !== 'POST') {
   return Astro.redirect('/questions')
@@ -39,6 +40,13 @@ const handled = handleAskResponseFromPost(response)
         query={handled.query}
         player={handled.player}
         league={handled.league}
+      />
+    ) : handled.type === 'teamSeason' ? (
+      <TeamSeasonProfile
+        query={handled.query}
+        team={handled.team}
+        league={handled.league}
+        year={handled.year}
       />
     ) : handled.type === 'teamFranchise' ? (
       <TeamFranchiseProfile

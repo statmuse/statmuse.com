@@ -19,9 +19,10 @@ import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
 interface Props {
   bio: GameraTeamSeasonBio
   meta?: Metadata
+  query?: string
 }
 
-const { bio, meta } = Astro.props
+const { bio, meta, query } = Astro.props
 
 const domain = bio.domain.toUpperCase() as GameraDomain
 const preferredDomain = domain.toLowerCase()
@@ -96,6 +97,7 @@ const twitter = {
     ...(meta || {}),
   }}
   analytics={{
+    query,
     is_search: true,
     page_domain:
       domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
@@ -104,6 +106,7 @@ const twitter = {
   }}
 >
   <Header
+    {query}
     {preferredDomain}
     share={{
       type: 'profile',
