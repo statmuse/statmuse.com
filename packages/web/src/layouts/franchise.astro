@@ -19,15 +19,15 @@ import { getTeamFranchiseLatestSeason } from '@lib/team'
 interface Props {
   overview: GameraTeamFranchiseOverview
   meta?: Metadata
+  query?: string
 }
 
-const { overview, meta } = Astro.props
+const { overview, meta, query } = Astro.props
 const { bio } = overview
 
 const domain = overview.domain.toUpperCase() as GameraDomain
 const preferredDomain = domain.toLowerCase()
 const path = Astro.url.pathname
-const canonical = { url: Astro.url.pathname + Astro.url.search }
 const teamPath = getUrlForEntity({
   type: 'teamSeason',
   domain,
@@ -77,12 +77,12 @@ const twitter = {
     title,
     description,
     keywords,
-    canonical,
     facebook,
     twitter,
     ...(meta || {}),
   }}
   analytics={{
+    query,
     is_search: true,
     page_domain:
       domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
@@ -90,7 +90,16 @@ const twitter = {
     disposition: overview.disposition,
   }}
 >
-  <Header {preferredDomain} share={{ type: 'profile', url: Astro.url.href }} />
+  <Header
+    {preferredDomain}
+    {query}
+    share={{
+      type: 'profile',
+      url: meta?.canonical?.url
+        ? Astro.url.origin + meta.canonical.url
+        : Astro.url.href,
+    }}
+  />
   <Container class="mb-5 bg-team-primary text-team-secondary overflow-hidden">
     <div
       class="relative flex flex-col md:flex-row md:flex-wrap justify-center items-center md:items-stretch"

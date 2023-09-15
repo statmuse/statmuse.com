@@ -6,6 +6,7 @@ import AnswerPrompt from '@components/answer-prompt.astro'
 import { handleAskResponseFromPost, tokensToText } from '@statmuse/core/gamera'
 
 import PlayerProfile from './[league]/player/[player]/index.astro'
+import TeamFranchiseProfile from './[league]/team/[team]/history.astro'
 
 if (Astro.request.method !== 'POST') {
   return Astro.redirect('/questions')
@@ -37,6 +38,12 @@ const handled = handleAskResponseFromPost(response)
       <PlayerProfile
         query={handled.query}
         player={handled.player}
+        league={handled.league}
+      />
+    ) : handled.type === 'teamFranchise' ? (
+      <TeamFranchiseProfile
+        query={handled.query}
+        team={handled.team}
         league={handled.league}
       />
     ) : response.type === 'nlgAnswerNotPossibleVisualsRequired' ? (
