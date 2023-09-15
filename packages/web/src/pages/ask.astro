@@ -5,6 +5,8 @@ import Answer from '@components/answer.astro'
 import AnswerPrompt from '@components/answer-prompt.astro'
 import { handleAskResponseFromPost, tokensToText } from '@statmuse/core/gamera'
 
+import PlayerProfile from './[league]/player/[player]/index.astro'
+
 if (Astro.request.method !== 'POST') {
   return Astro.redirect('/questions')
 }
@@ -31,6 +33,12 @@ const handled = handleAskResponseFromPost(response)
   {
     response.type === 'nlgPromptForMoreInfoVisualChoicesOptional' ? (
       <AnswerPrompt answer={response} />
+    ) : handled.type === 'player' ? (
+      <PlayerProfile
+        query={handled.query}
+        player={handled.player}
+        league={handled.league}
+      />
     ) : response.type === 'nlgAnswerNotPossibleVisualsRequired' ? (
       <Answer answer={response} />
     ) : undefined

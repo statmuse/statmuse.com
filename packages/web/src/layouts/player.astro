@@ -19,14 +19,11 @@ import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
 interface Props {
   bio: GameraPlayerBio
   meta?: Metadata
+  league: string
+  query?: string
 }
 
-const { bio, meta } = Astro.props
-
-const { league: preferredDomain, player } = Astro.params
-if (!player || !preferredDomain) {
-  return new Response(null, { status: 404, statusText: 'Not found' })
-}
+const { bio, meta, query, league: preferredDomain } = Astro.props
 
 const domain = preferredDomain.toUpperCase() as GameraDomain
 const teamUrl = getUrlForEntity(bio.team.entity)
@@ -86,6 +83,7 @@ const twitter = {
     ...(meta || {}),
   }}
   analytics={{
+    query,
     is_search: true,
     page_domain:
       domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
@@ -93,7 +91,16 @@ const twitter = {
     disposition: bio.disposition,
   }}
 >
-  <Header {preferredDomain} share={{ type: 'profile', url: Astro.url.href }} />
+  <Header
+    {preferredDomain}
+    {query}
+    share={{
+      type: 'profile',
+      url: meta?.canonical?.url
+        ? Astro.url.origin + meta.canonical.url
+        : Astro.url.href,
+    }}
+  />
   <Container class="mb-5 bg-team-primary text-team-secondary">
     <div class="flex flex-col md:flex-row relative">
       <div class="flex-1 mt-5 mb-7">
