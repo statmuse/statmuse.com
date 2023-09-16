@@ -2,6 +2,7 @@ import { StackContext, Config, Function, Bucket, use } from 'sst/constructs'
 import {
   CachePolicy,
   CacheQueryStringBehavior,
+  Distribution,
   FunctionCode,
   FunctionEventType,
   ResponseHeadersPolicy,
@@ -14,7 +15,6 @@ import {
   InvokeMode,
   LayerVersion,
 } from 'aws-cdk-lib/aws-lambda'
-import { Web } from './web-stack'
 import { Duration, Fn, RemovalPolicy } from 'aws-cdk-lib/core'
 import {
   HttpOrigin,
@@ -22,8 +22,9 @@ import {
   S3Origin,
 } from 'aws-cdk-lib/aws-cloudfront-origins'
 import { Function as CfFunction } from 'aws-cdk-lib/aws-cloudfront'
+import { Web } from './web'
+import { Imports } from './imports'
 import { createHash } from 'crypto'
-import { Imports } from './imports-stack'
 
 // Region to Origin Shield mapping based on latency. to be updated when new Regional Edge Caches are added to CloudFront.
 const ORIGIN_SHIELD_MAPPING = new Map([
@@ -179,27 +180,14 @@ export function ImageOptimization({ stack }: StackContext) {
     responseHeadersPolicy,
   }
 
-  astroSite.cdk?.distribution.addBehavior('img/*', imageOrigin, params)
-  astroSite.cdk?.distribution.addBehavior(
-    'app/media/*.jpg',
-    imageOrigin,
-    params
-  )
-  astroSite.cdk?.distribution.addBehavior(
-    'app/media/*.jpeg',
-    imageOrigin,
-    params
-  )
-  astroSite.cdk?.distribution.addBehavior(
-    'app/media/*.png',
-    imageOrigin,
-    params
-  )
-  astroSite.cdk?.distribution.addBehavior(
-    'finance/asset_img/*',
-    imageOrigin,
-    params
-  )
+  const distribution = astroSite.cdk?.distribution as Distribution
+  if (distribution) {
+    distribution.addBehavior('img/*', imageOrigin, params)
+    distribution.addBehavior('app/media/*.jpg', imageOrigin, params)
+    distribution.addBehavior('app/media/*.jpeg', imageOrigin, params)
+    distribution.addBehavior('app/media/*.png', imageOrigin, params)
+    distribution.addBehavior('finance/asset_img/*', imageOrigin, params)
+  }
 
   return {}
 }

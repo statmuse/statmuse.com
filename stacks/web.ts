@@ -1,9 +1,9 @@
 import { StackContext, AstroSite, use } from 'sst/constructs'
 import { SubnetType } from 'aws-cdk-lib/aws-ec2'
-import { API } from './api-stack'
-import { DNS } from './dns-stack'
+import { API } from './api'
+import { DNS } from './dns'
+import { Imports } from './imports'
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins'
-import { Imports } from './imports-stack'
 import {
   AllowedMethods,
   CachePolicy,
@@ -11,11 +11,15 @@ import {
   ResponseHeadersPolicy,
   ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront'
+import { Auth } from './auth'
+import { Secrets } from './secrets'
 
 export function Web({ stack }: StackContext) {
   const dns = use(DNS)
   const api = use(API)
+  const auth = use(Auth)
   const imports = use(Imports)
+  const secrets = use(Secrets)
 
   const sitemapHeaders = new ResponseHeadersPolicy(stack, 'sitemap-headers', {
     customHeadersBehavior: {
@@ -41,13 +45,21 @@ export function Web({ stack }: StackContext) {
   const astroSite = new AstroSite(stack, 'astro-site', {
     path: 'packages/web',
     bind: [
+      auth,
+      auth.privateKey,
       api.api,
+      secrets.STRIPE_SECRET,
+      secrets.STRIPE_WEBHOOK_SECRET,
+      secrets.STRIPE_PRICE_ID,
+      secrets.SENDGRID_API_KEY,
       api.secrets.SEGMENT_WRITE_KEY,
-      api.secrets.STRIPE_SECRET,
-      api.secrets.STRIPE_WEBHOOK_SECRET,
-      api.secrets.STRIPE_PRICE_ID,
     ],
-    environment: { PUBLIC_API_URL: api.api.url, ...api.environment },
+    environment: {
+      ...api.environment,
+      PUBLIC_AUTH_URL: auth.url,
+      PUBLIC_API_URL: api.api.url,
+      AUTH_ID: auth.id,
+    },
     nodejs: { install: ['pg'] },
     cdk: {
       server: {

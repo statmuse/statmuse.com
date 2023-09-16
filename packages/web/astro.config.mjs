@@ -5,11 +5,18 @@ import { defineConfig } from 'astro/config'
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind({ config: { applyBaseStyles: false } }), react()],
+  integrations: [
+    tailwind({
+      config: {
+        applyBaseStyles: false,
+      },
+    }),
+    react(),
+  ],
   output: 'server',
+  server: { port: 3000 },
   adapter: aws(),
-  compressHTML: true,
-  build: { inlineStylesheets: 'auto' },
+  vite: { optimizeDeps: ['sst'] },
   redirects: {
     '/company': '/company/about',
     '/company/products': '/company/about',
@@ -27,5 +34,4 @@ export default defineConfig({
     '/product/voices': '/product/examples',
     '/statlove': '/company/about',
   },
-  experimental: { assets: true, viewTransitions: true },
 })

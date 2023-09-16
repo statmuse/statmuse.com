@@ -1,10 +1,10 @@
 import { StackContext, Api, Function, use } from 'sst/constructs'
 import { Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2'
-import { Imports } from './imports-stack'
-import { Secrets } from './secrets-stack'
+import { Imports } from './imports'
+import { Secrets } from './secrets'
 
 export function API({ stack }: StackContext) {
-  const { secrets } = use(Secrets)
+  const secrets = use(Secrets)
 
   const { vpc, rdsCredentialsSecret, rdsProxySecurityGroup } = use(Imports)
 
@@ -75,6 +75,7 @@ export function API({ stack }: StackContext) {
           secrets.STRIPE_SECRET,
           secrets.STRIPE_WEBHOOK_SECRET,
           secrets.STRIPE_PRICE_ID,
+          secrets.SENDGRID_API_KEY,
         ],
         vpc,
         vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_EGRESS },

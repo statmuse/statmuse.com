@@ -1,0 +1,119 @@
+---
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Container from '@components/container.astro'
+import Image from '@components/image.astro'
+import * as User from '@statmuse/core/user'
+import { createCheckoutSession } from '@statmuse/core/stripe'
+
+if (Astro.request.method === 'POST') {
+  const data = await Astro.request.formData()
+  const email = data.get('email')?.toString()
+  if (!email)
+    return new Response(null, { status: 400, statusText: 'No email provided' })
+
+  const session = Astro.locals.session
+  let user
+  if (session.type === 'public') {
+    throw new Error('No active session')
+  } else if (session.type === 'visitor') {
+    user = await User.create(email, session.visitor.id)
+  } else if (session.type === 'user') {
+    user = session.user
+  }
+
+  const { url } = await createCheckoutSession({
+    email,
+    userId: user!.id,
+    successUrl: Astro.url.origin + '/foo',
+    cancelUrl: Astro.url.origin + '/bar',
+    customerId: user?.stripe_customer_id ?? undefined,
+    // referral: '',
+  })
+
+  return Astro.redirect(url)
+}
+
+const session = Astro.locals.session
+const email = session.type === 'user' ? session.user.email : ''
+
+Astro.response.headers.set('Cache-Control', 'no-cache, no-store')
+
+const meta = {
+  title: 'Sign Up For StatMuse+',
+}
+---
+
+<Layout {meta}>
+  <Header />
+  <Container class="px-[30px] py-[5px]">
+    <div
+      class="w-full max-w-md bg-white rounded-lg border border-[#e4e4e4] mx-auto mb-5 pt-8 px-8 pb-44 relative text-center overflow-hidden"
+    >
+      <h1 class="font-medium text-lg md:text-xl">Sign up for StatMuse+</h1>
+      <p class="my-5 text-left">
+        Members enjoy these benefits across NBA, NFL, NHL, MLB, PGA, Fantasy and
+        Money:
+      </p>
+      <ul class='m-5 list-["🏆"] text-left [&>li]:pl-3'>
+        <li>Unlimited prompts</li>
+        <li>2x data in results (unlimited in Money)</li>
+        <li>Zero ads</li>
+        <li>Personalized search history</li>
+        <li>Early access to features &amp; datasets</li>
+      </ul>
+      <div>
+        <form novalidate id="signup-form" method="post">
+          <input
+            class="w-full px-3 py-2.5 text-lg text-[#55595c] rounded bg-white border mb-7 outline-none"
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={email}
+          />
+          <input type="hidden" name="client_id" value="web" />
+          <input
+            type="hidden"
+            name="redirect_uri"
+            value={Astro.url.origin + '/'}
+          />
+          <input type="hidden" name="response_type" value="token" />
+          <input type="hidden" name="provider" value="email" />
+          <button
+            disabled={false}
+            class="w-full text-lg mb-7 p-3 border-0 rounded text-white bg-[#42a5f5] hover:bg-[#1976d2] disabled:bg-[#cfd8dc]"
+            type="submit"
+          >
+            Join for $20/mo
+          </button>
+        </form>
+        <div>
+          <p class="text-black/60">
+            Already have an account? <a href="/signin">Sign in</a>
+          </p>
+        </div>
+        <p class="text-xs text-[#777] mt-[23px] mb-[15px]">
+          By using StatMuse, you agree to our <a href="/terms">
+            terms of service
+          </a><br />and <a href="/privacy">privacy policy</a>.
+        </p>
+      </div>
+      <Image
+        class="absolute bottom-0 left-0 w-full"
+        src="https://cdn.statmuse.com/app/images/signup-players.png"
+        alt="StatMuse+"
+        width={450}
+        height={200}
+      />
+    </div>
+  </Container>
+</Layout>
+
+<!-- <script> -->
+<!--   const form = document.getElementById('signup-form') as HTMLFormElement -->
+<!--   form.addEventListener('submit', (event) => { -->
+<!--     event.preventDefault() -->
+<!--     const form = event.currentTarget as HTMLFormElement -->
+<!--     form.submit() -->
+<!--   }) -->
+<!-- </script> -->

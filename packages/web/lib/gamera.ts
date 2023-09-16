@@ -1,4 +1,4 @@
-import { GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
+import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
 import { relativeTimeFromDates } from '@statmuse/core/time'
 import type { Musing } from '@statmuse/core/musings'
 import type { HeroProps } from './props'

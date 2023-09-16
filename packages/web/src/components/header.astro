@@ -56,4 +56,54 @@ const audioUrl = Astro.props.audioUrl
       {audioUrl && <AnswerAudio src={audioUrl} />}
     </div>
   </div>
+  <div class="flex space-x-5 items-center justify-end flex-shrink-0">
+    <right-menu class="md:hidden">
+      <div class="relative ml-3" data-headlessui-state="">
+        <div>
+          <button
+            class="flex max-w-xs items-center text-sm focus:outline-none focus:ring-2 focus:ring-team-secondary-sm-default focus:ring-offset-2"
+            id="headlessui-menu-button-1"
+            type="button"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            data-headlessui-state=""
+          >
+            <span class="sr-only">Open user menu</span>
+            <svg
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              x="0px"
+              y="0px"
+              viewBox="0 0 29.2 22.7"
+              xml:space="preserve"
+              class="w-[25px] h-[25px] relative cursor-pointer fill-team-secondary"
+            >
+              <path
+                d="M27,19.2H2.2c-0.3,0-0.5-0.2-0.5-0.5s0.2-0.5,0.5-0.5H27c0.3,0,0.5,0.2,0.5,0.5S27.3,19.2,27,19.2z"
+              >
+              </path><path
+                d="M27,11.8H2.2c-0.3,0-0.5-0.2-0.5-0.5s0.2-0.5,0.5-0.5H27c0.3,0,0.5,0.2,0.5,0.5S27.3,11.8,27,11.8z"
+              >
+              </path><path
+                d="M27,4.4H2.2c-0.3,0-0.5-0.2-0.5-0.5s0.2-0.5,0.5-0.5H27c0.3,0,0.5,0.2,0.5,0.5S27.3,4.4,27,4.4z"
+              >
+              </path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </right-menu>
+    <a
+      href="/signin"
+      class="hidden md:block ml-5 no-underline hover:underline text-team-secondary-sm-default whitespace-nowrap"
+    >
+      Sign in
+    </a>
+    <a
+      href="/signup"
+      class="hidden md:flex items-center justify-center border border-team-secondary-sm-default rounded-md hover:text-team-secondary-sm-default hover:bg-team-primary hover:border-team-secondary-sm-default hover:border hover:no-underline py-1 px-4 bg-team-secondary-sm-default text-team-primary whitespace-nowrap"
+    >
+      Sign up
+    </a>
+  </div>
 </div>

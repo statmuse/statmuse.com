@@ -1,10 +1,11 @@
 import { SSTConfig } from 'sst'
-import { API } from './stacks/api-stack'
-import { Web } from './stacks/web-stack'
-import { DNS } from './stacks/dns-stack'
-import { ImageOptimization } from './stacks/img-stack'
-import { Imports } from './stacks/imports-stack'
-import { Secrets } from './stacks/secrets-stack'
+import { API } from './stacks/api'
+import { Web } from './stacks/web'
+import { DNS } from './stacks/dns'
+import { ImageOptimization } from './stacks/img'
+import { Imports } from './stacks/imports'
+import { Secrets } from './stacks/secrets'
+import { Auth } from './stacks/auth'
 
 export default {
   config(_input) {
@@ -19,6 +20,7 @@ export default {
       .stack(Imports)
       .stack(Secrets)
       .stack(DNS)
+      .stack(Auth)
       .stack(API)
       .stack(Web)
       .stack(ImageOptimization)

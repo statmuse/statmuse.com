@@ -7,9 +7,7 @@ import { formatDate } from "@statmuse/core/time";
 import { marked } from "marked";
 
 const musings = await listLatestMusings.execute()
-
 const shortLinkUrl =  process.env.SHORT_LINK_URL || 'http://localhost:3000/';
-
 ---
 <Fragment>
   <h3
