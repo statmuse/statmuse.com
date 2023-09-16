@@ -1,6 +1,5 @@
 import { ApiHandler } from "sst/node/api"
-import { Config } from "sst/node/config"
-import { stripe } from "@statmuse/core/stripe"
+import { createCheckoutSession } from "@statmuse/core/stripe"
 
 type Request = {
   email: string
@@ -22,38 +21,7 @@ export const handler = ApiHandler(async (evt) => {
     }
   }
 
-  let customerId = body.customerId
-
-  if (body.customerId) {
-    if (body.referral) {
-      await stripe.customers.update(body.customerId, {
-        metadata: { referral: body.referral },
-        coupon: body.referral ? "referral" : undefined,
-      })
-    }
-  } else {
-    const customer = await stripe.customers.create({
-      email: body.email,
-      metadata: body.referral ? { referral: body.referral } : undefined,
-      coupon: body.referral ? "referral" : undefined,
-    })
-    customerId = customer.id
-  }
-
-  const session = await stripe.checkout.sessions.create({
-    line_items: [
-      {
-        price: Config.STRIPE_PRICE_ID,
-        quantity: 1,
-      },
-    ],
-    mode: "subscription",
-    success_url: body.successUrl,
-    cancel_url: body.cancelUrl,
-    customer: customerId,
-    client_reference_id: body.userId,
-    allow_promotion_codes: true,
-  })
+  const session = await createCheckoutSession(body)
 
   if (!session.url) {
     return {

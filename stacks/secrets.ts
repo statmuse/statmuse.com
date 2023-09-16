@@ -7,10 +7,9 @@ export function Secrets({ stack }: StackContext) {
     'STRIPE_WEBHOOK_SECRET',
     'STRIPE_PRICE_ID',
     'API_KEY',
-    'ELASTICSEARCH_CREDENTIALS'
+    'ELASTICSEARCH_CREDENTIALS',
+    'SENDGRID_API_KEY'
   )
 
-  return {
-    secrets,
-  }
+  return secrets
 }

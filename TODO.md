@@ -2,12 +2,12 @@
 
 ## Parity
 
-- [ ] tabbed visuals
 - [ ] auth (visitors, users)
 - [ ] statmuse+ (limit features for free users)
+- [ ] rewardful integration
 - [ ] persist asks, cache logic from mothra, etc.
-- [ ] swr headers (use astro middleware? works on sst?)
 - [ ] analytics (provider?)
+- [ ] swr headers (use astro middleware? works on sst?)
 - [ ] security headers
 - [ ] cookie banner
 - [x] error pages (404, gamera couldn't answer, etc)
@@ -33,6 +33,8 @@
 - [x] gallery page
 - [x] grid column sort
 - [x] shot chart visuals (react island)
+- [x] tabbed visuals
+- [x] newsletter signup
 
 ## Launch
 
