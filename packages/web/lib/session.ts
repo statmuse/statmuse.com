@@ -20,6 +20,7 @@ export const verify = (token: string) => {
 
 export const create = async (context: APIContext) => {
   const visitor = await fromRequest(context)
+  context.locals.visitor = visitor
   const token = builder.create('visitor', { id: visitor.id })
   set(context, token)
   return builder.verify(token)
