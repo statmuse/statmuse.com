@@ -29,5 +29,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
       ? await User.fromEmail(session.properties.email)
       : undefined
 
+  locals.subscribed = locals.user?.stripe_subscription_status === 'active'
+
   return next()
 })
