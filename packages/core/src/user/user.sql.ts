@@ -4,7 +4,7 @@ export interface UserTable {
   id: string
 
   username: string
-  email: string | null
+  email: string
   email_confirm_token: string
   has_completed_signup: boolean
 

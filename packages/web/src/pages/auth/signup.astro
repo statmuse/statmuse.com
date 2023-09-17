@@ -3,8 +3,6 @@ import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
 import Image from '@components/image.astro'
-import * as User from '@statmuse/core/user'
-import { createCheckoutSession } from '@statmuse/core/stripe'
 
 if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData()
@@ -12,32 +10,24 @@ if (Astro.request.method === 'POST') {
   if (!email)
     return new Response(null, { status: 400, statusText: 'No email provided' })
 
-  const session = Astro.locals.session
-  let user
-  if (session.type === 'public') {
-    throw new Error('No active session')
-  } else if (session.type === 'visitor') {
-    user = await User.create(email, session.visitor.id)
-  } else if (session.type === 'user') {
-    user = session.user
-  }
+  const visitor = Astro.locals.visitor.id
+  data.set('visitor', visitor)
+  data.set('upgrade', 'true')
 
-  const { url } = await createCheckoutSession({
-    email,
-    userId: user!.id,
-    successUrl: Astro.url.origin + '/foo',
-    cancelUrl: Astro.url.origin + '/bar',
-    customerId: user?.stripe_customer_id ?? undefined,
-    // referral: '',
-  })
+  const url =
+    import.meta.env.PUBLIC_AUTH_URL +
+    '/authorize?' +
+    // @ts-expect-error
+    new URLSearchParams(data).toString()
 
   return Astro.redirect(url)
 }
 
-const session = Astro.locals.session
-const email = session.type === 'user' ? session.user.email : ''
-
 Astro.response.headers.set('Cache-Control', 'no-cache, no-store')
+
+if (Astro.locals.session.type === 'user') {
+  return Astro.redirect('/', 302)
+}
 
 const meta = {
   title: 'Sign Up For StatMuse+',
@@ -63,21 +53,21 @@ const meta = {
         <li>Early access to features &amp; datasets</li>
       </ul>
       <div>
-        <form novalidate id="signup-form" method="post">
+        <form id="signup-form" method="post">
           <input
             class="w-full px-3 py-2.5 text-lg text-[#55595c] rounded bg-white border mb-7 outline-none"
             name="email"
             type="email"
             placeholder="Email"
-            value={email}
+            value=""
           />
           <input type="hidden" name="client_id" value="web" />
           <input
             type="hidden"
             name="redirect_uri"
-            value={Astro.url.origin + '/'}
+            value={Astro.url.origin + '/auth/callback'}
           />
-          <input type="hidden" name="response_type" value="token" />
+          <input type="hidden" name="response_type" value="code" />
           <input type="hidden" name="provider" value="email" />
           <button
             disabled={false}
@@ -89,7 +79,7 @@ const meta = {
         </form>
         <div>
           <p class="text-black/60">
-            Already have an account? <a href="/signin">Sign in</a>
+            Already have an account? <a href="/auth/signin">Sign in</a>
           </p>
         </div>
         <p class="text-xs text-[#777] mt-[23px] mb-[15px]">

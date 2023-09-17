@@ -5,7 +5,10 @@ module.exports = {
   htmlWhitespaceSensitivity: 'ignore',
   semi: false,
   singleQuote: true,
-  plugins: [require.resolve('prettier-plugin-astro')],
+  plugins: [
+    require.resolve('prettier-plugin-astro'),
+    require.resolve('prettier-plugin-svelte'),
+  ],
   overrides: [
     {
       files: '*.astro',
@@ -13,5 +16,6 @@ module.exports = {
         parser: 'astro',
       },
     },
+    { files: '*.svelte', options: { parser: 'svelte' } },
   ],
 }

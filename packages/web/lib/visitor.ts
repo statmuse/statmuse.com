@@ -20,8 +20,8 @@ export const botName = (userAgent: string | undefined) => {
 }
 
 export const fromRequest = async (context: APIContext) => {
-  if (context.locals.session && context.locals.session.type !== 'public') {
-    return context.locals.session.visitor
+  if (context.locals.visitor) {
+    return context.locals.visitor
   }
 
   const headers = context.request.headers
@@ -34,9 +34,9 @@ export const fromRequest = async (context: APIContext) => {
   const session = Session.get(context)
   const visitorId =
     session?.type === 'visitor'
-      ? session.properties.visitor.id
+      ? session.properties.id
       : session?.type === 'user'
-      ? session.properties.visitor.id
+      ? session.properties.visitorId
       : undefined
 
   const existing = visitorId ? await Visitor.get(visitorId) : undefined
