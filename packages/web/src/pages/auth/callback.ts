@@ -1,6 +1,7 @@
 import type { APIContext } from 'astro'
 import { Auth } from 'sst/node/future/auth'
 import * as Session from '@lib/session'
+import * as User from '@statmuse/core/user'
 import { createCheckoutSession } from '@statmuse/core/stripe'
 
 export async function GET(ctx: APIContext) {
@@ -21,22 +22,26 @@ export async function GET(ctx: APIContext) {
   Session.set(ctx, response.access_token)
 
   const session = Session.verify(response.access_token)
+  if (session.type !== 'user') {
+    return ctx.redirect('/', 302)
+  }
+
+  const user = await User.get(session.properties.id)
   if (
-    session?.type === 'user' &&
     session.properties.upgrade &&
-    session.properties.stripe_subscription_status !== 'active'
+    user?.stripe_subscription_status !== 'active'
   ) {
-    const user = session.properties
     const { url } = await createCheckoutSession({
-      email: user.email,
-      userId: user.id,
+      email: session.properties.email,
+      userId: session.properties.id,
       successUrl: ctx.url.origin,
-      cancelUrl: ctx.url.origin,
-      customerId: user.stripe_customer_id ?? undefined,
+      cancelUrl: ctx.url.origin + '/auth/signup',
+      customerId: user?.stripe_customer_id ?? undefined,
       // referral: '',
     })
     if (url) return ctx.redirect(url)
   }
 
-  return ctx.redirect('/', 302)
+  const url = session.properties.updated ? '/account/settings' : '/'
+  return ctx.redirect(url, 302)
 }

@@ -82,6 +82,10 @@
   }
 }
 
+input {
+  padding: .5rem .75rem
+}
+
 .btn-gallery-icon {
   background: url('data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDA4NmZmIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCI+PHBhdGggZD0ibTIuMyAyLjNoOHY4aC04eiIvPjxwYXRoIGQ9Im0xMi41IDIuM2g4djhoLTh6Ii8+PHBhdGggZD0ibTIuMyAxMi41aDh2OGgtOHoiLz48cGF0aCBkPSJtMTIuNSAxMi41aDh2OGgtOHoiLz48L2c+PC9zdmc+Cg==');
 }

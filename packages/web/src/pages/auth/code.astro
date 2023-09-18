@@ -7,6 +7,11 @@ import Image from '@components/image.astro'
 const meta = {
   title: 'Sign Up For StatMuse+',
 }
+
+const error = Astro.url.searchParams.get('error')
+const messages: Record<string, string> = {
+  invalid_code: 'The code you entered is invalid',
+}
 ---
 
 <Layout {meta}>
@@ -19,7 +24,6 @@ const meta = {
       <p class="my-5 text-left">Check your inbox for the code we sent you</p>
       <div>
         <form
-          novalidate
           id="signup-form"
           method="get"
           action={import.meta.env.PUBLIC_AUTH_URL + '/callback'}
@@ -29,7 +33,17 @@ const meta = {
             name="code"
             type="text"
             placeholder="Code"
+            required
+            aria-invalid={!!error}
+            aria-describedby={error ? 'code-error' : undefined}
           />
+          {
+            error ? (
+              <p class="mb-3 text-sm text-red-600" id="code-error">
+                {messages[error]}
+              </p>
+            ) : null
+          }
           <button
             disabled={false}
             class="w-full text-lg mb-7 p-3 border-0 rounded text-white bg-[#42a5f5] hover:bg-[#1976d2] disabled:bg-[#cfd8dc]"
@@ -41,7 +55,7 @@ const meta = {
       </div>
       <Image
         class="absolute bottom-0 left-0 w-full"
-        src="https://cdn.statmuse.com/app/images/signup-players.png"
+        src="app/images/signup-players.png"
         alt="StatMuse+"
         width={450}
         height={200}

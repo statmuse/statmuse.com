@@ -40,6 +40,13 @@ export const create = async (email: string, visitorId: string) => {
   return user
 }
 
+export const get = async (id: string) =>
+  db
+    .selectFrom('users')
+    .where('users.id', '=', id)
+    .selectAll()
+    .executeTakeFirst()
+
 export const fromEmail = async (email: string) =>
   db
     .selectFrom('users')
@@ -77,4 +84,15 @@ export async function deleteUser(id: string) {
   })
 
   console.log('transaction', JSON.stringify(transaction, undefined, 2))
+}
+
+export async function updateEmail(id: string, email: string) {
+  console.log(`Updating email address to ${email} for user with id: ${id}`)
+
+  return db
+    .updateTable('users')
+    .set({ email })
+    .where('users.id', '=', id)
+    .returningAll()
+    .executeTakeFirst()
 }

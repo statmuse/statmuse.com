@@ -1,5 +1,5 @@
-import { ApiHandler } from "sst/node/api"
-import { stripe } from "@statmuse/core/stripe"
+import { ApiHandler } from 'sst/node/api'
+import { createBillingSession } from '@statmuse/core/stripe'
 
 type Request = {
   customerId: string
@@ -7,27 +7,22 @@ type Request = {
 }
 
 export const handler = ApiHandler(async (evt) => {
-  if (!evt.body) return { statusCode: 400, body: "Missing body" }
+  if (!evt.body) return { statusCode: 400, body: 'Missing body' }
 
   const body = JSON.parse(evt.body) as Request
   if (!body.returnUrl || !body.customerId) {
     return {
       statusCode: 400,
-      body: "Missing required fields (customerId, returnUrl)",
+      body: 'Missing required fields (customerId, returnUrl)',
     }
   }
 
-  const session = await stripe.billingPortal.sessions.create({
-    customer: body.customerId,
-    return_url: body.returnUrl,
-  })
-
-  console.log("session", session)
+  const session = await createBillingSession(body)
 
   if (!session.url) {
     return {
       statusCode: 500,
-      body: "Failed to create checkout session",
+      body: 'Failed to create checkout session',
     }
   }
 

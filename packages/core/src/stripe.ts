@@ -100,3 +100,23 @@ export async function createCheckoutSession(options: {
 
   return session
 }
+
+export async function createBillingSession(options: {
+  customerId: string
+  returnUrl: string
+}) {
+  const session = await stripe.billingPortal.sessions.create({
+    customer: options.customerId,
+    return_url: options.returnUrl,
+  })
+
+  return session
+}
+
+export async function deleteCustomer(options: { customerId: string }) {
+  try {
+    await stripe.customers.del(options.customerId)
+  } catch (error) {
+    console.error('Error deleting Stripe customer; already deleted?', error)
+  }
+}
