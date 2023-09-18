@@ -72,8 +72,23 @@ const meta =
   status={422}
   message={tokensToText(response.visual.summary.answer)}
   {query}
+  analytics={{
+    is_search: true,
+    page_type: 'ask',
+    page_domain: 'finance',
+    query,
+  }}
 >
-  <MoneyBaseLayout {meta} colors={subject?.colors}>
+  <MoneyBaseLayout
+    {meta}
+    colors={subject?.colors}
+    analytics={{
+      is_search: true,
+      page_type: 'ask',
+      page_domain: 'finance',
+      query,
+    }}
+  >
     <Header
       money
       {query}

@@ -52,10 +52,12 @@ export function Web({ stack }: StackContext) {
       secrets.STRIPE_WEBHOOK_SECRET,
       secrets.STRIPE_PRICE_ID,
       secrets.SENDGRID_API_KEY,
+      secrets.SEGMENT_WRITE_KEY,
     ],
     environment: {
       ...api.environment,
       PUBLIC_AUTH_URL: auth.url,
+      PUBLIC_API_URL: api.api.url,
       AUTH_ID: auth.id,
     },
     nodejs: { install: ['pg'] },

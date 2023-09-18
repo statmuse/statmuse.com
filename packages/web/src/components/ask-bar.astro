@@ -1,6 +1,4 @@
 ---
-import { Api } from 'sst/node/api'
-
 interface Props {
   query?: string
   conversationToken?: string
@@ -19,13 +17,7 @@ const placeholder = money
   : 'Search players, stats or odds'
 ---
 
-<form
-  class="ask-form"
-  {action}
-  accept-charset="UTF-8"
-  method="post"
-  data-api-url={Api.api.url}
->
+<form class="ask-form" {action} accept-charset="UTF-8" method="post">
   <div
     role="combobox"
     aria-haspopup="listbox"
@@ -158,7 +150,7 @@ const placeholder = money
   const listbox = document.querySelector('div[role="listbox"]') as HTMLElement
   const section = document.querySelector('ul[role="listbox"]') as HTMLElement
   const close = document.querySelector('[data-clear]') as HTMLElement
-  const apiUrl = `${form.dataset.apiUrl}${
+  const apiUrl = `${import.meta.env.PUBLIC_API_URL}${
     form.action.includes('money') ? '/money/search/suggest' : '/search/suggest'
   }`
   const league = form.action.includes('money')
@@ -203,6 +195,7 @@ const placeholder = money
 
     if (event.keyCode === 13) {
       if (!event.repeat) {
+        trackSuggestion()
         form.submit()
       }
 
@@ -282,6 +275,7 @@ const placeholder = money
 
     item.addEventListener('click', () => {
       textarea.value = state.suggestions[i].display
+      trackSuggestion()
       form.submit()
     })
 
@@ -341,5 +335,17 @@ const placeholder = money
     textarea.classList.add('border-b-transparent')
     textarea.classList.add('rounded-bl-none')
     textarea.classList.add('rounded-br-none')
+  }
+
+  const trackSuggestion = () => {
+    if (
+      state.selectedIndex !== -1 &&
+      state.suggestions[state.selectedIndex].display === textarea.value
+    ) {
+      window.segment.track('Autosuggest Search', {
+        query: textarea.value,
+        section: 'suggestion',
+      })
+    }
   }
 </script>

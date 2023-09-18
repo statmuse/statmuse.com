@@ -1,0 +1,84 @@
+---
+import { getHeroProps } from '@lib/gamera'
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Hero from '@components/hero.astro'
+import Visuals from '@components/visuals.astro'
+import Explore from '@components/explore.astro'
+import Container from '@components/container.astro'
+import { type GameraDefaultResponse, tokensToText } from '@statmuse/core/gamera'
+import { title, description } from '@lib/meta'
+import { clean, createAskPath, imageForgeUrl } from '@lib/path'
+import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
+
+interface Props {
+  answer: GameraDefaultResponse
+}
+
+const { answer } = Astro.props
+const conversationToken = answer.conversation.token
+const query = clean(
+  tokensToText(answer.visual.summaryTokens.filter((t) => t.type !== 'inferred'))
+)
+const preferredDomain = answer.visual.domain.toLowerCase()
+const subject = answer.visual.summary.subject
+const heroProps = getHeroProps({ imageAlt: query, response: answer })
+const meta = {
+  title: title(query),
+  description: description(answer),
+  canonical: {
+    url: createAskPath({
+      domain: answer.visual.domain.toLowerCase(),
+      query,
+    }),
+    rewrite: true,
+  },
+  facebook: {
+    imageUrl: imageForgeUrl({
+      url: heroProps?.imageUrl || '',
+      bgColor: subject.colors.background,
+      type: 'facebook',
+    }),
+  },
+  twitter: {
+    imageUrl: imageForgeUrl({
+      url: heroProps?.imageUrl || '',
+      bgColor: subject.colors.background,
+      type: 'twitter',
+    }),
+  },
+}
+---
+
+<Layout
+  colors={subject?.colors}
+  {meta}
+  analytics={{
+    is_search: true,
+    page_type: 'ask',
+    page_domain:
+      answer.visual.domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
+    disposition: answer.disposition,
+    tokenizationScore: answer.tokenizationScore,
+    query,
+  }}
+>
+  <Header
+    {query}
+    {conversationToken}
+    {preferredDomain}
+    share={preferredDomain
+      ? { type: 'ask', shortCode: 'CODE', query, domain: preferredDomain }
+      : undefined}
+    audioUrl={answer.visual.summary.narrator?.answerWithIntroAudioUrl ||
+      answer.visual.summary.narrator?.answerAudioUrl}
+  />
+  {heroProps ? <Hero {...heroProps} /> : null}
+  <Visuals response={answer} {conversationToken} />
+  <Container>
+    <Explore
+      domain={preferredDomain?.toLowerCase()}
+      additionalQuestions={answer.visual.additionalQuestions}
+    />
+  </Container>
+</Layout>

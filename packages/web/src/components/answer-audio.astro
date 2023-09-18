@@ -70,12 +70,16 @@ interface Props {
         el.querySelector('[data-play]')?.classList.remove('hidden')
         el.querySelector('[data-pause]')?.classList.add('hidden')
       }
+      window.segment.track('Toggle Musing Audio Playback', {
+        playing: state.playing,
+      })
     })
 
     audio.addEventListener('ended', () => {
       state.playing = !state.playing
       el.querySelector('[data-play]')?.classList.remove('hidden')
       el.querySelector('[data-pause]')?.classList.add('hidden')
+      window.segment.track('Musing Audio Finished')
     })
 
     audio.addEventListener('timeupdate', () => {

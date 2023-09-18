@@ -30,6 +30,7 @@ const { domain, additionalQuestions, showVideo = false } = Astro.props
                   domain: question.domain?.toLowerCase() || domain || '',
                   query: question.text,
                 })}
+                data-track-click="Click Try-Also Query"
               >
                 {question.text}
               </a>
@@ -51,3 +52,15 @@ const { domain, additionalQuestions, showVideo = false } = Astro.props
     <div></div>
   </div>
 </div>
+<script>
+  document
+    .querySelectorAll<HTMLElement>('[data-track-click="Click Try-Also Query"]')
+    .forEach((el) => {
+      el.addEventListener('click', () => {
+        window.segment.track(el.dataset.trackClick as string, {
+          query: el.innerText,
+          referrer: window.location.href,
+        })
+      })
+    })
+</script>

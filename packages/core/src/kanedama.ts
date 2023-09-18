@@ -69,6 +69,32 @@ export function handleResponse(response: KanedamaResponse) {
   }
 }
 
+export function handleAskResponse(response: KanedamaResponse) {
+  const query = tokensToText(
+    response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
+  ).toLowerCase()
+
+  if (response.type === 'nlgPromptForMoreInfoVisualChoicesOptional') {
+    return { query }
+  }
+  const entity = response.visual.summary.answer.find((t) => t.type === 'entity')
+  const assetEntityData = response.visual.detail?.find(
+    (d) => d.type === 'assetEntityData'
+  ) as AssetEntityData | undefined
+
+  if (assetEntityData && entity?.type === 'entity') {
+    return {
+      query,
+      type: assetEntityData.type,
+      symbol: entity.entity.id.toLowerCase(),
+    }
+  }
+
+  return {
+    query,
+  }
+}
+
 export const tokensToHtml = (tokens: KanedamaToken[]) => {
   return tokens.map(formatToken).join('').trim()
 }
@@ -122,6 +148,9 @@ export type KanedamaToken = {
 } & (
   | {
       type: 'general'
+    }
+  | {
+      type: 'inferred'
     }
   | {
       type: 'entity'

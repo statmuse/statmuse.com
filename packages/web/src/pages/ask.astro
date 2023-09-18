@@ -1,109 +1,78 @@
 ---
-import { ask, getHeroProps } from '@lib/gamera'
-import Layout from '@layouts/main.astro'
-import Error from '@layouts/error.astro'
-import Header from '@components/header.astro'
-import Hero from '@components/hero.astro'
-import Visuals from '@components/visuals.astro'
-import Explore from '@components/explore.astro'
-import Container from '@components/container.astro'
-import { handleResponse, tokensToText } from '@statmuse/core/gamera'
-import { title, description } from '@lib/meta'
-import { clean, createAskPath, imageForgeUrl } from '@lib/path'
+import { ask } from '@lib/gamera'
+import ErrorLayout from '@layouts/error.astro'
+import Answer from '@components/answer.astro'
+import AnswerPrompt from '@components/answer-prompt.astro'
+import { handleAskResponseFromPost, tokensToText } from '@statmuse/core/gamera'
+import PlayerProfile from './[league]/player/[player]/index.astro'
+import TeamFranchiseProfile from './[league]/team/[team]/history.astro'
+import TeamSeasonProfile from './[league]/team/[team]/[year].astro'
+import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
+import { clean } from '@lib/path'
 
 if (Astro.request.method !== 'POST') {
   return Astro.redirect('/questions')
 }
 
 const data = await Astro.request.formData()
-let preferredDomain = data.get('question[preferred_domain]')?.toString()
+const preferredDomain = data.get('question[preferred_domain]')?.toString()
 let query = data.get('question[query]')?.toString()
-let conversationToken = data.get('question[conversation_token]')?.toString()
+const conversationToken = data.get('question[conversation_token]')?.toString()
 if (!query) throw new Error('No query provided')
 
 const response = await ask({ query, preferredDomain, conversationToken })
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })
 
-conversationToken = response.conversation.token
+const handled = handleAskResponseFromPost(response)
 query = clean(
   tokensToText(
     response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
   )
 )
-preferredDomain =
-  response.type === 'nlgPromptForMoreInfoVisualChoicesOptional'
-    ? undefined
-    : response.visual.domain.toLowerCase()
-
-const handled = handleResponse(response)
-if (handled.redirectUrl) return Astro.redirect(handled.redirectUrl)
-
-const subject = handled.subject
-
-const heroProps = getHeroProps({ imageAlt: query, response })
-
-const meta =
-  response.type !== 'error'
-    ? {
-        title: title(query),
-        description: description(response),
-        canonical:
-          response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
-            ? {
-                url: createAskPath({
-                  domain: response.visual.domain.toLowerCase(),
-                  query,
-                }),
-                rewrite: true,
-              }
-            : undefined,
-        facebook: {
-          imageUrl: imageForgeUrl({
-            url: heroProps?.imageUrl || '',
-            bgColor: subject?.colors.background,
-            type: 'facebook',
-          }),
-        },
-        twitter: {
-          imageUrl: imageForgeUrl({
-            url: heroProps?.imageUrl || '',
-            bgColor: subject?.colors.background,
-            type: 'twitter',
-          }),
-        },
-      }
-    : {}
 ---
 
-<Error
+<ErrorLayout
   render={response.type === 'error'}
   status={422}
   message={tokensToText(response.visual.summary.answer)}
   {query}
+  analytics={{
+    is_search: true,
+    page_type: 'ask',
+    page_domain:
+      response.type === 'error'
+        ? (response.visual.domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'])
+        : undefined,
+    disposition: response.disposition,
+    tokenizationScore: response.tokenizationScore,
+    query,
+  }}
 >
-  <Layout colors={subject?.colors} {meta}>
-    <Header
-      {query}
-      {conversationToken}
-      {preferredDomain}
-      share={preferredDomain
-        ? { type: 'ask', shortCode: 'CODE', query, domain: preferredDomain }
-        : undefined}
-      audioUrl={response.visual.summary.narrator?.answerWithIntroAudioUrl ||
-        response.visual.summary.narrator?.answerAudioUrl}
-    />
-    {heroProps ? <Hero {...heroProps} /> : null}
-    <Visuals {response} {conversationToken} />
-    {
-      response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
-        <Container>
-          <Explore
-            domain={preferredDomain?.toLowerCase()}
-            additionalQuestions={response.visual.additionalQuestions}
-          />
-        </Container>
-      )
-    }
-  </Layout>
-</Error>
+  {
+    response.type === 'nlgPromptForMoreInfoVisualChoicesOptional' ? (
+      <AnswerPrompt answer={response} />
+    ) : handled.type === 'player' ? (
+      <PlayerProfile
+        query={handled.query}
+        player={handled.player}
+        league={handled.league}
+      />
+    ) : handled.type === 'teamSeason' ? (
+      <TeamSeasonProfile
+        query={handled.query}
+        team={handled.team}
+        league={handled.league}
+        year={handled.year}
+      />
+    ) : handled.type === 'teamFranchise' ? (
+      <TeamFranchiseProfile
+        query={handled.query}
+        team={handled.team}
+        league={handled.league}
+      />
+    ) : response.type === 'nlgAnswerNotPossibleVisualsRequired' ? (
+      <Answer answer={response} />
+    ) : undefined
+  }
+</ErrorLayout>

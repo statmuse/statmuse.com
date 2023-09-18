@@ -1,0 +1,93 @@
+---
+import MoneyBaseLayout from '@layouts/money-base.astro'
+import Header from '@components/header.astro'
+import Footer from '@components/footer.astro'
+import Hero from '@components/hero.astro'
+import Visuals from '@components/visuals-money.astro'
+import Explore from '@components/explore.astro'
+import Container from '@components/container.astro'
+import { getHeroProps } from '@lib/kanedama'
+import { clean, createAskPath, imageForgeUrl } from '@lib/path'
+import { tokensToText } from '@statmuse/core/kanedama'
+import { title } from '@lib/meta'
+import type { KanedamaResponse } from '@statmuse/core/kanedama'
+
+interface Props {
+  answer: KanedamaResponse
+}
+
+const { answer } = Astro.props
+const conversationToken = answer.conversation.token
+const subject = answer.visual.summary.subject
+
+const query = clean(
+  tokensToText(answer.visual.summaryTokens.filter((t) => t.type !== 'inferred'))
+)
+
+const heroProps = getHeroProps({ imageAlt: query, response: answer })
+
+const meta =
+  answer.type !== 'error'
+    ? {
+        title: title(query),
+        description:
+          answer.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
+            ? tokensToText(answer.nlg.text.answer)
+            : '',
+        canonical:
+          answer.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
+            ? {
+                url: createAskPath({ domain: 'money', query }),
+                rewrite: true,
+              }
+            : undefined,
+        facebook: {
+          imageUrl: imageForgeUrl({
+            url: heroProps?.imageUrl || '',
+            bgColor: subject?.colors.background,
+            type: 'facebook',
+          }),
+        },
+        twitter: {
+          imageUrl: imageForgeUrl({
+            url: heroProps?.imageUrl || '',
+            bgColor: subject?.colors.background,
+            type: 'twitter',
+          }),
+        },
+      }
+    : {}
+---
+
+<MoneyBaseLayout
+  {meta}
+  colors={subject?.colors}
+  analytics={{
+    is_search: true,
+    page_type: 'ask',
+    page_domain: 'finance',
+    query,
+  }}
+>
+  <Header
+    money
+    {query}
+    {conversationToken}
+    share={Astro.request.method === 'POST'
+      ? { type: 'ask', shortCode: 'CODE', domain: 'money', query }
+      : { type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
+  />
+  {heroProps ? <Hero {...heroProps} /> : null}
+  <Visuals response={answer} {conversationToken} />
+  {
+    answer.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
+      <Container>
+        <Explore
+          domain="money"
+          additionalQuestions={answer.visual.additionalQuestions}
+        />
+      </Container>
+    )
+  }
+  <Footer />
+</MoneyBaseLayout>

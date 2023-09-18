@@ -14,6 +14,7 @@ import {
 import { ask, getHeroProps } from '@lib/gamera'
 import { description, title } from '@lib/meta'
 import { clean, imageForgeUrl } from '@lib/path'
+import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
 
 const { league, question } = Astro.params
 if (!question) return Astro.redirect('/questions')
@@ -61,8 +62,27 @@ const meta =
   status={422}
   message={tokensToText(response.visual.summary.answer)}
   {query}
+  analytics={{
+    is_search: true,
+    page_type: 'ask',
+    page_domain: league as AnalyticsPageviewProperties['page_domain'],
+    disposition: response.disposition,
+    tokenizationScore: response.tokenizationScore,
+    query,
+  }}
 >
-  <Layout {meta} colors={subject?.colors}>
+  <Layout
+    {meta}
+    colors={subject?.colors}
+    analytics={{
+      is_search: true,
+      page_type: 'ask',
+      page_domain: league as AnalyticsPageviewProperties['page_domain'],
+      disposition: response.disposition,
+      tokenizationScore: response.tokenizationScore,
+      query,
+    }}
+  >
     <Header
       {query}
       {conversationToken}

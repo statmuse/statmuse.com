@@ -31,6 +31,7 @@ const { url } = Astro.props
         target="_blank"
         rel="noopener"
         class="flex items-center cursor-pointer text-primary"
+        data-track-click="Click Musing Share Link"
       >
         <div class="w-8 h-5 flex justify-center items-center pr-2 relative">
           <img
@@ -50,6 +51,7 @@ const { url } = Astro.props
         target="_blank"
         rel="noopener"
         class="flex items-center cursor-pointer text-primary"
+        data-track-click="Click Musing Share Link"
       >
         <div class="w-8 h-5 flex justify-center items-center pr-2 relative">
           <img
@@ -99,14 +101,28 @@ const { url } = Astro.props
     })
   })
   // copy clipboard bind & event handler
-  document.querySelectorAll('[data-share-url]').forEach((el) => {
-    el.addEventListener('click', async () => {
-      ;(el.nextSibling as HTMLInputElement).select()
-      try {
-        await navigator.clipboard.writeText(
-          (el as HTMLElement).dataset.shareUrl || ''
-        )
-      } catch (err) {}
+  document
+    .querySelectorAll<HTMLInputElement>('[data-share-url]')
+    .forEach((el) => {
+      el.addEventListener('click', async () => {
+        ;(el.nextSibling as HTMLInputElement).select()
+        try {
+          await navigator.clipboard.writeText(el.dataset.shareUrl || '')
+          window.segment.track('Copy Musing Share Link', {
+            href: el.dataset.shareUrl,
+          })
+        } catch (err) {}
+      })
     })
-  })
+  document
+    .querySelectorAll<HTMLAnchorElement>(
+      '[data-track-click="Click Musing Share Link"]'
+    )
+    .forEach((el) => {
+      el.addEventListener('click', () => {
+        window.segment.track(el.dataset.trackClick as string, {
+          href: el.href,
+        })
+      })
+    })
 </script>

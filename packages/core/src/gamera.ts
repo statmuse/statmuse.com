@@ -29,12 +29,65 @@ export function handleResponse(response: GameraResponse) {
   }
 }
 
+export function handleAskResponseFromPost(response: GameraResponse) {
+  const query = tokensToText(
+    response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
+  ).toLowerCase()
+
+  if (response.type === 'nlgPromptForMoreInfoVisualChoicesOptional') {
+    return { query }
+  }
+
+  const playerProfile = response.visual.detail?.find(
+    (d) => d.type === 'playerProfile'
+  ) as PlayerProfileDetail
+
+  if (playerProfile) {
+    return {
+      query,
+      type: playerProfile.entity.type,
+      player: `${parameterize(playerProfile.entity.display)}-${
+        playerProfile.entity.id
+      }`,
+      league: playerProfile.entity.domain,
+    }
+  }
+
+  const teamProfile = response.visual.detail?.find(
+    (d) => d.type === 'teamProfile'
+  ) as TeamProfileDetail
+
+  if (teamProfile && teamProfile.entity.type === 'teamSeason') {
+    const [teamId, year] = teamProfile.entity.id.split('/')
+    return {
+      query,
+      type: teamProfile.entity.type,
+      team: `${parameterize(teamProfile.entity.display)}-${teamId}`,
+      year,
+      league: teamProfile.entity.domain,
+    }
+  }
+
+  if (teamProfile && teamProfile.entity.type === 'teamFranchise') {
+    return {
+      query,
+      type: teamProfile.entity.type,
+      team: `${parameterize(teamProfile.entity.display)}-${
+        teamProfile.entity.id
+      }`,
+      league: teamProfile.entity.domain,
+    }
+  }
+
+  return { query }
+}
+
 export const tokensToHtml = (tokens?: GameraToken[]) => {
   return tokens ? tokens.map(formatToken).join('').trim() : ''
 }
 
-export const tokensToText = (tokens: GameraToken[]) => {
-  return tokens.map(formatTokenTextOnly).join('').trim()
+export const tokensToText = (tokens?: GameraToken[]) => {
+  return tokens ? tokens.map(formatTokenTextOnly).join('').trim() : ''
 }
 
 const parameterize = (text: string) => {

@@ -12,7 +12,16 @@ import {
 import { getPlayerProfile } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
 
-const { league, player } = Astro.params
+interface Props {
+  league?: string
+  player?: string
+  query?: string
+}
+
+const query = Astro.props.query
+const player = Astro.props.player || Astro.params.player
+const league = Astro.props.league || Astro.params.league
+
 if (!player || !league) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
@@ -40,10 +49,11 @@ const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
 const keywords = `${getLeagueKeywords(domain)} ${
   bio.usedName
 } career stats statistics`
-const meta = { title, description, keywords }
+const canonical = { url: playerPath, rewrite: true }
+const meta = { title, description, keywords, canonical }
 ---
 
-<PlayerLayout {bio} {meta}>
+<PlayerLayout {bio} {meta} {league} {query}>
   <div>
     <div class="mb-5 leading-snug">
       <p set:html={summary} />

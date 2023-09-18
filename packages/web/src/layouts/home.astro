@@ -10,6 +10,7 @@ import DropdownMenu from '@components/dropdown-menu.astro'
 import MenuLinks from '@components/menu-links.astro'
 import type { GameraResponse } from '@statmuse/core/gamera'
 import type { Metadata } from '@lib/meta'
+import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
 import NewsletterSignup from '@components/newsletter-signup.astro'
 import UserMenu from '@components/user-menu.svelte'
 import AuthMenu from '@components/auth-menu.svelte'
@@ -55,7 +56,19 @@ Astro.response.headers.set(
 )
 ---
 
-<Layout {...rest}>
+<Layout
+  {...rest}
+  analytics={{
+    page_domain:
+      domain === 'All'
+        ? 'unknown'
+        : domain === 'fantasy'
+        ? 'nfl'
+        : domain === 'money'
+        ? 'finance'
+        : (domain as AnalyticsPageviewProperties['page_domain']),
+  }}
+>
   <main
     id="home"
     class="home-layout [--header-height:55px] md:[--header-height:64px]"

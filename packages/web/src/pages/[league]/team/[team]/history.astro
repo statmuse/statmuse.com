@@ -3,11 +3,19 @@ import FranchiseLayout from '@layouts/franchise.astro'
 import Grid from '@components/grid.astro'
 import TeamLeaders from '@components/leaders.astro'
 import PlayerGallery from '@components/gallery.astro'
-import type { GameraDomain } from '@statmuse/core/gamera'
+import { getUrlForEntity, type GameraDomain } from '@statmuse/core/gamera'
 import { getTeamFranchiseOverview } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
 
-const { league, team } = Astro.params
+interface Props {
+  league?: string
+  team?: string
+  query?: string
+}
+
+const query = Astro.props.query
+const team = Astro.props.team || Astro.params.team
+const league = Astro.props.league || Astro.params.league
 if (!team || !league) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
@@ -26,10 +34,19 @@ const description = `The ${bio.name} team history for the ${domain} regular seas
 const keywords = `${getLeagueKeywords(domain)} ${
   bio.name
 } team history stats statistics`
-const meta = { title, description, keywords }
+const canonical = {
+  url: `${getUrlForEntity({
+    type: 'teamSeason',
+    domain,
+    id: overview.teamId.toString(),
+    display: bio.name,
+  })}/history`,
+  rewrite: true,
+}
+const meta = { title, description, keywords, canonical }
 ---
 
-<FranchiseLayout {overview} {meta}>
+<FranchiseLayout {overview} {meta} {query}>
   <div class="space-y-5 mb-5">
     {
       teamHistory && (

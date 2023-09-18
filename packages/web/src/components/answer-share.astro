@@ -105,6 +105,7 @@ const socialButtons = [
                   target="_blank"
                   rel="noopener noreferrer"
                   data-social={button.label}
+                  data-track-click="Click Musing Share Link"
                 >
                   <img
                     src={button.icon}
@@ -189,6 +190,7 @@ const socialButtons = [
       try {
         await navigator.clipboard.writeText(input.value)
         inputLabel.innerText = 'COPIED'
+        window.segment.track('Copy Musing Share Link', { href: input.value })
       } catch (err) {}
     })
     // listen to changes on checkbox and set share url on input
@@ -235,4 +237,15 @@ const socialButtons = [
       }
     })
   }
+  document
+    .querySelectorAll<HTMLAnchorElement>(
+      '[data-track-click="Click Musing Share Link"]'
+    )
+    .forEach((el) => {
+      el.addEventListener('click', () => {
+        window.segment.track(el.dataset.trackClick as string, {
+          href: el.href,
+        })
+      })
+    })
 </script>

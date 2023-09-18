@@ -8,6 +8,7 @@ export function Secrets({ stack }: StackContext) {
     'STRIPE_PRICE_ID',
     'API_KEY',
     'ELASTICSEARCH_CREDENTIALS',
+    'SEGMENT_WRITE_KEY',
     'SENDGRID_API_KEY'
   )
 

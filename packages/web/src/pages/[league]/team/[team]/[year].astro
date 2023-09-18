@@ -4,21 +4,52 @@ import Grid from '@components/grid.astro'
 import TeamLeaders from '@components/leaders.astro'
 import PlayerGallery from '@components/gallery.astro'
 
-import { GameraDomain, tokensToText, tokensToHtml } from '@statmuse/core/gamera'
-import { getTeamSeasonOverview } from '@lib/team'
+import {
+  GameraDomain,
+  tokensToText,
+  tokensToHtml,
+  getUrlForEntity,
+} from '@statmuse/core/gamera'
+import { getTeamFranchiseLatestSeason, getTeamSeasonOverview } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
 
-const { league, team, year } = Astro.params
+interface Props {
+  league?: string
+  team?: string
+  year?: string
+  query?: string
+}
+
+const query = Astro.props.query
+const league = Astro.props.league || Astro.params.league
+const team = Astro.props.team || Astro.params.team
+let year = Astro.props.year || Astro.params.year
+
 if (!team || !league || !year) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
 
 const domain = league.toUpperCase() as GameraDomain
-const response = await getTeamSeasonOverview({
+let response = await getTeamSeasonOverview({
   domain,
   team,
   year,
 })
+
+// re-fetch team season overview from latest season if initial reponse has no stats
+if (response && !response.bio.hasStats && Astro.request.method === 'POST') {
+  const latestSeason = await getTeamFranchiseLatestSeason({
+    domain: league as GameraDomain,
+    teamId: response.teamId.toString(),
+  })
+  year = latestSeason?.entity.id.split('/')[1] as string
+  response = await getTeamSeasonOverview({
+    domain,
+    team,
+    year,
+  })
+}
+
 if (!response) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
@@ -35,10 +66,19 @@ const description = bio.summaryNlg
 const keywords = `${getLeagueKeywords(domain)} ${year} ${
   bio.name
 } team player stats statistics`
-const meta = { title, description, keywords }
+const canonical = {
+  url: `${getUrlForEntity({
+    type: 'teamSeason',
+    domain,
+    id: bio.teamId.toString(),
+    display: bio.name,
+  })}/${year}`,
+  rewrite: true,
+}
+const meta = { title, description, keywords, canonical }
 ---
 
-<TeamLayout {bio} {meta}>
+<TeamLayout {bio} {meta} {query}>
   <div>
     <div class="mb-5 leading-snug">
       <p set:html={summary} />

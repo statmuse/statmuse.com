@@ -11,6 +11,7 @@ import {
 import type { Metadata } from '@lib/meta'
 import Hero from '@components/hero.astro'
 import { imageForgeUrl } from '@lib/path'
+import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
 
 interface Props {
   data: GameraBoxScore
@@ -48,7 +49,16 @@ const meta = {
 }
 ---
 
-<Layout {meta} colors={subject?.colors} {...Astro.props.meta ?? {}}>
+<Layout
+  {meta}
+  colors={subject?.colors}
+  {...Astro.props.meta ?? {}}
+  analytics={{
+    is_search: true,
+    page_domain: preferredDomain as AnalyticsPageviewProperties['page_domain'],
+    page_type: 'game',
+  }}
+>
   <Header {preferredDomain} share={{ url: Astro.url.href }} />
   <Hero
     content={answer}

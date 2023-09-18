@@ -15,9 +15,10 @@ import { cdnBaseUrl } from '@statmuse/core/gamera'
 interface Props {
   profile: AssetProfile
   meta?: Metadata
+  query?: string
 }
 
-const { profile, meta } = Astro.props
+const { profile, meta, query } = Astro.props
 
 const assetPath = getUrlForEntity({
   type: 'assetProfile',
@@ -63,8 +64,23 @@ const twitter = {
   tradingview
   {colors}
   meta={{ title, canonical, facebook, twitter, ...(meta || {}) }}
+  analytics={{
+    query,
+    is_search: true,
+    page_domain: 'finance',
+    page_type: 'asset',
+  }}
 >
-  <Header money share={{ type: 'profile', url: Astro.url.href }} />
+  <Header
+    money
+    {query}
+    share={{
+      type: 'profile',
+      url: meta?.canonical?.url
+        ? Astro.url.origin + meta.canonical.url
+        : Astro.url.href,
+    }}
+  />
   <Container class="mb-5 bg-team-primary text-team-secondary">
     <div
       class="relative flex flex-col md:flex-row md:flex-wrap justify-center items-center md:items-stretch"

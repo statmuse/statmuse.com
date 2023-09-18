@@ -1,25 +1,18 @@
 ---
-import MoneyBaseLayout from '@layouts/money-base.astro'
-import Error from '@layouts/error.astro'
-import Header from '@components/header.astro'
-import Footer from '@components/footer.astro'
-import Hero from '@components/hero.astro'
-import Visuals from '@components/visuals-money.astro'
-import Explore from '@components/explore.astro'
-import Container from '@components/container.astro'
-import { handleResponse } from '@statmuse/core/kanedama'
-import { ask, getHeroProps } from '@lib/kanedama'
-import { clean, createAskPath, imageForgeUrl } from '@lib/path'
+import ErrorLayout from '@layouts/error.astro'
+import { handleResponse, handleAskResponse } from '@statmuse/core/kanedama'
+import { ask } from '@lib/kanedama'
 import { tokensToText } from '@statmuse/core/kanedama'
-import { title } from '@lib/meta'
+import AnswerMoney from '@components/answer-money.astro'
+import { clean } from '@lib/path'
+
+import AssetProfile from '../symbol/[symbol]/index.astro'
 
 let question: string | undefined
-let conversationToken: string | undefined
 
 if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData()
   question = data.get('question[query]')?.toString()
-  conversationToken = data.get('question[conversation_token]')?.toString()
   if (!question) throw new Error('No query provided')
 } else {
   question = Astro.url.searchParams.get('q') ?? undefined
@@ -30,75 +23,33 @@ const response = await ask({ query: question })
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })
 
-const handled = handleResponse(response)
-const { subject, redirectUrl } = handled
-conversationToken = handled.conversationToken ?? conversationToken
-if (redirectUrl) return Astro.redirect(redirectUrl)
+const handled = handleAskResponse(response)
 
-const query = clean(tokensToText(response.visual.summaryTokens))
-
-const heroProps = getHeroProps({ imageAlt: query, response })
-
-const meta =
-  response.type !== 'error'
-    ? {
-        title: title(query),
-        description:
-          response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
-            ? tokensToText(response.nlg.text.answer)
-            : '',
-        canonical:
-          response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
-            ? {
-                url: createAskPath({ domain: 'money', query }),
-                rewrite: true,
-              }
-            : undefined,
-        facebook: {
-          imageUrl: imageForgeUrl({
-            url: heroProps?.imageUrl || '',
-            bgColor: subject?.colors.background,
-            type: 'facebook',
-          }),
-        },
-        twitter: {
-          imageUrl: imageForgeUrl({
-            url: heroProps?.imageUrl || '',
-            bgColor: subject?.colors.background,
-            type: 'twitter',
-          }),
-        },
-      }
-    : {}
+const query = clean(
+  tokensToText(
+    response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
+  )
+)
 ---
 
-<Error
+<ErrorLayout
   render={response.type === 'error'}
   status={422}
   message={tokensToText(response.visual.summary.answer)}
   {query}
+  analytics={{
+    is_search: true,
+    page_type: 'ask',
+    page_domain: 'finance',
+    query,
+  }}
 >
-  <MoneyBaseLayout {meta} colors={subject?.colors}>
-    <Header
-      money
-      {query}
-      {conversationToken}
-      share={Astro.request.method === 'POST'
-        ? { type: 'ask', shortCode: 'CODE', domain: 'money', query }
-        : { type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
-    />
-    {heroProps ? <Hero {...heroProps} /> : null}
-    <Visuals {response} {conversationToken} />
-    {
-      response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
-        <Container>
-          <Explore
-            domain="money"
-            additionalQuestions={response.visual.additionalQuestions}
-          />
-        </Container>
-      )
-    }
-    <Footer />
-  </MoneyBaseLayout>
-</Error>
+  {
+    handled.type === 'assetEntityData' ? (
+      <AssetProfile query={handled.query} symbol={handled.symbol} />
+    ) : response.type === 'nlgAnswerNotPossibleVisualsRequired' ||
+      response.type === 'nlgPromptForMoreInfoVisualChoicesOptional' ? (
+      <AnswerMoney answer={response} />
+    ) : undefined
+  }
+</ErrorLayout>
