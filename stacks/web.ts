@@ -52,7 +52,7 @@ export function Web({ stack }: StackContext) {
       secrets.STRIPE_WEBHOOK_SECRET,
       secrets.STRIPE_PRICE_ID,
       secrets.SENDGRID_API_KEY,
-      api.secrets.SEGMENT_WRITE_KEY,
+      secrets.SEGMENT_WRITE_KEY,
     ],
     environment: {
       ...api.environment,

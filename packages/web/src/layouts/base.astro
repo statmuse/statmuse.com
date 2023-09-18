@@ -235,24 +235,6 @@ Astro.response.headers.set(
     win.history.replaceState(null, doc.title, newUrl)
 
   /**
-   * Given window and document, add or remove "selected" class to league nav
-   * links if current window location matches nav href.
-   *
-   * @param {Window} win - DOM window
-   * @param {HTMLDocument} doc - DOM document
-   *
-   */
-  const updateLeagueNav = (win: Window, doc: Document) => {
-    Array.from(doc.querySelectorAll('nav.nav-league a')).forEach((e) => {
-      const nav = e as HTMLAnchorElement
-
-      nav.href === win.location.href
-        ? nav.classList.add('selected')
-        : nav.classList.remove('selected')
-    })
-  }
-
-  /**
    * Given window and document, get canonical link tag and check if URL should be
    * rewritten, in which case call rewriteUrl and updateLeagueNav.
    *
@@ -268,7 +250,6 @@ Astro.response.headers.set(
 
     if (shouldRewriteUrl(win, canonicalTag)) {
       rewriteUrl(win, doc, canonicalTag.href)
-      updateLeagueNav(win, doc)
     }
   }
 
@@ -307,7 +288,7 @@ Astro.response.headers.set(
       ? (['identify', 'page', 'track'].reduce(
           (stub, key) => ({
             ...stub,
-            [key]: (...args: [string | object]) =>
+            [key]: (...args: [string]) =>
               console.debug(`analytics.${key}`, ...args),
           }),
           {}
@@ -323,6 +304,7 @@ Astro.response.headers.set(
     segment.identify(`u:${session.properties.id}`, { origin: 'web' })
   }
 
+  // default page tracking
   segment.page()
 
   // custom Pageview event
