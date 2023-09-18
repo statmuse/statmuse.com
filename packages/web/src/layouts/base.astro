@@ -274,6 +274,30 @@ Astro.response.headers.set(
 
   maybeRewriteUrl(window, document)
 
+  const flattenObj = (key: string, obj?: {}) => {
+    return !obj
+      ? {}
+      : Object.entries(obj).reduce((x, [k, v]) => {
+          return {
+            ...x,
+            [`${key}.${k}`]: v,
+          }
+        }, {})
+  }
+
+  const userInfo = (session: Session) => {
+    if (session.type === 'user')
+      return {
+        user_id: session.properties.id,
+        visitor_id: session.properties.visitorId,
+      }
+    if (session.type === 'visitor')
+      return {
+        visitor_id: session.properties.id,
+      }
+    return {}
+  }
+
   const writeKey = document.querySelector<HTMLMetaElement>(
     'meta[name="analytics"]'
   )?.content
@@ -283,7 +307,7 @@ Astro.response.headers.set(
       ? (['identify', 'page', 'track'].reduce(
           (stub, key) => ({
             ...stub,
-            [key]: (...args: [string]) =>
+            [key]: (...args: [string | object]) =>
               console.debug(`analytics.${key}`, ...args),
           }),
           {}
@@ -300,32 +324,19 @@ Astro.response.headers.set(
   }
 
   segment.page()
-</script>
-<script>
-  // const addContext = (props: object) => ({
-  //   ...props,
-  //   context: {
-  //     page: {
-  //       title: document.title,
-  //       path: document.location.pathname,
-  //       referrer: document.referrer,
-  //       search: document.location.search,
-  //       url: document.location.href,
-  //     },
-  //   },
-  // })
 
-  // const eventProps = document.querySelector<HTMLMetaElement>(
-  //   'meta[name="analytics:event:properties"]'
-  // )?.content
+  // custom Pageview event
+  const eventProps = document.querySelector<HTMLMetaElement>(
+    'meta[name="analytics:event:properties"]'
+  )?.content
 
-  // if (eventProps) {
-  //   fetch(`${import.meta.env.PUBLIC_API_URL}/analytics/track`, {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(addContext(JSON.parse(eventProps))),
-  //   })
-  // }
+  if (eventProps) {
+    const { disposition, tokenizationScore, ...props } = JSON.parse(eventProps)
+    segment.track('Pageview', {
+      ...props,
+      ...flattenObj('disposition', disposition),
+      ...flattenObj('tokenizationScore', tokenizationScore),
+      ...userInfo(session),
+    })
+  }
 </script>
