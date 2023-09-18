@@ -201,6 +201,9 @@ Astro.response.headers.set(
   </body>
 </html>
 <script>
+  import { AnalyticsBrowser } from '@segment/analytics-next'
+  import type { Session } from '@lib/session'
+
   /**
    * Given window and document, add or remove "selected" class to league nav
    * links if current window location matches nav href. Note that the argument
@@ -271,49 +274,11 @@ Astro.response.headers.set(
 
   maybeRewriteUrl(window, document)
 
-  // TODO: ANALYTICS
-  // identify user in analytics, using uid from meta tag as userId if present
-  // !((userId) => {
-  //   const props = { origin: 'web' }
-  //   userId ? analytics.identify(userId, props) : analytics.identify(props)
-  // })(undefined)
-</script>
-<script>
-  const addContext = (props: object) => ({
-    ...props,
-    context: {
-      page: {
-        title: document.title,
-        path: document.location.pathname,
-        referrer: document.referrer,
-        search: document.location.search,
-        url: document.location.href,
-      },
-    },
-  })
-
-  const eventProps = document.querySelector<HTMLMetaElement>(
-    'meta[name="analytics:event:properties"]'
-  )?.content
-
-  if (eventProps) {
-    fetch(`${import.meta.env.PUBLIC_API_URL}/analytics/track`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(addContext(JSON.parse(eventProps))),
-    })
-  }
-</script>
-<script>
-  import { AnalyticsBrowser } from '@segment/analytics-next'
-
   const writeKey = document.querySelector<HTMLMetaElement>(
     'meta[name="analytics"]'
   )?.content
 
-  const segment =
+  const segment = (window.segment =
     import.meta.env.DEV || !writeKey
       ? (['identify', 'page', 'track'].reduce(
           (stub, key) => ({
@@ -323,9 +288,44 @@ Astro.response.headers.set(
           }),
           {}
         ) as AnalyticsBrowser)
-      : AnalyticsBrowser.load({ writeKey })
+      : AnalyticsBrowser.load({ writeKey }))
+
+  const session: Session = await fetch('/auth/session').then((r) => r.json())
+
+  if (session.type === 'visitor') {
+    segment.identify(`v:${session.properties.id}`, { origin: 'web' })
+  }
+  if (session.type === 'user') {
+    segment.identify(`u:${session.properties.id}`, { origin: 'web' })
+  }
 
   segment.page()
+</script>
+<script>
+  // const addContext = (props: object) => ({
+  //   ...props,
+  //   context: {
+  //     page: {
+  //       title: document.title,
+  //       path: document.location.pathname,
+  //       referrer: document.referrer,
+  //       search: document.location.search,
+  //       url: document.location.href,
+  //     },
+  //   },
+  // })
 
-  window.segment = segment
+  // const eventProps = document.querySelector<HTMLMetaElement>(
+  //   'meta[name="analytics:event:properties"]'
+  // )?.content
+
+  // if (eventProps) {
+  //   fetch(`${import.meta.env.PUBLIC_API_URL}/analytics/track`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(addContext(JSON.parse(eventProps))),
+  //   })
+  // }
 </script>
