@@ -16,6 +16,7 @@ export const sessions = createSessionBuilder<{
     email: string
     visitorId: string
     upgrade?: boolean
+    updated?: boolean
   }
 }>()
 
@@ -25,7 +26,6 @@ export const handler = AuthHandler({
     email: CodeAdapter({
       async onCodeRequest(code, claims) {
         console.log('sending email to', claims.email)
-        console.log(claims)
 
         await sendgrid.send({
           to: claims.email,
@@ -41,7 +41,10 @@ export const handler = AuthHandler({
             Location:
               process.env.AUTH_FRONTEND_URL +
               '/auth/code?' +
-              new URLSearchParams({ email: claims.email }).toString(),
+              new URLSearchParams({
+                email: claims.email,
+                update: claims.update,
+              }).toString(),
           },
         }
       },
@@ -66,8 +69,10 @@ export const handler = AuthHandler({
     const visitorId: string | undefined = input.claims.visitor
     if (!visitorId) throw new Error('No visitor id found')
 
+    const updating: string | undefined = input.claims.update
+
     const visitor = await Visitor.get(visitorId)
-    let user = await User.fromEmail(email)
+    let user = updating ? await User.get(updating) : await User.fromEmail(email)
 
     if (!user) {
       user = await User.create(email, visitorId)
@@ -81,13 +86,25 @@ export const handler = AuthHandler({
 
     if (!user || !visitor) throw new Error('Unable to register new user')
 
+    if (updating) {
+      const updated = await User.updateEmail(user.id, email)
+      if (updated) user = updated
+
+      await contacts.request({
+        url: '/v3/contactdb/recipients',
+        method: 'POST',
+        body: [{ email }],
+      })
+    }
+
     return response.session({
       type: 'user',
       properties: {
         id: user.id,
-        email: user.email,
+        email,
         visitorId: visitor.id,
         upgrade: input.claims.upgrade === 'true' || undefined,
+        updated: !!updating,
       },
     })
   },

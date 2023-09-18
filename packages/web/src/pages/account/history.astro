@@ -1,1 +1,20 @@
-Account history
+---
+import AccountLayout from './_layout.astro'
+
+// export const prerender = true
+
+const meta = {
+  title: 'History',
+}
+
+Astro.response.headers.set('Cache-Control', 'no-cache, no-store')
+
+if (Astro.locals.session.type !== 'user') {
+  return Astro.redirect('/')
+}
+
+const userId = Astro.locals.session.properties.id
+// TODO: fetch user asks
+---
+
+<AccountLayout {meta} prefixPath="/account/history" />

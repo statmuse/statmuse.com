@@ -1,1 +1,253 @@
-Account settings
+---
+import AccountLayout from './_layout.astro'
+import * as User from '@statmuse/core/user'
+import {
+  createBillingSession,
+  createCheckoutSession,
+} from '@statmuse/core/stripe'
+import { deleteUser } from '@statmuse/core/user'
+import { deleteCustomer } from '@statmuse/core/stripe'
+import * as Session from '@lib/session'
+
+// export const prerender = true
+
+const meta = {
+  title: 'Settings',
+}
+
+Astro.response.headers.set('Cache-Control', 'no-cache, no-store')
+
+if (Astro.locals.session.type !== 'user') {
+  return Astro.redirect('/')
+}
+
+const user = Astro.locals.session.properties
+
+if (Astro.request.method === 'POST') {
+  if (Astro.url.searchParams.has('delete-account')) {
+    const customerId = Astro.locals.user?.stripe_customer_id
+    await deleteUser(user.id)
+    if (customerId) await deleteCustomer({ customerId: customerId })
+
+    await Session.clear(Astro)
+    return Astro.redirect('/')
+  }
+
+  const data = await Astro.request.formData()
+  const email = data.get('email')?.toString()
+  if (!email) {
+    return Astro.redirect('?error=email-missing')
+  }
+
+  if (email === user.email) {
+    return Astro.redirect('?error=email-unchanged')
+  }
+
+  const existing = await User.fromEmail(email)
+  if (existing && existing.id !== user?.id) {
+    return Astro.redirect('?error=email-taken')
+  }
+
+  const visitor = Astro.locals.visitor.id
+  data.set('visitor', visitor)
+  data.set('update', user.id)
+
+  const url =
+    import.meta.env.PUBLIC_AUTH_URL +
+    '/authorize?' +
+    // @ts-expect-error
+    new URLSearchParams(data).toString()
+
+  return Astro.redirect(url)
+}
+
+const email = Astro.locals.session.properties.email
+const error = Astro.url.searchParams.get('error')
+
+const messages: Record<string, string> = {
+  'email-taken': 'That email address is already in use',
+  'email-missing': 'You must provide an email address',
+  'email-unchanged': 'Your email address is unchanged',
+}
+
+const manageAccountUrl =
+  Astro.locals.user?.stripe_subscription_status === 'active'
+    ? await createBillingSession({
+        customerId: Astro.locals.user?.stripe_customer_id as string,
+        returnUrl: Astro.url.origin + '/account/settings',
+      }).then((s) => s.url)
+    : await createCheckoutSession({
+        email: user.email,
+        userId: user.id,
+        successUrl: Astro.url.origin,
+        cancelUrl: Astro.url.origin + '/account/settings',
+        customerId: Astro.locals.user?.stripe_customer_id ?? undefined,
+        // referral: '',
+      }).then((s) => s.url)
+---
+
+<AccountLayout {meta} prefixPath="/account/settings">
+  <main>
+    <div class="divide-y divide-black/5">
+      <div
+        class="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8"
+      >
+        <div>
+          <h2 class="text-base font-semibold leading-7 text-black">
+            Basic Info
+          </h2>
+          <p class="mt-1 text-sm leading-6 text-gray-400">
+            Update your email address and... ok, just your email address.
+          </p>
+        </div>
+        <form class="md:col-span-2" method="post">
+          <input type="hidden" name="client_id" value="web" />
+          <input
+            type="hidden"
+            name="redirect_uri"
+            value={Astro.url.origin + '/auth/callback'}
+          />
+          <input type="hidden" name="response_type" value="code" />
+          <input type="hidden" name="provider" value="email" />
+          <div
+            class="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6"
+          >
+            <div class="col-span-full flex items-center gap-x-8">
+              <span
+                class="inline-block h-24 w-24 overflow-hidden rounded-full bg-gray-100"
+              >
+                <svg
+                  class="h-full w-full text-gray-300"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"
+                  >
+                  </path>
+                </svg>
+              </span>
+              <div>
+                <button
+                  disabled=""
+                  type="button"
+                  class="rounded-md bg-black/10 px-3 py-2 text-sm font-semibold text-black/40 shadow-sm hover:bg-black/20 pointer-events-none"
+                >
+                  Choose (soon!)
+                </button><p class="mt-2 text-xs leading-5 text-gray-400">
+                  JPG or PNG. 5MB max.
+                </p>
+              </div>
+            </div>
+            <div class="col-span-full">
+              <label
+                for="email"
+                class="block text-sm font-medium leading-6 text-black"
+              >
+                Email address
+              </label>
+              <div class="mt-2">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  class="block w-full rounded-md border-0 bg-black/5 py-1.5 px-3 text-black shadow-sm ring-1 ring-inset ring-black/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                  value={email}
+                  required
+                  aria-invalid={!!error}
+                  aria-describedby={error ? 'email-error' : undefined}
+                />
+                {
+                  error ? (
+                    <p class="mt-2 text-sm text-red-600" id="email-error">
+                      {messages[error]}
+                    </p>
+                  ) : null
+                }
+              </div>
+            </div>
+          </div>
+          <div class="mt-8 flex">
+            <button
+              type="submit"
+              class="w-16 rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:opacity-50 disabled:pointer-events-none"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+      <div
+        class="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8"
+      >
+        <div>
+          <h2 class="text-base font-semibold leading-7 text-black">
+            Manage billing
+          </h2>
+          <p class="mt-1 text-sm leading-6 text-gray-400">
+            Manage your subscription to StatMuse+
+          </p>
+        </div>
+        <div class="items-start md:col-span-2">
+          <a
+            href={manageAccountUrl}
+            class="w-32 block rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:opacity-50 disabled:pointer-events-none no-underline hover:no-underline"
+          >
+            Manage billing
+          </a>
+        </div>
+      </div>
+      <form
+        id="delete-account-form"
+        method="post"
+        action="?delete-account"
+        class="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8"
+      >
+        <div>
+          <h2 class="text-base font-semibold leading-7 text-black">
+            Delete account
+          </h2>
+          <p class="mt-1 text-sm leading-6 text-gray-400">
+            No longer want to use our service? You can delete your account here.
+            This action is not reversible. All information related to this
+            account will be deleted permanently and any active subscription will
+            be canceled.
+          </p>
+        </div>
+        <div class="flex items-start md:col-span-2">
+          <button
+            id="delete-account-button"
+            type="submit"
+            class="w-48 rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:enabled:bg-red-400 disabled:opacity-60"
+            data-confirmed={false}
+          >
+            Delete my account
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+</AccountLayout>
+
+<script>
+  const deleteAccountForm = document.getElementById(
+    'delete-account-form'
+  ) as HTMLFormElement
+  const deleteAccountButton = document.getElementById(
+    'delete-account-button'
+  ) as HTMLButtonElement
+
+  deleteAccountButton.addEventListener('click', (e) => {
+    e.preventDefault()
+
+    const confirmed = deleteAccountButton.dataset['confirmed'] === 'true'
+    if (confirmed) {
+      deleteAccountButton.disabled = true
+      deleteAccountForm.submit()
+    } else {
+      deleteAccountButton.dataset['confirmed'] = 'true'
+      deleteAccountButton.innerText = 'Are you sure?'
+    }
+  })
+</script>

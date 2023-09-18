@@ -19,7 +19,7 @@ export const botName = (userAgent: string | undefined) => {
   return undefined
 }
 
-export const fromRequest = async (context: APIContext) => {
+export const fromRequest = async (context: Session.Context) => {
   if (context.locals.visitor) {
     return context.locals.visitor
   }

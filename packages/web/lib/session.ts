@@ -1,14 +1,25 @@
 import { createSessionBuilder } from 'sst/node/future/auth'
 import type { sessions } from '@statmuse/functions/auth'
-import type { APIContext } from 'astro'
+import type { APIContext, AstroGlobal } from 'astro'
 import { fromRequest } from '@lib/visitor'
+import type { AstroComponentFactory } from 'astro/runtime/server/index.js'
 
 const builder = createSessionBuilder<typeof sessions.$type>()
 const SESSION_COOKIE = 'sm_session'
 
 export type Session = ReturnType<typeof builder.verify>
 
-export const get = ({ cookies }: APIContext) => {
+export type Context =
+  | APIContext
+  | Readonly<
+      AstroGlobal<
+        Record<string, any>,
+        AstroComponentFactory,
+        Record<string, string | undefined>
+      >
+    >
+
+export const get = ({ cookies }: Context) => {
   const cookie = cookies.get(SESSION_COOKIE)?.value
   if (!cookie) return undefined
   return builder.verify(cookie)
@@ -18,7 +29,7 @@ export const verify = (token: string) => {
   return builder.verify(token)
 }
 
-export const create = async (context: APIContext) => {
+export const create = async (context: Context) => {
   const visitor = await fromRequest(context)
   context.locals.visitor = visitor
   const token = builder.create('visitor', { id: visitor.id })
@@ -26,7 +37,7 @@ export const create = async (context: APIContext) => {
   return builder.verify(token)
 }
 
-export const set = (context: APIContext, token: string) => {
+export const set = (context: Context, token: string) => {
   const tomorrow = new Date()
   tomorrow.setDate(tomorrow.getDate() + 1)
 
@@ -42,7 +53,7 @@ export const set = (context: APIContext, token: string) => {
   })
 }
 
-export const clear = async (context: APIContext) => {
+export const clear = async (context: Context) => {
   context.cookies.delete(SESSION_COOKIE, { path: '/' })
   // create a new visitor session (using existing visitor)
   await create(context)
