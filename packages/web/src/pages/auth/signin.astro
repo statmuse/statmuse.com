@@ -10,8 +10,7 @@ if (Astro.request.method === 'POST') {
   if (!email)
     return new Response(null, { status: 400, statusText: 'No email provided' })
 
-  const session = Astro.locals.session
-  const visitor = session.visitor.id
+  const visitor = Astro.locals.visitor.id
   data.set('visitor', visitor)
 
   const url =
@@ -41,7 +40,7 @@ const meta = {
       class="w-full max-w-md bg-white rounded-lg border border-[#e4e4e4] mx-auto mb-5 pt-8 px-8 pb-44 relative text-center overflow-hidden"
     >
       <div>
-        <form novalidate method="post">
+        <form method="post">
           <input
             class="w-full px-3 py-2.5 text-lg text-[#55595c] rounded bg-white border mb-7 outline-none"
             name="email"
@@ -66,7 +65,7 @@ const meta = {
         </form>
         <div>
           <p class="text-black/60">
-            Don't have an account? <a href="/signup">Sign up</a>
+            Don't have an account? <a href="/auth/signup">Sign up</a>
           </p>
         </div>
         <p

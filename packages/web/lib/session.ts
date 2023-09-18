@@ -2,47 +2,26 @@ import { createSessionBuilder } from 'sst/node/future/auth'
 import type { sessions } from '@statmuse/functions/auth'
 import type { APIContext } from 'astro'
 import { fromRequest } from '@lib/visitor'
-import type { Visitor } from '@statmuse/core/visitor'
-import type { User } from '@statmuse/core/user'
 
 const builder = createSessionBuilder<typeof sessions.$type>()
 const SESSION_COOKIE = 'sm_session'
 
-export type PublicSession = {
-  type: 'public'
-  properties: {}
-}
+export type Session = ReturnType<typeof builder.verify>
 
-export type VisitorSession = {
-  type: 'visitor'
-  properties: {
-    visitor: Visitor
-  }
-}
-
-export type UserSession = {
-  type: 'user'
-  properties: {
-    user: User
-    visitor: Visitor
-  }
-}
-
-export type Session = PublicSession | VisitorSession | UserSession
-
-export const get = ({ cookies }: APIContext): Session | undefined => {
+export const get = ({ cookies }: APIContext) => {
   const cookie = cookies.get(SESSION_COOKIE)?.value
   if (!cookie) return undefined
   return builder.verify(cookie)
 }
 
-export const verify = (token: string): Session | undefined => {
+export const verify = (token: string) => {
   return builder.verify(token)
 }
 
-export const create = async (context: APIContext): Promise<Session> => {
+export const create = async (context: APIContext) => {
   const visitor = await fromRequest(context)
-  const token = builder.create('visitor', { visitor })
+  context.locals.visitor = visitor
+  const token = builder.create('visitor', { id: visitor.id })
   set(context, token)
   return builder.verify(token)
 }

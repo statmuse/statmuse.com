@@ -3,15 +3,19 @@ import * as User from '@statmuse/core/user'
 import * as Visitor from '@statmuse/core/visitor'
 import { createSessionBuilder } from 'sst/node/future/auth'
 import sendgrid from '@sendgrid/mail'
+import contacts from '@sendgrid/client'
 import { Config } from 'sst/node/config'
 
 sendgrid.setApiKey(Config.SENDGRID_API_KEY)
+contacts.setApiKey(Config.SENDGRID_API_KEY)
 
 export const sessions = createSessionBuilder<{
-  visitor: { visitor: Visitor.Visitor }
+  visitor: { id: string }
   user: {
-    user: User.User
-    visitor: Visitor.Visitor
+    id: string
+    email: string
+    visitorId: string
+    upgrade?: boolean
   }
 }>()
 
@@ -67,16 +71,23 @@ export const handler = AuthHandler({
 
     if (!user) {
       user = await User.create(email, visitorId)
+
+      await contacts.request({
+        url: '/v3/contactdb/recipients',
+        method: 'POST',
+        body: [{ email }],
+      })
     }
 
     if (!user || !visitor) throw new Error('Unable to register new user')
 
     return response.session({
-      // @ts-ignore
       type: 'user',
       properties: {
-        user,
-        visitor,
+        id: user.id,
+        email: user.email,
+        visitorId: visitor.id,
+        upgrade: input.claims.upgrade === 'true' || undefined,
       },
     })
   },

@@ -1,5 +1,6 @@
 import tailwind from '@astrojs/tailwind'
 import react from '@astrojs/react'
+import svelte from '@astrojs/svelte'
 import aws from 'astro-sst/lambda'
 import { defineConfig } from 'astro/config'
 
@@ -12,6 +13,7 @@ export default defineConfig({
       },
     }),
     react(),
+    svelte(),
   ],
   output: 'server',
   server: { port: 3000 },
@@ -33,5 +35,8 @@ export default defineConfig({
     '/product/personalities': '/product/examples',
     '/product/voices': '/product/examples',
     '/statlove': '/company/about',
+    '/account': '/account/history',
+    '/signin': '/auth/signin',
+    '/signup': '/auth/signup',
   },
 })
