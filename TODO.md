@@ -2,10 +2,10 @@
 
 ## Parity
 
-- [ ] auth (visitors, users)
+- [ ] persist asks, cache logic from mothra, etc.
+- [ ] query history page (/account/history)
 - [ ] statmuse+ (limit features for free users)
 - [ ] rewardful integration
-- [ ] persist asks, cache logic from mothra, etc.
 - [ ] analytics (provider?)
 - [ ] swr headers (use astro middleware? works on sst?)
 - [ ] security headers
@@ -35,6 +35,7 @@
 - [x] shot chart visuals (react island)
 - [x] tabbed visuals
 - [x] newsletter signup
+- [x] auth (visitors, users)
 
 ## Launch
 
