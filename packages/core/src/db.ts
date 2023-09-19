@@ -81,6 +81,7 @@ interface AskUserTable {
   ask_id: string
   user_id: string
 
+  last_asked_at: ColumnType<Date, string | undefined, string | undefined>
   inserted_at: ColumnType<Date, string | undefined, string | undefined>
   updated_at: ColumnType<Date, string | undefined, string | undefined>
 }
@@ -237,6 +238,17 @@ interface FinanceAskTable {
   updated_at: ColumnType<Date, string | undefined, string | undefined>
 }
 
+interface FinanceAskUserTable {
+  id: Generated<string>
+
+  finance_ask_id: string
+  user_id: string
+
+  last_asked_at: ColumnType<Date, string | undefined, string | undefined>
+  inserted_at: ColumnType<Date, string | undefined, string | undefined>
+  updated_at: ColumnType<Date, string | undefined, string | undefined>
+}
+
 interface LinkTable {
   id: Generated<string>
 
@@ -261,6 +273,7 @@ export interface Database {
   asks_users: AskUserTable
   contexts: ContextTable
   finance_asks: FinanceAskTable
+  finance_asks_users: FinanceAskUserTable
   links: LinkTable
   musings: MusingTable
   questions: QuestionTable
