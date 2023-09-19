@@ -130,6 +130,6 @@ export interface FinanceAskUserTable {
   updated_at: ColumnType<Date, string | undefined, string | undefined>
 }
 
-export type FinanceAskUser = Selectable<AskUserTable>
-export type NewFinanceAskUser = Insertable<AskUserTable>
-export type FianceAskUserUpdate = Updateable<AskUserTable>
+export type FinanceAskUser = Selectable<FinanceAskUserTable>
+export type NewFinanceAskUser = Insertable<FinanceAskUserTable>
+export type FianceAskUserUpdate = Updateable<FinanceAskUserTable>
