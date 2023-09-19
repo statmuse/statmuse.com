@@ -5,97 +5,26 @@ import Header from '@components/header.astro'
 import Footer from '@components/footer.astro'
 import Container from '@components/container.astro'
 import Image from '@components/image.astro'
-import { ASK_LIMIT, type FinanceAsk, type Ask } from '@statmuse/core/asks'
-import { createAskPath } from '@lib/path'
-import { formatDate, utc } from '@statmuse/core/time'
+import { ASK_LIMIT } from '@statmuse/core/asks'
+import { formatDate } from '@statmuse/core/time'
 import type { Metadata } from '@lib/meta'
 import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
+import {
+  askPath,
+  getBgColor,
+  getImage,
+  getNlg,
+  parseSearchParams,
+  paginate,
+} from '@lib/asks'
 
 interface Props {
   domain?: string
-  fetchAsks: (params: SearchParams) => Promise<Ask[] | FinanceAsk[]>
+  // fetchAsks: (params: SearchParams) => Promise<Ask[] | FinanceAsk[]>
   meta?: Metadata
 }
 
 const { domain, fetchAsks, meta } = Astro.props
-
-const dateFromString = (x: string) => {
-  const date = utc(x)
-  if (date.toString() !== 'Invalid Date') {
-    return date
-  }
-  return
-}
-
-const parseSearchParams = (params: URLSearchParams) => {
-  const next = (params.get('n') || '').replaceAll('_', ':')
-  const previous = (params.get('p') || '').replaceAll('_', ':')
-  const page = params.get('page') || undefined
-  return {
-    n: dateFromString(next),
-    p: dateFromString(previous),
-    page,
-  }
-}
-
-type SearchParams = ReturnType<typeof parseSearchParams>
-
-type PaginationOptions = {
-  current_page?: 'first-last' | 'first' | 'last'
-  n?: string
-  p?: string
-}
-
-const paginate = (
-  asks: Ask[] | FinanceAsk[],
-  { n, p, page }: SearchParams,
-  overflow: boolean
-): PaginationOptions => {
-  if (asks.length === 0) return {}
-
-  if (!n && !p && !page) {
-    return {
-      current_page: overflow ? 'first' : 'first-last',
-      n: overflow
-        ? asks[asks.length - 1].last_web_search_at
-            ?.toISOString()
-            .replaceAll(':', '_')
-        : undefined,
-    }
-  }
-
-  if (page && page === 'last') {
-    return {
-      current_page: overflow ? 'last' : 'first-last',
-      p: overflow
-        ? asks[0].last_web_search_at?.toISOString().replaceAll(':', '_')
-        : undefined,
-    }
-  }
-
-  if (n && !overflow) {
-    return {
-      current_page: 'last',
-      p: asks[0].last_web_search_at?.toISOString().replaceAll(':', '_'),
-    }
-  }
-
-  if (p && !overflow) {
-    return {
-      current_page: 'first',
-      n: asks[asks.length - 1].last_web_search_at
-        ?.toISOString()
-        .replaceAll(':', '_'),
-    }
-  }
-
-  return {
-    n: asks[asks.length - 1].last_web_search_at
-      ?.toISOString()
-      .replaceAll(':', '_'),
-    p: asks[0].last_web_search_at?.toISOString().replaceAll(':', '_'),
-  }
-}
 
 const searchParams = parseSearchParams(Astro.url.searchParams)
 
@@ -125,40 +54,6 @@ const headline = (title?: string) => {
   if (title === 'money') {
     return 'Trending Finance Searches'
   }
-}
-
-const createPaginationLink = (
-  domain?: string,
-  params?: Record<string, string>
-) => {
-  let link = domain ? `/${domain}/questions` : '/questions'
-  if (params) {
-    link = link + `?${new URLSearchParams(params).toString()}`
-  }
-  return link
-}
-
-const isAsk = (ask: Ask | FinanceAsk): ask is Ask => 'answer_html' in ask
-const getNlg = (ask: Ask | FinanceAsk) =>
-  isAsk(ask) ? ask.answer_html : ask.answer_text
-const getImage = (ask: Ask | FinanceAsk) =>
-  isAsk(ask) ? ask.image_url : ask.answer.visual.summary.subject.imageUrl
-const getBgColor = (ask: Ask | FinanceAsk) =>
-  isAsk(ask)
-    ? ask.hex_background
-    : ask.answer.visual.summary.subject.colors.background
-
-const askPath = (ask: Ask | FinanceAsk, domain = '') => {
-  if (domain === 'money') {
-    return createAskPath({ domain, query: ask.query })
-  }
-  if (isAsk(ask) && ask.is_fantasy_query) {
-    return createAskPath({ domain: 'fantasy', query: ask.query })
-  }
-  if (isAsk(ask)) {
-    return createAskPath({ domain: ask.league_name, query: ask.query })
-  }
-  return ''
 }
 
 const leagues = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
@@ -236,7 +131,7 @@ const Layout = domain === 'money' ? MoneyBaseLayout : BaseLayout
               >
                 <a
                   class="h-full flex justify-center items-end overflow-visible"
-                  href={askPath(ask, domain)}
+                  href={askPath(ask)}
                 >
                   <Image
                     class="h-[90%] object-cover object-bottom overflow-visible"
@@ -250,7 +145,7 @@ const Layout = domain === 'money' ? MoneyBaseLayout : BaseLayout
               </div>
               <div class="flex-1 flex flex-col">
                 <h3 class="text-lg font-semibold">
-                  <a href={askPath(ask, domain)}>{ask.query}</a>
+                  <a href={askPath(ask)}>{ask.query}</a>
                 </h3>
                 <div class="italic opacity-50">
                   Answered{' '}
@@ -266,38 +161,59 @@ const Layout = domain === 'money' ? MoneyBaseLayout : BaseLayout
         }
       </div>
     </section>
-
     <ul class="text-center my-10 space-x-2">
       <li class="inline-block">
         <a
-          href={createPaginationLink(domain)}
-          class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${['first', 'first-last'].includes(paginationOptions.current_page || '') ? 'text-black pointer-events-none' : ''}`
+          href={Astro.url.pathname}
+          class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
+            ['first', 'first-last'].includes(
+              paginationOptions.current_page || ''
+            )
+              ? 'text-black pointer-events-none'
+              : ''
+          }`}
         >
-          « First
+          &laquo; First
         </a>
       </li>
       <li class="inline-block">
         <a
-          href={createPaginationLink(domain, { p: paginationOptions.p || '' })}
-          class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${paginationOptions.p ? '' : 'text-[#c5c9cc] pointer-events-none'}`
+          href={Astro.url.pathname +
+            '?' +
+            new URLSearchParams({ p: paginationOptions.p || '' })}
+          class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
+            paginationOptions.p ? '' : 'text-[#c5c9cc] pointer-events-none'
+          }`}
         >
           &lt; Previous
         </a>
       </li>
       <li class="inline-block">
         <a
-          href={createPaginationLink(domain, { n: paginationOptions.n || '' })}
-          class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${paginationOptions.n ? '' : 'text-[#c5c9cc] pointer-events-none'}`
+          href={Astro.url.pathname +
+            '?' +
+            new URLSearchParams({ n: paginationOptions.n || '' })}
+          class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
+            paginationOptions.n ? '' : 'text-[#c5c9cc] pointer-events-none'
+          }`}
         >
           Next &gt;
         </a>
       </li>
       <li class="inline-block">
         <a
-          href={createPaginationLink(domain, { page: 'last' })}
-          class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${['last', 'first-last'].includes(paginationOptions.current_page || '') ? 'text-black pointer-events-none' : ''}`
+          href={Astro.url.pathname +
+            '?' +
+            new URLSearchParams({ page: 'last' })}
+          class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
+            ['last', 'first-last'].includes(
+              paginationOptions.current_page || ''
+            )
+              ? 'text-black pointer-events-none'
+              : ''
+          }`}
         >
-          Last »
+          Last &raquo;
         </a>
       </li>
     </ul>

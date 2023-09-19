@@ -2,14 +2,8 @@ import { db } from './db'
 
 const leagues = ['nba', 'nfl', 'nhl', 'mlb', 'pga']
 
-export const getListContextIds = async (names: string[]) => {
-  const records = await db
-    .selectFrom('contexts')
-    .where('contexts.name', 'in', names)
-    .selectAll()
-    .execute()
-  return records.map((r) => r.id)
-}
+export const getListContextIds = (names: string[]) =>
+  db.selectFrom('contexts').where('contexts.name', 'in', names).select('id')
 
 export const ASK_LIMIT = 15
 
@@ -24,7 +18,7 @@ export const getAsksIndex = async (
     .innerJoin('contexts', 'contexts.id', 'asks.context_id')
     .where('is_in_index', '=', true)
     .where('last_web_search_at', 'is not', null)
-    .where('context_id', 'in', await getListContextIds(names))
+    .where('context_id', 'in', getListContextIds(names))
 
   if (isFantasy) {
     query = query.where('is_fantasy_query', '=', true)
@@ -48,6 +42,7 @@ export const getAsksIndex = async (
   const records = await query
     .selectAll('asks')
     .select('contexts.name as league_name')
+    .select('asks.last_web_search_at as last_asked_at')
     .limit(ASK_LIMIT + 1)
     .execute()
 
@@ -87,6 +82,7 @@ export const getFinanceAsksIndex = async (params: {
 
   const records = await query
     .selectAll('finance_asks')
+    .select('finance_asks.last_web_search_at as last_asked_at')
     .limit(ASK_LIMIT + 1)
     .execute()
 
