@@ -1,6 +1,7 @@
 ---
 import AccountLayout from './_layout.astro'
 import { getUserAsks, getFinanceUserAsks } from '@statmuse/core/asks'
+import { ASK_LIMIT } from '@statmuse/core/asks'
 import { formatDate } from '@statmuse/core/time'
 import Image from '@components/image.astro'
 import {
@@ -9,6 +10,7 @@ import {
   getImage,
   getNlg,
   parseSearchParams,
+  paginate,
 } from '@lib/asks'
 
 // export const prerender = true
@@ -30,6 +32,16 @@ let asks =
   money === null
     ? await getUserAsks(userId, searchParams)
     : await getFinanceUserAsks(userId, searchParams)
+
+const overflow = asks.length > ASK_LIMIT
+
+if (overflow && (searchParams.p || searchParams.page === 'last')) {
+  asks = asks.slice(1)
+} else {
+  asks = asks.slice(0, ASK_LIMIT)
+}
+
+const paginationOptions = paginate(asks, searchParams, overflow)
 ---
 
 <AccountLayout {meta} prefixPath="/account/history">
@@ -95,4 +107,53 @@ let asks =
       }
     </div>
   </section>
+  <ul class="text-center my-10 space-x-2">
+    <li class="inline-block">
+      <a
+        href={Astro.url.pathname + (money !== null ? '?money=' : '')}
+        class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${['first', 'first-last'].includes(paginationOptions.current_page || '') ? 'text-black pointer-events-none' : ''}`
+      >
+        « First
+      </a>
+    </li>
+    <li class="inline-block">
+      <a
+        href={Astro.url.pathname +
+          '?' +
+          new URLSearchParams({
+            p: paginationOptions.p || '',
+            ...(money !== null ? { money: '' } : {}),
+          }).toString()}
+        class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${paginationOptions.p ? '' : 'text-[#c5c9cc] pointer-events-none'}`
+      >
+        &lt; Previous
+      </a>
+    </li>
+    <li class="inline-block">
+      <a
+        href={Astro.url.pathname +
+          '?' +
+          new URLSearchParams({
+            n: paginationOptions.n || '',
+            ...(money !== null ? { money: '' } : {}),
+          }).toString()}
+        class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${paginationOptions.n ? '' : 'text-[#c5c9cc] pointer-events-none'}`
+      >
+        Next &gt;
+      </a>
+    </li>
+    <li class="inline-block">
+      <a
+        href={Astro.url.pathname +
+          '?' +
+          new URLSearchParams({
+            page: 'last',
+            ...(money !== null ? { money: '' } : {}),
+          }).toString()}
+        class=`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${['last', 'first-last'].includes(paginationOptions.current_page || '') ? 'text-black pointer-events-none' : ''}`
+      >
+        Last »
+      </a>
+    </li>
+  </ul>
 </AccountLayout>@lib/asks
