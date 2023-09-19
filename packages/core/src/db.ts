@@ -9,6 +9,12 @@ import {
 import { GameraResponse } from './gamera'
 import { UserTable } from './user/user.sql'
 import { UsersVisitorTable, VisitorTable } from './visitor/visitor.sql'
+import {
+  AskEventTable,
+  AskTable,
+  AskUserTable,
+  FinanceAskTable,
+} from './ask/ask.sql'
 
 const secretsManager = new SecretsManagerClient({
   region: process.env.AWS_REGION || 'us-east-1',
@@ -29,74 +35,6 @@ const credentials = JSON.parse(secret) as {
   port: 5432
   dbname: string
   dbInstanceIdentifier: string
-}
-
-interface AskTable {
-  id: Generated<string>
-
-  answer: GameraResponse
-  answer_html: string | null
-  answer_text: string | null
-  answer_type:
-    | 'answer'
-    | 'error'
-    | 'prompt'
-    | 'player_bio'
-    | 'team_franchise_bio'
-    | 'team_season_bio'
-    | 'unknown'
-  context_id: string
-  count_total: number
-  count_web_search: number
-  count_web_view: number
-  hex_background: string | null
-  hex_foreground: string | null
-  image_url: string | null
-  is_fantasy_query: boolean
-  is_game_odds_query: boolean | null
-  is_in_index: boolean
-  is_in_index_pin: boolean | null
-  is_in_suggests: boolean
-  is_in_suggests_pin: boolean | null
-  is_legacy_answer: boolean
-  last_user_id: string | null
-  last_visitor_id: string | null
-  last_web_search_at: ColumnType<
-    Date,
-    string | undefined,
-    string | undefined
-  > | null
-  query: string
-  resource_path: string
-  resource_query: string
-  sid: Generated<number>
-
-  inserted_at: ColumnType<Date, string | undefined, string | undefined>
-  updated_at: ColumnType<Date, string | undefined, string | undefined>
-}
-
-interface AskUserTable {
-  id: Generated<string>
-
-  ask_id: string
-  user_id: string
-
-  inserted_at: ColumnType<Date, string | undefined, string | undefined>
-  updated_at: ColumnType<Date, string | undefined, string | undefined>
-}
-
-interface AskEventTable {
-  id: Generated<string>
-
-  conversation_token: string
-  query_raw: string
-  ask_id: string
-  question_id: string | null
-  user_id: string | null
-  visitor_id: string | null
-
-  inserted_at: ColumnType<Date, string | undefined, string | undefined>
-  updated_at: ColumnType<Date, string | undefined, string | undefined>
 }
 
 interface MusingTable {
@@ -205,33 +143,6 @@ interface PlayerTable {
   resource_path: string
   used_name: string
   league_id: string
-
-  inserted_at: ColumnType<Date, string | undefined, string | undefined>
-  updated_at: ColumnType<Date, string | undefined, string | undefined>
-}
-
-interface FinanceAskTable {
-  id: Generated<string>
-
-  answer: GameraResponse
-  answer_text: string | null
-  answer_type: 'answer' | 'asset' | 'error' | 'unknown'
-  count_total: number
-  count_web_search: number
-  count_web_view: number
-  is_in_index: boolean | null
-  is_in_index_pin: boolean | null
-  is_in_suggests: boolean | null
-  is_in_suggests_pin: boolean | null
-  last_user_id: string | null
-  last_visitor_id: string | null
-  last_web_search_at: ColumnType<
-    Date,
-    string | undefined,
-    string | undefined
-  > | null
-  query: string
-  sid: Generated<number>
 
   inserted_at: ColumnType<Date, string | undefined, string | undefined>
   updated_at: ColumnType<Date, string | undefined, string | undefined>

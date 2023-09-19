@@ -1,5 +1,7 @@
-import { db } from './db'
+import { db } from '../db'
+export * from './ask.sql'
 
+export const ASK_LIMIT = 15
 const leagues = ['nba', 'nfl', 'nhl', 'mlb', 'pga']
 
 export const getListContextIds = async (names: string[]) => {
@@ -10,8 +12,6 @@ export const getListContextIds = async (names: string[]) => {
     .execute()
   return records.map((r) => r.id)
 }
-
-export const ASK_LIMIT = 15
 
 export const getAsksIndex = async (
   names = leagues,
@@ -57,7 +57,7 @@ export const getAsksIndex = async (
   return records
 }
 
-export type Ask = Awaited<ReturnType<typeof getAsksIndex>>[number]
+export type AskForIndex = Awaited<ReturnType<typeof getAsksIndex>>[number]
 
 export const getFinanceAsksIndex = async (params: {
   n?: Date
@@ -96,4 +96,6 @@ export const getFinanceAsksIndex = async (params: {
   return records
 }
 
-export type FinanceAsk = Awaited<ReturnType<typeof getFinanceAsksIndex>>[number]
+export type FinanceAskForIndex = Awaited<
+  ReturnType<typeof getFinanceAsksIndex>
+>[number]

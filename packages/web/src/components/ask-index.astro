@@ -5,7 +5,11 @@ import Header from '@components/header.astro'
 import Footer from '@components/footer.astro'
 import Container from '@components/container.astro'
 import Image from '@components/image.astro'
-import { ASK_LIMIT, type FinanceAsk, type Ask } from '@statmuse/core/asks'
+import {
+  ASK_LIMIT,
+  type FinanceAskForIndex,
+  type AskForIndex,
+} from '@statmuse/core/ask'
 import { createAskPath } from '@lib/path'
 import { formatDate, utc } from '@statmuse/core/time'
 import type { Metadata } from '@lib/meta'
@@ -13,10 +17,11 @@ import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
 
 interface Props {
   domain?: string
-  fetchAsks: (params: SearchParams) => Promise<Ask[] | FinanceAsk[]>
+  fetchAsks: (
+    params: SearchParams
+  ) => Promise<AskForIndex[] | FinanceAskForIndex[]>
   meta?: Metadata
 }
-
 const { domain, fetchAsks, meta } = Astro.props
 
 const dateFromString = (x: string) => {
@@ -47,7 +52,7 @@ type PaginationOptions = {
 }
 
 const paginate = (
-  asks: Ask[] | FinanceAsk[],
+  asks: AskForIndex[] | FinanceAskForIndex[],
   { n, p, page }: SearchParams,
   overflow: boolean
 ): PaginationOptions => {
@@ -138,17 +143,18 @@ const createPaginationLink = (
   return link
 }
 
-const isAsk = (ask: Ask | FinanceAsk): ask is Ask => 'answer_html' in ask
-const getNlg = (ask: Ask | FinanceAsk) =>
+const isAsk = (ask: AskForIndex | FinanceAskForIndex): ask is AskForIndex =>
+  'answer_html' in ask
+const getNlg = (ask: AskForIndex | FinanceAskForIndex) =>
   isAsk(ask) ? ask.answer_html : ask.answer_text
-const getImage = (ask: Ask | FinanceAsk) =>
+const getImage = (ask: AskForIndex | FinanceAskForIndex) =>
   isAsk(ask) ? ask.image_url : ask.answer.visual.summary.subject.imageUrl
-const getBgColor = (ask: Ask | FinanceAsk) =>
+const getBgColor = (ask: AskForIndex | FinanceAskForIndex) =>
   isAsk(ask)
     ? ask.hex_background
     : ask.answer.visual.summary.subject.colors.background
 
-const askPath = (ask: Ask | FinanceAsk, domain = '') => {
+const askPath = (ask: AskForIndex | FinanceAskForIndex, domain = '') => {
   if (domain === 'money') {
     return createAskPath({ domain, query: ask.query })
   }

@@ -186,7 +186,7 @@ export function ImageOptimization({ stack }: StackContext) {
     distribution.addBehavior('app/media/*.jpg', imageOrigin, params)
     distribution.addBehavior('app/media/*.jpeg', imageOrigin, params)
     distribution.addBehavior('app/media/*.png', imageOrigin, params)
-    distribution.addBehavior('app/images/*.png', imageOrigin, params)
+    distribution.addBehavior('app/images/*', imageOrigin, params)
     distribution.addBehavior('finance/asset_img/*', imageOrigin, params)
   }
 

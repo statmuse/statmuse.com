@@ -5,7 +5,6 @@
 - [ ] persist asks, cache logic from mothra, etc.
 - [ ] query history page (/account/history)
 - [ ] statmuse+ (limit features for free users)
-- [ ] rewardful integration
 - [ ] analytics (provider?)
 - [ ] swr headers (use astro middleware? works on sst?)
 - [ ] security headers
