@@ -1,20 +1,10 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
   import UserMenu from '@components/user-menu.svelte'
   import { createDropdownMenu, melt } from '@melt-ui/svelte'
   import { fly } from 'svelte/transition'
-  import { fetchSession } from '@lib/fetch-session'
+  import { session } from '@lib/session-store'
 
   export let collapsible = false
-  let loaded = false
-  let signedIn: boolean | undefined
-
-  onMount(async () => {
-    const session = await fetchSession()
-
-    loaded = true
-    signedIn = session.type === 'user'
-  })
 
   const {
     elements: { trigger, menu, item },
@@ -25,9 +15,9 @@
 </script>
 
 <div {...$$restProps}>
-  {#if !loaded}
+  {#if !$session}
     <div />
-  {:else if signedIn}
+  {:else if $session.type === 'user'}
     <UserMenu />
   {:else if collapsible}
     <div class="hidden md:flex space-x-5 items-center">
