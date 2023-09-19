@@ -1,34 +1,26 @@
 ---
-import BaseLayout from '@layouts/base.astro'
-import MoneyBaseLayout from '@layouts/money-base.astro'
-import Header from '@components/header.astro'
-import Footer from '@components/footer.astro'
 import Container from '@components/container.astro'
 import Image from '@components/image.astro'
-import { ASK_LIMIT } from '@statmuse/core/asks'
+import { ASK_LIMIT, type Ask, type FinanceAsk } from '@statmuse/core/asks'
 import { formatDate } from '@statmuse/core/time'
-import type { Metadata } from '@lib/meta'
-import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
 import {
   askPath,
   getBgColor,
   getImage,
   getNlg,
-  parseSearchParams,
   paginate,
+  type SearchParams,
 } from '@lib/asks'
 
 interface Props {
-  domain?: string
-  // fetchAsks: (params: SearchParams) => Promise<Ask[] | FinanceAsk[]>
-  meta?: Metadata
+  selected?: string
+  headline: string
+  asks: Ask[] | FinanceAsk[]
+  searchParams: SearchParams
 }
 
-const { domain, fetchAsks, meta } = Astro.props
-
-const searchParams = parseSearchParams(Astro.url.searchParams)
-
-let asks = await fetchAsks(searchParams)
+const { selected, headline, searchParams } = Astro.props
+let asks = Astro.props.asks
 
 const overflow = asks.length > ASK_LIMIT
 
@@ -40,183 +32,137 @@ if (overflow && (searchParams.p || searchParams.page === 'last')) {
 
 const paginationOptions = paginate(asks, searchParams, overflow)
 
-const headline = (title?: string) => {
-  if (!title) return 'Trending Searches'
-
-  if (leagues.includes(title.toUpperCase())) {
-    return `Trending ${title.toUpperCase()} Searches`
-  }
-
-  if (title === 'fantasy') {
-    return 'Trending Fantasy Football Searches'
-  }
-
-  if (title === 'money') {
-    return 'Trending Finance Searches'
-  }
-}
-
 const leagues = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
-
-const Layout = domain === 'money' ? MoneyBaseLayout : BaseLayout
 ---
 
-<Layout
-  {meta}
-  analytics={{
-    page_type: 'question',
-    page_domain: !domain
-      ? 'unknown'
-      : domain === 'fantasy'
-      ? 'nfl'
-      : domain === 'money'
-      ? 'finance'
-      : (domain as AnalyticsPageviewProperties['page_domain']),
-  }}
->
-  <Header
-    money={domain === 'money'}
-    fantasy={domain === 'fantasy'}
-    preferredDomain={domain}
-  />
-  <Container>
-    <nav style="margin-top: 15px;">
-      <div style="display: flex; gap: 10px;">
-        {
-          ['All', ...leagues].map((league) => (
-            <a
-              class={`flex items-center justify-center min-w-[80px] border border-primary rounded-md hover:no-underline hover:text-white hover:bg-primary p-[5px] ${
-                league.toLowerCase() === (domain || 'all')
-                  ? 'bg-primary text-white'
-                  : 'text-primary'
-              } %>`}
-              href={
-                league === 'All'
-                  ? '/questions'
-                  : `/${league.toLowerCase()}/questions`
-              }
-              set:html={league}
-            />
-          ))
-        }
-      </div>
-      <div style="display: flex; gap: 10px; margin-top: 10px;">
-        <a
-          class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
-            'fantasy' === domain ? 'bg-secondary text-white' : 'text-secondary'
-          } %>`}
-          href="/fantasy/questions"
-          set:html="Fantasy Football"
-        />
-        <a
-          class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
-            'money' === domain ? 'bg-secondary text-white' : 'text-secondary'
-          } %>`}
-          href="/money/questions"
-          set:html="Money"
-        />
-      </div>
-    </nav>
-  </Container>
-  <Container>
-    <section>
-      <h2 class="text-2xl font-semibold my-5">{headline(domain)}</h2>
-      <div class="space-y-5">
-        {
-          asks.map((ask, i) => (
-            <article class="flex">
-              <div
-                class="hidden sm:block h-24 w-36 rounded-lg mr-2.5 overflow-hidden"
-                style={`background: ${getBgColor(ask)}`}
+<Container>
+  <nav style="margin-top: 15px;">
+    <div style="display: flex; gap: 10px;">
+      {
+        ['All', ...leagues].map((league) => (
+          <a
+            class={`flex items-center justify-center min-w-[80px] border border-primary rounded-md hover:no-underline hover:text-white hover:bg-primary p-[5px] ${
+              league.toLowerCase() === (selected || 'all')
+                ? 'bg-primary text-white'
+                : 'text-primary'
+            } %>`}
+            href={
+              league === 'All'
+                ? '/questions'
+                : `/${league.toLowerCase()}/questions`
+            }
+            set:html={league}
+          />
+        ))
+      }
+    </div>
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+      <a
+        class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
+          'fantasy' === selected ? 'bg-secondary text-white' : 'text-secondary'
+        } %>`}
+        href="/fantasy/questions"
+        set:html="Fantasy Football"
+      />
+      <a
+        class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
+          'money' === selected ? 'bg-secondary text-white' : 'text-secondary'
+        } %>`}
+        href="/money/questions"
+        set:html="Money"
+      />
+    </div>
+  </nav>
+  <section>
+    <h2 class="text-2xl font-semibold my-5">{headline}</h2>
+    <div class="space-y-5">
+      {
+        asks.map((ask, i) => (
+          <article class="flex">
+            <div
+              class="hidden sm:block h-24 w-36 rounded-lg mr-2.5 overflow-hidden"
+              style={`background: ${getBgColor(ask)}`}
+            >
+              <a
+                class="h-full flex justify-center items-end overflow-visible"
+                href={askPath(ask)}
               >
-                <a
-                  class="h-full flex justify-center items-end overflow-visible"
-                  href={askPath(ask)}
-                >
-                  <Image
-                    class="h-[90%] object-cover object-bottom overflow-visible"
-                    src={getImage(ask)!}
-                    alt="player illustration"
-                    width={100}
-                    height={84}
-                    loading={i < 8 ? 'eager' : 'lazy'}
-                  />
-                </a>
-              </div>
-              <div class="flex-1 flex flex-col">
-                <h3 class="text-lg font-semibold">
-                  <a href={askPath(ask)}>{ask.query}</a>
-                </h3>
-                <div class="italic opacity-50">
-                  Answered{' '}
-                  {formatDate(ask.last_web_search_at as Date, 'MMMM Do, YYYY')}
-                </div>
-                <div
-                  class="flex-1 flex items-center border-l-2 border-secondary pl-1.5"
-                  set:html={getNlg(ask)}
+                <Image
+                  class="h-[90%] object-cover object-bottom overflow-visible"
+                  src={getImage(ask)!}
+                  alt="player illustration"
+                  width={100}
+                  height={84}
+                  loading={i < 8 ? 'eager' : 'lazy'}
                 />
+              </a>
+            </div>
+            <div class="flex-1 flex flex-col">
+              <h3 class="text-lg font-semibold">
+                <a href={askPath(ask)}>{ask.query}</a>
+              </h3>
+              <div class="italic opacity-50">
+                Answered{' '}
+                {formatDate(ask.last_web_search_at as Date, 'MMMM Do, YYYY')}
               </div>
-            </article>
-          ))
-        }
-      </div>
-    </section>
-    <ul class="text-center my-10 space-x-2">
-      <li class="inline-block">
-        <a
-          href={Astro.url.pathname}
-          class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
-            ['first', 'first-last'].includes(
-              paginationOptions.current_page || ''
-            )
-              ? 'text-black pointer-events-none'
-              : ''
-          }`}
-        >
-          &laquo; First
-        </a>
-      </li>
-      <li class="inline-block">
-        <a
-          href={Astro.url.pathname +
-            '?' +
-            new URLSearchParams({ p: paginationOptions.p || '' })}
-          class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
-            paginationOptions.p ? '' : 'text-[#c5c9cc] pointer-events-none'
-          }`}
-        >
-          &lt; Previous
-        </a>
-      </li>
-      <li class="inline-block">
-        <a
-          href={Astro.url.pathname +
-            '?' +
-            new URLSearchParams({ n: paginationOptions.n || '' })}
-          class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
-            paginationOptions.n ? '' : 'text-[#c5c9cc] pointer-events-none'
-          }`}
-        >
-          Next &gt;
-        </a>
-      </li>
-      <li class="inline-block">
-        <a
-          href={Astro.url.pathname +
-            '?' +
-            new URLSearchParams({ page: 'last' })}
-          class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
-            ['last', 'first-last'].includes(
-              paginationOptions.current_page || ''
-            )
-              ? 'text-black pointer-events-none'
-              : ''
-          }`}
-        >
-          Last &raquo;
-        </a>
-      </li>
-    </ul>
-  </Container>
-  <Footer />
-</Layout>
+              <div
+                class="flex-1 flex items-center border-l-2 border-secondary pl-1.5"
+                set:html={getNlg(ask)}
+              />
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+  <ul class="text-center my-10 space-x-2">
+    <li class="inline-block">
+      <a
+        href={Astro.url.pathname}
+        class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
+          ['first', 'first-last'].includes(paginationOptions.current_page || '')
+            ? 'text-black pointer-events-none'
+            : ''
+        }`}
+      >
+        &laquo; First
+      </a>
+    </li>
+    <li class="inline-block">
+      <a
+        href={Astro.url.pathname +
+          '?' +
+          new URLSearchParams({ p: paginationOptions.p || '' })}
+        class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
+          paginationOptions.p ? '' : 'text-[#c5c9cc] pointer-events-none'
+        }`}
+      >
+        &lt; Previous
+      </a>
+    </li>
+    <li class="inline-block">
+      <a
+        href={Astro.url.pathname +
+          '?' +
+          new URLSearchParams({ n: paginationOptions.n || '' })}
+        class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
+          paginationOptions.n ? '' : 'text-[#c5c9cc] pointer-events-none'
+        }`}
+      >
+        Next &gt;
+      </a>
+    </li>
+    <li class="inline-block">
+      <a
+        href={Astro.url.pathname + '?' + new URLSearchParams({ page: 'last' })}
+        class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
+          ['last', 'first-last'].includes(paginationOptions.current_page || '')
+            ? 'text-black pointer-events-none'
+            : ''
+        }`}
+      >
+        Last &raquo;
+      </a>
+    </li>
+  </ul>
+</Container>

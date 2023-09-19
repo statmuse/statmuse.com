@@ -21,7 +21,7 @@ export const parseSearchParams = (params: URLSearchParams) => {
   }
 }
 
-type SearchParams = ReturnType<typeof parseSearchParams>
+export type SearchParams = ReturnType<typeof parseSearchParams>
 
 type PaginationOptions = {
   current_page?: 'first-last' | 'first' | 'last'

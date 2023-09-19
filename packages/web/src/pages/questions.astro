@@ -1,6 +1,21 @@
 ---
+import BaseLayout from '@layouts/base.astro'
+import Header from '@components/header.astro'
+import Footer from '@components/footer.astro'
 import AskIndex from '@components/ask-index.astro'
 import { getAsksIndex } from '@statmuse/core/asks'
+import { parseSearchParams } from '@lib/asks'
+
+const searchParams = parseSearchParams(Astro.url.searchParams)
+const asks = await getAsksIndex(undefined, searchParams)
 ---
 
-<AskIndex fetchAsks={(params) => getAsksIndex(undefined, params)} />
+<BaseLayout
+  analytics={{
+    page_type: 'question',
+  }}
+>
+  <Header />
+  <AskIndex headline="Trending Searches" {asks} {searchParams} />
+  <Footer />
+</BaseLayout>

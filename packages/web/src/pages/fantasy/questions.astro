@@ -1,16 +1,40 @@
 ---
+import BaseLayout from '@layouts/base.astro'
+import Header from '@components/header.astro'
+import Footer from '@components/footer.astro'
 import AskIndex from '@components/ask-index.astro'
 import { getAsksIndex } from '@statmuse/core/asks'
+import { parseSearchParams } from '@lib/asks'
+
+const searchParams = parseSearchParams(Astro.url.searchParams)
+const asks = await getAsksIndex(['nfl'], searchParams, true)
 
 const meta = {
   title: 'Fantasy Football Stats',
   description:
     'Instant answers to your fantasy football questions. Stats, projections, comparisons, outlooks, recaps and more — just ask.',
+  facebook: {
+    imageUrl: '/images/sm-fantasy-meta-banner.jpg',
+  },
+  twitter: {
+    imageUrl: '/images/sm-fantasy-meta-banner.jpg',
+  },
 }
 ---
 
-<AskIndex
+<BaseLayout
   {meta}
-  domain="fantasy"
-  fetchAsks={(params) => getAsksIndex(['nfl'], params, true)}
-/>
+  analytics={{
+    page_type: 'question',
+    page_domain: 'nfl',
+  }}
+>
+  <Header fantasy />
+  <AskIndex
+    selected="fantasy"
+    headline="Trending Fantasy Football Searches"
+    {asks}
+    {searchParams}
+  />
+  <Footer />
+</BaseLayout>
