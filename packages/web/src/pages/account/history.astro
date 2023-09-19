@@ -1,5 +1,15 @@
 ---
 import AccountLayout from './_layout.astro'
+import { getUserAsks, getFinanceUserAsks } from '@statmuse/core/asks'
+import { formatDate } from '@statmuse/core/time'
+import Image from '@components/image.astro'
+import {
+  askPath,
+  getBgColor,
+  getImage,
+  getNlg,
+  parseSearchParams,
+} from '@lib/asks'
 
 // export const prerender = true
 
@@ -14,7 +24,55 @@ if (Astro.locals.session.type !== 'user') {
 }
 
 const userId = Astro.locals.session.properties.id
-// TODO: fetch user asks
+const money = Astro.url.searchParams.get('money')
+const searchParams = parseSearchParams(Astro.url.searchParams)
+let asks =
+  money === null
+    ? await getUserAsks(userId, searchParams)
+    : await getFinanceUserAsks(userId, searchParams)
 ---
 
-<AccountLayout {meta} prefixPath="/account/history" />
+<AccountLayout {meta} prefixPath="/account/history">
+  <section>
+    <h2 class="text-2xl font-semibold my-5">History</h2>
+    <div class="space-y-5">
+      {
+        asks.map((ask, i) => (
+          <article class="flex">
+            <div
+              class="hidden sm:block h-24 w-36 rounded-lg mr-2.5 overflow-hidden"
+              style={`background: ${getBgColor(ask)}`}
+            >
+              <a
+                class="h-full flex justify-center items-end overflow-visible"
+                href={askPath(ask)}
+              >
+                <Image
+                  class="h-[90%] object-cover object-bottom overflow-visible"
+                  src={getImage(ask)!}
+                  alt="player illustration"
+                  width={100}
+                  height={84}
+                  loading={i < 8 ? 'eager' : 'lazy'}
+                />
+              </a>
+            </div>
+            <div class="flex-1 flex flex-col">
+              <h3 class="text-lg font-semibold">
+                <a href={askPath(ask)}>{ask.query}</a>
+              </h3>
+              <div class="italic opacity-50">
+                Answered{' '}
+                {formatDate(ask.last_web_search_at as Date, 'MMMM Do, YYYY')}
+              </div>
+              <div
+                class="flex-1 flex items-center border-l-2 border-secondary pl-1.5"
+                set:html={getNlg(ask)}
+              />
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</AccountLayout>@lib/asks
