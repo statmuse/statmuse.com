@@ -84,11 +84,11 @@ const isFinanceAsk = (ask: Ask | FinanceAsk): ask is FinanceAsk => !isAsk(ask)
 export const getNlg = (ask: Ask | FinanceAsk) =>
   isAsk(ask) ? ask.answer_html : ask.answer_text
 export const getImage = (ask: Ask | FinanceAsk) =>
-  isAsk(ask) ? ask.image_url : ask.answer.visual.summary.subject.imageUrl
+  isAsk(ask) ? ask.image_url : ask.answer.visual.summary.subject?.imageUrl
 export const getBgColor = (ask: Ask | FinanceAsk) =>
   isAsk(ask)
     ? ask.hex_background
-    : ask.answer.visual.summary.subject.colors.background
+    : ask.answer.visual.summary.subject?.colors.background
 
 export const askPath = (ask: Ask | FinanceAsk) => {
   if (isFinanceAsk(ask)) {

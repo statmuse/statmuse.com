@@ -81,7 +81,7 @@ const paginationOptions = paginate(asks, searchParams, overflow)
               >
                 <Image
                   class="h-[90%] object-cover object-bottom overflow-visible"
-                  src={getImage(ask)!}
+                  src={getImage(ask) || ''}
                   alt="player illustration"
                   width={100}
                   height={84}
