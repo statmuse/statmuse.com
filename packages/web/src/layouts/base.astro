@@ -203,6 +203,7 @@ Astro.response.headers.set(
 <script>
   import { AnalyticsBrowser } from '@segment/analytics-next'
   import type { Session } from '@lib/session'
+  import { fetchSession } from '@lib/fetch-session'
 
   /**
    * Given window and document, add or remove "selected" class to league nav
@@ -295,7 +296,7 @@ Astro.response.headers.set(
         ) as AnalyticsBrowser)
       : AnalyticsBrowser.load({ writeKey }))
 
-  const session: Session = await fetch('/auth/session').then((r) => r.json())
+  const session: Session = await fetchSession()
 
   if (session.type === 'visitor') {
     segment.identify(`v:${session.properties.id}`, { origin: 'web' })

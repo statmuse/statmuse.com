@@ -1,18 +1,16 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import type { Session } from '@lib/session'
   import UserMenu from '@components/user-menu.svelte'
   import { createDropdownMenu, melt } from '@melt-ui/svelte'
   import { fly } from 'svelte/transition'
+  import { fetchSession } from '@lib/fetch-session'
 
   export let collapsible = false
   let loaded = false
   let signedIn: boolean | undefined
 
   onMount(async () => {
-    const session = await fetch('/auth/session').then(
-      (s) => s.json() as unknown as Session,
-    )
+    const session = await fetchSession()
 
     loaded = true
     signedIn = session.type === 'user'
