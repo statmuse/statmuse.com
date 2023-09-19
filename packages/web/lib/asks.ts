@@ -1,4 +1,4 @@
-import { type FinanceAsk, type Ask } from '@statmuse/core/asks'
+import { type FinanceAskForIndex, type AskForIndex } from '@statmuse/core/ask'
 import { createAskPath } from './path'
 import { utc } from '@statmuse/core/time'
 
@@ -30,7 +30,7 @@ type PaginationOptions = {
 }
 
 export const paginate = (
-  asks: Ask[] | FinanceAsk[],
+  asks: AskForIndex[] | FinanceAskForIndex[],
   { n, p, page }: SearchParams,
   overflow: boolean
 ): PaginationOptions => {
@@ -78,19 +78,22 @@ export const paginate = (
   }
 }
 
-const isAsk = (ask: Ask | FinanceAsk): ask is Ask => 'answer_html' in ask
-const isFinanceAsk = (ask: Ask | FinanceAsk): ask is FinanceAsk => !isAsk(ask)
+const isAsk = (ask: AskForIndex | FinanceAskForIndex): ask is AskForIndex =>
+  'answer_html' in ask
+const isFinanceAsk = (
+  ask: AskForIndex | FinanceAskForIndex
+): ask is FinanceAskForIndex => !isAsk(ask)
 
-export const getNlg = (ask: Ask | FinanceAsk) =>
+export const getNlg = (ask: AskForIndex | FinanceAskForIndex) =>
   isAsk(ask) ? ask.answer_html : ask.answer_text
-export const getImage = (ask: Ask | FinanceAsk) =>
+export const getImage = (ask: AskForIndex | FinanceAskForIndex) =>
   isAsk(ask) ? ask.image_url : ask.answer.visual.summary.subject?.imageUrl
-export const getBgColor = (ask: Ask | FinanceAsk) =>
+export const getBgColor = (ask: AskForIndex | FinanceAskForIndex) =>
   isAsk(ask)
     ? ask.hex_background
     : ask.answer.visual.summary.subject?.colors.background
 
-export const askPath = (ask: Ask | FinanceAsk) => {
+export const askPath = (ask: AskForIndex | FinanceAskForIndex) => {
   if (isFinanceAsk(ask)) {
     return createAskPath({ domain: 'money', query: ask.query })
   }

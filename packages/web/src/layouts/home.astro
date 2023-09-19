@@ -12,7 +12,6 @@ import type { GameraResponse } from '@statmuse/core/gamera'
 import type { Metadata } from '@lib/meta'
 import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
 import NewsletterSignup from '@components/newsletter-signup.astro'
-import UserMenu from '@components/user-menu.svelte'
 import AuthMenu from '@components/auth-menu.svelte'
 
 interface Props {
@@ -73,7 +72,7 @@ Astro.response.headers.set(
     id="home"
     class="home-layout [--header-height:55px] md:[--header-height:64px]"
   >
-    <div class="sidebar hidden md:block min-w-[75px] bg-[#f9f9f9]">
+    <div class="sidebar hidden lg:block min-w-[75px] bg-[#f9f9f9]">
       <div
         class="sticky top-0 bg-[#f9f9f9] border-t border-transparent w-[237px]"
       >
@@ -86,9 +85,9 @@ Astro.response.headers.set(
     </div>
 
     <div
-      class="main h-[var(--header-height)] px-3 md:px-[21px] bg-white flex items-center sticky md:relative top-0 z-20"
+      class="main h-[var(--header-height)] px-3 lg:px-[21px] bg-white flex items-center sticky lg:relative top-0 z-20"
     >
-      <div class="md:hidden">
+      <div class="lg:hidden">
         <DropdownMenu />
       </div>
 
@@ -138,21 +137,21 @@ Astro.response.headers.set(
             ))
           }
           <a
-            class={`hidden md:flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 min-w-fit ${
+            class={`hidden lg:flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 min-w-fit ${
               domain === 'fantasy' && 'bg-secondary text-white'
             }`}
             href="/fantasy"
             set:text="Fantasy"
           />
           <a
-            class={`hidden md:flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 min-w-fit ${
+            class={`hidden lg:flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 min-w-fit ${
               domain === 'money' && 'bg-[#003ca8] text-white'
             }`}
             href="/money"
             set:text="Money"
           />
         </div>
-        <div class="flex flex-nowrap gap-[5px] mb-2.5 md:hidden">
+        <div class="flex flex-nowrap gap-[5px] mb-2.5 lg:hidden">
           <a
             class={`flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 max-w-fit ${
               domain === 'fantasy' && 'bg-secondary text-white'
@@ -169,7 +168,7 @@ Astro.response.headers.set(
           />
         </div>
       </div>
-      <!-- <div class="mb-[30px] mt-[32px] w-full md:w-[400px]">
+      <!-- <div class="mb-[30px] mt-[32px] w-full lg:w-[400px]">
         <FreestarVideo />
       </div> -->
       <slot />

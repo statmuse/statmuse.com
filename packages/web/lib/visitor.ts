@@ -1,4 +1,3 @@
-import type { APIContext } from 'astro'
 import * as Session from '@lib/session'
 import * as Visitor from '@statmuse/core/visitor'
 import { randomUUID } from 'crypto'

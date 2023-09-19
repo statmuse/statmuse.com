@@ -1,5 +1,5 @@
 import { db } from './db'
-import type { Ask, FinanceAsk } from './asks'
+import type { Ask, FinanceAsk } from './ask'
 import type { Musing } from './musings'
 import type { Question } from './questions'
 

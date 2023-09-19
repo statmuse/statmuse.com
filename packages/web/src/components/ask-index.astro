@@ -1,7 +1,11 @@
 ---
 import Container from '@components/container.astro'
 import Image from '@components/image.astro'
-import { ASK_LIMIT, type Ask, type FinanceAsk } from '@statmuse/core/asks'
+import {
+  ASK_LIMIT,
+  type AskForIndex,
+  type FinanceAskForIndex,
+} from '@statmuse/core/ask'
 import { formatDate } from '@statmuse/core/time'
 import {
   askPath,
@@ -15,7 +19,7 @@ import {
 interface Props {
   selected?: string
   headline: string
-  asks: Ask[] | FinanceAsk[]
+  asks: AskForIndex[] | FinanceAskForIndex[]
   searchParams: SearchParams
 }
 

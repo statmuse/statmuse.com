@@ -35,7 +35,7 @@ export function API({ stack }: StackContext) {
   }
 
   if (isDev) {
-    environment['POSTGRES_HOST'] = 'localhost'
+    // environment['POSTGRES_HOST'] = 'localhost'
     environment['POSTGRES_PORT'] = '5432'
     environment['POSTGRES_DATABASE'] = 'mothra_dev'
     environment['POSTGRES_USER'] = 'postgres'
