@@ -33,6 +33,26 @@ let asks =
 ---
 
 <AccountLayout {meta} prefixPath="/account/history">
+  <div style="display: flex; gap: 10px; margin-top: 20px;">
+    <a
+      class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
+        money === null && 'bg-secondary text-white'
+      }`}
+      href={Astro.url.pathname}
+    >
+      Sports
+    </a>
+    <a
+      class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
+        money !== null && 'bg-secondary text-white'
+      }`}
+      href={Astro.url.pathname +
+        '?' +
+        new URLSearchParams({ money: '' }).toString()}
+    >
+      Money
+    </a>
+  </div>
   <section>
     <h2 class="text-2xl font-semibold my-5">History</h2>
     <div class="space-y-5">
