@@ -14,6 +14,7 @@ import {
   AskTable,
   AskUserTable,
   FinanceAskTable,
+  FinanceAskUserTable,
 } from './ask/ask.sql'
 
 const secretsManager = new SecretsManagerClient({
@@ -172,6 +173,7 @@ export interface Database {
   asks_users: AskUserTable
   contexts: ContextTable
   finance_asks: FinanceAskTable
+  finance_asks_users: FinanceAskUserTable
   links: LinkTable
   musings: MusingTable
   questions: QuestionTable

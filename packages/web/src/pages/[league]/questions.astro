@@ -1,25 +1,35 @@
 ---
+import BaseLayout from '@layouts/base.astro'
+import Header from '@components/header.astro'
+import Footer from '@components/footer.astro'
 import AskIndex from '@components/ask-index.astro'
 import { getAsksIndex } from '@statmuse/core/ask'
+import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
+import { parseSearchParams } from '@lib/asks'
 
 const league = Astro.params.league as string
+const searchParams = parseSearchParams(Astro.url.searchParams)
+const asks = await getAsksIndex([league], searchParams)
 
 const meta = {
   title: `${league.toUpperCase()} Stats`,
   description: `Instant answers to your ${league.toUpperCase()} questions. Stats, scores, schedules, standings, recaps and more — just ask.`,
-  facebook: {
-    imageUrl:
-      league === 'fantasy' ? '/images/sm-fantasy-meta-banner.jpg' : undefined,
-  },
-  twitter: {
-    imageUrl:
-      league === 'fantasy' ? '/images/sm-fantasy-meta-banner.jpg' : undefined,
-  },
 }
 ---
 
-<AskIndex
+<BaseLayout
   {meta}
-  domain={league}
-  fetchAsks={(params) => getAsksIndex([league], params)}
-/>
+  analytics={{
+    page_type: 'question',
+    page_domain: league as AnalyticsPageviewProperties['page_domain'],
+  }}
+>
+  <Header preferredDomain={league} />
+  <AskIndex
+    selected={league}
+    headline={`Trending ${league.toUpperCase()} Searches`}
+    {asks}
+    {searchParams}
+  />
+  <Footer />
+</BaseLayout>

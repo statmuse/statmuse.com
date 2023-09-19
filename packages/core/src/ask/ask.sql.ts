@@ -61,6 +61,7 @@ export interface AskUserTable {
   ask_id: string
   user_id: string
 
+  last_asked_at: ColumnType<Date, string | undefined, string | undefined>
   inserted_at: ColumnType<Date, string | undefined, string | undefined>
   updated_at: ColumnType<Date, string | undefined, string | undefined>
 }
@@ -117,3 +118,18 @@ export interface FinanceAskTable {
 export type FinanceAsk = Selectable<FinanceAskTable>
 export type NewFinanceAsk = Insertable<FinanceAskTable>
 export type FinanceAskUpdate = Updateable<FinanceAskTable>
+
+export interface FinanceAskUserTable {
+  id: Generated<string>
+
+  finance_ask_id: string
+  user_id: string
+
+  last_asked_at: ColumnType<Date, string | undefined, string | undefined>
+  inserted_at: ColumnType<Date, string | undefined, string | undefined>
+  updated_at: ColumnType<Date, string | undefined, string | undefined>
+}
+
+export type FinanceAskUser = Selectable<FinanceAskUserTable>
+export type NewFinanceAskUser = Insertable<FinanceAskUserTable>
+export type FianceAskUserUpdate = Updateable<FinanceAskUserTable>
