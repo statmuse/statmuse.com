@@ -93,6 +93,8 @@ export function API({ stack }: StackContext) {
     },
   })
 
+  rdsCredentialsSecret.grantRead(api.getFunction('GET /search/suggest')!)
+  rdsCredentialsSecret.grantRead(api.getFunction('GET /money/search/suggest')!)
   rdsCredentialsSecret.grantRead(api.getFunction('POST /checkout')!)
   rdsCredentialsSecret.grantRead(api.getFunction('POST /stripe/manage')!)
   rdsCredentialsSecret.grantRead(api.getFunction('POST /stripe/webhooks')!)
