@@ -8,7 +8,8 @@ import PlayerProfile from './[league]/player/[player]/index.astro'
 import TeamFranchiseProfile from './[league]/team/[team]/history.astro'
 import TeamSeasonProfile from './[league]/team/[team]/[year].astro'
 import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
-import { clean } from '@lib/path'
+import { clean } from '@statmuse/core/path'
+import { upsert } from '@statmuse/core/ask'
 
 if (Astro.request.method !== 'POST') {
   return Astro.redirect('/questions')
@@ -22,7 +23,7 @@ if (!query) throw new Error('No query provided')
 
 const response = await ask({ query, preferredDomain, conversationToken })
 if (!response)
-  return new Response(null, { status: 404, statusText: 'Not found' })
+  return new Response(null, { status: 405, statusText: 'Not found' })
 
 const handled = handleAskResponseFromPost(response)
 query = clean(
@@ -30,6 +31,13 @@ query = clean(
     response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
   )
 )
+
+await upsert({
+  query,
+  response,
+  visitorId: Astro.locals.visitor.id,
+  userId: Astro.locals.user?.id,
+})
 ---
 
 <ErrorLayout

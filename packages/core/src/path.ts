@@ -1,4 +1,4 @@
-import { cdnBaseUrl } from '@statmuse/core/gamera'
+import { cdnBaseUrl } from './gamera'
 
 export const clean = (x: string) =>
   x
@@ -50,9 +50,11 @@ export const createAskPath = ({
   query: string
 }) => {
   if (hasSymbols(query)) {
-    return `/${domain}/ask?q=${encodeRFC3986URIComponent(clean(query))}`
+    return `/${domain.toLowerCase()}/ask?q=${encodeRFC3986URIComponent(
+      clean(query)
+    )}`
   }
-  return `/${domain}/ask/${createSlug(query)}`
+  return `/${domain.toLowerCase()}/ask/${createSlug(query)}`
 }
 
 export const imageForgeUrl = ({
