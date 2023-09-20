@@ -1,5 +1,13 @@
 import { ApiHandler, useQueryParam } from 'sst/node/api'
-import { autosuggest, financeAutosuggest } from '@statmuse/core/elastic'
+import {
+  AskDocument,
+  autosuggest,
+  financeAutosuggest,
+} from '@statmuse/core/elastic'
+import {
+  getUserAskSuggestions,
+  getUserFinanceAskSuggestions,
+} from '@statmuse/core/ask'
 import { sample, sampleSize } from 'lodash-es'
 
 const fantasyExamples = [
@@ -97,12 +105,18 @@ const getExampleSuggestions = (league?: League) => {
 export const handler = ApiHandler(async (_evt) => {
   const query = useQueryParam('query') as string
   const league = useQueryParam('league') as League
+  const userId = useQueryParam('userId')
+
+  let history: Partial<AskDocument>[] = []
+  if (userId) {
+    history = await getUserAskSuggestions(userId)
+  }
 
   if (query === '') {
     return {
       statusCode: 200,
       body: JSON.stringify({
-        history: [], // TODO: query user history
+        history,
         suggestions: getExampleSuggestions(league),
         timestamp: new Date().toISOString(),
       }),
@@ -116,7 +130,7 @@ export const handler = ApiHandler(async (_evt) => {
   return {
     statusCode: 200,
     body: JSON.stringify({
-      history: [], // TODO: query user history
+      history,
       suggestions,
       timestamp: new Date().toISOString(),
     }),
@@ -125,12 +139,18 @@ export const handler = ApiHandler(async (_evt) => {
 
 export const moneyHandler = ApiHandler(async (_evt) => {
   const query = useQueryParam('query') as string
+  const userId = useQueryParam('userId')
+
+  let history: Partial<AskDocument>[] = []
+  if (userId) {
+    history = await getUserFinanceAskSuggestions(userId)
+  }
 
   if (query === '') {
     return {
       statusCode: 200,
       body: JSON.stringify({
-        history: [], // TODO: query user history
+        history,
         suggestions: sampleSize(financeExmaples, 5),
         timestamp: new Date().toISOString(),
       }),
@@ -144,7 +164,7 @@ export const moneyHandler = ApiHandler(async (_evt) => {
   return {
     statusCode: 200,
     body: JSON.stringify({
-      history: [], // TODO: query user history
+      history,
       suggestions,
       timestamp: new Date().toISOString(),
     }),
