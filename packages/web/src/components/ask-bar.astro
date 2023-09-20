@@ -77,6 +77,7 @@ const placeholder = money
 <script>
   import { throttle } from 'lodash-es'
   import type { AskDocument } from '@statmuse/core/elastic'
+  import { session } from '@lib/session-store'
 
   // UI Helpers
 
@@ -162,6 +163,13 @@ const placeholder = money
       ).value
 
   textarea.setSelectionRange(textarea.value.length, textarea.value.length)
+
+  let userId: string
+  session.subscribe((s) => {
+    if (s && s.type === 'user') {
+      userId = s.properties.id
+    }
+  })
 
   // State
 
@@ -297,6 +305,7 @@ const placeholder = money
       `${apiUrl}?${new URLSearchParams({
         query,
         ...(league ? { league } : {}),
+        ...(userId ? { userId } : {}),
       })}`
     )
     const results: {
