@@ -1,4 +1,5 @@
 import { db } from '../db'
+import { sql } from 'kysely'
 export * from './ask.sql'
 
 export const ASK_LIMIT = 15
@@ -177,3 +178,32 @@ export const getFinanceUserAsks = async (
 
   return records
 }
+
+export const getUserAskSuggestions = (userId: string) =>
+  db
+    .selectFrom('asks_users')
+    .innerJoin('asks', 'asks.id', 'asks_users.ask_id')
+    .where('asks.is_in_index', '=', true)
+    .where('asks_users.user_id', '=', userId)
+    .orderBy('asks_users.last_asked_at', 'desc')
+    .limit(3)
+    .select(['asks.query as display', sql<string>`'history'`.as('type')])
+    .execute()
+
+export const getUserFinanceAskSuggestions = (userId: string) =>
+  db
+    .selectFrom('finance_asks_users')
+    .innerJoin(
+      'finance_asks',
+      'finance_asks.id',
+      'finance_asks_users.finance_ask_id'
+    )
+    .where('finance_asks.is_in_index', '=', true)
+    .where('finance_asks_users.user_id', '=', userId)
+    .orderBy('finance_asks_users.last_asked_at', 'desc')
+    .limit(3)
+    .select([
+      'finance_asks.query as display',
+      sql<string>`'history'`.as('type'),
+    ])
+    .execute()
