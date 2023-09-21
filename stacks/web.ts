@@ -3,6 +3,7 @@ import { SubnetType } from 'aws-cdk-lib/aws-ec2'
 import { API } from './api'
 import { DNS } from './dns'
 import { Imports } from './imports'
+import { AnalyticsProxy } from './analytics-proxy'
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins'
 import {
   AllowedMethods,
@@ -20,6 +21,7 @@ export function Web({ stack }: StackContext) {
   const auth = use(Auth)
   const imports = use(Imports)
   const secrets = use(Secrets)
+  const analytics = use(AnalyticsProxy)
 
   const sitemapHeaders = new ResponseHeadersPolicy(stack, 'sitemap-headers', {
     customHeadersBehavior: {
@@ -58,6 +60,8 @@ export function Web({ stack }: StackContext) {
       ...api.environment,
       PUBLIC_AUTH_URL: auth.url,
       PUBLIC_API_URL: api.api.url,
+      PUBLIC_ANALYTICS_CDN_PROXY_URL: analytics.cdnUrl,
+      PUBLIC_ANALYTICS_API_PROXY_URL: analytics.apiUrl,
       AUTH_ID: auth.id,
     },
     nodejs: { install: ['pg'] },
