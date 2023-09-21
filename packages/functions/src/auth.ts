@@ -59,8 +59,8 @@ export const handler = AuthHandler({
       },
     }),
   },
-  async clients() {
-    return { web: '' }
+  async allowClient(clientID, redirect) {
+    return true
   },
   onSuccess: async (input, response) => {
     const email: string = input.claims.email
