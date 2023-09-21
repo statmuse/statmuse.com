@@ -22,12 +22,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const visitor = await Visitor.get(visitorId!)
     if (!visitor) throw new Error('No visitor found')
     locals.visitor = visitor
+    console.log('visitor', visitor)
   }
 
   locals.user =
     session.type === 'user'
       ? await User.fromEmail(session.properties.email)
       : undefined
+  console.log('user', locals.user)
 
   locals.subscribed = locals.user?.stripe_subscription_status === 'active'
 
