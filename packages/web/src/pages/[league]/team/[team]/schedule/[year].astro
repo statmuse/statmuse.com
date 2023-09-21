@@ -5,6 +5,7 @@ import Grid from '@components/grid.astro'
 import { getUrlForEntity, type GameraDomain } from '@statmuse/core/gamera'
 import { getTeamSeasonBio, getTeamSeasonGameResults } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
+import { Caching } from '@lib/caching'
 
 const { league, team, year } = Astro.params
 if (!team || !league || !year) {
@@ -33,6 +34,8 @@ const canonical = {
   rewrite: true,
 }
 const meta = { title, description, keywords, canonical }
+
+Caching.swr(Astro)
 ---
 
 <TeamLayout {bio} {meta}>

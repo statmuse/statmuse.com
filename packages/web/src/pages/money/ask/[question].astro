@@ -15,6 +15,7 @@ import {
 import { ask, getHeroProps } from '@lib/kanedama'
 import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import { title } from '@lib/meta'
+import { Caching } from '@lib/caching'
 
 const isLegacyParam = (param: string) => param.includes('+')
 const parseLegacyParam = (path: string) => {
@@ -65,6 +66,8 @@ const meta =
         },
       }
     : {}
+
+Caching.swr(Astro)
 ---
 
 <Error

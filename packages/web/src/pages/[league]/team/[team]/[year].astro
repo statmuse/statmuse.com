@@ -5,13 +5,14 @@ import TeamLeaders from '@components/leaders.astro'
 import PlayerGallery from '@components/gallery.astro'
 
 import {
-  GameraDomain,
+  type GameraDomain,
   tokensToText,
   tokensToHtml,
   getUrlForEntity,
 } from '@statmuse/core/gamera'
 import { getTeamFranchiseLatestSeason, getTeamSeasonOverview } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
+import { Caching } from '@lib/caching'
 
 interface Props {
   league?: string
@@ -76,6 +77,8 @@ const canonical = {
   rewrite: true,
 }
 const meta = { title, description, keywords, canonical }
+
+Caching.swr(Astro)
 ---
 
 <TeamLayout {bio} {meta} {query}>

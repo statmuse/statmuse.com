@@ -6,6 +6,7 @@ import { getAssetProfile } from '@lib/kanedama'
 import { getUrlForEntity } from '@statmuse/core/kanedama'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { Caching } from '@lib/caching'
 dayjs.extend(relativeTime)
 
 interface Props {
@@ -38,6 +39,8 @@ const stats = profile.stockProfile.overview.stats
 const financials = profile.stockProfile.overview.financials
 const news = profile.news?.slice(0, 4)
 const companyProfile = profile.stockProfile.profile.profile
+
+Caching.swr(Astro)
 ---
 
 <MoneyLayout

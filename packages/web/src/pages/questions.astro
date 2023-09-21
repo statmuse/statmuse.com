@@ -5,9 +5,11 @@ import Footer from '@components/footer.astro'
 import AskIndex from '@components/ask-index.astro'
 import { getAsksIndex } from '@statmuse/core/ask'
 import { parseSearchParams } from '@lib/asks'
+import { Caching } from '@lib/caching'
 
 const searchParams = parseSearchParams(Astro.url.searchParams)
 const asks = await getAsksIndex(undefined, searchParams)
+Caching.swr(Astro)
 ---
 
 <BaseLayout

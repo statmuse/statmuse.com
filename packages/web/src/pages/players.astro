@@ -1,10 +1,12 @@
 ---
 import PlayerGallery from '@components/player-gallery.astro'
+import { Caching } from '@lib/caching'
 import { getPlayerGalleryList } from '@lib/player'
 
 const { league } = Astro.params
 
 const players = await getPlayerGalleryList(league?.toUpperCase())
+Caching.swr(Astro)
 ---
 
 <PlayerGallery league={league?.toUpperCase()} {players} />

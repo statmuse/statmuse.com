@@ -8,6 +8,7 @@ import { clean } from '@statmuse/core/path'
 
 import AssetProfile from '../symbol/[symbol]/index.astro'
 import { upsertFinance } from '@statmuse/core/ask'
+import { Caching } from '@lib/caching'
 
 let question: string | undefined
 
@@ -40,6 +41,8 @@ if (Astro.request.method === 'POST') {
     userId: Astro.locals.user?.id,
   })
 }
+
+Caching.swr(Astro)
 ---
 
 <ErrorLayout
