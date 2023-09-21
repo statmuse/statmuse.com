@@ -17,24 +17,15 @@ import { clean, imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
 import { Caching } from '@lib/caching'
 
-console.log("MADE IT 1")
-
 const { league } = Astro.params
 const question = Astro.url.searchParams.get('q')
-if (!question) {
-  console.error("no question pulled from " + Astro.url.searchParams)
-  return Astro.redirect('/questions')
-}
-
-console.log("MADE IT 2")
+if (!question) return Astro.redirect('/questions')
 
 const response = (await ask({ query: question, league })) as
   | GameraDefaultResponse
   | undefined
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })
-
-console.log("MADE IT 3")
 
 const { subject, redirectUrl, conversationToken } = handleResponse(response)
 if (redirectUrl) return Astro.redirect(redirectUrl)
@@ -45,8 +36,6 @@ const query = clean(
   )
 )
 const heroProps = getHeroProps({ imageAlt: query, response })
-
-console.log("MADE IT 4")
 
 const meta =
   response.type !== 'error'
@@ -69,8 +58,6 @@ const meta =
         },
       }
     : {}
-
-console.log("MADE IT 5")
 
 Caching.swr(Astro)
 ---

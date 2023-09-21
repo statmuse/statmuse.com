@@ -1,0 +1,15 @@
+---
+import HomeLayout from '@layouts/home.astro'
+import Musings from '@components/musings.astro'
+import { listOnboarding } from '@statmuse/core/examples'
+import { Caching } from '@lib/caching'
+
+const examples = await listOnboarding()
+const banner = examples[Math.floor(Math.random() * examples.length)]
+
+Caching.swr(Astro)
+---
+
+<HomeLayout img={{ src: banner, text: banner.text }}>
+  <Musings />
+</HomeLayout>
