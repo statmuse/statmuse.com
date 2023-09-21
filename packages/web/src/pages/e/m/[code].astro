@@ -4,7 +4,7 @@ import Logo from '@components/logo.astro'
 import { getMusingByShortcode } from '@statmuse/core/musings'
 import { rgbToHex } from '@statmuse/core/color'
 import { title } from '@lib/meta'
-import { imageForgeUrl } from '@lib/path'
+import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 
 const code = Astro.params.code as string

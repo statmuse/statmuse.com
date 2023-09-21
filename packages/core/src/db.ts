@@ -7,15 +7,18 @@ import {
   SecretsManagerClient,
 } from '@aws-sdk/client-secrets-manager'
 import { GameraResponse } from './gamera'
-import { UserTable } from './user/user.sql'
-import { UsersVisitorTable, VisitorTable } from './visitor/visitor.sql'
+import { UserTable } from './user'
+import { UsersVisitorTable, VisitorTable } from './visitor'
 import {
   AskEventTable,
   AskTable,
   AskUserTable,
+  FinanceAskEventTable,
   FinanceAskTable,
   FinanceAskUserTable,
-} from './ask/ask.sql'
+} from './ask'
+import { ContextTable } from './context'
+import { LinkTable } from './link'
 
 const secretsManager = new SecretsManagerClient({
   region: process.env.AWS_REGION || 'us-east-1',
@@ -125,13 +128,6 @@ interface LeagueTable {
   updated_at: ColumnType<Date, string | undefined, string | undefined>
 }
 
-interface ContextTable {
-  id: Generated<string>
-  name: string
-  inserted_at: ColumnType<Date, string | undefined, string | undefined>
-  updated_at: ColumnType<Date, string | undefined, string | undefined>
-}
-
 interface PlayerTable {
   id: Generated<string>
 
@@ -149,21 +145,6 @@ interface PlayerTable {
   updated_at: ColumnType<Date, string | undefined, string | undefined>
 }
 
-interface LinkTable {
-  id: Generated<string>
-
-  short_code: string
-  linkable_type: 'ask' | 'finance_ask' | 'question' | 'musing' | 'url'
-  ask_id: string | null
-  finance_ask_id: string | null
-  question_id: string | null
-  musing_id: string | null
-  url: string | null
-
-  inserted_at: ColumnType<Date, string | undefined, string | undefined>
-  updated_at: ColumnType<Date, string | undefined, string | undefined>
-}
-
 export interface Database {
   users: UserTable
   visitors: VisitorTable
@@ -173,6 +154,7 @@ export interface Database {
   asks_users: AskUserTable
   contexts: ContextTable
   finance_asks: FinanceAskTable
+  finance_ask_events: FinanceAskEventTable
   finance_asks_users: FinanceAskUserTable
   links: LinkTable
   musings: MusingTable

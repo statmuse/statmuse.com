@@ -7,13 +7,13 @@ import Visuals from '@components/visuals.astro'
 import Explore from '@components/explore.astro'
 import Container from '@components/container.astro'
 import {
-  GameraDefaultResponse,
+  type GameraDefaultResponse,
   handleResponse,
   tokensToText,
 } from '@statmuse/core/gamera'
 import { ask, getHeroProps } from '@lib/gamera'
 import { description, title } from '@lib/meta'
-import { clean, imageForgeUrl } from '@lib/path'
+import { clean, imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 
 const { league, question } = Astro.params

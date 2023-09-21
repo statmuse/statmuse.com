@@ -94,6 +94,55 @@ const parameterize = (text: string) => {
   return text.replaceAll(' ', '-').replaceAll('/', '-').toLowerCase()
 }
 
+export const getDomain = (response: GameraResponse) => {
+  try {
+    return (
+      response.domain ??
+      // @ts-ignore
+      response.visual?.domain ??
+      // @ts-ignore
+      response.Domain ??
+      // @ts-ignore
+      response.Context
+    )
+  } catch {
+    return undefined
+  }
+}
+
+const fantasyPatterns = [
+  // fantasy
+  'f+a+n+t+a+s+y+',
+  'f+a+\\S{0,3}[sc]+y\\W*(point|pt)',
+
+  // draft kings
+  'dk',
+  'd+r+a+f+t+.{0,2}\\W*k+(i|$)',
+  'd+r+.{0,1}a+[fk]?t+.{0,2}\\W*k+(i|$)',
+  'd+r+a+f+t+.{0,2}\\W*k+\\W*(point|pt)',
+
+  // fanduel
+  'fd',
+  'f+a+u?n+.{0,2}\\W*d+e?u+',
+]
+
+const fantasyRegex = new RegExp(`(${fantasyPatterns.join('|')})`, 'i')
+
+export const isFantasyQuery = (query: string) => {
+  return fantasyRegex.test(query)
+}
+
+const excludedRegex = /(joe biden|trump|xnxx)/i
+export const isExcludedQuery = (query: string) => {
+  return excludedRegex.test(query)
+}
+
+const voiceRegex =
+  /((^|\s)a+l+e+x+a+($|\s+)|(^|\s)g+o{2,}g+l+e+($|\s+)|joe buck|scott\s+(\w+\s+|)pelt)/i
+export const isVoiceQuery = (query: string) => {
+  return voiceRegex.test(query)
+}
+
 export const fallbackIcon = (league: string) => {
   switch (league) {
     case 'mlb':

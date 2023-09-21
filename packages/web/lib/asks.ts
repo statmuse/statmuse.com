@@ -1,5 +1,5 @@
 import { type FinanceAskForIndex, type AskForIndex } from '@statmuse/core/ask'
-import { createAskPath } from './path'
+import { createAskPath } from '@statmuse/core/path'
 import { utc } from '@statmuse/core/time'
 
 const dateFromString = (x: string) => {

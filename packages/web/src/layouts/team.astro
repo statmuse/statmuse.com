@@ -6,14 +6,14 @@ import AnswerShare from '@components/answer-share.astro'
 import Explore from '@components/explore.astro'
 import Layout from '@layouts/main.astro'
 import {
-  GameraDomain,
-  GameraTeamSeasonBio,
+  type GameraDomain,
+  type GameraTeamSeasonBio,
   getDefaultTeamLogoUrl,
   getUrlForEntity,
   tokensToText,
 } from '@statmuse/core/gamera'
-import { getLeagueKeywords, Metadata } from '@lib/meta'
-import { imageForgeUrl } from '@lib/path'
+import { getLeagueKeywords, type Metadata } from '@lib/meta'
+import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 
 interface Props {

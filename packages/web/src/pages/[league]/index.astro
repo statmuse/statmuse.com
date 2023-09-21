@@ -1,7 +1,7 @@
 ---
 import HomeLayout from '@layouts/home.astro'
 import { listOnboarding } from '@statmuse/core/examples'
-import { createAskPath } from '@lib/path'
+import { createAskPath } from '@statmuse/core/path'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fantasy']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league)) {

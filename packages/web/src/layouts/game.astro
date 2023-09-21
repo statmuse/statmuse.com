@@ -4,13 +4,13 @@ import Header from '@components/header.astro'
 import Container from '@components/container.astro'
 import Explore from '@components/explore.astro'
 import {
-  GameraBoxScore,
+  type GameraBoxScore,
   tokensToHtml,
   tokensToText,
 } from '@statmuse/core/gamera'
 import type { Metadata } from '@lib/meta'
 import Hero from '@components/hero.astro'
-import { imageForgeUrl } from '@lib/path'
+import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 
 interface Props {

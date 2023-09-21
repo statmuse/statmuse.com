@@ -8,12 +8,12 @@ import Visuals from '@components/visuals-money.astro'
 import Container from '@components/container.astro'
 import Explore from '@components/explore.astro'
 import {
-  KanedamaDefaultResponse,
+  type KanedamaDefaultResponse,
   handleResponse,
   tokensToText,
 } from '@statmuse/core/kanedama'
 import { ask, getHeroProps } from '@lib/kanedama'
-import { clean, createAskPath, imageForgeUrl } from '@lib/path'
+import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import { title } from '@lib/meta'
 
 const isLegacyParam = (param: string) => param.includes('+')
