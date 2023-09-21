@@ -63,7 +63,7 @@ export const fromRequest = async (context: Session.Context) => {
     headers.get('cloudfront-viewer-address') ||
     undefined
 
-  return Visitor.insert({
+  const newVisitor = {
     id,
     origin_id,
     origin_name,
@@ -74,5 +74,9 @@ export const fromRequest = async (context: Session.Context) => {
     bot_name,
     request_count: 1,
     last_request_ip,
-  })
+  }
+
+  console.log('newVisitor', newVisitor)
+
+  return Visitor.insert(newVisitor)
 }

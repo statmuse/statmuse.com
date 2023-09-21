@@ -20,11 +20,13 @@ import { Caching } from '@lib/caching'
 const { league, question } = Astro.params
 if (!question) return Astro.redirect('/questions')
 let query = question.replaceAll('-', ' ')
+
 const response = (await ask({ league, query })) as
   | GameraDefaultResponse
   | undefined
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })
+
 const { subject, redirectUrl, conversationToken } = handleResponse(response)
 if (redirectUrl) return Astro.redirect(redirectUrl)
 

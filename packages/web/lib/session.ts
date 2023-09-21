@@ -30,11 +30,17 @@ export const verify = (token: string) => {
 }
 
 export const create = async (context: Context) => {
-  const visitor = await fromRequest(context)
-  context.locals.visitor = visitor
-  const token = builder.create('visitor', { id: visitor.id })
-  set(context, token)
-  return builder.verify(token)
+  try {
+    const visitor = await fromRequest(context)
+    context.locals.visitor = visitor
+    const token = builder.create('visitor', { id: visitor.id })
+    set(context, token)
+    return builder.verify(token)
+  } catch (error) {
+    console.error(error)
+    const publicSession = builder.create('public', {})
+    return builder.verify(publicSession)
+  }
 }
 
 export const set = (context: Context, token: string) => {
