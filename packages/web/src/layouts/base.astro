@@ -66,11 +66,6 @@ const analyticsProperties = Object.assign(
   },
   analytics
 )
-
-Astro.response.headers.set(
-  'Cache-Control',
-  'public, s-maxage=60, stale-while-revalidate=86400'
-)
 ---
 
 <html lang="en">
