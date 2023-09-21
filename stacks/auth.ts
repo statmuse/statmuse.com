@@ -7,6 +7,7 @@ import { Imports } from './imports'
 export function Auth({ stack, app }: StackContext) {
   const dns = use(DNS)
   const secrets = use(Secrets)
+  const { vpc } = use(Imports)
   const { rdsCredentialsSecret } = use(Imports)
 
   const isProd = stack.stage === 'production'
@@ -33,6 +34,7 @@ export function Auth({ stack, app }: StackContext) {
       ],
       permissions: ['ses', 'secretsmanager'],
       nodejs: { install: ['pg'], esbuild: { external: ['pg-native'] } },
+      vpc,
     },
     customDomain: {
       domainName: 'auth.' + dns.domain,
