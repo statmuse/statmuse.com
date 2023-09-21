@@ -97,7 +97,7 @@ Caching.swr(Astro)
         response.visual.summary.narrator?.answerAudioUrl}
     />
     {heroProps ? <Hero {...heroProps} /> : null}
-    <Visuals {response} />
+    <Visuals {response} {conversationToken} />
     <Container>
       <Explore
         domain={league}
