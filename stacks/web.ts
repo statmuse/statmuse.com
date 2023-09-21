@@ -60,7 +60,7 @@ export function Web({ stack }: StackContext) {
       PUBLIC_API_URL: api.api.url,
       AUTH_ID: auth.id,
     },
-    nodejs: { install: ['pg'] },
+    nodejs: { install: ['pg'], esbuild: { external: ['pg-native'] } },
     cdk: {
       server: {
         vpc: api.vpc,

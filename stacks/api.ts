@@ -77,7 +77,7 @@ export function API({ stack }: StackContext) {
         vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_EGRESS },
         securityGroups: [lambdaSecurityGroup],
         environment,
-        nodejs: { install: ['pg'] },
+        nodejs: { install: ['pg'], esbuild: { external: ['pg-native'] } },
       },
     },
     authorizers: {

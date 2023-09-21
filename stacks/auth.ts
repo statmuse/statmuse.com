@@ -32,6 +32,7 @@ export function Auth({ stack, app }: StackContext) {
         secrets.SENDGRID_API_KEY,
       ],
       permissions: ['ses', 'secretsmanager'],
+      nodejs: { esbuild: { external: ['pg-native'] } },
     },
     customDomain: {
       domainName: 'auth.' + dns.domain,
