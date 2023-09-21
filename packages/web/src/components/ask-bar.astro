@@ -75,7 +75,7 @@ const placeholder = money
 </form>
 
 <script>
-  import { throttle } from 'lodash-es'
+  import { throttle, uniqBy } from 'lodash-es'
   import type { AskDocument } from '@statmuse/core/elastic'
   import { session } from '@lib/session-store'
 
@@ -158,10 +158,11 @@ const placeholder = money
   const listbox = document.querySelector('div[role="listbox"]') as HTMLElement
   const section = document.querySelector('ul[role="listbox"]') as HTMLElement
   const close = document.querySelector('[data-clear]') as HTMLElement
+  const isMoney = form.action.includes('money')
   const apiUrl = `${import.meta.env.PUBLIC_API_URL}${
-    form.action.includes('money') ? '/money/search/suggest' : '/search/suggest'
+    isMoney ? '/money/search/suggest' : '/search/suggest'
   }`
-  const league = form.action.includes('money')
+  const league = isMoney
     ? undefined
     : (
         document.querySelector(
@@ -210,8 +211,7 @@ const placeholder = money
 
     if (event.keyCode === 13) {
       if (!event.repeat) {
-        trackSuggestion()
-        form.submit()
+        submitForm()
       }
 
       return e.preventDefault() // Prevents the addition of a new line in the text field
@@ -290,8 +290,7 @@ const placeholder = money
 
     item.addEventListener('click', () => {
       textarea.value = state.suggestions[i].display
-      trackSuggestion()
-      form.submit()
+      submitForm()
     })
 
     item.addEventListener('mousedown', () => {
@@ -323,7 +322,9 @@ const placeholder = money
 
     if (results.timestamp > state.timestamp) {
       state.timestamp = results.timestamp
-      state.suggestions = [...results.suggestions, ...results.history]
+      const history =
+        results.history.length > 0 ? results.history : getQueryHistory()
+      state.suggestions = [...results.suggestions, ...history]
 
       const count = state.suggestions.length
       for (const i in state.listItems) {
@@ -339,6 +340,53 @@ const placeholder = money
     }
   }, 600)
 
+  const submitForm = () => {
+    const query = textarea.value
+    trackSuggestion(query)
+    storeQuery(query)
+    form.submit()
+  }
+
+  const storeQuery = (query: string) => {
+    const context = isMoney ? 'money' : 'sports'
+    const storageItem = localStorage.getItem(`query.${context}`)
+    const queryHistory = storageItem ? JSON.parse(storageItem) : []
+
+    localStorage.setItem(
+      `query.${context}`,
+      JSON.stringify(
+        uniqBy(
+          [
+            {
+              type: 'history',
+              display: query,
+            },
+            ...queryHistory,
+          ],
+          'display'
+        ).slice(0, 3)
+      )
+    )
+  }
+
+  const getQueryHistory = () => {
+    const context = isMoney ? 'money' : 'sports'
+    const storageItem = localStorage.getItem(`query.${context}`)
+    return storageItem ? JSON.parse(storageItem) : []
+  }
+
+  const trackSuggestion = (query: string) => {
+    if (
+      state.selectedIndex !== -1 &&
+      state.suggestions[state.selectedIndex].display === textarea.value
+    ) {
+      window.segment.track('Autosuggest Search', {
+        query,
+        section: 'suggestion',
+      })
+    }
+  }
+
   const closeAutosuggest = () => {
     listbox.classList.add('hidden')
     textarea.classList.remove('border-b-transparent')
@@ -351,17 +399,5 @@ const placeholder = money
     textarea.classList.add('border-b-transparent')
     textarea.classList.add('rounded-bl-none')
     textarea.classList.add('rounded-br-none')
-  }
-
-  const trackSuggestion = () => {
-    if (
-      state.selectedIndex !== -1 &&
-      state.suggestions[state.selectedIndex].display === textarea.value
-    ) {
-      window.segment.track('Autosuggest Search', {
-        query: textarea.value,
-        section: 'suggestion',
-      })
-    }
   }
 </script>
