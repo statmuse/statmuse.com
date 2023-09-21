@@ -41,10 +41,6 @@ const credentials = JSON.parse(secret) as {
   dbInstanceIdentifier: string
 }
 
-console.log('POSTGRES_SECRET_ARN', process.env.POSTGRES_SECRET_ARN)
-console.log('POSTGRES_HOST', process.env.POSTGRES_HOST)
-console.log('credentials', credentials)
-
 interface MusingTable {
   id: Generated<string>
   friendly_id: string
@@ -194,3 +190,27 @@ export const db = new Kysely<Database>({
     }),
   }),
 })
+
+import dns from 'node:dns'
+try {
+  const response = await dns.promises.resolve(
+    process.env.POSTGRES_HOST as string
+  )
+  console.log(response)
+} catch (error) {
+  console.error(error)
+}
+
+try {
+  const client = new pg.Client({
+    host: process.env.POSTGRES_HOST,
+    port: Number.parseInt(process.env.POSTGRES_PORT || '5432'),
+    database: credentials.dbname || process.env.POSTGRES_DATABASE,
+    user: credentials.username || process.env.POSTGRES_USER,
+    password: credentials.password || process.env.POSTGRES_PASSWORD,
+  })
+
+  await client.connect()
+} catch (error) {
+  console.error(error)
+}

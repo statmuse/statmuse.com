@@ -1,19 +1,11 @@
 ---
 import HomeLayout from '@layouts/home.astro'
 import Musings from '@components/musings.astro'
-import { listOnboarding, type Example } from '@statmuse/core/examples'
+import { listOnboarding } from '@statmuse/core/examples'
 import { Caching } from '@lib/caching'
-import { db } from '@statmuse/core/db'
 
-let banner: Example
-try {
-  const examples = await listOnboarding()
-  banner = examples[Math.floor(Math.random() * examples.length)]
-  db.destroy()
-} catch (error) {
-  console.error(error)
-  return Astro.redirect('/404')
-}
+const examples = await listOnboarding()
+const banner = examples[Math.floor(Math.random() * examples.length)]
 
 Caching.swr(Astro)
 ---
