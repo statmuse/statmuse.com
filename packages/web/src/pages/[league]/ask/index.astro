@@ -15,6 +15,7 @@ import { ask, getHeroProps } from '@lib/gamera'
 import { description, title } from '@lib/meta'
 import { clean, imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import { Caching } from '@lib/caching'
 
 const { league } = Astro.params
 const question = Astro.url.searchParams.get('q')
@@ -57,6 +58,8 @@ const meta =
         },
       }
     : {}
+
+Caching.swr(Astro)
 ---
 
 <Error

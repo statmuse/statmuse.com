@@ -14,6 +14,7 @@ import {
 import { fantasyAsk, getHeroProps } from '@lib/gamera'
 import { description, title } from '@lib/meta'
 import { clean, imageForgeUrl } from '@statmuse/core/path'
+import { Caching } from '@lib/caching'
 
 const { question } = Astro.params
 if (!question) return Astro.redirect('/questions')
@@ -54,6 +55,8 @@ const meta =
         },
       }
     : {}
+
+Caching.swr(Astro)
 ---
 
 <Error

@@ -8,6 +8,7 @@ import {
 import { deleteUser } from '@statmuse/core/user'
 import { deleteCustomer } from '@statmuse/core/stripe'
 import * as Session from '@lib/session'
+import { Caching } from '@lib/caching'
 
 // export const prerender = true
 
@@ -15,7 +16,7 @@ const meta = {
   title: 'Settings',
 }
 
-Astro.response.headers.set('Cache-Control', 'no-cache, no-store')
+Caching.none(Astro)
 
 if (Astro.locals.session.type !== 'user') {
   return Astro.redirect('/')
@@ -230,24 +231,4 @@ const manageAccountUrl =
   </main>
 </AccountLayout>
 
-<script>
-  const deleteAccountForm = document.getElementById(
-    'delete-account-form'
-  ) as HTMLFormElement
-  const deleteAccountButton = document.getElementById(
-    'delete-account-button'
-  ) as HTMLButtonElement
-
-  deleteAccountButton.addEventListener('click', (e) => {
-    e.preventDefault()
-
-    const confirmed = deleteAccountButton.dataset['confirmed'] === 'true'
-    if (confirmed) {
-      deleteAccountButton.disabled = true
-      deleteAccountForm.submit()
-    } else {
-      deleteAccountButton.dataset['confirmed'] = 'true'
-      deleteAccountButton.innerText = 'Are you sure?'
-    }
-  })
-</script>
+<script></script>

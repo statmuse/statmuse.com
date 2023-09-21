@@ -1,5 +1,6 @@
 ---
 import MoneyLayout from '@layouts/money.astro'
+import { Caching } from '@lib/caching'
 import { getAssetProfile } from '@lib/kanedama'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -22,6 +23,8 @@ const truncate = (str: string, n: number) =>
 const meta = {
   title: `${profile.asset.canonicalName || profile.asset.officialName} News`,
 }
+
+Caching.swr(Astro)
 ---
 
 <MoneyLayout {meta} {profile}>

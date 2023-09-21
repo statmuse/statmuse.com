@@ -1,6 +1,7 @@
 ---
 import Grid from '@components/grid.astro'
 import MoneyLayout from '@layouts/money.astro'
+import { Caching } from '@lib/caching'
 import { getAssetProfile } from '@lib/kanedama'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -22,6 +23,8 @@ const { priceHistory, valuation, shortStats, shareStats } =
 const meta = {
   title: `${profile.asset.canonicalName || profile.asset.officialName} Stats`,
 }
+
+Caching.swr(Astro)
 ---
 
 <MoneyLayout {meta} {profile}>

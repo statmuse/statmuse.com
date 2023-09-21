@@ -1,9 +1,10 @@
 ---
 import PlayerLayout from '@layouts/player.astro'
-import { GameraDomain, tokensToText, tokensToHtml } from '@statmuse/core/gamera'
+import { type GameraDomain, tokensToText, tokensToHtml } from '@statmuse/core/gamera'
 import { formatDateString } from '@statmuse/core/time'
 import { getPlayerBio } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
+import { Caching } from '@lib/caching'
 
 const { league, player } = Astro.params
 if (!player || !league) {
@@ -26,9 +27,11 @@ const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
 const keywords = `${leagueKeywords} ${bio.usedName} career stats statistics`
 const meta = { title, description, keywords }
 const birthdate = formatDateString(bio.birthdate)
+
+Caching.swr(Astro)
 ---
 
-<PlayerLayout {bio} {meta}>
+<PlayerLayout {league} {bio} {meta}>
   <div>
     <div class="mb-5 leading-snug">
       <p set:html={summary} />

@@ -4,6 +4,7 @@ import Grid from '@components/grid.astro'
 import type { GameraDomain } from '@statmuse/core/gamera'
 import { getPlayerBio, getPlayerSplits } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
+import { Caching } from '@lib/caching'
 
 const { league, player } = Astro.params
 if (!player || !league) {
@@ -33,9 +34,11 @@ const title = `${bio.usedName} Splits`
 const description = `${bio.usedName}'s splits for the${year} ${domain} regular season and playoffs`
 const keywords = `${leagueKeywords} ${bio.usedName}${year} splits stats statistics`
 const meta = { title, description, keywords }
+
+Caching.swr(Astro)
 ---
 
-<PlayerLayout {bio} {meta}>
+<PlayerLayout {league} {bio} {meta}>
   <div>
     {
       grids &&

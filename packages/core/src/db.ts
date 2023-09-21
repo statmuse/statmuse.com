@@ -41,6 +41,10 @@ const credentials = JSON.parse(secret) as {
   dbInstanceIdentifier: string
 }
 
+console.log('POSTGRES_SECRET_ARN', process.env.POSTGRES_SECRET_ARN)
+console.log('POSTGRES_HOST', process.env.POSTGRES_HOST)
+console.log('credentials', credentials)
+
 interface MusingTable {
   id: Generated<string>
   friendly_id: string

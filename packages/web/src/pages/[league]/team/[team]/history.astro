@@ -6,6 +6,7 @@ import PlayerGallery from '@components/gallery.astro'
 import { getUrlForEntity, type GameraDomain } from '@statmuse/core/gamera'
 import { getTeamFranchiseOverview } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
+import { Caching } from '@lib/caching'
 
 interface Props {
   league?: string
@@ -44,6 +45,8 @@ const canonical = {
   rewrite: true,
 }
 const meta = { title, description, keywords, canonical }
+
+Caching.swr(Astro)
 ---
 
 <FranchiseLayout {overview} {meta} {query}>

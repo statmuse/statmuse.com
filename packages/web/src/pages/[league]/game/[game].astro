@@ -7,6 +7,7 @@ import NbaBoxscore from '@components/nba-boxscore.astro'
 import NflBoxscore from '@components/nfl-boxscore.astro'
 import MlbBoxscore from '@components/mlb-boxscore.astro'
 import NhlBoxscore from '@components/nhl-boxscore.astro'
+import { Caching } from '@lib/caching'
 
 const { league, game } = Astro.params
 if (!game || !league) {
@@ -18,6 +19,8 @@ const data = await getGame({ domain, game })
 if (!data) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
+
+Caching.swr(Astro)
 ---
 
 <GameLayout {data}>

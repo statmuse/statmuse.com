@@ -2,12 +2,15 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
+import { Caching } from '@lib/caching'
 
 // export const prerender = true
 
 const meta = {
   title: 'Privacy Policy',
 }
+
+Caching.swr(Astro)
 ---
 
 <Layout {meta}>

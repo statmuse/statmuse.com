@@ -9,6 +9,7 @@ import { getHeroProps } from '@lib/gamera'
 import { title } from '@lib/meta'
 import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import { Caching } from '@lib/caching'
 
 const id = Astro.params.id as string
 const musing = await getMusingByIdOrFriendlyId(id).executeTakeFirst()
@@ -49,6 +50,8 @@ const meta = {
       : undefined,
   },
 }
+
+Caching.swr(Astro)
 ---
 
 <Layout
