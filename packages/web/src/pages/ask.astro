@@ -7,7 +7,7 @@ import { handleAskResponseFromPost, tokensToText } from '@statmuse/core/gamera'
 import PlayerProfile from './[league]/player/[player]/index.astro'
 import TeamFranchiseProfile from './[league]/team/[team]/history.astro'
 import TeamSeasonProfile from './[league]/team/[team]/[year].astro'
-import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
+import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { clean } from '@lib/path'
 
 if (Astro.request.method !== 'POST') {

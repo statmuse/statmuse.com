@@ -5,7 +5,7 @@ import { getMusingByShortcode } from '@statmuse/core/musings'
 import { rgbToHex } from '@statmuse/core/color'
 import { title } from '@lib/meta'
 import { imageForgeUrl } from '@lib/path'
-import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
+import type { AnalyticsPageviewProperties } from '@lib/analytics'
 
 const code = Astro.params.code as string
 const musing = await getMusingByShortcode(code)
