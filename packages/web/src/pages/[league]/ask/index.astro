@@ -19,7 +19,10 @@ import { Caching } from '@lib/caching'
 
 const { league } = Astro.params
 const question = Astro.url.searchParams.get('q')
-if (!question) return Astro.redirect('/questions')
+if (!question) {
+  console.error("no question pulled from " + Astro.url.searchParams)
+  return Astro.redirect('/questions')
+}
 
 const response = (await ask({ query: question, league })) as
   | GameraDefaultResponse
