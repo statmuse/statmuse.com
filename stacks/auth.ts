@@ -3,11 +3,14 @@ import { Auth as SSTAuth } from 'sst/constructs/future'
 import { DNS } from './dns'
 import { Secrets } from './secrets'
 import { Imports } from './imports'
+import { SubnetType } from 'aws-cdk-lib/aws-ec2'
+import { API } from './api'
 
 export function Auth({ stack, app }: StackContext) {
   const dns = use(DNS)
   const secrets = use(Secrets)
   const { vpc } = use(Imports)
+  const { lambdaSecurityGroup } = use(API)
   const { rdsCredentialsSecret } = use(Imports)
 
   const isProd = stack.stage === 'production'
@@ -35,6 +38,8 @@ export function Auth({ stack, app }: StackContext) {
       permissions: ['ses', 'secretsmanager'],
       nodejs: { install: ['pg'], esbuild: { external: ['pg-native'] } },
       vpc,
+      vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_EGRESS },
+      securityGroups: [lambdaSecurityGroup],
     },
     customDomain: {
       domainName: 'auth.' + dns.domain,

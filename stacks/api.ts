@@ -5,7 +5,6 @@ import { Secrets } from './secrets'
 
 export function API({ stack }: StackContext) {
   const secrets = use(Secrets)
-
   const { vpc, rdsCredentialsSecret, rdsProxySecurityGroup } = use(Imports)
 
   const isStaging = stack.stage === 'staging'

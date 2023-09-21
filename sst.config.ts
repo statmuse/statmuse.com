@@ -20,8 +20,8 @@ export default {
       .stack(Imports)
       .stack(Secrets)
       .stack(DNS)
-      .stack(Auth)
       .stack(API)
+      .stack(Auth)
       .stack(Web)
       .stack(ImageOptimization)
   },
