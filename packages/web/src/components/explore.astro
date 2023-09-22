@@ -1,6 +1,6 @@
 ---
 import { createAskPath } from '@statmuse/core/path'
-import FreestarVideo from './freestar-video.astro'
+import FreestarVideo from '@components/freestar-video.svelte'
 interface Props {
   domain?: string
   additionalQuestions?: { domain?: string; text: string }[]
@@ -14,7 +14,7 @@ const { domain, additionalQuestions } = Astro.props
   <div
     class="grid grid-cols-[repeat(auto-fit,_minmax(425px,_1fr))] gap-2 items-start"
   >
-    <FreestarVideo {domain} />
+    <FreestarVideo client:only="svelte" {domain} />
     {
       additionalQuestions ? (
         <ul
