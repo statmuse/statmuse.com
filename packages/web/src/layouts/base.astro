@@ -3,6 +3,7 @@ import '@styles/global.css'
 import type { Metadata } from '@lib/meta'
 import { Config } from 'sst/node/config'
 import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
+import CookieConsent from '@components/cookie-consent.svelte'
 // import { ViewTransitions } from 'astro :transitions'
 
 interface Props {
@@ -193,6 +194,7 @@ const analyticsProperties = Object.assign(
   </head>
   <body>
     <slot />
+    <CookieConsent client:load />
   </body>
 </html>
 <script>
