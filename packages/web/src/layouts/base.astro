@@ -194,7 +194,7 @@ const analyticsProperties = Object.assign(
   </head>
   <body>
     <slot />
-    <CookieConsent client:load />
+    <CookieConsent client:only="svelte" />
   </body>
 </html>
 <script>
