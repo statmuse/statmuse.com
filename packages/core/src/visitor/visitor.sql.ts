@@ -21,7 +21,7 @@ export interface VisitorTable {
   user_agent: string | null
   bot_name: string | null
   last_referrer_id: string | null
-  cookie_status: boolean | null
+  cookie_status: 'allow' | 'deny' | 'dismiss' | null
   last_request_ip: string | null
   last_request: {} | null
 

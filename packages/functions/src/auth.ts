@@ -10,13 +10,17 @@ sendgrid.setApiKey(Config.SENDGRID_API_KEY)
 contacts.setApiKey(Config.SENDGRID_API_KEY)
 
 export const sessions = createSessionBuilder<{
-  visitor: { id: string }
+  visitor: {
+    id: string
+    cookieStatus: Visitor.Visitor['cookie_status']
+  }
   user: {
     id: string
     email: string
     visitorId: string
     upgrade?: boolean
     updated?: boolean
+    cookieStatus: Visitor.Visitor['cookie_status']
     subscriptionStatus?: string
   }
 }>()
@@ -106,6 +110,7 @@ export const handler = AuthHandler({
         visitorId: visitor.id,
         upgrade: input.claims.upgrade === 'true' || undefined,
         updated: !!updating,
+        cookieStatus: visitor.cookie_status,
         subscriptionStatus: user.stripe_subscription_status || undefined,
       },
     })

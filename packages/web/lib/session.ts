@@ -33,7 +33,10 @@ export const create = async (context: Context) => {
   try {
     const visitor = await fromRequest(context)
     context.locals.visitor = visitor
-    const token = builder.create('visitor', { id: visitor.id })
+    const token = builder.create('visitor', {
+      id: visitor.id,
+      cookieStatus: visitor.cookie_status,
+    })
     set(context, token)
     return builder.verify(token)
   } catch (error) {
@@ -57,6 +60,17 @@ export const set = (context: Context, token: string) => {
     httpOnly: true,
     sameSite: 'lax',
   })
+}
+
+export const update = (context: Context, props: Session['properties']) => {
+  const session = context.locals.session
+  if (session) {
+    const token = builder.create(session.type, {
+      ...session.properties,
+      ...props,
+    })
+    set(context, token)
+  }
 }
 
 export const clear = async (context: Context) => {
