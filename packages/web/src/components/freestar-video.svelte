@@ -1,118 +1,11 @@
----
-interface Props {
-  domain?: string
-}
+<script lang="ts">
+  import { session } from "@lib/session-store";
+  export let domain: string
 
-const { domain = 'default' } = Astro.props
----
-
-<div
-  data-track-view-video
-  class="border border-black rounded-md overflow-hidden z-0"
->
-  {
-    domain === 'nba' && (
-      <>
-        <div class="s2nPlayer k-GvH7HE8X-iw36bHUX" data-type="float" />
-        <script
-          type="text/javascript"
-          src="https://embed.sendtonews.com/player3/embedcode.js?fk=GvH7HE8X-iw36bHUX&cid=15048"
-          data-type="s2nScript"
-        />
-      </>
-    )
-  }
-
-  {
-    domain === 'nfl' && (
-      <>
-        <div class="s2nPlayer k-LT4Y9uw1" data-type="float" />
-        <script
-          type="text/javascript"
-          src="//embed.sendtonews.com/player3/embedcode.js?fk=LT4Y9uw1&cid=15048&offsetx=0&offsety=0&floatwidth=400&floatposition=bottom-right"
-          data-type="s2nScript"
-        />
-      </>
-    )
-  }
-  {
-    domain === 'nhl' && (
-      <>
-        <div class="s2nPlayer k-GvH7HE8X-Qe4apDTX" data-type="float" />
-        <script
-          type="text/javascript"
-          src="https://embed.sendtonews.com/player3/embedcode.js?fk=GvH7HE8X-Qe4apDTX&cid=15048"
-          data-type="s2nScript"
-        />
-      </>
-    )
-  }
-  {
-    domain === 'mlb' && (
-      <>
-        <div class="s2nPlayer k-hYWeRTR4" data-type="float" />
-        <script
-          type="text/javascript"
-          src="//embed.sendtonews.com/player3/embedcode.js?fk=hYWeRTR4&cid=15048&offsetx=0&offsety=0&floatwidth=400&floatposition=bottom-right"
-          data-type="s2nScript"
-        />
-      </>
-    )
-  }
-
-  {
-    domain === 'pga' && (
-      <>
-        <div class="s2nPlayer k-G4ZAb39z" data-type="float" />
-        <script
-          type="text/javascript"
-          src="//embed.sendtonews.com/player3/embedcode.js?fk=G4ZAb39z&cid=15048&offsetx=0&offsety=0&floatwidth=400&floatposition=bottom-right"
-          data-type="s2nScript"
-        />
-      </>
-    )
-  }
-  {
-    domain === 'fantasy' && (
-      <>
-        <div class="s2nPlayer k-ipKWbzce" data-type="float" />
-        <script
-          type="text/javascript"
-          src="//embed.sendtonews.com/player3/embedcode.js?fk=ipKWbzce&cid=15048&offsetx=0&offsety=0&floatwidth=400&floatposition=bottom-right"
-          data-type="s2nScript"
-        />
-      </>
-    )
-  }
-  {
-    domain === 'money' && (
-      <>
-        <div class="s2nPlayer k-sDqs3wE9" data-type="float" />
-        <script
-          type="text/javascript"
-          src="//embed.sendtonews.com/player3/embedcode.js?fk=sDqs3wE9&cid=15048&offsetx=0&offsety=0&floatwidth=400&floatposition=bottom-right"
-          data-type="s2nScript"
-        />
-      </>
-    )
-  }
-  {
-    domain === 'default' && (
-      <>
-        <div class="s2nPlayer k-ZRRhGcJz" data-type="float" />
-        <script
-          type="text/javascript"
-          src="//embed.sendtonews.com/player3/embedcode.js?fk=ZRRhGcJz&cid=15048&offsetx=0&offsety=0&floatwidth=400&floatposition=bottom-right"
-          data-type="s2nScript"
-        />
-      </>
-    )
-  }
-</div>
-<script>
-  setTimeout(() => {
-    const video = document.querySelector('[data-track-view-video] stn-player')
-    if ('IntersectionObserver' in window && video) {
+  let container: HTMLElement
+  
+  $: {
+    if ('IntersectionObserver' in window && container) {
       const options = {
         root: null,
         rootMargin: '0px',
@@ -124,7 +17,7 @@ const { domain = 'default' } = Astro.props
         self: IntersectionObserver
       ) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && video) {
+          if (entry.isIntersecting && container) {
             window.segment.track('View Video')
             self.unobserve(entry.target)
           }
@@ -133,7 +26,75 @@ const { domain = 'default' } = Astro.props
 
       const observer = new IntersectionObserver(callback, options)
 
-      observer.observe(video)
+      observer.observe(container)
     }
-  }, 1000)
+  }
 </script>
+
+{#if $session?.type === 'visitor' || ($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active' )}
+  {#if import.meta.env.DEV}
+    <div bind:this={container} class={`${$$props.class} bg-gray-100 text-gray-600 h-52 rounded-md flex items-center justify-center`}>
+      Video Ad
+    </div>
+  {:else}
+    <div bind:this={container} class={`${$$props.class} border border-black rounded-md overflow-hidden z-0`}>
+      {#if domain === 'nba'}
+        <div class="s2nPlayer k-GvH7HE8X-iw36bHUX" data-type="float" />
+        <script
+          type="text/javascript"
+          src="https://embed.sendtonews.com/player3/embedcode.js?fk=GvH7HE8X-iw36bHUX&cid=15048"
+          data-type="s2nScript"
+        />
+      {:else if domain === 'nfl'}
+        <div class="s2nPlayer k-LT4Y9uw1" data-type="float" />
+        <script
+          type="text/javascript"
+          src="//embed.sendtonews.com/player3/embedcode.js?fk=LT4Y9uw1&cid=15048&offsetx=0&offsety=0&floatwidth=400&floatposition=bottom-right"
+          data-type="s2nScript"
+        />
+      {:else if domain === 'nhl'}
+        <div class="s2nPlayer k-GvH7HE8X-Qe4apDTX" data-type="float" />
+        <script
+          type="text/javascript"
+          src="https://embed.sendtonews.com/player3/embedcode.js?fk=GvH7HE8X-Qe4apDTX&cid=15048"
+          data-type="s2nScript"
+        />
+      {:else if domain === 'mlb'}
+        <div class="s2nPlayer k-hYWeRTR4" data-type="float" />
+        <script
+          type="text/javascript"
+          src="//embed.sendtonews.com/player3/embedcode.js?fk=hYWeRTR4&cid=15048&offsetx=0&offsety=0&floatwidth=400&floatposition=bottom-right"
+          data-type="s2nScript"
+        />
+      {:else if domain === 'pga'}
+        <div class="s2nPlayer k-G4ZAb39z" data-type="float" />
+        <script
+          type="text/javascript"
+          src="//embed.sendtonews.com/player3/embedcode.js?fk=G4ZAb39z&cid=15048&offsetx=0&offsety=0&floatwidth=400&floatposition=bottom-right"
+          data-type="s2nScript"
+        />
+      {:else if domain === 'fantasy'}
+        <div class="s2nPlayer k-ipKWbzce" data-type="float" />
+        <script
+          type="text/javascript"
+          src="//embed.sendtonews.com/player3/embedcode.js?fk=ipKWbzce&cid=15048&offsetx=0&offsety=0&floatwidth=400&floatposition=bottom-right"
+          data-type="s2nScript"
+        />
+      {:else if domain === 'money'}
+        <div class="s2nPlayer k-sDqs3wE9" data-type="float" />
+        <script
+          type="text/javascript"
+          src="//embed.sendtonews.com/player3/embedcode.js?fk=sDqs3wE9&cid=15048&offsetx=0&offsety=0&floatwidth=400&floatposition=bottom-right"
+          data-type="s2nScript"
+        />
+      {:else}
+        <div class="s2nPlayer k-ZRRhGcJz" data-type="float" />
+        <script
+          type="text/javascript"
+          src="//embed.sendtonews.com/player3/embedcode.js?fk=ZRRhGcJz&cid=15048&offsetx=0&offsety=0&floatwidth=400&floatposition=bottom-right"
+          data-type="s2nScript"
+        />
+      {/if}
+    </div>
+  {/if}
+{/if}

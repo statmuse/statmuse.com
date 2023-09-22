@@ -21,6 +21,7 @@ export const sessions = createSessionBuilder<{
     upgrade?: boolean
     updated?: boolean
     cookieStatus: Visitor.Visitor['cookie_status']
+    subscriptionStatus?: string
   }
 }>()
 
@@ -110,6 +111,7 @@ export const handler = AuthHandler({
         upgrade: input.claims.upgrade === 'true' || undefined,
         updated: !!updating,
         cookieStatus: visitor.cookie_status,
+        subscriptionStatus: user.stripe_subscription_status || undefined,
       },
     })
   },

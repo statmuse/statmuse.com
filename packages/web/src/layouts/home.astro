@@ -13,6 +13,7 @@ import type { Metadata } from '@lib/meta'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import NewsletterSignup from '@components/newsletter-signup.astro'
 import AuthMenu from '@components/auth-menu.svelte'
+import FreestarVideo from '@components/freestar-video.svelte'
 
 interface Props {
   domain?: string
@@ -163,9 +164,13 @@ const Logo = domain === 'money' ? MoneyLogo : StandardLogo
           />
         </div>
       </div>
-      <!-- <div class="mb-[30px] mt-[32px] w-full lg:w-[400px]">
-        <FreestarVideo />
-      </div> -->
+      <div>
+        <FreestarVideo
+          client:only="svelte"
+          class="mb-[30px] mt-[32px] w-full lg:w-[425px]"
+          {domain}
+        />
+      </div>
       <slot />
       <h4 class="font-semibold text-right py-4">
         <a href={domain === 'All' ? '/questions' : `/${domain}/questions`}>
