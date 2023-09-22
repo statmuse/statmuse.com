@@ -17,6 +17,7 @@ export const sessions = createSessionBuilder<{
     visitorId: string
     upgrade?: boolean
     updated?: boolean
+    subscriptionStatus?: string
   }
 }>()
 
@@ -105,6 +106,7 @@ export const handler = AuthHandler({
         visitorId: visitor.id,
         upgrade: input.claims.upgrade === 'true' || undefined,
         updated: !!updating,
+        subscriptionStatus: user.stripe_subscription_status || undefined,
       },
     })
   },
