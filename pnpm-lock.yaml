@@ -179,8 +179,8 @@ importers:
         specifier: ^3.1.2
         version: 3.1.2(@types/node@20.4.5)
       astro-sst:
-        specifier: 2.25.6
-        version: 2.25.6
+        specifier: 2.22.11
+        version: 2.22.11
       classnames:
         specifier: ^2.3.2
         version: 2.3.2
@@ -6439,8 +6439,8 @@ packages:
       - supports-color
     dev: true
 
-  /astro-sst@2.25.6:
-    resolution: {integrity: sha512-0gtB66e+0tK5vC3obV6iqavLZK/Ny57IM+rxmR5VbRDschLVt02NolVH0KICB7dXLjhp287e5Bt8RS731/GGug==}
+  /astro-sst@2.22.11:
+    resolution: {integrity: sha512-U1qOi0IEj3SlpozlO2+NPyQpd6PzRIVxOEimd4fnMwz9Ho0Fa2qDCq5oQW+DKAKWvsPXHyFG189lrgPEWdxNEg==}
     dependencies:
       '@astrojs/webapi': 2.2.0
       set-cookie-parser: 2.6.0
