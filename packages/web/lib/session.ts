@@ -33,7 +33,10 @@ export const create = async (context: Context) => {
   try {
     const visitor = await fromRequest(context)
     context.locals.visitor = visitor
-    const token = builder.create('visitor', { id: visitor.id })
+    const token = builder.create('visitor', {
+      id: visitor.id,
+      cookieStatus: visitor.cookie_status,
+    })
     set(context, token)
     return builder.verify(token)
   } catch (error) {
