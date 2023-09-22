@@ -62,6 +62,17 @@ export const set = (context: Context, token: string) => {
   })
 }
 
+export const update = (context: Context, props: Session['properties']) => {
+  const session = context.locals.session
+  if (session) {
+    const token = builder.create(session.type, {
+      ...session.properties,
+      ...props,
+    })
+    set(context, token)
+  }
+}
+
 export const clear = async (context: Context) => {
   context.cookies.delete(SESSION_COOKIE, { path: '/' })
   // create a new visitor session (using existing visitor)
