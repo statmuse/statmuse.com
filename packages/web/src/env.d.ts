@@ -6,6 +6,8 @@ interface ImportMetaEnv {
   readonly KANEDAMA_API_URL: string
   readonly SHORT_LINK_URL: string
   readonly PUBLIC_AUTH_URL: string
+  readonly PUBLIC_ANALYTICS_API_PROXY_URL: string
+  readonly PUBLIC_ANALYTICS_CDN_PROXY_URL: string
 }
 
 interface ImportMeta {
