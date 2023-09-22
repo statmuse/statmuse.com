@@ -1,5 +1,5 @@
 import { db } from '../db'
-import { NewVisitor } from './visitor.sql'
+import { NewVisitor, VisitorUpdate } from './visitor.sql'
 export * from './visitor.sql'
 
 export const get = async (id: string) =>
@@ -29,3 +29,14 @@ export const insert = async (
     })
     .returningAll()
     .executeTakeFirstOrThrow()
+
+export const update = async (visitorId: string, visitor: VisitorUpdate) =>
+  db
+    .updateTable('visitors')
+    .set({
+      ...visitor,
+      updated_at: new Date().toISOString(),
+    })
+    .where('id', '=', visitorId)
+    .returning('id')
+    .executeTakeFirst()
