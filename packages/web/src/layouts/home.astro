@@ -3,7 +3,7 @@ import BaseLayout from '@layouts/base.astro'
 import MoneyBaseLayout from '@layouts/money-base.astro'
 import StandardLogo from '@components/logo.astro'
 import MoneyLogo from '@components/logo-money.astro'
-import AskBar from '@components/ask-bar.astro'
+import AskBar from '@components/ask-bar.svelte'
 import Image from '@components/image.astro'
 import Footer from '@components/footer.astro'
 import DropdownMenu from '@components/dropdown-menu.astro'
@@ -51,7 +51,7 @@ const Logo = domain === 'money' ? MoneyLogo : StandardLogo
 
 Astro.response.headers.set(
   'Cache-Control',
-  'public, s-maxage=60, stale-while-revalidate=86400'
+  'public, s-maxage=60, stale-while-revalidate=86400',
 )
 ---
 
@@ -117,6 +117,7 @@ Astro.response.headers.set(
       >
         <div class="min-h-[46px]">
           <AskBar
+            client:load
             money={domain === 'money'}
             fantasy={domain === 'fantasy'}
             preferredDomain={domain !== 'All' ? domain : undefined}
