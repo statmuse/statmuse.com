@@ -39,8 +39,12 @@ export const handler = ApiHandler(async (_evt) => {
     return {
       statusCode: 200,
       body: JSON.stringify({
-        history,
-        suggestions: sampleSize(financeExmaples, 5),
+        sections: [
+          { type: 'example', suggestions: sampleSize(financeExmaples, 5) },
+          ...(history.length > 0
+            ? [{ type: 'history', suggestions: history }]
+            : []),
+        ],
         timestamp: new Date().toISOString(),
       }),
     }
@@ -53,8 +57,12 @@ export const handler = ApiHandler(async (_evt) => {
   return {
     statusCode: 200,
     body: JSON.stringify({
-      history,
-      suggestions,
+      sections: [
+        { type: 'ask', suggestions },
+        ...(history.length > 0
+          ? [{ type: 'history', suggestions: history }]
+          : []),
+      ],
       timestamp: new Date().toISOString(),
     }),
   }

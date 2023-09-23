@@ -68,7 +68,7 @@ const getExampleSuggestions = (league?: League) => {
   }
 
   return (['nba', 'nfl', 'nhl', 'mlb', 'pga'] as League[]).map((key) =>
-    sample(examples[key])
+    sample(examples[key]),
   )
 }
 
@@ -86,8 +86,12 @@ export const handler = ApiHandler(async (_evt) => {
     return {
       statusCode: 200,
       body: JSON.stringify({
-        history,
-        suggestions: getExampleSuggestions(league),
+        sections: [
+          { type: 'example', suggestions: getExampleSuggestions(league) },
+          ...(history.length > 0
+            ? [{ type: 'history', suggestions: history }]
+            : []),
+        ],
         timestamp: new Date().toISOString(),
       }),
     }
@@ -100,8 +104,12 @@ export const handler = ApiHandler(async (_evt) => {
   return {
     statusCode: 200,
     body: JSON.stringify({
-      history,
-      suggestions,
+      sections: [
+        { type: 'ask', suggestions },
+        ...(history.length > 0
+          ? [{ type: 'history', suggestions: history }]
+          : []),
+      ],
       timestamp: new Date().toISOString(),
     }),
   }
