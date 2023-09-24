@@ -48,10 +48,10 @@ export function API({ stack }: StackContext) {
         function: 'packages/functions/src/stripe/checkout.handler',
       },
       'GET /search/suggest': {
-        function: 'packages/functions/src/search/autosuggest.handler',
+        function: 'packages/functions/src/search/sports-suggest.handler',
       },
       'GET /money/search/suggest': {
-        function: 'packages/functions/src/search/autosuggest.moneyHandler',
+        function: 'packages/functions/src/search/money-suggest.handler',
       },
       'POST /stripe/manage': {
         authorizer: 'simple',
@@ -92,6 +92,8 @@ export function API({ stack }: StackContext) {
     },
   })
 
+  rdsCredentialsSecret.grantRead(api.getFunction('GET /search/suggest')!)
+  rdsCredentialsSecret.grantRead(api.getFunction('GET /money/search/suggest')!)
   rdsCredentialsSecret.grantRead(api.getFunction('POST /checkout')!)
   rdsCredentialsSecret.grantRead(api.getFunction('POST /stripe/manage')!)
   rdsCredentialsSecret.grantRead(api.getFunction('POST /stripe/webhooks')!)

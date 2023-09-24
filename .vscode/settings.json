@@ -1,11 +1,8 @@
 {
-  "[astro]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "prettier.documentSelectors": ["**/*.astro"],
+  "prettier.documentSelectors": ["**/*.astro", "**/*.svelte"],
   "search.exclude": {
     "**/.sst": true
   }

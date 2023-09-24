@@ -1,6 +1,6 @@
 ---
 import Logo from '@components/logo.astro'
-import AskBar from '@components/ask-bar.astro'
+import AskBar from '@components/ask-bar.svelte'
 import AnswerShare from '@components/answer-share.astro'
 import DropdownMenu from '@components/dropdown-menu.astro'
 import AnswerAudio from './answer-audio.astro'
@@ -43,6 +43,7 @@ const audioUrl = Astro.props.audioUrl
   <div class="col-start-2 col-span-1 max-w-[780px] flex">
     <div class="flex-1">
       <AskBar
+        client:load
         {query}
         {conversationToken}
         {preferredDomain}
