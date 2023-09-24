@@ -4,13 +4,14 @@ import Grid from '@components/grid.astro'
 import PlayerGallery from '@components/gallery.astro'
 
 import {
-  GameraDomain,
+ type GameraDomain,
   tokensToText,
   tokensToHtml,
   getUrlForEntity,
 } from '@statmuse/core/gamera'
 import { getPlayerProfile } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
+import { Caching } from '@lib/caching'
 
 interface Props {
   league?: string
@@ -51,6 +52,8 @@ const keywords = `${getLeagueKeywords(domain)} ${
 } career stats statistics`
 const canonical = { url: playerPath, rewrite: true }
 const meta = { title, description, keywords, canonical }
+
+Caching.swr(Astro)
 ---
 
 <PlayerLayout {bio} {meta} {league} {query}>

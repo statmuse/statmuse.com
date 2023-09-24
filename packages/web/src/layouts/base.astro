@@ -2,7 +2,8 @@
 import '@styles/global.css'
 import type { Metadata } from '@lib/meta'
 import { Config } from 'sst/node/config'
-import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
+import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import CookieConsent from '@components/cookie-consent.svelte'
 // import { ViewTransitions } from 'astro :transitions'
 
 interface Props {
@@ -65,11 +66,6 @@ const analyticsProperties = Object.assign(
     query: undefined,
   },
   analytics
-)
-
-Astro.response.headers.set(
-  'Cache-Control',
-  'public, s-maxage=60, stale-while-revalidate=86400'
 )
 ---
 
@@ -198,6 +194,7 @@ Astro.response.headers.set(
   </head>
   <body>
     <slot />
+    <CookieConsent client:only="svelte" />
   </body>
 </html>
 <script>
@@ -297,7 +294,21 @@ Astro.response.headers.set(
           }),
           {}
         ) as AnalyticsBrowser)
-      : AnalyticsBrowser.load({ writeKey }))
+      : AnalyticsBrowser.load(
+          {
+            writeKey,
+            cdnURL: import.meta.env.PUBLIC_ANALYTICS_CDN_PROXY_URL,
+          },
+          {
+            integrations: {
+              'Segment.io': {
+                apiHost:
+                  new URL(import.meta.env.PUBLIC_ANALYTICS_API_PROXY_URL).host +
+                  '/v1',
+              },
+            },
+          }
+        ))
 
   if (session.type === 'visitor') {
     segment.identify(`v:${session.properties.id}`, { origin: 'web' })

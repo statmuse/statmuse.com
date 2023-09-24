@@ -10,9 +10,10 @@ import DropdownMenu from '@components/dropdown-menu.astro'
 import MenuLinks from '@components/menu-links.astro'
 import type { GameraResponse } from '@statmuse/core/gamera'
 import type { Metadata } from '@lib/meta'
-import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
+import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import NewsletterSignup from '@components/newsletter-signup.astro'
 import AuthMenu from '@components/auth-menu.svelte'
+import FreestarVideo from '@components/freestar-video.svelte'
 
 interface Props {
   domain?: string
@@ -48,11 +49,6 @@ const trendingLinkText = (domain: string) => {
 
 const Layout = domain === 'money' ? MoneyBaseLayout : BaseLayout
 const Logo = domain === 'money' ? MoneyLogo : StandardLogo
-
-Astro.response.headers.set(
-  'Cache-Control',
-  'public, s-maxage=60, stale-while-revalidate=86400',
-)
 ---
 
 <Layout
@@ -169,9 +165,13 @@ Astro.response.headers.set(
           />
         </div>
       </div>
-      <!-- <div class="mb-[30px] mt-[32px] w-full lg:w-[400px]">
-        <FreestarVideo />
-      </div> -->
+      <div>
+        <FreestarVideo
+          client:only="svelte"
+          class="mb-[30px] mt-[32px] w-full lg:w-[425px]"
+          {domain}
+        />
+      </div>
       <slot />
       <h4 class="font-semibold text-right py-4">
         <a href={domain === 'All' ? '/questions' : `/${domain}/questions`}>

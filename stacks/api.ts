@@ -5,7 +5,6 @@ import { Secrets } from './secrets'
 
 export function API({ stack }: StackContext) {
   const secrets = use(Secrets)
-
   const { vpc, rdsCredentialsSecret, rdsProxySecurityGroup } = use(Imports)
 
   const isStaging = stack.stage === 'staging'
@@ -77,7 +76,7 @@ export function API({ stack }: StackContext) {
         vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_EGRESS },
         securityGroups: [lambdaSecurityGroup],
         environment,
-        nodejs: { install: ['pg'] },
+        nodejs: { install: ['pg'], esbuild: { external: ['pg-native'] } },
       },
     },
     authorizers: {

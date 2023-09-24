@@ -1,12 +1,14 @@
 ---
 import ErrorLayout from '@layouts/error.astro'
-import { handleResponse, handleAskResponse } from '@statmuse/core/kanedama'
+import { handleAskResponse } from '@statmuse/core/kanedama'
 import { ask } from '@lib/kanedama'
 import { tokensToText } from '@statmuse/core/kanedama'
 import AnswerMoney from '@components/answer-money.astro'
-import { clean } from '@lib/path'
+import { clean } from '@statmuse/core/path'
 
 import AssetProfile from '../symbol/[symbol]/index.astro'
+import { upsertFinance } from '@statmuse/core/ask'
+import { Caching } from '@lib/caching'
 
 let question: string | undefined
 
@@ -30,6 +32,17 @@ const query = clean(
     response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
   )
 )
+
+if (Astro.request.method === 'POST') {
+  await upsertFinance({
+    query,
+    response,
+    visitorId: Astro.locals.visitor.id,
+    userId: Astro.locals.user?.id,
+  })
+}
+
+Caching.swr(Astro)
 ---
 
 <ErrorLayout

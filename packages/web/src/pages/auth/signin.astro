@@ -2,7 +2,7 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
-import Image from '@components/image.astro'
+import { Caching } from '@lib/caching'
 
 if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData()
@@ -22,7 +22,7 @@ if (Astro.request.method === 'POST') {
   return Astro.redirect(url)
 }
 
-Astro.response.headers.set('Cache-Control', 'no-cache, no-store')
+Caching.none(Astro)
 
 if (Astro.locals.session.type === 'user') {
   return Astro.redirect('/', 302)
@@ -77,9 +77,9 @@ const meta = {
           </a><br />and <a href="/privacy">privacy policy</a>.
         </p>
       </div>
-      <Image
+      <img
         class="absolute bottom-0 left-0 w-full"
-        src="app/images/signup-players.png"
+        src="https://cdn.statmuse.com/app/images/signup-players.png"
         alt="StatMuse+"
         width={450}
         height={200}

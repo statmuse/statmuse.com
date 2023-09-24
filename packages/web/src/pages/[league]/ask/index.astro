@@ -7,14 +7,15 @@ import Visuals from '@components/visuals.astro'
 import Explore from '@components/explore.astro'
 import Container from '@components/container.astro'
 import {
-  GameraDefaultResponse,
+  type GameraDefaultResponse,
   handleResponse,
   tokensToText,
 } from '@statmuse/core/gamera'
 import { ask, getHeroProps } from '@lib/gamera'
 import { description, title } from '@lib/meta'
-import { clean, imageForgeUrl } from '@lib/path'
-import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
+import { clean, imageForgeUrl } from '@statmuse/core/path'
+import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import { Caching } from '@lib/caching'
 
 const { league } = Astro.params
 const question = Astro.url.searchParams.get('q')
@@ -57,6 +58,8 @@ const meta =
         },
       }
     : {}
+
+Caching.swr(Astro)
 ---
 
 <Error

@@ -9,7 +9,8 @@ import Explore from '@components/explore.astro'
 import Container from '@components/container.astro'
 import { handleResponse, tokensToText } from '@statmuse/core/gamera'
 import { title, description } from '@lib/meta'
-import { clean, createAskPath, imageForgeUrl } from '@lib/path'
+import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
+import { Caching } from '@lib/caching'
 
 let query: string | undefined
 let conversationToken: string | undefined
@@ -73,6 +74,8 @@ const meta =
         },
       }
     : {}
+
+Caching.swr(Astro)
 ---
 
 <ErrorLayout

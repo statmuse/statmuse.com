@@ -1,7 +1,8 @@
 ---
 import HomeLayout from '@layouts/home.astro'
+import { Caching } from '@lib/caching'
 import { listOnboarding } from '@statmuse/core/examples'
-import { createAskPath } from '@lib/path'
+import { createAskPath } from '@statmuse/core/path'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fantasy']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league)) {
@@ -539,10 +540,7 @@ const meta = {
   },
 }
 
-Astro.response.headers.set(
-  'Cache-Control',
-  'public, s-maxage=60, stale-while-revalidate=86400'
-)
+Caching.swr(Astro)
 ---
 
 <HomeLayout {meta} domain={league} img={{ src: banner, text: banner.text }}>

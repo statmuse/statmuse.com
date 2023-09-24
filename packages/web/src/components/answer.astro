@@ -8,8 +8,8 @@ import Explore from '@components/explore.astro'
 import Container from '@components/container.astro'
 import { type GameraDefaultResponse, tokensToText } from '@statmuse/core/gamera'
 import { title, description } from '@lib/meta'
-import { clean, createAskPath, imageForgeUrl } from '@lib/path'
-import type { AnalyticsPageviewProperties } from '@statmuse/core/analytics'
+import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
+import type { AnalyticsPageviewProperties } from '@lib/analytics'
 
 interface Props {
   answer: GameraDefaultResponse

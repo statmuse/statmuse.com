@@ -1,9 +1,10 @@
 ---
 import Grid from '@components/grid.astro'
 import PlayerLayout from '@layouts/player.astro'
-import { GameraDomain, tokensToText } from '@statmuse/core/gamera'
+import { type GameraDomain, tokensToText } from '@statmuse/core/gamera'
 import { getPlayerBio, getPlayerStats } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
+import { Caching } from '@lib/caching'
 
 const { league, player } = Astro.params
 if (!player || !league) {
@@ -44,9 +45,11 @@ const keywords = `${getLeagueKeywords(bio.domain)} ${
   bio.usedName
 } career stats statistics`
 const meta = { title, description, keywords }
+
+Caching.swr(Astro)
 ---
 
-<PlayerLayout {bio} {meta}>
+<PlayerLayout {league} {bio} {meta}>
   <div>
     {
       grids &&
