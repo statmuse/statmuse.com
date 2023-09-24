@@ -1,3 +1,5 @@
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <script lang="ts">
   import { throttle, uniqBy } from 'lodash-es'
   import { session } from '@lib/session-store'
@@ -178,7 +180,13 @@
 </script>
 
 <form bind:this={form} class="ask-form" {action} method="post">
-  <div class="relative rounded-lg text-[#191919]">
+  <div
+    role="combobox"
+    aria-haspopup="listbox"
+    aria-owns="ask-bar-suggestions"
+    aria-expanded={open}
+    class="relative rounded-lg text-[#191919]"
+  >
     <div class="relative group">
       <textarea
         class="ask-textarea input appearance-none outline-none resize-none block w-full border border-black rounded-lg p-2.5 focus:shadow-md peer group-hover:shadow-md"
@@ -231,6 +239,7 @@
       />
     </div>
     <div
+      id="ask-bar-suggestions"
       role="listbox"
       class:hidden={!open}
       class="bg-white w-full px-2 absolute top-full border-x border-x-black border-b border-b-black rounded-b-lg shadow-md"
@@ -242,6 +251,8 @@
               <li
                 class="py-1.5 px-1 cursor-pointer flex items-center"
                 class:bg-[#eee]={i === sectionIdx && j === suggestionIdx}
+                role="option"
+                aria-selected={i === sectionIdx && j === suggestionIdx}
                 on:click={() => {
                   input.value = suggestion.display
                   submitForm()
