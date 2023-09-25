@@ -15,6 +15,13 @@ import { fantasyAsk, getHeroProps } from '@lib/gamera'
 import { description, title } from '@lib/meta'
 import { clean, imageForgeUrl } from '@statmuse/core/path'
 import { Caching } from '@lib/caching'
+import * as Enforcer from '@lib/enforcer'
+
+const canQuery = await Enforcer.canQuery(Astro.locals)
+
+if (!canQuery) {
+  return Astro.redirect('/auth/signup?limit')
+}
 
 const { question } = Astro.params
 if (!question) return Astro.redirect('/questions')

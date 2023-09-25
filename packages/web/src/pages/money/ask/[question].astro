@@ -16,6 +16,13 @@ import { ask, getHeroProps } from '@lib/kanedama'
 import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import { title } from '@lib/meta'
 import { Caching } from '@lib/caching'
+import * as Enforcer from '@lib/enforcer'
+
+const canQuery = await Enforcer.canQueryFinance(Astro.locals)
+
+if (!canQuery) {
+  return Astro.redirect('/auth/signup?limit')
+}
 
 const isLegacyParam = (param: string) => param.includes('+')
 const parseLegacyParam = (path: string) => {

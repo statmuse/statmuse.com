@@ -10,9 +10,16 @@ import TeamSeasonProfile from './[league]/team/[team]/[year].astro'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { clean } from '@statmuse/core/path'
 import { upsert } from '@statmuse/core/ask'
+import * as Enforcer from '@lib/enforcer'
 
 if (Astro.request.method !== 'POST') {
   return Astro.redirect('/questions')
+}
+
+const canQuery = await Enforcer.canQuery(Astro.locals)
+
+if (!canQuery) {
+  return Astro.redirect('/auth/signup?limit')
 }
 
 const data = await Astro.request.formData()

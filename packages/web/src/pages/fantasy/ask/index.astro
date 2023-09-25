@@ -11,9 +11,16 @@ import { handleResponse, tokensToText } from '@statmuse/core/gamera'
 import { title, description } from '@lib/meta'
 import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import { Caching } from '@lib/caching'
+import * as Enforcer from '@lib/enforcer'
 
 let query: string | undefined
 let conversationToken: string | undefined
+
+const canQuery = await Enforcer.canQuery(Astro.locals)
+
+if (!canQuery) {
+  return Astro.redirect('/auth/signup?limit')
+}
 
 if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData()
