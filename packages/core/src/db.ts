@@ -7,8 +7,8 @@ import {
   SecretsManagerClient,
 } from '@aws-sdk/client-secrets-manager'
 import { GameraResponse } from './gamera'
-import { UserTable } from './user'
-import { UsersVisitorTable, VisitorTable } from './visitor'
+import { UserTable } from './user/user.sql'
+import { UsersVisitorTable, VisitorTable } from './visitor/visitor.sql'
 import {
   AskEventTable,
   AskTable,
@@ -16,9 +16,9 @@ import {
   FinanceAskEventTable,
   FinanceAskTable,
   FinanceAskUserTable,
-} from './ask'
-import { ContextTable } from './context'
-import { LinkTable } from './link'
+} from './ask/ask.sql'
+import { ContextTable } from './context/context.sql'
+import { LinkTable } from './link/link.sql'
 
 const secretsManager = new SecretsManagerClient({
   region: process.env.AWS_REGION || 'us-east-1',
