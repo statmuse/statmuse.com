@@ -708,3 +708,35 @@ export const getUserFinanceAskSuggestions = (userId: string) =>
       sql<string>`'history'`.as('type'),
     ])
     .execute()
+
+export const countByUser = (userId: string) =>
+  db
+    .selectFrom('ask_events')
+    .where('user_id', '=', userId)
+    .where(sql`DATE(inserted_at) = current_date`)
+    .select((eb) => eb.fn.countAll().as('ask_count'))
+    .executeTakeFirst()
+
+export const countByVisitor = (visitorId: string) =>
+  db
+    .selectFrom('ask_events')
+    .where('visitor_id', '=', visitorId)
+    .where(sql`DATE(inserted_at) = current_date`)
+    .select((eb) => eb.fn.countAll().as('ask_count'))
+    .executeTakeFirst()
+
+export const financeCountByUser = (userId: string) =>
+  db
+    .selectFrom('finance_ask_events')
+    .where('user_id', '=', userId)
+    .where(sql`DATE(inserted_at) = current_date`)
+    .select((eb) => eb.fn.countAll().as('ask_count'))
+    .executeTakeFirst()
+
+export const financeCountByVisitor = (visitorId: string) =>
+  db
+    .selectFrom('finance_ask_events')
+    .where('visitor_id', '=', visitorId)
+    .where(sql`DATE(inserted_at) = current_date`)
+    .select((eb) => eb.fn.countAll().as('ask_count'))
+    .executeTakeFirst()
