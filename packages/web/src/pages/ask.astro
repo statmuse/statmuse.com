@@ -23,7 +23,7 @@ if (!query) throw new Error('No query provided')
 
 const response = await ask({ query, preferredDomain, conversationToken })
 if (!response)
-  return new Response(null, { status: 405, statusText: 'Not found' })
+  return new Response(null, { status: 404, statusText: 'Not found' })
 
 const handled = handleAskResponseFromPost(response)
 query = clean(
