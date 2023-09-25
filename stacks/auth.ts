@@ -36,7 +36,7 @@ export function Auth({ stack, app }: StackContext) {
         secrets.SENDGRID_API_KEY,
       ],
       permissions: ['ses', 'secretsmanager'],
-      nodejs: { install: ['pg'] },
+      nodejs: { install: ['pg'], esbuild: { external: ['pg-native'] } },
       vpc,
       vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_EGRESS },
       securityGroups: [lambdaSecurityGroup],
