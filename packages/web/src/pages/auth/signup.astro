@@ -4,6 +4,10 @@ import Header from '@components/header.astro'
 import Container from '@components/container.astro'
 import Image from '@components/image.astro'
 import { Caching } from '@lib/caching'
+import {
+  createBillingSession,
+  createCheckoutSession,
+} from '@statmuse/core/stripe'
 
 if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData()
@@ -25,6 +29,25 @@ if (Astro.request.method === 'POST') {
 }
 
 Caching.none(Astro)
+
+const limit = Astro.url.searchParams.get('limit')
+const user = Astro.locals.user
+if (user && user.stripe_subscription_status !== 'active' && limit !== null) {
+  const { url } = user.stripe_customer_id
+    ? await createBillingSession({
+        customerId: user?.stripe_customer_id as string,
+        returnUrl: Astro.url.origin,
+      })
+    : await createCheckoutSession({
+        email: user.email,
+        userId: user.id,
+        successUrl: Astro.url.origin,
+        cancelUrl: Astro.url.origin,
+        customerId: undefined,
+      })
+
+  if (url) return Astro.redirect(url)
+}
 
 if (Astro.locals.session.type === 'user') {
   return Astro.redirect('/', 302)
