@@ -41,7 +41,8 @@ export const upsert = async (params: {
 }) => {
   const response = params.response
   const domain = getDomain(response)
-  const context = await Context.getByName(domain as string)
+  const context =
+    (await Context.getByName(domain as string)) ?? (await Context.getUnknown())
 
   const error =
     response.type === 'error'
@@ -61,7 +62,7 @@ export const upsert = async (params: {
     is_legacy_answer: false,
     prompt: getPrompt(response),
     error,
-    context_id: context.id,
+    context_id: context?.id as string,
     last_visitor_id: params.visitorId,
     last_user_id: params.userId,
     inserted_at: now,
