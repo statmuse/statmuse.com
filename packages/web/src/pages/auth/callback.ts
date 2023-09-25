@@ -2,7 +2,7 @@ import type { APIContext } from 'astro'
 import { Auth } from 'sst/node/future/auth'
 import * as Session from '@lib/session'
 import * as User from '@statmuse/core/user'
-import { createCheckoutSession } from '@statmuse/core/stripe'
+import { createBillingSession, createCheckoutSession } from '@statmuse/core/stripe'
 
 export async function GET(ctx: APIContext) {
   const code = ctx.url.searchParams.get('code')
@@ -27,6 +27,16 @@ export async function GET(ctx: APIContext) {
   }
 
   const user = await User.get(session.properties.id)
+
+  if (user?.stripe_subscription_status === 'cancelled' || user?.stripe_subscription_status === 'past_due') {
+      const { url } =  await createBillingSession({
+      customerId: user?.stripe_customer_id as string,
+      returnUrl: ctx.url.origin,
+    })
+
+    if (url) return ctx.redirect(url)
+  }
+
   if (
     session.properties.upgrade &&
     user?.stripe_subscription_status !== 'active'
@@ -39,6 +49,7 @@ export async function GET(ctx: APIContext) {
       customerId: user?.stripe_customer_id ?? undefined,
       // referral: '',
     })
+
     if (url) return ctx.redirect(url)
   }
 
