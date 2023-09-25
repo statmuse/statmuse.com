@@ -1,14 +1,14 @@
 import {
   type KanedamaResponse,
   tokensToHtml,
-  Timeframe,
-  AssetBySymbolResponse,
-  AssetProfile,
+  type Timeframe,
+  type AssetBySymbolResponse,
+  type AssetProfile,
 } from '@statmuse/core/kanedama'
 import type { HeroProps } from './props'
 import {
   Frequency,
-  FrequencyKey,
+  type FrequencyKey,
   frequencyMap,
   getFrequencyForTimeframe,
 } from '@statmuse/core/frequency'

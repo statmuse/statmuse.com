@@ -64,7 +64,7 @@ export function Web({ stack }: StackContext) {
       PUBLIC_ANALYTICS_API_PROXY_URL: analytics.apiUrl,
       AUTH_ID: auth.id,
     },
-    nodejs: { install: ['pg'], esbuild: { external: ['pg-native'] } },
+    nodejs: { install: ['pg'] },
     cdk: {
       server: {
         vpc: api.vpc,
