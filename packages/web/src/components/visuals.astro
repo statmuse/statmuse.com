@@ -134,12 +134,14 @@ const details =
                     </Fragment>
                   ))}
                 {detail.grids.map((grid) => (
-                  <Grid data={grid} hideTitle />
+                  <Grid data={grid} hideTitle limitRows />
                 ))}
               </Fragment>
             )
           case 'genericGrids':
-            return detail.grids.map((grid) => <Grid data={grid} hideTitle />)
+            return detail.grids.map((grid) => (
+              <Grid data={grid} hideTitle limitRows />
+            ))
           case 'standings':
             switch (response.visual.domain) {
               case 'MLB':
