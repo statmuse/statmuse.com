@@ -1,6 +1,7 @@
 import * as Asks from '@statmuse/core/ask'
 
 const freeAskLimit = 20
+export const freeRowLimit = 25
 
 export const canQuery = async (locals: App.Locals) => {
   console.log('locals.subscribed: ', locals.subscribed)
