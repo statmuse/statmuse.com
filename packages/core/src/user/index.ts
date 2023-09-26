@@ -1,6 +1,5 @@
 import { randomUUID } from 'crypto'
 import { db } from '../db'
-export * from './user.sql'
 
 export const create = async (email: string, visitorId: string) => {
   const existing = await fromEmail(email)

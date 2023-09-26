@@ -1,6 +1,5 @@
 import { db } from '../db'
 import { NewVisitor, VisitorUpdate } from './visitor.sql'
-export * from './visitor.sql'
 
 export const get = async (id: string) =>
   db
