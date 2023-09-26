@@ -4,15 +4,12 @@ const freeAskLimit = 20
 export const freeRowLimit = 25
 
 export const canQuery = async (locals: App.Locals) => {
-  console.log('locals.subscribed: ', locals.subscribed)
   if (locals.subscribed) return locals.subscribed
 
   const result = locals.user
     ? await Asks.countByUser(locals.user.id)
     : await Asks.countByVisitor(locals.visitor.id)
   const count = result ? Number(result.ask_count) : 0
-
-  console.log('count: ', count)
 
   return count <= freeAskLimit
 }
