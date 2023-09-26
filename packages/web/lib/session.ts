@@ -65,11 +65,13 @@ export const set = (context: Context, token: string) => {
 export const update = (context: Context, props: Session['properties']) => {
   const session = context.locals.session
   if (session) {
-    const token = builder.create(session.type, {
+    const updateProps = {
       ...session.properties,
       ...props,
-    })
+    }
+    const token = builder.create(session.type, updateProps)
     set(context, token)
+    context.locals.session.properties = updateProps
   }
 }
 
