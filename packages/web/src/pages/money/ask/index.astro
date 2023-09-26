@@ -9,8 +9,15 @@ import { clean } from '@statmuse/core/path'
 import AssetProfile from '../symbol/[symbol]/index.astro'
 import { upsertFinance } from '@statmuse/core/ask'
 import { Caching } from '@lib/caching'
+import * as Enforcer from '@lib/enforcer'
 
 let question: string | undefined
+
+const canQuery = await Enforcer.canQueryFinance(Astro.locals)
+
+if (!canQuery) {
+  return Astro.redirect('/auth/signup?limit')
+}
 
 if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData()

@@ -72,18 +72,19 @@ const messages: Record<string, string> = {
 }
 
 const manageAccountUrl =
-  Astro.locals.user?.stripe_subscription_status === 'active'
-    ? await createBillingSession({
-        customerId: Astro.locals.user?.stripe_customer_id as string,
-        returnUrl: Astro.url.origin + '/account/settings',
-      }).then((s) => s.url)
-    : await createCheckoutSession({
+  Astro.locals.user?.stripe_subscription_status === 'canceled' ||
+  !Astro.locals.user?.stripe_subscription_status
+    ? await createCheckoutSession({
         email: user.email,
         userId: user.id,
         successUrl: Astro.url.origin,
         cancelUrl: Astro.url.origin + '/account/settings',
         customerId: Astro.locals.user?.stripe_customer_id ?? undefined,
         // referral: '',
+      }).then((s) => s.url)
+    : await createBillingSession({
+        customerId: Astro.locals.user?.stripe_customer_id as string,
+        returnUrl: Astro.url.origin + '/account/settings',
       }).then((s) => s.url)
 ---
 

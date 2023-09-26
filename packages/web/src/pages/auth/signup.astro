@@ -4,6 +4,10 @@ import Header from '@components/header.astro'
 import Container from '@components/container.astro'
 import Image from '@components/image.astro'
 import { Caching } from '@lib/caching'
+import {
+  createBillingSession,
+  createCheckoutSession,
+} from '@statmuse/core/stripe'
 
 if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData()
@@ -26,6 +30,27 @@ if (Astro.request.method === 'POST') {
 
 Caching.none(Astro)
 
+const limit = Astro.url.searchParams.get('limit')
+const user = Astro.locals.user
+if (user && user.stripe_subscription_status !== 'active' && limit !== null) {
+  const { url } =
+    user.stripe_subscription_status === 'canceled' ||
+    !user.stripe_subscription_status
+      ? await createCheckoutSession({
+          email: user.email,
+          userId: user.id,
+          successUrl: Astro.url.origin,
+          cancelUrl: Astro.url.origin,
+          customerId: user.stripe_customer_id ?? undefined,
+        })
+      : await createBillingSession({
+          customerId: user.stripe_customer_id as string,
+          returnUrl: Astro.url.origin,
+        })
+
+  if (url) return Astro.redirect(url)
+}
+
 if (Astro.locals.session.type === 'user') {
   return Astro.redirect('/', 302)
 }
@@ -38,64 +63,96 @@ const meta = {
 <Layout {meta}>
   <Header />
   <Container class="px-[30px] py-[5px]">
-    <div
-      class="w-full max-w-md bg-white rounded-lg border border-[#e4e4e4] mx-auto mb-5 pt-8 px-8 pb-44 relative text-center overflow-hidden"
-    >
-      <h1 class="font-medium text-lg md:text-xl">Sign up for StatMuse+</h1>
-      <p class="my-5 text-left">
-        Members enjoy these benefits across NBA, NFL, NHL, MLB, PGA, Fantasy and
-        Money:
-      </p>
-      <ul class='m-5 list-["🏆"] text-left [&>li]:pl-3'>
-        <li>Unlimited prompts</li>
-        <li>2x data in results (unlimited in Money)</li>
-        <li>Zero ads</li>
-        <li>Personalized search history</li>
-        <li>Early access to features &amp; datasets</li>
-      </ul>
-      <div>
-        <form id="signup-form" method="post">
-          <input
-            class="w-full px-3 py-2.5 text-lg text-[#55595c] rounded bg-white border mb-7 outline-none"
-            name="email"
-            type="email"
-            placeholder="Email"
-            value=""
-          />
-          <input type="hidden" name="client_id" value="web" />
-          <input
-            type="hidden"
-            name="redirect_uri"
-            value={Astro.url.origin + '/auth/callback'}
-          />
-          <input type="hidden" name="response_type" value="code" />
-          <input type="hidden" name="provider" value="email" />
-          <button
-            disabled={false}
-            class="w-full text-lg mb-7 p-3 border-0 rounded text-white bg-[#42a5f5] hover:bg-[#1976d2] disabled:bg-[#cfd8dc]"
-            type="submit"
-          >
-            Join for $20/mo
-          </button>
-        </form>
+    <div>
+      {
+        limit !== null && (
+          <div class="border-l-4 border-yellow-400 bg-yellow-50 p-4 max-w-md mx-auto mb-3">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width={2}
+                  stroke="currentColor"
+                  class="w-5 h-5 text-yellow-400"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+                  />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-yellow-700">
+                  You've used up all free prompts for the day
+                </p>
+              </div>
+            </div>
+          </div>
+        )
+      }
+      <div
+        class="w-full max-w-md bg-white rounded-lg border border-[#e4e4e4] mx-auto mb-5 pt-8 px-8 pb-44 relative text-center overflow-hidden"
+      >
+        <h1 class="font-medium text-lg md:text-xl">Sign up for StatMuse+</h1>
+        <p class="my-5 text-left">
+          Members enjoy these benefits across NBA, NFL, NHL, MLB, PGA, Fantasy
+          and Money:
+        </p>
+        <ul class='m-5 list-["🏆"] text-left [&>li]:pl-3'>
+          <li>Unlimited prompts</li>
+          <li>2x data in results (unlimited in Money)</li>
+          <li>Zero ads</li>
+          <li>Personalized search history</li>
+          <li>Early access to features &amp; datasets</li>
+        </ul>
         <div>
-          <p class="text-black/60">
-            Already have an account? <a href="/auth/signin">Sign in</a>
+          <form id="signup-form" method="post">
+            <input
+              class="w-full px-3 py-2.5 text-lg text-[#55595c] rounded bg-white border mb-7 outline-none"
+              name="email"
+              type="email"
+              placeholder="Email"
+              value=""
+            />
+            <input type="hidden" name="client_id" value="web" />
+            <input
+              type="hidden"
+              name="redirect_uri"
+              value={Astro.url.origin + '/auth/callback'}
+            />
+            <input type="hidden" name="response_type" value="code" />
+            <input type="hidden" name="provider" value="email" />
+            <button
+              disabled={false}
+              class="w-full text-lg mb-7 p-3 border-0 rounded text-white bg-[#42a5f5] hover:bg-[#1976d2] disabled:bg-[#cfd8dc]"
+              type="submit"
+            >
+              Join for $20/mo
+            </button>
+          </form>
+          <div>
+            <p class="text-black/60">
+              Already have an account? <a href="/auth/signin">Sign in</a>
+            </p>
+          </div>
+          <p class="text-xs text-[#777] mt-[23px] mb-[15px]">
+            By using StatMuse, you agree to our <a href="/terms">
+              terms of service
+            </a><br />and <a href="/privacy">privacy policy</a>.
           </p>
         </div>
-        <p class="text-xs text-[#777] mt-[23px] mb-[15px]">
-          By using StatMuse, you agree to our <a href="/terms">
-            terms of service
-          </a><br />and <a href="/privacy">privacy policy</a>.
-        </p>
+        <img
+          class="absolute bottom-0 left-0 w-full"
+          src="https://cdn.statmuse.com/app/images/signup-players.png"
+          alt="StatMuse+"
+          width={450}
+          height={200}
+        />
       </div>
-      <img
-        class="absolute bottom-0 left-0 w-full"
-        src="https://cdn.statmuse.com/app/images/signup-players.png"
-        alt="StatMuse+"
-        width={450}
-        height={200}
-      />
     </div>
   </Container>
 </Layout>
