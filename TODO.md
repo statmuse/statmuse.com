@@ -2,13 +2,14 @@
 
 ## Parity
 
-- [ ] persist asks, cache logic from mothra, etc.
-- [ ] query history page (/account/history)
-- [ ] statmuse+ (limit features for free users)
-- [ ] analytics (provider?)
-- [ ] swr headers (use astro middleware? works on sst?)
 - [ ] security headers
-- [ ] cookie banner
+- [ ] gamera x-origin header
+- [x] persist asks, cache logic from mothra, etc.
+- [x] query history page (/account/history)
+- [x] statmuse+ (limit features for free users)
+- [x] analytics (provider?)
+- [x] swr headers (use astro middleware? works on sst?)
+- [x] cookie banner
 - [x] error pages (404, gamera couldn't answer, etc)
 - [x] typeahead suggestions (ask-bar component)
 - [x] focus should start in the search bar on every page right? also, focus state doesn't have blue outline
