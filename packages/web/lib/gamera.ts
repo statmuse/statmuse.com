@@ -104,7 +104,8 @@ const getTimezoneOffset = (timeZone: string | undefined) => {
   const date = new Date()
   const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }))
   const tzDate = new Date(date.toLocaleString('en-US', { timeZone }))
-  return ((tzDate.getTime() - utcDate.getTime()) / 6e4).toString()
+  const minutes = (tzDate.getTime() - utcDate.getTime()) / 6e4
+  return (minutes / 60).toString()
 }
 
 export function getHeroProps(props: {
