@@ -17,6 +17,7 @@ import { clean, imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { Caching } from '@lib/caching'
 import * as Enforcer from '@lib/enforcer'
+import * as Link from '@statmuse/core/link'
 
 const canQuery = await Enforcer.canQuery(Astro.locals)
 
@@ -40,9 +41,11 @@ if (redirectUrl) return Astro.redirect(redirectUrl)
 const heroProps = getHeroProps({ imageAlt: query, response })
 query = clean(
   tokensToText(
-    response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
-  )
+    response.visual.summaryTokens.filter((t) => t.type !== 'inferred'),
+  ),
 )
+
+const code = await Link.askShortCode(query, league as string)
 
 const meta =
   response.type !== 'error'
@@ -99,7 +102,7 @@ Caching.swr(Astro)
       {query}
       {conversationToken}
       preferredDomain={league}
-      share={{ type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
+      share={{ type: 'ask', shortCode: code?.short_code, url: Astro.url.href }}
       audioUrl={response.visual.summary.narrator?.answerWithIntroAudioUrl ||
         response.visual.summary.narrator?.answerAudioUrl}
     />

@@ -35,8 +35,8 @@ if (!response)
 const handled = handleAskResponseFromPost(response)
 query = clean(
   tokensToText(
-    response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
-  )
+    response.visual.summaryTokens.filter((t) => t.type !== 'inferred'),
+  ),
 )
 
 await upsert({

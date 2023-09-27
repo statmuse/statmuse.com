@@ -17,6 +17,7 @@ import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import { title } from '@lib/meta'
 import { Caching } from '@lib/caching'
 import * as Enforcer from '@lib/enforcer'
+import * as Link from '@statmuse/core/link'
 
 const canQuery = await Enforcer.canQueryFinance(Astro.locals)
 
@@ -44,9 +45,15 @@ if (!response)
 const { subject, redirectUrl, conversationToken } = handleResponse(response)
 if (redirectUrl) return Astro.redirect(redirectUrl)
 
-query = clean(tokensToText(response.visual.summaryTokens))
+query = clean(
+  tokensToText(
+    response.visual.summaryTokens.filter((t) => t.type !== 'inferred'),
+  ),
+)
 
 const heroProps = getHeroProps({ imageAlt: query, response })
+
+const code = await Link.financeAskShortCode(query)
 
 const meta =
   response.type !== 'error'
@@ -105,7 +112,7 @@ Caching.swr(Astro)
       {conversationToken}
       share={{
         type: 'ask',
-        shortCode: 'CODE',
+        shortCode: code?.short_code,
         url: Astro.url.origin + createAskPath({ domain: 'money', query }),
       }}
     />
