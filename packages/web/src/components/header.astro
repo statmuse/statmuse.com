@@ -51,7 +51,9 @@ const audioUrl = Astro.props.audioUrl
         fantasy={Astro.props.fantasy}
       />
     </div>
-    <div class="md:flex items-center ml-4 hidden space-x-4">
+    <div
+      class="w-0 md:w-fit overflow-hidden flex items-center md:ml-4 space-x-4"
+    >
       {share && <AnswerShare {...share} />}
       {audioUrl && <AnswerAudio src={audioUrl} />}
     </div>
