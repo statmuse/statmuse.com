@@ -310,7 +310,7 @@ const PUBLIC_FINANCE_ANSWER_TYPES: FinanceAnswerType[] = ['answer', 'asset']
 const getResourcePath = (
   response: GameraResponse,
   query: string,
-  domain?: GameraDomain
+  gameraDomain?: GameraDomain
 ) => {
   if (
     response.type === 'fullNlgAnswerVisualsOptional' ||
@@ -324,6 +324,7 @@ const getResourcePath = (
     }
   }
 
+  const domain = gameraDomain ? gameraDomain.toLowerCase() : undefined
   if (domain) return createAskPath({ domain, query }).substring(1)
 
   return undefined
