@@ -28,7 +28,7 @@ if (Astro.request.method === 'POST') {
   if (!question) return Astro.redirect('/money/questions')
 }
 
-const response = await ask({ query: question })
+const response = await ask({ query: question }, Astro)
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })
 

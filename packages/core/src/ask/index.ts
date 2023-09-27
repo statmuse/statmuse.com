@@ -28,6 +28,7 @@ import { createAskPath } from '../path'
 import { NewLink } from '../link/link.sql'
 import { randomAlphanumericString } from '../random'
 import { KanedamaResponse } from '../kanedama'
+export * from './ask.sql'
 
 export const ASK_LIMIT = 15
 const leagues = ['nba', 'nfl', 'nhl', 'mlb', 'pga']

@@ -179,6 +179,8 @@ types.setTypeParser(types.builtins.TIMESTAMP, (datetimeString) => {
   )
 })
 
+console.log(process.env.POSTGRES_HOST)
+
 export const db = new Kysely<Database>({
   dialect: new PostgresDialect({
     pool: new Pool({

@@ -43,7 +43,7 @@ export const fromRequest = async (context: Session.Context) => {
 
   const id = visitorId || randomUUID()
   const origin_id = bot_name ?? id
-  const origin_name = headers.get('x-origin') || 'web'
+  const origin_name = headers.get('x-origin') || (bot ? 'web.bot' : 'web')
 
   const existingBot = bot
     ? await Visitor.getByOrigin(origin_id, origin_name)
