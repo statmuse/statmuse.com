@@ -38,6 +38,7 @@ export const upsert = async (params: {
   response: GameraResponse
   userId?: string
   visitorId?: string
+  fantasy?: boolean
 }) => {
   const response = params.response
   const domain = getDomain(response)
@@ -68,7 +69,7 @@ export const upsert = async (params: {
     inserted_at: now,
     updated_at: now,
     last_web_search_at: now,
-    is_fantasy_query: isFantasyQuery(params.query),
+    is_fantasy_query: params.fantasy || isFantasyQuery(params.query),
     is_in_index: isInIndex(params.query, response, answerType),
     is_in_suggests: isInSuggests(params.query, response, answerType),
     hex_background: getBackgroundHex(response),
