@@ -36,8 +36,8 @@ const handled = handleAskResponse(response)
 
 const query = clean(
   tokensToText(
-    response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
-  )
+    response.visual.summaryTokens.filter((t) => t.type !== 'inferred'),
+  ),
 )
 
 if (Astro.request.method === 'POST') {

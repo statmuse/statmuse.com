@@ -11,6 +11,7 @@ import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import { tokensToText } from '@statmuse/core/kanedama'
 import { title } from '@lib/meta'
 import type { KanedamaResponse } from '@statmuse/core/kanedama'
+import * as Link from '@statmuse/core/link'
 
 interface Props {
   answer: KanedamaResponse
@@ -21,10 +22,14 @@ const conversationToken = answer.conversation.token
 const subject = answer.visual.summary.subject
 
 const query = clean(
-  tokensToText(answer.visual.summaryTokens.filter((t) => t.type !== 'inferred'))
+  tokensToText(
+    answer.visual.summaryTokens.filter((t) => t.type !== 'inferred'),
+  ),
 )
 
 const heroProps = getHeroProps({ imageAlt: query, response: answer })
+
+const code = await Link.financeAskShortCode(query)
 
 const meta =
   answer.type !== 'error'
@@ -74,8 +79,8 @@ const meta =
     {query}
     {conversationToken}
     share={Astro.request.method === 'POST'
-      ? { type: 'ask', shortCode: 'CODE', domain: 'money', query }
-      : { type: 'ask', shortCode: 'CODE', url: Astro.url.href }}
+      ? { type: 'ask', shortCode: code?.short_code, domain: 'money', query }
+      : { type: 'ask', shortCode: code?.short_code, url: Astro.url.href }}
   />
   {heroProps ? <Hero {...heroProps} /> : null}
   <Visuals response={answer} {conversationToken} />

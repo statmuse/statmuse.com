@@ -12,6 +12,7 @@ import { title, description } from '@lib/meta'
 import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import { Caching } from '@lib/caching'
 import * as Enforcer from '@lib/enforcer'
+import * as Link from '@statmuse/core/link'
 
 let query: string | undefined
 let conversationToken: string | undefined
@@ -39,8 +40,8 @@ if (!response)
 conversationToken = response.conversation.token
 query = clean(
   tokensToText(
-    response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
-  )
+    response.visual.summaryTokens.filter((t) => t.type !== 'inferred'),
+  ),
 )
 
 const handled = handleResponse(response)
@@ -49,6 +50,8 @@ if (handled.redirectUrl) return Astro.redirect(handled.redirectUrl)
 const subject = handled.subject
 
 const heroProps = getHeroProps({ imageAlt: query, response })
+
+const code = await Link.askShortCode(query, 'nfl')
 
 const meta =
   response.type !== 'error'
@@ -115,7 +118,12 @@ Caching.swr(Astro)
       fantasy
       {query}
       {conversationToken}
-      share={{ type: 'ask', shortCode: 'CODE', query, domain: 'fantasy' }}
+      share={{
+        type: 'ask',
+        shortCode: code?.short_code,
+        query,
+        domain: 'fantasy',
+      }}
     />
     {heroProps ? <Hero {...heroProps} /> : null}
     <Visuals {response} {conversationToken} />
