@@ -161,7 +161,7 @@ export const upsert = async (params: {
     }
 
     // only add link if this is a new ask
-    if (ask.inserted_at === ask.updated_at) {
+    if (ask.inserted_at.toISOString() === ask.updated_at.toISOString()) {
       const link = await trx
         .insertInto('links')
         .values(newLink)
@@ -283,7 +283,7 @@ export const upsertFinance = async (params: {
     }
 
     // only add link if this is a new ask
-    if (ask.inserted_at === ask.updated_at) {
+    if (ask.inserted_at.toISOString() === ask.updated_at.toISOString()) {
       const link = await trx
         .insertInto('links')
         .values(newLink)
