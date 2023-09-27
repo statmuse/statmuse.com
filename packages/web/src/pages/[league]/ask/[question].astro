@@ -28,7 +28,7 @@ const { league, question } = Astro.params
 if (!question) return Astro.redirect('/questions')
 let query = question.replaceAll('-', ' ')
 
-const response = (await ask({ league, query })) as
+const response = (await ask({ league, query }, Astro)) as
   | GameraDefaultResponse
   | undefined
 if (!response)

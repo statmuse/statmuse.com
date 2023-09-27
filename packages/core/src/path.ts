@@ -50,11 +50,9 @@ export const createAskPath = ({
   query: string
 }) => {
   if (hasSymbols(query)) {
-    return `/${domain.toLowerCase()}/ask?q=${encodeRFC3986URIComponent(
-      clean(query)
-    )}`
+    return `/${domain}/ask?q=${encodeRFC3986URIComponent(clean(query))}`
   }
-  return `/${domain.toLowerCase()}/ask/${createSlug(query)}`
+  return `/${domain}/ask/${createSlug(query)}`
 }
 
 export const imageForgeUrl = ({

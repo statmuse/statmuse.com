@@ -28,7 +28,7 @@ const { league } = Astro.params
 const question = Astro.url.searchParams.get('q')
 if (!question) return Astro.redirect('/questions')
 
-const response = (await ask({ query: question, league })) as
+const response = (await ask({ query: question, league }, Astro)) as
   | GameraDefaultResponse
   | undefined
 if (!response)

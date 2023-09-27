@@ -13,6 +13,7 @@ contacts.setApiKey(Config.SENDGRID_API_KEY)
 export const sessions = createSessionBuilder<{
   visitor: {
     id: string
+    bot?: boolean
     cookieStatus: VisitorT['cookie_status']
     origin: VisitorT['origin_name']
   }

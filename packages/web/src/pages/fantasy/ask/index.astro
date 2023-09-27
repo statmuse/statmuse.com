@@ -32,7 +32,7 @@ if (Astro.request.method === 'POST') {
   if (!query) return Astro.redirect('/money/questions')
 }
 
-const response = await fantasyAsk({ query, conversationToken })
+const response = await fantasyAsk({ query, conversationToken }, Astro)
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })
 

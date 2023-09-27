@@ -28,6 +28,7 @@ import { createAskPath } from '../path'
 import { NewLink } from '../link/link.sql'
 import { randomAlphanumericString } from '../random'
 import { KanedamaResponse } from '../kanedama'
+export * from './ask.sql'
 
 export const ASK_LIMIT = 15
 const leagues = ['nba', 'nfl', 'nhl', 'mlb', 'pga']
@@ -309,7 +310,7 @@ const PUBLIC_FINANCE_ANSWER_TYPES: FinanceAnswerType[] = ['answer', 'asset']
 const getResourcePath = (
   response: GameraResponse,
   query: string,
-  domain?: GameraDomain
+  gameraDomain?: GameraDomain
 ) => {
   if (
     response.type === 'fullNlgAnswerVisualsOptional' ||
@@ -323,6 +324,7 @@ const getResourcePath = (
     }
   }
 
+  const domain = gameraDomain ? gameraDomain.toLowerCase() : undefined
   if (domain) return createAskPath({ domain, query }).substring(1)
 
   return undefined

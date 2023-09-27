@@ -35,6 +35,7 @@ export const create = async (context: Context) => {
     context.locals.visitor = visitor
     const token = builder.create('visitor', {
       id: visitor.id,
+      bot: visitor.is_bot,
       cookieStatus: visitor.cookie_status,
       origin: visitor.origin_name,
     })

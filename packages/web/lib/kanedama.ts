@@ -23,6 +23,8 @@ import pipe from 'lodash/fp/pipe'
 import reduce from 'lodash/fp/reduce'
 import update from 'lodash/fp/update'
 import type { SeriesOptionsType, SeriesTooltipOptionsObject } from 'highcharts'
+import { getGameraHeaders } from './gamera'
+import type { Context } from './session'
 
 export const kanedamaApiUrl = import.meta.env.KANEDAMA_API_URL
 
@@ -88,10 +90,13 @@ export type RenderTarget = {
   supportsCandlestick: boolean
 }
 
-export async function ask(options: {
-  query: string
-  conversationToken?: string
-}) {
+export async function ask(
+  options: {
+    query: string
+    conversationToken?: string
+  },
+  context: Context
+) {
   const query = options.query
 
   const params: Record<string, string> = {
@@ -109,7 +114,9 @@ export async function ask(options: {
   console.log(requestUrl)
 
   try {
-    const response = await fetch(requestUrl)
+    const response = await fetch(requestUrl, {
+      headers: getGameraHeaders(context),
+    })
     return response.json() as Promise<KanedamaResponse>
   } catch (error) {
     console.error(error)
