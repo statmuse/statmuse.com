@@ -38,7 +38,9 @@ let query = isLegacyParam(question)
   ? parseLegacyParam(Astro.url.pathname)
   : question.replaceAll('-', ' ')
 
-const response = (await ask({ query })) as KanedamaDefaultResponse | undefined
+const response = (await ask({ query }, Astro)) as
+  | KanedamaDefaultResponse
+  | undefined
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })
 
