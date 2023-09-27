@@ -13,6 +13,7 @@ export const sessions = createSessionBuilder<{
   visitor: {
     id: string
     cookieStatus: Visitor.Visitor['cookie_status']
+    bot?: boolean
   }
   user: {
     id: string
