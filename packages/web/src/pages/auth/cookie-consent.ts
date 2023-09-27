@@ -1,10 +1,11 @@
 import type { APIContext } from 'astro'
 import * as Session from '@lib/session'
 import * as Visitor from '@statmuse/core/visitor'
+import type { Visitor as VisitorT } from '@statmuse/core/visitor/visitor.sql'
 
 export async function POST(ctx: APIContext) {
   const body = (await ctx.request.json()) as {
-    cookie_status: Visitor.Visitor['cookie_status']
+    cookie_status: VisitorT['cookie_status']
   }
 
   if (!body.cookie_status) {

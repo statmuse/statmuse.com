@@ -1,6 +1,7 @@
 import { AuthHandler, CodeAdapter } from 'sst/node/future/auth'
 import * as User from '@statmuse/core/user'
 import * as Visitor from '@statmuse/core/visitor'
+import type { Visitor as VisitorT } from '@statmuse/core/visitor/visitor.sql'
 import { createSessionBuilder } from 'sst/node/future/auth'
 import sendgrid from '@sendgrid/mail'
 import contacts from '@sendgrid/client'
@@ -12,8 +13,9 @@ contacts.setApiKey(Config.SENDGRID_API_KEY)
 export const sessions = createSessionBuilder<{
   visitor: {
     id: string
-    cookieStatus: Visitor.Visitor['cookie_status']
     bot?: boolean
+    cookieStatus: VisitorT['cookie_status']
+    origin: VisitorT['origin_name']
   }
   user: {
     id: string
@@ -21,7 +23,8 @@ export const sessions = createSessionBuilder<{
     visitorId: string
     upgrade?: boolean
     updated?: boolean
-    cookieStatus: Visitor.Visitor['cookie_status']
+    cookieStatus: VisitorT['cookie_status']
+    origin: VisitorT['origin_name']
     subscriptionStatus?: string
   }
 }>()
@@ -112,6 +115,7 @@ export const handler = AuthHandler({
         upgrade: input.claims.upgrade === 'true' || undefined,
         updated: !!updating,
         cookieStatus: visitor.cookie_status,
+        origin: visitor.origin_name,
         subscriptionStatus: user.stripe_subscription_status || undefined,
       },
     })

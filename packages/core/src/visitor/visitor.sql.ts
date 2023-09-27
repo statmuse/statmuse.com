@@ -4,7 +4,7 @@ export interface VisitorTable {
   id: string
 
   origin_id: string
-  origin_name: string
+  origin_name: 'web' | 'web.bot' | 'web.googlebot' | 'web.statbot'
   timezone_name: string
   is_bot: boolean
   last_request_path: string

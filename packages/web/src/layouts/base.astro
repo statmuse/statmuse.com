@@ -65,7 +65,7 @@ const analyticsProperties = Object.assign(
     page_type: 'unknown',
     query: undefined,
   },
-  analytics
+  analytics,
 )
 ---
 
@@ -139,7 +139,8 @@ const analyticsProperties = Object.assign(
     <style>
       @font-face {
         font-family: 'canada-type-gibson';
-        src: url('/fonts/gibson-normal-subset.woff2') format('woff2'),
+        src:
+          url('/fonts/gibson-normal-subset.woff2') format('woff2'),
           url('/fonts/gibson-normal-subset.zopfli.woff') format('woff'),
           url('/fonts/gibson-normal-subset.ttf') format('truetype');
         unicode-range: U+0-FF;
@@ -150,7 +151,8 @@ const analyticsProperties = Object.assign(
 
       @font-face {
         font-family: 'canada-type-gibson';
-        src: url('/fonts/gibson-italic-subset.woff2') format('woff2'),
+        src:
+          url('/fonts/gibson-italic-subset.woff2') format('woff2'),
           url('/fonts/gibson-italic-subset.zopfli.woff') format('woff'),
           url('/fonts/gibson-italic-subset.ttf') format('truetype');
         unicode-range: U+0-FF;
@@ -242,7 +244,7 @@ const analyticsProperties = Object.assign(
    */
   const maybeRewriteUrl = (win: Window, doc: Document) => {
     const canonicalTag = doc.querySelector(
-      'link[rel="canonical"]'
+      'link[rel="canonical"]',
     ) as HTMLLinkElement | null
     if (!canonicalTag) return
 
@@ -281,7 +283,7 @@ const analyticsProperties = Object.assign(
   sessionStore.set(session)
 
   const writeKey = document.querySelector<HTMLMetaElement>(
-    'meta[name="analytics"]'
+    'meta[name="analytics"]',
   )?.content
 
   const segment = (window.segment =
@@ -292,7 +294,7 @@ const analyticsProperties = Object.assign(
             [key]: (...args: [string]) =>
               console.debug(`analytics.${key}`, ...args),
           }),
-          {}
+          {},
         ) as AnalyticsBrowser)
       : AnalyticsBrowser.load(
           {
@@ -307,14 +309,20 @@ const analyticsProperties = Object.assign(
                   '/v1',
               },
             },
-          }
+          },
         ))
 
   if (session.type === 'visitor') {
-    segment.identify(`v:${session.properties.id}`, { origin: 'web' })
+    segment.identify(`v:${session.properties.id}`, {
+      origin: session.properties.origin,
+      origin_scope: 'browser',
+    })
   }
   if (session.type === 'user') {
-    segment.identify(`u:${session.properties.id}`, { origin: 'web' })
+    segment.identify(`u:${session.properties.id}`, {
+      origin: session.properties.origin,
+      origin_scope: 'browser',
+    })
   }
 
   // default page tracking
@@ -322,7 +330,7 @@ const analyticsProperties = Object.assign(
 
   // custom Pageview event
   const eventProps = document.querySelector<HTMLMetaElement>(
-    'meta[name="analytics:event:properties"]'
+    'meta[name="analytics:event:properties"]',
   )?.content
 
   if (eventProps) {
@@ -332,6 +340,7 @@ const analyticsProperties = Object.assign(
       ...flattenObj('disposition', disposition),
       ...flattenObj('tokenizationScore', tokenizationScore),
       ...userInfo(session),
+      origin: session.type !== 'public' ? session.properties.origin : 'web',
     })
   }
 </script>
