@@ -38,6 +38,7 @@ export const upsert = async (params: {
   response: GameraResponse
   userId?: string
   visitorId?: string
+  fantasy?: boolean
 }) => {
   const response = params.response
   const domain = getDomain(response)
@@ -68,7 +69,7 @@ export const upsert = async (params: {
     inserted_at: now,
     updated_at: now,
     last_web_search_at: now,
-    is_fantasy_query: isFantasyQuery(params.query),
+    is_fantasy_query: params.fantasy || isFantasyQuery(params.query),
     is_in_index: isInIndex(params.query, response, answerType),
     is_in_suggests: isInSuggests(params.query, response, answerType),
     hex_background: getBackgroundHex(response),
@@ -95,7 +96,7 @@ export const upsert = async (params: {
           updated_at: now,
           is_in_index: newAsk.is_in_index,
           is_in_suggests: newAsk.is_in_suggests,
-        })
+        }),
       )
       .executeTakeFirst()
 
@@ -142,7 +143,7 @@ export const upsert = async (params: {
             inserted_at: undefined,
             ask_id: undefined,
             user_id: undefined,
-          })
+          }),
         )
         .returningAll()
         .executeTakeFirst()
@@ -160,7 +161,7 @@ export const upsert = async (params: {
     }
 
     // only add link if this is a new ask
-    if (ask.inserted_at === ask.updated_at) {
+    if (ask.inserted_at.toISOString() === ask.updated_at.toISOString()) {
       const link = await trx
         .insertInto('links')
         .values(newLink)
@@ -218,7 +219,7 @@ export const upsertFinance = async (params: {
           updated_at: now,
           is_in_index: newAsk.is_in_index,
           is_in_suggests: newAsk.is_in_suggests,
-        })
+        }),
       )
       .executeTakeFirst()
 
@@ -264,7 +265,7 @@ export const upsertFinance = async (params: {
             inserted_at: undefined,
             finance_ask_id: undefined,
             user_id: undefined,
-          })
+          }),
         )
         .returningAll()
         .executeTakeFirst()
@@ -282,7 +283,7 @@ export const upsertFinance = async (params: {
     }
 
     // only add link if this is a new ask
-    if (ask.inserted_at === ask.updated_at) {
+    if (ask.inserted_at.toISOString() === ask.updated_at.toISOString()) {
       const link = await trx
         .insertInto('links')
         .values(newLink)
@@ -310,7 +311,7 @@ const PUBLIC_FINANCE_ANSWER_TYPES: FinanceAnswerType[] = ['answer', 'asset']
 const getResourcePath = (
   response: GameraResponse,
   query: string,
-  gameraDomain?: GameraDomain
+  gameraDomain?: GameraDomain,
 ) => {
   if (
     response.type === 'fullNlgAnswerVisualsOptional' ||
@@ -381,7 +382,7 @@ const isMeh = (response: GameraResponse | KanedamaResponse) => {
 const isInIndex = (
   query: string,
   response: GameraResponse,
-  answerType: AnswerType
+  answerType: AnswerType,
 ) => {
   if (!PUBLIC_ANSWER_TYPES.includes(answerType)) return false
   if (isMeh(response)) return false
@@ -396,7 +397,7 @@ const isInIndex = (
 const isInIndexFinance = (
   query: string,
   response: KanedamaResponse,
-  answerType: FinanceAnswerType
+  answerType: FinanceAnswerType,
 ) => {
   if (!PUBLIC_FINANCE_ANSWER_TYPES.includes(answerType)) return false
   if (isMeh(response)) return false
@@ -410,7 +411,7 @@ const isInIndexFinance = (
 const isInSuggests = (
   query: string,
   response: GameraResponse,
-  answerType: AnswerType
+  answerType: AnswerType,
 ) => {
   if (!PUBLIC_ANSWER_TYPES.includes(answerType)) return false
   if (isMeh(response)) return false
@@ -424,7 +425,7 @@ const isInSuggests = (
 const isInSuggestsFinance = (
   query: string,
   response: KanedamaResponse,
-  answerType: FinanceAnswerType
+  answerType: FinanceAnswerType,
 ) => {
   if (!PUBLIC_FINANCE_ANSWER_TYPES.includes(answerType)) return false
   if (isMeh(response)) return false
@@ -478,7 +479,7 @@ const getAnswerType = (response: GameraResponse): AnswerType => {
 }
 
 const getAnswerTypeFinance = (
-  response: KanedamaResponse
+  response: KanedamaResponse,
 ): FinanceAnswerType => {
   if (response.type === 'error') return 'error'
 
@@ -514,7 +515,7 @@ export const getListContextIds = (names: string[]) =>
 export const getAsksIndex = async (
   names = leagues,
   params: { n?: Date; p?: Date; page?: string },
-  isFantasy = false
+  isFantasy = false,
 ) => {
   let query = db
     .selectFrom('asks')
@@ -602,7 +603,7 @@ export type FinanceAskForIndex = Awaited<
 
 export const getUserAsks = async (
   userId: string,
-  params: { n?: Date; p?: Date; page?: string }
+  params: { n?: Date; p?: Date; page?: string },
 ) => {
   let query = db
     .selectFrom('asks_users')
@@ -642,14 +643,14 @@ export const getUserAsks = async (
 
 export const getFinanceUserAsks = async (
   userId: string,
-  params: { n?: Date; p?: Date; page?: string }
+  params: { n?: Date; p?: Date; page?: string },
 ) => {
   let query = db
     .selectFrom('finance_asks_users')
     .innerJoin(
       'finance_asks',
       'finance_asks.id',
-      'finance_asks_users.finance_ask_id'
+      'finance_asks_users.finance_ask_id',
     )
     .where('finance_asks.is_in_index', '=', true)
     .where('finance_asks_users.user_id', '=', userId)
@@ -699,7 +700,7 @@ export const getUserFinanceAskSuggestions = (userId: string) =>
     .innerJoin(
       'finance_asks',
       'finance_asks.id',
-      'finance_asks_users.finance_ask_id'
+      'finance_asks_users.finance_ask_id',
     )
     .where('finance_asks.is_in_index', '=', true)
     .where('finance_asks_users.user_id', '=', userId)

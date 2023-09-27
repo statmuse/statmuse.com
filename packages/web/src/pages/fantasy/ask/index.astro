@@ -7,6 +7,7 @@ import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals.astro'
 import Explore from '@components/explore.astro'
 import Container from '@components/container.astro'
+import { upsert } from '@statmuse/core/ask'
 import { handleResponse, tokensToText } from '@statmuse/core/gamera'
 import { title, description } from '@lib/meta'
 import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
@@ -43,6 +44,16 @@ query = clean(
     response.visual.summaryTokens.filter((t) => t.type !== 'inferred'),
   ),
 )
+
+if (Astro.request.method === 'POST') {
+  await upsert({
+    query,
+    response,
+    visitorId: Astro.locals.visitor.id,
+    userId: Astro.locals.user?.id,
+    fantasy: true,
+  })
+}
 
 const handled = handleResponse(response)
 if (handled.redirectUrl) return Astro.redirect(handled.redirectUrl)

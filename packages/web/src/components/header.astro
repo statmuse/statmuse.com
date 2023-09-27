@@ -24,7 +24,7 @@ interface Props {
 
 const query = Astro.props.query ?? ''
 const conversationToken = Astro.props.conversationToken
-const preferredDomain = Astro.props.preferredDomain
+const preferredDomain = Astro.props.preferredDomain ?? ''
 const share = Astro.props.share
 const audioUrl = Astro.props.audioUrl
 ---
