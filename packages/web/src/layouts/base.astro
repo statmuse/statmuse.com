@@ -4,7 +4,6 @@ import type { Metadata } from '@lib/meta'
 import { Config } from 'sst/node/config'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import CookieConsent from '@components/cookie-consent.svelte'
-import SmPlusBanner from '@components/sm-plus-banner.svelte'
 // import { ViewTransitions } from 'astro :transitions'
 
 interface Props {
@@ -194,7 +193,6 @@ const analyticsProperties = Object.assign(
     />
   </head>
   <body>
-    <SmPlusBanner client:only="svelte" />
     <slot />
     <CookieConsent client:only="svelte" />
   </body>
