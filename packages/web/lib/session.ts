@@ -36,6 +36,7 @@ export const create = async (context: Context) => {
     const token = builder.create('visitor', {
       id: visitor.id,
       cookieStatus: visitor.cookie_status,
+      origin: visitor.origin_name,
     })
     set(context, token)
     return builder.verify(token)
