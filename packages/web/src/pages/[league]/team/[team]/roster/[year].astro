@@ -42,7 +42,7 @@ const meta = { title, description, keywords, canonical }
 Caching.swr(Astro)
 ---
 
-<TeamLayout {bio} {meta}>
+<TeamLayout {bio} {meta} page="roster">
   <div class="mb-5">
     {
       roster?.grid && (

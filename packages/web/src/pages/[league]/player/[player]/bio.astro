@@ -35,7 +35,7 @@ const birthdate = formatDateString(bio.birthdate)
 Caching.swr(Astro)
 ---
 
-<PlayerLayout {league} {bio} {meta}>
+<PlayerLayout {league} {bio} {meta} page="bio">
   <div>
     <div class="mb-5 leading-snug">
       <p set:html={summary} />

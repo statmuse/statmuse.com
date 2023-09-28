@@ -18,16 +18,16 @@ import { getTeamFranchiseLatestSeason } from '@lib/team'
 
 interface Props {
   overview: GameraTeamFranchiseOverview
+  page: 'overview' | 'stats' | 'schedule' | 'roster' | 'splits' | 'history'
   meta?: Metadata
   query?: string
 }
 
-const { overview, meta, query } = Astro.props
+const { overview, meta, query, page: pageType } = Astro.props
 const { bio } = overview
 
 const domain = overview.domain.toUpperCase() as GameraDomain
 const preferredDomain = domain.toLowerCase()
-const path = Astro.url.pathname
 const teamPath = getUrlForEntity({
   type: 'teamSeason',
   domain,
@@ -41,12 +41,16 @@ const latestSeason = await getTeamFranchiseLatestSeason({
 const yearId = latestSeason?.entity.id.split('/')[1]
 
 const links = [
-  { text: 'Overview', href: `${teamPath}/${yearId}` },
-  { text: 'Stats', href: `${teamPath}/stats/${yearId}` },
-  { text: 'Scores & Schedule', href: `${teamPath}/schedule/${yearId}` },
-  { text: 'Roster', href: `${teamPath}/roster/${yearId}` },
-  { text: 'Splits', href: `${teamPath}/splits/${yearId}` },
-  { text: 'History', href: `${teamPath}/history` },
+  { text: 'Overview', href: `${teamPath}/${yearId}`, page: 'overview' },
+  { text: 'Stats', href: `${teamPath}/stats/${yearId}`, page: 'stats' },
+  {
+    text: 'Scores & Schedule',
+    href: `${teamPath}/schedule/${yearId}`,
+    page: 'schedule',
+  },
+  { text: 'Roster', href: `${teamPath}/roster/${yearId}`, page: 'roster' },
+  { text: 'Splits', href: `${teamPath}/splits/${yearId}`, page: 'splits' },
+  { text: 'History', href: `${teamPath}/history`, page: 'history' },
 ]
 
 const title = `${bio.name} Overview`
@@ -202,13 +206,13 @@ const twitter = {
   <Container>
     <div class="flex flex-nowrap overflow-auto mb-5 space-x-5">
       {
-        links.map(({ href, text }, index) => (
+        links.map(({ href, text, page }) => (
           <a
-            aria-current={href === path ? 'page' : undefined}
+            aria-current={page === pageType ? 'page' : undefined}
             class:list={{
               'text-3xl font-semibold shrink-0': true,
-              'text-team-primary active': index === 5,
-              'text-black': index !== 5,
+              'text-team-primary active': page === pageType,
+              'text-black': page !== pageType,
             }}
             {href}
           >

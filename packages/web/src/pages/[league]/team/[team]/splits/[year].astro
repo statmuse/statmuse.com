@@ -43,7 +43,7 @@ const meta = { title, description, keywords, canonical }
 Caching.swr(Astro)
 ---
 
-<TeamLayout {bio} {meta}>
+<TeamLayout {bio} {meta} page="splits">
   <div class="space-y-5 mb-5">
     {
       splits?.grids &&
