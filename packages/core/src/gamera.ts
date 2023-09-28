@@ -9,14 +9,14 @@ export function handleResponse(response: GameraResponse) {
 
   let redirectUrl = ''
   const playerProfile = response.visual.detail?.find(
-    (d) => d.type === 'playerProfile'
+    (d) => d.type === 'playerProfile',
   ) as PlayerProfileDetail
   if (playerProfile) {
     redirectUrl = getUrlForEntity(playerProfile.entity)
   }
 
   const teamProfile = response.visual.detail?.find(
-    (d) => d.type === 'teamProfile'
+    (d) => d.type === 'teamProfile',
   ) as TeamProfileDetail
   if (teamProfile) {
     redirectUrl = getUrlForEntity(teamProfile.entity)
@@ -31,7 +31,7 @@ export function handleResponse(response: GameraResponse) {
 
 export function handleAskResponseFromPost(response: GameraResponse) {
   const query = tokensToText(
-    response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
+    response.visual.summaryTokens.filter((t) => t.type !== 'inferred'),
   ).toLowerCase()
 
   if (response.type === 'nlgPromptForMoreInfoVisualChoicesOptional') {
@@ -39,7 +39,7 @@ export function handleAskResponseFromPost(response: GameraResponse) {
   }
 
   const playerProfile = response.visual.detail?.find(
-    (d) => d.type === 'playerProfile'
+    (d) => d.type === 'playerProfile',
   ) as PlayerProfileDetail
 
   if (playerProfile) {
@@ -54,7 +54,7 @@ export function handleAskResponseFromPost(response: GameraResponse) {
   }
 
   const teamProfile = response.visual.detail?.find(
-    (d) => d.type === 'teamProfile'
+    (d) => d.type === 'teamProfile',
   ) as TeamProfileDetail
 
   if (teamProfile && teamProfile.entity.type === 'teamSeason') {
@@ -207,19 +207,19 @@ export const getUrlForEntity = (entity: GameraEntity) => {
       break
     case 'teamSeason':
       url = `/${domain.toLowerCase()}/team/${parameterize(
-        display.replaceAll('.', '')
+        display.replaceAll('.', ''),
       )}-${teamId}${isPostseason ? '/schedule' : ''}${
         yearId ? `/${yearId}` : ''
       }`
       break
     case 'teamFranchise':
       url = `/${domain.toLowerCase()}/team/${parameterize(
-        display.replaceAll('.', '')
+        display.replaceAll('.', ''),
       )}-${id}/history`
       break
     case 'game':
       url = `/${domain.toLowerCase()}/game/${parameterize(
-        display.replaceAll(' @ ', ' at ')
+        display.replaceAll(' @ ', ' at '),
       )}-${id}`
       break
     default:
@@ -234,7 +234,7 @@ export const getUrlForEntity = (entity: GameraEntity) => {
 }
 
 export const isGameraDefaultResponse = (
-  resp: GameraResponse
+  resp: GameraResponse,
 ): resp is GameraDefaultResponse =>
   resp.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
 
@@ -345,7 +345,7 @@ export interface GameraGrid {
       rowItemKey: string
       title: string
       type: string
-    }
+    },
   ]
   rows: Record<
     string,
@@ -380,15 +380,15 @@ export interface GameraChart {
           color: string
           series?: string
           float?: boolean
-        }
+        },
       ]
       color: string
-    }
+    },
   ]
   categories: [
     {
       nameLines: [string]
-    }
+    },
   ]
 }
 
@@ -581,6 +581,10 @@ export interface GameraTeamSeasonPlayerStats {
 
 export interface GameraTeamSeasonGameResults {
   grids: GameraGrid[]
+}
+
+export interface GameraTeamSeasonSchedule {
+  grid: GameraGrid
 }
 
 export interface GameraTeamSeasonRoster {
@@ -1009,7 +1013,7 @@ export interface NhlBoxScoreDetail {
       description: string
       homeTeamScore: number
       awayTeamScore: number
-    }
+    },
   ]
 }
 
@@ -1096,7 +1100,7 @@ export interface ChoicesVisual
       display: string
       assetId: string
       input: string
-    }
+    },
   ]
 }
 

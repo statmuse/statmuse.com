@@ -19,6 +19,10 @@ if (!bio || !roster) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
 
+if (!bio.hasRoster) {
+  return Astro.redirect(`/${league}/team/${team}/schedule/${year}`)
+}
+
 const title = `${year} ${bio.name} Roster`
 const description = `The ${year} ${bio.name} roster for the ${domain} regular season and playoffs`
 const keywords = `${getLeagueKeywords(domain)} ${year} ${
@@ -38,7 +42,7 @@ const meta = { title, description, keywords, canonical }
 Caching.swr(Astro)
 ---
 
-<TeamLayout {bio} {meta}>
+<TeamLayout {bio} {meta} page="roster">
   <div class="mb-5">
     {
       roster?.grid && (

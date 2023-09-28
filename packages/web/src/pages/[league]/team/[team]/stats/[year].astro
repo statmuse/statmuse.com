@@ -34,6 +34,10 @@ if (!bio || !stats || !playerStats) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
 
+if (!bio.hasStats) {
+  return Astro.redirect(`/${league}/team/${team}/schedule/${year}`)
+}
+
 const title = `${year} ${bio.name} Team & Player Stats`
 const description = bio.summaryNlg
   ? tokensToText(bio.summaryNlg)
@@ -55,7 +59,7 @@ const meta = { title, description, keywords, canonical }
 Caching.swr(Astro)
 ---
 
-<TeamLayout {bio} {meta}>
+<TeamLayout {bio} {meta} page="stats">
   <div>
     {
       stats.grids.map((grid, i) => (

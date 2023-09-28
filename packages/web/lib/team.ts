@@ -7,6 +7,7 @@ import type {
   GameraTeamSeasonOverview,
   GameraTeamSeasonPlayerStats,
   GameraTeamSeasonRoster,
+  GameraTeamSeasonSchedule,
   GameraTeamSeasonSplits,
   GameraTeamSeasonStats,
 } from '@statmuse/core/gamera'
@@ -105,6 +106,25 @@ export const getTeamSeasonGameResults = async (props: {
     const requestUrl = `${gameraApiUrl}${domain}/teams/v2/${teamId}/${yearId}/gameResults`
     const response = await fetch(requestUrl)
     const data = (await response.json()) as GameraTeamSeasonGameResults
+    return data
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
+}
+
+export const getTeamSeasonSchedule = async (props: {
+  domain: GameraDomain
+  team: string
+  year: string
+}) => {
+  const { team, year, domain } = props
+  try {
+    const teamId = parseTeamId(team)
+    const yearId = parseYearId(year)
+    const requestUrl = `${gameraApiUrl}${domain}/teams/v2/${teamId}/${yearId}/schedule`
+    const response = await fetch(requestUrl)
+    const data = (await response.json()) as GameraTeamSeasonSchedule
     return data
   } catch (error) {
     console.error(error)

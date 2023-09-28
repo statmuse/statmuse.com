@@ -20,6 +20,10 @@ if (!bio || !splits) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
 
+if (!bio.hasStats) {
+  return Astro.redirect(`/${league}/team/${team}/schedule/${year}`)
+}
+
 const title = `${year} ${bio.name} Splits`
 const description = `The ${year} ${bio.name} splits for the ${domain} regular season and playoffs`
 const keywords = `${getLeagueKeywords(domain)} ${year} ${
@@ -39,7 +43,7 @@ const meta = { title, description, keywords, canonical }
 Caching.swr(Astro)
 ---
 
-<TeamLayout {bio} {meta}>
+<TeamLayout {bio} {meta} page="splits">
   <div class="space-y-5 mb-5">
     {
       splits?.grids &&

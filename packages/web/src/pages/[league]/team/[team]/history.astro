@@ -49,7 +49,7 @@ const meta = { title, description, keywords, canonical }
 Caching.swr(Astro)
 ---
 
-<FranchiseLayout {overview} {meta} {query}>
+<FranchiseLayout {overview} {meta} {query} page="history">
   <div class="space-y-5 mb-5">
     {
       teamHistory && (

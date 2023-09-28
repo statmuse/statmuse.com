@@ -58,6 +58,10 @@ if (!response) {
 const { bio, scoresAndSchedule, teamLeaders, standings, stats, playerGallery } =
   response
 
+if (!bio.hasStats) {
+  return Astro.redirect(`/${league}/team/${team}/schedule/${year}`)
+}
+
 const summary = bio.summaryNlg ? tokensToHtml(bio.summaryNlg) : undefined
 
 const title = `${year} ${bio.name} Team & Player Stats`
@@ -81,7 +85,7 @@ const meta = { title, description, keywords, canonical }
 Caching.swr(Astro)
 ---
 
-<TeamLayout {bio} {meta} {query}>
+<TeamLayout {bio} {meta} {query} page="overview">
   <div>
     <div class="mb-5 leading-snug">
       <p set:html={summary} />

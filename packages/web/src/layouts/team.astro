@@ -18,17 +18,17 @@ import type { AnalyticsPageviewProperties } from '@lib/analytics'
 
 interface Props {
   bio: GameraTeamSeasonBio
+  page: 'overview' | 'stats' | 'schedule' | 'roster' | 'splits' | 'history'
   meta?: Metadata
   query?: string
 }
 
-const { bio, meta, query } = Astro.props
+const { bio, meta, query, page: pageType } = Astro.props
 
 const domain = bio.domain.toUpperCase() as GameraDomain
 const preferredDomain = domain.toLowerCase()
 const teamFranchiseUrl = getUrlForEntity(bio.franchise)
 
-const path = Astro.url.pathname
 const canonical = { url: Astro.url.pathname + Astro.url.search }
 const teamPath = getUrlForEntity({
   type: 'teamSeason',
@@ -41,27 +41,25 @@ const currentSeason = bio.season?.all?.find((s) => s.name === year)
 const [, yearId] = currentSeason?.entity.id.split('/') || []
 
 const links = [
-  { text: 'Overview', href: `${teamPath}/${yearId}` },
-  { text: 'Stats', href: `${teamPath}/stats/${yearId}` },
-  { text: 'Scores & Schedule', href: `${teamPath}/schedule/${yearId}` },
-  { text: 'Roster', href: `${teamPath}/roster/${yearId}` },
-  { text: 'Splits', href: `${teamPath}/splits/${yearId}` },
-  { text: 'History', href: `${teamPath}/history` },
+  ...(bio.hasStats
+    ? [{ text: 'Overview', href: `${teamPath}/${yearId}`, page: 'overview' }]
+    : []),
+  ...(bio.hasStats
+    ? [{ text: 'Stats', href: `${teamPath}/stats/${yearId}`, page: 'stats' }]
+    : []),
+  {
+    text: 'Scores & Schedule',
+    href: `${teamPath}/schedule/${yearId}`,
+    page: 'schedule',
+  },
+  ...(bio.hasRoster
+    ? [{ text: 'Roster', href: `${teamPath}/roster/${yearId}`, page: 'roster' }]
+    : []),
+  ...(bio.hasStats
+    ? [{ text: 'Splits', href: `${teamPath}/splits/${yearId}`, page: 'splits' }]
+    : []),
+  { text: 'History', href: `${teamPath}/history`, page: 'history' },
 ]
-
-let page = 0
-
-if (path.includes('stats')) {
-  page = 1
-} else if (path.includes('schedule')) {
-  page = 2
-} else if (path.includes('roster')) {
-  page = 3
-} else if (path.includes('splits')) {
-  page = 4
-} else if (path.includes('history')) {
-  page = 5
-}
 
 const title = `${bio.name} Overview`
 const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
@@ -254,13 +252,13 @@ const twitter = {
   <Container>
     <div class="flex flex-nowrap overflow-auto mb-5 space-x-5">
       {
-        links.map(({ href, text }, index) => (
+        links.map(({ href, text, page }) => (
           <a
-            aria-current={href === path ? 'page' : undefined}
+            aria-current={page === pageType ? 'page' : undefined}
             class:list={{
               'text-3xl font-semibold shrink-0': true,
-              'text-team-primary active': index === page,
-              'text-black': index !== page,
+              'text-team-primary active': page === pageType,
+              'text-black': page !== pageType,
             }}
             {href}
           >

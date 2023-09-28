@@ -44,7 +44,7 @@ const meta = { title, description, keywords }
 Caching.swr(Astro)
 ---
 
-<PlayerLayout {league} {bio} {meta}>
+<PlayerLayout {league} {bio} {meta} page="game-log">
   <div>
     {
       grids &&
