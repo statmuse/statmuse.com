@@ -67,12 +67,15 @@ Caching.none(Astro)
 </Layout>
 
 <script>
-  const form = document.getElementById('signup-form') as HTMLFormElement
-  form.addEventListener('submit', (event) => {
-    event.preventDefault()
-    const code = new FormData(form).get('code')?.toString()
-    if (!code) throw new Error('No code')
+  document.addEventListener('astro:page-load', () => {
+    const form = document.getElementById('signup-form') as HTMLFormElement
+    form.addEventListener('submit', (event) => {
+      event.preventDefault()
+      const code = new FormData(form).get('code')?.toString()
+      if (!code) throw new Error('No code')
 
-    location.href = form.action + '?' + new URLSearchParams({ code }).toString()
+      location.href =
+        form.action + '?' + new URLSearchParams({ code }).toString()
+    })
   })
 </script>

@@ -43,15 +43,19 @@ const options = {
   import Exporting from 'highcharts/modules/exporting'
   import OfflineExporting from 'highcharts/modules/offline-exporting'
 
-  Exporting(Highcharts)
-  OfflineExporting(Highcharts)
+  document.addEventListener('astro:page-load', () => {
+    Exporting(Highcharts)
+    OfflineExporting(Highcharts)
 
-  const chart = document.getElementById('time-series-line-chart') as HTMLElement
-  if (chart) {
-    const options = JSON.parse(
-      chart?.dataset.options as string,
-    ) as Highcharts.Options
+    const chart = document.getElementById(
+      'time-series-line-chart',
+    ) as HTMLElement
+    if (chart) {
+      const options = JSON.parse(
+        chart?.dataset.options as string,
+      ) as Highcharts.Options
 
-    Highcharts.chart('time-series-line-chart', options)
-  }
+      Highcharts.chart('time-series-line-chart', options)
+    }
+  })
 </script>

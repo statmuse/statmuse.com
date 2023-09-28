@@ -14,7 +14,7 @@ const { domain, additionalQuestions } = Astro.props
   <div
     class="grid grid-cols-[repeat(auto-fit,_minmax(425px,_1fr))] gap-2 items-start"
   >
-    <FreestarVideo client:only="svelte" {domain} />
+    <FreestarVideo client:only="svelte" transition:persist {domain} />
     {
       additionalQuestions ? (
         <ul
@@ -48,14 +48,18 @@ const { domain, additionalQuestions } = Astro.props
   </div>
 </div>
 <script>
-  document
-    .querySelectorAll<HTMLElement>('[data-track-click="Click Try-Also Query"]')
-    .forEach((el) => {
-      el.addEventListener('click', () => {
-        window.segment.track(el.dataset.trackClick as string, {
-          query: el.innerText,
-          referrer: window.location.href,
+  document.addEventListener('astro:page-load', () => {
+    document
+      .querySelectorAll<HTMLElement>(
+        '[data-track-click="Click Try-Also Query"]',
+      )
+      .forEach((el) => {
+        el.addEventListener('click', () => {
+          window.segment.track(el.dataset.trackClick as string, {
+            query: el.innerText,
+            referrer: window.location.href,
+          })
         })
       })
-    })
+  })
 </script>

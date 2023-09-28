@@ -91,6 +91,7 @@ const meta = {
     <div>
       <FreestarVideo
         client:only="svelte"
+        transition:persist
         class="w-full md:w-[425px] mx-auto mt-4"
         domain={league?.toLowerCase()}
       />
@@ -200,21 +201,23 @@ const meta = {
   </Container>
 </Layout>
 <script>
-  // Player Gallery Alphabet Nav Highlight
-  document.querySelectorAll('[data-click-nav]').forEach((el) => {
-    const element = el as HTMLAnchorElement
-    element.addEventListener('click', () => {
-      // remove classes from previously selected item
-      document.querySelectorAll('[data-highlight="true"]').forEach((n) => {
-        ;['text-white', 'bg-primary', 'hover:no-underline'].forEach((x) => {
-          n.classList.remove(x)
+  document.addEventListener('astro:page-load', () => {
+    // Player Gallery Alphabet Nav Highlight
+    document.querySelectorAll('[data-click-nav]').forEach((el) => {
+      const element = el as HTMLAnchorElement
+      element.addEventListener('click', () => {
+        // remove classes from previously selected item
+        document.querySelectorAll('[data-highlight="true"]').forEach((n) => {
+          ;['text-white', 'bg-primary', 'hover:no-underline'].forEach((x) => {
+            n.classList.remove(x)
+          })
         })
-      })
 
-      element.classList.add('text-white')
-      element.classList.add('bg-primary')
-      element.classList.add('hover:no-underline')
-      element.dataset.highlight = 'true'
+        element.classList.add('text-white')
+        element.classList.add('bg-primary')
+        element.classList.add('hover:no-underline')
+        element.dataset.highlight = 'true'
+      })
     })
   })
 </script>

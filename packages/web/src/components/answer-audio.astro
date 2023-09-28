@@ -51,39 +51,41 @@ interface Props {
   <audio preload="none" src={Astro.props.src}></audio>
 </div>
 <script>
-  document.querySelectorAll('[data-play-btn]').forEach((el) => {
-    const state = {
-      playing: false,
-      progress: 0,
-    }
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll('[data-play-btn]').forEach((el) => {
+      const state = {
+        playing: false,
+        progress: 0,
+      }
 
-    const audio = el.nextElementSibling as HTMLAudioElement
+      const audio = el.nextElementSibling as HTMLAudioElement
 
-    el.addEventListener('click', () => {
-      state.playing = !state.playing
-      if (state.playing) {
-        audio.play()
-        el.querySelector('[data-play]')?.classList.add('hidden')
-        el.querySelector('[data-pause]')?.classList.remove('hidden')
-      } else {
-        audio.pause()
+      el.addEventListener('click', () => {
+        state.playing = !state.playing
+        if (state.playing) {
+          audio.play()
+          el.querySelector('[data-play]')?.classList.add('hidden')
+          el.querySelector('[data-pause]')?.classList.remove('hidden')
+        } else {
+          audio.pause()
+          el.querySelector('[data-play]')?.classList.remove('hidden')
+          el.querySelector('[data-pause]')?.classList.add('hidden')
+        }
+        window.segment.track('Toggle Musing Audio Playback', {
+          playing: state.playing,
+        })
+      })
+
+      audio.addEventListener('ended', () => {
+        state.playing = !state.playing
         el.querySelector('[data-play]')?.classList.remove('hidden')
         el.querySelector('[data-pause]')?.classList.add('hidden')
-      }
-      window.segment.track('Toggle Musing Audio Playback', {
-        playing: state.playing,
+        window.segment.track('Musing Audio Finished')
       })
-    })
 
-    audio.addEventListener('ended', () => {
-      state.playing = !state.playing
-      el.querySelector('[data-play]')?.classList.remove('hidden')
-      el.querySelector('[data-pause]')?.classList.add('hidden')
-      window.segment.track('Musing Audio Finished')
-    })
-
-    audio.addEventListener('timeupdate', () => {
-      state.progress = (audio.currentTime || 0) / (audio.duration || 1)
+      audio.addEventListener('timeupdate', () => {
+        state.progress = (audio.currentTime || 0) / (audio.duration || 1)
+      })
     })
   })
 </script>

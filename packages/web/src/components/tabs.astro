@@ -73,38 +73,40 @@ const tabs = Astro.props.titles.map((tab) => ({
 </div>
 
 <script>
-  const parents = document.querySelectorAll('.tabs')
+  document.addEventListener('astro:page-load', () => {
+    const parents = document.querySelectorAll('.tabs')
 
-  for (const parent of parents) {
-    const panelsContainer = parent.querySelector('.panels-container')
-    if (!panelsContainer) continue
+    for (const parent of parents) {
+      const panelsContainer = parent.querySelector('.panels-container')
+      if (!panelsContainer) continue
 
-    const tabsContainer = parent.querySelector('.tabs-container')
-    if (!tabsContainer) continue
+      const tabsContainer = parent.querySelector('.tabs-container')
+      if (!tabsContainer) continue
 
-    const tabs = tabsContainer.querySelectorAll(
-      ':scope > .tab',
-    ) as unknown as HTMLElement[]
+      const tabs = tabsContainer.querySelectorAll(
+        ':scope > .tab',
+      ) as unknown as HTMLElement[]
 
-    tabs.forEach((tab) => {
-      tab.addEventListener('change', (e) => {
-        // clear off the initial classes for hiding panels
-        panelsContainer.className = 'panels-container'
+      tabs.forEach((tab) => {
+        tab.addEventListener('change', (e) => {
+          // clear off the initial classes for hiding panels
+          panelsContainer.className = 'panels-container'
 
-        tabs.forEach((tab) => {
-          const label = tab.dataset.label
-          const panel = panelsContainer.querySelector(`[id="${label}"]`)
-          if (!panel) return
+          tabs.forEach((tab) => {
+            const label = tab.dataset.label
+            const panel = panelsContainer.querySelector(`[id="${label}"]`)
+            if (!panel) return
 
-          if (label === (e.currentTarget as HTMLInputElement).dataset.label) {
-            panel.classList.remove('hidden')
-            panel.classList.add('block')
-          } else {
-            panel.classList.remove('block')
-            panel.classList.add('hidden')
-          }
+            if (label === (e.currentTarget as HTMLInputElement).dataset.label) {
+              panel.classList.remove('hidden')
+              panel.classList.add('block')
+            } else {
+              panel.classList.remove('block')
+              panel.classList.add('hidden')
+            }
+          })
         })
       })
-    })
-  }
+    }
+  })
 </script>

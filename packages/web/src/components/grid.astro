@@ -402,82 +402,86 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
 <script>
   import { session } from '@lib/session-store'
 
-  session.subscribe((s) => {
-    if (
-      s &&
-      s.type === 'user' &&
-      s.properties.subscriptionStatus === 'active'
-    ) {
-      document
-        .querySelectorAll<HTMLTableRowElement>('[data-redact]')
-        .forEach((elem) => {
-          const [content, lock] = elem.children
-          content.classList.remove('hidden')
-          lock.classList.add('hidden')
-        })
-    }
-  })
-
-  const selects = document.querySelectorAll('select.grid-filter')
-  selects.forEach((select) => {
-    select.addEventListener('change', (event) => {
-      const select = event.target as HTMLSelectElement
-      const url = new URL(window.location.href)
-      url.searchParams.set(select.name, select.value)
-      window.location.href = url.toString()
+  document.addEventListener('astro:page-load', () => {
+    session.subscribe((s) => {
+      if (
+        s &&
+        s.type === 'user' &&
+        s.properties.subscriptionStatus === 'active'
+      ) {
+        document
+          .querySelectorAll<HTMLTableRowElement>('[data-redact]')
+          .forEach((elem) => {
+            const [content, lock] = elem.children
+            content.classList.remove('hidden')
+            lock.classList.add('hidden')
+          })
+      }
     })
-  })
 
-  const getValue = (tr: HTMLTableRowElement, index: number) => {
-    const x = tr.children[index] as HTMLTableCellElement
-    if (!Number.isNaN(Number(x.dataset.value))) {
-      return Number(x.dataset.value)
+    const selects = document.querySelectorAll('select.grid-filter')
+    selects.forEach((select) => {
+      select.addEventListener('change', (event) => {
+        const select = event.target as HTMLSelectElement
+        const url = new URL(window.location.href)
+        url.searchParams.set(select.name, select.value)
+        window.location.href = url.toString()
+      })
+    })
+
+    const getValue = (tr: HTMLTableRowElement, index: number) => {
+      const x = tr.children[index] as HTMLTableCellElement
+      if (!Number.isNaN(Number(x.dataset.value))) {
+        return Number(x.dataset.value)
+      }
+      return x.dataset.value
     }
-    return x.dataset.value
-  }
 
-  let prevIdx = -1
-  let desc = true
-  document.querySelectorAll('th').forEach((th) => {
-    th.addEventListener('click', () => {
-      const idx = Array.from(th.parentElement?.children || []).indexOf(th)
-      const table = th.closest('table')
-      const tbody = table?.querySelector('tbody')
-      desc = idx !== prevIdx || !desc
-      Array.from(table?.querySelectorAll<HTMLTableRowElement>('tbody tr') || [])
-        .sort((a, b) => {
-          let result = 0
-          const sortOptions = [
-            { idx, desc },
-            { idx: 0, desc: false },
-          ]
-          for (const i in sortOptions) {
-            const { idx, desc } = sortOptions[i]
-            const ax = getValue(a, idx) ?? (desc ? -1000000 : 1000000)
-            const bx = getValue(b, idx) ?? (desc ? -1000000 : 1000000)
-            if (typeof ax === 'number' && typeof bx === 'number') {
-              result = desc ? bx - ax : ax - bx
+    let prevIdx = -1
+    let desc = true
+    document.querySelectorAll('th').forEach((th) => {
+      th.addEventListener('click', () => {
+        const idx = Array.from(th.parentElement?.children || []).indexOf(th)
+        const table = th.closest('table')
+        const tbody = table?.querySelector('tbody')
+        desc = idx !== prevIdx || !desc
+        Array.from(
+          table?.querySelectorAll<HTMLTableRowElement>('tbody tr') || [],
+        )
+          .sort((a, b) => {
+            let result = 0
+            const sortOptions = [
+              { idx, desc },
+              { idx: 0, desc: false },
+            ]
+            for (const i in sortOptions) {
+              const { idx, desc } = sortOptions[i]
+              const ax = getValue(a, idx) ?? (desc ? -1000000 : 1000000)
+              const bx = getValue(b, idx) ?? (desc ? -1000000 : 1000000)
+              if (typeof ax === 'number' && typeof bx === 'number') {
+                result = desc ? bx - ax : ax - bx
+              }
+              if (typeof ax === 'string' && typeof bx === 'string') {
+                result = desc ? bx.localeCompare(ax) : ax.localeCompare(bx)
+              }
+              if (result !== 0) return result
             }
-            if (typeof ax === 'string' && typeof bx === 'string') {
-              result = desc ? bx.localeCompare(ax) : ax.localeCompare(bx)
+            return result
+          })
+          .forEach((tr) => {
+            if (tbody) {
+              if (prevIdx > -1) {
+                tr.children[prevIdx].classList.remove('bg-[#fffbec]')
+                tr.children[prevIdx].classList.add('bg-white')
+              }
+              tr.children[idx].classList.add('bg-[#fffbec]')
+              tr.children[idx].classList.remove('bg-white')
+              tbody.append(tr)
             }
-            if (result !== 0) return result
-          }
-          return result
-        })
-        .forEach((tr) => {
-          if (tbody) {
-            if (prevIdx > -1) {
-              tr.children[prevIdx].classList.remove('bg-[#fffbec]')
-              tr.children[prevIdx].classList.add('bg-white')
-            }
-            tr.children[idx].classList.add('bg-[#fffbec]')
-            tr.children[idx].classList.remove('bg-white')
-            tbody.append(tr)
-          }
-        })
+          })
 
-      prevIdx = idx
+        prevIdx = idx
+      })
     })
   })
 </script>

@@ -4,7 +4,7 @@ import type { Metadata } from '@lib/meta'
 import { Config } from 'sst/node/config'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import CookieConsent from '@components/cookie-consent.svelte'
-// import { ViewTransitions } from 'astro :transitions'
+import { ViewTransitions } from 'astro:transitions'
 
 interface Props {
   meta?: Metadata
@@ -119,7 +119,7 @@ const analyticsProperties = Object.assign(
         />
       )
     }
-    <!-- <ViewTransitions /> -->
+    <ViewTransitions />
     <link
       href="https://www.statmuse.com/opensearch.xml"
       rel="search"
@@ -196,151 +196,157 @@ const analyticsProperties = Object.assign(
   </head>
   <body>
     <slot />
-    <CookieConsent client:only="svelte" />
+    <CookieConsent client:only="svelte" transition:persist />
+    <script>
+      import { AnalyticsBrowser } from '@segment/analytics-next'
+      import type { Session } from '@lib/session'
+      import { session as sessionStore } from '@lib/session-store'
+
+      document.addEventListener('astro:page-load', async () => {
+        /**
+         * Given window and document, add or remove "selected" class to league nav
+         * links if current window location matches nav href. Note that the argument
+         * tests are more comprehensive to protect functions downstream of this.
+         *
+         * @param {Window} win - DOM window
+         * @param {Element} ctag - Node Element with data for canonical link
+         *
+         */
+        const shouldRewriteUrl = (win: Window, ctag: HTMLLinkElement) => {
+          return (
+            win instanceof Window &&
+            win.history instanceof History &&
+            win.location instanceof Location &&
+            ctag.href !== win.location.href &&
+            ctag.dataset.shouldRewrite === 'true'
+          )
+        }
+
+        /**
+         * Rewrite URL.
+         *
+         * @param {Window} win - DOM window
+         * @param {HTMLDocument} doc - DOM document
+         * @param {String} newUrl - Destination URL
+         *
+         */
+        const rewriteUrl = (win: Window, doc: Document, newUrl: string) =>
+          win.history.replaceState(null, doc.title, newUrl)
+
+        /**
+         * Given window and document, get canonical link tag and check if URL should be
+         * rewritten, in which case call rewriteUrl and updateLeagueNav.
+         *
+         * @param {Window} win - DOM window
+         * @param {HTMLDocument} doc - DOM document
+         *
+         */
+        const maybeRewriteUrl = (win: Window, doc: Document) => {
+          const canonicalTag = doc.querySelector(
+            'link[rel="canonical"]',
+          ) as HTMLLinkElement | null
+          if (!canonicalTag) return
+
+          if (shouldRewriteUrl(win, canonicalTag)) {
+            rewriteUrl(win, doc, canonicalTag.href)
+          }
+        }
+
+        maybeRewriteUrl(window, document)
+
+        const flattenObj = (key: string, obj?: {}) => {
+          return !obj
+            ? {}
+            : Object.entries(obj).reduce((x, [k, v]) => {
+                return {
+                  ...x,
+                  [`${key}.${k}`]: v,
+                }
+              }, {})
+        }
+
+        const userInfo = (session: Session) => {
+          if (session.type === 'user')
+            return {
+              user_id: session.properties.id,
+              visitor_id: session.properties.visitorId,
+            }
+          if (session.type === 'visitor')
+            return {
+              visitor_id: session.properties.id,
+            }
+          return {}
+        }
+
+        const session: Session = await fetch('/auth/session').then((r) =>
+          r.json(),
+        )
+        sessionStore.set(session)
+
+        const writeKey = document.querySelector<HTMLMetaElement>(
+          'meta[name="analytics"]',
+        )?.content
+
+        const segment = (window.segment =
+          import.meta.env.DEV || !writeKey
+            ? (['identify', 'page', 'track'].reduce(
+                (stub, key) => ({
+                  ...stub,
+                  [key]: (...args: [string]) =>
+                    console.debug(`analytics.${key}`, ...args),
+                }),
+                {},
+              ) as AnalyticsBrowser)
+            : AnalyticsBrowser.load(
+                {
+                  writeKey,
+                  cdnURL: import.meta.env.PUBLIC_ANALYTICS_CDN_PROXY_URL,
+                },
+                {
+                  integrations: {
+                    'Segment.io': {
+                      apiHost:
+                        new URL(import.meta.env.PUBLIC_ANALYTICS_API_PROXY_URL)
+                          .host + '/v1',
+                    },
+                  },
+                },
+              ))
+
+        if (session.type === 'visitor') {
+          segment.identify(`v:${session.properties.id}`, {
+            origin: session.properties.origin,
+            origin_scope: 'browser',
+          })
+        }
+        if (session.type === 'user') {
+          segment.identify(`u:${session.properties.id}`, {
+            origin: session.properties.origin,
+            origin_scope: 'browser',
+          })
+        }
+
+        // default page tracking
+        segment.page()
+
+        // custom Pageview event
+        const eventProps = document.querySelector<HTMLMetaElement>(
+          'meta[name="analytics:event:properties"]',
+        )?.content
+
+        if (eventProps) {
+          const { disposition, tokenizationScore, ...props } =
+            JSON.parse(eventProps)
+          segment.track('Pageview', {
+            ...props,
+            ...flattenObj('disposition', disposition),
+            ...flattenObj('tokenizationScore', tokenizationScore),
+            ...userInfo(session),
+            origin:
+              session.type !== 'public' ? session.properties.origin : 'web',
+          })
+        }
+      })
+    </script>
   </body>
 </html>
-<script>
-  import { AnalyticsBrowser } from '@segment/analytics-next'
-  import type { Session } from '@lib/session'
-  import { session as sessionStore } from '@lib/session-store'
-
-  /**
-   * Given window and document, add or remove "selected" class to league nav
-   * links if current window location matches nav href. Note that the argument
-   * tests are more comprehensive to protect functions downstream of this.
-   *
-   * @param {Window} win - DOM window
-   * @param {Element} ctag - Node Element with data for canonical link
-   *
-   */
-  const shouldRewriteUrl = (win: Window, ctag: HTMLLinkElement) => {
-    return (
-      win instanceof Window &&
-      win.history instanceof History &&
-      win.location instanceof Location &&
-      ctag.href !== win.location.href &&
-      ctag.dataset.shouldRewrite === 'true'
-    )
-  }
-
-  /**
-   * Rewrite URL.
-   *
-   * @param {Window} win - DOM window
-   * @param {HTMLDocument} doc - DOM document
-   * @param {String} newUrl - Destination URL
-   *
-   */
-  const rewriteUrl = (win: Window, doc: Document, newUrl: string) =>
-    win.history.replaceState(null, doc.title, newUrl)
-
-  /**
-   * Given window and document, get canonical link tag and check if URL should be
-   * rewritten, in which case call rewriteUrl and updateLeagueNav.
-   *
-   * @param {Window} win - DOM window
-   * @param {HTMLDocument} doc - DOM document
-   *
-   */
-  const maybeRewriteUrl = (win: Window, doc: Document) => {
-    const canonicalTag = doc.querySelector(
-      'link[rel="canonical"]',
-    ) as HTMLLinkElement | null
-    if (!canonicalTag) return
-
-    if (shouldRewriteUrl(win, canonicalTag)) {
-      rewriteUrl(win, doc, canonicalTag.href)
-    }
-  }
-
-  maybeRewriteUrl(window, document)
-
-  const flattenObj = (key: string, obj?: {}) => {
-    return !obj
-      ? {}
-      : Object.entries(obj).reduce((x, [k, v]) => {
-          return {
-            ...x,
-            [`${key}.${k}`]: v,
-          }
-        }, {})
-  }
-
-  const userInfo = (session: Session) => {
-    if (session.type === 'user')
-      return {
-        user_id: session.properties.id,
-        visitor_id: session.properties.visitorId,
-      }
-    if (session.type === 'visitor')
-      return {
-        visitor_id: session.properties.id,
-      }
-    return {}
-  }
-
-  const session: Session = await fetch('/auth/session').then((r) => r.json())
-  sessionStore.set(session)
-
-  const writeKey = document.querySelector<HTMLMetaElement>(
-    'meta[name="analytics"]',
-  )?.content
-
-  const segment = (window.segment =
-    import.meta.env.DEV || !writeKey
-      ? (['identify', 'page', 'track'].reduce(
-          (stub, key) => ({
-            ...stub,
-            [key]: (...args: [string]) =>
-              console.debug(`analytics.${key}`, ...args),
-          }),
-          {},
-        ) as AnalyticsBrowser)
-      : AnalyticsBrowser.load(
-          {
-            writeKey,
-            cdnURL: import.meta.env.PUBLIC_ANALYTICS_CDN_PROXY_URL,
-          },
-          {
-            integrations: {
-              'Segment.io': {
-                apiHost:
-                  new URL(import.meta.env.PUBLIC_ANALYTICS_API_PROXY_URL).host +
-                  '/v1',
-              },
-            },
-          },
-        ))
-
-  if (session.type === 'visitor') {
-    segment.identify(`v:${session.properties.id}`, {
-      origin: session.properties.origin,
-      origin_scope: 'browser',
-    })
-  }
-  if (session.type === 'user') {
-    segment.identify(`u:${session.properties.id}`, {
-      origin: session.properties.origin,
-      origin_scope: 'browser',
-    })
-  }
-
-  // default page tracking
-  segment.page()
-
-  // custom Pageview event
-  const eventProps = document.querySelector<HTMLMetaElement>(
-    'meta[name="analytics:event:properties"]',
-  )?.content
-
-  if (eventProps) {
-    const { disposition, tokenizationScore, ...props } = JSON.parse(eventProps)
-    segment.track('Pageview', {
-      ...props,
-      ...flattenObj('disposition', disposition),
-      ...flattenObj('tokenizationScore', tokenizationScore),
-      ...userInfo(session),
-      origin: session.type !== 'public' ? session.properties.origin : 'web',
-    })
-  }
-</script>
