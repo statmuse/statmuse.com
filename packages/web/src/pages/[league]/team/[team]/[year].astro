@@ -58,6 +58,10 @@ if (!response) {
 const { bio, scoresAndSchedule, teamLeaders, standings, stats, playerGallery } =
   response
 
+if (!bio.hasStats) {
+  return Astro.redirect(`/${league}/team/${team}/schedule/${year}`)
+}
+
 const summary = bio.summaryNlg ? tokensToHtml(bio.summaryNlg) : undefined
 
 const title = `${year} ${bio.name} Team & Player Stats`
