@@ -17,7 +17,7 @@ const league = Astro.params.league as LeagueParam
 
 const onboardingExamples = await listOnboarding(
   league === 'fantasy' ? 'nfl' : league,
-  10
+  10,
 )
 const banner =
   onboardingExamples[Math.floor(Math.random() * onboardingExamples.length)]
@@ -95,7 +95,7 @@ const nbaExamples = [
       (q) => ({
         query: q,
         path: createAskPath({ domain: 'nba', query: q }),
-      })
+      }),
     ),
   ],
   [
@@ -181,7 +181,7 @@ const nflExamples = [
   [
     'Odds',
     ['NFL odds', 'Who are the favorites this week?', 'Chiefs spread'].map((q) =>
-      createAskPath({ domain: 'nfl', query: q })
+      createAskPath({ domain: 'nfl', query: q }),
     ),
   ],
   [
@@ -270,7 +270,7 @@ const mlbExamples = [
       (q) => ({
         query: q,
         path: createAskPath({ domain: 'mlb', query: q }),
-      })
+      }),
     ),
   ],
   [
@@ -359,7 +359,7 @@ const nhlExamples = [
       (q) => ({
         query: q,
         path: createAskPath({ domain: 'nhl', query: q }),
-      })
+      }),
     ),
   ],
   [

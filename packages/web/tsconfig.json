@@ -3,24 +3,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@lib/*": [
-        "lib/*"
-      ],
-      "@layouts/*": [
-        "src/layouts/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@styles/*": [
-        "src/styles/*"
-      ],
-      "@statmuse/core/*": [
-        "../core/src/*"
-      ],
-      "@statmuse/functions/*": [
-        "../functions/src/*"
-      ]
+      "@lib/*": ["lib/*"],
+      "@layouts/*": ["src/layouts/*"],
+      "@components/*": ["src/components/*"],
+      "@styles/*": ["src/styles/*"],
+      "@statmuse/core/*": ["../core/src/*"],
+      "@statmuse/functions/*": ["../functions/src/*"]
     },
     "jsx": "react-jsx",
     "jsxImportSource": "react"

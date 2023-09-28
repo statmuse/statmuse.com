@@ -1,179 +1,175 @@
-import { range } from 'd3-array';
-import { values } from 'd3-collection';
-import { mean, map } from 'lodash';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { findDOMNode } from 'react-dom';
-import { take, reduce, mean as meanCount } from 'lodash';
-import { get } from 'lodash/fp';
-import cx from 'classnames';
-import { select } from 'd3-selection';
-import { scaleLinear, scaleQuantize } from 'd3-scale';
+import { range } from 'd3-array'
+import { values } from 'd3-collection'
+import { mean, map } from 'lodash'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { findDOMNode } from 'react-dom'
+import { take, reduce, mean as meanCount } from 'lodash'
+import { get } from 'lodash/fp'
+import cx from 'classnames'
+import { select } from 'd3-selection'
+import { scaleLinear, scaleQuantize } from 'd3-scale'
 
 export const hexbinPlugin = () => {
-  let width = 1;
-  let height = 1;
-  let r;
-  let x = d3_hexbinX;
-  let y = d3_hexbinY;
-  let dx;
-  let dy;
+  let width = 1
+  let height = 1
+  let r
+  let x = d3_hexbinX
+  let y = d3_hexbinY
+  let dx
+  let dy
 
   function hexbin(points) {
-    const binsById = {};
+    const binsById = {}
 
-    points.forEach(function(point, i) {
-      const py = y.call(hexbin, point, i) / dy;
-      let pj = Math.round(py);
-      const px = x.call(hexbin, point, i) / dx - (pj & 1 ? 0.5 : 0);
-      let pi = Math.round(px);
-      const py1 = py - pj;
+    points.forEach(function (point, i) {
+      const py = y.call(hexbin, point, i) / dy
+      let pj = Math.round(py)
+      const px = x.call(hexbin, point, i) / dx - (pj & 1 ? 0.5 : 0)
+      let pi = Math.round(px)
+      const py1 = py - pj
 
       if (Math.abs(py1) * 3 > 1) {
-        const px1 = px - pi;
-        const pi2 = pi + (px < pi ? -1 : 1) / 2;
-        const pj2 = pj + (py < pj ? -1 : 1);
-        const px2 = px - pi2;
-        const py2 = py - pj2;
+        const px1 = px - pi
+        const pi2 = pi + (px < pi ? -1 : 1) / 2
+        const pj2 = pj + (py < pj ? -1 : 1)
+        const px2 = px - pi2
+        const py2 = py - pj2
         if (px1 * px1 + py1 * py1 > px2 * px2 + py2 * py2)
-          (pi = pi2 + (pj & 1 ? 1 : -1) / 2), (pj = pj2);
+          (pi = pi2 + (pj & 1 ? 1 : -1) / 2), (pj = pj2)
       }
 
-      const id = `${pi}-${pj}`;
-      let bin = binsById[id];
-      if (bin) bin.push(point);
+      const id = `${pi}-${pj}`
+      let bin = binsById[id]
+      if (bin) bin.push(point)
       else {
-        bin = binsById[id] = [point];
-        bin.i = pi;
-        bin.j = pj;
-        bin.x = (pi + (pj & 1 ? 1 / 2 : 0)) * dx;
-        bin.y = pj * dy;
+        bin = binsById[id] = [point]
+        bin.i = pi
+        bin.j = pj
+        bin.x = (pi + (pj & 1 ? 1 / 2 : 0)) * dx
+        bin.y = pj * dy
       }
-    });
+    })
 
-    return values(binsById);
+    return values(binsById)
   }
 
   function hexagon(radius) {
-    let x0 = 0;
-    let y0 = 0;
-    return d3_hexbinAngles.map(function(angle) {
-      const x1 = Math.sin(angle) * radius;
-      const y1 = -Math.cos(angle) * radius;
-      const dx = x1 - x0;
-      const dy = y1 - y0;
-      (x0 = x1), (y0 = y1);
-      return [dx, dy];
-    });
+    let x0 = 0
+    let y0 = 0
+    return d3_hexbinAngles.map(function (angle) {
+      const x1 = Math.sin(angle) * radius
+      const y1 = -Math.cos(angle) * radius
+      const dx = x1 - x0
+      const dy = y1 - y0
+      ;(x0 = x1), (y0 = y1)
+      return [dx, dy]
+    })
   }
 
-  hexbin.x = function(_) {
-    if (!arguments.length) return x;
-    x = _;
-    return hexbin;
-  };
+  hexbin.x = function (_) {
+    if (!arguments.length) return x
+    x = _
+    return hexbin
+  }
 
-  hexbin.y = function(_) {
-    if (!arguments.length) return y;
-    y = _;
-    return hexbin;
-  };
+  hexbin.y = function (_) {
+    if (!arguments.length) return y
+    y = _
+    return hexbin
+  }
 
-  hexbin.hexagon = function(radius) {
-    if (arguments.length < 1) radius = r;
-    return `m${hexagon(radius).join('l')}z`;
-  };
+  hexbin.hexagon = function (radius) {
+    if (arguments.length < 1) radius = r
+    return `m${hexagon(radius).join('l')}z`
+  }
 
-  hexbin.centers = function() {
-    const centers = [];
+  hexbin.centers = function () {
+    const centers = []
     for (
       let y = 0, odd = false, j = 0;
       y < height + r;
       y += dy, odd = !odd, ++j
     ) {
       for (let x = odd ? dx / 2 : 0, i = 0; x < width + dx / 2; x += dx, ++i) {
-        const center = [x, y];
-        center.i = i;
-        center.j = j;
-        centers.push(center);
+        const center = [x, y]
+        center.i = i
+        center.j = j
+        centers.push(center)
       }
     }
-    return centers;
-  };
+    return centers
+  }
 
-  hexbin.mesh = function() {
-    const fragment = hexagon(r)
-      .slice(0, 4)
-      .join('l');
+  hexbin.mesh = function () {
+    const fragment = hexagon(r).slice(0, 4).join('l')
     return hexbin
       .centers()
-      .map(function(p) {
-        return `M${p}m${fragment}`;
+      .map(function (p) {
+        return `M${p}m${fragment}`
       })
-      .join('');
-  };
+      .join('')
+  }
 
-  hexbin.size = function(_) {
-    if (!arguments.length) return [width, height];
-    (width = +_[0]), (height = +_[1]);
-    return hexbin;
-  };
+  hexbin.size = function (_) {
+    if (!arguments.length) return [width, height]
+    ;(width = +_[0]), (height = +_[1])
+    return hexbin
+  }
 
-  hexbin.radius = function(_) {
-    if (!arguments.length) return r;
-    r = +_;
-    dx = r * 2 * Math.sin(Math.PI / 3);
-    dy = r * 1.5;
-    return hexbin;
-  };
+  hexbin.radius = function (_) {
+    if (!arguments.length) return r
+    r = +_
+    dx = r * 2 * Math.sin(Math.PI / 3)
+    dy = r * 1.5
+    return hexbin
+  }
 
-  return hexbin.radius(1);
-};
+  return hexbin.radius(1)
+}
 
-var d3_hexbinAngles = range(0, 2 * Math.PI, Math.PI / 3);
-var d3_hexbinX = function(d) {
-  return d[0];
-};
-var d3_hexbinY = function(d) {
-  return d[1];
-};
+var d3_hexbinAngles = range(0, 2 * Math.PI, Math.PI / 3)
+var d3_hexbinX = function (d) {
+  return d[0]
+}
+var d3_hexbinY = function (d) {
+  return d[1]
+}
 
-export const standardDeviation = data => {
-  const avg = mean(data);
-  const diff = map(data, d => d - avg);
-  const sqDiff = map(diff, d => d * d);
-  const meanSqDiff = mean(sqDiff);
-  return Math.sqrt(meanSqDiff);
-};
+export const standardDeviation = (data) => {
+  const avg = mean(data)
+  const diff = map(data, (d) => d - avg)
+  const sqDiff = map(diff, (d) => d * d)
+  const meanSqDiff = mean(sqDiff)
+  return Math.sqrt(meanSqDiff)
+}
 
 export const calcDistance = (event, dom) => {
-  const { clientX, clientY } = event;
-  const { top: domY, left: domX } = dom.getBoundingClientRect();
-  return Math.sqrt(Math.pow(clientX - domX, 2) + Math.pow(clientY - domY, 2));
-};
-
-
+  const { clientX, clientY } = event
+  const { top: domY, left: domX } = dom.getBoundingClientRect()
+  return Math.sqrt(Math.pow(clientX - domX, 2) + Math.pow(clientY - domY, 2))
+}
 
 export default class Shotchart extends Component {
   static propTypes = {
     onlyThrees: PropTypes.bool,
     colorsString: PropTypes.string,
     plainTips: PropTypes.bool,
-  };
+  }
 
   static defaultProps = {
     onlyThrees: false,
     colorsString: '',
     plainTips: false,
-  };
+  }
 
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       index: props.series || 0,
-    };
+    }
 
-    this.state.all = this.crunchAll(props.widthAvailable, props.model);
+    this.state.all = this.crunchAll(props.widthAvailable, props.model)
   }
 
   /*
@@ -181,14 +177,14 @@ export default class Shotchart extends Component {
    */
 
   componentDidMount() {
-    const { widthAvailable, model } = this.props;
-    this.root = select(findDOMNode(this.refs.root));
-    this.container = select(findDOMNode(this.refs.container));
-    this.reset(widthAvailable, model);
+    const { widthAvailable, model } = this.props
+    this.root = select(findDOMNode(this.refs.root))
+    this.container = select(findDOMNode(this.refs.container))
+    this.reset(widthAvailable, model)
   }
 
   componentWillReceiveProps(nextProps) {
-    this.reset(nextProps.widthAvailable, nextProps.model);
+    this.reset(nextProps.widthAvailable, nextProps.model)
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -197,7 +193,7 @@ export default class Shotchart extends Component {
       nextProps.model !== this.props.model ||
       nextState.all !== this.state.all ||
       nextState.index !== this.state.index
-    );
+    )
   }
 
   /*
@@ -205,17 +201,17 @@ export default class Shotchart extends Component {
    */
 
   filteredModel(model) {
-    const { onlyThrees } = this.props;
-    const threeZones = [14, 13, 12, 11, 10];
+    const { onlyThrees } = this.props
+    const threeZones = [14, 13, 12, 11, 10]
     // only need to filter when onlyThrees is set
-    if (!onlyThrees) return model;
+    if (!onlyThrees) return model
     // return a new object with same data, except for non-three zones and shots filtered-out
     const series = model.series.map((series) => {
-      const zones = series.zones.filter((zone) => threeZones.includes(zone.Z));
-      const shots = series.shots.filter((shot) => threeZones.includes(shot.Z));
-      return { ...series, zones, shots };
-    });
-    return { ...model, series };
+      const zones = series.zones.filter((zone) => threeZones.includes(zone.Z))
+      const shots = series.shots.filter((shot) => threeZones.includes(shot.Z))
+      return { ...series, zones, shots }
+    })
+    return { ...model, series }
   }
 
   getZoneColor(zone) {
@@ -223,154 +219,150 @@ export default class Shotchart extends Component {
       this.state.all[this.props.minimal ? 0 : this.state.index].zones.filter(
         (z) => z.Z === zone.Z,
       )[0].FGPCT_Delta,
-    );
+    )
   }
 
   getZoneInfoStyle(zone, width, height) {
-    const zoneId = zone.Z;
-    const base = { position: 'absolute', borderColor: this.getZoneColor(zone) };
-    const itemWidth = 64; // TODO: Make this dynamic
-    const middle = width * 0.5 - itemWidth;
+    const zoneId = zone.Z
+    const base = { position: 'absolute', borderColor: this.getZoneColor(zone) }
+    const itemWidth = 64 // TODO: Make this dynamic
+    const middle = width * 0.5 - itemWidth
 
-    const baseline = height * 0.9;
+    const baseline = height * 0.9
 
     switch (zoneId) {
       case 1:
-        return { ...base, top: baseline, left: middle };
+        return { ...base, top: baseline, left: middle }
       case 2:
-        return { ...base, top: baseline, left: width * 0.7 - itemWidth };
+        return { ...base, top: baseline, left: width * 0.7 - itemWidth }
       case 3:
-        return { ...base, top: height * 0.65, left: middle };
+        return { ...base, top: height * 0.65, left: middle }
       case 4:
-        return { ...base, top: baseline, left: width * 0.3 - itemWidth };
+        return { ...base, top: baseline, left: width * 0.3 - itemWidth }
       case 5:
-        return { ...base, top: baseline, left: width * 0.85 - itemWidth };
+        return { ...base, top: baseline, left: width * 0.85 - itemWidth }
       case 6:
-        return { ...base, top: height * 0.6, left: width * 0.75 - itemWidth };
+        return { ...base, top: height * 0.6, left: width * 0.75 - itemWidth }
       case 7:
-        return { ...base, top: height * 0.4, left: middle };
+        return { ...base, top: height * 0.4, left: middle }
       case 8:
-        return { ...base, top: height * 0.6, left: width * 0.25 - itemWidth };
+        return { ...base, top: height * 0.6, left: width * 0.25 - itemWidth }
       case 9:
-        return { ...base, top: baseline, left: width * 0.15 - itemWidth };
+        return { ...base, top: baseline, left: width * 0.15 - itemWidth }
       case 10:
-        return { ...base, top: baseline, left: width * 0.925 - itemWidth };
+        return { ...base, top: baseline, left: width * 0.925 - itemWidth }
       case 11:
-        return { ...base, top: height * 0.3, left: width * 0.75 - itemWidth };
+        return { ...base, top: height * 0.3, left: width * 0.75 - itemWidth }
       case 12:
-        return { ...base, top: height * 0.2, left: middle };
+        return { ...base, top: height * 0.2, left: middle }
       case 13:
-        return { ...base, top: height * 0.3, left: width * 0.25 - itemWidth };
+        return { ...base, top: height * 0.3, left: width * 0.25 - itemWidth }
       case 14:
-        return { ...base, top: baseline, left: width * 0.075 - itemWidth };
+        return { ...base, top: baseline, left: width * 0.075 - itemWidth }
       case 15:
       default:
-        return { ...base, display: 'none' };
+        return { ...base, display: 'none' }
     }
   }
 
   getSize(widthOverride) {
-    const { widthAvailable, minimal } = this.props;
+    const { widthAvailable, minimal } = this.props
 
-    const width = widthOverride || (widthAvailable > 0 ? widthAvailable : 600);
-    const height = width * 0.67931937172;
+    const width = widthOverride || (widthAvailable > 0 ? widthAvailable : 600)
+    const height = width * 0.67931937172
 
     return {
       width,
       height,
-    };
+    }
   }
 
   colors() {
-    const { colorsString } = this.props;
-    const clrs = colorsString.split('|');
+    const { colorsString } = this.props
+    const clrs = colorsString.split('|')
     return [
       clrs[0] || '#7FDBFF',
       clrs[1] || '#66A2E8',
       clrs[2] || '#0064D9',
       clrs[3] || '#00326D',
       clrs[4] || '#001F3F',
-    ];
+    ]
   }
 
   getColor(x) {
-    const clrs = this.colors();
-    if (x >= 10) return clrs[4];
-    if (x >= 5) return clrs[3];
-    if (x <= -10) return clrs[0];
-    if (x <= -5) return clrs[1];
-    return clrs[2];
+    const clrs = this.colors()
+    if (x >= 10) return clrs[4]
+    if (x >= 5) return clrs[3]
+    if (x <= -10) return clrs[0]
+    if (x <= -5) return clrs[1]
+    return clrs[2]
   }
 
   crunchAll(width, model) {
-    const { minimal } = this.props;
-    const filteredModel = this.filteredModel(model);
-    const { cumulative, series } = filteredModel;
-    const { index } = this.state;
+    const { minimal } = this.props
+    const filteredModel = this.filteredModel(model)
+    const { cumulative, series } = filteredModel
+    const { index } = this.state
 
-    const i = parseInt(index);
+    const i = parseInt(index)
     if (minimal) {
       if (cumulative) {
-        const items = take(series, i + 1);
-        const target = series[i];
+        const items = take(series, i + 1)
+        const target = series[i]
         const upToIndex = reduce(items, (result, n) => {
-          return { shots: result.shots.concat(n.shots) };
-        });
-        return [this.crunch({ ...target, shots: upToIndex.shots }, width)];
+          return { shots: result.shots.concat(n.shots) }
+        })
+        return [this.crunch({ ...target, shots: upToIndex.shots }, width)]
       }
 
-      return [this.crunch(series[i], width)];
+      return [this.crunch(series[i], width)]
     }
 
     if (cumulative) {
-      let shots = [];
+      let shots = []
       return series.map((s) => {
-        shots = shots.concat(s.shots);
-        return this.crunch({ ...s, shots }, width);
-      });
+        shots = shots.concat(s.shots)
+        return this.crunch({ ...s, shots }, width)
+      })
     }
 
     return series.map((s) => {
-      return this.crunch(s, width);
-    });
+      return this.crunch(s, width)
+    })
   }
 
   crunch(series, widthOverride) {
-    const { widthAvailable, minimal } = this.props;
-    const { width, height } = this.getSize(widthOverride);
-    const { name, shots, zones, colors } = series;
+    const { widthAvailable, minimal } = this.props
+    const { width, height } = this.getSize(widthOverride)
+    const { name, shots, zones, colors } = series
 
-    const x = scaleLinear()
-      .domain([-250, 250])
-      .range([width, 0]);
+    const x = scaleLinear().domain([-250, 250]).range([width, 0])
 
-    const y = scaleLinear()
-      .domain([-50, 300])
-      .range([height, 0]);
+    const y = scaleLinear().domain([-50, 300]).range([height, 0])
 
     const hexbin = hexbinPlugin()
       .size([width, height])
       .radius(13)
       .x((d) => x(d.X))
-      .y((d) => y(d.Y));
+      .y((d) => y(d.Y))
 
-    const bins = hexbin(shots);
-    const counts = bins.map((b) => b.length);
-    const max = Math.max.apply(Math, counts);
-    const min = Math.min.apply(Math, counts);
-    const half = max / 2;
+    const bins = hexbin(shots)
+    const counts = bins.map((b) => b.length)
+    const max = Math.max.apply(Math, counts)
+    const min = Math.min.apply(Math, counts)
+    const half = max / 2
 
-    let stdDeviation = standardDeviation(counts);
-    stdDeviation = stdDeviation === 0 ? 1 : stdDeviation;
-    const mean = meanCount(counts);
-    const { length } = shots;
+    let stdDeviation = standardDeviation(counts)
+    stdDeviation = stdDeviation === 0 ? 1 : stdDeviation
+    const mean = meanCount(counts)
+    const { length } = shots
 
     const radius = scaleQuantize()
       .domain([
         mean / 8,
         mean + stdDeviation / Math.min(4, stdDeviation / mean),
       ])
-      .range([2, 6, 10, 14]);
+      .range([2, 6, 10, 14])
 
     return {
       name,
@@ -382,12 +374,12 @@ export default class Shotchart extends Component {
           ...s,
           x: x(s.X),
           y: y(s.Y),
-        };
+        }
       }),
       zones,
       colors,
       length,
-    };
+    }
   }
 
   /*
@@ -397,36 +389,36 @@ export default class Shotchart extends Component {
   reset(width, model) {
     this.setState({
       all: this.crunchAll(width, model),
-    });
+    })
   }
 
   highlight(hex) {
-    this.root.selectAll('[data-shotchart-zone-info]').classed('hidden', true);
+    this.root.selectAll('[data-shotchart-zone-info]').classed('hidden', true)
     // this.container.selectAll('.hexagon').classed(style.highlighted, false);
-    this.container.selectAll('.hexagon').classed('opacity-25', !!hex);
+    this.container.selectAll('.hexagon').classed('opacity-25', !!hex)
 
-    if (!hex) return;
+    if (!hex) return
 
-    const className = `.${hex.className.baseVal.match(/shot-zone-\d+/)[0]}`;
-    const zoneId = parseInt(className.split('-')[2]);
+    const className = `.${hex.className.baseVal.match(/shot-zone-\d+/)[0]}`
+    const zoneId = parseInt(className.split('-')[2])
 
-    this.container.selectAll(className).classed('opacity-25', false);
+    this.container.selectAll(className).classed('opacity-25', false)
     // this.container.selectAll(className).classed(style.highlighted, true);
-    const zoneInfo = select(findDOMNode(this.refs[`zoneInfo.${zoneId}`]));
-    if (zoneInfo) zoneInfo.classed('hidden', false);
+    const zoneInfo = select(findDOMNode(this.refs[`zoneInfo.${zoneId}`]))
+    if (zoneInfo) zoneInfo.classed('hidden', false)
   }
 
   nearestHexagon(event) {
-    const hexagonNodes = this.refs.container.querySelectorAll('.hexagon');
+    const hexagonNodes = this.refs.container.querySelectorAll('.hexagon')
 
     return reduce(
       hexagonNodes,
       (result, node) => {
-        const distance = calcDistance(event, node);
-        return distance < result.distance ? { node, distance } : result;
+        const distance = calcDistance(event, node)
+        return distance < result.distance ? { node, distance } : result
       },
       { node: null, distance: Infinity },
-    );
+    )
   }
 
   /*
@@ -434,19 +426,19 @@ export default class Shotchart extends Component {
    */
 
   onMouseMove(event) {
-    const hexNode = this.nearestHexagon(event).node;
-    this.highlight(hexNode);
+    const hexNode = this.nearestHexagon(event).node
+    this.highlight(hexNode)
   }
 
   onMouseOut(event) {
-    this.highlight(null);
+    this.highlight(null)
   }
 
   onSeriesChange(e) {
     if (this.state.index != e.target.value) {
       this.setState({
         index: e.target.value,
-      });
+      })
     }
   }
 
@@ -574,11 +566,11 @@ export default class Shotchart extends Component {
           d="M516.75 1213.344H528"
         />
       </svg>
-    );
+    )
   }
 
   renderLegend() {
-    const clrs = this.colors();
+    const clrs = this.colors()
     return (
       <svg
         x="0px"
@@ -624,13 +616,13 @@ export default class Shotchart extends Component {
           -
         </text>
       </svg>
-    );
+    )
   }
 
   render() {
-    const colors = this.colors();
-    const { minimal, settings, onlyThrees, plainTips, model } = this.props;
-    const { width, height } = this.getSize();
+    const colors = this.colors()
+    const { minimal, settings, onlyThrees, plainTips, model } = this.props
+    const { width, height } = this.getSize()
     const {
       hexbin,
       bins,
@@ -643,10 +635,10 @@ export default class Shotchart extends Component {
       length,
       min,
       max,
-    } = this.state.all[minimal ? 0 : this.state.index];
-    const filteredModel = this.filteredModel(model);
+    } = this.state.all[minimal ? 0 : this.state.index]
+    const filteredModel = this.filteredModel(model)
 
-    const showLegend = true; // !minimal;
+    const showLegend = true // !minimal;
 
     return (
       <div className="bg-white">
@@ -809,6 +801,6 @@ export default class Shotchart extends Component {
             : ''}
         </div>
       </div>
-    );
+    )
   }
 }

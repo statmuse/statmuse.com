@@ -41,7 +41,7 @@ type TableRenderTarget = {
   }[]
   getRow: (
     price: ExtendedPrice,
-    getPriceCell: (value: unknown) => Cell
+    getPriceCell: (value: unknown) => Cell,
   ) => Record<string, Cell>
 }
 
@@ -76,7 +76,7 @@ const renderTargetMap: Record<string, TableRenderTarget> = {
     ],
     getRow: (
       { close, frequency, high, low, open, timeframe },
-      getPriceCell
+      getPriceCell,
     ) => ({
       DATE: timeframeCell(timeframe, frequency),
       OPEN: getPriceCell(open),
@@ -110,7 +110,7 @@ const renderTargetMap: Record<string, TableRenderTarget> = {
     ],
     getRow: (
       { close, frequency, timeframe, unitsOutstanding, redacted },
-      getPriceCell
+      getPriceCell,
     ) => ({
       DATE: timeframeCell(timeframe, frequency),
       CLOSE: getPriceCell(close),
@@ -134,7 +134,7 @@ const emptyCell = () => ({
 const timeframeCell = (timeframe: Timeframe, frequency: Frequency) => ({
   value: timeframe.timestamp ?? timeframe.endTimestamp,
   display: frequency.getDateDisplay(
-    timeframe.timestamp ?? timeframe.endTimestamp ?? ''
+    timeframe.timestamp ?? timeframe.endTimestamp ?? '',
   ),
 })
 
@@ -142,7 +142,7 @@ const priceCell = (
   { isDefaultQuoteAsset, quoteAsset }: AssetPair,
   formatString: string,
   value: unknown,
-  redacted: boolean
+  redacted: boolean,
 ) => {
   if (value === null && redacted) return { display: '' }
   if (!value) return emptyCell()
@@ -167,7 +167,7 @@ const mapGridForSingleAsset = (
   priceFormatString: string,
   renderTargetName: string,
   { prices, assetPair, redacted }: AssetPriceData,
-  notableTimestamps: Timeframe[]
+  notableTimestamps: Timeframe[],
 ) => {
   const renderTarget = (() => {
     const renderTargetKey = renderTargetName?.toLowerCase()
@@ -197,7 +197,7 @@ const mapGridForSingleAsset = (
   // leverage something like local storage to prevent making that call repeatedly.
   if (assetPair.baseAsset.name?.toUpperCase() === 'BITCOIN') {
     const outstandingColumnIndex = columns.findIndex(
-      (x) => x.rowItemKey === 'OUTSTANDING'
+      (x) => x.rowItemKey === 'OUTSTANDING',
     )
 
     if (outstandingColumnIndex >= 0) {
@@ -213,7 +213,7 @@ const mapGridForSingleAsset = (
     columns,
     rows: orderBy(
       (x: Price) => x.timeframe.timestamp ?? x.timeframe.endTimestamp,
-      'desc'
+      'desc',
     )(prices)
       .map((price, i) => {
         if (redacted && i > 25) {
@@ -236,7 +236,7 @@ const mapGridForSingleAsset = (
       .map((price) => {
         const row = renderTarget.getRow(
           { ...price, frequency, assetPair, redacted },
-          getPriceCell
+          getPriceCell,
         )
 
         if (includeVolume) {
@@ -268,7 +268,7 @@ const groupPricesByTimestamp = (assets: AssetPriceData[]) =>
         assetPair: {
           baseAsset: { symbol },
         },
-      }
+      },
     ) =>
       prices.reduce((byTimestamp, price) => {
         const timestamp = getTimestamp(price)
@@ -292,7 +292,7 @@ const groupPricesByTimestamp = (assets: AssetPriceData[]) =>
           },
         }
       }, byTimestamp),
-    {}
+    {},
   )
 
 type TimestampPriceMap = Record<string, object> &
@@ -303,7 +303,7 @@ type TimestampPriceMap = Record<string, object> &
 const mapValuesIntoGridRow = (
   assets: TimestampPriceMap[],
   frequency: Frequency,
-  priceFormatString: string
+  priceFormatString: string,
 ) =>
   map((priceMap: TimestampPriceMap) =>
     reduce(
@@ -317,12 +317,12 @@ const mapValuesIntoGridRow = (
             assetPair,
             priceFormatString,
             priceMap[symbol],
-            redacted
+            redacted,
           ),
         }
       },
-      { DATE: timeframeCell(priceMap.timeframe, frequency) }
-    )(assets)
+      { DATE: timeframeCell(priceMap.timeframe, frequency) },
+    )(assets),
   )
 
 const scrubValuesAfterN =
@@ -360,7 +360,7 @@ const scrubValuesAfterN =
 const mapGridForMultipleAssets = (
   frequency: Frequency,
   priceFormatString: string,
-  assets: AssetPriceData[]
+  assets: AssetPriceData[],
 ) => ({
   columns: [
     {
@@ -378,7 +378,7 @@ const mapGridForMultipleAssets = (
         title: name,
         display: symbol,
         type: 'string',
-      })
+      }),
     ),
   ],
   rows: pipe(
@@ -387,8 +387,8 @@ const mapGridForMultipleAssets = (
     mapValuesIntoGridRow(
       assets as TimestampPriceMap[],
       frequency,
-      priceFormatString
-    )
+      priceFormatString,
+    ),
   )(assets),
 })
 
@@ -406,7 +406,7 @@ const grid =
         priceFormatString,
         renderTarget,
         assets[0],
-        notableTimestamps
+        notableTimestamps,
       )
 
 grid.rows = orderBy('DATE.value', 'desc')(grid.rows)

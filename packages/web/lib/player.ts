@@ -25,7 +25,7 @@ export const getPlayerBio = async (domain: GameraDomain, player: string) => {
 
 export const getPlayerProfile = async (
   domain: GameraDomain,
-  player: string
+  player: string,
 ) => {
   try {
     const playerId = parsePlayerId(player)

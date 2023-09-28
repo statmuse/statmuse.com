@@ -29,10 +29,10 @@ const conversationToken = Astro.props.conversationToken
 
 const response = Astro.props.response
 const summary = tokensToHtml(
-  response.visual.summaryTokens as GameraToken[] | undefined
+  response.visual.summaryTokens as GameraToken[] | undefined,
 )
 const showSummary = !!response.visual.summaryTokens?.find(
-  (t) => t.type === 'inferred'
+  (t) => t.type === 'inferred',
 )
 const ignoreGenericGrids =
   response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' &&
@@ -43,12 +43,12 @@ const ignoreGenericGrids =
       d.type === 'mlbHistoricalBoxScore' ||
       d.type === 'nbaHistoricalBoxScore' ||
       d.type === 'nflHistoricalBoxScore' ||
-      d.type === 'nhlHistoricalBoxScore'
+      d.type === 'nhlHistoricalBoxScore',
   )
 const details =
   response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
     ? response.visual.detail?.filter((d) =>
-        ignoreGenericGrids ? d.type !== 'genericGrids' : true
+        ignoreGenericGrids ? d.type !== 'genericGrids' : true,
       )
     : undefined
 ---

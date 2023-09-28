@@ -67,7 +67,7 @@ let ticks: number[] | string[] = (
     ? Astro.props.scaleLinear?.ticks
       ? Astro.props.scaleLinear.ticks.apply(
           Astro.props.scaleLinear,
-          tickArguments
+          tickArguments,
         )
       : Astro.props.scaleBand?.domain()
     : Astro.props.tickValues
@@ -80,7 +80,7 @@ if (!Astro.props.tickFormat) {
   if (Astro.props.scaleLinear?.tickFormat) {
     tickFormat = Astro.props.scaleLinear.tickFormat.apply(
       Astro.props.scaleLinear,
-      tickArguments
+      tickArguments,
     ) as (d: number | string) => string
   } else {
     tickFormat = (x) => {

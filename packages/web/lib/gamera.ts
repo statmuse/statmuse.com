@@ -12,7 +12,7 @@ export async function ask(
     conversationToken?: string
     preferredDomain?: string
   },
-  context: Context
+  context: Context,
 ) {
   const league = options.league
   const query = options.query
@@ -48,7 +48,7 @@ export async function fantasyAsk(
     query: string
     conversationToken?: string
   },
-  context: Context
+  context: Context,
 ) {
   const query = options.query
 
@@ -61,7 +61,7 @@ export async function fantasyAsk(
   }
 
   const requestUrl = `${gameraApiUrl}nfl/fantasy/answer?${new URLSearchParams(
-    params
+    params,
   ).toString()}`
 
   try {

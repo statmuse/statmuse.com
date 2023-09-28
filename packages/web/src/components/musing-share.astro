@@ -26,7 +26,7 @@ const { url } = Astro.props
     <li class="mx-4 py-2 border-b border-[#e4e4e4]">
       <a
         href={`https://www.facebook.com/sharer/sharer.php?${new URLSearchParams(
-          { u: url }
+          { u: url },
         ).toString()}`}
         target="_blank"
         rel="noopener"
@@ -40,7 +40,7 @@ const { url } = Astro.props
             src="/share-icons/facebook-dark.svg"
           />
         </div>
-        Facebook
+         Facebook
       </a>
     </li>
     <li class="mx-4 py-2 border-b border-[#e4e4e4]">
@@ -60,7 +60,7 @@ const { url } = Astro.props
             src="/share-icons/twitter-dark.svg"
           />
         </div>
-        Twitter
+         Twitter
       </a>
     </li>
     <li class="mx-4 py-2">
@@ -71,7 +71,7 @@ const { url } = Astro.props
         <div class="w-8 h-5 flex justify-center items-center pr-2 relative">
           <img class="max-h-full" src="/share-icons/link.svg" alt="share" />
         </div>
-        Copy Link
+         Copy Link
       </a>
       <input
         class="absolute right-[99999px]"
@@ -93,7 +93,7 @@ const { url } = Astro.props
   document.querySelectorAll('[data-dropdown] label').forEach((el) => {
     el.addEventListener('click', () => {
       const input = document.querySelector(
-        '[data-dropdown] input:checked'
+        '[data-dropdown] input:checked',
       ) as HTMLInputElement | null
       if (input && input.parentNode !== el.parentElement) {
         input.checked = false
@@ -116,7 +116,7 @@ const { url } = Astro.props
     })
   document
     .querySelectorAll<HTMLAnchorElement>(
-      '[data-track-click="Click Musing Share Link"]'
+      '[data-track-click="Click Musing Share Link"]',
     )
     .forEach((el) => {
       el.addEventListener('click', () => {

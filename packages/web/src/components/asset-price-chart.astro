@@ -66,7 +66,7 @@ const getSinglePriceSeries = (
   preferCandlestick: boolean,
   renderTarget: RenderTarget,
   includeVolume: boolean,
-  notableTimestamps: Timeframe[]
+  notableTimestamps: Timeframe[],
 ) => {
   const includeCandlestick =
     assetPair?.isDefaultQuoteAsset && renderTarget.supportsCandlestick
@@ -224,7 +224,7 @@ const mapChartOptions = (
   assets: Asset[],
   preferCandlestick: boolean,
   renderTargetName: string,
-  notableTimestamps: Timeframe[]
+  notableTimestamps: Timeframe[],
 ): Options => {
   const includeVolume =
     (assets.length === 1 && assets[0].prices?.some((price) => price.volume)) ??
@@ -249,7 +249,7 @@ const mapChartOptions = (
           preferCandlestick,
           renderTarget,
           includeVolume,
-          notableTimestamps
+          notableTimestamps,
         )
       : getMultiPriceSeries(assets)
 
@@ -327,7 +327,7 @@ const options = mapChartOptions(
   assets,
   preferCandlestick,
   renderTargetName,
-  notableTimestamps
+  notableTimestamps,
 )
 ---
 
@@ -380,7 +380,7 @@ const options = mapChartOptions(
         ]),
         lang: { numericSymbols: ['k', 'M', 'B', 'T', 'P', 'E'] },
       },
-    ])
+    ]),
   )([Highcharts])
 
   const chart = document.getElementById('chart') as HTMLElement
@@ -389,7 +389,7 @@ const options = mapChartOptions(
     const renderTargetName = chart.dataset.renderTarget as string
     const color = chart.dataset.color as string
     const options = JSON.parse(
-      chart.dataset.options as string
+      chart.dataset.options as string,
     ) as Highcharts.Options
 
     const renderTargetMap: Record<string, RenderTarget> = {
@@ -426,36 +426,36 @@ const options = mapChartOptions(
 
     const candleTooltip = (
       { assetPair, close, high, low, open, series }: Asset,
-      numericFormatter: NumericFormatter
+      numericFormatter: NumericFormatter,
     ) => {
       const seriesName = series?.name?.replace('(Candlestick)', '').trim()
       return `<span style="color:${series?.color}">${seriesName}</span>: <br/>\
         Open: <b>${formatPriceForTooltip(
           open,
           assetPair!,
-          numericFormatter
+          numericFormatter,
         )}</b> <br/>\
         High: <b>${formatPriceForTooltip(
           high,
           assetPair!,
-          numericFormatter
+          numericFormatter,
         )}</b> <br/>\
         Low: <b>${formatPriceForTooltip(
           low,
           assetPair!,
-          numericFormatter
+          numericFormatter,
         )}</b> <br/>\
         Close: <b>${formatPriceForTooltip(
           close,
           assetPair!,
-          numericFormatter
+          numericFormatter,
         )}</b>`
     }
 
     const formatPriceForTooltip = (
       value: unknown,
       assetPair: AssetPair,
-      numericFormatter: NumericFormatter
+      numericFormatter: NumericFormatter,
     ) => {
       return getTooltipText(value, assetPair, numericFormatter)
     }
@@ -467,7 +467,7 @@ const options = mapChartOptions(
 
     const lineTooltip = (
       { assetPair, series, y }: Asset,
-      numericFormatter: NumericFormatter
+      numericFormatter: NumericFormatter,
     ) => {
       const seriesName = series?.name?.replace('(Line)', '').trim()
       return `<span style="color:${
@@ -475,7 +475,7 @@ const options = mapChartOptions(
       }">${seriesName}</span>: <b>${formatPriceForTooltip(
         y,
         assetPair!,
-        numericFormatter
+        numericFormatter,
       )}</b> <br/>`
     }
 
@@ -490,7 +490,7 @@ const options = mapChartOptions(
     const getTooltipText = (
       value: unknown,
       { isDefaultQuoteAsset, quoteAsset }: AssetPair,
-      numericFormatter: NumericFormatter
+      numericFormatter: NumericFormatter,
     ) => {
       if (value) {
         const formattedNumericValue = numericFormatter(value)
@@ -512,7 +512,7 @@ const options = mapChartOptions(
             // @ts-ignore
             return [this.point.xTooltipDisplay].concat(
               // @ts-ignore
-              this.point.text ? [this.point.text] : []
+              this.point.text ? [this.point.text] : [],
             )
           }
 
@@ -542,7 +542,7 @@ const options = mapChartOptions(
                       return `${point.series.name}: ${point.y}`
                   }
                 })
-              : []
+              : [],
           )
         },
         split: true,

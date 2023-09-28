@@ -1140,7 +1140,7 @@ const leagueSets = [
 ]
 
 const { exampleSets } = leagueSets.find(
-  (x) => x.league.toLowerCase() === league
+  (x) => x.league.toLowerCase() === league,
 ) || { exampleSets: [] }
 
 Caching.swr(Astro)

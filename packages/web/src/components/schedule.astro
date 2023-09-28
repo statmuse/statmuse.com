@@ -29,7 +29,7 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
     detail.completed.map((d) => ({ ...d, type: 'completed' })),
     detail.inProgress.map((d) => ({ ...d, type: 'inProgress' })),
     detail.scheduled.map((d) => ({ ...d, type: 'scheduled' })),
-  ])
+  ]),
 )
 ---
 

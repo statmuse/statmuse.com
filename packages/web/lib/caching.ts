@@ -15,7 +15,7 @@ const DEFAULT_REVALIDATE_PERIOD = 86400
 
 export const swr = (
   astro: Astro,
-  options?: { maxage?: number; revalidate?: number }
+  options?: { maxage?: number; revalidate?: number },
 ) => {
   astro.response.headers.set(
     'Cache-Control',
@@ -23,7 +23,7 @@ export const swr = (
       options?.maxage ?? DEFAULT_MAX_AGE
     }, stale-while-revalidate=${
       options?.revalidate ?? DEFAULT_REVALIDATE_PERIOD
-    }`
+    }`,
   )
 }
 

@@ -32,7 +32,7 @@ type PaginationOptions = {
 export const paginate = (
   asks: AskForIndex[] | FinanceAskForIndex[],
   { n, p, page }: SearchParams,
-  overflow: boolean
+  overflow: boolean,
 ): PaginationOptions => {
   if (asks.length === 0) return {}
 
@@ -81,7 +81,7 @@ export const paginate = (
 const isAsk = (ask: AskForIndex | FinanceAskForIndex): ask is AskForIndex =>
   'answer_html' in ask
 const isFinanceAsk = (
-  ask: AskForIndex | FinanceAskForIndex
+  ask: AskForIndex | FinanceAskForIndex,
 ): ask is FinanceAskForIndex => !isAsk(ask)
 
 export const getNlg = (ask: AskForIndex | FinanceAskForIndex) =>

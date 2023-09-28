@@ -95,7 +95,7 @@ export async function ask(
     query: string
     conversationToken?: string
   },
-  context: Context
+  context: Context,
 ) {
   const query = options.query
 
@@ -108,7 +108,7 @@ export async function ask(
   }
 
   const requestUrl = `${kanedamaApiUrl}answer?${new URLSearchParams(
-    params
+    params,
   ).toString()}`
 
   console.log(requestUrl)
@@ -181,7 +181,7 @@ export async function getAssetPriceData(options: {
 export const getFrequencyKey = (
   frequencyName: string | undefined,
   startTimestamp: string,
-  endTimestamp: string
+  endTimestamp: string,
 ) => {
   // For backwards compatibility, allow server to introduce new frequencies
   // which aren't yet supported in the client. Fallback to time-based frequency
@@ -206,14 +206,14 @@ export const calculateAvgReturns = (assets: Asset[]) =>
       return update(
         price.timeframe.timestamp ?? price.timeframe.endTimestamp!,
         (n) => (n ? [...n, price] : [price]),
-        obj
+        obj,
       )
     }, {}),
     filter((x) => x.length === assets.length),
     map((x) => ({
       closePercentChange: meanBy('closePercentChange', x),
       timeframe: x[0].timeframe,
-    }))
+    })),
   )(assets)
 
 export const createCompositeIndex = (assets: Asset[]) => ({
@@ -237,7 +237,7 @@ export const maybeIncludeComposite = (assets: Asset[]) => {
       {
         assetPair: { isDefaultQuoteAsset: true, quoteAsset: { symbol: 'USD' } },
       },
-      assets
+      assets,
     )
   ) {
     const compositeIndex = createCompositeIndex(assets)
@@ -261,7 +261,7 @@ export const addTimeframeDisplay = (frequency: Frequency) => (x: Price) => ({
   timeframe: {
     ...x.timeframe,
     display: frequency.getDateDisplay(
-      x.timeframe.timestamp ?? x.timeframe.endTimestamp!
+      x.timeframe.timestamp ?? x.timeframe.endTimestamp!,
     ),
   },
 })

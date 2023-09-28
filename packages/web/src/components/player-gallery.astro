@@ -18,7 +18,7 @@ const { league, players } = Astro.props
 const leagues = ['All', 'NBA', 'NFL', 'NHL', 'MLB', 'PGA']
 
 const alphabet = [...Array(26)].map((_x, i) =>
-  String.fromCharCode(i + 65).toLowerCase()
+  String.fromCharCode(i + 65).toLowerCase(),
 )
 
 const groupedByFirstLetterLastName = players.reduce(
@@ -33,7 +33,7 @@ const groupedByFirstLetterLastName = players.reduce(
 
     return acc
   },
-  {}
+  {},
 )
 
 const colors = {
@@ -184,7 +184,7 @@ const meta = {
                 ))}
               </>
             )
-          }
+          },
         )
       }
     </div>
@@ -195,7 +195,7 @@ const meta = {
       All illustrations and content on this site &copy; 2016-{
         new Date().getFullYear()
       } StatMuse, Inc.<br />
-      Unauthorized duplication or usage prohibited.
+       Unauthorized duplication or usage prohibited.
     </p>
   </Container>
 </Layout>

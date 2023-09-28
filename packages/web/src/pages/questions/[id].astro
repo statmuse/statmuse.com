@@ -7,7 +7,7 @@ const question = await getQuestionByIdOrFriendlyId(id)
 
 if (question && question.is_successful) {
   return Astro.redirect(
-    createAskPath({ domain: question.domain, query: question.text })
+    createAskPath({ domain: question.domain, query: question.text }),
   )
 }
 

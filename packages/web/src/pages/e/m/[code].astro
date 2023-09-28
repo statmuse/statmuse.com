@@ -102,25 +102,25 @@ const meta = {
         StatMuse gives fans personalized stats, stories and original content
         narrated by more than 20 NFL player voices.
         <br />
-        Available on{' '}
+         Available on{' '}
         <a
           class="text-inherit underline"
           href="https://itunes.apple.com/us/app/statmuse/id1234654160?mt=8"
         >
           iOS
         </a>
-        ,{' '}
+         ,{' '}
         <a
           class="text-inherit underline"
           href="https://www.statmuse.com/alexa/"
         >
           Alexa
         </a>
-        , and{' '}
+         , and{' '}
         <a class="text-inherit underline" href="https://labs.statmuse.com">
           web
         </a>
-        .
+         .
       </p>
     </footer>
   </div>
@@ -129,7 +129,7 @@ const meta = {
   window.segment.track('Musing - Web View', { id, text: query })
 
   const el = document.querySelector(
-    '[data-track-click="Musing - Click App Store link"]'
+    '[data-track-click="Musing - Click App Store link"]',
   )
   el.addEventListener('click', () => {
     window.segment.track(el.dataset.trackClick, { id, text: query })

@@ -99,7 +99,7 @@ const details =
             const frequencyKey = getFrequencyKey(
               frequencyName,
               detail.assetPriceData.startTimestamp,
-              detail.assetPriceData.endTimestamp
+              detail.assetPriceData.endTimestamp,
             )
             const frequency = frequencyMap[frequencyKey]
             const responses = await Promise.all(
@@ -108,8 +108,8 @@ const details =
                   frequency: frequency.name as FrequencyKey,
                   ...p,
                   ...props,
-                })
-              )
+                }),
+              ),
             )
 
             const assets = responses
@@ -119,7 +119,7 @@ const details =
                 const { assetPair, prices, redacted } = r
                 const sortedPrices = sortBy(
                   (p) => p.timeframe.timestamp ?? p.timeframe.endTimestamp,
-                  prices
+                  prices,
                 )
                 const initialClose = getInitialClose(sortedPrices)
                 return {
@@ -129,9 +129,9 @@ const details =
                   prices: map(
                     pipe(
                       addTimeframeDisplay(frequency),
-                      addClosePercentChange(initialClose)
+                      addClosePercentChange(initialClose),
                     ),
-                    sortedPrices
+                    sortedPrices,
                   ) as unknown as Price[],
                 }
               })
@@ -156,10 +156,10 @@ const details =
                       pipe(
                         map((x) => Math.abs(x)),
                         filter((x) => x > 0),
-                        min
+                        min,
                       )([value, open, high, low, close]),
-                    Number.MAX_VALUE
-                  )
+                    Number.MAX_VALUE,
+                  ),
                 )(assets)
 
                 return `0,0.${'0'.repeat(getDecimals(minValue))}`

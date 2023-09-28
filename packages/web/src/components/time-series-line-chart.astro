@@ -49,7 +49,7 @@ const options = {
   const chart = document.getElementById('time-series-line-chart') as HTMLElement
   if (chart) {
     const options = JSON.parse(
-      chart?.dataset.options as string
+      chart?.dataset.options as string,
     ) as Highcharts.Options
 
     Highcharts.chart('time-series-line-chart', options)

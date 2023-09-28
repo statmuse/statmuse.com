@@ -58,8 +58,8 @@ const categoryMaxLength = Math.max.apply(
   null,
   categories.map((cat) =>
     // @ts-expect-error
-    cat.nameLines ? cat.nameLines.join('<br>').length : cat.length
-  )
+    cat.nameLines ? cat.nameLines.join('<br>').length : cat.length,
+  ),
 )
 
 const showXAxis = categoryWidth > 50
@@ -94,8 +94,8 @@ const x0 = scaleBand()
     categories.map((cat, index) =>
       cat.nameLines
         ? `${index}|${cat.nameLines.join('<br>')}`
-        : `${index}|${cat}`
-    )
+        : `${index}|${cat}`,
+    ),
   )
 
 const x1 = scaleBand()
@@ -113,7 +113,7 @@ const series = Astro.props.model.series.map((s) => {
     ...s,
     float: some(
       s.data.filter((d) => d.y).map((d) => d.y.toString()),
-      (s) => s.indexOf('.') > -1
+      (s) => s.indexOf('.') > -1,
     ),
   }
 })

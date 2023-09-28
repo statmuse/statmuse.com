@@ -181,7 +181,7 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                 const textColumnStyles = getTextColumnStyles(col)
                 const textColumnHeaderStyles = getTextColumnHeaderStyles(col)
                 const hasImage = data.rows.some(
-                  (row) => row[col.rowItemKey].imageUrl
+                  (row) => row[col.rowItemKey].imageUrl,
                 )
 
                 return (
@@ -282,7 +282,7 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                 const href = entity
                   ? kanedama
                     ? getUrlForEntityKanedama(
-                        entity as unknown as KanedamaEntity
+                        entity as unknown as KanedamaEntity,
                       )
                     : getUrlForEntityGamera(entity)
                   : undefined

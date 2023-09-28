@@ -83,7 +83,7 @@ const tabs = Astro.props.titles.map((tab) => ({
     if (!tabsContainer) continue
 
     const tabs = tabsContainer.querySelectorAll(
-      ':scope > .tab'
+      ':scope > .tab',
     ) as unknown as HTMLElement[]
 
     tabs.forEach((tab) => {

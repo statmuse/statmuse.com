@@ -49,7 +49,7 @@ const options = {
   })),
   xAxis: {
     categories: chart.categories.map((category) =>
-      category.nameLines.join('<br/>')
+      category.nameLines.join('<br/>'),
     ),
   },
   yAxis: { visible: false },
@@ -73,11 +73,11 @@ const options = {
   OfflineExporting(Highcharts)
 
   const chart = document.getElementById(
-    'categorical-column-chart'
+    'categorical-column-chart',
   ) as HTMLElement
   if (chart) {
     const options = JSON.parse(
-      chart?.dataset.options as string
+      chart?.dataset.options as string,
     ) as Highcharts.Options
 
     Highcharts.chart('categorical-column-chart', options)

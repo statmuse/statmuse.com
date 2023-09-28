@@ -54,7 +54,7 @@ const getTeamFranchiseProfilePath = ({
 }: GameraEntity) =>
   allowedTeamProfileDomains.includes(domain)
     ? `/${domain.toLowerCase()}/team/${getSlug(display, id)}${getQuery(
-        parameters ?? {}
+        parameters ?? {},
       )}`
     : null
 
@@ -72,11 +72,11 @@ const getTeamSeasonProfilePath = ({
     get(parameters, 'seasonType') === 'postseason'
       ? `/${domain.toLowerCase()}/team/${teamSeasonSlug(
           display,
-          id
+          id,
         )}/schedule/${teamSeasonYear(id)}`
       : `/${domain.toLowerCase()}/team/${teamSeasonSlug(
           display,
-          id
+          id,
         )}/${teamSeasonYear(id)}`
 
   return path + getQuery(parameters ?? {})
@@ -89,7 +89,7 @@ const getGameBoxScorePath = ({
   parameters,
 }: GameraEntity) =>
   `/${domain.toLowerCase()}/game/${getSlug(display, id)}${getQuery(
-    parameters ?? {}
+    parameters ?? {},
   )}`
 
 const getPlayerStatsAskPath = ({ display, parameters }: GameraEntity) => {

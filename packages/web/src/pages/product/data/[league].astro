@@ -1187,7 +1187,7 @@ const data = [
 ]
 
 const { coverage, glossaryItems } = data.find(
-  (x) => x.league.toLowerCase() === league
+  (x) => x.league.toLowerCase() === league,
 ) || { coverage: [], glossaryItems: [] }
 
 Caching.swr(Astro)

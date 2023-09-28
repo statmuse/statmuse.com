@@ -1,5 +1,5 @@
 ---
-import { createAskPath} from "@statmuse/core/path"
+import { createAskPath } from '@statmuse/core/path'
 import { getLink } from '@statmuse/core/links'
 
 const code = Astro.params.code as string
@@ -12,7 +12,7 @@ if (link.linkable_type === 'ask' && link.is_in_index) {
     createAskPath({
       domain: link.is_fantasy_query ? 'fantasy' : link.domain,
       query: link.query,
-    })
+    }),
   )
 }
 
@@ -21,7 +21,7 @@ if (link.linkable_type === 'finance_ask' && link.is_in_index) {
     createAskPath({
       domain: 'money',
       query: link.query,
-    })
+    }),
   )
 }
 

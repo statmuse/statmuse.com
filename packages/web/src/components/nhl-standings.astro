@@ -21,7 +21,7 @@ const groups = [
 if (
   detail.topic?.group?.startsWith('Western') ||
   westernStandings.find((s) =>
-    s.teams.find((t) => t.name === detail.topic?.team)
+    s.teams.find((t) => t.name === detail.topic?.team),
   )
 )
   groups.reverse()
