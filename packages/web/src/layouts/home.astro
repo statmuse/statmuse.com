@@ -88,7 +88,7 @@ const Logo = domain === 'money' ? MoneyLogo : StandardLogo
       </div>
 
       <div class="flex flex-1 justify-end">
-        <AuthMenu client:load transition:persist />
+        <AuthMenu client:load />
       </div>
     </div>
 
@@ -114,7 +114,6 @@ const Logo = domain === 'money' ? MoneyLogo : StandardLogo
         <div class="min-h-[46px]">
           <AskBar
             client:load
-            transition:persist
             money={domain === 'money'}
             fantasy={domain === 'fantasy'}
             preferredDomain={domain !== 'All' ? domain : undefined}

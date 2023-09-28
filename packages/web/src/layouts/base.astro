@@ -196,7 +196,7 @@ const analyticsProperties = Object.assign(
   </head>
   <body>
     <slot />
-    <CookieConsent client:only="svelte" transition:persist />
+    <CookieConsent client:only="svelte" />
     <script>
       import { AnalyticsBrowser } from '@segment/analytics-next'
       import type { Session } from '@lib/session'

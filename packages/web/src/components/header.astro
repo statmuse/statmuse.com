@@ -44,7 +44,6 @@ const audioUrl = Astro.props.audioUrl
     <div class="flex-1">
       <AskBar
         client:load
-        transition:persist
         {query}
         {conversationToken}
         {preferredDomain}
@@ -60,6 +59,6 @@ const audioUrl = Astro.props.audioUrl
     </div>
   </div>
   <div class="ml-3 justify-end">
-    <AuthMenu client:load transition:persist collapsible />
+    <AuthMenu client:load collapsible />
   </div>
 </div>
