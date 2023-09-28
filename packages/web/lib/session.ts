@@ -21,8 +21,11 @@ export type Context =
 
 export const get = ({ cookies }: Context) => {
   const cookie = cookies.get(SESSION_COOKIE)?.value
+  console.log('cookie', cookie)
   if (!cookie) return undefined
-  return builder.verify(cookie)
+  const verified = builder.verify(cookie)
+  console.log('verified', verified)
+  return verified
 }
 
 export const verify = (token: string) => {
