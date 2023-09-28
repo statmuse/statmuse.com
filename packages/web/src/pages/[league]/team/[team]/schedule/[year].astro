@@ -3,7 +3,11 @@ import TeamLayout from '@layouts/team.astro'
 import Grid from '@components/grid.astro'
 
 import { getUrlForEntity, type GameraDomain } from '@statmuse/core/gamera'
-import { getTeamSeasonBio, getTeamSeasonGameResults } from '@lib/team'
+import {
+  getTeamSeasonBio,
+  getTeamSeasonGameResults,
+  getTeamSeasonSchedule,
+} from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
 
@@ -15,6 +19,8 @@ if (!team || !league || !year) {
 const domain = league.toUpperCase() as GameraDomain
 const bio = await getTeamSeasonBio({ domain, team, year })
 const gameResults = await getTeamSeasonGameResults({ domain, team, year })
+const schedule = await getTeamSeasonSchedule({ domain, team, year })
+
 if (!bio || !gameResults) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
@@ -40,6 +46,20 @@ Caching.swr(Astro)
 
 <TeamLayout {bio} {meta}>
   <div class="space-y-5 mb-5">
+    {
+      schedule?.grid && schedule.grid.columns.length > 0 && (
+        <Grid
+          data={schedule.grid}
+          fullWidth={false}
+          columnStyles={{
+            DATE: 'text-left w-20',
+            SCORE: 'text-left w-20',
+            OPP: 'text-left w-20',
+            RECORD: 'text-right w-20',
+          }}
+        />
+      )
+    }
     {
       gameResults?.grids &&
         gameResults.grids.map((data) => (
