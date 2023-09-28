@@ -59,7 +59,7 @@ export function Web({ stack }: StackContext) {
     environment: {
       ...api.environment,
       PUBLIC_AUTH_URL: auth.url,
-      PUBLIC_API_URL: api.api.url,
+      PUBLIC_API_URL: api.api.customDomainUrl ?? api.api.url,
       PUBLIC_ANALYTICS_CDN_PROXY_URL: analytics.cdnUrl,
       PUBLIC_ANALYTICS_API_PROXY_URL: analytics.apiUrl,
       AUTH_ID: auth.id,

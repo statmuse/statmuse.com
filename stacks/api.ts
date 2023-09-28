@@ -2,9 +2,11 @@ import { StackContext, Api, Function, use } from 'sst/constructs'
 import { Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2'
 import { Imports } from './imports'
 import { Secrets } from './secrets'
+import { DNS } from './dns'
 
 export function API({ stack }: StackContext) {
   const secrets = use(Secrets)
+  const dns = use(DNS)
   const { vpc, rdsCredentialsSecret, rdsProxySecurityGroup } = use(Imports)
 
   const isStaging = stack.stage === 'staging'
@@ -89,6 +91,10 @@ export function API({ stack }: StackContext) {
         resultsCacheTtl: '1 minute',
         responseTypes: ['simple'],
       },
+    },
+    customDomain: {
+      domainName: 'api.' + dns.domain,
+      hostedZone: dns.hostedZone.zoneName,
     },
   })
 
