@@ -41,11 +41,19 @@ const currentSeason = bio.season?.all?.find((s) => s.name === year)
 const [, yearId] = currentSeason?.entity.id.split('/') || []
 
 const links = [
-  { text: 'Overview', href: `${teamPath}/${yearId}` },
-  { text: 'Stats', href: `${teamPath}/stats/${yearId}` },
+  ...(bio.hasStats
+    ? [{ text: 'Overview', href: `${teamPath}/${yearId}` }]
+    : []),
+  ...(bio.hasStats
+    ? [{ text: 'Stats', href: `${teamPath}/stats/${yearId}` }]
+    : []),
   { text: 'Scores & Schedule', href: `${teamPath}/schedule/${yearId}` },
-  { text: 'Roster', href: `${teamPath}/roster/${yearId}` },
-  { text: 'Splits', href: `${teamPath}/splits/${yearId}` },
+  ...(bio.hasRoster
+    ? [{ text: 'Roster', href: `${teamPath}/roster/${yearId}` }]
+    : []),
+  ...(bio.hasStats
+    ? [{ text: 'Splits', href: `${teamPath}/splits/${yearId}` }]
+    : []),
   { text: 'History', href: `${teamPath}/history` },
 ]
 
