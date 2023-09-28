@@ -19,6 +19,7 @@
   let sectionIdx: number | undefined
   let suggestionIdx: number | undefined
   let input: HTMLTextAreaElement
+  let shadowInput: HTMLTextAreaElement
   let form: HTMLFormElement
   let clickedItem = false
 
@@ -92,7 +93,6 @@
       timestamp: string
       sections: typeof sections
     } = await response.json()
-
     if (results.timestamp > timestamp) {
       if (!results.sections.find((s) => s.type === 'history')) {
         results.sections.push({
@@ -177,9 +177,15 @@
 
   $: open = sections.findIndex((s) => s.suggestions.length > 0) > -1
   $: userId = $session?.type === 'user' ? $session.properties.id : undefined
+  $: {
+    if (shadowInput && input) {
+      shadowInput.value = query
+      input.style.height = shadowInput.scrollHeight + 2 + 'px'
+    }
+  }
 </script>
 
-<form bind:this={form} class="ask-form" {action} method="post">
+<form bind:this={form} class="relative" {action} method="post">
   <div
     role="combobox"
     aria-haspopup="listbox"
@@ -189,7 +195,8 @@
   >
     <div class="relative group">
       <textarea
-        class="ask-textarea input appearance-none outline-none resize-none block w-full border border-black rounded-lg p-2.5 focus:shadow-md peer group-hover:shadow-md"
+        class="appearance-none outline-none resize-none block w-full border border-black rounded-lg p-2.5 focus:shadow-md peer group-hover:shadow-md"
+        class:pr-[70px]={query}
         class:border-b-transparent={open}
         class:rounded-bl-none={open}
         class:rounded-br-none={open}
@@ -311,4 +318,18 @@
     type="hidden"
     value={conversationToken}
   />
+  <textarea
+    bind:this={shadowInput}
+    class="appearance-none outline-none resize-none block w-full border border-black rounded-lg p-2.5 focus:shadow-md peer group-hover:shadow-md"
+    class:pr-[70px]={query}
+    style:height="0px"
+    style:min-height="0px"
+    style:max-height="none"
+    style:visibility="hidden"
+    style:overflow="hidden"
+    style:position="absolute"
+    style:z-index="-1000"
+    tabindex="-1"
+    aria-hidden="true"
+  ></textarea>
 </form>
