@@ -17,44 +17,10 @@ const getUrl = (src: string | { answer: Answer }) => {
 const getImageUrl = (src: string | { answer: Answer }) => {
   const raw = getUrl(src)
   const url = raw.startsWith('http') ? raw : `${cdnBaseUrl}/${raw}`
-  if (import.meta.env.DEV) return url
-  return new URL(url).pathname
+  return url
 }
 
-const getSrc = (url: string) => {
-  const params: Record<string, string> = { format: 'auto' }
-  if (Astro.props.width) params['width'] = Astro.props.width.toString()
-  else if (Astro.props.height) params['height'] = Astro.props.height.toString()
-
-  return url + '?' + new URLSearchParams(params).toString()
-}
-
-const getSrcSet = (url: string) => {
-  const params: Record<string, string> = { format: 'auto' }
-  const width =
-    typeof Astro.props.width === 'number'
-      ? Astro.props.width
-      : parseInt(Astro.props.width)
-
-  const getDensity = (multiplier: 1 | 2 | 3) =>
-    url +
-    '?' +
-    new URLSearchParams({
-      ...params,
-      width: (width * multiplier).toString(),
-    }).toString() +
-    ` ${multiplier}x`
-
-  const base = getDensity(1)
-  const double = getDensity(2)
-  const triple = getDensity(3)
-
-  return [base, double, triple].join(', ')
-}
-
-const url = getImageUrl(Astro.props.src)
-const src = import.meta.env.DEV ? url : getSrc(url)
-const srcset = import.meta.env.DEV ? undefined : getSrcSet(url)
+const src = getImageUrl(Astro.props.src)
 ---
 
-<AstroImage {...Astro.props} {src} {srcset} />
+<AstroImage {...Astro.props} {src} />

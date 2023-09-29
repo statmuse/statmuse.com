@@ -19,6 +19,14 @@ export default defineConfig({
   server: { port: 3000 },
   adapter: aws(),
   vite: { optimizeDeps: ['sst'] },
+  image: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.statmuse.com',
+      },
+    ],
+  },
   redirects: {
     '/company': '/company/about',
     '/company/products': '/company/about',

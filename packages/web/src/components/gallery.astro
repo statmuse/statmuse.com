@@ -1,5 +1,5 @@
 ---
-import { GameraGalleryImage, getUrlForEntity } from '@statmuse/core/gamera'
+import { type GameraGalleryImage, getUrlForEntity } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
 import Image from '@components/image.astro'
 
@@ -28,11 +28,11 @@ const Wrapper = firstLeader?.entity ? 'a' : 'div'
             style={`background-color: ${image.colors.backgroundColor}`}
           >
             <Image
-              class="h-[90%] object-contain object-bottom"
+              class="h-[90%] max-w-[125px] object-contain object-bottom"
               alt={image.entity?.display || alt || 'Player Gallery Image'}
               src={image.url}
-              width={125}
-              height={90}
+              width={250}
+              height={180}
             />
           </Wrapper>
         ))

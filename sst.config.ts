@@ -2,7 +2,6 @@ import { SSTConfig } from 'sst'
 import { API } from './stacks/api'
 import { Web } from './stacks/web'
 import { DNS } from './stacks/dns'
-import { ImageOptimization } from './stacks/img'
 import { Imports } from './stacks/imports'
 import { Secrets } from './stacks/secrets'
 import { Auth } from './stacks/auth'
@@ -25,6 +24,5 @@ export default {
       .stack(Auth)
       .stack(AnalyticsProxy)
       .stack(Web)
-      .stack(ImageOptimization)
   },
 } satisfies SSTConfig

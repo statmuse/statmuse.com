@@ -1,8 +1,8 @@
 ---
 import Grid from '@components/grid.astro'
 import {
-  GameraNflBoxScore,
-  NflHistoricalBoxScore,
+  type GameraNflBoxScore,
+  type NflHistoricalBoxScore,
   getUrlForEntity,
 } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
@@ -44,8 +44,8 @@ const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
           src={awayTeam.logoUrl}
           alt={awayTeam.abbrev}
           class="w-24 h-24 object-contain"
-          width={96}
-          height={96}
+          width={200}
+          height={200}
           loading="eager"
         />
       </a>
@@ -63,8 +63,8 @@ const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
           class="w-24 h-24 object-contain"
           src={homeTeam.logoUrl}
           alt={homeTeam.abbrev}
-          width={96}
-          height={96}
+          width={200}
+          height={200}
           loading="eager"
         />
       </a>
@@ -126,8 +126,8 @@ const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
                       }
                       alt={play.team}
                       class="w-7 h-7 mt-2 object-contain"
-                      width={28}
-                      height={28}
+                      width={60}
+                      height={60}
                     />
                     <p class="flex-1 py-2 px-4">{play.description}</p>
                     <>

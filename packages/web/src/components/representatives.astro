@@ -43,8 +43,8 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
           class="max-w-[75%] max-h-[75%] object-contain object-bottom"
           alt={alt}
           src={fallback}
-          width={250}
-          height={250}
+          width={500}
+          height={500}
           loading="eager"
         />
       </div>
@@ -56,32 +56,32 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
         <div class="relative">
           <Image
             data-cy-illustration
-            class="max-w-none absolute bottom-0 left-0 -translate-x-1/2 object-contain object-bottom"
+            class="max-w-[250px] absolute bottom-0 left-0 -translate-x-1/2 object-contain object-bottom"
             alt={representatives[0].entity?.display ?? ''}
             src={representatives[0].url}
             style={`height: ${getIllustrationHeight(representatives[0])}px;`}
-            width={250}
-            height={250}
+            width={500}
+            height={500}
             loading="eager"
           />
           <Image
             data-cy-illustration
-            class="max-w-none relative z-[1] object-contain object-bottom"
+            class="max-w-[250px] relative z-[1] object-contain object-bottom"
             alt={representatives[1].entity?.display ?? ''}
             src={representatives[1].url}
             style={`height: ${getIllustrationHeight(representatives[1])}px;`}
-            width={250}
-            height={250}
+            width={500}
+            height={500}
             loading="eager"
           />
           <Image
             data-cy-illustration
-            class="max-w-none absolute bottom-0 right-0 translate-x-1/2 object-contain object-bottom"
+            class="max-w-[250px] absolute bottom-0 right-0 translate-x-1/2 object-contain object-bottom"
             alt={representatives[2].entity?.display ?? ''}
             src={representatives[2].url}
             style={`height: ${getIllustrationHeight(representatives[2])}px;`}
-            width={250}
-            height={250}
+            width={500}
+            height={500}
             loading="eager"
           />
         </div>
@@ -97,8 +97,8 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
           alt={representatives[0].entity?.display ?? ''}
           src={representatives[0].url}
           style={`height: ${getIllustrationHeight(representatives[0])}px;`}
-          width={250}
-          height={250}
+          width={500}
+          height={500}
           loading="eager"
         />
         <Image
@@ -107,8 +107,8 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
           alt={representatives[1].entity?.display ?? ''}
           src={representatives[1].url}
           style={`height: ${getIllustrationHeight(representatives[1])}px;`}
-          width={250}
-          height={250}
+          width={500}
+          height={500}
           loading="eager"
         />
       </div>

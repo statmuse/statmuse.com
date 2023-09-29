@@ -81,11 +81,11 @@ const paginationOptions = paginate(asks, searchParams, overflow)
                 href={askPath(ask)}
               >
                 <Image
-                  class="h-[90%] object-cover object-bottom overflow-visible"
+                  class="h-[90%] max-w-[126px] object-cover object-bottom overflow-visible"
                   src={getImage(ask) || ''}
                   alt="player illustration"
-                  width={100}
-                  height={84}
+                  width={250}
+                  height={172}
                   loading={i < 8 ? 'eager' : 'lazy'}
                 />
               </a>
