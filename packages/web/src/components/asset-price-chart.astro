@@ -20,11 +20,8 @@ interface Props {
   notableTimestamps: Timeframe[]
   renderTarget: string
   priceFormatString: string
-  color?: string
   preferCandlestick: boolean
 }
-
-const color = Astro.props.color
 
 const renderTargetMap: Record<string, RenderTarget> = {
   close: {
@@ -62,7 +59,7 @@ const getSymbolDisplay = ({
 }
 
 const getSinglePriceSeries = (
-  { assetPair, prices }: Asset,
+  { assetPair, prices, color }: Asset,
   preferCandlestick: boolean,
   renderTarget: RenderTarget,
   includeVolume: boolean,
@@ -199,7 +196,7 @@ const getSinglePriceSeries = (
 }
 
 const getMultiPriceSeries = (assets: Asset[]) => {
-  return assets.map(({ assetPair, prices }) => {
+  return assets.map(({ assetPair, prices, color }) => {
     return {
       color,
       data: prices?.map(({ close, closePercentChange, timeframe }) => ({
@@ -337,7 +334,6 @@ const options = mapChartOptions(
   data-options={JSON.stringify(options)}
   data-price-format-string={priceFormatString}
   data-render-target={renderTargetName}
-  data-color={color}
 >
 </div>
 

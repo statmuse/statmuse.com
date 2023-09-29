@@ -79,6 +79,7 @@ export type Asset = {
   assetPair?: AssetPair
   prices?: Price[]
   redacted?: boolean
+  color?: string
 }
 export type NumericFormatter = (value: unknown) => string
 
@@ -171,8 +172,19 @@ export async function getAssetPriceData(options: {
   console.log(requestUrl)
 
   try {
-    const response = await fetch(requestUrl)
-    return response.json() as Promise<AssetPriceData>
+    const responses = await Promise.all([
+      fetch(requestUrl),
+      fetch(`${kanedamaApiUrl}asset/${options.baseAssetId}`),
+    ])
+    const json = (await Promise.all(responses.map((r) => r.json()))) as [
+      AssetPriceData,
+      AssetProfile,
+    ]
+    const [priceData, asset] = json
+    return {
+      ...priceData,
+      color: asset.images[0]?.colors[0]?.background || '#000',
+    }
   } catch (error) {
     console.error(error)
   }

@@ -8,7 +8,7 @@ import Grid from '@components/grid.astro'
 import { type KanedamaResponse, tokensToHtml } from '@statmuse/core/kanedama'
 import {
   type Asset,
-  type AssetPriceData,
+  type AssetPair,
   type Price,
   getFrequencyKey,
   getAssetPriceData,
@@ -17,7 +17,6 @@ import {
   addClosePercentChange,
 } from '@lib/kanedama'
 import { frequencyMap, type FrequencyKey } from '@statmuse/core/frequency'
-import { color } from 'highcharts'
 import map from 'lodash/fp/map'
 import pipe from 'lodash/fp/pipe'
 import flatMap from 'lodash/fp/flatMap'
@@ -114,9 +113,13 @@ const details =
 
             const assets = responses
               .filter((r) => !!r)
-              .map((r) => r as AssetPriceData)
               .map((r) => {
-                const { assetPair, prices, redacted } = r
+                const { assetPair, prices, redacted, color } = r as {
+                  color: string
+                  assetPair: AssetPair
+                  prices: Price[]
+                  redacted: boolean
+                }
                 const sortedPrices = sortBy(
                   (p) => p.timeframe.timestamp ?? p.timeframe.endTimestamp,
                   prices,
@@ -180,7 +183,6 @@ const details =
                   {renderTarget}
                   {priceFormatString}
                   {preferCandlestick}
-                  color={response.visual.summary.subject?.colors.background}
                 />
                 <AssetPriceGrid
                   {detail}
