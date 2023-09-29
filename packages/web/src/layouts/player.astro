@@ -144,7 +144,9 @@ const twitter = {
             bio.position && (
               <>
                 <span>
-                  {bio.jerseyNumber && `#${bio.jerseyNumber}`} {bio.position}
+                  {`${bio.jerseyNumber ? '#' + bio.jerseyNumber : ''} ${
+                    bio.position
+                  }`}
                 </span>
                 <span class="last:hidden" set:text=" • " />
               </>
