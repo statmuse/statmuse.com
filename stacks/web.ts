@@ -14,7 +14,12 @@ import {
 } from 'aws-cdk-lib/aws-cloudfront'
 import { Auth } from './auth'
 import { Secrets } from './secrets'
-import { Code, LayerVersion } from 'aws-cdk-lib/aws-lambda'
+import {
+  Architecture,
+  Code,
+  LayerVersion,
+  Runtime,
+} from 'aws-cdk-lib/aws-lambda'
 
 export function Web({ stack }: StackContext) {
   const dns = use(DNS)
@@ -47,6 +52,8 @@ export function Web({ stack }: StackContext) {
 
   const layer = new LayerVersion(stack, 'sharp-layer', {
     code: Code.fromAsset('layers/sharp'),
+    compatibleRuntimes: [Runtime.NODEJS_18_X],
+    compatibleArchitectures: [Architecture.ARM_64],
   })
 
   const astroSite = new AstroSite(stack, 'astro-site', {
