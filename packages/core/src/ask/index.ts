@@ -47,7 +47,7 @@ export const upsert = async (params: {
 
   const error =
     response.type === 'error'
-      ? tokensToText(response.nlg.text.answer)
+      ? { message: tokensToText(response.nlg.text.answer) }
       : undefined
 
   const answerType = getAnswerType(response)
