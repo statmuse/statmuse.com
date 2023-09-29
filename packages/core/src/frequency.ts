@@ -25,7 +25,7 @@ export class Frequency {
   constructor(
     name: string,
     keyFn: (key: string) => string | number,
-    displayFn?: (value: string) => string | number
+    displayFn?: (value: string) => string | number,
   ) {
     this._name = name
     this._getDateKey = keyFn
@@ -52,32 +52,35 @@ export const frequencies = [
   new Frequency(
     'Month',
     (date) => dayjs(date).format('YYYYMM'),
-    (date) => dayjs(date).format('MMMM YYYY')
+    (date) => dayjs(date).format('MMMM YYYY'),
   ),
   new Frequency(
     'Week',
     (date) => dayjs(date).isoWeek(),
     (date) => {
       const d = dayjs(date)
-      return d.add(1 - d.isoWeekday(), 'day').format('Week of MMMM DD YYYY')
-    }
+      return d.add(1 - d.isoWeekday(), 'day').format('[Week of] MMMM DD YYYY')
+    },
   ),
   new Frequency(
     'Day',
     (date) => dayjs(date).unix(),
-    (date) => dayjs(date).format('MMMM DD YYYY')
+    (date) => dayjs(date).format('MMMM DD YYYY'),
   ),
   new Frequency(
     'Hour',
     (date) => dayjs(date).unix(),
-    (date) => dayjs(date).format('MMMM DD YYYY HH:mm')
+    (date) => dayjs(date).format('MMMM DD YYYY HH:mm'),
   ),
 ]
 
-export const frequencyMap = frequencies.reduce((accum, current) => {
-  accum[current.name.toLowerCase()] = current
-  return accum
-}, {} as Record<string, Frequency>)
+export const frequencyMap = frequencies.reduce(
+  (accum, current) => {
+    accum[current.name.toLowerCase()] = current
+    return accum
+  },
+  {} as Record<string, Frequency>,
+)
 
 export type FrequencyKey =
   | 'hour'
@@ -90,7 +93,7 @@ export type FrequencyKey =
 
 export const getFrequencyForTimeframe = (
   startTimestamp: string,
-  endTimestamp: string
+  endTimestamp: string,
 ): FrequencyKey => {
   if (!startTimestamp) return 'month'
 
