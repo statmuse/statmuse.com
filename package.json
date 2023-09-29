@@ -18,7 +18,7 @@
     "aws-cdk-lib": "2.95.1",
     "constructs": "10.2.69",
     "prettier": "^3.0.3",
-    "sst": "2.26.8",
+    "sst": "2.25.6",
     "typescript": "^5.0.4"
   },
   "workspaces": [
