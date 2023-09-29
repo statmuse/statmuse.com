@@ -29,7 +29,7 @@ if (!stats || !bio) {
   })
 }
 
-const { grids, parameters } = stats
+const { grids, parameters = {} } = stats
 
 const [firstParam] = Object.values(parameters)
 const firstParamDisplay = firstParam
