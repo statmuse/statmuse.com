@@ -14,6 +14,7 @@ import {
 } from 'aws-cdk-lib/aws-cloudfront'
 import { Auth } from './auth'
 import { Secrets } from './secrets'
+import { Code, LayerVersion } from 'aws-cdk-lib/aws-lambda'
 
 export function Web({ stack }: StackContext) {
   const dns = use(DNS)
@@ -44,6 +45,10 @@ export function Web({ stack }: StackContext) {
     compress: true,
   }
 
+  const layer = new LayerVersion(stack, 'sharp-layer', {
+    code: Code.fromAsset('layers/sharp'),
+  })
+
   const astroSite = new AstroSite(stack, 'astro-site', {
     path: 'packages/web',
     bind: [
@@ -64,7 +69,7 @@ export function Web({ stack }: StackContext) {
       PUBLIC_ANALYTICS_API_PROXY_URL: analytics.apiUrl,
       AUTH_ID: auth.id,
     },
-    nodejs: { install: ['pg', 'sharp'], esbuild: { external: ['pg-native'] } },
+    nodejs: { install: ['pg'], esbuild: { external: ['pg-native', 'sharp'] } },
     cdk: {
       server: {
         vpc: api.vpc,
