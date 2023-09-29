@@ -28,7 +28,10 @@ const assetPath = getUrlForEntity({
 const [image] = profile.images
 const bustImageUrl = image ? image.imageUrl : undefined // default image fallback?
 const bustImageAlt = profile.asset.canonicalName
-const colors = image ? image.colors[0] : undefined
+
+const colors = image
+  ? image.colors[0]
+  : { foreground: '#fff', background: '#00c1d8' }
 
 const path = Astro.url.pathname
 const canonical = { url: Astro.url.pathname + Astro.url.search }
@@ -45,18 +48,22 @@ const title = `${
 } Overview`
 
 const facebook = {
-  imageUrl: imageForgeUrl({
-    url: `${cdnBaseUrl}/${bustImageUrl || ''}`,
-    bgColor: colors?.background,
-    type: 'facebook',
-  }),
+  imageUrl:
+    bustImageUrl &&
+    imageForgeUrl({
+      url: `${cdnBaseUrl}/${bustImageUrl}`,
+      bgColor: colors?.background,
+      type: 'facebook',
+    }),
 }
 const twitter = {
-  imageUrl: imageForgeUrl({
-    url: `${cdnBaseUrl}/${bustImageUrl || ''}`,
-    bgColor: colors?.background,
-    type: 'twitter',
-  }),
+  imageUrl:
+    bustImageUrl &&
+    imageForgeUrl({
+      url: `${cdnBaseUrl}/${bustImageUrl}`,
+      bgColor: colors?.background,
+      type: 'twitter',
+    }),
 }
 ---
 
