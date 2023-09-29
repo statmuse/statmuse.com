@@ -84,9 +84,6 @@ importers:
       '@aws-sdk/client-sesv2':
         specifier: ^3.391.0
         version: 3.391.0
-      '@botpoison/node':
-        specifier: ^0.1.10
-        version: 0.1.10
       '@elastic/elasticsearch':
         specifier: ^8.9.0
         version: 8.9.0
@@ -102,18 +99,12 @@ importers:
       kysely:
         specifier: ^0.25.0
         version: 0.25.0
-      lambda-stream:
-        specifier: ^0.5.0
-        version: 0.5.0
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
       pg:
         specifier: ^8.11.0
         version: 8.11.1
-      sharp:
-        specifier: ^0.32.3
-        version: 0.32.4
       stripe:
         specifier: ^12.9.0
         version: 12.16.0
@@ -182,8 +173,8 @@ importers:
         specifier: ^3.1.2
         version: 3.1.2(@types/node@20.4.5)
       astro-sst:
-        specifier: 2.25.6
-        version: 2.25.6
+        specifier: 2.22.11
+        version: 2.22.11
       classnames:
         specifier: ^2.3.2
         version: 2.3.2
@@ -2617,11 +2608,6 @@ packages:
   /@balena/dockerignore@1.0.2:
     resolution: {integrity: sha512-wMue2Sy4GAVTk6Ic4tJVcnfdau+gx2EnG7S+uAEe+TWJFqE4YoWN4/H8MSLj4eYJKxGg26lZwboEniNiNwZQ6Q==}
     dev: true
-
-  /@botpoison/node@0.1.10:
-    resolution: {integrity: sha512-sKkiQyfACvGYLvN6KUVwFTDru4tlutxYPoihsDMs6Pklso9ADfb78jShGfhvBYVXn6Vhf5z19yalaUmzU2yjfA==}
-    engines: {node: '>=10'}
-    dev: false
 
   /@elastic/elasticsearch@8.9.0:
     resolution: {integrity: sha512-UyolnzjOYTRL2966TYS3IoJP4tQbvak/pmYmbP3JdphD53RjkyVDdxMpTBv+2LcNBRrvYPTzxQbpRW/nGSXA9g==}
@@ -6442,8 +6428,8 @@ packages:
       - supports-color
     dev: true
 
-  /astro-sst@2.25.6:
-    resolution: {integrity: sha512-0gtB66e+0tK5vC3obV6iqavLZK/Ny57IM+rxmR5VbRDschLVt02NolVH0KICB7dXLjhp287e5Bt8RS731/GGug==}
+  /astro-sst@2.22.11:
+    resolution: {integrity: sha512-U1qOi0IEj3SlpozlO2+NPyQpd6PzRIVxOEimd4fnMwz9Ho0Fa2qDCq5oQW+DKAKWvsPXHyFG189lrgPEWdxNEg==}
     dependencies:
       '@astrojs/webapi': 2.2.0
       set-cookie-parser: 2.6.0
@@ -9033,10 +9019,6 @@ packages:
   /kysely@0.25.0:
     resolution: {integrity: sha512-srn0efIMu5IoEBk0tBmtGnoUss4uwvxtbFQWG/U2MosfqIace1l43IFP1PmEpHRDp+Z79xIcKEqmHH3dAvQdQA==}
     engines: {node: '>=14.0.0'}
-
-  /lambda-stream@0.5.0:
-    resolution: {integrity: sha512-AaMXqUM+GcJ2OpNF2LI78jzbZ84rSckH+uKfstMQFqXDn+ZBLIkJgkUk+L0fuCGzw+LP5VToUxJKDfAbtLXSGw==}
-    dev: false
 
   /lazystream@1.0.1:
     resolution: {integrity: sha512-b94GiNHQNy6JNTrt5w6zNyffMrNkXZb3KTkCZJb2V1xaEGCk093vkZ2jk3tpaeP33/OiXC+WvK9AxUebnf5nbw==}
