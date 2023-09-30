@@ -7,7 +7,7 @@ export function DNS({ stack }: StackContext) {
     domainName: zone,
   })
 
-  const subdomain = `alpha.${zone}`
+  const subdomain = `v2.${zone}`
   const domain =
     stack.stage === 'production' ? subdomain : `${stack.stage}.${subdomain}`
   return { zone, domain, hostedZone }
