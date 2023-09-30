@@ -79,8 +79,6 @@ export const upsert = async (params: {
     resource_query: getResourceQuery(response, params.query),
   }
 
-  console.log('newAsk', newAsk)
-
   const ask = await db.transaction().execute(async (trx) => {
     const ask = await trx
       .insertInto('asks')
@@ -102,8 +100,6 @@ export const upsert = async (params: {
 
     if (!ask) throw new Error('Failed to create new ask')
 
-    console.log('ask', ask)
-
     const newAskEvent: NewAskEvent = {
       id: randomUUID(),
       query_raw: params.query,
@@ -120,8 +116,6 @@ export const upsert = async (params: {
       .values(newAskEvent)
       .returningAll()
       .executeTakeFirst()
-
-    console.log('askEvent', askEvent)
 
     if (params.userId) {
       const newAskUser: NewAskUser = {
@@ -147,8 +141,6 @@ export const upsert = async (params: {
         )
         .returningAll()
         .executeTakeFirst()
-
-      console.log('askUser', askUser)
     }
 
     const newLink: NewLink = {
@@ -167,8 +159,6 @@ export const upsert = async (params: {
         .values(newLink)
         .returningAll()
         .executeTakeFirst()
-
-      console.log('link', link)
     }
 
     return ask

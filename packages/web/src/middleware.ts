@@ -4,6 +4,10 @@ import * as User from '@statmuse/core/user'
 import * as Visitor from '@statmuse/core/visitor'
 
 export const onRequest = defineMiddleware(async (context, next) => {
+  console.log('method', context.request.method)
+  console.log('path', context.url.pathname)
+  console.log('url', context.url.toString())
+
   const locals = context.locals
   let session = Session.get(context)
   if (!session || session.type === 'public')
