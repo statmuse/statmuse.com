@@ -33,11 +33,11 @@ const {
 } = Astro.props
 
 const domain = preferredDomain.toUpperCase() as GameraDomain
-const teamUrl = getUrlForEntity(bio.team.entity)
+const teamUrl = bio.team ? getUrlForEntity(bio.team.entity) : ''
 const bustImageUrl = bio.bustImageUrl || getDefaultBustImageUrl(domain)
 const bustImageAlt = bio.bustImageUrl?.includes('silhouette')
-  ? `Illustrated silhouette of a player wearing the ${bio.team.name} uniform`
-  : `Illustration of ${bio.usedName} wearing the ${bio.team.name} uniform`
+  ? `Illustrated silhouette of a player wearing the ${bio.team?.name} uniform`
+  : `Illustration of ${bio.usedName} wearing the ${bio.team?.name} uniform`
 
 const canonical = { url: Astro.url.pathname + Astro.url.search }
 const playerPath = getUrlForEntity({
@@ -64,21 +64,21 @@ const keywords = `${getLeagueKeywords(domain)} ${
 const facebook = {
   imageUrl: imageForgeUrl({
     url: bustImageUrl,
-    bgColor: bio.team.colors.backgroundColor,
+    bgColor: bio.team?.colors.backgroundColor,
     type: 'facebook',
   }),
 }
 const twitter = {
   imageUrl: imageForgeUrl({
     url: bustImageUrl,
-    bgColor: bio.team.colors.backgroundColor,
+    bgColor: bio.team?.colors.backgroundColor,
     type: 'twitter',
   }),
 }
 ---
 
 <Layout
-  colors={bio.team.colors}
+  colors={bio.team?.colors || { background: '#00c1d8', foreground: '#fff' }}
   meta={{
     title,
     description,
@@ -133,10 +133,10 @@ const twitter = {
               <a
                 class="text-inherit underline"
                 href={teamUrl}
-                set:text={bio.team.nickname || bio.team.name}
+                set:text={bio.team?.nickname || bio.team?.name}
               />
             ) : (
-              <>{bio.team.nickname || bio.team.name}</>
+              <>{bio.team?.nickname || bio.team?.name}</>
             )
           }
           <span class="last:hidden" set:text=" • " />

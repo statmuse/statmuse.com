@@ -34,8 +34,9 @@ if (!profile) {
 }
 
 const { bio, stats, recentGames, nextGame } = profile
+
 const isNextGameHome =
-  profile.bio.team.abbreviation === nextGame?.homeTeam.abbreviation
+  profile.bio.team?.abbreviation === nextGame?.homeTeam.abbreviation
 
 const summary = bio.summaryNlg ? tokensToHtml(bio.summaryNlg) : undefined
 const playerPath = getUrlForEntity({
