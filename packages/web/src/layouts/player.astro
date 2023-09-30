@@ -64,14 +64,14 @@ const keywords = `${getLeagueKeywords(domain)} ${
 const facebook = {
   imageUrl: imageForgeUrl({
     url: bustImageUrl,
-    bgColor: bio.team?.colors.backgroundColor,
+    bgColor: bio.team?.colors?.backgroundColor ?? '#FFF',
     type: 'facebook',
   }),
 }
 const twitter = {
   imageUrl: imageForgeUrl({
     url: bustImageUrl,
-    bgColor: bio.team?.colors.backgroundColor,
+    bgColor: bio.team?.colors?.backgroundColor ?? '#FFF',
     type: 'twitter',
   }),
 }

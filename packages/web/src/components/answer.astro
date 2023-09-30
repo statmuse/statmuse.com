@@ -37,18 +37,22 @@ const meta = {
     rewrite: true,
   },
   facebook: {
-    imageUrl: imageForgeUrl({
-      url: heroProps?.imageUrl || '',
-      bgColor: subject.colors.background,
-      type: 'facebook',
-    }),
+    imageUrl:
+      heroProps?.imageUrl &&
+      imageForgeUrl({
+        url: heroProps.imageUrl,
+        bgColor: subject.colors?.background,
+        type: 'facebook',
+      }),
   },
   twitter: {
-    imageUrl: imageForgeUrl({
-      url: heroProps?.imageUrl || '',
-      bgColor: subject.colors.background,
-      type: 'twitter',
-    }),
+    imageUrl:
+      heroProps?.imageUrl &&
+      imageForgeUrl({
+        url: heroProps.imageUrl,
+        bgColor: subject.colors?.background,
+        type: 'twitter',
+      }),
   },
 }
 
