@@ -117,7 +117,7 @@ export function Web({ stack }: StackContext) {
         
           if (headers['cloudfront-viewer-country']) {
               var countryCode = headers['cloudfront-viewer-country'].value;
-              if (countryCode === country) {
+              if (countryCode === australia) {
                   var response = {
                       statusCode: 302,
                       statusDescription: 'Found',
@@ -129,8 +129,7 @@ export function Web({ stack }: StackContext) {
               }
           }
           return request;
-      }
-    `),
+      }`),
   })
 
   stack.addOutputs({ CdnUrl: astroSite.url, Url: astroSite.customDomainUrl })
