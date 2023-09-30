@@ -76,12 +76,15 @@ export async function fantasyAsk(
 
 export const getGameraHeaders = (context: Context) => {
   const visitor = context.locals.visitor
+  console.log('headers', new Map(context.request.headers))
+
   const headers: Record<string, string> = {
     Accept: 'application/json',
     'x-origin': visitor.origin_name,
     'x-origin-scope': 'browser',
     'x-origin-version': '2.0',
     'x-visitor-id': visitor.id,
+    // 'x-request-id': context.request.
   }
 
   if (visitor.last_request_ip) {
