@@ -9,6 +9,7 @@ import {
   AllowedMethods,
   CachePolicy,
   CachedMethods,
+  FunctionCode,
   ResponseHeadersPolicy,
   ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront'
@@ -20,6 +21,7 @@ import {
   LayerVersion,
   Runtime,
 } from 'aws-cdk-lib/aws-lambda'
+import { Function as CfFunction } from 'aws-cdk-lib/aws-cloudfront'
 
 export function Web({ stack }: StackContext) {
   const dns = use(DNS)
@@ -103,6 +105,32 @@ export function Web({ stack }: StackContext) {
       hostedZone: dns.zone,
       domainName: dns.domain,
     },
+  })
+
+  const cfFunction = new CfFunction(stack, 'redirect-function', {
+    code: FunctionCode.fromInline(`
+       function handler(event) {
+          var request = event.request;
+          var headers = request.headers;
+          var host = request.headers.host.value;
+          var australia = 'AU'
+        
+          if (headers['cloudfront-viewer-country']) {
+              var countryCode = headers['cloudfront-viewer-country'].value;
+              if (countryCode === country) {
+                  var response = {
+                      statusCode: 302,
+                      statusDescription: 'Found',
+                      headers:
+                          { "location": { "value": "alpha." + request.uri } }
+                      }
+
+                  return response;
+              }
+          }
+          return request;
+      }
+    `),
   })
 
   stack.addOutputs({ CdnUrl: astroSite.url, Url: astroSite.customDomainUrl })
