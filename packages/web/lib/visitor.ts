@@ -56,7 +56,7 @@ const originName = (headers: Headers) => {
 }
 
 export const fromRequest = async (context: Session.Context) => {
-  if (context.locals.visitor) {
+  if (context.locals && context.locals.visitor) {
     return context.locals.visitor
   }
 
