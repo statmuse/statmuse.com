@@ -57,7 +57,7 @@ await upsert({
     page_type: 'ask',
     page_domain:
       response.type === 'error'
-        ? (response.visual.domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'])
+        ? (response.visual.domain?.toLowerCase() as AnalyticsPageviewProperties['page_domain'])
         : undefined,
     disposition: response.disposition,
     tokenizationScore: response.tokenizationScore,
