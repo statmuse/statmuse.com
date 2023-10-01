@@ -73,5 +73,14 @@ Caching.swr(Astro)
         </Fragment>
       ))
     }
+    {
+      playerStats.grids.length > stats.grids.length
+        ? playerStats.grids
+            .slice(stats.grids.length)
+            .map((grid) => (
+              <Grid class="mb-5" data={grid} parameters={stats.parameters} />
+            ))
+        : null
+    }
   </div>
 </TeamLayout>
