@@ -23,7 +23,6 @@ export async function GET(ctx: APIContext) {
       }),
     }).then((r) => r.json() as unknown as { access_token: string })
 
-    console.log('access_token', response.access_token)
     Session.set(ctx, response.access_token)
 
     const session = Session.verify(response.access_token)

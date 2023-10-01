@@ -50,14 +50,13 @@ export const create = async (context: Context) => {
 }
 
 export const set = (context: Context, token: string) => {
-  console.log('setting sm_session=' + token)
   const tomorrow = new Date()
   tomorrow.setDate(tomorrow.getDate() + 1)
 
   const local = context.url.hostname === 'localhost'
   context.cookies.set(SESSION_COOKIE, token, {
     path: '/',
-    domain: local ? undefined : `${context.url.hostname}`,
+    domain: local ? undefined : 'statmuse.com',
     expires: tomorrow,
     maxAge: 31536000,
     secure: true,
