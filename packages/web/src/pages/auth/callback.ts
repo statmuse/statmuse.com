@@ -23,6 +23,9 @@ export async function GET(ctx: APIContext) {
       }),
     }).then((r) => r.json() as unknown as { access_token: string })
 
+    if (!response.access_token)
+      throw new Error('No access_token provided: ' + JSON.stringify(response))
+
     Session.set(ctx, response.access_token)
 
     const session = Session.verify(response.access_token)
