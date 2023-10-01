@@ -1,6 +1,10 @@
 import { randomUUID } from 'crypto'
 import { db } from '../db'
 export * from './user.sql'
+export * from './indentity.sql'
+export * from './session.sql'
+export * from './story.sql'
+export * from './follow.sql'
 
 export const create = async (email: string, visitorId: string) => {
   const existing = await fromEmail(email)
@@ -58,26 +62,87 @@ export async function deleteUser(id: string) {
   console.log('Deleting user asks with id: ' + id)
 
   const transaction = await db.transaction().execute(async (trx) => {
-    const updateAskEvents = await trx
-      .updateTable('ask_events')
+    const updateMusings = trx
+      .updateTable('musings')
+      .where('author_id', '=', id)
+      .set({ author_id: null })
+      .execute()
+
+    const updateQuestions = trx
+      .updateTable('questions')
       .where('user_id', '=', id)
       .set({ user_id: null })
-      .executeTakeFirst()
+      .execute()
 
-    console.log(
-      'updateAskEvents',
-      JSON.stringify(updateAskEvents, undefined, 2)
-    )
+    const updateReferredUsers = trx
+      .updateTable('users')
+      .where('referrer_id', '=', id)
+      .set({ referrer_id: null })
+      .execute()
 
-    const deleteAsksResponse = await trx
+    const updateReferredVisitors = trx
+      .updateTable('visitors')
+      .where('last_referrer_id', '=', id)
+      .set({ last_referrer_id: null })
+      .execute()
+
+    await Promise.all([
+      updateMusings,
+      updateQuestions,
+      updateReferredUsers,
+      updateReferredVisitors,
+    ])
+
+    const deleteAskEvents = trx
+      .deleteFrom('ask_events')
+      .where('user_id', '=', id)
+      .execute()
+
+    const deleteAsksUsers = trx
       .deleteFrom('asks_users')
       .where('user_id', '=', id)
-      .executeTakeFirst()
+      .execute()
 
-    console.log(
-      'deleteAsksResponse',
-      JSON.stringify(deleteAsksResponse, undefined, 2)
-    )
+    const deleteIdentities = trx
+      .deleteFrom('identities')
+      .where('user_id', '=', id)
+      .execute()
+
+    const deleteUsersVisitors = trx
+      .deleteFrom('users_visitors')
+      .where('user_id', '=', id)
+      .execute()
+
+    const deleteSessions = trx
+      .deleteFrom('sessions')
+      .where('user_id', '=', id)
+      .execute()
+
+    const deleteStories = trx
+      .deleteFrom('stories')
+      .where('user_id', '=', id)
+      .execute()
+
+    const deleteFollowers = trx
+      .deleteFrom('follows')
+      .where('follower_id', '=', id)
+      .execute()
+
+    const deleteFollowed = trx
+      .deleteFrom('follows')
+      .where('followed_id', '=', id)
+      .execute()
+
+    await Promise.all([
+      deleteAskEvents,
+      deleteIdentities,
+      deleteUsersVisitors,
+      deleteAsksUsers,
+      deleteStories,
+      deleteSessions,
+      deleteFollowers,
+      deleteFollowed,
+    ])
 
     console.log('Deleting user with id: ' + id)
     return await trx.deleteFrom('users').where('id', '=', id).executeTakeFirst()

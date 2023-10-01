@@ -7,6 +7,7 @@ export interface UserTable {
   email: string
   email_confirm_token: string
   has_completed_signup: boolean
+  referrer_id: string | null
 
   stripe_customer_id: string | null
   stripe_subscription_status: string | null

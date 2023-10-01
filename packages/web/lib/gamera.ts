@@ -1,6 +1,6 @@
 import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
 import { relativeTimeFromDates } from '@statmuse/core/time'
-import type { Musing } from '@statmuse/core/musings'
+import type { Musing } from '@statmuse/core/musing'
 import type { HeroProps } from './props'
 import type { Context } from './session'
 export const gameraApiUrl = import.meta.env.GAMERA_API_URL

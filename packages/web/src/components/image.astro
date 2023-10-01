@@ -1,7 +1,7 @@
 ---
 import { Image as AstroImage, type RemoteImageProps } from 'astro:assets'
 import { cdnBaseUrl, type GameraResponse } from '@statmuse/core/gamera'
-import type { Answer } from '@statmuse/core/questions'
+import type { Answer } from '@statmuse/core/question'
 
 interface Props extends Omit<RemoteImageProps, 'src'> {
   src: string | { answer: Answer }

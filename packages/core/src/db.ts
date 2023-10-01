@@ -6,9 +6,14 @@ import {
   GetSecretValueCommand,
   SecretsManagerClient,
 } from '@aws-sdk/client-secrets-manager'
-import { GameraResponse } from './gamera'
-import { UserTable } from './user/user.sql'
-import { UsersVisitorTable, VisitorTable } from './visitor/visitor.sql'
+import {
+  StoryTable,
+  SessionTable,
+  IdentityTable,
+  UserTable,
+  FollowTable,
+} from './user'
+import { UsersVisitorTable, VisitorTable } from './visitor'
 import {
   AskEventTable,
   AskTable,
@@ -16,9 +21,11 @@ import {
   FinanceAskEventTable,
   FinanceAskTable,
   FinanceAskUserTable,
-} from './ask/ask.sql'
-import { ContextTable } from './context/context.sql'
-import { LinkTable } from './link/link.sql'
+} from './ask'
+import { ContextTable } from './context'
+import { LinkTable } from './link'
+import { MusingTable } from './musing'
+import { QuestionTable } from './question'
 
 const secretsManager = new SecretsManagerClient({
   region: process.env.AWS_REGION || 'us-east-1',
@@ -39,62 +46,6 @@ const credentials = JSON.parse(secret) as {
   port: 5432
   dbname: string
   dbInstanceIdentifier: string
-}
-
-interface MusingTable {
-  id: Generated<string>
-  friendly_id: string
-  league_id: string
-  content_type: 'latest-stats' | 'user-generated' | 'templated'
-  publish_at: ColumnType<Date, string | undefined, string | undefined>
-
-  layout_type: 'bottom'
-  text_markdown: string | null
-  text_plain: string | null
-  image_url: string | null
-  video_url: string | null
-  audio_answer_url: string | null
-  video_should_replay: boolean
-  foreground_rgba: { a: number; b: number; g: number; r: number }
-  background_rgba: { a: number; b: number; g: number; r: number }
-  author_id: string
-  question_id: string
-  is_editorial: boolean
-  visitor_id: string | null
-  expires_at: ColumnType<Date, string | undefined, string | undefined>
-  template_id: string
-  expired_early_at: ColumnType<Date, string | undefined, string | undefined>
-  relevance_score_boost: number
-
-  inserted_at: ColumnType<Date, string | undefined, string | undefined>
-  updated_at: ColumnType<Date, string | undefined, string | undefined>
-}
-
-interface QuestionTable {
-  id: Generated<string>
-  friendly_id: string
-  caption: string
-  config: {}
-  text: string
-  answer: GameraResponse
-  is_successful: boolean
-  data_last_updated_at: ColumnType<Date, string | undefined, string | undefined>
-  duration: number
-  error: string
-  handler: string
-  preprocessed: string
-  tokenized: string
-  context_id: string
-  user_id: string
-  error_message: string
-  text_clarification_for: string
-  visitor_id: string
-  sid: number
-  ask_url: string
-  input_conversation_token: string
-
-  inserted_at: ColumnType<Date, string | undefined, string | undefined>
-  updated_at: ColumnType<Date, string | undefined, string | undefined>
 }
 
 interface ExampleTable {
@@ -162,6 +113,10 @@ export interface Database {
   examples: ExampleTable
   leagues: LeagueTable
   players: PlayerTable
+  identities: IdentityTable
+  sessions: SessionTable
+  stories: StoryTable
+  follows: FollowTable
 }
 
 types.setTypeParser(types.builtins.TIMESTAMP, (datetimeString) => {

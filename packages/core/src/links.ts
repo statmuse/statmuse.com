@@ -1,7 +1,7 @@
 import { db } from './db'
 import type { Ask, FinanceAsk } from './ask/ask.sql'
-import type { Musing } from './musings'
-import type { Question } from './questions'
+import type { Musing } from './musing'
+import type { Question } from './question'
 
 export const getLink = async (code: string): Promise<Linkable | undefined> => {
   const link = await db

@@ -1,6 +1,6 @@
 ---
 import { createAskPath } from '@statmuse/core/path'
-import { getQuestionByIdOrFriendlyId } from '@statmuse/core/questions'
+import { getQuestionByIdOrFriendlyId } from '@statmuse/core/question'
 
 const id = Astro.params.id as string
 const question = await getQuestionByIdOrFriendlyId(id)
