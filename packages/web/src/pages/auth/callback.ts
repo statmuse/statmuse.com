@@ -23,6 +23,7 @@ export async function GET(ctx: APIContext) {
       }),
     }).then((r) => r.json() as unknown as { access_token: string })
 
+    console.log('access_token', response.access_token)
     Session.set(ctx, response.access_token)
 
     const session = Session.verify(response.access_token)
@@ -43,7 +44,6 @@ export async function GET(ctx: APIContext) {
         successUrl: ctx.url.origin,
         cancelUrl: ctx.url.origin + '/auth/signup',
         customerId: user?.stripe_customer_id ?? undefined,
-        // referral: '',
       })
 
       if (url) return ctx.redirect(url)

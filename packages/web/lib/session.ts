@@ -50,6 +50,7 @@ export const create = async (context: Context) => {
 }
 
 export const set = (context: Context, token: string) => {
+  console.log('setting sm_session=' + token)
   const tomorrow = new Date()
   tomorrow.setDate(tomorrow.getDate() + 1)
 
