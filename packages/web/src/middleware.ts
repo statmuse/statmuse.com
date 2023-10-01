@@ -10,8 +10,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   const locals = context.locals
   let session = Session.get(context)
-  if (!session || session.type === 'public')
+  if (session) {
+    console.log('existing session: ' + session)
+  }
+
+  if (!session || session.type === 'public') {
     session = await Session.create(context)
+    console.log('new session: ' + session)
+  }
 
   locals.session = session
 
