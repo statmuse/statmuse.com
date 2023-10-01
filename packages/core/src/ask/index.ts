@@ -192,8 +192,6 @@ export const upsertFinance = async (params: {
     is_in_suggests: isInSuggestsFinance(params.query, response, answerType),
   }
 
-  console.log('newAsk', newAsk)
-
   const ask = await db.transaction().execute(async (trx) => {
     const ask = await trx
       .insertInto('finance_asks')
@@ -215,8 +213,6 @@ export const upsertFinance = async (params: {
 
     if (!ask) throw new Error('Failed to create new ask')
 
-    console.log('ask', ask)
-
     const newAskEvent: NewFinanceAskEvent = {
       id: randomUUID(),
       query_raw: params.query,
@@ -232,8 +228,6 @@ export const upsertFinance = async (params: {
       .values(newAskEvent)
       .returningAll()
       .executeTakeFirst()
-
-    console.log('askEvent', askEvent)
 
     if (params.userId) {
       const newAskUser: NewFinanceAskUser = {
@@ -259,8 +253,6 @@ export const upsertFinance = async (params: {
         )
         .returningAll()
         .executeTakeFirst()
-
-      console.log('askUser', askUser)
     }
 
     const newLink: NewLink = {
@@ -279,8 +271,6 @@ export const upsertFinance = async (params: {
         .values(newLink)
         .returningAll()
         .executeTakeFirst()
-
-      console.log('link', link)
     }
 
     return ask

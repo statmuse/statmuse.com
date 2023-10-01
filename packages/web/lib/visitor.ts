@@ -111,7 +111,5 @@ export const fromRequest = async (context: Session.Context) => {
     last_request_ip,
   }
 
-  console.log('newVisitor', newVisitor)
-
   return Visitor.insert(newVisitor)
 }

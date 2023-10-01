@@ -223,7 +223,7 @@ export const getUrlForEntity = (entity: GameraEntity) => {
       )}-${id}`
       break
     default:
-      throw new Error('Unknown entity type')
+      throw new Error('Unknown entity type: ' + type)
   }
 
   if (parameters && !isPga) {

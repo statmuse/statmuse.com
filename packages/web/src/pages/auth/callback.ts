@@ -11,8 +11,6 @@ export async function GET(ctx: APIContext) {
   const code = ctx.url.searchParams.get('code')
   if (!code) throw new Error('Code missing')
 
-  console.log(Auth.auth.url)
-
   try {
     const response = await fetch(Auth.auth.url + '/token', {
       method: 'POST',

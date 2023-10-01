@@ -76,7 +76,6 @@ export async function fantasyAsk(
 
 export const getGameraHeaders = (context: Context) => {
   const visitor = context.locals.visitor
-  console.log('headers', new Map(context.request.headers))
 
   const headers: Record<string, string> = {
     Accept: 'application/json',
@@ -95,8 +94,6 @@ export const getGameraHeaders = (context: Context) => {
   if (timezoneOffset) {
     headers['x-visitor-tz'] = timezoneOffset
   }
-
-  console.log('headers', headers)
 
   return headers
 }

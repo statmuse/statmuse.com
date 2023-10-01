@@ -19,7 +19,7 @@ export type KanedamaCategoricalColumnChart = KanedamaChartBase & {
         nameLines: string[]
         color: string
       }[]
-    }
+    },
   ]
   categories: {
     nameLines: string[]
@@ -36,7 +36,7 @@ export type KanedamaTimeSeriesLineChart = KanedamaChartBase & {
         y: number
         label: string
       }[]
-    }
+    },
   ]
 }
 
@@ -55,7 +55,7 @@ export function handleResponse(response: KanedamaResponse) {
 
   let redirectUrl = ''
   const assetEntityData = response.visual.detail?.find(
-    (d) => d.type === 'assetEntityData'
+    (d) => d.type === 'assetEntityData',
   ) as AssetEntityData | undefined
   if (assetEntityData && entity?.type === 'entity') {
     const symbol = entity.entity.id.toLowerCase()
@@ -71,7 +71,7 @@ export function handleResponse(response: KanedamaResponse) {
 
 export function handleAskResponse(response: KanedamaResponse) {
   const query = tokensToText(
-    response.visual.summaryTokens.filter((t) => t.type !== 'inferred')
+    response.visual.summaryTokens.filter((t) => t.type !== 'inferred'),
   ).toLowerCase()
 
   if (response.type === 'nlgPromptForMoreInfoVisualChoicesOptional') {
@@ -79,7 +79,7 @@ export function handleAskResponse(response: KanedamaResponse) {
   }
   const entity = response.visual.summary.answer.find((t) => t.type === 'entity')
   const assetEntityData = response.visual.detail?.find(
-    (d) => d.type === 'assetEntityData'
+    (d) => d.type === 'assetEntityData',
   ) as AssetEntityData | undefined
 
   if (assetEntityData && entity?.type === 'entity') {
@@ -113,7 +113,7 @@ export const getUrlForEntity = (entity: KanedamaEntity) => {
       url = `/money/symbol/${symbol}`
       break
     default:
-      throw new Error('Unknown entity type')
+      throw new Error('Unknown entity type: ' + type)
   }
 
   return url
@@ -406,7 +406,7 @@ export interface ChoicesVisual
       display: string
       assetId: string
       input: string
-    }
+    },
   ]
 }
 

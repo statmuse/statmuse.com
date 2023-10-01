@@ -112,8 +112,6 @@ export async function ask(
     params,
   ).toString()}`
 
-  console.log(requestUrl)
-
   try {
     const response = await fetch(requestUrl, {
       headers: getGameraHeaders(context),
@@ -169,7 +167,6 @@ export async function getAssetPriceData(options: {
   const requestUrl = `${kanedamaApiUrl}asset/${
     options.baseAssetId
   }/price?${new URLSearchParams(params).toString()}`
-  console.log(requestUrl)
 
   try {
     const responses = await Promise.all([

@@ -27,7 +27,7 @@ const secretsManager = new SecretsManagerClient({
 const { SecretString: secret } = await secretsManager.send(
   new GetSecretValueCommand({
     SecretId: process.env.POSTGRES_SECRET_ARN,
-  })
+  }),
 )
 if (!secret) throw new Error('No secret found')
 
@@ -174,12 +174,10 @@ types.setTypeParser(types.builtins.TIMESTAMP, (datetimeString) => {
       temp.getHours(),
       temp.getMinutes(),
       temp.getSeconds(),
-      temp.getMilliseconds()
-    )
+      temp.getMilliseconds(),
+    ),
   )
 })
-
-console.log(process.env.POSTGRES_HOST)
 
 export const db = new Kysely<Database>({
   dialect: new PostgresDialect({

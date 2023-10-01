@@ -4,9 +4,9 @@ import * as User from '@statmuse/core/user'
 import * as Visitor from '@statmuse/core/visitor'
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  console.log('method', context.request.method)
-  console.log('path', context.url.pathname)
-  console.log('url', context.url.toString())
+  const req = context.request
+  console.log(`${req.method} ${context.url.pathname}${context.url.search}`)
+  console.log(new Map(req.headers))
 
   const locals = context.locals
   let session = Session.get(context)
@@ -26,14 +26,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const visitor = await Visitor.get(visitorId!)
     if (!visitor) throw new Error('No visitor found')
     locals.visitor = visitor
-    console.log('visitor', visitor)
   }
 
   locals.user =
     session.type === 'user'
       ? await User.fromEmail(session.properties.email)
       : undefined
-  console.log('user', locals.user)
+
+  console.log('visitor', locals.visitor.id)
+  if (locals.user) console.log('user', locals.user.id)
 
   // if user subscription status changes and differs from session
   // then update session cookie
