@@ -125,11 +125,12 @@ const formatToken = (token: KanedamaToken) => {
   let text = token.text
   if (token.type === 'entity') {
     const url = getUrlForEntity(token.entity)
-
-    text =
-      text === token.entity?.display
-        ? `<a href="${url}">${text}</a>`
-        : `<a href="${url}" title="${token.entity.display}">${text}</a>`
+    if (url) {
+      text =
+        text === token.entity?.display
+          ? `<a href="${url}">${text}</a>`
+          : `<a href="${url}" title="${token.entity.display}">${text}</a>`
+    }
   }
 
   // if (token.type === 'inferred') {
