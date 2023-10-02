@@ -22,8 +22,9 @@ export function Auth({ stack, app }: StackContext) {
         AUTH_FRONTEND_URL:
           app.mode === 'dev'
             ? 'http://localhost:3000'
+            : isProd
+            ? 'https://www.statmuse.com'
             : 'https://' + dns.domain,
-        EMAIL_DOMAIN: dns.domain,
         POSTGRES_SECRET_ARN: rdsCredentialsSecret.secretArn,
         POSTGRES_HOST: isProd
           ? 'mothra-prod.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com'
