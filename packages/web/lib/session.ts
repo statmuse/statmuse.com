@@ -40,6 +40,7 @@ export const create = async (context: Context) => {
       cookieStatus: visitor.cookie_status,
       origin: visitor.origin_name,
     })
+    console.log('updating the session because a new session was created')
     set(context, token)
     return builder.verify(token)
   } catch (error) {

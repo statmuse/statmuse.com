@@ -25,6 +25,7 @@ export async function POST(ctx: APIContext) {
     })
   }
 
+  console.log('updating the session because cookie status updated (POST)')
   Session.update(ctx, {
     cookieStatus: body.cookie_status,
   })

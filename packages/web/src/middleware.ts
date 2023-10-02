@@ -50,6 +50,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
     session.properties.subscriptionStatus !==
       locals.user.stripe_subscription_status
   ) {
+    console.log(
+      'updating the session because user subscription status is stale',
+    )
     Session.update(context, {
       subscriptionStatus: locals.user.stripe_subscription_status,
     })
