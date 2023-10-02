@@ -86,6 +86,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
         `${cacheControl}, no-cache="Set-Cookie"`,
       )
     }
+  } else {
+    response.headers.set('Cache-Control', 'no-cache="Set-Cookie"')
   }
 
   return response
