@@ -33,7 +33,7 @@ export const verify = (token: string) => {
 export const create = async (context: Context) => {
   try {
     const visitor = await fromRequest(context)
-    context.locals.visitor = visitor
+    if (context.locals) context.locals.visitor = visitor
     const token = builder.create('visitor', {
       id: visitor.id,
       bot: visitor.is_bot,
