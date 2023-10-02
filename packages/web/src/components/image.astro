@@ -7,8 +7,8 @@ interface Props extends Omit<RemoteImageProps, 'src'> {
   src: string | { answer: Answer }
 }
 
-const getUrl = (src: string | { answer: Answer }) => {
-  if (typeof src === 'string') return src
+const getUrl = (src: string | { answer: Answer } | undefined) => {
+  if (!src || typeof src === 'string') return src
   const answer = src.answer as GameraResponse
   const subject = answer.visual.summary.subject
   return subject.imageUrl
@@ -16,6 +16,7 @@ const getUrl = (src: string | { answer: Answer }) => {
 
 const getImageUrl = (src: string | { answer: Answer }) => {
   const raw = getUrl(src)
+  if (!raw) return ''
   const url = raw.startsWith('http') ? raw : `${cdnBaseUrl}/${raw}`
   return url
 }
