@@ -44,16 +44,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // if user subscription status changes and differs from session
   // then update session cookie
-  // if (
-  //   locals.user &&
-  //   session.type === 'user' &&
-  //   session.properties.subscriptionStatus !==
-  //     locals.user.stripe_subscription_status
-  // ) {
-  //   Session.update(context, {
-  //     subscriptionStatus: locals.user.stripe_subscription_status,
-  //   })
-  // }
+  if (
+    locals.user &&
+    session.type === 'user' &&
+    session.properties.subscriptionStatus !==
+      locals.user.stripe_subscription_status
+  ) {
+    Session.update(context, {
+      subscriptionStatus: locals.user.stripe_subscription_status,
+    })
+  }
 
   locals.subscribed = locals.user?.stripe_subscription_status === 'active'
 
