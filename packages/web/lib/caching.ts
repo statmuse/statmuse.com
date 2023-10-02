@@ -19,7 +19,7 @@ export const swr = (
 ) => {
   astro.response.headers.set(
     'Cache-Control',
-    `public, s-maxage=${
+    `public, no-cache="Set-Cookie", s-maxage=${
       options?.maxage ?? DEFAULT_MAX_AGE
     }, stale-while-revalidate=${
       options?.revalidate ?? DEFAULT_REVALIDATE_PERIOD

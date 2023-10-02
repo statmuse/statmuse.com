@@ -78,5 +78,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
   response.headers.set('X-Permitted-Cross-Domain-Policies', 'none')
   response.headers.set('X-Xss-Protection', '1; mode=block')
 
+  if (response.headers.has('Cache-Control')) {
+    const cacheControl = response.headers.get('Cache-Control')
+    if (!cacheControl?.includes('Set-Cookie')) {
+      response.headers.set(
+        'Cache-Control',
+        `${cacheControl}, no-cache="Set-Cookie"`,
+      )
+    }
+  }
+
   return response
 })
