@@ -76,6 +76,7 @@
   }
 
   const submitForm = () => {
+    if (!input.value) return
     trackSuggestion(input.value)
     storeQuery(input.value)
     form.submit()
