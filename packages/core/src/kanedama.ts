@@ -112,6 +112,8 @@ export const getUrlForEntity = (entity: KanedamaEntity) => {
       const symbol = id.toLowerCase()
       url = `/money/symbol/${symbol}`
       break
+    case 'btcBlock':
+      break
     default:
       throw new Error('Unknown entity type: ' + type)
   }
@@ -160,7 +162,7 @@ export type KanedamaToken = {
 
 export type KanedamaEntity = {
   display: string
-  type: 'assetProfile'
+  type: 'assetProfile' | 'btcBlock'
   id: string
 }
 

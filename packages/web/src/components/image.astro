@@ -16,7 +16,7 @@ const getUrl = (src: string | { answer: Answer } | undefined) => {
 
 const getImageUrl = (src: string | { answer: Answer }) => {
   const raw = getUrl(src)
-  if (!raw) return ''
+  if (!raw) return undefined
   const url = raw.startsWith('http') ? raw : `${cdnBaseUrl}/${raw}`
   return url
 }
@@ -24,4 +24,4 @@ const getImageUrl = (src: string | { answer: Answer }) => {
 const src = getImageUrl(Astro.props.src)
 ---
 
-<AstroImage {...Astro.props} {src} />
+{src ? <AstroImage {...Astro.props} {src} /> : <div />}
