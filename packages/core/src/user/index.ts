@@ -103,6 +103,16 @@ export async function deleteUser(id: string) {
       .where('user_id', '=', id)
       .execute()
 
+    const deleteFinanceAskEvents = trx
+      .deleteFrom('finance_ask_events')
+      .where('user_id', '=', id)
+      .execute()
+
+    const deleteFinanceAsksUsers = trx
+      .deleteFrom('finance_asks_users')
+      .where('user_id', '=', id)
+      .execute()
+
     const deleteIdentities = trx
       .deleteFrom('identities')
       .where('user_id', '=', id)
@@ -135,9 +145,11 @@ export async function deleteUser(id: string) {
 
     await Promise.all([
       deleteAskEvents,
+      deleteAsksUsers,
+      deleteFinanceAskEvents,
+      deleteFinanceAsksUsers,
       deleteIdentities,
       deleteUsersVisitors,
-      deleteAsksUsers,
       deleteStories,
       deleteSessions,
       deleteFollowers,
