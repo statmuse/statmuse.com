@@ -455,7 +455,7 @@ export default class Shotchart extends Component {
         width="100%"
         viewBox="15.25 923 764 519"
         enableBackground="new 15.25 923 764 519"
-        class="stroke-black"
+        className="stroke-black"
       >
         <path
           fill="none"
