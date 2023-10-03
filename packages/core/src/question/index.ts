@@ -1,4 +1,4 @@
-import { InferResult } from 'kysely'
+import type { InferResult } from 'kysely'
 import { db } from '../db'
 export * from './question.sql'
 

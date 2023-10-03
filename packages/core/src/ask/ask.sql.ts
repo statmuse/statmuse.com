@@ -1,12 +1,12 @@
-import {
+import type {
   ColumnType,
   Generated,
   Insertable,
   Selectable,
   Updateable,
 } from 'kysely'
-import { GameraResponse } from '../gamera'
-import { KanedamaResponse } from '../kanedama'
+import type { GameraResponse } from '../gamera'
+import type { KanedamaResponse } from '../kanedama'
 
 export type AnswerType =
   | 'answer'

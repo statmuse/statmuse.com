@@ -1,4 +1,4 @@
-import { ColumnType, Insertable, Selectable, Updateable } from 'kysely'
+import type { ColumnType, Insertable, Selectable, Updateable } from 'kysely'
 
 export interface UserTable {
   id: string

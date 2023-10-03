@@ -38,18 +38,31 @@ const latestSeason = await getTeamFranchiseLatestSeason({
   domain,
   teamId: overview.teamId.toString(),
 })
+
 const yearId = latestSeason?.entity.id.split('/')[1]
 
 const links = [
-  { text: 'Overview', href: `${teamPath}/${yearId}`, page: 'overview' },
-  { text: 'Stats', href: `${teamPath}/stats/${yearId}`, page: 'stats' },
-  {
-    text: 'Scores & Schedule',
-    href: `${teamPath}/schedule/${yearId}`,
-    page: 'schedule',
-  },
-  { text: 'Roster', href: `${teamPath}/roster/${yearId}`, page: 'roster' },
-  { text: 'Splits', href: `${teamPath}/splits/${yearId}`, page: 'splits' },
+  ...(yearId
+    ? [
+        { text: 'Overview', href: `${teamPath}/${yearId}`, page: 'overview' },
+        { text: 'Stats', href: `${teamPath}/stats/${yearId}`, page: 'stats' },
+        {
+          text: 'Scores & Schedule',
+          href: `${teamPath}/schedule/${yearId}`,
+          page: 'schedule',
+        },
+        {
+          text: 'Roster',
+          href: `${teamPath}/roster/${yearId}`,
+          page: 'roster',
+        },
+        {
+          text: 'Splits',
+          href: `${teamPath}/splits/${yearId}`,
+          page: 'splits',
+        },
+      ]
+    : []),
   { text: 'History', href: `${teamPath}/history`, page: 'history' },
 ]
 

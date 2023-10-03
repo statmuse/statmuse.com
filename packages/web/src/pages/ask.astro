@@ -30,6 +30,7 @@ if (Astro.request.method === 'POST') {
 
 if (!query) throw new Error('No query provided')
 
+console.log('query input: ', query)
 const response = await ask({ query, preferredDomain, conversationToken }, Astro)
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })

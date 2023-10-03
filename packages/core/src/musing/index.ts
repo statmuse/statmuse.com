@@ -1,4 +1,4 @@
-import { InferResult } from 'kysely'
+import type { InferResult } from 'kysely'
 import { db } from '../db'
 import { isUUID } from '../question'
 export * from './musing.sql'

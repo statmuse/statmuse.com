@@ -1,4 +1,4 @@
-import { GameraGrid } from './gamera'
+import type { GameraGrid } from './gamera'
 
 export const cdnBaseUrl = 'https://cdn.statmuse.com'
 export type KanedamaGrid = GameraGrid

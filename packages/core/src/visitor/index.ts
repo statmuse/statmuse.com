@@ -1,5 +1,5 @@
 import { db } from '../db'
-import { NewVisitor, VisitorUpdate } from './visitor.sql'
+import type { NewVisitor, Visitor, VisitorUpdate } from './visitor.sql'
 export * from './visitor.sql'
 
 export const get = async (id: string) =>
@@ -9,7 +9,10 @@ export const get = async (id: string) =>
     .selectAll()
     .executeTakeFirst()
 
-export const getByOrigin = async (originId: string, originName: string) =>
+export const getByOrigin = async (
+  originId: string,
+  originName: Visitor['origin_name'],
+) =>
   db
     .selectFrom('visitors')
     .where('visitors.origin_id', '=', originId)
@@ -18,7 +21,7 @@ export const getByOrigin = async (originId: string, originName: string) =>
     .executeTakeFirst()
 
 export const insert = async (
-  visitor: Omit<NewVisitor, 'inserted_at' | 'updated_at'>
+  visitor: Omit<NewVisitor, 'inserted_at' | 'updated_at'>,
 ) =>
   db
     .insertInto('visitors')

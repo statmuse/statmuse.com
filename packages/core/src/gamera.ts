@@ -785,7 +785,7 @@ export interface Team {
   record: string
   score: number
   logoUrl: string
-  entity: GameraEntity
+  entity?: GameraEntity
 }
 
 export interface NbaHistoricalBoxScore extends DetailBase {
@@ -1116,22 +1116,22 @@ export interface ChoicesNlg {
 
 export type GameraResponse = GameraDefaultResponse | GameraChoicesResponse
 
-export interface GameraNbaBoxScore extends GameraResponseBase {
+export interface GameraNbaBoxScore extends GameraDefaultResponse {
   domain: 'NBA'
   visual: NbaVisual
   nlg: Nlg
 }
-export interface GameraNflBoxScore extends GameraResponseBase {
+export interface GameraNflBoxScore extends GameraDefaultResponse {
   domain: 'NFL'
   visual: NflVisual
   nlg: Nlg
 }
-export interface GameraMlbBoxScore extends GameraResponseBase {
+export interface GameraMlbBoxScore extends GameraDefaultResponse {
   domain: 'MLB'
   visual: MlbVisual
   nlg: Nlg
 }
-export interface GameraNhlBoxScore extends GameraResponseBase {
+export interface GameraNhlBoxScore extends GameraDefaultResponse {
   domain: 'NHL'
   visual: NhlVisual
   nlg: Nlg

@@ -20,6 +20,10 @@ if (!data) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
 
+if (data.type === 'error') {
+  return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
 Caching.swr(Astro)
 ---
 

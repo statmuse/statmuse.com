@@ -142,7 +142,11 @@ export async function getAssetProfile(symbol: string) {
 
   try {
     const response = await fetch(requestUrl)
-    return response.json() as Promise<AssetProfile>
+    const data = await response.json()
+    if (data.error) {
+      return undefined
+    }
+    return data as AssetProfile
   } catch (error) {
     console.error(error)
   }

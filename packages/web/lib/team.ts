@@ -25,8 +25,11 @@ export const getTeamSeasonOverview = async (props: {
     const yearId = parseYearId(year)
     const requestUrl = `${gameraApiUrl}${domain}/teams/v2/${teamId}/${yearId}`
     const response = await fetch(requestUrl)
-    const data = (await response.json()) as GameraTeamSeasonOverview
-    return data
+    const data = await response.json()
+    if (data.error) {
+      return undefined
+    }
+    return data as GameraTeamSeasonOverview
   } catch (error) {
     console.error(error)
     return undefined
@@ -200,6 +203,13 @@ export const getTeamFranchiseLatestSeason = async (props: {
     const data = (await response.json()) as {
       name: string
       entity: GameraEntity
+      error?: {
+        code: string
+        message: string
+      }
+    }
+    if (data.error) {
+      return undefined
     }
     return data
   } catch (error) {
