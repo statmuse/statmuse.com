@@ -41,7 +41,7 @@ export const handler = AuthHandler({
         await sendgrid.send({
           templateId: '14a1e4d7-01a1-45b4-b43a-35950b9829b9',
           substitutions: {
-            confirmation_url: `https://www.statmuse.com/auth/code?email=${claims.email}&code=${code}`,
+            confirmation_url: `${process.env.AUTH_FRONTEND_URL}/auth/code?email=${claims.email}&code=${code}`,
           },
           to: claims.email,
           from: 'StatMuse <hello@statmuse.com>',
