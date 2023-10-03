@@ -6,11 +6,14 @@ import * as Visitor from '@statmuse/core/visitor'
 export const logging = defineMiddleware(async (context, next) => {
   const req = context.request
   console.log(`${req.method} ${context.url.pathname}${context.url.search}`)
-  console.log('destination', context.request.destination)
   return next()
 })
 
 export const session = defineMiddleware(async (context, next) => {
+  if (context.url.pathname.startsWith('/_image')) {
+    return next()
+  }
+
   const locals = context.locals
   let session = Session.get(context)
 
