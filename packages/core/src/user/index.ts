@@ -59,7 +59,7 @@ export const fromEmail = async (email: string) =>
     .executeTakeFirst()
 
 export async function deleteUser(id: string) {
-  console.log('Deleting user asks with id: ' + id)
+  console.log('Deleting user with id: ' + id)
 
   const transaction = await db.transaction().execute(async (trx) => {
     const updateMusings = trx
@@ -156,7 +156,6 @@ export async function deleteUser(id: string) {
       deleteFollowed,
     ])
 
-    console.log('Deleting user with id: ' + id)
     return await trx.deleteFrom('users').where('id', '=', id).executeTakeFirst()
   })
 

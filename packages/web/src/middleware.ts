@@ -1,23 +1,21 @@
 import * as Session from '@lib/session'
-import { defineMiddleware } from 'astro:middleware'
+import { defineMiddleware, sequence } from 'astro:middleware'
 import * as User from '@statmuse/core/user'
 import * as Visitor from '@statmuse/core/visitor'
 
-export const onRequest = defineMiddleware(async (context, next) => {
+export const logging = defineMiddleware(async (context, next) => {
   const req = context.request
   console.log(`${req.method} ${context.url.pathname}${context.url.search}`)
-  console.log(new Map(req.headers))
+  console.log('destination', context.request.destination)
+  return next()
+})
 
+export const session = defineMiddleware(async (context, next) => {
   const locals = context.locals
   let session = Session.get(context)
-  if (session) {
-    console.log('existing session: ' + JSON.stringify(session))
-  }
 
-  if (!session || session.type === 'public') {
+  if (!session || session.type === 'public')
     session = await Session.create(context)
-    console.log('new session: ' + JSON.stringify(session))
-  }
 
   locals.session = session
 
@@ -50,9 +48,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
     session.properties.subscriptionStatus !==
       locals.user.stripe_subscription_status
   ) {
-    console.log(
-      'updating the session because user subscription status is stale',
-    )
     Session.update(context, {
       subscriptionStatus: locals.user.stripe_subscription_status,
     })
@@ -60,6 +55,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   locals.subscribed = locals.user?.stripe_subscription_status === 'active'
 
+  return next()
+})
+
+export const headers = defineMiddleware(async (_context, next) => {
   const response = await next()
   response.headers.set(
     'Content-Security-Policy',
@@ -86,9 +85,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
         `${cacheControl}, no-cache="Set-Cookie"`,
       )
     }
-  } else {
-    response.headers.set('Cache-Control', 'no-cache="Set-Cookie"')
   }
 
   return response
 })
+
+export const onRequest = sequence(logging, session, headers)

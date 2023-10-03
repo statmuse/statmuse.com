@@ -21,10 +21,8 @@ export type Context =
 
 export const get = ({ cookies }: Context) => {
   const cookie = cookies.get(SESSION_COOKIE)?.value
-  console.log('cookie', cookie)
   if (!cookie) return undefined
   const verified = builder.verify(cookie)
-  console.log('verified', verified)
   return verified
 }
 
@@ -42,7 +40,6 @@ export const create = async (context: Context) => {
       cookieStatus: visitor.cookie_status,
       origin: visitor.origin_name,
     })
-    console.log('updating the session because a new session was created')
     set(context, token)
     return builder.verify(token)
   } catch (error) {
