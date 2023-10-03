@@ -15,8 +15,11 @@ export const getPlayerBio = async (domain: GameraDomain, player: string) => {
     const playerId = parsePlayerId(player)
     const requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}/bio`
     const response = await fetch(requestUrl)
-    const data = (await response.json()) as GameraPlayerBio
-    return data
+    const data = await response.json()
+    if (data.error) {
+      return undefined
+    }
+    return data as GameraPlayerBio
   } catch (error) {
     console.error(error)
     return undefined
