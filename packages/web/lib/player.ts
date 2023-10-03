@@ -31,8 +31,11 @@ export const getPlayerProfile = async (
     const playerId = parsePlayerId(player)
     const requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}`
     const response = await fetch(requestUrl)
-    const data = (await response.json()) as GameraPlayerProfileResponse
-    return data
+    const data = await response.json()
+    if (data.error) {
+      return undefined
+    }
+    return data as GameraPlayerProfileResponse
   } catch (error) {
     console.error(error)
     return undefined
