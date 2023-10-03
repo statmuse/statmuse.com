@@ -455,116 +455,59 @@ export default class Shotchart extends Component {
         width="100%"
         viewBox="15.25 923 764 519"
         enableBackground="new 15.25 923 764 519"
+        class="stroke-black"
       >
         <path
           fill="none"
-          stroke="#000000"
           strokeMiterlimit="10"
           d="M278.75 1432.5v-283.75h237.5v283.75"
         />
         <path
           fill="none"
-          stroke="#000000"
           strokeMiterlimit="10"
           d="M386.25 1353.75c0-6.213 5.036-11.25 11.25-11.25 6.213 0 11.25 5.037 11.25 11.25S403.713 1365 397.5 1365C391.286 1365 386.25 1359.963 386.25 1353.75z"
         />
         <path
           fill="none"
-          stroke="#000000"
           strokeMiterlimit="10"
           d="M338.75 1353.75c0-32.447 26.303-58.75 58.75-58.75s58.75 26.303 58.75 58.75"
         />
         <path
           fill="none"
-          stroke="#000000"
           strokeMiterlimit="10"
           d="M67.52 1432.5l0.032-210c52.192-131.094 180.248-223.75 329.949-223.75 149.7 0 277.848 92.656 330.039 223.75l-0.039 210"
         />
+        <path fill="none" strokeMiterlimit="10" d="M352.5 1371.25h90" />
         <path
           fill="none"
-          stroke="#000000"
-          strokeMiterlimit="10"
-          d="M352.5 1371.25h90"
-        />
-        <path
-          fill="none"
-          stroke="#000000"
           strokeMiterlimit="10"
           d="M308.77 1147.5c0-49.016 39.715-88.75 88.73-88.75s88.75 39.734 88.75 88.75"
         />
+        <path fill="none" strokeMiterlimit="10" d="M773.75 1432.75H21.25" />
         <path
           fill="none"
-          stroke="#000000"
-          strokeMiterlimit="10"
-          d="M773.75 1432.75H21.25"
-        />
-        <path
-          fill="none"
-          stroke="#000000"
           strokeMiterlimit="10"
           d="M486.152 1148.273c0 3.035-0.152 6.033-0.449 8.99"
         />
         <path
           fill="none"
-          stroke="#000000"
           strokeMiterlimit="10"
           strokeDasharray="17.3876,17.3876"
           d="M482.28 1174.289c-11.114 36.322-44.896 62.734-84.858 62.734 -43.003 0-78.864-30.586-87.013-71.189"
         />
         <path
           fill="none"
-          stroke="#000000"
           strokeMiterlimit="10"
           d="M309.122 1157.264c-0.297-2.957-0.45-5.955-0.45-8.99"
         />
-        <path
-          fill="#FFFFFF"
-          stroke="#000000"
-          strokeMiterlimit="10"
-          d="M279.25 1325.844H268"
-        />
-        <path
-          fill="#FFFFFF"
-          stroke="#000000"
-          strokeMiterlimit="10"
-          d="M279.25 1308.344H268"
-        />
-        <path
-          fill="#FFFFFF"
-          stroke="#000000"
-          strokeMiterlimit="10"
-          d="M279.25 1260.844H268"
-        />
-        <path
-          fill="#FFFFFF"
-          stroke="#000000"
-          strokeMiterlimit="10"
-          d="M279.25 1213.344H268"
-        />
-        <path
-          fill="#FFFFFF"
-          stroke="#000000"
-          strokeMiterlimit="10"
-          d="M516.75 1325.844H528"
-        />
-        <path
-          fill="#FFFFFF"
-          stroke="#000000"
-          strokeMiterlimit="10"
-          d="M516.75 1308.344H528"
-        />
-        <path
-          fill="#FFFFFF"
-          stroke="#000000"
-          strokeMiterlimit="10"
-          d="M516.75 1260.844H528"
-        />
-        <path
-          fill="#FFFFFF"
-          stroke="#000000"
-          strokeMiterlimit="10"
-          d="M516.75 1213.344H528"
-        />
+        <path fill="#FFFFFF" strokeMiterlimit="10" d="M279.25 1325.844H268" />
+        <path fill="#FFFFFF" strokeMiterlimit="10" d="M279.25 1308.344H268" />
+        <path fill="#FFFFFF" strokeMiterlimit="10" d="M279.25 1260.844H268" />
+        <path fill="#FFFFFF" strokeMiterlimit="10" d="M279.25 1213.344H268" />
+        <path fill="#FFFFFF" strokeMiterlimit="10" d="M516.75 1325.844H528" />
+        <path fill="#FFFFFF" strokeMiterlimit="10" d="M516.75 1308.344H528" />
+        <path fill="#FFFFFF" strokeMiterlimit="10" d="M516.75 1260.844H528" />
+        <path fill="#FFFFFF" strokeMiterlimit="10" d="M516.75 1213.344H528" />
       </svg>
     )
   }

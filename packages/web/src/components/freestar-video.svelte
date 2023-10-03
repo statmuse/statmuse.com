@@ -40,10 +40,7 @@
       Video Ad
     </div>
   {:else}
-    <div
-      bind:this={container}
-      class={`${$$props.class} border border-black rounded-md overflow-hidden z-0`}
-    >
+    <div bind:this={container} class={`${$$props.class} overflow-hidden z-0`}>
       {#if domain === 'nba'}
         <div class="s2nPlayer k-GvH7HE8X-iw36bHUX" data-type="float" />
         <script

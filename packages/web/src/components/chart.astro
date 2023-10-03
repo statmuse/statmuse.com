@@ -212,6 +212,7 @@ categories.forEach((cat, i) => {
                     fill={fillColor(v.color!)}
                   />
                   <text
+                    class="fill-black"
                     style={{
                       display: showBarLabel ? 'block' : 'none',
                       fontSize: 14,
@@ -223,7 +224,6 @@ categories.forEach((cat, i) => {
                     x={x1(v.series) + x1.bandwidth() / 2}
                     dy=".35em"
                     text-anchor="middle"
-                    fill="black"
                   >
                     {formatValue(v)}
                   </text>

@@ -192,7 +192,7 @@
     aria-haspopup="listbox"
     aria-owns="ask-bar-suggestions"
     aria-expanded={open}
-    class="relative rounded-lg text-[#191919]"
+    class="relative rounded-lg text-black"
   >
     <div class="relative group">
       <textarea

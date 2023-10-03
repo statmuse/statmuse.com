@@ -12,17 +12,14 @@ const { domain, additionalQuestions } = Astro.props
 <div class="mt-6 mb-4">
   <h3 class="text-4xl font-semibold">Explore</h3>
   <div
-    class="grid grid-cols-[repeat(auto-fit,_minmax(425px,_1fr))] gap-2 items-start"
+    class="grid grid-cols-[repeat(auto-fit,_minmax(425px,_1fr))] gap-4 items-start"
   >
     <FreestarVideo client:only="svelte" transition:persist {domain} />
     {
       additionalQuestions ? (
-        <ul
-          class="p-4 border border-black rounded-md"
-          data-cy-related-questions
-        >
+        <ul class="space-y-3" data-cy-related-questions>
           {additionalQuestions.slice(0, 3).map((question) => (
-            <li class="flex-1 min-w-[210px] my-1.5 sm:my-2.5 flex gap-1.5 leading-snug">
+            <li class="flex-1 min-w-[210px] flex gap-1.5 leading-snug">
               <i class="w-5 h-5 shrink-0 explore-search-icon" />
               <a
                 href={createAskPath({

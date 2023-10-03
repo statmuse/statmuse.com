@@ -295,7 +295,7 @@ input {
 
 .ad-offer {
   width: 280px;
-  border: 1px solid black;
+  border: 1px solid #333333;
   border-radius: 8px;
   padding: 0 20px;
   position: relative;
