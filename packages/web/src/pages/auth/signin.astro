@@ -2,6 +2,7 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
+import Image from '@components/image.astro'
 import { Caching } from '@lib/caching'
 
 if (Astro.request.method === 'POST') {
@@ -77,12 +78,12 @@ const meta = {
           </a><br />and <a href="/privacy">privacy policy</a>.
         </p>
       </div>
-      <img
+      <Image
         class="absolute bottom-0 left-0 w-full"
         src="https://cdn.statmuse.com/app/images/signup-players.png"
         alt="StatMuse+"
-        width={450}
-        height={200}
+        width={900}
+        height={400}
       />
     </div>
   </Container>

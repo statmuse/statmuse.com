@@ -1,0 +1,30 @@
+---
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Container from '@components/container.astro'
+import Image from '@components/image.astro'
+import { Caching } from '@lib/caching'
+
+const meta = { title: 'Confirm your email' }
+Caching.swr(Astro)
+---
+
+<Layout {meta}>
+  <Header />
+  <Container class="px-[30px] py-[5px]">
+    <div
+      class="w-full max-w-md bg-white rounded-lg border border-[#e4e4e4] mx-auto mb-5 pt-8 px-8 pb-44 relative text-center overflow-hidden"
+    >
+      <h2 class="my-5 text-center">
+        We sent you a link to sign in.<br />Please check your inbox.
+      </h2>
+      <Image
+        class="absolute bottom-0 left-0 w-full"
+        src="https://cdn.statmuse.com/app/images/signup-players.png"
+        alt="StatMuse+"
+        width={900}
+        height={400}
+      />
+    </div>
+  </Container>
+</Layout>

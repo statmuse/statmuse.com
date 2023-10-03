@@ -167,7 +167,7 @@ export async function updateEmail(id: string, email: string) {
 
   return db
     .updateTable('users')
-    .set({ email })
+    .set({ email, username: email })
     .where('users.id', '=', id)
     .returningAll()
     .executeTakeFirst()

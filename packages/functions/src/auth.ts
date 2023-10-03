@@ -1,4 +1,4 @@
-import { AuthHandler, CodeAdapter } from 'sst/node/future/auth'
+import { AuthHandler, CodeAdapter, LinkAdapter } from 'sst/node/future/auth'
 import * as User from '@statmuse/core/user'
 import * as Visitor from '@statmuse/core/visitor'
 import type { Visitor as VisitorT } from '@statmuse/core/visitor/visitor.sql'
@@ -33,16 +33,13 @@ export const sessions = createSessionBuilder<{
 export const handler = AuthHandler({
   sessions,
   providers: {
-    email: CodeAdapter({
-      async onCodeRequest(code, claims) {
+    email: LinkAdapter({
+      async onLink(link, claims) {
         console.log('sending email to', claims.email)
 
-        // 14a1e4d7-01a1-45b4-b43a-35950b9829b9
         await sendgrid.send({
           templateId: '14a1e4d7-01a1-45b4-b43a-35950b9829b9',
-          substitutions: {
-            confirmation_url: `${process.env.AUTH_FRONTEND_URL}/auth/code?email=${claims.email}&code=${code}`,
-          },
+          substitutions: { confirmation_url: link },
           to: claims.email,
           from: 'StatMuse <hello@statmuse.com>',
           subject: 'Please confirm your email',
@@ -53,20 +50,8 @@ export const handler = AuthHandler({
           headers: {
             Location:
               process.env.AUTH_FRONTEND_URL +
-              '/auth/code?' +
-              new URLSearchParams({
-                email: claims.email,
-                update: claims.update,
-              }).toString(),
-          },
-        }
-      },
-      async onCodeInvalid() {
-        return {
-          statusCode: 302,
-          headers: {
-            Location:
-              process.env.AUTH_FRONTEND_URL + '/auth/code?error=invalid_code',
+              '/auth/confirm?' +
+              new URLSearchParams({ email: claims.email }).toString(),
           },
         }
       },
@@ -76,13 +61,13 @@ export const handler = AuthHandler({
     return true
   },
   onSuccess: async (input, response) => {
-    const email: string = input.claims.email
+    const email: string = input.email
     if (!email) throw new Error('No email found')
 
-    const visitorId: string | undefined = input.claims.visitor
+    const visitorId: string | undefined = input.visitor
     if (!visitorId) throw new Error('No visitor id found')
 
-    const updating: string | undefined = input.claims.update
+    const updating: string | undefined = input.update
 
     const visitor = await Visitor.get(visitorId)
     let user = updating ? await User.get(updating) : await User.fromEmail(email)
@@ -116,7 +101,7 @@ export const handler = AuthHandler({
         id: user.id,
         email,
         visitorId: visitor.id,
-        upgrade: input.claims.upgrade === 'true' || undefined,
+        upgrade: input.upgrade === 'true' || undefined,
         updated: !!updating,
         cookieStatus: visitor.cookie_status,
         origin: visitor.origin_name,
