@@ -3,16 +3,16 @@ import { db } from '../db'
 import { sql } from 'kysely'
 import {
   type GameraResponse,
+  type GameraDomain,
   getDomain,
   isFantasyQuery,
   isVoiceQuery,
   isExcludedQuery,
   cdnBaseUrl,
-  GameraDomain,
   tokensToHtml,
 } from '../gamera'
 import { tokensToText as tokensToTextFinance } from '../kanedama'
-import {
+import type {
   AnswerType,
   FinanceAnswerType,
   NewAsk,
@@ -25,9 +25,9 @@ import {
 import { tokensToText } from '../gamera'
 import * as Context from '../context'
 import { createAskPath } from '../path'
-import { NewLink } from '../link/link.sql'
+import type { NewLink } from '../link/link.sql'
 import { randomAlphanumericString } from '../random'
-import { KanedamaResponse } from '../kanedama'
+import type { KanedamaResponse } from '../kanedama'
 export * from './ask.sql'
 
 export const ASK_LIMIT = 15

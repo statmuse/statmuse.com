@@ -9,12 +9,12 @@
     "deploy": "sst deploy",
     "remove": "sst remove",
     "console": "sst console",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc -noEmit",
     "sso": "aws sso login --profile=statmuse"
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.3",
-    "@types/node": "16",
+    "@types/node": "^20.3.1",
     "aws-cdk-lib": "2.95.1",
     "constructs": "10.2.69",
     "prettier": "^3.0.3",

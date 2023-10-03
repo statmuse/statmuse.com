@@ -1,20 +1,25 @@
 import pg from 'pg'
 const { Pool, types } = pg
 
-import { Kysely, PostgresDialect, Generated, ColumnType } from 'kysely'
+import {
+  Kysely,
+  PostgresDialect,
+  type Generated,
+  type ColumnType,
+} from 'kysely'
 import {
   GetSecretValueCommand,
   SecretsManagerClient,
 } from '@aws-sdk/client-secrets-manager'
-import {
+import type {
   StoryTable,
   SessionTable,
   IdentityTable,
   UserTable,
   FollowTable,
 } from './user'
-import { UsersVisitorTable, VisitorTable } from './visitor'
-import {
+import type { UsersVisitorTable, VisitorTable } from './visitor'
+import type {
   AskEventTable,
   AskTable,
   AskUserTable,
@@ -22,10 +27,10 @@ import {
   FinanceAskTable,
   FinanceAskUserTable,
 } from './ask'
-import { ContextTable } from './context'
-import { LinkTable } from './link'
-import { MusingTable } from './musing'
-import { QuestionTable } from './question'
+import type { ContextTable } from './context'
+import type { LinkTable } from './link'
+import type { MusingTable } from './musing'
+import type { QuestionTable } from './question'
 
 const secretsManager = new SecretsManagerClient({
   region: process.env.AWS_REGION || 'us-east-1',
