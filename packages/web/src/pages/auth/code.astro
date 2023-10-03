@@ -13,6 +13,8 @@ const messages: Record<string, string> = {
   invalid_code: 'The code you entered is invalid',
 }
 
+const code = Astro.url.searchParams.get('code')
+
 Caching.none(Astro)
 ---
 
@@ -38,6 +40,7 @@ Caching.none(Astro)
             required
             aria-invalid={!!error}
             aria-describedby={error ? 'code-error' : undefined}
+            value={code}
           />
           {
             error ? (
@@ -77,5 +80,10 @@ Caching.none(Astro)
       location.href =
         form.action + '?' + new URLSearchParams({ code }).toString()
     })
+
+    const data = new FormData(form)
+    if (data.has('code') && data.get('code')) {
+      form.submit()
+    }
   })
 </script>

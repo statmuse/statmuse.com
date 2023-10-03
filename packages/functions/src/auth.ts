@@ -8,6 +8,7 @@ import contacts from '@sendgrid/client'
 import { Config } from 'sst/node/config'
 
 sendgrid.setApiKey(Config.SENDGRID_API_KEY)
+sendgrid.setSubstitutionWrappers('%', '%')
 contacts.setApiKey(Config.SENDGRID_API_KEY)
 
 export const sessions = createSessionBuilder<{
@@ -36,12 +37,15 @@ export const handler = AuthHandler({
       async onCodeRequest(code, claims) {
         console.log('sending email to', claims.email)
 
+        // 14a1e4d7-01a1-45b4-b43a-35950b9829b9
         await sendgrid.send({
+          templateId: '14a1e4d7-01a1-45b4-b43a-35950b9829b9',
+          substitutions: {
+            confirmation_url: `https://www.statmuse.com/auth/code?email=${claims.email}&code=${code}`,
+          },
           to: claims.email,
           from: 'StatMuse <hello@statmuse.com>',
-          subject: 'StatMuse Pin Code: ' + code,
-          text: `Your pin code is ${code}`,
-          html: `Your pin code is <strong>${code}</strong>`,
+          subject: 'Please confirm your email',
         })
 
         return {
