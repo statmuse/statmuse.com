@@ -12,20 +12,22 @@ import { clean } from '@statmuse/core/path'
 import { upsert } from '@statmuse/core/ask'
 import * as Enforcer from '@lib/enforcer'
 
-if (Astro.request.method !== 'POST') {
-  return Astro.redirect('/questions')
+let query: string | null | undefined = Astro.url.searchParams.get('q')
+let preferredDomain: string | undefined
+let conversationToken: string | undefined
+
+if (Astro.request.method === 'POST') {
+  const data = await Astro.request.formData()
+  preferredDomain = data.get('question[preferred_domain]')?.toString()
+  query = data.get('question[query]')?.toString()
+  conversationToken = data.get('question[conversation_token]')?.toString()
+
+  const canQuery = await Enforcer.canQuery(Astro.locals)
+  if (!canQuery) {
+    return Astro.redirect('/auth/signup?limit')
+  }
 }
 
-const canQuery = await Enforcer.canQuery(Astro.locals)
-
-if (!canQuery) {
-  return Astro.redirect('/auth/signup?limit')
-}
-
-const data = await Astro.request.formData()
-const preferredDomain = data.get('question[preferred_domain]')?.toString()
-let query = data.get('question[query]')?.toString()
-const conversationToken = data.get('question[conversation_token]')?.toString()
 if (!query) throw new Error('No query provided')
 
 const response = await ask({ query, preferredDomain, conversationToken }, Astro)
@@ -39,12 +41,14 @@ query = clean(
   ),
 )
 
-await upsert({
-  query,
-  response,
-  visitorId: Astro.locals.visitor.id,
-  userId: Astro.locals.user?.id,
-})
+if (Astro.request.method === 'POST') {
+  await upsert({
+    query,
+    response,
+    visitorId: Astro.locals.visitor.id,
+    userId: Astro.locals.user?.id,
+  })
+}
 ---
 
 <ErrorLayout
