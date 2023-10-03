@@ -785,7 +785,7 @@ export interface Team {
   record: string
   score: number
   logoUrl: string
-  entity: GameraEntity
+  entity?: GameraEntity
 }
 
 export interface NbaHistoricalBoxScore extends DetailBase {

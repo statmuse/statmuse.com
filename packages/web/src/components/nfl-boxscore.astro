@@ -28,8 +28,8 @@ const homeTeamStats = boxScoreData.teamDetail.homeTeam
 const awayTeam = boxScoreData.awayTeam
 const awayTeamStats = boxScoreData.teamDetail.awayTeam
 
-const homeTeamUrl = getUrlForEntity(homeTeam.entity)
-const awayTeamUrl = getUrlForEntity(awayTeam.entity)
+const homeTeamUrl = homeTeam.entity ? getUrlForEntity(homeTeam.entity) : ''
+const awayTeamUrl = awayTeam.entity ? getUrlForEntity(awayTeam.entity) : ''
 
 const plays = boxScoreData.scoringSummary
 const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
@@ -50,9 +50,17 @@ const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
         />
       </a>
       <div class="flex-1 ml-5">
-        <a title={awayTeam.name} href={awayTeamUrl}>
-          <h1 class="font-semibold text-2xl md:text-3xl">{awayTeam.name}</h1>
-        </a>
+        {
+          awayTeamUrl ? (
+            <a title={awayTeam.name} href={awayTeamUrl}>
+              <h1 class="font-semibold text-2xl md:text-3xl">
+                {awayTeam.name}
+              </h1>
+            </a>
+          ) : (
+            <h1 class="font-semibold text-2xl md:text-3xl">{awayTeam.name}</h1>
+          )
+        }
         <p class="font-semibold md:text-xl">{awayTeam.record}</p>
       </div>
       <h2 class="font-semibold text-5xl">{awayTeam.score}</h2>
@@ -69,9 +77,17 @@ const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
         />
       </a>
       <div class="flex-1 ml-5">
-        <a title={homeTeam.name} href={homeTeamUrl}>
-          <h1 class="font-semibold text-2xl md:text-3xl">{homeTeam.name}</h1>
-        </a>
+        {
+          homeTeamUrl ? (
+            <a title={homeTeam.name} href={homeTeamUrl}>
+              <h1 class="font-semibold text-2xl md:text-3xl">
+                {homeTeam.name}
+              </h1>
+            </a>
+          ) : (
+            <h1 class="font-semibold text-2xl md:text-3xl">{homeTeam.name}</h1>
+          )
+        }
         <p class="font-semibold md:text-xl">{homeTeam.record}</p>
       </div>
       <h2 class="font-semibold text-5xl">{homeTeam.score}</h2>
