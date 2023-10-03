@@ -1,0 +1,55 @@
+---
+import PlayerLayout from '@layouts/player.astro'
+import Grid from '@components/grid.astro'
+import type { GameraDomain } from '@statmuse/core/gamera'
+import { getPlayerBio, getPlayerSplits } from '@lib/player'
+import { getLeagueKeywords } from '@lib/meta'
+import { Caching } from '@lib/caching'
+
+const { league, player } = Astro.params
+if (!player || !league) {
+  return new Response(null, {
+    status: 404,
+    statusText: 'Not found',
+  })
+}
+
+const domain = league.toUpperCase() as GameraDomain
+const params = Astro.url.searchParams
+const splits = await getPlayerSplits({ domain, player, params })
+const bio = await getPlayerBio(domain, player)
+if (!splits || !bio) {
+  return new Response(null, {
+    status: 404,
+    statusText: 'Not found',
+  })
+}
+
+const { grids, parameters } = splits
+const leagueKeywords = getLeagueKeywords(domain)
+const seasonYear = Astro.url.searchParams.get('seasonYear')
+const year = seasonYear ? ` ${seasonYear}` : ''
+
+const title = `${bio.usedName} Splits`
+const description = `${bio.usedName}'s splits for the${year} ${domain} regular season and playoffs`
+const keywords = `${leagueKeywords} ${bio.usedName}${year} splits stats statistics`
+const meta = { title, description, keywords }
+
+Caching.swr(Astro)
+---
+
+<PlayerLayout {league} {bio} {meta} page="splits">
+  <div>
+    {
+      grids &&
+        grids.map((grid) => (
+          <Grid
+            class="mb-5"
+            data={grid}
+            columnStyles={{ SPLIT: 'text-left w-24 min-w-[96px]' }}
+            {parameters}
+          />
+        ))
+    }
+  </div>
+</PlayerLayout>

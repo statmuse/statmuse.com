@@ -9,16 +9,9 @@ import {
   tokensToHtml,
   getUrlForEntity,
 } from '@statmuse/core/gamera'
-import {
-  getPlayerBio,
-  getPlayerGameLog,
-  getPlayerProfile,
-  getPlayerSplits,
-  getPlayerStats,
-} from '@lib/player'
+import { getPlayerProfile } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
-import { formatDateString } from '@statmuse/core/time'
 
 interface Props {
   league?: string
@@ -27,7 +20,6 @@ interface Props {
 }
 
 const query = Astro.props.query
-const params = Astro.url.searchParams
 const player = Astro.props.player || Astro.params.player
 const league = Astro.props.league || Astro.params.league
 
@@ -36,22 +28,15 @@ if (!player || !league) {
 }
 
 const domain = league.toUpperCase() as GameraDomain
-
-const [profile, stats, games, splits, bio] = await Promise.all([
-  getPlayerProfile(domain, player),
-  getPlayerStats({ domain, player, params }),
-  getPlayerGameLog({ domain, player, params }),
-  getPlayerSplits({ domain, player, params }),
-  getPlayerBio(league as GameraDomain, player),
-])
-
-if (!profile || !stats || !bio || !games) {
+const profile = await getPlayerProfile(domain, player)
+if (!profile) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
 
-const birthdate = formatDateString(bio.birthdate)
+const { bio, stats, recentGames, nextGame } = profile
+
 const isNextGameHome =
-  profile.bio.team?.abbreviation === profile.nextGame?.homeTeam.abbreviation
+  profile.bio.team?.abbreviation === nextGame?.homeTeam.abbreviation
 
 const summary = bio.summaryNlg ? tokensToHtml(bio.summaryNlg) : undefined
 const playerPath = getUrlForEntity({
@@ -66,160 +51,54 @@ const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
 const keywords = `${getLeagueKeywords(domain)} ${
   bio.usedName
 } career stats statistics`
-const canonical = {
-  url: `${playerPath}${params ? '?' + params.toString() : ''}`,
-}
+const canonical = { url: playerPath, rewrite: true }
 const meta = { title, description, keywords, canonical }
 
 Caching.swr(Astro)
 ---
 
 <PlayerLayout {bio} {meta} {league} {query} page="overview">
-  <div class="flex-1 space-y-12">
-    <div>
-      <div class="mb-5 leading-snug">
-        <p set:html={summary} />
-      </div>
-      <div class="mb-5">
-        {
-          profile.nextGame?.grid && (
-            <Grid
-              class="mb-5"
-              data={profile.nextGame.grid}
-              title={`Next Game ${isNextGameHome ? 'vs' : '@'} ${
-                isNextGameHome
-                  ? profile.nextGame.awayTeam.abbreviation
-                  : profile.nextGame.homeTeam.abbreviation
-              }`}
-            />
-          )
-        }
-        {
-          profile.stats?.grid && (
-            <Grid
-              class="mb-5"
-              seeAllUrl={`${playerPath}/career-stats`}
-              data={profile.stats.grid}
-            />
-          )
-        }
-        {
-          profile.recentGames?.grid && (
-            <Grid
-              class="mb-5"
-              seeAllUrl={`${playerPath}/game-log`}
-              data={profile.recentGames.grid}
-              columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
-            />
-          )
-        }
-        {
-          bio.bustImageUrlGallery.length ? (
-            <PlayerGallery images={bio.bustImageUrlGallery} class="mb-5" />
-          ) : null
-        }
-      </div>
+  <div>
+    <div class="mb-5 leading-snug">
+      <p set:html={summary} />
     </div>
-    <div id="stats">
-      <h2 class="text-3xl font-semibold shrink-0 mb-5">Stats</h2>
+    <div class="mb-5">
       {
-        stats.grids &&
-          stats.grids.map((grid) => (
-            <Grid
-              class="mb-5"
-              data={grid}
-              columnStyles={{ SEASON: 'text-left' }}
-              parameters={stats.parameters}
-            />
-          ))
-      }
-    </div>
-    <div id="game-log">
-      <h2 class="text-3xl font-semibold shrink-0 mb-5">Game Log</h2>
-      {
-        games.grids &&
-          games.grids.map((grid) => (
-            <Grid
-              class="mb-5"
-              data={grid}
-              columnStyles={{ DATE: 'text-left w-20', SCORE: 'text-left' }}
-              parameters={games.parameters}
-            />
-          ))
-      }
-    </div>
-    <div id="splits">
-      <h2 class="text-3xl font-semibold shrink-0 mb-5">Splits</h2>
-      {
-        splits?.grids &&
-          splits?.grids.map((grid) => (
-            <Grid
-              class="mb-5"
-              data={grid}
-              columnStyles={{ DATE: 'text-left w-20', SCORE: 'text-left' }}
-              parameters={splits?.parameters}
-            />
-          ))
-      }
-    </div>
-    <div id="bio">
-      <h2 class="text-3xl font-semibold shrink-0 mb-5">Bio</h2>
-      {
-        bio && (
-          <table class="mb-5 border-collapse leading-tight">
-            <tbody>
-              {bio.birthdate && (
-                <tr>
-                  <td>Born:</td>
-                  <td class="pl-4">
-                    {birthdate}
-                    {bio.age && ` (age ${bio.age})`}
-                  </td>
-                </tr>
-              )}
-              {bio.birthplace && (
-                <tr>
-                  <td>Birth Place:</td>
-                  <td class="pl-4">{bio.birthplace}</td>
-                </tr>
-              )}
-              {bio.drafted && (
-                <tr>
-                  <td>Drafted:</td>
-                  <td class="pl-4">{bio.drafted}</td>
-                </tr>
-              )}
-              {bio.college && (
-                <tr>
-                  <td>College:</td>
-                  <td class="pl-4">{bio.college}</td>
-                </tr>
-              )}
-              {bio.experience && (
-                <tr>
-                  <td>Experience:</td>
-                  <td class="pl-4">{bio.experience}</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        nextGame?.grid && (
+          <Grid
+            class="mb-5"
+            data={nextGame.grid}
+            title={`Next Game ${isNextGameHome ? 'vs' : '@'} ${
+              isNextGameHome
+                ? nextGame.awayTeam.abbreviation
+                : nextGame.homeTeam.abbreviation
+            }`}
+          />
         )
       }
       {
-        bio && bio.awards && bio.awards.length > 0 && (
-          <div class="mb-5 leading-tight">
-            <h3 class="font-semibold text-team-primary">Awards</h3>
-            <ul class="list-disc list-inside">
-              {bio.awards.map((award) => (
-                <li>
-                  {award.years.length > 1 ? `${award.years.length}x ` : ''}
-                  {award.name}
-                  {` (${award.years.join(', ')})`}
-                </li>
-              ))}
-            </ul>
-          </div>
+        stats?.grid && (
+          <Grid
+            class="mb-5"
+            seeAllUrl={`${playerPath}/career-stats`}
+            data={stats.grid}
+          />
         )
+      }
+      {
+        recentGames?.grid && (
+          <Grid
+            class="mb-5"
+            seeAllUrl={`${playerPath}/game-log`}
+            data={recentGames.grid}
+            columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+          />
+        )
+      }
+      {
+        bio.bustImageUrlGallery.length ? (
+          <PlayerGallery images={bio.bustImageUrlGallery} class="mb-5" />
+        ) : null
       }
     </div>
   </div>
