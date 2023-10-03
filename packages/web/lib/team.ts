@@ -200,6 +200,13 @@ export const getTeamFranchiseLatestSeason = async (props: {
     const data = (await response.json()) as {
       name: string
       entity: GameraEntity
+      error?: {
+        code: string
+        message: string
+      }
+    }
+    if (data.error) {
+      return undefined
     }
     return data
   } catch (error) {
