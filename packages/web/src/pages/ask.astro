@@ -28,6 +28,7 @@ let query = data.get('question[query]')?.toString()
 const conversationToken = data.get('question[conversation_token]')?.toString()
 if (!query) throw new Error('No query provided')
 
+console.log('query input: ', query)
 const response = await ask({ query, preferredDomain, conversationToken }, Astro)
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })

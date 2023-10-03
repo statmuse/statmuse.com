@@ -23,7 +23,7 @@ const query = clean(
     answer.visual.summaryTokens.filter((t) => t.type !== 'inferred'),
   ),
 )
-const preferredDomain = answer.visual.domain.toLowerCase()
+const preferredDomain = answer.visual.domain?.toLowerCase()
 const subject = answer.visual.summary.subject
 const heroProps = getHeroProps({ imageAlt: query, response: answer })
 const meta = {
@@ -31,7 +31,7 @@ const meta = {
   description: description(answer),
   canonical: {
     url: createAskPath({
-      domain: answer.visual.domain.toLowerCase(),
+      domain: answer.visual.domain?.toLowerCase(),
       query,
     }),
     rewrite: true,
@@ -66,7 +66,7 @@ const code = await Link.askShortCode(query, preferredDomain)
     is_search: true,
     page_type: 'ask',
     page_domain:
-      answer.visual.domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
+      answer.visual.domain?.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
     disposition: answer.disposition,
     tokenizationScore: answer.tokenizationScore,
     query,
