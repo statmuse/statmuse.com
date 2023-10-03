@@ -1,9 +1,14 @@
 ---
-import { Image as AstroImage, type RemoteImageProps } from 'astro:assets'
+import {
+  Image as AstroImage,
+  type RemoteImageProps,
+  type LocalImageProps,
+} from 'astro:assets'
 import { cdnBaseUrl, type GameraResponse } from '@statmuse/core/gamera'
 import type { Answer } from '@statmuse/core/question'
 
-interface Props extends Omit<RemoteImageProps, 'src'> {
+type ImageProps = RemoteImageProps | LocalImageProps
+interface Props extends Omit<ImageProps, 'src'> {
   src: string | { answer: Answer }
 }
 
