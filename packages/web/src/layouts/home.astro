@@ -93,13 +93,13 @@ const Logo = domain === 'money' ? MoneyLogo : StandardLogo
     </div>
 
     <div class="main content-layout">
-      <div class="-mb-[5px] z-10">
+      <div class="-mb-[5px]">
         <div class="flex flex-col md:flex-row items-center mt-[55px] md:mt-0">
           <div class="flex-1 mb-[34px] md:-mr-[20px] md:mb-0">
             <Logo />
           </div>
           <Image
-            class="max-w-[70%] md:max-w-[260px] md:h-[205px] md:pr-[10px] object-contain object-bottom"
+            class="max-w-[70%] md:max-w-[260px] md:h-[205px] md:pr-[10px] object-contain object-bottom z-[5]"
             src={img.src}
             alt={img.text}
             width={750}
@@ -109,9 +109,13 @@ const Logo = domain === 'money' ? MoneyLogo : StandardLogo
         </div>
       </div>
       <div
-        class="content-item-full content-layout mb-5 md:mb-[30px] sticky top-[var(--header-height)] md:top-0 py-[5px] bg-white z-[5]"
+        class="content-item-full sticky top-[var(--header-height)] md:top-0 pb-[5px] bg-white"
       >
-        <div class="min-h-[46px]">
+      </div>
+      <div
+        class="content-item-full content-layout mb-5 md:mb-[30px] sticky top-[calc(var(--header-height)+5px)] md:top-[5px] pb-[5px] bg-white z-[5]"
+      >
+        <div>
           <AskBar
             client:load
             money={domain === 'money'}

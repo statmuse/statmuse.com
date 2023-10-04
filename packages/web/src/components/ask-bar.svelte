@@ -213,7 +213,7 @@
   >
     <div class="relative group">
       <textarea
-        class="appearance-none outline-none resize-none block w-full border-y border-transparent p-2.5"
+        class="appearance-none outline-none resize-none block w-full border-y border-transparent p-2.5 peer"
         class:pr-[70px]={query}
         autocomplete="off"
         aria-autocomplete="list"
