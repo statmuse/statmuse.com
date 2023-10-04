@@ -5,7 +5,6 @@ import { Config } from 'sst/node/config'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import CookieConsent from '@components/cookie-consent.svelte'
 import { ViewTransitions } from 'astro:transitions'
-import path from 'path'
 
 interface Props {
   meta?: Metadata
@@ -72,7 +71,7 @@ const analyticsProperties = Object.assign(
 const canonicalUrl = meta?.canonical
   ? meta.canonical.url.startsWith('http')
     ? meta.canonical.url
-    : path.join(Astro.url.origin, meta.canonical.url)
+    : new URL(meta.canonical.url, Astro.url.origin).href
   : undefined
 ---
 
