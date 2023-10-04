@@ -64,7 +64,7 @@ const { url } = Astro.props
       </a>
     </li>
     <li class="mx-4 py-2">
-      <a
+      <button
         class="flex items-center cursor-pointer text-primary"
         data-share-url={url}
       >
@@ -72,7 +72,7 @@ const { url } = Astro.props
           <img class="max-h-full" src="/share-icons/link.svg" alt="share" />
         </div>
          Copy Link
-      </a>
+      </button>
       <input
         class="absolute right-[99999px]"
         type="text"
