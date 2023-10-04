@@ -43,7 +43,7 @@ export function Auth({ stack, app }: StackContext) {
       securityGroups: [lambdaSecurityGroup],
     },
     customDomain: {
-      domainName: 'auth.' + dns.domain,
+      domainName: isProd ? 'auth.statmuse.com' : 'auth.' + dns.domain,
       hostedZone: dns.hostedZone.zoneName,
     },
   })
