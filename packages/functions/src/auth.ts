@@ -38,11 +38,14 @@ export const handler = AuthHandler({
         console.log('sending email to', claims.email)
 
         await sendgrid.send({
-          templateId: '14a1e4d7-01a1-45b4-b43a-35950b9829b9',
-          substitutions: { confirmation_url: link },
+          templateId: 'b70dbadb-e0c9-47a1-a521-69ccf93f02d7',
+          substitutions: {
+            sign_in_token_url: link,
+            sign_in_token_expires_in_minutes: '30',
+          },
           to: claims.email,
           from: 'StatMuse <hello@statmuse.com>',
-          subject: 'Please confirm your email',
+          subject: 'Sign in to StatMuse',
         })
 
         return {
