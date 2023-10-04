@@ -9,6 +9,7 @@ export interface Metadata {
   title?: string
   description?: string
   keywords?: string
+  pageType?: string
   canonical?: {
     url: string
     rewrite?: boolean

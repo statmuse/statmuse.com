@@ -32,6 +32,7 @@ const subject = data.visual.summary.subject
 
 const meta = {
   title: tokensToText(data.nlg.text.answer),
+  pageType: 'game',
   facebook: {
     imageUrl: imageForgeUrl({
       url: data.visual.summary.subject.imageUrl,

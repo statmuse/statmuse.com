@@ -111,7 +111,7 @@ const canonicalUrl = meta?.canonical
         property="twitter:image"
         content={meta?.twitter?.imageUrl || defaultImageUrl}
       />
-      <!-- <meta name="page-type" content="player" /> -->
+      {meta?.pageType && <meta name="page-type" content={meta?.pageType} />}
       <!-- <meta name="uid" content="v:10f20462-9e37-40d7-9ff7-91e66a9843f6" /> -->
     </slot>
     {
