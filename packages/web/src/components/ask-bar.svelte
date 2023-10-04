@@ -2,6 +2,7 @@
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <!-- svelte-ignore a11y-role-has-required-aria-props -->
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { throttle, uniqBy } from 'lodash-es'
   import { session } from '@lib/session-store'
   import type { AskDocument } from '@statmuse/core/elastic'
@@ -178,6 +179,14 @@
       return input.blur()
     }
   }
+
+  onMount(() => {
+    const mobileRegex =
+      /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Kindle|NetFront|Silk-Accelerated|(hpw|web)OS|Fennec|Minimo|Opera M(obi|ini)|Blazer|Dolfin|Dolphin|Skyfire|Zune/
+    if (!mobileRegex.test(navigator.userAgent)) {
+      input.focus()
+    }
+  })
 
   $: open = sections.findIndex((s) => s.suggestions.length > 0) > -1
   $: userId = $session?.type === 'user' ? $session.properties.id : undefined
