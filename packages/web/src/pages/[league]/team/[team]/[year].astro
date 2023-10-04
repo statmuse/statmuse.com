@@ -32,6 +32,7 @@ if (!team || !league || !year) {
 
 const domain = league.toUpperCase() as GameraDomain
 let response = await getTeamSeasonOverview({
+  context: Astro,
   domain,
   team,
   year,
@@ -40,11 +41,13 @@ let response = await getTeamSeasonOverview({
 // re-fetch team season overview from latest season if initial reponse has no stats
 if (response && !response.bio.hasStats && Astro.request.method === 'POST') {
   const latestSeason = await getTeamFranchiseLatestSeason({
+    context: Astro,
     domain: league as GameraDomain,
     teamId: response.teamId.toString(),
   })
   year = latestSeason?.entity.id.split('/')[1] as string
   response = await getTeamSeasonOverview({
+    context: Astro,
     domain,
     team,
     year,

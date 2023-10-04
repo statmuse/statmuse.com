@@ -35,6 +35,7 @@ const teamPath = getUrlForEntity({
   display: bio.name,
 })
 const latestSeason = await getTeamFranchiseLatestSeason({
+  context: Astro,
   domain,
   teamId: overview.teamId.toString(),
 })

@@ -28,7 +28,7 @@ if (!player || !league) {
 }
 
 const domain = league.toUpperCase() as GameraDomain
-const profile = await getPlayerProfile(domain, player)
+const profile = await getPlayerProfile(Astro, domain, player)
 if (!profile) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }

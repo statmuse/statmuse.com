@@ -17,11 +17,12 @@ if (!player || !league) {
 const domain = league.toUpperCase() as GameraDomain
 const params = Astro.url.searchParams
 const stats = await getPlayerGameLog({
+  context: Astro,
   domain,
   player,
   params,
 })
-const bio = await getPlayerBio(domain, player)
+const bio = await getPlayerBio(Astro, domain, player)
 if (!stats || !bio) {
   return new Response(null, {
     status: 404,

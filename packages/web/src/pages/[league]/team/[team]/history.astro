@@ -22,7 +22,7 @@ if (!team || !league) {
 }
 
 const domain = league.toUpperCase() as GameraDomain
-const overview = await getTeamFranchiseOverview({ domain, team })
+const overview = await getTeamFranchiseOverview({ context: Astro, domain, team })
 if (!overview) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }

@@ -12,24 +12,25 @@ import type {
   GameraTeamSeasonStats,
 } from '@statmuse/core/gamera'
 import { parseTeamId, parseYearId } from './parse'
-import { gameraApiUrl } from '@lib/gamera'
+import { request } from '@lib/gamera'
+import type { Context } from '@lib/session'
 
 export const getTeamSeasonOverview = async (props: {
+  context: Context
   domain: GameraDomain
   team: string
   year: string
 }) => {
-  const { team, domain, year } = props
   try {
-    const teamId = parseTeamId(team)
-    const yearId = parseYearId(year)
-    const requestUrl = `${gameraApiUrl}${domain}/teams/v2/${teamId}/${yearId}`
-    const response = await fetch(requestUrl)
-    const data = await response.json()
-    if (data.error) {
-      return undefined
-    }
-    return data as GameraTeamSeasonOverview
+    const teamId = parseTeamId(props.team)
+    const yearId = parseYearId(props.year)
+    const path = `${props.domain}/teams/v2/${teamId}/${yearId}`
+    const data = await request<GameraTeamSeasonOverview & { error?: string }>(
+      props.context,
+      path,
+    )
+    if (data?.error) return undefined
+    return data
   } catch (error) {
     console.error(error)
     return undefined
@@ -37,18 +38,16 @@ export const getTeamSeasonOverview = async (props: {
 }
 
 export const getTeamSeasonBio = async (props: {
+  context: Context
   domain: GameraDomain
   team: string
   year: string
 }) => {
-  const { team, domain, year } = props
   try {
-    const teamId = parseTeamId(team)
-    const yearId = parseYearId(year)
-    const requestUrl = `${gameraApiUrl}${domain}/teams/v2/${teamId}/${yearId}/bio`
-    const response = await fetch(requestUrl)
-    const data = (await response.json()) as GameraTeamSeasonBio
-    return data
+    const teamId = parseTeamId(props.team)
+    const yearId = parseYearId(props.year)
+    const path = `${props.domain}/teams/v2/${teamId}/${yearId}/bio`
+    return request<GameraTeamSeasonBio>(props.context, path)
   } catch (error) {
     console.error(error)
     return undefined
@@ -56,20 +55,17 @@ export const getTeamSeasonBio = async (props: {
 }
 
 export const getTeamSeasonStats = async (props: {
+  context: Context
   domain: GameraDomain
   team: string
   year: string
   params: URLSearchParams
 }) => {
-  const { team, year, domain, params } = props
   try {
-    const teamId = parseTeamId(team)
-    const yearId = parseYearId(year)
-    let requestUrl = `${gameraApiUrl}${domain}/teams/v2/${teamId}/${yearId}/stats`
-    if (params) requestUrl += `?${params.toString()}`
-    const response = await fetch(requestUrl)
-    const data = (await response.json()) as GameraTeamSeasonStats
-    return data
+    const teamId = parseTeamId(props.team)
+    const yearId = parseYearId(props.year)
+    const path = `${props.domain}/teams/v2/${teamId}/${yearId}/stats`
+    return request<GameraTeamSeasonStats>(props.context, path, props.params)
   } catch (error) {
     console.error(error)
     return undefined
@@ -77,20 +73,21 @@ export const getTeamSeasonStats = async (props: {
 }
 
 export const getTeamSeasonPlayerStats = async (props: {
+  context: Context
   domain: GameraDomain
   team: string
   year: string
   params: URLSearchParams
 }) => {
-  const { team, year, domain, params } = props
   try {
-    const teamId = parseTeamId(team)
-    const yearId = parseYearId(year)
-    let requestUrl = `${gameraApiUrl}${domain}/teams/v2/${teamId}/${yearId}/playerStats`
-    if (params) requestUrl += `?${params.toString()}`
-    const response = await fetch(requestUrl)
-    const data = (await response.json()) as GameraTeamSeasonPlayerStats
-    return data
+    const teamId = parseTeamId(props.team)
+    const yearId = parseYearId(props.year)
+    const path = `${props.domain}/teams/v2/${teamId}/${yearId}/playerStats`
+    return request<GameraTeamSeasonPlayerStats>(
+      props.context,
+      path,
+      props.params,
+    )
   } catch (error) {
     console.error(error)
     return undefined
@@ -98,18 +95,16 @@ export const getTeamSeasonPlayerStats = async (props: {
 }
 
 export const getTeamSeasonGameResults = async (props: {
+  context: Context
   domain: GameraDomain
   team: string
   year: string
 }) => {
-  const { team, year, domain } = props
   try {
-    const teamId = parseTeamId(team)
-    const yearId = parseYearId(year)
-    const requestUrl = `${gameraApiUrl}${domain}/teams/v2/${teamId}/${yearId}/gameResults`
-    const response = await fetch(requestUrl)
-    const data = (await response.json()) as GameraTeamSeasonGameResults
-    return data
+    const teamId = parseTeamId(props.team)
+    const yearId = parseYearId(props.year)
+    const path = `${props.domain}/teams/v2/${teamId}/${yearId}/gameResults`
+    return request<GameraTeamSeasonGameResults>(props.context, path)
   } catch (error) {
     console.error(error)
     return undefined
@@ -117,18 +112,16 @@ export const getTeamSeasonGameResults = async (props: {
 }
 
 export const getTeamSeasonSchedule = async (props: {
+  context: Context
   domain: GameraDomain
   team: string
   year: string
 }) => {
-  const { team, year, domain } = props
   try {
-    const teamId = parseTeamId(team)
-    const yearId = parseYearId(year)
-    const requestUrl = `${gameraApiUrl}${domain}/teams/v2/${teamId}/${yearId}/schedule`
-    const response = await fetch(requestUrl)
-    const data = (await response.json()) as GameraTeamSeasonSchedule
-    return data
+    const teamId = parseTeamId(props.team)
+    const yearId = parseYearId(props.year)
+    const path = `${props.domain}/teams/v2/${teamId}/${yearId}/schedule`
+    return request<GameraTeamSeasonSchedule>(props.context, path)
   } catch (error) {
     console.error(error)
     return undefined
@@ -136,18 +129,16 @@ export const getTeamSeasonSchedule = async (props: {
 }
 
 export const getTeamSeasonRoster = async (props: {
+  context: Context
   domain: GameraDomain
   team: string
   year: string
 }) => {
-  const { team, year, domain } = props
   try {
-    const teamId = parseTeamId(team)
-    const yearId = parseYearId(year)
-    const requestUrl = `${gameraApiUrl}${domain}/teams/v2/${teamId}/${yearId}/roster`
-    const response = await fetch(requestUrl)
-    const data = (await response.json()) as GameraTeamSeasonRoster
-    return data
+    const teamId = parseTeamId(props.team)
+    const yearId = parseYearId(props.year)
+    const path = `${props.domain}/teams/v2/${teamId}/${yearId}/roster`
+    return request<GameraTeamSeasonRoster>(props.context, path)
   } catch (error) {
     console.error(error)
     return undefined
@@ -155,20 +146,17 @@ export const getTeamSeasonRoster = async (props: {
 }
 
 export const getTeamSeasonSplits = async (props: {
+  context: Context
   domain: GameraDomain
   team: string
   year: string
   params: URLSearchParams
 }) => {
-  const { team, year, domain, params } = props
   try {
-    const teamId = parseTeamId(team)
-    const yearId = parseYearId(year)
-    let requestUrl = `${gameraApiUrl}${domain}/teams/v2/${teamId}/${yearId}/splits`
-    if (params) requestUrl += `?${params.toString()}`
-    const response = await fetch(requestUrl)
-    const data = (await response.json()) as GameraTeamSeasonSplits
-    return data
+    const teamId = parseTeamId(props.team)
+    const yearId = parseYearId(props.year)
+    const path = `${props.domain}/teams/v2/${teamId}/${yearId}/splits`
+    return request<GameraTeamSeasonSplits>(props.context, path, props.params)
   } catch (error) {
     console.error(error)
     return undefined
@@ -176,16 +164,14 @@ export const getTeamSeasonSplits = async (props: {
 }
 
 export const getTeamFranchiseOverview = async (props: {
+  context: Context
   domain: GameraDomain
   team: string
 }) => {
-  const { team, domain } = props
   try {
-    const teamId = parseTeamId(team)
-    const requestUrl = `${gameraApiUrl}${domain}/teams/v2/${teamId}`
-    const response = await fetch(requestUrl)
-    const data = (await response.json()) as GameraTeamFranchiseOverview
-    return data
+    const teamId = parseTeamId(props.team)
+    const path = `${props.domain}/teams/v2/${teamId}`
+    return request<GameraTeamFranchiseOverview>(props.context, path)
   } catch (error) {
     console.error(error)
     return undefined
@@ -193,24 +179,21 @@ export const getTeamFranchiseOverview = async (props: {
 }
 
 export const getTeamFranchiseLatestSeason = async (props: {
+  context: Context
   domain: GameraDomain
   teamId: string
 }) => {
-  const { domain, teamId } = props
   try {
-    const requestUrl = `${gameraApiUrl}${domain}/teams/${teamId}/latestseason`
-    const response = await fetch(requestUrl)
-    const data = (await response.json()) as {
+    const path = `${props.domain}/teams/${props.teamId}/latestseason`
+    const data = await request<{
       name: string
       entity: GameraEntity
       error?: {
         code: string
         message: string
       }
-    }
-    if (data.error) {
-      return undefined
-    }
+    }>(props.context, path)
+    if (data?.error) return undefined
     return data
   } catch (error) {
     console.error(error)

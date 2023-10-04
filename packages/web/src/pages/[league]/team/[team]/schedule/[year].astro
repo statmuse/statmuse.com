@@ -17,9 +17,9 @@ if (!team || !league || !year) {
 }
 
 const domain = league.toUpperCase() as GameraDomain
-const bio = await getTeamSeasonBio({ domain, team, year })
-const gameResults = await getTeamSeasonGameResults({ domain, team, year })
-const schedule = await getTeamSeasonSchedule({ domain, team, year })
+const bio = await getTeamSeasonBio({ context: Astro, domain, team, year })
+const gameResults = await getTeamSeasonGameResults({ context: Astro, domain, team, year })
+const schedule = await getTeamSeasonSchedule({ context: Astro, domain, team, year })
 
 if (!bio || !gameResults) {
   return new Response(null, { status: 404, statusText: 'Not found' })

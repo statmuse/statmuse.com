@@ -16,8 +16,8 @@ if (!player || !league) {
 
 const domain = league.toUpperCase() as GameraDomain
 const params = Astro.url.searchParams
-const splits = await getPlayerSplits({ domain, player, params })
-const bio = await getPlayerBio(domain, player)
+const splits = await getPlayerSplits({ context: Astro, domain, player, params })
+const bio = await getPlayerBio(Astro, domain, player)
 if (!splits || !bio) {
   return new Response(null, {
     status: 404,

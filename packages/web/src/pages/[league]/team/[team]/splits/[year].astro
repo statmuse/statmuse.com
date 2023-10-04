@@ -14,8 +14,8 @@ if (!team || !league || !year) {
 
 const params = Astro.url.searchParams
 const domain = league.toUpperCase() as GameraDomain
-const bio = await getTeamSeasonBio({ domain, team, year })
-const splits = await getTeamSeasonSplits({ domain, team, year, params })
+const bio = await getTeamSeasonBio({ context: Astro, domain, team, year })
+const splits = await getTeamSeasonSplits({ context: Astro, domain, team, year, params })
 if (!bio || !splits) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }

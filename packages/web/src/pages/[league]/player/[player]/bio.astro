@@ -19,7 +19,7 @@ if (!player || !league) {
 }
 
 const domain = league.toUpperCase() as GameraDomain
-const bio = await getPlayerBio(domain, player)
+const bio = await getPlayerBio(Astro, domain, player)
 if (!bio) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }

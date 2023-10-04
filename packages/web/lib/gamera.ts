@@ -5,6 +5,26 @@ import type { HeroProps } from './props'
 import type { Context } from './session'
 export const gameraApiUrl = import.meta.env.GAMERA_API_URL
 
+export async function request<T>(
+  context: Context,
+  path: string,
+  params?: Record<string, string> | URLSearchParams,
+): Promise<T | undefined> {
+  const requestUrl = `${gameraApiUrl}${path}?${new URLSearchParams(
+    params,
+  ).toString()}`
+
+  try {
+    const response = await fetch(requestUrl, {
+      headers: getGameraHeaders(context),
+    })
+    return response.json() as Promise<T>
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
+}
+
 export async function ask(
   options: {
     league?: string
@@ -24,23 +44,11 @@ export async function ask(
   if (options.conversationToken) {
     params['conversationToken'] = options.conversationToken
   }
-
   if (options.preferredDomain) {
     params['preferredDomain'] = options.preferredDomain
   }
 
-  const requestUrl = `${gameraApiUrl}${
-    league ? league + '/' : ''
-  }answer?${new URLSearchParams(params).toString()}`
-
-  try {
-    const response = await fetch(requestUrl, {
-      headers: getGameraHeaders(context),
-    })
-    return response.json() as Promise<GameraResponse>
-  } catch (error) {
-    console.error(error)
-  }
+  return request(context, `${league ? league + '/' : ''}answer`, params)
 }
 
 export async function fantasyAsk(
@@ -60,18 +68,7 @@ export async function fantasyAsk(
     params['conversationToken'] = options.conversationToken
   }
 
-  const requestUrl = `${gameraApiUrl}nfl/fantasy/answer?${new URLSearchParams(
-    params,
-  ).toString()}`
-
-  try {
-    const response = await fetch(requestUrl, {
-      headers: getGameraHeaders(context),
-    })
-    return response.json() as Promise<GameraResponse>
-  } catch (error) {
-    console.error(error)
-  }
+  return request(context, 'nfl/fantasy/answer', params)
 }
 
 export const getGameraHeaders = (context: Context) => {

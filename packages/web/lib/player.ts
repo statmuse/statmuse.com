@@ -7,19 +7,24 @@ import type {
   GameraPlayerStats,
 } from '@statmuse/core/gamera'
 import { parsePlayerId } from './parse'
-import { gameraApiUrl } from '@lib/gamera'
+import { request } from '@lib/gamera'
 import { db } from '@statmuse/core/db'
+import type { Context } from '@lib/session'
 
-export const getPlayerBio = async (domain: GameraDomain, player: string) => {
+export const getPlayerBio = async (
+  context: Context,
+  domain: GameraDomain,
+  player: string,
+) => {
   try {
     const playerId = parsePlayerId(player)
-    const requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}/bio`
-    const response = await fetch(requestUrl)
-    const data = await response.json()
-    if (data.error) {
-      return undefined
-    }
-    return data as GameraPlayerBio
+    const path = `${domain}/players/v2/${playerId}/bio`
+    const data = await request<GameraPlayerBio & { error?: string }>(
+      context,
+      path,
+    )
+    if (data?.error) return undefined
+    return data
   } catch (error) {
     console.error(error)
     return undefined
@@ -27,18 +32,18 @@ export const getPlayerBio = async (domain: GameraDomain, player: string) => {
 }
 
 export const getPlayerProfile = async (
+  context: Context,
   domain: GameraDomain,
   player: string,
 ) => {
   try {
     const playerId = parsePlayerId(player)
-    const requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}`
-    const response = await fetch(requestUrl)
-    const data = await response.json()
-    if (data.error) {
-      return undefined
-    }
-    return data as GameraPlayerProfileResponse
+    const path = `${domain}/players/v2/${playerId}`
+    const data = await request<
+      GameraPlayerProfileResponse & { error?: string }
+    >(context, path)
+    if (data?.error) return undefined
+    return data
   } catch (error) {
     console.error(error)
     return undefined
@@ -46,18 +51,15 @@ export const getPlayerProfile = async (
 }
 
 export const getPlayerStats = async (props: {
+  context: Context
   domain: GameraDomain
   player: string
-  params: URLSearchParams
+  params: Record<string, string> | URLSearchParams
 }) => {
-  const { player, domain, params } = props
   try {
-    const playerId = parsePlayerId(player)
-    let requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}/careerStats`
-    if (params) requestUrl += `?${params.toString()}`
-    const response = await fetch(requestUrl)
-    const data = (await response.json()) as GameraPlayerStats
-    return data
+    const playerId = parsePlayerId(props.player)
+    const path = `${props.domain}/players/v2/${playerId}/careerStats`
+    return request<GameraPlayerStats>(props.context, path, props.params)
   } catch (error) {
     console.error(error)
     return undefined
@@ -65,18 +67,15 @@ export const getPlayerStats = async (props: {
 }
 
 export const getPlayerGameLog = async (props: {
+  context: Context
   domain: GameraDomain
   player: string
-  params: URLSearchParams
+  params: Record<string, string> | URLSearchParams
 }) => {
-  const { player, domain, params } = props
   try {
-    const playerId = parsePlayerId(player)
-    let requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}/gameLog`
-    if (params) requestUrl += `?${params.toString()}`
-    const response = await fetch(requestUrl)
-    const data = (await response.json()) as GameraPlayerGameLog
-    return data
+    const playerId = parsePlayerId(props.player)
+    const path = `${props.domain}/players/v2/${playerId}/gameLog`
+    return request<GameraPlayerGameLog>(props.context, path, props.params)
   } catch (error) {
     console.error(error)
     return undefined
@@ -84,18 +83,15 @@ export const getPlayerGameLog = async (props: {
 }
 
 export const getPlayerSplits = async (props: {
+  context: Context
   domain: GameraDomain
   player: string
-  params: URLSearchParams
+  params: Record<string, string> | URLSearchParams
 }) => {
-  const { player, domain, params } = props
   try {
-    const playerId = parsePlayerId(player)
-    let requestUrl = `${gameraApiUrl}${domain}/players/v2/${playerId}/splits`
-    if (params) requestUrl += `?${params.toString()}`
-    const response = await fetch(requestUrl)
-    const data = (await response.json()) as GameraPlayerSplits
-    return data
+    const playerId = parsePlayerId(props.player)
+    const path = `${props.domain}/players/v2/${playerId}/splits`
+    return request<GameraPlayerSplits>(props.context, path, props.params)
   } catch (error) {
     console.error(error)
     return undefined

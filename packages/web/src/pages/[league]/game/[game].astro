@@ -1,13 +1,13 @@
 ---
 import GameLayout from '@layouts/game.astro'
 
-import { getGame } from '@lib/game'
 import type { GameraDomain } from '@statmuse/core/gamera'
 import NbaBoxscore from '@components/nba-boxscore.astro'
 import NflBoxscore from '@components/nfl-boxscore.astro'
 import MlbBoxscore from '@components/mlb-boxscore.astro'
 import NhlBoxscore from '@components/nhl-boxscore.astro'
 import { Caching } from '@lib/caching'
+import { getGame } from '@lib/game'
 
 const { league, game } = Astro.params
 if (!game || !league) {
@@ -15,11 +15,10 @@ if (!game || !league) {
 }
 
 const domain = league.toUpperCase() as GameraDomain
-const data = await getGame({ domain, game })
+const data = await getGame({ context: Astro, domain, game })
 if (!data) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
-
 if (data.type === 'error') {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }

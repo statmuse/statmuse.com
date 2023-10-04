@@ -5,9 +5,9 @@ import type {
   GameraNflBoxScore,
   GameraNhlBoxScore,
 } from '@statmuse/core/gamera'
-import { parseGameId } from './parse'
-
-const gameraApiUrl = import.meta.env.GAMERA_API_URL
+import { parseGameId } from '@lib/parse'
+import { request } from '@lib/gamera'
+import type { Context } from '@lib/session'
 
 interface Response {
   NBA: GameraNbaBoxScore
@@ -18,20 +18,19 @@ interface Response {
 }
 
 export async function getGame<T extends GameraDomain>(props: {
+  context: Context
   domain: T
   game: string
-  params?: URLSearchParams
+  params?: Record<string, string>
 }) {
   if (props.domain === 'PGA')
     throw new Error('There are no PGA boxscores, dummy!')
 
   try {
     const gameId = parseGameId(props.game)
-    let requestUrl = `${gameraApiUrl}${props.domain}/games/${gameId}/answer`
-    if (props.params) requestUrl += `?${props.params.toString()}`
-    const response = await fetch(requestUrl)
-    const data = (await response.json()) as Response[T]
-    data.domain = props.domain
+    const path = `${props.domain}/games/${gameId}/answer`
+    const data = await request<Response[T]>(props.context, path, props.params)
+    if (data) data.domain = props.domain
     return data
   } catch (error) {
     console.error(error)
