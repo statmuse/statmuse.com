@@ -108,17 +108,6 @@ input {
   background: url('/icons/icon-hamburger.svg') no-repeat center center;
 }
 
-/* ask bar styles */
-.ask-bar-search-icon {
-  background: url('/icons/icon-search.svg') no-repeat scroll center / contain;
-}
-
-.group:hover .ask-bar-search-icon,
-.peer:focus ~ .ask-bar-search-icon {
-  background: url('/icons/icon-search-blue.svg') no-repeat scroll center /
-    contain;
-}
-
 .suggestion-nba-icon {
   background: url('/icons/icon-nba.svg') center / contain;
 }

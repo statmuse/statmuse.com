@@ -257,8 +257,9 @@
       />
       <input
         type="submit"
-        class="ask-bar-search-icon absolute bottom-3 right-2.5 block w-5 h-5 cursor-pointer"
+        class="absolute bottom-3 right-2.5 block w-5 h-5 cursor-pointer bg-[url('/icons/icon-search.svg')] bg-contain bg-no-repeat bg-scroll bg-center group:hover:bg-[url('/icons/icon-search-blue.svg')] peer-focus:bg-[url('/icons/icon-search-blue.svg')]"
         value=""
+        aria-label="Search"
       />
     </div>
     <div

@@ -10,9 +10,13 @@ const { domain, additionalQuestions } = Astro.props
 ---
 
 <div class="mt-6 mb-4">
-  <h3 class="text-4xl font-semibold">Explore</h3>
+  {
+    additionalQuestions?.length ? (
+      <h3 class="text-3xl font-semibold mb-5">Explore</h3>
+    ) : null
+  }
   <div
-    class="grid grid-cols-[repeat(auto-fit,_minmax(425px,_1fr))] gap-4 items-start"
+    class="grid md:grid-cols-[repeat(auto-fit,_minmax(425px,_1fr))] gap-4 items-start"
   >
     <FreestarVideo client:only="svelte" transition:persist {domain} />
     {
