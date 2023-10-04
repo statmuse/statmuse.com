@@ -5,6 +5,7 @@ import { Config } from 'sst/node/config'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import CookieConsent from '@components/cookie-consent.svelte'
 import { ViewTransitions } from 'astro:transitions'
+import path from 'path'
 
 interface Props {
   meta?: Metadata
@@ -67,6 +68,12 @@ const analyticsProperties = Object.assign(
   },
   analytics,
 )
+
+const canonicalUrl = meta?.canonical
+  ? meta.canonical.url.startsWith('http')
+    ? meta.canonical.url
+    : path.join(Astro.url.origin, meta.canonical.url)
+  : undefined
 ---
 
 <html lang="en">
@@ -111,7 +118,7 @@ const analyticsProperties = Object.assign(
       meta?.canonical && (
         <link
           rel="canonical"
-          href={meta.canonical.url}
+          href={canonicalUrl}
           data-should-rewrite={meta.canonical.rewrite?.toString()}
         />
       )
