@@ -229,7 +229,10 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                         {row.imageUrl ? (
                           <Image
                             src={row.imageUrl}
-                            alt={row.display}
+                            alt={
+                              row.display +
+                              (playerEntity ? ' illustration' : ' logo')
+                            }
                             class:list={{
                               'w-6 h-6 max-w-none object-cover rounded-full bg-white mr-2.5':
                                 playerEntity && !alternateStyle,
