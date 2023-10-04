@@ -1,13 +1,15 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+<!-- svelte-ignore a11y-role-has-required-aria-props -->
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { throttle, uniqBy } from 'lodash-es'
   import { session } from '@lib/session-store'
   import type { AskDocument } from '@statmuse/core/elastic'
 
   export let query: string = ''
   export let conversationToken: string = ''
-  export let preferredDomain: string
+  export let preferredDomain: string = ''
   export let money: boolean
   export let fantasy: boolean
 
@@ -20,8 +22,10 @@
   let suggestionIdx: number | undefined
   let input: HTMLTextAreaElement
   let shadowInput: HTMLTextAreaElement
+  let spacer: HTMLElement
   let form: HTMLFormElement
   let clickedItem = false
+  let inFocus = false
 
   const action = money ? '/money/ask' : fantasy ? '/fantasy/ask' : '/ask'
   const placeholder = money
@@ -176,32 +180,41 @@
     }
   }
 
+  onMount(() => {
+    const mobileRegex =
+      /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Kindle|NetFront|Silk-Accelerated|(hpw|web)OS|Fennec|Minimo|Opera M(obi|ini)|Blazer|Dolfin|Dolphin|Skyfire|Zune/
+    if (!mobileRegex.test(navigator.userAgent)) {
+      input.focus()
+    }
+  })
+
   $: open = sections.findIndex((s) => s.suggestions.length > 0) > -1
   $: userId = $session?.type === 'user' ? $session.properties.id : undefined
   $: {
     if (shadowInput && input) {
       shadowInput.value = query
       input.style.height = shadowInput.scrollHeight + 2 + 'px'
+      spacer.style.height = shadowInput.scrollHeight + 2 + 'px'
     }
   }
 </script>
 
 <form bind:this={form} class="relative" {action} method="post">
+  <div bind:this={spacer} style="height: 46px !important;" />
   <div
     role="combobox"
     aria-haspopup="listbox"
     aria-owns="ask-bar-suggestions"
     aria-expanded={open}
-    class="relative rounded-lg text-black"
+    class="absolute top-0 w-full border border-black rounded-lg hover:shadow-md overflow-hidden"
+    class:border-primary={inFocus}
+    class:ring-1={inFocus}
+    class:ring-primary={inFocus}
   >
     <div class="relative group">
       <textarea
-        class="appearance-none outline-none resize-none block w-full border border-black rounded-lg p-2.5 focus:shadow-md peer group-hover:shadow-md"
+        class="appearance-none outline-none resize-none block w-full border-y border-transparent p-2.5 peer"
         class:pr-[70px]={query}
-        class:border-b-transparent={open}
-        class:rounded-bl-none={open}
-        class:rounded-br-none={open}
-        autofocus
         autocomplete="off"
         aria-autocomplete="list"
         name="question[query]"
@@ -228,7 +241,9 @@
           }
           sectionIdx = suggestionIdx = undefined
           sections = []
+          inFocus = false
         }}
+        on:focus={() => (inFocus = true)}
       />
       <img
         class="w-5 h-5 absolute right-[46px] bottom-3 object-contain cursor-pointer"
@@ -250,7 +265,7 @@
       id="ask-bar-suggestions"
       role="listbox"
       class:hidden={!open}
-      class="bg-white w-full px-2 absolute top-full border-x border-x-black border-b border-b-black rounded-b-lg shadow-md"
+      class="w-full px-2 bg-white"
     >
       {#each sections as section, i (section.type)}
         {#if section.suggestions.length > 0}
@@ -321,7 +336,7 @@
   />
   <textarea
     bind:this={shadowInput}
-    class="appearance-none outline-none resize-none block w-full border border-black rounded-lg p-2.5 focus:shadow-md peer group-hover:shadow-md"
+    class="appearance-none outline-none resize-none block w-full border-y p-2.5"
     class:pr-[70px]={query}
     style:height="0px"
     style:min-height="0px"
