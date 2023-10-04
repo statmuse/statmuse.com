@@ -186,6 +186,9 @@
     if (!mobileRegex.test(navigator.userAgent)) {
       input.focus()
     }
+    shadowInput.value = query
+    spacer.style.height = shadowInput.scrollHeight + 2 + 'px'
+    input.style.height = shadowInput.scrollHeight + 2 + 'px'
   })
 
   $: open = sections.findIndex((s) => s.suggestions.length > 0) > -1
@@ -257,7 +260,7 @@
       />
       <input
         type="submit"
-        class="absolute bottom-3 right-2.5 block w-5 h-5 cursor-pointer bg-[url('/icons/icon-search.svg')] bg-contain bg-no-repeat bg-scroll bg-center group:hover:bg-[url('/icons/icon-search-blue.svg')] peer-focus:bg-[url('/icons/icon-search-blue.svg')]"
+        class="absolute bottom-3 right-2.5 block w-5 h-5 cursor-pointer bg-[url('/icons/icon-search.svg')] bg-contain bg-no-repeat bg-scroll bg-center group-hover:bg-[url('/icons/icon-search-blue.svg')] peer-focus:bg-[url('/icons/icon-search-blue.svg')]"
         value=""
         aria-label="Search"
       />
