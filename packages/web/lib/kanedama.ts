@@ -286,7 +286,10 @@ export function getHeroProps(props: {
   const answer = props.response
   if (!answer) throw new Error('Must provide either data')
 
-  if (answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional')
+  if (
+    answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional' ||
+    answer.type === 'error'
+  )
     return undefined
 
   const content = tokensToHtml(answer.nlg.text.answer)

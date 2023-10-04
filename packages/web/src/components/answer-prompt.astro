@@ -17,7 +17,7 @@ const { answer } = Astro.props
 const conversationToken = answer.conversation.token
 const query = clean(
   tokensToText(
-    answer.visual.summaryTokens.filter((t) => t.type !== 'inferred'),
+    answer.visual.summaryTokens?.filter((t) => t.type !== 'inferred'),
   ),
 )
 ---

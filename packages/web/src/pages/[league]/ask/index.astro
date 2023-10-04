@@ -40,7 +40,7 @@ if (redirectUrl) return Astro.redirect(redirectUrl)
 
 const query = clean(
   tokensToText(
-    response.visual.summaryTokens.filter((t) => t.type !== 'inferred'),
+    response.visual.summaryTokens?.filter((t) => t.type !== 'inferred'),
   ),
 )
 const heroProps = getHeroProps({ imageAlt: query, response })

@@ -41,7 +41,7 @@ if (!response)
 conversationToken = response.conversation.token
 query = clean(
   tokensToText(
-    response.visual.summaryTokens.filter((t) => t.type !== 'inferred'),
+    response.visual.summaryTokens?.filter((t) => t.type !== 'inferred'),
   ),
 )
 

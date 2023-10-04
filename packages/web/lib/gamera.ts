@@ -118,7 +118,10 @@ export function getHeroProps(props: {
 
   const musing = props.musing
 
-  if (answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional')
+  if (
+    answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional' ||
+    answer.type === 'error'
+  )
     return undefined
 
   const content = musing

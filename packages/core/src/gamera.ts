@@ -31,7 +31,7 @@ export function handleResponse(response: GameraResponse) {
 
 export function handleAskResponseFromPost(response: GameraResponse) {
   const query = tokensToText(
-    response.visual.summaryTokens.filter((t) => t.type !== 'inferred'),
+    response.visual.summaryTokens?.filter((t) => t.type !== 'inferred'),
   ).toLowerCase()
 
   if (response.type === 'nlgPromptForMoreInfoVisualChoicesOptional') {
@@ -1020,7 +1020,7 @@ export interface NhlBoxScoreDetail {
 export interface Visual {
   domain: GameraDomain
   summary: Summary
-  summaryTokens: GameraToken[]
+  summaryTokens?: GameraToken[]
   isSuperlative: boolean
   additionalQuestions?: AdditionalQuestion[]
   detail?: Detail[]
