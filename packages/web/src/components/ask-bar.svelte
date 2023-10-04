@@ -7,7 +7,7 @@
 
   export let query: string = ''
   export let conversationToken: string = ''
-  export let preferredDomain: string
+  export let preferredDomain: string = ''
   export let money: boolean
   export let fantasy: boolean
 
