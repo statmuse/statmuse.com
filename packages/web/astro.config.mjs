@@ -8,9 +8,7 @@ import { defineConfig } from 'astro/config'
 export default defineConfig({
   integrations: [
     tailwind({
-      config: {
-        applyBaseStyles: false,
-      },
+      applyBaseStyles: false,
     }),
     react(),
     svelte(),
