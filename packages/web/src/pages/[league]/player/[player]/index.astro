@@ -33,6 +33,7 @@ if (!profile) {
   return new Response(null, { status: 404, statusText: 'Not found' })
 }
 
+console.log(profile)
 const { bio, stats, recentGames, nextGame } = profile
 
 const isNextGameHome =

@@ -18,7 +18,7 @@ export const getPlayerBio = async (
 ) => {
   try {
     const playerId = parsePlayerId(player)
-    const path = `${domain}/players/v2/${playerId}/bio`
+    const path = `${domain.toLowerCase()}/players/v2/${playerId}/bio`
     const data = await request<GameraPlayerBio & { error?: string }>(
       context,
       path,
@@ -38,7 +38,7 @@ export const getPlayerProfile = async (
 ) => {
   try {
     const playerId = parsePlayerId(player)
-    const path = `${domain}/players/v2/${playerId}`
+    const path = `${domain.toLowerCase()}/players/v2/${playerId}`
     const data = await request<
       GameraPlayerProfileResponse & { error?: string }
     >(context, path)
@@ -58,7 +58,7 @@ export const getPlayerStats = async (props: {
 }) => {
   try {
     const playerId = parsePlayerId(props.player)
-    const path = `${props.domain}/players/v2/${playerId}/careerStats`
+    const path = `${props.domain.toLowerCase()}/players/v2/${playerId}/careerStats`
     return request<GameraPlayerStats>(props.context, path, props.params)
   } catch (error) {
     console.error(error)
@@ -74,7 +74,7 @@ export const getPlayerGameLog = async (props: {
 }) => {
   try {
     const playerId = parsePlayerId(props.player)
-    const path = `${props.domain}/players/v2/${playerId}/gameLog`
+    const path = `${props.domain.toLowerCase()}/players/v2/${playerId}/gameLog`
     return request<GameraPlayerGameLog>(props.context, path, props.params)
   } catch (error) {
     console.error(error)
@@ -90,7 +90,7 @@ export const getPlayerSplits = async (props: {
 }) => {
   try {
     const playerId = parsePlayerId(props.player)
-    const path = `${props.domain}/players/v2/${playerId}/splits`
+    const path = `${props.domain.toLowerCase()}/players/v2/${playerId}/splits`
     return request<GameraPlayerSplits>(props.context, path, props.params)
   } catch (error) {
     console.error(error)

@@ -98,7 +98,10 @@ export function Web({ stack }: StackContext) {
         },
       },
     },
-    permissions: [[api.rdsCredentialsSecret, 'grantRead']],
+    permissions: [
+      [api.rdsCredentialsSecret, 'grantRead'],
+      [api.gameraProxyResource.anyMethod!, 'grantExecute'],
+    ],
     customDomain: {
       hostedZone: dns.zone,
       domainName: dns.domain,

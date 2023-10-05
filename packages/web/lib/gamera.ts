@@ -4,18 +4,27 @@ import type { Musing } from '@statmuse/core/musing'
 import type { HeroProps } from './props'
 import type { Context } from './session'
 export const gameraApiUrl = import.meta.env.GAMERA_API_URL
+import { createSignedFetcher } from 'aws-sigv4-fetch'
+
+const signedFetcher = createSignedFetcher({
+  service: 'apigateway',
+  region: 'us-east-1',
+})
 
 export async function request<T>(
   context: Context,
   path: string,
   params?: Record<string, string> | URLSearchParams,
 ): Promise<T | undefined> {
-  const requestUrl = `${gameraApiUrl}${path}?${new URLSearchParams(
-    params,
-  ).toString()}`
+  const requestUrl = `${gameraApiUrl}${path}${
+    params ? '?' + new URLSearchParams(params).toString() : ''
+  }`
+
+  console.log(requestUrl)
 
   try {
-    const response = await fetch(requestUrl, {
+    const response = await signedFetcher(requestUrl, {
+      method: 'get',
       headers: getGameraHeaders(context),
     })
     return response.json() as Promise<T>
