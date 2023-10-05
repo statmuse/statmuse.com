@@ -1,26 +1,8 @@
 import { StackContext, Api, Function, use } from 'sst/constructs'
-import {
-  InterfaceVpcEndpoint,
-  Port,
-  SecurityGroup,
-  SubnetType,
-} from 'aws-cdk-lib/aws-ec2'
+import { Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2'
 import { Imports } from './imports'
 import { Secrets } from './secrets'
 import { DNS } from './dns'
-import {
-  EndpointType,
-  HttpIntegration,
-  PassthroughBehavior,
-  RestApi,
-} from 'aws-cdk-lib/aws-apigateway'
-import {
-  AnyPrincipal,
-  Effect,
-  PolicyDocument,
-  PolicyStatement,
-} from 'aws-cdk-lib/aws-iam'
-import { Duration } from 'aws-cdk-lib/core'
 
 export function API({ stack }: StackContext) {
   const secrets = use(Secrets)
@@ -36,76 +18,17 @@ export function API({ stack }: StackContext) {
   rdsProxySecurityGroup.addIngressRule(
     lambdaSecurityGroup,
     Port.tcp(5432),
-    'allow lambda connection to rds proxy',
+    'allow lambda connection to rds proxy'
   )
-
-  const sg = new SecurityGroup(stack, 'vpc-endpoint-sg', {
-    vpc,
-    allowAllOutbound: true,
-  })
-  sg.addIngressRule(lambdaSecurityGroup, Port.tcp(443))
-
-  const vpcEndpoint = new InterfaceVpcEndpoint(stack, 'vpc-endpoint', {
-    vpc,
-    service: { name: 'com.amazonaws.us-east-1.execute-api', port: 443 },
-    subnets: { subnetType: SubnetType.PRIVATE_WITH_EGRESS },
-    privateDnsEnabled: true,
-    securityGroups: [sg],
-  })
-
-  const gameraApiUrl = isProd
-    ? 'http://gamera.statmuse.com/'
-    : 'http://gamera.staging.statmuse.com/'
-
-  const defaultIntegration = new HttpIntegration(gameraApiUrl, {
-    // options: { passthroughBehavior: PassthroughBehavior.WHEN_NO_MATCH },
-  })
-
-  const gameraProxyApi = new RestApi(stack, 'gamera-proxy', {
-    defaultIntegration,
-    endpointConfiguration: {
-      types: [EndpointType.PRIVATE],
-      vpcEndpoints: [vpcEndpoint],
-    },
-    deployOptions: {
-      cachingEnabled: true,
-      cacheClusterEnabled: true,
-      // 0.5 | 1.6 | 6.1 | 13.5 | 28.4 | 58.2 | 118 | 237
-      cacheClusterSize: '58.2',
-      cacheTtl: Duration.minutes(60),
-      metricsEnabled: true,
-    },
-    policy: new PolicyDocument({
-      statements: [
-        new PolicyStatement({
-          principals: [new AnyPrincipal()],
-          actions: ['execute-api:Invoke'],
-          resources: ['execute-api:/*'],
-          effect: Effect.DENY,
-          conditions: {
-            StringNotEquals: {
-              'aws:SourceVpce': vpcEndpoint.vpcEndpointId,
-            },
-          },
-        }),
-        new PolicyStatement({
-          principals: [new AnyPrincipal()],
-          actions: ['execute-api:Invoke'],
-          resources: ['execute-api:/*'],
-          effect: Effect.ALLOW,
-        }),
-      ],
-    }),
-  })
-
-  gameraProxyApi.root.addMethod('GET', defaultIntegration)
 
   const environment: Record<string, string> = {
     POSTGRES_SECRET_ARN: rdsCredentialsSecret.secretArn,
     POSTGRES_HOST: isProd
       ? 'mothra-prod.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com'
       : 'mothra-staging.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com',
-    GAMERA_API_URL: `https://${gameraProxyApi.restApiId}-${vpcEndpoint.vpcEndpointId}.execute-api.${stack.region}.amazonaws.com/${gameraProxyApi.deploymentStage.stageName}/`,
+    GAMERA_API_URL: isProd
+      ? 'http://gamera.statmuse.com/'
+      : 'http://gamera.staging.statmuse.com/',
     KANEDAMA_API_URL: isProd
       ? 'http://kanedama.statmuse.com/'
       : 'http://kanedama.staging.statmuse.com/',
