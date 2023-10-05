@@ -196,18 +196,22 @@ const canonicalUrl = meta?.canonical
       name="analytics:event:properties"
       content={JSON.stringify(analyticsProperties)}
     />
-    {!import.meta.env.DEV && (
-      <Fragment>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QRW302M4ZR" />
-        <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', 'G-QRW302M4ZR');
-        </script>
-      </Fragment>
-    )}
+    {
+      !import.meta.env.DEV && (
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-QRW302M4ZR"
+        />
+      )
+    }
+    <script>
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        dataLayer.push(arguments)
+      }
+      gtag('js', new Date())
+      gtag('config', 'G-QRW302M4ZR')
+    </script>
   </head>
   <body class="text-black">
     <slot />
