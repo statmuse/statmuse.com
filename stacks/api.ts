@@ -11,6 +11,7 @@ import { DNS } from './dns'
 import {
   EndpointType,
   HttpIntegration,
+  PassthroughBehavior,
   RestApi,
 } from 'aws-cdk-lib/aws-apigateway'
 import {
@@ -48,7 +49,7 @@ export function API({ stack }: StackContext) {
     vpc,
     service: { name: 'com.amazonaws.us-east-1.execute-api', port: 443 },
     subnets: { subnetType: SubnetType.PRIVATE_WITH_EGRESS },
-    // privateDnsEnabled: true,
+    privateDnsEnabled: true,
     securityGroups: [sg],
   })
 
@@ -104,8 +105,7 @@ export function API({ stack }: StackContext) {
     POSTGRES_HOST: isProd
       ? 'mothra-prod.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com'
       : 'mothra-staging.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com',
-    GAMERA_API_URL: `${gameraProxyApi.restApiId}.execute-api.${stack.region}.amazonaws.com`,
-    VPC_ENDPOINT_URL: `https://${vpcEndpoint.vpcEndpointId}.execute-api.${stack.region}.vpce.amazonaws.com/prod/`,
+    GAMERA_API_URL: `https://${gameraProxyApi.restApiId}-${vpcEndpoint.vpcEndpointId}.execute-api.${stack.region}.amazonaws.com/${gameraProxyApi.deploymentStage.stageName}/`,
     KANEDAMA_API_URL: isProd
       ? 'http://kanedama.statmuse.com/'
       : 'http://kanedama.staging.statmuse.com/',
