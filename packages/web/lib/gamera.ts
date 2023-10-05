@@ -4,6 +4,7 @@ import type { Musing } from '@statmuse/core/musing'
 import type { HeroProps } from './props'
 import type { Context } from './session'
 export const gameraApiUrl = import.meta.env.GAMERA_API_URL
+export const vpcEndpointUrl = import.meta.env.VPC_ENDPOINT_URL
 import { createSignedFetcher } from 'aws-sigv4-fetch'
 
 const signedFetcher = createSignedFetcher({
@@ -16,7 +17,7 @@ export async function request<T>(
   path: string,
   params?: Record<string, string> | URLSearchParams,
 ): Promise<T | undefined> {
-  const requestUrl = `${gameraApiUrl}${path}${
+  const requestUrl = `${vpcEndpointUrl}${path}${
     params ? '?' + new URLSearchParams(params).toString() : ''
   }`
 
@@ -84,6 +85,7 @@ export const getGameraHeaders = (context: Context) => {
 
   const headers: Record<string, string> = {
     Accept: 'application/json',
+    Host: gameraApiUrl,
     'x-origin': visitor.origin_name,
     'x-origin-scope': 'browser',
     'x-origin-version': '2.0',
