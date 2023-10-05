@@ -124,6 +124,8 @@ export interface Database {
   follows: FollowTable
 }
 
+pg.defaults.parseInputDatesAsUTC = true
+
 types.setTypeParser(types.builtins.TIMESTAMP, (datetimeString) => {
   const temp = new Date(datetimeString)
   return new Date(

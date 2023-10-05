@@ -1,9 +1,8 @@
 import { type FinanceAskForIndex, type AskForIndex } from '@statmuse/core/ask'
 import { createAskPath } from '@statmuse/core/path'
-import { utc } from '@statmuse/core/time'
 
 const dateFromString = (x: string) => {
-  const date = utc(x)
+  const date = new Date(x)
   if (date.toString() !== 'Invalid Date') {
     return date
   }
