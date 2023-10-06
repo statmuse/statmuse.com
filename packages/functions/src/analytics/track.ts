@@ -16,10 +16,11 @@ export const handler = Handler('kinesis_stream', async (event, ctx) => {
 
   const { Records } = event
   for (const record of Records) {
-    const decoded = JSON.parse(
-      unzipSync(Buffer.from(record.kinesis.data, 'base64')).toString(),
-    )
-    console.log(JSON.stringify(decoded, undefined, 2))
+    console.log(record.kinesis.data)
+    // const decoded = JSON.parse(
+    //   unzipSync(Buffer.from(record.kinesis.data, 'base64')).toString(),
+    // )
+    // console.log(JSON.stringify(decoded, undefined, 2))
     incomplete.pop()
     // if (decoded.messageType !== 'DATA_MESSAGE') {
     //   incomplete.pop()
