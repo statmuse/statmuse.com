@@ -23,7 +23,13 @@ if (!team || !league || !year) {
 const params = Astro.url.searchParams
 const domain = league.toUpperCase() as GameraDomain
 const bio = await getTeamSeasonBio({ context: Astro, domain, team, year })
-const stats = await getTeamSeasonStats({ context: Astro, domain, team, year, params })
+const stats = await getTeamSeasonStats({
+  context: Astro,
+  domain,
+  team,
+  year,
+  params,
+})
 const playerStats = await getTeamSeasonPlayerStats({
   context: Astro,
   domain,
@@ -66,11 +72,13 @@ Caching.swr(Astro)
       stats.grids.map((grid, i) => (
         <Fragment>
           <Grid class="mb-5" data={grid} parameters={stats.parameters} />
-          <Grid
-            class="mb-5"
-            data={playerStats.grids[i]}
-            parameters={stats.parameters}
-          />
+          {playerStats.grids[i] && (
+            <Grid
+              class="mb-5"
+              data={playerStats.grids[i]}
+              parameters={stats.parameters}
+            />
+          )}
         </Fragment>
       ))
     }
