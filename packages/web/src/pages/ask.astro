@@ -13,6 +13,7 @@ import { upsert } from '@statmuse/core/ask'
 import * as Enforcer from '@lib/enforcer'
 
 let query: string | null | undefined = Astro.url.searchParams.get('q')
+const league = Astro.url.searchParams.get('d')
 let preferredDomain: string | undefined
 let conversationToken: string | undefined
 
@@ -28,10 +29,13 @@ if (Astro.request.method === 'POST') {
   }
 }
 
-if (!query) throw new Error('No query provided')
+if (!query) return Astro.redirect('/')
 
 console.log('query input: ', query)
-const response = await ask({ query, preferredDomain, conversationToken }, Astro)
+const response = await ask(
+  { query, preferredDomain, conversationToken, ...(league ? { league } : {}) },
+  Astro,
+)
 if (!response)
   return new Response(null, { status: 404, statusText: 'Not found' })
 
