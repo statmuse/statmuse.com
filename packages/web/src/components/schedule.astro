@@ -16,7 +16,7 @@ interface Props {
   detail: ScheduleDetail
 }
 
-const league = Astro.props.league
+const league = Astro.props.league.toLowerCase()
 const detail = Astro.props.detail
 const groupGames = compose(entries, groupBy('date'))
 
