@@ -1,5 +1,6 @@
-import { StackContext, AstroSite, use } from 'sst/constructs'
+import { StackContext, AstroSite, use, KinesisStream } from 'sst/constructs'
 import { SubnetType } from 'aws-cdk-lib/aws-ec2'
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs'
 import { API } from './api'
 import { DNS } from './dns'
 import { Imports } from './imports'
@@ -9,6 +10,9 @@ import {
   AllowedMethods,
   CachePolicy,
   CachedMethods,
+  Endpoint,
+  FunctionEventType,
+  RealtimeLogConfig,
   ResponseHeadersPolicy,
   ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront'
@@ -19,7 +23,9 @@ import {
   Code,
   LayerVersion,
   Runtime,
+  StartingPosition,
 } from 'aws-cdk-lib/aws-lambda'
+import { StreamMode } from 'aws-cdk-lib/aws-kinesis'
 
 export function Web({ stack }: StackContext) {
   const dns = use(DNS)
@@ -56,6 +62,58 @@ export function Web({ stack }: StackContext) {
     compatibleArchitectures: [Architecture.ARM_64],
   })
 
+  const cfLogStream = new KinesisStream(stack, 'cf-realtime-logs-stream', {
+    consumers: {
+      consumer: {
+        function: {
+          handler: 'packages/functions/src/analytics/track.handler',
+          timeout: '15 minutes',
+          // memorySize: '3008 MB',
+          // nodejs: { install: ['source-map'], },
+          bind: [
+            // ...Object.values(secrets.database),
+            // secrets.cloudflare,
+          ],
+          // permissions: ['sts', 'iot'],
+        },
+        cdk: {
+          eventSource: {
+            reportBatchItemFailures: true,
+            bisectBatchOnError: true,
+            startingPosition: StartingPosition.TRIM_HORIZON,
+            parallelizationFactor: 10,
+          },
+        },
+      },
+    },
+    cdk: { stream: { streamMode: StreamMode.ON_DEMAND } },
+  })
+
+  const realtimeLogConfig = new RealtimeLogConfig(stack, 'cf-realtime-logs', {
+    endPoints: [Endpoint.fromKinesisStream(cfLogStream.cdk.stream)],
+    fields: [
+      'timestamp',
+      'c-ip',
+      'time-to-first-byte',
+      'sc-status',
+      'cs-method',
+      'cs-uri-stem',
+      'x-edge-location',
+      'time-taken',
+      'cs-user-agent',
+      'cs-referer',
+      'cs-cookie',
+      'x-edge-result-type',
+      'x-forwarded-for',
+      'sc-content-type',
+      'c-country',
+      'cs-headers',
+      'asn',
+    ],
+    // realtimeLogConfigName: 'my-delivery-stream',
+    samplingRate: 100,
+  })
+
   const astroSite = new AstroSite(stack, 'astro-site', {
     path: 'packages/web',
     bind: [
@@ -84,6 +142,7 @@ export function Web({ stack }: StackContext) {
         securityGroups: [api.lambdaSecurityGroup],
       },
       distribution: {
+        defaultBehavior: { realtimeLogConfig },
         additionalBehaviors: {
           'sitemap.xml': {
             origin: new S3Origin(imports.statmuseProdBucket, {
