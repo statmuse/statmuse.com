@@ -614,7 +614,7 @@ export interface Subject {
   actor: Actor
   imageUrl: string
   colors: Colors
-  entities: GameraEntity[]
+  entities?: GameraEntity[]
 }
 
 export interface Colors {

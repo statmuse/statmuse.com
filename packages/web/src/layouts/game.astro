@@ -64,7 +64,9 @@ const meta = {
   <Hero
     content={answer}
     imageUrl={subject.imageUrl}
-    imageAlt={subject.entities[0].display}
+    imageAlt={subject.entities
+      ? subject.entities[0].display
+      : `${preferredDomain} image`}
   />
   <Container>
     <slot />
