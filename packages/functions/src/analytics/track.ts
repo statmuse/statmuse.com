@@ -2,6 +2,7 @@ import { Handler } from 'sst/context'
 import { KinesisStreamEvent, KinesisStreamBatchResponse } from 'aws-lambda'
 import { Analytics } from '@segment/analytics-node'
 import { Config } from 'sst/node/config'
+import { randomUUID } from 'crypto'
 
 declare module 'sst/context' {
   interface Handlers {
@@ -51,7 +52,7 @@ export const handler = Handler('kinesis_stream', async (event, ctx) => {
             timestamp: new Date(Number.parseFloat(timestamp) * 1000),
             event: 'CDN Request',
             // userId: '',
-            // anonymousId: '',
+            anonymousId: randomUUID(),
             properties: {
               headers,
               cookie,
