@@ -68,13 +68,7 @@ export function Web({ stack }: StackContext) {
         function: {
           handler: 'packages/functions/src/analytics/track.handler',
           timeout: '15 minutes',
-          // memorySize: '3008 MB',
-          // nodejs: { install: ['source-map'], },
-          bind: [
-            // ...Object.values(secrets.database),
-            // secrets.cloudflare,
-          ],
-          // permissions: ['sts', 'iot'],
+          bind: [secrets.SEGMENT_WRITE_KEY],
         },
         cdk: {
           eventSource: {
@@ -104,13 +98,11 @@ export function Web({ stack }: StackContext) {
       'cs-referer',
       'cs-cookie',
       'x-edge-result-type',
-      'x-forwarded-for',
       'sc-content-type',
       'c-country',
       'cs-headers',
       'asn',
     ],
-    // realtimeLogConfigName: 'my-delivery-stream',
     samplingRate: 100,
   })
 
