@@ -1,0 +1,26 @@
+---
+/**
+ *
+ *  Legacy Route
+ *
+ *  GET /ask/most-points-in-a-game
+ *  GET /ask/nba?q=most+points+in+a+game
+ *
+ *  Redirect: GET /ask?q=most+points+in+a+game[&d=nba]
+ *
+ */
+
+const leagueOrQuestion = Astro.params.league
+const q =
+  Astro.url.searchParams.get('q') || leagueOrQuestion?.replaceAll('-', ' ')
+const league = Astro.url.searchParams.get('q')
+  ? leagueOrQuestion
+  : Astro.url.searchParams.get('d') ?? undefined
+
+if (!q) return Astro.redirect('/')
+
+return Astro.redirect(
+  `/ask?` +
+    new URLSearchParams({ q, ...(league ? { d: league } : {}) }).toString(),
+)
+---
