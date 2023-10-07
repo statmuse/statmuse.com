@@ -1,6 +1,6 @@
 import { StackContext, Api, Function, use } from 'sst/constructs'
 import { Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2'
-import { HttpApi } from '@aws-cdk/aws-apigatewayv2-alpha'
+import { HttpApi, VpcLink } from '@aws-cdk/aws-apigatewayv2-alpha'
 import { HttpAlbIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha'
 import { Imports } from './imports'
 import { Secrets } from './secrets'
@@ -39,11 +39,16 @@ export function API({ stack }: StackContext) {
       },
     )
 
+    const vpcLink = new VpcLink(stack, 'gamera-proxy-vpc-link', {
+      vpc,
+    })
+
     const gameraProxy = new HttpApi(stack, 'gamera-proxy-api', {
       apiName: `${stack.stage}-gamera-proxy-api`,
       defaultIntegration: new HttpAlbIntegration(
         'gamera-proxy-api-integration',
         albListener,
+        { vpcLink },
       ),
     })
 
