@@ -81,7 +81,11 @@ export function API({ stack }: StackContext) {
 
     new Distribution(stack, 'gamera-proxy-cf', {
       priceClass: PriceClass.PRICE_CLASS_100,
-      defaultBehavior: { origin: new HttpOrigin(gameraProxy.url!) },
+      defaultBehavior: {
+        origin: new HttpOrigin(
+          `${gameraProxy.httpApiId}.execute-api.${stack.region}.amazonaws.com`,
+        ),
+      },
     })
   }
 
