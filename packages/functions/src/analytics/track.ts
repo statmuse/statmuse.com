@@ -94,7 +94,7 @@ export const handler = Handler('kinesis_stream', async (event) => {
 
     if (contentType === 'text/html') {
       try {
-        const cookies = parseCookie(decodeURIComponent(cookieString))
+        const cookies = parseCookie(cookie ?? '')
         await new Promise((resolve) =>
           analytics().track(
             {
