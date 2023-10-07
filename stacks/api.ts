@@ -71,16 +71,7 @@ export function API({ stack }: StackContext) {
 
     const gameraProxy = new HttpApi(stack, 'gamera-proxy-api', {
       apiName: `${stack.stage}-gamera-proxy-api`,
-      // defaultIntegration: new HttpAlbIntegration(
-      //   'gamera-proxy-api-integration',
-      //   albListener,
-      //   { vpcLink },
-      // ),
-    })
-
-    gameraProxy.addRoutes({
-      path: '/{proxy+}',
-      integration: new HttpAlbIntegration(
+      defaultIntegration: new HttpAlbIntegration(
         'gamera-proxy-api-integration',
         albListener,
         { vpcLink },
