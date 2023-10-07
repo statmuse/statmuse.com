@@ -82,7 +82,7 @@ export const handler = Handler('kinesis_stream', async (event) => {
       headers = decodeURIComponent(headerString)
     } catch (e) {}
     try {
-      cookie = decodeURIComponent(cookieString)
+      cookie = decodeURIComponent(decodeURIComponent(cookieString))
     } catch (e) {}
     try {
       userAgent = decodeURIComponent(userAgentRaw)
