@@ -12,8 +12,18 @@ import { Imports } from './imports'
 import { Secrets } from './secrets'
 import { DNS } from './dns'
 import { ApplicationListener } from 'aws-cdk-lib/aws-elasticloadbalancingv2'
-import { Distribution, PriceClass } from 'aws-cdk-lib/aws-cloudfront'
+import {
+  AllowedMethods,
+  CachePolicy,
+  CacheQueryStringBehavior,
+  Distribution,
+  OriginRequestPolicy,
+  PriceClass,
+  ResponseHeadersPolicy,
+  ViewerProtocolPolicy,
+} from 'aws-cdk-lib/aws-cloudfront'
 import { HttpOrigin } from 'aws-cdk-lib/aws-cloudfront-origins'
+import { Duration } from 'aws-cdk-lib/core'
 
 export function API({ stack }: StackContext) {
   const secrets = use(Secrets)
@@ -84,6 +94,16 @@ export function API({ stack }: StackContext) {
         origin: new HttpOrigin(
           `${gameraProxy.httpApiId}.execute-api.${stack.region}.amazonaws.com`,
         ),
+        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        allowedMethods: AllowedMethods.ALLOW_ALL,
+        cachePolicy: new CachePolicy(stack, 'gamera-proxy-cf-cache-policy', {
+          queryStringBehavior: CacheQueryStringBehavior.all(),
+          enableAcceptEncodingGzip: true,
+          enableAcceptEncodingBrotli: true,
+          // minTtl: Duration.seconds(0),
+          defaultTtl: Duration.minutes(5),
+        }),
+        originRequestPolicy: OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
       },
     })
   }
