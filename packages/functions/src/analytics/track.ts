@@ -76,6 +76,8 @@ export const handler = Handler('kinesis_stream', async (event) => {
     let cookie: string | undefined
     let userAgent: string | undefined
     let isBot = false
+    let headerMap: { [key: string]: string | undefined } = {}
+
     try {
       headers = decodeURIComponent(headerString)
     } catch (e) {}
@@ -86,18 +88,29 @@ export const handler = Handler('kinesis_stream', async (event) => {
       userAgent = decodeURIComponent(userAgentRaw)
       isBot = botRegex.test(userAgent)
     } catch (e) {}
+    try {
+      headerMap = parseHeaders(headers)
+    } catch (e) {}
 
     if (contentType === 'text/html') {
       try {
         const cookies = parseCookie(decodeURIComponent(cookieString))
-        const headerMap = parseHeaders(headers)
         await new Promise((resolve) =>
           analytics().track(
             {
               timestamp: new Date(Number.parseFloat(timestamp) * 1000),
               event: 'CDN Request',
-              userId: cookies['ajs_user_id'],
-              anonymousId: cookies['ajs_anonymous_id'] || randomUUID(),
+              userId:
+                cookies['ajs_user_id'] ||
+                cookies['_ajs_user_id'] ||
+                cookies['__ajs_user_id'] ||
+                cookies['___ajs_user_id'],
+              anonymousId:
+                cookies['ajs_anonymous_id'] ||
+                cookies['_ajs_anonymous_id'] ||
+                cookies['__ajs_anonymous_id'] ||
+                cookies['___ajs_anonymous_id'] ||
+                randomUUID(),
               properties: {
                 isBot,
                 headers,

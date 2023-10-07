@@ -56,7 +56,48 @@ export const session = defineMiddleware(async (context, next) => {
     })
   }
 
+  const uid = context.cookies.get('ajs_user_id')
+  if (uid) {
+    // giving it more chances to make it into the
+    // cloudfront realtime logs lol
+    context.cookies.set('_ajs_user_id', uid.value)
+    context.cookies.set('__ajs_user_id', uid.value)
+    context.cookies.set('___ajs_user_id', uid.value)
+  }
+
+  const vid = context.cookies.get('ajs_anonymous_id')
+  if (vid) {
+    context.cookies.set('_ajs_visitor_id', vid.value)
+    context.cookies.set('__ajs_visitor_id', vid.value)
+    context.cookies.set('___ajs_visitor_id', vid.value)
+  }
+
   locals.subscribed = locals.user?.stripe_subscription_status === 'active'
+  return next()
+})
+
+export const cleanup = defineMiddleware(async (context, next) => {
+  const remove = [
+    'statmuse', // old mothra session
+    'statmuse_csrf_token',
+    'statmuse_tz',
+    'cookie_status',
+    'amplitude_idundefinedstatmuse.com',
+    '_tracking_consent',
+    'initialTrafficSource',
+    '_shopify_y',
+    '_y',
+    '_fbp',
+    '_ttp',
+    '_tt_enable_cookie',
+    '_shopify_m',
+  ]
+
+  for (const cookie of remove) {
+    if (context.cookies.has(cookie)) {
+      context.cookies.delete(cookie, { path: '/' })
+    }
+  }
 
   return next()
 })
@@ -93,4 +134,4 @@ export const headers = defineMiddleware(async (_context, next) => {
   return response
 })
 
-export const onRequest = sequence(logging, session, headers)
+export const onRequest = sequence(logging, session, cleanup, headers)
