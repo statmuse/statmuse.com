@@ -1,8 +1,13 @@
 import { StackContext, Api, Function, use } from 'sst/constructs'
 import { Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2'
+import { HttpApi } from '@aws-cdk/aws-apigatewayv2-alpha'
+import { HttpAlbIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha'
 import { Imports } from './imports'
 import { Secrets } from './secrets'
 import { DNS } from './dns'
+import { ApplicationListener } from 'aws-cdk-lib/aws-elasticloadbalancingv2'
+import { Distribution, PriceClass } from 'aws-cdk-lib/aws-cloudfront'
+import { HttpOrigin } from 'aws-cdk-lib/aws-cloudfront-origins'
 
 export function API({ stack }: StackContext) {
   const secrets = use(Secrets)
@@ -18,8 +23,35 @@ export function API({ stack }: StackContext) {
   rdsProxySecurityGroup.addIngressRule(
     lambdaSecurityGroup,
     Port.tcp(5432),
-    'allow lambda connection to rds proxy'
+    'allow lambda connection to rds proxy',
   )
+
+  // TODO: remove staging
+  if (isProd || isStaging) {
+    const albListener = ApplicationListener.fromLookup(
+      stack,
+      'gamera-prod-alb-listener',
+      {
+        loadBalancerArn:
+          'arn:aws:elasticloadbalancing:us-east-1:723112830140:loadbalancer/app/gamera-prod/69000dfcb10c6a79',
+        listenerArn:
+          'arn:aws:elasticloadbalancing:us-east-1:723112830140:listener/app/gamera-prod/69000dfcb10c6a79/66bcc3bb81da491a',
+      },
+    )
+
+    const gameraProxy = new HttpApi(stack, 'gamera-proxy-api', {
+      apiName: `${stack.stage}-gamera-proxy-api`,
+      defaultIntegration: new HttpAlbIntegration(
+        'gamera-proxy-api-integration',
+        albListener,
+      ),
+    })
+
+    new Distribution(stack, 'gamera-proxy-cf', {
+      priceClass: PriceClass.PRICE_CLASS_100,
+      defaultBehavior: { origin: new HttpOrigin(gameraProxy.url!) },
+    })
+  }
 
   const environment: Record<string, string> = {
     POSTGRES_SECRET_ARN: rdsCredentialsSecret.secretArn,

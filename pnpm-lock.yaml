@@ -8,6 +8,12 @@ importers:
 
   .:
     devDependencies:
+      '@aws-cdk/aws-apigatewayv2-alpha':
+        specifier: 2.95.1-alpha.0
+        version: 2.95.1-alpha.0(aws-cdk-lib@2.95.1)(constructs@10.2.69)
+      '@aws-cdk/aws-apigatewayv2-integrations-alpha':
+        specifier: 2.95.1-alpha.0
+        version: 2.95.1-alpha.0(@aws-cdk/aws-apigatewayv2-alpha@2.95.1-alpha.0)(aws-cdk-lib@2.95.1)(constructs@10.2.69)
       '@tsconfig/node16':
         specifier: ^1.0.3
         version: 1.0.3
