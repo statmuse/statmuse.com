@@ -61,40 +61,42 @@ export const handler = Handler('kinesis_stream', async (event, ctx) => {
       asn,
     ] = parts
 
-    try {
-      const cookies = parseCookie(decodeURIComponent(cookieString))
-      await new Promise((resolve) =>
-        analytics().track(
-          {
-            timestamp: new Date(Number.parseFloat(timestamp) * 1000),
-            event: 'CDN Request',
-            userId: cookies['ajs_user_id'],
-            anonymousId: cookies['ajs_anonymous_id'] || randomUUID(),
-            properties: {
-              isBot: botRegex.test(decodeURIComponent(userAgent)),
-              headers: decodeURIComponent(headerString),
-              cookie: decodeURIComponent(cookieString),
-              uri,
-              contentType,
-              country,
-              method,
-              status,
+    if (contentType === 'text/html') {
+      try {
+        const cookies = parseCookie(decodeURIComponent(cookieString))
+        await new Promise((resolve) =>
+          analytics().track(
+            {
+              timestamp: new Date(Number.parseFloat(timestamp) * 1000),
+              event: 'CDN Request',
+              userId: cookies['ajs_user_id'],
+              anonymousId: cookies['ajs_anonymous_id'] || randomUUID(),
+              properties: {
+                isBot: botRegex.test(decodeURIComponent(userAgent)),
+                headers: decodeURIComponent(headerString),
+                cookie: decodeURIComponent(cookieString),
+                uri,
+                contentType,
+                country,
+                method,
+                status,
+              },
+              context: {
+                ip,
+                // @ts-ignore
+                page: uri,
+                // @ts-ignore
+                referrer,
+                userAgent: decodeURIComponent(userAgent),
+              },
             },
-            context: {
-              ip,
-              // @ts-ignore
-              page: uri,
-              // @ts-ignore
-              referrer,
-              userAgent: decodeURIComponent(userAgent),
-            },
-          },
-          resolve,
-        ),
-      )
-    } catch (error) {
-      console.error(error)
-      continue
+            resolve,
+          ),
+        )
+      } catch (error) {
+        console.error(error)
+        continue
+      }
     }
 
     incomplete.pop()
