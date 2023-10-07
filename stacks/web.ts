@@ -135,6 +135,9 @@ export function Web({ stack }: StackContext) {
       },
       distribution: {
         defaultBehavior: { realtimeLogConfig },
+        webAclId: isProd
+          ? 'arn:aws:wafv2:us-east-1:723112830140:global/webacl/CreatedByCloudFront-114df543-b96b-4233-a149-7b90a83c0911/c2c78158-2ed2-4bb1-8633-6f27a616fca1'
+          : undefined,
         additionalBehaviors: {
           'sitemap.xml': {
             origin: new S3Origin(imports.statmuseProdBucket, {
