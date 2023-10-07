@@ -67,9 +67,9 @@ export const session = defineMiddleware(async (context, next) => {
 
   const vid = context.cookies.get('ajs_anonymous_id')
   if (vid) {
-    context.cookies.set('_ajs_visitor_id', vid.value)
-    context.cookies.set('__ajs_visitor_id', vid.value)
-    context.cookies.set('___ajs_visitor_id', vid.value)
+    context.cookies.set('_ajs_anonymous_id', vid.value)
+    context.cookies.set('__ajs_anonymous_id', vid.value)
+    context.cookies.set('___ajs_anonymous_id', vid.value)
   }
 
   locals.subscribed = locals.user?.stripe_subscription_status === 'active'
