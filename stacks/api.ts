@@ -97,6 +97,7 @@ export function API({ stack }: StackContext) {
       defaultBehavior: {
         origin: new HttpOrigin(
           `${gameraProxy.httpApiId}.execute-api.${stack.region}.amazonaws.com`,
+          { readTimeout: Duration.seconds(10) },
         ),
         viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         allowedMethods: AllowedMethods.ALLOW_ALL,

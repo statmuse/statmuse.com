@@ -48,7 +48,11 @@ export async function ask(
     params['preferredDomain'] = options.preferredDomain
   }
 
-  return request(context, `${league ? league + '/' : ''}answer`, params)
+  return request<GameraResponse>(
+    context,
+    `${league ? league + '/' : ''}answer`,
+    params,
+  )
 }
 
 export async function fantasyAsk(
@@ -68,7 +72,7 @@ export async function fantasyAsk(
     params['conversationToken'] = options.conversationToken
   }
 
-  return request(context, 'nfl/fantasy/answer', params)
+  return request<GameraResponse>(context, 'nfl/fantasy/answer', params)
 }
 
 export const getGameraHeaders = (context: Context) => {
