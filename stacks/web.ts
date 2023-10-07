@@ -68,7 +68,8 @@ export function Web({ stack }: StackContext) {
       consumer: {
         function: {
           handler: 'packages/functions/src/analytics/track.handler',
-          timeout: '15 minutes',
+          timeout: '1 minute',
+          memorySize: '256 MB',
           bind: [secrets.SEGMENT_WRITE_KEY],
         },
         cdk: {
