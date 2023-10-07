@@ -38,7 +38,7 @@ const parseHeaders = (headerString?: string) => {
 
   const headerPairs = headerString.split('\n')
   for (const pair of headerPairs) {
-    const [key, value] = pair.split('=')
+    const [key, value] = pair.split(':')
     headerObj[key] = value
   }
 
