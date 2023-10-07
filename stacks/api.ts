@@ -41,6 +41,7 @@ export function API({ stack }: StackContext) {
 
     const vpcLink = new VpcLink(stack, 'gamera-proxy-vpc-link', {
       vpc,
+      subnets: { subnetType: SubnetType.PRIVATE_WITH_EGRESS },
     })
 
     const gameraProxy = new HttpApi(stack, 'gamera-proxy-api', {
