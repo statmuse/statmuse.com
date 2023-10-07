@@ -42,6 +42,10 @@ export function API({ stack }: StackContext) {
     'allow lambda connection to rds proxy',
   )
 
+  let GAMERA_API_URL = isProd
+    ? 'http://gamera.statmuse.com/'
+    : 'http://gamera.staging.statmuse.com/'
+
   // TODO: remove staging
   if (isProd || isStaging) {
     const albListener = ApplicationListener.fromLookup(
@@ -88,7 +92,7 @@ export function API({ stack }: StackContext) {
       ),
     })
 
-    new Distribution(stack, 'gamera-proxy-cf', {
+    const gameraCfDistro = new Distribution(stack, 'gamera-proxy-cf', {
       priceClass: PriceClass.PRICE_CLASS_100,
       defaultBehavior: {
         origin: new HttpOrigin(
@@ -106,6 +110,8 @@ export function API({ stack }: StackContext) {
         originRequestPolicy: OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
       },
     })
+
+    GAMERA_API_URL = `https://${gameraCfDistro.distributionDomainName}/`
   }
 
   const environment: Record<string, string> = {
@@ -113,9 +119,7 @@ export function API({ stack }: StackContext) {
     POSTGRES_HOST: isProd
       ? 'mothra-prod.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com'
       : 'mothra-staging.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com',
-    GAMERA_API_URL: isProd
-      ? 'http://gamera.statmuse.com/'
-      : 'http://gamera.staging.statmuse.com/',
+    GAMERA_API_URL,
     KANEDAMA_API_URL: isProd
       ? 'http://kanedama.statmuse.com/'
       : 'http://kanedama.staging.statmuse.com/',
