@@ -56,8 +56,6 @@ export function API({ stack }: StackContext) {
       Subnet.fromSubnetId(stack, 'gamera-proxy-vpc-link-1a', 'subnet-db00adad'),
       Subnet.fromSubnetId(stack, 'gamera-proxy-vpc-link-1b', 'subnet-e718dfbf'),
       Subnet.fromSubnetId(stack, 'gamera-proxy-vpc-link-1d', 'subnet-81e211ab'),
-      // TODO: why is this failing? "service not available"
-      // Subnet.fromSubnetId(stack, 'gamera-proxy-vpc-link-1e', 'subnet-efde48d2'),
       Subnet.fromSubnetId(
         stack,
         'gamera-proxy-vpc-link-1f',
