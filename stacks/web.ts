@@ -5,6 +5,7 @@ import { DNS } from './dns'
 import { Imports } from './imports'
 import { AnalyticsProxy } from './analytics-proxy'
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins'
+import { CfnWebACL } from 'aws-cdk-lib/aws-wafv2'
 import {
   AllowedMethods,
   CachePolicy,
@@ -136,7 +137,7 @@ export function Web({ stack }: StackContext) {
       distribution: {
         defaultBehavior: { realtimeLogConfig },
         webAclId: isProd
-          ? 'arn:aws:wafv2:us-east-1:723112830140:global/webacl/CreatedByCloudFront-114df543-b96b-4233-a149-7b90a83c0911/c2c78158-2ed2-4bb1-8633-6f27a616fca1'
+          ? 'arn:aws:wafv2:us-east-1:723112830140:global/webacl/statmuse-com-acl/e2ab5696-ad18-4946-a192-f534187ce9b5'
           : undefined,
         additionalBehaviors: {
           'sitemap.xml': {
