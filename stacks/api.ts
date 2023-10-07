@@ -1,5 +1,11 @@
 import { StackContext, Api, Function, use } from 'sst/constructs'
-import { Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2'
+import {
+  Peer,
+  Port,
+  SecurityGroup,
+  Subnet,
+  SubnetType,
+} from 'aws-cdk-lib/aws-ec2'
 import { HttpApi, VpcLink } from '@aws-cdk/aws-apigatewayv2-alpha'
 import { HttpAlbIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha'
 import { Imports } from './imports'
@@ -39,9 +45,29 @@ export function API({ stack }: StackContext) {
       },
     )
 
+    const vpcLinkSg = new SecurityGroup(stack, 'gamera-proxy-vpc-link-sg', {
+      vpc,
+      allowAllOutbound: true,
+    })
+    vpcLinkSg.addIngressRule(Peer.anyIpv4(), Port.tcp(80))
+    vpcLinkSg.addIngressRule(Peer.anyIpv4(), Port.tcp(443))
+
+    const subnets = [
+      Subnet.fromSubnetId(stack, 'gamera-proxy-vpc-link-1a', 'subnet-db00adad'),
+      Subnet.fromSubnetId(stack, 'gamera-proxy-vpc-link-1b', 'subnet-e718dfbf'),
+      Subnet.fromSubnetId(stack, 'gamera-proxy-vpc-link-1d', 'subnet-81e211ab'),
+      Subnet.fromSubnetId(stack, 'gamera-proxy-vpc-link-1e', 'subnet-efde48d2'),
+      Subnet.fromSubnetId(
+        stack,
+        'gamera-proxy-vpc-link-1f',
+        'subnet-0a08534ad323b86d7',
+      ),
+    ]
+
     const vpcLink = new VpcLink(stack, 'gamera-proxy-vpc-link', {
       vpc,
-      subnets: { subnetType: SubnetType.PRIVATE_WITH_NAT },
+      subnets: { subnets },
+      securityGroups: [vpcLinkSg],
     })
 
     const gameraProxy = new HttpApi(stack, 'gamera-proxy-api', {
