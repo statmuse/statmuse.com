@@ -1,6 +1,5 @@
 import { StackContext, AstroSite, use, KinesisStream } from 'sst/constructs'
 import { SubnetType } from 'aws-cdk-lib/aws-ec2'
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs'
 import { API } from './api'
 import { DNS } from './dns'
 import { Imports } from './imports'
@@ -11,7 +10,6 @@ import {
   CachePolicy,
   CachedMethods,
   Endpoint,
-  FunctionEventType,
   RealtimeLogConfig,
   ResponseHeadersPolicy,
   ViewerProtocolPolicy,
@@ -34,6 +32,8 @@ export function Web({ stack }: StackContext) {
   const imports = use(Imports)
   const secrets = use(Secrets)
   const analytics = use(AnalyticsProxy)
+
+  const isProd = stack.stage === 'production'
 
   const sitemapHeaders = new ResponseHeadersPolicy(stack, 'sitemap-headers', {
     customHeadersBehavior: {
@@ -152,7 +152,7 @@ export function Web({ stack }: StackContext) {
     permissions: [[api.rdsCredentialsSecret, 'grantRead']],
     customDomain: {
       hostedZone: dns.zone,
-      domainName: dns.domain,
+      domainName: isProd ? 'www.statmuse.com' : dns.domain,
     },
   })
 
