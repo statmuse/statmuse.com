@@ -120,7 +120,9 @@ export const handler = Handler('kinesis_stream', async (event) => {
                 country,
                 method,
                 status,
-                prefetch: headerMap['Purpose'] === 'prefetch',
+                prefetch:
+                  headerMap['Purpose'] === 'prefetch' ||
+                  headerMap['Sec-Purpose'] === 'prefetch',
               },
               context: {
                 ip,
