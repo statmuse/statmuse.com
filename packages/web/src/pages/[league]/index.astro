@@ -2,8 +2,10 @@
 import HomeLayout from '@layouts/home.astro'
 import { listOnboarding } from '@statmuse/core/examples'
 import { createAskPath } from '@statmuse/core/path'
+import { Caching } from '@lib/caching'
 
-export const prerender = true
+// export const prerender = true
+Caching.swr(Astro)
 export function getStaticPaths() {
   return [
     {params: {league: 'nba'}},
