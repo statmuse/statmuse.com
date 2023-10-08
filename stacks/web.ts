@@ -5,7 +5,6 @@ import { DNS } from './dns'
 import { Imports } from './imports'
 import { AnalyticsProxy } from './analytics-proxy'
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins'
-import { CfnWebACL } from 'aws-cdk-lib/aws-wafv2'
 import {
   AllowedMethods,
   CachePolicy,
