@@ -13,9 +13,12 @@ export default defineConfig({
     react(),
     svelte(),
   ],
-  output: 'server',
+  output: 'hybrid',
   server: { port: 3000 },
-  adapter: aws(),
+  adapter: aws({
+    responseMode: 'buffer',
+    serverRoutes: ['ask', 'auth/*', 'account/*'],
+  }),
   vite: { optimizeDeps: ['sst'] },
   image: {
     remotePatterns: [

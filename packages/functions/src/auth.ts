@@ -60,59 +60,65 @@ export const handler = AuthHandler({
       },
     }),
   },
-  async allowClient(clientID, redirect) {
-    return true
-  },
-  onSuccess: async (input, response) => {
-    const email: string = input.email
-    if (!email) throw new Error('No email found')
-
-    const visitorId: string | undefined = input.visitor
-    if (!visitorId) throw new Error('No visitor id found')
-
-    const updating: string | undefined = input.update
-
-    const visitor = await Visitor.get(visitorId)
-    let user = updating ? await User.get(updating) : await User.fromEmail(email)
-
-    if (!user) {
-      user = await User.create(email, visitorId)
-
-      await contacts.request({
-        url: '/v3/contactdb/recipients',
-        method: 'POST',
-        body: [{ email }],
-      })
-    }
-
-    if (!user || !visitor) throw new Error('Unable to register new user')
-
-    if (updating) {
-      const updated = await User.updateEmail(user.id, email)
-      if (updated) user = updated
-
-      await contacts.request({
-        url: '/v3/contactdb/recipients',
-        method: 'POST',
-        body: [{ email }],
-      })
-    }
-
-    return response.session({
-      type: 'user',
-      properties: {
-        id: user.id,
-        email,
-        visitorId: visitor.id,
-        upgrade: input.upgrade === 'true' || undefined,
-        updated: !!updating,
-        cookieStatus: visitor.cookie_status,
-        origin: visitor.origin_name,
-        subscriptionStatus: user.stripe_subscription_status || undefined,
+  callbacks: {
+    auth: {
+      async allowClient(_clientID, _redirect) {
+        return true
       },
-    })
+      async success(input, response) {
+        const email: string = input.email
+        if (!email) throw new Error('No email found')
+
+        const visitorId: string | undefined = input.visitor
+        if (!visitorId) throw new Error('No visitor id found')
+
+        const updating: string | undefined = input.update
+
+        const visitor = await Visitor.get(visitorId)
+        let user = updating
+          ? await User.get(updating)
+          : await User.fromEmail(email)
+
+        if (!user) {
+          user = await User.create(email, visitorId)
+
+          await contacts.request({
+            url: '/v3/contactdb/recipients',
+            method: 'POST',
+            body: [{ email }],
+          })
+        }
+
+        if (!user || !visitor) throw new Error('Unable to register new user')
+
+        if (updating) {
+          const updated = await User.updateEmail(user.id, email)
+          if (updated) user = updated
+
+          await contacts.request({
+            url: '/v3/contactdb/recipients',
+            method: 'POST',
+            body: [{ email }],
+          })
+        }
+
+        return response.session({
+          type: 'user',
+          properties: {
+            id: user.id,
+            email,
+            visitorId: visitor.id,
+            upgrade: input.upgrade === 'true' || undefined,
+            updated: !!updating,
+            cookieStatus: visitor.cookie_status,
+            origin: visitor.origin_name,
+            subscriptionStatus: user.stripe_subscription_status || undefined,
+          },
+        })
+      },
+      error: async () => ({
+        statusCode: 401,
+      }),
+    },
   },
-  onError: async () => ({
-    statusCode: 401,
-  }),
 })
