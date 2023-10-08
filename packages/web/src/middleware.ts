@@ -10,9 +10,8 @@ export const logging = defineMiddleware(async (context, next) => {
 })
 
 export const session = defineMiddleware(async (context, next) => {
-  if (context.url.pathname.startsWith('/_image')) {
-    return next()
-  }
+  if (import.meta.env.CI) return next()
+  if (context.url.pathname.startsWith('/_image')) return next()
 
   const locals = context.locals
   let session = Session.get(context)
