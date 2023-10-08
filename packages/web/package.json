@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "sst bind astro dev",
     "start": "astro dev",
-    "build": "sst bind astro build",
+    "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
     "format": "prettier --write --plugin-search-dir=. .",

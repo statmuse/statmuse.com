@@ -36,17 +36,12 @@ const secretsManager = new SecretsManagerClient({
   region: process.env.AWS_REGION || 'us-east-1',
 })
 
-let secret = '{}'
-try {
-  const response = await secretsManager.send(
-    new GetSecretValueCommand({
-      SecretId: process.env.POSTGRES_SECRET_ARN,
-    }),
-  )
-  secret = response.SecretString || '{}'
-} catch (error) {
-  console.error(error)
-}
+const { SecretString: secret } = await secretsManager.send(
+  new GetSecretValueCommand({
+    SecretId: process.env.POSTGRES_SECRET_ARN,
+  }),
+)
+if (!secret) throw new Error('No secret found')
 
 const credentials = JSON.parse(secret) as {
   username: string

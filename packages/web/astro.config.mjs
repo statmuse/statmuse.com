@@ -13,7 +13,7 @@ export default defineConfig({
     react(),
     svelte(),
   ],
-  output: 'hybrid',
+  output: 'server',
   server: { port: 3000 },
   adapter: aws({
     responseMode: 'buffer',
