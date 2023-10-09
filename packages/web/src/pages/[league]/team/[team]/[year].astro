@@ -25,6 +25,7 @@ const query = Astro.props.query
 const league = Astro.props.league || Astro.params.league
 const team = Astro.props.team || Astro.params.team
 let year = Astro.props.year || Astro.params.year
+const isSearch = Astro.url.pathname === '/ask'
 
 if (!team || !league || !year) {
   return new Response(null, { status: 404, statusText: 'Not found' })
@@ -61,7 +62,7 @@ if (!response) {
 const { bio, scoresAndSchedule, teamLeaders, standings, stats, playerGallery } =
   response
 
-if (!bio.hasStats) {
+if (!bio.hasStats && !isSearch) {
   return Astro.redirect(`/${league}/team/${team}/schedule/${year}`)
 }
 
