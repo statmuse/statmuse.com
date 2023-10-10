@@ -13,10 +13,10 @@
     "typecheck": "tsc -noEmit"
   },
   "dependencies": {
-    "@astrojs/node": "^6.0.3",
-    "@astrojs/react": "^3.0.3",
-    "@astrojs/svelte": "^4.0.3",
-    "@astrojs/tailwind": "^5.0.1",
+    "@astrojs/node": "^6.0.1",
+    "@astrojs/react": "^3.0.2",
+    "@astrojs/svelte": "^4.0.2",
+    "@astrojs/tailwind": "^5.0.0",
     "@aws-sdk/client-secrets-manager": "^3.354.0",
     "@segment/analytics-next": "^1.55.0",
     "@sendgrid/client": "^7.7.0",
@@ -26,7 +26,7 @@
     "@types/lodash-es": "^4.17.8",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
-    "astro": "^3.2.3",
+    "astro": "^3.1.2",
     "astro-sst": "2.22.9",
     "classnames": "^2.3.2",
     "d3": "^7.8.5",
