@@ -10,7 +10,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "format": "prettier --write --plugin-search-dir=. .",
-    "typecheck": "astro check"
+    "typecheck": "astro check",
+    "svelte-check": "svelte-check"
   },
   "dependencies": {
     "@astrojs/node": "^6.0.1",
@@ -72,6 +73,7 @@
     "eslint-plugin-astro": "^0.27.1",
     "prettier-plugin-astro": "^0.12.0",
     "prettier-plugin-svelte": "^3.0.3",
+    "svelte-check": "^3.5.2",
     "svelte-sequential-preprocessor": "^2.0.1",
     "typescript": "^5.2.2"
   }
