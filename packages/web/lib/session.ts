@@ -1,5 +1,5 @@
 import { createSessionBuilder } from 'sst/node/future/auth'
-import type { sessions } from '@statmuse/functions/auth'
+import type { sessions } from '@statmuse/functions/session'
 import type { APIContext, AstroGlobal } from 'astro'
 import { fromRequest } from '@lib/visitor'
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js'

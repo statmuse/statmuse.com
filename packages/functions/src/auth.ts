@@ -1,34 +1,14 @@
-import { AuthHandler, CodeAdapter, LinkAdapter } from 'sst/node/future/auth'
+import { AuthHandler, LinkAdapter } from 'sst/node/future/auth'
 import * as User from '@statmuse/core/user'
 import * as Visitor from '@statmuse/core/visitor'
-import type { Visitor as VisitorT } from '@statmuse/core/visitor/visitor.sql'
-import { createSessionBuilder } from 'sst/node/future/auth'
 import sendgrid from '@sendgrid/mail'
 import contacts from '@sendgrid/client'
 import { Config } from 'sst/node/config'
+import { sessions } from './session'
 
 sendgrid.setApiKey(Config.SENDGRID_API_KEY)
 sendgrid.setSubstitutionWrappers('%', '%')
 contacts.setApiKey(Config.SENDGRID_API_KEY)
-
-export const sessions = createSessionBuilder<{
-  visitor: {
-    id: string
-    bot?: boolean
-    cookieStatus: VisitorT['cookie_status']
-    origin: VisitorT['origin_name']
-  }
-  user: {
-    id: string
-    email: string
-    visitorId: string
-    upgrade?: boolean
-    updated?: boolean
-    cookieStatus: VisitorT['cookie_status']
-    origin: VisitorT['origin_name']
-    subscriptionStatus?: string
-  }
-}>()
 
 export const handler = AuthHandler({
   sessions,
