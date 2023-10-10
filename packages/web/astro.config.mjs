@@ -15,10 +15,7 @@ export default defineConfig({
   ],
   output: 'server',
   server: { port: 3000 },
-  adapter: aws({
-    responseMode: 'buffer',
-    serverRoutes: ['ask', 'auth/*', 'account/*'],
-  }),
+  adapter: aws(),
   vite: { optimizeDeps: ['sst'] },
   image: {
     remotePatterns: [

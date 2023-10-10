@@ -1,7 +1,8 @@
 ---
 import ProductLayout from '@layouts/product.astro'
+import { Caching } from '@lib/caching'
 
-export const prerender = true
+// export const prerender = true
 
 export function getStaticPaths() {
   return [
@@ -1188,6 +1189,8 @@ const data = [
 const { coverage, glossaryItems } = data.find(
   (x) => x.league.toLowerCase() === league,
 ) || { coverage: [], glossaryItems: [] }
+
+Caching.swr(Astro)
 ---
 
 <ProductLayout {meta} league={league || 'nfl'} prefixPath="/product/data">
