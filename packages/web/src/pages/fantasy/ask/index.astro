@@ -14,6 +14,7 @@ import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import { Caching } from '@lib/caching'
 import * as Enforcer from '@lib/enforcer'
 import * as Link from '@statmuse/core/link'
+import { NOT_FOUND_404 } from '@lib/response'
 
 let query: string | undefined
 let conversationToken: string | undefined
@@ -35,8 +36,7 @@ if (Astro.request.method === 'POST') {
 }
 
 const response = await fantasyAsk({ query, conversationToken }, Astro)
-if (!response)
-  return new Response(null, { status: 404, statusText: 'Not found' })
+if (!response) return NOT_FOUND_404
 
 conversationToken = response.conversation.token
 query = clean(

@@ -5,25 +5,16 @@ import type { GameraDomain } from '@statmuse/core/gamera'
 import { getPlayerBio, getPlayerSplits } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
+import { NOT_FOUND_404 } from '@lib/response'
 
 const { league, player } = Astro.params
-if (!player || !league) {
-  return new Response(null, {
-    status: 404,
-    statusText: 'Not found',
-  })
-}
+if (!player || !league) return NOT_FOUND_404
 
 const domain = league.toUpperCase() as GameraDomain
 const params = Astro.url.searchParams
 const splits = await getPlayerSplits({ context: Astro, domain, player, params })
 const bio = await getPlayerBio(Astro, domain, player)
-if (!splits || !bio) {
-  return new Response(null, {
-    status: 404,
-    statusText: 'Not found',
-  })
-}
+if (!splits || !bio) return NOT_FOUND_404
 
 const { grids, parameters } = splits
 const leagueKeywords = getLeagueKeywords(domain)

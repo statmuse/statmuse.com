@@ -7,6 +7,7 @@ import { getUrlForEntity, type GameraDomain } from '@statmuse/core/gamera'
 import { getTeamFranchiseOverview } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
+import { NOT_FOUND_404 } from '@lib/response'
 
 interface Props {
   league?: string
@@ -17,15 +18,11 @@ interface Props {
 const query = Astro.props.query
 const team = Astro.props.team || Astro.params.team
 const league = Astro.props.league || Astro.params.league
-if (!team || !league) {
-  return new Response(null, { status: 404, statusText: 'Not found' })
-}
+if (!team || !league) return NOT_FOUND_404
 
 const domain = league.toUpperCase() as GameraDomain
 const overview = await getTeamFranchiseOverview({ context: Astro, domain, team })
-if (!overview) {
-  return new Response(null, { status: 404, statusText: 'Not found' })
-}
+if (!overview) return NOT_FOUND_404
 
 const { bio, teamHistory, franchiseInfo, franchiseLeaders, playerGallery } =
   overview

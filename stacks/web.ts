@@ -109,6 +109,7 @@ export function Web({ stack }: StackContext) {
 
   const astroSite = new AstroSite(stack, 'astro-site', {
     path: 'packages/web',
+    timeout: '12 seconds',
     bind: [
       auth,
       auth.privateKey,

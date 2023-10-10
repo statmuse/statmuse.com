@@ -10,10 +10,11 @@ import { title } from '@lib/meta'
 import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { Caching } from '@lib/caching'
+import { NOT_FOUND_404 } from '@lib/response'
 
 const id = Astro.params.id as string
 const musing = await getMusingByIdOrFriendlyId(id).executeTakeFirst()
-if (!musing) return new Response(null, { status: 404, statusText: 'Not found' })
+if (!musing) return NOT_FOUND_404
 
 const query = musing.text ?? ''
 const conversationToken = musing.input_conversation_token

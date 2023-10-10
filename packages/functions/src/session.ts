@@ -1,4 +1,4 @@
-import { createSessionBuilder } from "sst/node/future/auth"
+import { createSessionBuilder } from 'sst/node/future/auth'
 import type { Visitor as VisitorT } from '@statmuse/core/visitor/visitor.sql'
 
 export const sessions = createSessionBuilder<{

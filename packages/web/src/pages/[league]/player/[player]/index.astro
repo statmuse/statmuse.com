@@ -12,6 +12,7 @@ import {
 import { getPlayerProfile } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
+import { NOT_FOUND_404 } from '@lib/response'
 
 interface Props {
   league?: string
@@ -23,15 +24,11 @@ const query = Astro.props.query
 const player = Astro.props.player || Astro.params.player
 const league = Astro.props.league || Astro.params.league
 
-if (!player || !league) {
-  return new Response(null, { status: 404, statusText: 'Not found' })
-}
+if (!player || !league) return NOT_FOUND_404
 
 const domain = league.toUpperCase() as GameraDomain
 const profile = await getPlayerProfile(Astro, domain, player)
-if (!profile) {
-  return new Response(null, { status: 404, statusText: 'Not found' })
-}
+if (!profile) return NOT_FOUND_404
 
 const { bio, stats, recentGames, nextGame } = profile
 

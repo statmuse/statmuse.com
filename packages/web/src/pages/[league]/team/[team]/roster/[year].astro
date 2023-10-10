@@ -6,18 +6,15 @@ import { getUrlForEntity, type GameraDomain } from '@statmuse/core/gamera'
 import { getTeamSeasonBio, getTeamSeasonRoster } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
+import { NOT_FOUND_404 } from '@lib/response'
 
 const { league, team, year } = Astro.params
-if (!team || !league || !year) {
-  return new Response(null, { status: 404, statusText: 'Not found' })
-}
+if (!team || !league || !year) return NOT_FOUND_404
 
 const domain = league.toUpperCase() as GameraDomain
 const bio = await getTeamSeasonBio({ context: Astro, domain, team, year })
 const roster = await getTeamSeasonRoster({ context: Astro, domain, team, year })
-if (!bio || !roster) {
-  return new Response(null, { status: 404, statusText: 'Not found' })
-}
+if (!bio || !roster) return NOT_FOUND_404
 
 if (!bio.hasRoster) {
   return Astro.redirect(`/${league}/team/${team}/schedule/${year}`)

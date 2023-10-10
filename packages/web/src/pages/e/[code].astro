@@ -1,11 +1,12 @@
 ---
 import { createAskPath } from '@statmuse/core/path'
 import { getLink } from '@statmuse/core/links'
+import { NOT_FOUND_404 } from "@lib/response"
 
 const code = Astro.params.code as string
 
 const link = await getLink(code)
-if (!link) return new Response(null, { status: 404, statusText: 'Not found' })
+if (!link) return NOT_FOUND_404
 
 if (link.linkable_type === 'ask' && link.is_in_index) {
   return Astro.redirect(
@@ -37,5 +38,5 @@ if (link.linkable_type === 'url') {
   return Astro.redirect(link.url)
 }
 
-return new Response(null, { status: 404, statusText: 'Not found' })
+return NOT_FOUND_404
 ---

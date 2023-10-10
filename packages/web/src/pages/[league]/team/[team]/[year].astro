@@ -13,6 +13,7 @@ import {
 import { getTeamFranchiseLatestSeason, getTeamSeasonOverview } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
+import { NOT_FOUND_404 } from '@lib/response'
 
 interface Props {
   league?: string
@@ -27,9 +28,7 @@ const team = Astro.props.team || Astro.params.team
 let year = Astro.props.year || Astro.params.year
 const isSearch = Astro.url.pathname === '/ask'
 
-if (!team || !league || !year) {
-  return new Response(null, { status: 404, statusText: 'Not found' })
-}
+if (!team || !league || !year) return NOT_FOUND_404
 
 const domain = league.toUpperCase() as GameraDomain
 let response = await getTeamSeasonOverview({
@@ -55,9 +54,7 @@ if (response && !response.bio.hasStats && Astro.request.method === 'POST') {
   })
 }
 
-if (!response) {
-  return new Response(null, { status: 404, statusText: 'Not found' })
-}
+if (!response) return NOT_FOUND_404
 
 const { bio, scoresAndSchedule, teamLeaders, standings, stats, playerGallery } =
   response

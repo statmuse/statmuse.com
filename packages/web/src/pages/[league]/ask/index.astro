@@ -18,6 +18,7 @@ import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { Caching } from '@lib/caching'
 import * as Enforcer from '@lib/enforcer'
 import * as Link from '@statmuse/core/link'
+import { NOT_FOUND_404 } from '@lib/response'
 
 const canQuery = await Enforcer.canQuery(Astro.locals)
 
@@ -32,8 +33,7 @@ if (!question) return Astro.redirect('/questions')
 const response = (await ask({ query: question, league }, Astro)) as
   | GameraDefaultResponse
   | undefined
-if (!response)
-  return new Response(null, { status: 404, statusText: 'Not found' })
+if (!response) return NOT_FOUND_404
 
 const { subject, redirectUrl, conversationToken } = handleResponse(response)
 if (redirectUrl) return Astro.redirect(redirectUrl)

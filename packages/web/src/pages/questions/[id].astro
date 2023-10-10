@@ -1,4 +1,5 @@
 ---
+import { NOT_FOUND_404 } from '@lib/response'
 import { createAskPath } from '@statmuse/core/path'
 import { getQuestionByIdOrFriendlyId } from '@statmuse/core/question'
 
@@ -11,5 +12,5 @@ if (question && question.is_successful) {
   )
 }
 
-return new Response(null, { status: 404, statusText: 'Not found' })
+return NOT_FOUND_404
 ---

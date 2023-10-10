@@ -14,11 +14,10 @@ import {
 } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
+import { NOT_FOUND_404 } from '@lib/response'
 
 const { league, team, year } = Astro.params
-if (!team || !league || !year) {
-  return new Response(null, { status: 404, statusText: 'Not found' })
-}
+if (!team || !league || !year) return NOT_FOUND_404
 
 const params = Astro.url.searchParams
 const domain = league.toUpperCase() as GameraDomain
@@ -37,9 +36,7 @@ const playerStats = await getTeamSeasonPlayerStats({
   year,
   params,
 })
-if (!bio || !stats || !playerStats) {
-  return new Response(null, { status: 404, statusText: 'Not found' })
-}
+if (!bio || !stats || !playerStats) return NOT_FOUND_404
 
 if (!bio.hasStats) {
   return Astro.redirect(`/${league}/team/${team}/schedule/${year}`)
