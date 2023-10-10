@@ -9,6 +9,7 @@ if (!Astro.params.league || !leaguePaths.includes(Astro.params.league)) {
   return new Response(null, {
     status: 404,
     statusText: 'Not found',
+    headers: { "Content-Type": "text/html" }
   })
 }
 
