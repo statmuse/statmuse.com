@@ -1,4 +1,4 @@
-import { StackContext, use } from 'sst/constructs'
+import { type StackContext, use } from 'sst/constructs'
 import { Auth as SSTAuth } from 'sst/constructs/future'
 import { DNS } from './dns'
 import { Secrets } from './secrets'

@@ -1,4 +1,4 @@
-import { SSTConfig } from 'sst'
+import type { SSTConfig } from 'sst'
 import { API } from './stacks/api'
 import { Web } from './stacks/web'
 import { DNS } from './stacks/dns'

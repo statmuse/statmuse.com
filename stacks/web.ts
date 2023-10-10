@@ -1,4 +1,9 @@
-import { StackContext, AstroSite, use, KinesisStream } from 'sst/constructs'
+import {
+  type StackContext,
+  AstroSite,
+  use,
+  KinesisStream,
+} from 'sst/constructs'
 import { SubnetType } from 'aws-cdk-lib/aws-ec2'
 import { API } from './api'
 import { DNS } from './dns'

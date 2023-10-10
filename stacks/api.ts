@@ -1,4 +1,4 @@
-import { StackContext, Api, Function, use } from 'sst/constructs'
+import { type StackContext, Api, Function, use } from 'sst/constructs'
 import {
   Peer,
   Port,
@@ -19,7 +19,6 @@ import {
   Distribution,
   OriginRequestPolicy,
   PriceClass,
-  ResponseHeadersPolicy,
   ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront'
 import { HttpOrigin } from 'aws-cdk-lib/aws-cloudfront-origins'

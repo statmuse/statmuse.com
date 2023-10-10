@@ -100,26 +100,29 @@ export const autosuggest = async (query: string, league?: string) => {
 
   if (!results) return results
 
-  const x = results.hits.hits.reduce((acc, x) => {
-    if (x._source) {
-      const score = x._score as number
-      const { id, display, league, path, image_url, type } = x._source
-      if (!(id in acc) || acc[id].score < score) {
-        return {
-          ...acc,
-          [id]: {
-            display,
-            image_url,
-            league,
-            path,
-            type,
-            score,
-          },
+  const x = results.hits.hits.reduce(
+    (acc, x) => {
+      if (x._source) {
+        const score = x._score as number
+        const { id, display, league, path, image_url, type } = x._source
+        if (!(id in acc) || acc[id].score < score) {
+          return {
+            ...acc,
+            [id]: {
+              display,
+              image_url,
+              league,
+              path,
+              type,
+              score,
+            },
+          }
         }
       }
-    }
-    return acc
-  }, {} as Record<string, Partial<AskDocument> & { score: number }>)
+      return acc
+    },
+    {} as Record<string, Partial<AskDocument> & { score: number }>,
+  )
 
   return Object.values(x).sort((a, b) => b.score - a.score)
 }

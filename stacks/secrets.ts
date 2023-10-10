@@ -1,4 +1,4 @@
-import { StackContext, Config } from 'sst/constructs'
+import { type StackContext, Config } from 'sst/constructs'
 
 export function Secrets({ stack }: StackContext) {
   const secrets = Config.Secret.create(
