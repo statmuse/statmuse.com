@@ -52,7 +52,7 @@ const content = markdown
       Astro.props.imageUrl ? (
         <Image
           class="h-44 md:h-52 self-center md:self-end mt-2 md:mt-0 md:pl-6 md:pr-1.5 select-none object-contain object-bottom md:max-w-[350px]"
-          alt={Astro.props.imageAlt}
+          alt={Astro.props.imageAlt ?? null}
           src={Astro.props.imageUrl}
           width={750}
           height={750}

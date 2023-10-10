@@ -1,8 +1,8 @@
-import { Config } from "sst/node/config"
-import { APIGatewayRequestSimpleAuthorizerHandlerV2 } from "aws-lambda"
+import { Config } from 'sst/node/config'
+import type { APIGatewayRequestSimpleAuthorizerHandlerV2 } from 'aws-lambda'
 
 export const handler: APIGatewayRequestSimpleAuthorizerHandlerV2 = async (
-  event
+  event,
 ) => {
   const authorization =
     event.headers?.Authorization || event.headers?.authorization

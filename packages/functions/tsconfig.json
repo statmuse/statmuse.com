@@ -5,6 +5,7 @@
     "baseUrl": ".",
     "paths": {
       "@statmuse/core/*": ["../core/src/*"]
-    }
+    },
+    "verbatimModuleSyntax": true
   }
 }

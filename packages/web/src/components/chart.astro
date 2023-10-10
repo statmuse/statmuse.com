@@ -20,12 +20,21 @@ const isWhite = (hexColorString: string) => hexColorString === '#FFFFFF'
 const fillColor = (hexColorString: string) =>
   isWhite(hexColorString) ? '#DDDDDD' : hexColorString
 
-const formatValue = (v: { label: string; y: number; float: boolean }) => {
+const formatValue = (v: {
+  label: string
+  y: number | null
+  float?: boolean
+}) => {
   const { label, y: yValue, float: isFloat } = v
 
   // check if label is a number greater than 1k
   const numberFromLabel = label && Number(label.replace(',', ''))
-  if (!isUndefined(label) && isFinite(numberFromLabel) && yValue > 1000)
+  if (
+    !isUndefined(label) &&
+    isFinite(numberFromLabel) &&
+    yValue &&
+    yValue > 1000
+  )
     return numeral(yValue).format('0.0a')
 
   // check if label is defined (even empty strings)
@@ -35,7 +44,7 @@ const formatValue = (v: { label: string; y: number; float: boolean }) => {
   if (yValue && typeof yValue === 'string') return yValue
 
   // last resort is to format the numeric y value as bar label
-  return isFloat || yValue >= 1000
+  return isFloat || (yValue && yValue >= 1000)
     ? numeral(yValue).format('0.0a')
     : numeral(yValue).format('0 a')
 }
@@ -127,7 +136,7 @@ type Record = {
 type Value = {
   nameLines?: string[]
   y: number | null
-  label?: string
+  label: string
   color?: string
   series?: string
   float?: boolean
@@ -150,7 +159,7 @@ categories.forEach((cat, i) => {
       v.float = s.float
       record.values.push(v)
     } else {
-      record.values.push({ series: s.name, y: null })
+      record.values.push({ series: s.name, y: null, label: '' })
     }
   })
   data.push(record)
@@ -221,7 +230,7 @@ categories.forEach((cat, i) => {
                       y(Math.max(0, v.y!)) +
                       (v.y! < 0 ? Math.abs(y(v.y!) - y(0)) + 10 : -10)
                     }
-                    x={x1(v.series) + x1.bandwidth() / 2}
+                    x={(x1(v.series ?? '') || 0) + x1.bandwidth() / 2}
                     dy=".35em"
                     text-anchor="middle"
                   >
