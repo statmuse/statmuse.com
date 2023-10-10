@@ -1,23 +1,19 @@
 ---
 import HomeLayout from '@layouts/home.astro'
+import { Caching } from '@lib/caching'
 import { listOnboarding } from '@statmuse/core/examples'
 import { createAskPath } from '@statmuse/core/path'
-import { Caching } from '@lib/caching'
 
-// export const prerender = true
-Caching.swr(Astro)
-const leagues = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fantasy'] as const
-
-export function getStaticPaths() {
-  return leagues.map(league => ({ params: { league }}))
+const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fantasy']
+if (!Astro.params.league || !leaguePaths.includes(Astro.params.league)) {
+  return new Response(null, {
+    status: 404,
+    statusText: 'Not found',
+  })
 }
 
-type LeagueParam = (typeof leagues)[number]
+type LeagueParam = 'nba' | 'nfl' | 'mlb' | 'nhl' | 'pga' | 'fantasy'
 const league = Astro.params.league as LeagueParam
-
-if (!league || !leagues.includes(league)) {
-    return new Response(null, { status: 404, statusText: 'Not found' })
-}
 
 const onboardingExamples = await listOnboarding(
   league === 'fantasy' ? 'nfl' : league,
@@ -543,6 +539,8 @@ const meta = {
       league === 'fantasy' ? '/images/sm-fantasy-meta-banner.jpg' : undefined,
   },
 }
+
+Caching.swr(Astro)
 ---
 
 <HomeLayout {meta} domain={league} img={{ src: banner, text: banner.text }}>

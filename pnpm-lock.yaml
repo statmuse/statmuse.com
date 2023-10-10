@@ -9,10 +9,10 @@ importers:
   .:
     devDependencies:
       '@aws-cdk/aws-apigatewayv2-alpha':
-        specifier: ^2.95.1-alpha.0
+        specifier: 2.95.1-alpha.0
         version: 2.95.1-alpha.0(aws-cdk-lib@2.95.1)(constructs@10.2.69)
       '@aws-cdk/aws-apigatewayv2-integrations-alpha':
-        specifier: ^2.95.1-alpha.0
+        specifier: 2.95.1-alpha.0
         version: 2.95.1-alpha.0(@aws-cdk/aws-apigatewayv2-alpha@2.95.1-alpha.0)(aws-cdk-lib@2.95.1)(constructs@10.2.69)
       '@tsconfig/node16':
         specifier: ^1.0.3
@@ -30,8 +30,8 @@ importers:
         specifier: ^3.0.3
         version: 3.0.3
       sst:
-        specifier: 2.28.1
-        version: 2.28.1(pg@8.11.1)
+        specifier: 2.25.6
+        version: 2.25.6(pg@8.11.1)
       typescript:
         specifier: ^5.0.4
         version: 5.0.4
@@ -70,8 +70,8 @@ importers:
         specifier: ^8.10.2
         version: 8.10.2
       sst:
-        specifier: 2.28.1
-        version: 2.28.1(pg@8.11.1)
+        specifier: 2.25.6
+        version: 2.25.6(pg@8.11.1)
       stripe-event-types:
         specifier: ^2.3.0
         version: 2.3.0(stripe@12.16.0)
@@ -131,8 +131,8 @@ importers:
         specifier: ^20.3.1
         version: 20.4.5
       sst:
-        specifier: 2.28.1
-        version: 2.28.1(pg@8.11.1)
+        specifier: 2.25.6
+        version: 2.25.6(pg@8.11.1)
       stripe-event-types:
         specifier: ^2.3.0
         version: 2.3.0(stripe@12.16.0)
@@ -182,8 +182,8 @@ importers:
         specifier: ^3.2.3
         version: 3.2.3(@types/node@20.4.5)
       astro-sst:
-        specifier: 2.28.1
-        version: 2.28.1
+        specifier: 2.22.9
+        version: 2.22.9
       classnames:
         specifier: ^2.3.2
         version: 2.3.2
@@ -461,9 +461,8 @@ packages:
       - supports-color
     dev: false
 
-  /@astrojs/webapi@3.0.0:
-    resolution: {integrity: sha512-+/Wruju2Ho99z0jI8zxMFGBkKKG97RzR/srSaColejUDrczkAjR3HjULKTVfDdIpvtvFZLyl7OMBmHKQazfeZg==}
-    deprecated: This package is not used by Astro any more and is no longer maintained. In Astro 3.0 polyfills are part of a core module.
+  /@astrojs/webapi@2.2.0:
+    resolution: {integrity: sha512-mHAOApWyjqSe5AQMOUD9rsZJqbMQqe3Wosb1a40JV6Okvyxj1G6GTlthwYadWCymq/lbgwh0PLiY8Fr4eFxtuQ==}
     dependencies:
       undici: 5.25.1
     dev: false
@@ -6932,11 +6931,10 @@ packages:
       - supports-color
     dev: true
 
-  /astro-sst@2.28.1:
-    resolution: {integrity: sha512-K56ufitndFX2La5K4YCgLU5mJ00jq+BMYQYJouXhjoxjoWnZYNU8C6dVE+5Befp5jce+DwSTBW9SR1/yIPXjWA==}
+  /astro-sst@2.22.9:
+    resolution: {integrity: sha512-CckbWKaiYuJJ4d0yJlOzodkYX4EqMxGNXO/LEPNREwel0l292wGM2jSz60ocMj5ok08xS8W2sEsYHkSUQEXhrg==}
     dependencies:
-      '@astrojs/webapi': 3.0.0
-      set-cookie-parser: 2.6.0
+      '@astrojs/webapi': 2.2.0
     dev: false
 
   /astro@3.2.3(@types/node@20.4.5):
@@ -11574,10 +11572,6 @@ packages:
     resolution: {integrity: sha512-rb+9B5YBIEzYcD6x2VKidaa+cqYBJQKnU4oe4E3ANwRRN56yk/ua1YCJT1n21NTS8w6CcOclAKNP3PhdCXKYtQ==}
     dev: false
 
-  /set-cookie-parser@2.6.0:
-    resolution: {integrity: sha512-RVnVQxTXuerk653XfuliOxBP81Sf0+qfQE73LIYKcyMYHG94AuH0kgrQpRDuTZnSmjpysHmzxJXKNfa6PjFhyQ==}
-    dev: false
-
   /setprototypeof@1.2.0:
     resolution: {integrity: sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==}
 
@@ -11748,8 +11742,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /sst@2.28.1(pg@8.11.1):
-    resolution: {integrity: sha512-jAeQlIz98E7vh7Z7BNIavKOv+8YWUQQrp8orBiVWOLmdUm9qJVtAA5cgtDMvi9zOyJ/gHzcQwOJ+PCnuisZiBA==}
+  /sst@2.25.6(pg@8.11.1):
+    resolution: {integrity: sha512-IDpyTJfrcFcN1DMlZcqcJ5nTSnPgXQWpUhzFrzGn3bpTX3T+oOWkHs/OFCiN69KmLkHFZ2Eu5U0rt6/K9b5Dxw==}
     hasBin: true
     peerDependencies:
       '@sls-next/lambda-at-edge': ^3.7.0
