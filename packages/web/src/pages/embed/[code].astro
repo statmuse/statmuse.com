@@ -47,7 +47,8 @@ interface Data {
   shotcharts?: NbaShotChart[]
 }
 
-const data = link.answer.Data as Data | undefined
+const answer = link.answer as GameraResponse & { Data?: Data }
+const data = answer.Data
 
 const charts: GameraChart[] | undefined =
   data !== undefined ? data.charts : getColumnCharts(link.answer)
