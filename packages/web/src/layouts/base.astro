@@ -191,6 +191,7 @@ const canonicalUrl = meta?.canonical
     />
     <slot name="tradingview" />
 
+    <meta name="honeybadger" content={Config.HONEYBADGER_API_KEY} />
     <meta name="analytics" content={Config.SEGMENT_WRITE_KEY} />
     <meta
       name="analytics:event:properties"
@@ -217,11 +218,20 @@ const canonicalUrl = meta?.canonical
     <slot />
     <CookieConsent client:only="svelte" />
     <script>
+      import Honeybadger from '@honeybadger-io/js'
       import { AnalyticsBrowser } from '@segment/analytics-next'
       import type { Session } from '@lib/session'
       import { session as sessionStore } from '@lib/session-store'
 
       document.addEventListener('astro:page-load', async () => {
+        Honeybadger.configure({
+          apiKey: document.querySelector<HTMLMetaElement>(
+            'meta[name="honeybadger"]',
+          )?.content,
+          environment: import.meta.env.PUBLIC_STAGE,
+          reportData: import.meta.env.PROD,
+        })
+
         /**
          * Given window and document, add or remove "selected" class to league nav
          * links if current window location matches nav href. Note that the argument
@@ -365,6 +375,11 @@ const canonicalUrl = meta?.canonical
               session.type !== 'public' ? session.properties.origin : 'web',
           })
         }
+
+        Honeybadger.setContext({
+          user_id: session.properties.id,
+          user_type: session.type,
+        })
       })
     </script>
   </body>
