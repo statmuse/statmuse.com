@@ -9,7 +9,8 @@ export function Secrets({ stack }: StackContext) {
     'API_KEY',
     'ELASTICSEARCH_CREDENTIALS',
     'SEGMENT_WRITE_KEY',
-    'SENDGRID_API_KEY'
+    'SENDGRID_API_KEY',
+    'HONEYBADGER_API_KEY',
   )
 
   return secrets

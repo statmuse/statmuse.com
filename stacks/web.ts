@@ -118,6 +118,7 @@ export function Web({ stack }: StackContext) {
       secrets.STRIPE_PRICE_ID,
       secrets.SENDGRID_API_KEY,
       secrets.SEGMENT_WRITE_KEY,
+      secrets.HONEYBADGER_API_KEY,
     ],
     environment: {
       ...api.environment,
@@ -125,6 +126,7 @@ export function Web({ stack }: StackContext) {
       PUBLIC_API_URL: api.api.customDomainUrl ?? api.api.url,
       PUBLIC_ANALYTICS_CDN_PROXY_URL: analytics.cdnUrl,
       PUBLIC_ANALYTICS_API_PROXY_URL: analytics.apiUrl,
+      PUBLIC_STAGE: stack.stage,
       AUTH_ID: auth.id,
     },
     nodejs: { install: ['pg'], esbuild: { external: ['pg-native', 'sharp'] } },

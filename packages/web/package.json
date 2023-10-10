@@ -18,6 +18,7 @@
     "@astrojs/svelte": "^4.0.2",
     "@astrojs/tailwind": "^5.0.0",
     "@aws-sdk/client-secrets-manager": "^3.354.0",
+    "@honeybadger-io/js": "^6.5.2",
     "@segment/analytics-next": "^1.55.0",
     "@sendgrid/client": "^7.7.0",
     "@sendgrid/mail": "^7.7.0",
