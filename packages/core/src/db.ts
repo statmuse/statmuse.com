@@ -124,6 +124,7 @@ export interface Database {
   follows: FollowTable
 }
 
+// @ts-ignore
 pg.defaults.parseInputDatesAsUTC = true
 
 types.setTypeParser(types.builtins.TIMESTAMP, (datetimeString) => {

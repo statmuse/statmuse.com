@@ -1,10 +1,10 @@
-import { Database, db } from './db'
-import { OperandValueExpressionOrList, sql } from 'kysely'
+import { type Database, db } from './db'
+import { type OperandValueExpressionOrList, sql } from 'kysely'
 
 export const listLatestIdsPerLeague = async (
   type: OperandValueExpressionOrList<Database, 'examples', 'examples.type'>,
   league?: string,
-  n = 1
+  n = 1,
 ) => {
   const records = await db
     .selectFrom((eb) => {
@@ -14,8 +14,8 @@ export const listLatestIdsPerLeague = async (
         .selectAll('examples')
         .select(
           sql<number>`ROW_NUMBER() OVER (PARTITION BY examples.type, examples.league_id ORDER BY examples.position ASC, examples.inserted_at DESC)`.as(
-            'row'
-          )
+            'row',
+          ),
         )
 
       if (league) {
@@ -42,7 +42,7 @@ export const listOnboarding = async (league?: string, n: number = 2) =>
     .where(
       'examples.id',
       'in',
-      await listLatestIdsPerLeague('onboarding', league, n)
+      await listLatestIdsPerLeague('onboarding', league, n),
     )
     .orderBy('examples.type', 'asc')
     .orderBy('leagues.name', 'asc')

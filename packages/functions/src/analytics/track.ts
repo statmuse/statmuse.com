@@ -1,5 +1,5 @@
 import { Handler } from 'sst/context'
-import { KinesisStreamEvent, KinesisStreamBatchResponse } from 'aws-lambda'
+import type { KinesisStreamEvent, KinesisStreamBatchResponse } from 'aws-lambda'
 import { Analytics } from '@segment/analytics-node'
 import { Config } from 'sst/node/config'
 import { randomUUID } from 'crypto'

@@ -1,5 +1,5 @@
 import { Client } from '@elastic/elasticsearch'
-import { SearchResponse } from '@elastic/elasticsearch/lib/api/types'
+import type { SearchResponse } from '@elastic/elasticsearch/lib/api/types'
 import { Config } from 'sst/node/config'
 
 const creds = JSON.parse(Config.ELASTICSEARCH_CREDENTIALS) as {
