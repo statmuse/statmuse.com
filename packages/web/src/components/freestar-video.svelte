@@ -31,7 +31,7 @@
   }
 </script>
 
-{#if ($session?.type === 'visitor' && !$session?.properties.bot) || ($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active')}
+{#if ($session?.type === 'visitor' && $session?.properties.origin !== 'web.googlebot') || ($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active')}
   {#if import.meta.env.DEV}
     <div
       bind:this={container}

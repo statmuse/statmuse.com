@@ -5,11 +5,12 @@ import Container from '@components/container.astro'
 import Image from '@components/image.astro'
 import sample from 'lodash/sample'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import Hero from '@components/hero.astro'
 
 interface Props {
   status?: number
   render: boolean
-  message?: string
+  message: string
   query?: string
   image?: {
     url: string
@@ -47,26 +48,12 @@ if (render) {
       colors={{ foreground: '#fff', background: '#0086ff' }}
     >
       <Header {query} />
-      <Container class="mb-5 bg-team-primary text-team-secondary">
-        <div class="flex flex-col md:flex-row pt-4 md:pt-6 relative">
-          <div class="flex-1 flex flex-col justify-between text-center md:text-left">
-            <h1
-              data-cy-nlg
-              class="font-semibold text-xl md:text-2xl md:leading-snug lg:text-[1.75rem] xl:text-3xl xl:leading-snug my-auto"
-            >
-              {message}
-            </h1>
-          </div>
-          <Image
-            class="object-contain object-bottom self-center md:self-end h-44 md:h-52 md:max-w-[300px]"
-            alt={image?.alt || ''}
-            src={image?.url || ''}
-            width={750}
-            height={750}
-            loading="eager"
-          />
-        </div>
-      </Container>
+      <Hero
+        content={message}
+        imageUrl={image?.url}
+        imageAlt={image?.alt}
+        shareable={false}
+      />
     </MainLayout>
   ) : (
     <slot />
