@@ -22,7 +22,7 @@ const schedule = await getTeamSeasonSchedule({ context: Astro, domain, team, yea
 
 if (!bio || !gameResults) return NOT_FOUND_404
 
-const title = `${year} ${bio.name} Schedule & Results`
+const title = `${bio.name} ${year} Schedule & Results`
 const description = `The ${year} ${bio.name} schedule and results for the ${domain} regular season and playoffs`
 const keywords = `${getLeagueKeywords(domain)} ${year} ${
   bio.name

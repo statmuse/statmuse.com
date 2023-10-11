@@ -21,7 +21,9 @@ const leagueKeywords = getLeagueKeywords(domain)
 const seasonYear = Astro.url.searchParams.get('seasonYear')
 const year = seasonYear ? ` ${seasonYear}` : ''
 
-const title = `${bio.usedName} Splits`
+const title = [bio.usedName, year?.trim(), 'Splits']
+  .filter((w) => !!w)
+  .join(' ')
 const description = `${bio.usedName}'s splits for the${year} ${domain} regular season and playoffs`
 const keywords = `${leagueKeywords} ${bio.usedName}${year} splits stats statistics`
 const meta = { title, description, keywords }

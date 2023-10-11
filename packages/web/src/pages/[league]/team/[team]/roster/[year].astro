@@ -20,7 +20,7 @@ if (!bio.hasRoster) {
   return Astro.redirect(`/${league}/team/${team}/schedule/${year}`)
 }
 
-const title = `${year} ${bio.name} Roster`
+const title = `${bio.name} ${year} Roster`
 const description = `The ${year} ${bio.name} roster for the ${domain} regular season and playoffs`
 const keywords = `${getLeagueKeywords(domain)} ${year} ${
   bio.name

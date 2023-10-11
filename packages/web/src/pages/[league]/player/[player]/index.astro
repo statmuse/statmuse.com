@@ -9,7 +9,7 @@ import {
   tokensToHtml,
   getUrlForEntity,
 } from '@statmuse/core/gamera'
-import { getPlayerProfile } from '@lib/player'
+import { getPlayerProfile, getPositionName } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
 import { NOT_FOUND_404 } from '@lib/response'
@@ -43,7 +43,8 @@ const playerPath = getUrlForEntity({
   display: bio.usedName,
 })
 
-const title = `${bio.usedName} Overview`
+const position = getPositionName(bio)
+const title = `${bio.usedName} - ${bio.team.name} ${position}`
 const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
 const keywords = `${getLeagueKeywords(domain)} ${
   bio.usedName

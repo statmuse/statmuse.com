@@ -11,6 +11,96 @@ import { request } from '@lib/gamera'
 import { db } from '@statmuse/core/db'
 import type { Context } from '@lib/session'
 
+export const getPositionName = (bio: GameraPlayerBio) => {
+  if (bio.domain === 'NBA') {
+    switch (bio.position) {
+      case 'PG':
+        return 'Point Guard'
+      case 'SG':
+        return 'Shooting Guard'
+      case 'SF':
+        return 'Small Forward'
+      case 'PF':
+        return 'Power Forward'
+      case 'C':
+        return 'Center'
+    }
+  }
+
+  if (bio.domain === 'NFL') {
+    switch (bio.position) {
+      case 'QB':
+        return 'Quarterback'
+      case 'RB':
+        return 'Running Back'
+      case 'WR':
+        return 'Wide Receiver'
+      case 'TE':
+        return 'Tight End'
+      case 'OL':
+        return 'Offensive Lineman'
+      case 'DL':
+        return 'Defensive Lineman'
+      case 'LB':
+        return 'Linebacker'
+      case 'DB':
+        return 'Defensive Back'
+      case 'K':
+        return 'Kicker'
+      case 'P':
+        return 'Punter'
+      case 'LS':
+        return 'Long Snapper'
+    }
+  }
+
+  if (bio.domain === 'MLB') {
+    switch (bio.position) {
+      case 'P':
+        return 'Pitcher'
+      case 'C':
+        return 'Catcher'
+      case '1B':
+        return 'First Base'
+      case '2B':
+        return 'Second Base'
+      case '3B':
+        return 'Second Base'
+      case 'SS':
+        return 'Shortstop'
+      case 'LF':
+        return 'Left Fielder'
+      case 'CF':
+        return 'Center Fielder'
+      case 'RF':
+        return 'Right Fielder'
+      case 'DH':
+        return 'Designated Hitter'
+      case 'PH':
+        return 'Pinch Hitter'
+      case 'PR':
+        return 'Pinch Runner'
+    }
+  }
+
+  if (bio.domain === 'NHL') {
+    switch (bio.position) {
+      case 'L':
+        return 'Left Wing'
+      case 'C':
+        return 'Center'
+      case 'R':
+        return 'Right Wing'
+      case 'D':
+        return 'Defenseman'
+      case 'G':
+        return 'Goalie'
+    }
+  }
+
+  return bio.position
+}
+
 export const getPlayerBio = async (
   context: Context,
   domain: GameraDomain,

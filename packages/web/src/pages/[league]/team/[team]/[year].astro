@@ -65,10 +65,10 @@ if (!bio.hasStats && !isSearch) {
 
 const summary = bio.summaryNlg ? tokensToHtml(bio.summaryNlg) : undefined
 
-const title = `${year} ${bio.name} Team & Player Stats`
+const title = `${bio.name} ${year} Scores, Stats, Schedule, Standings`
 const description = bio.summaryNlg
   ? tokensToText(bio.summaryNlg)
-  : `The ${year} ${bio.name} team and player stats for the ${domain} regular season and playoffs`
+  : `The ${year} ${bio.name} scores, stats, schedule, standings and more for the ${domain} regular season and playoffs`
 const keywords = `${getLeagueKeywords(domain)} ${year} ${
   bio.name
 } team player stats statistics`
