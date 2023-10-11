@@ -87,27 +87,29 @@
   }
 
   const loadSuggestions = throttle(async (query: string) => {
-    const response = await fetch(
-      `${apiUrl}?${new URLSearchParams({
-        query,
-        ...(preferredDomain && !money ? { league: preferredDomain } : {}),
-        ...(userId ? { userId } : {}),
-      })}`,
-    )
-    const results: {
-      timestamp: string
-      sections: typeof sections
-    } = await response.json()
-    if (results.timestamp > timestamp) {
-      if (!results.sections.find((s) => s.type === 'history')) {
-        results.sections.push({
-          type: 'history',
-          suggestions: getQueryHistory(),
-        })
+    try {
+      const response = await fetch(
+        `${apiUrl}?${new URLSearchParams({
+          query,
+          ...(preferredDomain && !money ? { league: preferredDomain } : {}),
+          ...(userId ? { userId } : {}),
+        })}`,
+      )
+      const results: {
+        timestamp: string
+        sections: typeof sections
+      } = await response.json()
+      if (results.timestamp > timestamp) {
+        if (!results.sections.find((s) => s.type === 'history')) {
+          results.sections.push({
+            type: 'history',
+            suggestions: getQueryHistory(),
+          })
+        }
+        sections = results.sections
+        timestamp = results.timestamp
       }
-      sections = results.sections
-      timestamp = results.timestamp
-    }
+    } catch (e) {}
   }, 600)
 
   const nextIndex = () => {
