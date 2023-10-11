@@ -44,7 +44,7 @@ const playerPath = getUrlForEntity({
 })
 
 const position = getPositionName(bio)
-const title = `${bio.usedName} - ${bio.team.name} ${position}`
+const title = `${bio.usedName} - ${bio.team?.name || bio.domain} ${position || "Player"}`
 const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
 const keywords = `${getLeagueKeywords(domain)} ${
   bio.usedName

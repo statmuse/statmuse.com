@@ -55,7 +55,9 @@ const links = [
   { text: 'Bio', href: `${playerPath}/bio`, page: 'bio' },
 ]
 
-const title = `${bio.usedName} - ${bio.team.name} ${bio.position}`
+const title = `${bio.usedName} - ${bio.team?.name || bio.domain} ${
+  bio.position || 'Player'
+}`
 const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
 const keywords = `${getLeagueKeywords(domain)} ${
   bio.usedName
