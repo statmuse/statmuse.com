@@ -16,7 +16,10 @@ export default defineConfig({
   output: 'server',
   server: { port: 3000 },
   adapter: aws(),
-  vite: { optimizeDeps: ['sst'] },
+  vite: {
+    optimizeDeps: ['sst'],
+    build: { sourcemap: process.env.NODE_ENV === 'production' },
+  },
   image: {
     remotePatterns: [
       {
