@@ -43,6 +43,11 @@ export function handleAskResponseFromPost(response: GameraResponse) {
   ) as PlayerProfileDetail
 
   if (playerProfile) {
+    if (playerProfile.entity.domain === 'PGA') {
+      return {
+        query: `${playerProfile.entity.display} career stats`,
+      }
+    }
     return {
       query,
       type: playerProfile.entity.type,
