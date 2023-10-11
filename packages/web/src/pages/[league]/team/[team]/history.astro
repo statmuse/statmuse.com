@@ -21,7 +21,11 @@ const league = Astro.props.league || Astro.params.league
 if (!team || !league) return NOT_FOUND_404
 
 const domain = league.toUpperCase() as GameraDomain
-const overview = await getTeamFranchiseOverview({ context: Astro, domain, team })
+const overview = await getTeamFranchiseOverview({
+  context: Astro,
+  domain,
+  team,
+})
 if (!overview) return NOT_FOUND_404
 
 const { bio, teamHistory, franchiseInfo, franchiseLeaders, playerGallery } =

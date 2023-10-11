@@ -15,7 +15,7 @@ const asks = await getAsksIndex([league], searchParams)
 const meta = {
   title: `${league.toUpperCase()} Stats`,
   description: `Instant answers to your ${league.toUpperCase()} questions. Stats, scores, schedules, standings, recaps and more — just ask.`,
-  pageType: "question"
+  pageType: 'question',
 }
 
 Caching.swr(Astro)

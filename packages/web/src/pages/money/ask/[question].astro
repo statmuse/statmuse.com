@@ -42,8 +42,7 @@ let query = isLegacyParam(question)
 const response = (await ask({ query }, Astro)) as
   | KanedamaDefaultResponse
   | undefined
-if (!response)
-  return NOT_FOUND_404
+if (!response) return NOT_FOUND_404
 
 const { subject, redirectUrl, conversationToken } = handleResponse(response)
 if (redirectUrl) return Astro.redirect(redirectUrl)
