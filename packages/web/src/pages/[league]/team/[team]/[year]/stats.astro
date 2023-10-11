@@ -1,0 +1,17 @@
+---
+/**
+ *
+ *  Legacy Route
+ *
+ *  GET /mlb/team/1948-st.-louis-cardinals-67/1948/stats
+ *
+ *  Redirect: GET /mlb/team/1948-st.-louis-cardinals-67/stats/1948
+ *
+ */
+
+const league = Astro.params.league
+const team = Astro.params.team
+const year = Astro.params.year
+
+return Astro.redirect(`/${league}/team/${team}/stats/${year}`)
+---
