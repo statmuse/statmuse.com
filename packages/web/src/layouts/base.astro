@@ -219,11 +219,23 @@ const canonicalUrl = meta?.canonical
     <CookieConsent client:only="svelte" />
     <script>
       import Honeybadger from '@honeybadger-io/js'
-      import { AnalyticsBrowser } from '@segment/analytics-next'
+      import { segment, getOrigin } from '@lib/analytics'
       import type { Session } from '@lib/session'
       import { session as sessionStore } from '@lib/session-store'
 
+      const flattenObj = (key: string, obj?: {}) => {
+        return !obj
+          ? {}
+          : Object.entries(obj).reduce((x, [k, v]) => {
+              return {
+                ...x,
+                [`${key}.${k}`]: v,
+              }
+            }, {})
+      }
+
       document.addEventListener('astro:page-load', async () => {
+        // configure honeybadger
         Honeybadger.configure({
           apiKey: document.querySelector<HTMLMetaElement>(
             'meta[name="honeybadger"]',
@@ -231,6 +243,25 @@ const canonicalUrl = meta?.canonical
           environment: import.meta.env.PUBLIC_STAGE,
           reportData: import.meta.env.PROD,
         })
+
+        // default page tracking
+        segment.page()
+
+        // custom Pageview event
+        const eventProps = document.querySelector<HTMLMetaElement>(
+          'meta[name="analytics:event:properties"]',
+        )?.content
+
+        if (eventProps) {
+          const { disposition, tokenizationScore, ...props } =
+            JSON.parse(eventProps)
+          segment.track('Pageview', {
+            ...props,
+            ...flattenObj('disposition', disposition),
+            ...flattenObj('tokenizationScore', tokenizationScore),
+            origin: getOrigin(navigator.userAgent),
+          })
+        }
 
         /**
          * Given window and document, add or remove "selected" class to league nav
@@ -283,64 +314,10 @@ const canonicalUrl = meta?.canonical
 
         maybeRewriteUrl(window, document)
 
-        const flattenObj = (key: string, obj?: {}) => {
-          return !obj
-            ? {}
-            : Object.entries(obj).reduce((x, [k, v]) => {
-                return {
-                  ...x,
-                  [`${key}.${k}`]: v,
-                }
-              }, {})
-        }
-
-        const userInfo = (session: Session) => {
-          if (session.type === 'user')
-            return {
-              user_id: session.properties.id,
-              visitor_id: session.properties.visitorId,
-            }
-          if (session.type === 'visitor')
-            return {
-              visitor_id: session.properties.id,
-            }
-          return {}
-        }
-
         const session: Session = await fetch('/auth/session').then((r) =>
           r.json(),
         )
         sessionStore.set(session)
-
-        const writeKey = document.querySelector<HTMLMetaElement>(
-          'meta[name="analytics"]',
-        )?.content
-
-        const segment = (window.segment =
-          import.meta.env.DEV || !writeKey
-            ? (['identify', 'page', 'track'].reduce(
-                (stub, key) => ({
-                  ...stub,
-                  [key]: (...args: [string]) =>
-                    console.debug(`analytics.${key}`, ...args),
-                }),
-                {},
-              ) as AnalyticsBrowser)
-            : AnalyticsBrowser.load(
-                {
-                  writeKey,
-                  cdnURL: import.meta.env.PUBLIC_ANALYTICS_CDN_PROXY_URL,
-                },
-                {
-                  integrations: {
-                    'Segment.io': {
-                      apiHost:
-                        new URL(import.meta.env.PUBLIC_ANALYTICS_API_PROXY_URL)
-                          .host + '/v1',
-                    },
-                  },
-                },
-              ))
 
         if (session.type === 'visitor') {
           segment.identify(`v:${session.properties.id}`, {
@@ -352,27 +329,6 @@ const canonicalUrl = meta?.canonical
           segment.identify(`u:${session.properties.id}`, {
             origin: session.properties.origin,
             origin_scope: 'browser',
-          })
-        }
-
-        // default page tracking
-        segment.page()
-
-        // custom Pageview event
-        const eventProps = document.querySelector<HTMLMetaElement>(
-          'meta[name="analytics:event:properties"]',
-        )?.content
-
-        if (eventProps) {
-          const { disposition, tokenizationScore, ...props } =
-            JSON.parse(eventProps)
-          segment.track('Pageview', {
-            ...props,
-            ...flattenObj('disposition', disposition),
-            ...flattenObj('tokenizationScore', tokenizationScore),
-            ...userInfo(session),
-            origin:
-              session.type !== 'public' ? session.properties.origin : 'web',
           })
         }
 
