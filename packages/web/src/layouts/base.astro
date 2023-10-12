@@ -234,16 +234,27 @@ const canonicalUrl = meta?.canonical
             }, {})
       }
 
-      document.addEventListener('astro:page-load', async () => {
-        // configure honeybadger
-        Honeybadger.configure({
-          apiKey: document.querySelector<HTMLMetaElement>(
-            'meta[name="honeybadger"]',
-          )?.content,
-          environment: import.meta.env.PUBLIC_STAGE,
-          reportData: import.meta.env.PROD,
-        })
+      // default page tracking
+      segment.page()
 
+      // custom Pageview event
+      const eventProps = document.querySelector<HTMLMetaElement>(
+        'meta[name="analytics:event:properties"]',
+      )?.content
+
+      if (eventProps) {
+        const { disposition, tokenizationScore, ...props } =
+          JSON.parse(eventProps)
+        segment.track('Pageview', {
+          ...props,
+          ...flattenObj('disposition', disposition),
+          ...flattenObj('tokenizationScore', tokenizationScore),
+          origin: getOrigin(navigator.userAgent),
+        })
+      }
+
+      // hack: 'astro:page-load' does not fire consistently
+      document.addEventListener('astro:after-swap', async () => {
         // default page tracking
         segment.page()
 
@@ -262,6 +273,17 @@ const canonicalUrl = meta?.canonical
             origin: getOrigin(navigator.userAgent),
           })
         }
+      })
+
+      document.addEventListener('astro:page-load', async () => {
+        // configure honeybadger
+        Honeybadger.configure({
+          apiKey: document.querySelector<HTMLMetaElement>(
+            'meta[name="honeybadger"]',
+          )?.content,
+          environment: import.meta.env.PUBLIC_STAGE,
+          reportData: import.meta.env.PROD,
+        })
 
         /**
          * Given window and document, add or remove "selected" class to league nav
@@ -315,28 +337,28 @@ const canonicalUrl = meta?.canonical
         maybeRewriteUrl(window, document)
 
         try {
-        const session: Session = await fetch('/auth/session').then((r) =>
-          r.json(),
-        )
-        sessionStore.set(session)
+          const session: Session = await fetch('/auth/session').then((r) =>
+            r.json(),
+          )
+          sessionStore.set(session)
 
-        if (session.type === 'visitor') {
-          segment.identify(`v:${session.properties.id}`, {
-            origin: session.properties.origin,
-            origin_scope: 'browser',
-          })
-        }
-        if (session.type === 'user') {
-          segment.identify(`u:${session.properties.id}`, {
-            origin: session.properties.origin,
-            origin_scope: 'browser',
-          })
-        }
+          if (session.type === 'visitor') {
+            segment.identify(`v:${session.properties.id}`, {
+              origin: session.properties.origin,
+              origin_scope: 'browser',
+            })
+          }
+          if (session.type === 'user') {
+            segment.identify(`u:${session.properties.id}`, {
+              origin: session.properties.origin,
+              origin_scope: 'browser',
+            })
+          }
 
-        Honeybadger.setContext({
-          user_id: session.properties.id,
-          user_type: session.type,
-        })
+          Honeybadger.setContext({
+            user_id: session.properties.id,
+            user_type: session.type,
+          })
         } catch (e) {}
       })
     </script>
