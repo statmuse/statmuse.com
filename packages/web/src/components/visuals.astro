@@ -108,25 +108,60 @@ const details =
           case 'stats':
             return (
               <Fragment>
-                {detail.columnCharts
-                  .filter((c) => c.categories.length > 5)
-                  .map((chart) => (
-                    <Fragment>
-                      {detail.columnCharts.length > 1 ? (
-                        <h3 class="text-[#2196f3] text-center text-lg font-semibold">
-                          {chart.name}
-                        </h3>
-                      ) : null}
+                {(() => {
+                  const columnCharts = detail.columnCharts.filter(
+                    (c) => c.categories.length > 5,
+                  )
+
+                  if (columnCharts.length > 1)
+                    return (
+                      <div role="tablist">
+                        <div class="flex">
+                          {columnCharts.map((c, i) => (
+                            <label
+                              role="tab"
+                              class:list={[
+                                'flex-1 h-12 flex items-center justify-center cursor-pointer text-secondary border-b-2',
+                                {
+                                  'border-transparent': i !== 0,
+                                  'border-secondary': i === 0,
+                                },
+                              ]}
+                              for={c.name}
+                            >
+                              {c.name}
+                            </label>
+                          ))}
+                        </div>
+                        {columnCharts.map((chart, i) => (
+                          <div role="tabpanel">
+                            <input
+                              id={chart.name}
+                              name="tabs"
+                              type="radio"
+                              class="peer hidden"
+                              checked={i === 0}
+                            />
+                            <Chart
+                              class="hidden peer-checked:block"
+                              model={chart}
+                              totalWidth={1495}
+                              isSuperlative={response.visual.isSuperlative}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )
+
+                  if (columnCharts.length === 1)
+                    return (
                       <Chart
-                        model={chart}
+                        model={columnCharts[0]}
                         totalWidth={1495}
                         isSuperlative={response.visual.isSuperlative}
-                        class={
-                          detail.columnCharts.length > 1 ? 'mb-8' : undefined
-                        }
                       />
-                    </Fragment>
-                  ))}
+                    )
+                })()}
                 {detail.grids.map((grid) => (
                   <Grid data={grid} hideTitle limitRows />
                 ))}
@@ -193,3 +228,17 @@ const details =
       )
   }
 </Container>
+<script>
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll('label[role="tab"]').forEach((elem) => {
+      elem.addEventListener('click', () => {
+        document.querySelectorAll('label[role="tab"]').forEach((el) => {
+          el.classList.add('border-transparent')
+          el.classList.remove('border-secondary')
+        })
+        elem.classList.add('border-secondary')
+        elem.classList.remove('border-transparent')
+      })
+    })
+  })
+</script>
