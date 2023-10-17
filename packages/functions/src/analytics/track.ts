@@ -15,7 +15,6 @@ declare module 'sst/context' {
 
 const analytics = () =>
   new Analytics({
-    maxEventsInBatch: 1,
     writeKey: Config.SEGMENT_WRITE_KEY,
   }).on('error', console.error)
 
@@ -50,6 +49,8 @@ const botRegex =
 
 export const handler = Handler('kinesis_stream', async (event) => {
   const { Records } = event
+  const segment = analytics()
+
   for (const record of Records) {
     const raw = Buffer.from(record.kinesis.data, 'base64').toString('utf-8')
     const parts = raw.split('\t')
@@ -95,52 +96,49 @@ export const handler = Handler('kinesis_stream', async (event) => {
     if (contentType === 'text/html') {
       try {
         const cookies = parseCookie(cookie ?? '')
-        await new Promise((resolve) =>
-          analytics().track(
-            {
-              timestamp: new Date(Number.parseFloat(timestamp) * 1000),
-              event: 'CDN Request',
-              userId:
-                cookies['ajs_user_id'] ||
-                cookies['_ajs_user_id'] ||
-                cookies['__ajs_user_id'] ||
-                cookies['___ajs_user_id'],
-              anonymousId:
-                cookies['ajs_anonymous_id'] ||
-                cookies['_ajs_anonymous_id'] ||
-                cookies['__ajs_anonymous_id'] ||
-                cookies['___ajs_anonymous_id'] ||
-                randomUUID(),
-              properties: {
-                isBot,
-                headers,
-                cookie,
-                uri,
-                contentType,
-                country,
-                method,
-                status,
-                prefetch:
-                  headerMap['Purpose'] === 'prefetch' ||
-                  headerMap['Sec-Purpose'] === 'prefetch',
-              },
-              context: {
-                ip,
-                // @ts-ignore
-                page: uri,
-                // @ts-ignore
-                referrer,
-                userAgent,
-              },
-            },
-            resolve,
-          ),
-        )
+        segment.track({
+          timestamp: new Date(Number.parseFloat(timestamp) * 1000),
+          event: 'CDN Request',
+          userId:
+            cookies['ajs_user_id'] ||
+            cookies['_ajs_user_id'] ||
+            cookies['__ajs_user_id'] ||
+            cookies['___ajs_user_id'],
+          anonymousId:
+            cookies['ajs_anonymous_id'] ||
+            cookies['_ajs_anonymous_id'] ||
+            cookies['__ajs_anonymous_id'] ||
+            cookies['___ajs_anonymous_id'] ||
+            randomUUID(),
+          properties: {
+            isBot,
+            headers,
+            cookie,
+            uri,
+            contentType,
+            country,
+            method,
+            status,
+            prefetch:
+              headerMap['Purpose'] === 'prefetch' ||
+              headerMap['Sec-Purpose'] === 'prefetch',
+          },
+          context: {
+            ip,
+            // @ts-ignore
+            page: uri,
+            // @ts-ignore
+            referrer,
+            userAgent,
+          },
+        })
       } catch (error) {
         console.error(error)
       }
     }
   }
+
+  await segment.closeAndFlush()
 
   const response = { batchItemFailures: [] }
   return response
