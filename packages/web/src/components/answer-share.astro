@@ -45,7 +45,11 @@ const socialButtons = [
 
 {
   onlyIcon ? (
-    <label for="answer-share" class="cursor-pointer">
+    <label
+      for="answer-share"
+      class="cursor-pointer"
+      data-mobile-share-url={shareUrl}
+    >
       <svg
         width="25"
         xmlns="http://www.w3.org/2000/svg"
@@ -253,5 +257,21 @@ const socialButtons = [
           })
         })
       })
+
+    const mobileShare = document.querySelector<HTMLLabelElement>(
+      'label[data-mobile-share-url]',
+    )
+    if (mobileShare) {
+      mobileShare.addEventListener('click', (e) => {
+        if (navigator.share) {
+          e.preventDefault()
+          const url = mobileShare.dataset.mobileShareUrl as string
+          try {
+            navigator.share({ url })
+          } catch (e) {}
+          return
+        }
+      })
+    }
   })
 </script>
