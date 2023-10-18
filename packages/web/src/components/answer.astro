@@ -88,7 +88,14 @@ const code = await Link.askShortCode(query, preferredDomain)
     audioUrl={answer.visual.summary.narrator?.answerWithIntroAudioUrl ||
       answer.visual.summary.narrator?.answerAudioUrl}
   />
-  {heroProps ? <Hero {...heroProps} /> : null}
+  {
+    heroProps ? (
+      <Hero
+        {...heroProps}
+        shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`}
+      />
+    ) : null
+  }
   <Visuals response={answer} {conversationToken} />
   <Container>
     <Explore

@@ -136,7 +136,14 @@ Caching.swr(Astro)
         domain: 'fantasy',
       }}
     />
-    {heroProps ? <Hero {...heroProps} /> : null}
+    {
+      heroProps ? (
+        <Hero
+          {...heroProps}
+          shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`}
+        />
+      ) : null
+    }
     <Visuals {response} {conversationToken} />
     {
       response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (

@@ -48,12 +48,7 @@ if (render) {
       colors={{ foreground: '#fff', background: '#0086ff' }}
     >
       <Header {query} />
-      <Hero
-        content={message}
-        imageUrl={image?.url}
-        imageAlt={image?.alt}
-        shareable={false}
-      />
+      <Hero content={message} imageUrl={image?.url} imageAlt={image?.alt} />
     </MainLayout>
   ) : (
     <slot />

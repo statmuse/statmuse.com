@@ -118,7 +118,14 @@ Caching.swr(Astro)
         url: Astro.url.origin + createAskPath({ domain: 'money', query }),
       }}
     />
-    {heroProps ? <Hero {...heroProps} /> : null}
+    {
+      heroProps ? (
+        <Hero
+          {...heroProps}
+          shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`}
+        />
+      ) : null
+    }
     <Visuals {response} {conversationToken} />
     <Container>
       <Explore

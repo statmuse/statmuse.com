@@ -104,7 +104,14 @@ Caching.swr(Astro)
       audioUrl={response.visual.summary.narrator?.answerWithIntroAudioUrl ||
         response.visual.summary.narrator?.answerAudioUrl}
     />
-    {heroProps ? <Hero {...heroProps} /> : null}
+    {
+      heroProps ? (
+        <Hero
+          {...heroProps}
+          shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`}
+        />
+      ) : null
+    }
     <Visuals {response} />
     <Container>
       <Explore

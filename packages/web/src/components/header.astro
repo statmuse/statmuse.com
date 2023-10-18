@@ -5,6 +5,7 @@ import AnswerShare from '@components/answer-share.astro'
 import DropdownMenu from '@components/dropdown-menu.astro'
 import AnswerAudio from './answer-audio.astro'
 import AuthMenu from '@components/auth-menu.svelte'
+import TwitterShare from './icons/twitter.astro'
 
 interface Props {
   query?: string
@@ -54,6 +55,17 @@ const audioUrl = Astro.props.audioUrl
     <div
       class="w-0 md:w-fit overflow-hidden flex items-center md:ml-4 space-x-4"
     >
+      {
+        share && (
+          <TwitterShare
+            shareUrl={
+              share.shortCode
+                ? `${process.env.SHORT_LINK_URL}e/${share.shortCode}`
+                : share.url ?? ''
+            }
+          />
+        )
+      }
       {share && <AnswerShare {...share} />}
       {audioUrl && <AnswerAudio src={audioUrl} />}
     </div>
