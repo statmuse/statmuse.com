@@ -11,7 +11,6 @@ interface Props extends HeroProps {}
 
 const answered = Astro.props.answered
 const markdown = Astro.props.markdown ?? false
-const shareable = Astro.props.shareable ?? true
 const shareUrl = Astro.props.shareUrl
 const content = markdown
   ? marked(Astro.props.content, {
@@ -62,14 +61,13 @@ const content = markdown
         />
       ) : null
     }
-    {
-      shareable ? (
-        <div class="md:hidden flex flex-col items-center absolute right-0 bottom-2.5 space-y-2.5">
-          {shareUrl && <TwitterShare shareUrl={shareUrl} />}
-          <AnswerShare onlyIcon />
-          {Astro.props.audioUrl && <AnswerAudio src={Astro.props.audioUrl} />}
-        </div>
-      ) : null
-    }
+
+    <div
+      class="md:hidden flex flex-col items-center absolute right-0 bottom-2.5 space-y-2.5"
+    >
+      {shareUrl && <TwitterShare {shareUrl} />}
+      {shareUrl && <AnswerShare onlyIcon url={shareUrl} />}
+      {Astro.props.audioUrl && <AnswerAudio src={Astro.props.audioUrl} />}
+    </div>
   </div>
 </Container>
