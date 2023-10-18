@@ -83,7 +83,14 @@ const meta =
       ? { type: 'ask', shortCode: code?.short_code, domain: 'money', query }
       : { type: 'ask', shortCode: code?.short_code, url: Astro.url.href }}
   />
-  {heroProps ? <Hero {...heroProps} /> : null}
+  {
+    heroProps ? (
+      <Hero
+        {...heroProps}
+        shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`}
+      />
+    ) : null
+  }
   <Visuals response={answer} {conversationToken} />
   {
     answer.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (

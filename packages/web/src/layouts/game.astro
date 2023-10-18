@@ -66,6 +66,7 @@ const meta = {
     imageAlt={subject.entities
       ? subject.entities[0].display
       : `${preferredDomain} image`}
+    shareUrl={Astro.url.href}
   />
   <Container>
     <slot />

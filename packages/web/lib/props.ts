@@ -6,4 +6,5 @@ export type HeroProps = {
   answered?: string
   markdown?: boolean
   audioUrl?: string
+  shareUrl?: string
 }

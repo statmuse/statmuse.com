@@ -15,6 +15,7 @@ import {
 import { type Metadata, getLeagueKeywords } from '@lib/meta'
 import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import TwitterShare from '@components/icons/twitter.astro'
 
 interface Props {
   bio: GameraPlayerBio
@@ -186,6 +187,7 @@ const twitter = {
       <div
         class="md:hidden flex flex-col items-center absolute right-0 bottom-2.5 space-y-2.5"
       >
+        <TwitterShare shareUrl={Astro.url.href} />
         <AnswerShare onlyIcon />
       </div>
     </div>

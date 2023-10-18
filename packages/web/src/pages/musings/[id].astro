@@ -77,6 +77,13 @@ Caching.swr(Astro)
     }}
     audioUrl={musing.audio_answer_url || undefined}
   />
-  {heroProps ? <Hero {...heroProps} /> : null}
+  {
+    heroProps ? (
+      <Hero
+        {...heroProps}
+        shareUrl={`${process.env.SHORT_LINK_URL}e/${musing.short_code}`}
+      />
+    ) : null
+  }
   <Visuals response={musing.answer} />
 </Layout>
