@@ -22,7 +22,7 @@ const {
   meta,
   colors,
   analytics = {},
-  enableFreestarAdBanner = true,
+  // enableFreestarAdBanner = true,
 } = Astro.props
 const foreground = colors?.foreground || colors?.foregroundColor || '#fff'
 const background = colors?.background || colors?.backgroundColor || '#00c1d8'
@@ -218,75 +218,6 @@ const canonicalUrl = meta?.canonical
       gtag('js', new Date())
       gtag('config', 'G-QRW302M4ZR')
     </script>
-    {
-      import.meta.env.PROD && enableFreestarAdBanner && (
-        <Fragment>
-          <link rel="preconnect" href="https://a.pub.network/" crossorigin />
-          <link rel="preconnect" href="https://b.pub.network/" crossorigin />
-          <link rel="preconnect" href="https://c.pub.network/" crossorigin />
-          <link rel="preconnect" href="https://d.pub.network/" crossorigin />
-          <link
-            rel="preconnect"
-            href="https://c.amazon-adsystem.com"
-            crossorigin
-          />
-          <link
-            rel="preconnect"
-            href="https://s.amazon-adsystem.com"
-            crossorigin
-          />
-          <link
-            rel="preconnect"
-            href="https://secure.quantserve.com/"
-            crossorigin
-          />
-          <link
-            rel="preconnect"
-            href="https://rules.quantcount.com/"
-            crossorigin
-          />
-          <link
-            rel="preconnect"
-            href="https://pixel.quantserve.com/"
-            crossorigin
-          />
-          <link
-            rel="preconnect"
-            href="https://cmp.quantcast.com/"
-            crossorigin
-          />
-          <link rel="preconnect" href="https://btloader.com/" crossorigin />
-          <link rel="preconnect" href="https://api.btloader.com/" crossorigin />
-          <link
-            rel="preconnect"
-            href="https://confiant-integrations.global.ssl.fastly.net"
-            crossorigin
-          />
-          <link
-            rel="stylesheet"
-            href="https://a.pub.network/statmuse-com/cls.css"
-          />
-          <script data-cfasync="false" type="text/javascript">
-            var freestar = freestar || {}; 
-            freestar.queue = freestar.queue || []; 
-            freestar.config = freestar.config || {};
-            freestar.config.enabled_slots = []; 
-            freestar.initCallback = function() {
-              if (freestar.config.enabled_slots.length === 0) {
-                freestar.initCallbackCalled = false
-              } else { 
-                freestar.newAdSlots(freestar.config.enabled_slots) 
-              }
-            }
-          </script>
-          <script
-            src="https://a.pub.network/statmuse-com/pubfig.min.js"
-            data-cfasync="false"
-            async
-          />
-        </Fragment>
-      )
-    }
   </head>
   <body class="text-black">
     <slot />
