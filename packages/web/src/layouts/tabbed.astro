@@ -12,12 +12,13 @@ interface Props {
     href: string
     title: string
   }[]
+  enableFreestarAdBanner?: boolean
 }
 
-const { meta, prefixPath, pages, title } = Astro.props
+const { meta, prefixPath, pages, title, ...rest } = Astro.props
 ---
 
-<Layout {meta} colors={{ foreground: '#fff', background: '#00c1d8' }}>
+<Layout {meta} colors={{ foreground: '#fff', background: '#00c1d8' }} {...rest}>
   <Header />
   <Container class="text-white bg-primary">
     <div class="pt-[54px] pb-10 md:pt-[90px] md:pb-16">
