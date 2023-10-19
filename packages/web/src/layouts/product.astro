@@ -6,9 +6,10 @@ interface Props {
   league: string
   meta?: Metadata
   prefixPath: string
+  enableFreestarAdBanner?: boolean
 }
 
-const { league, meta, prefixPath } = Astro.props
+const { league, meta, prefixPath, ...rest } = Astro.props
 
 const domains = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
 
@@ -29,6 +30,7 @@ const productPages = [
   title="The elephant of sports and financial information."
   prefixPath={Astro.props.prefixPath}
   pages={productPages}
+  {...rest}
 >
   <div class="flex flex-wrap gap-6 md:gap-12 py-12">
     <div class="w-full md:w-64 text-sm md:text-base text-[#333]">

@@ -14,7 +14,7 @@ const code = Astro.url.searchParams.get('code')
 Caching.none(Astro)
 ---
 
-<Layout {meta}>
+<Layout {meta} enableFreestarAdBanner={false}>
   <Header />
   <Container class="px-[30px] py-[5px]">
     <div
