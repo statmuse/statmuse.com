@@ -111,7 +111,6 @@ const canonicalUrl = meta?.canonical
         content={meta?.twitter?.imageUrl || defaultImageUrl}
       />
       {meta?.pageType && <meta name="page-type" content={meta?.pageType} />}
-      <!-- <meta name="uid" content="v:10f20462-9e37-40d7-9ff7-91e66a9843f6" /> -->
     </slot>
     {
       meta?.canonical && (
@@ -212,6 +211,42 @@ const canonicalUrl = meta?.canonical
       }
       gtag('js', new Date())
       gtag('config', 'G-QRW302M4ZR')
+    </script>
+    <!-- Freestar -->
+    <link rel="preconnect" href="https://a.pub.network/" crossorigin />
+    <link rel="preconnect" href="https://b.pub.network/" crossorigin />
+    <link rel="preconnect" href="https://c.pub.network/" crossorigin />
+    <link rel="preconnect" href="https://d.pub.network/" crossorigin />
+    <link rel="preconnect" href="https://c.amazon-adsystem.com" crossorigin />
+    <link rel="preconnect" href="https://s.amazon-adsystem.com" crossorigin />
+    <link rel="preconnect" href="https://secure.quantserve.com/" crossorigin />
+    <link rel="preconnect" href="https://rules.quantcount.com/" crossorigin />
+    <link rel="preconnect" href="https://pixel.quantserve.com/" crossorigin />
+    <link rel="preconnect" href="https://cmp.quantcast.com/" crossorigin />
+    <link rel="preconnect" href="https://btloader.com/" crossorigin />
+    <link rel="preconnect" href="https://api.btloader.com/" crossorigin />
+    <link
+      rel="preconnect"
+      href="https://confiant-integrations.global.ssl.fastly.net"
+      crossorigin
+    />
+    <link rel="stylesheet" href="https://a.pub.network/statmuse-com/cls.css" />
+    <script data-cfasync="false" type="text/javascript">
+      var freestar = freestar || {}
+      freestar.queue = freestar.queue || []
+      freestar.config = freestar.config || {}
+      freestar.config.enabled_slots = []
+      freestar.initCallback = function () {
+        freestar.config.enabled_slots.length === 0
+          ? (freestar.initCallbackCalled = false)
+          : freestar.newAdSlots(freestar.config.enabled_slots)
+      }
+    </script>
+    <script
+      src="https://a.pub.network/statmuse-com/pubfig.min.js"
+      data-cfasync="false"
+      async
+    >
     </script>
   </head>
   <body class="text-black">
