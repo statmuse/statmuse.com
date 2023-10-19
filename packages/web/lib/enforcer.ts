@@ -11,7 +11,7 @@ export const canQuery = async (locals: App.Locals) => {
     : await Asks.countByVisitor(locals.visitor.id)
   const count = result ? Number(result.ask_count) : 0
 
-  return count <= freeAskLimit
+  return count < freeAskLimit
 }
 
 export const canQueryFinance = async (locals: App.Locals) => {
@@ -22,5 +22,5 @@ export const canQueryFinance = async (locals: App.Locals) => {
     : await Asks.financeCountByVisitor(locals.visitor.id)
   const count = result ? Number(result.ask_count) : 0
 
-  return count <= freeAskLimit
+  return count < freeAskLimit
 }
