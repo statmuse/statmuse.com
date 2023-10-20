@@ -118,7 +118,7 @@ export const cleanup = defineMiddleware(async (context, next) => {
 
 export const headers = defineMiddleware(async (_context, next) => {
   const response = await next()
-  response.headers.set('Content-Security-Policy', contentSecurityPolicy)
+  // response.headers.set('Content-Security-Policy', contentSecurityPolicy)
 
   response.headers.set('Cross-Origin-Window-Policy', 'deny')
   response.headers.set('Referrer-Policy', 'no-referrer-when-downgrade')
