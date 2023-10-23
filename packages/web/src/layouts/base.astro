@@ -280,7 +280,22 @@ const canonicalUrl = meta?.canonical
   <body class="text-black">
     <slot />
     <CookieConsent client:only="svelte" />
-    <FreestarAdBanner client:only="svelte" {enableFreestarAdBanner} />
+    <FreestarAdBanner
+      transition:persist
+      client:only="svelte"
+      {enableFreestarAdBanner}
+    />
+    <script>
+      document.addEventListener('astro:after-swap', () => {
+        const freestar = window.freestar
+        console.log(freestar)
+        if (freestar) {
+          freestar.queue.push(function () {
+            freestar.newStickyFooter('statmuse_stickyfooter')
+          })
+        }
+      })
+    </script>
     <script>
       import Honeybadger from '@honeybadger-io/js'
       import { segment, getOrigin } from '@lib/analytics'

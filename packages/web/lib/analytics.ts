@@ -27,6 +27,15 @@ export type AnalyticsPageviewProperties = {
 declare global {
   interface Window {
     segment: AnalyticsBrowser
+    freestar: {
+      queue: any[]
+      config: {
+        enabled_slots: any[]
+      }
+      initCallback: () => void
+      newAdSlots: () => void
+      newStickyFooter: () => void
+    }
   }
 }
 
