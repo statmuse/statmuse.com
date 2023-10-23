@@ -228,7 +228,12 @@ const twitter = {
         <div
           class="flex items-center justify-center w-12 h-12 rounded-full bg-team-primary"
         >
-          <AnswerShare onlyIcon />
+          <AnswerShare
+            onlyIcon
+            url={meta?.canonical?.url
+              ? Astro.url.origin + meta.canonical.url
+              : Astro.url.href}
+          />
         </div>
       </div>
     </div>

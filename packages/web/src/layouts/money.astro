@@ -125,7 +125,12 @@ const twitter = {
       <div
         class="md:hidden flex flex-col items-center absolute right-0 bottom-2.5 space-y-2.5"
       >
-        <AnswerShare onlyIcon />
+        <AnswerShare
+          onlyIcon
+          url={meta?.canonical?.url
+            ? Astro.url.origin + meta.canonical.url
+            : Astro.url.href}
+        />
       </div>
     </div>
   </Container>
