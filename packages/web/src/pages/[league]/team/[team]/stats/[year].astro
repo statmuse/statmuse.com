@@ -50,12 +50,13 @@ const keywords = `${getLeagueKeywords(domain)} ${year} ${
   bio.name
 } team player stats statistics`
 const canonical = {
-  url: `${getUrlForEntity({
-    type: 'teamSeason',
-    domain,
-    id: bio.teamId.toString(),
-    display: bio.name,
-  })}/stats/${year}`,
+  url:
+    `${getUrlForEntity({
+      type: 'teamSeason',
+      domain,
+      id: bio.teamId.toString(),
+      display: bio.name,
+    })}/stats/${year}` + Astro.url.search,
   rewrite: true,
 }
 const meta = { title, description, keywords, canonical }
@@ -73,7 +74,7 @@ Caching.swr(Astro)
             <Grid
               class="mb-5"
               data={playerStats.grids[i]}
-              parameters={stats.parameters}
+              parameters={playerStats.parameters}
             />
           )}
         </Fragment>
@@ -84,7 +85,11 @@ Caching.swr(Astro)
         ? playerStats.grids
             .slice(stats.grids.length)
             .map((grid) => (
-              <Grid class="mb-5" data={grid} parameters={stats.parameters} />
+              <Grid
+                class="mb-5"
+                data={grid}
+                parameters={playerStats.parameters}
+              />
             ))
         : null
     }

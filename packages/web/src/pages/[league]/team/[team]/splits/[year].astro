@@ -33,12 +33,13 @@ const keywords = `${getLeagueKeywords(domain)} ${year} ${
   bio.name
 } team splits stats statistics`
 const canonical = {
-  url: `${getUrlForEntity({
-    type: 'teamSeason',
-    domain,
-    id: bio.teamId.toString(),
-    display: bio.name,
-  })}/splits/${year}`,
+  url:
+    `${getUrlForEntity({
+      type: 'teamSeason',
+      domain,
+      id: bio.teamId.toString(),
+      display: bio.name,
+    })}/splits/${year}` + Astro.url.search,
   rewrite: true,
 }
 const meta = { title, description, keywords, canonical }
