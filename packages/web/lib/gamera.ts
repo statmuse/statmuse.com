@@ -127,7 +127,7 @@ export function getHeroProps(props: {
 
   const content = musing
     ? musing.text_markdown ?? (musing.text_plain as string)
-    : tokensToHtml(answer.nlg.text.answer)
+    : tokensToHtml(answer.visual.summary.answer ?? answer.visual.summaryTokens)
   const imageUrl = musing
     ? musing.image_url ?? undefined
     : answer.visual.summary.subject.imageUrl

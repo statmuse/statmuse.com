@@ -62,7 +62,7 @@ export const title = (str: string) =>
 
 export const description = (resp: GameraResponse): string => {
   if (isGameraDefaultResponse(resp)) {
-    return tokensToText(resp.nlg.text.answer)
+    return tokensToText(resp.visual.summary.answer ?? resp.visual.summaryTokens)
   }
   return ''
 }
