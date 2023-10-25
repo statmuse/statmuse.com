@@ -1,6 +1,8 @@
 <script lang="ts">
   import { session } from '@lib/session-store'
   export let enableFreestarAdBanner: boolean
+
+  console.log('freestar: ', window.freestar)
 </script>
 
 {#if import.meta.env.PUBLIC_STAGE === 'staging' && import.meta.env.PROD && !window.freestar && enableFreestarAdBanner && (($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active') || ($session?.type === 'visitor' && !$session?.properties.bot))}
@@ -16,6 +18,7 @@
         freestar.newAdSlots(freestar.config.enabled_slots)
       }
     }
+    console.log('loading freestar script tag')
   </script>
   <script
     src="https://a.pub.network/statmuse-com/pubfig.min.js"

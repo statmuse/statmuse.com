@@ -282,7 +282,7 @@ const canonicalUrl = meta?.canonical
     <slot />
     <CookieConsent client:only="svelte" />
     <FreestarAdBanner
-      transition:persist
+      transition:persist="ad-banner"
       client:only="svelte"
       {enableFreestarAdBanner}
     />
