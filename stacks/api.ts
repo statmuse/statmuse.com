@@ -23,6 +23,7 @@ import {
 } from 'aws-cdk-lib/aws-cloudfront'
 import { HttpOrigin } from 'aws-cdk-lib/aws-cloudfront-origins'
 import { Duration } from 'aws-cdk-lib/core'
+import { LambdaInsightsVersion } from 'aws-cdk-lib/aws-lambda'
 
 export function API({ stack }: StackContext) {
   const secrets = use(Secrets)
@@ -135,7 +136,7 @@ export function API({ stack }: StackContext) {
 
   const api = new Api(stack, 'api', {
     routes: {
-      // TODO: should be able to remove these next two as they
+      // TODO: should be able to remove these next three as they
       // were only used by mothra, I think
       'POST /checkout': {
         authorizer: 'simple',
@@ -144,6 +145,10 @@ export function API({ stack }: StackContext) {
       'POST /user/delete': {
         authorizer: 'simple',
         function: 'packages/functions/src/user/delete.handler',
+      },
+      'POST /stripe/manage': {
+        authorizer: 'simple',
+        function: 'packages/functions/src/stripe/manage.handler',
       },
       'GET /search/suggest': {
         function: {
@@ -159,11 +164,13 @@ export function API({ stack }: StackContext) {
           memorySize: '128 MB',
         },
       },
-      'POST /stripe/manage': {
-        authorizer: 'simple',
-        function: 'packages/functions/src/stripe/manage.handler',
+      'POST /stripe/webhooks': {
+        function: {
+          handler: 'packages/functions/src/stripe/webhooks.handler',
+          timeout: '5 seconds',
+          memorySize: '128 MB',
+        },
       },
-      'POST /stripe/webhooks': 'packages/functions/src/stripe/webhooks.handler',
     },
     defaults: {
       function: {
@@ -181,6 +188,8 @@ export function API({ stack }: StackContext) {
         nodejs: { install: ['pg'], esbuild: { external: ['pg-native'] } },
         runtime: 'nodejs18.x',
         architecture: 'arm_64',
+        tracing: 'disabled',
+        insightsVersion: LambdaInsightsVersion.VERSION_1_0_229_0,
       },
     },
     authorizers: {
