@@ -74,6 +74,9 @@ export function Web({ stack }: StackContext) {
           handler: 'packages/functions/src/analytics/track.handler',
           timeout: '1 minute',
           memorySize: '256 MB',
+          architecture: 'arm_64',
+          runtime: 'nodejs18.x',
+          tracing: 'disabled',
           bind: [secrets.SEGMENT_WRITE_KEY],
         },
         cdk: {
