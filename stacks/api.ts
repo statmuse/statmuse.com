@@ -29,7 +29,7 @@ export function API({ stack }: StackContext) {
   const dns = use(DNS)
   const { vpc, rdsCredentialsSecret, rdsProxySecurityGroup } = use(Imports)
 
-  const isStaging = stack.stage === 'staging'
+  const isStaging = stack.stage.startsWith('staging')
   const isProd = stack.stage === 'production'
   const isDev = !isStaging && !isProd
 
@@ -45,7 +45,6 @@ export function API({ stack }: StackContext) {
     ? 'http://gamera.statmuse.com/'
     : 'http://gamera.staging.statmuse.com/'
 
-  // TODO: remove staging
   if (isProd || isStaging) {
     const albListener = ApplicationListener.fromLookup(
       stack,
@@ -136,23 +135,33 @@ export function API({ stack }: StackContext) {
 
   const api = new Api(stack, 'api', {
     routes: {
+      // TODO: should be able to remove these next two as they
+      // were only used by mothra, I think
       'POST /checkout': {
         authorizer: 'simple',
         function: 'packages/functions/src/stripe/checkout.handler',
       },
+      'POST /user/delete': {
+        authorizer: 'simple',
+        function: 'packages/functions/src/user/delete.handler',
+      },
       'GET /search/suggest': {
-        function: 'packages/functions/src/search/sports-suggest.handler',
+        function: {
+          handler: 'packages/functions/src/search/sports-suggest.handler',
+          timeout: '3 seconds',
+          memorySize: '128 MB',
+        },
       },
       'GET /money/search/suggest': {
-        function: 'packages/functions/src/search/money-suggest.handler',
+        function: {
+          handler: 'packages/functions/src/search/money-suggest.handler',
+          timeout: '3 seconds',
+          memorySize: '128 MB',
+        },
       },
       'POST /stripe/manage': {
         authorizer: 'simple',
         function: 'packages/functions/src/stripe/manage.handler',
-      },
-      'POST /user/delete': {
-        authorizer: 'simple',
-        function: 'packages/functions/src/user/delete.handler',
       },
       'POST /stripe/webhooks': 'packages/functions/src/stripe/webhooks.handler',
     },
@@ -170,6 +179,8 @@ export function API({ stack }: StackContext) {
         securityGroups: [lambdaSecurityGroup],
         environment,
         nodejs: { install: ['pg'], esbuild: { external: ['pg-native'] } },
+        runtime: 'nodejs18.x',
+        architecture: 'arm_64',
       },
     },
     authorizers: {
