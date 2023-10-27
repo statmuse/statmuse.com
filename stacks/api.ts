@@ -155,6 +155,7 @@ export function API({ stack }: StackContext) {
           handler: 'packages/functions/src/search/sports-suggest.handler',
           timeout: '3 seconds',
           memorySize: '128 MB',
+          retryAttempts: 0,
         },
       },
       'GET /money/search/suggest': {
@@ -162,6 +163,7 @@ export function API({ stack }: StackContext) {
           handler: 'packages/functions/src/search/money-suggest.handler',
           timeout: '3 seconds',
           memorySize: '128 MB',
+          retryAttempts: 0,
         },
       },
       'POST /stripe/webhooks': {
