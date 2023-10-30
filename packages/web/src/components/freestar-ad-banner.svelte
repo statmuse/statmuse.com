@@ -3,7 +3,7 @@
   export let enableFreestarAdBanner: boolean
 </script>
 
-{#if import.meta.env.PUBLIC_STAGE === 'staging' && import.meta.env.PROD && !window.freestar && enableFreestarAdBanner && (($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active') || ($session?.type === 'visitor' && !$session?.properties.bot))}
+{#if import.meta.env.PROD && !window.freestar && enableFreestarAdBanner && (($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active') || ($session?.type === 'visitor' && !$session?.properties.bot))}
   <script data-cfasync="false" type="text/javascript">
     var freestar = freestar || {}
     freestar.queue = freestar.queue || []
