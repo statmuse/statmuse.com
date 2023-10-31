@@ -145,28 +145,196 @@ const canonicalUrl = meta?.canonical
     {style && <style set:html={style} />}
 
     <!-- Font face definitions -->
-    <style>
+    <style is:inline>
       @font-face {
         font-family: 'canada-type-gibson';
         src:
-          url('/fonts/gibson-normal-subset.woff2') format('woff2'),
-          url('/fonts/gibson-normal-subset.zopfli.woff') format('woff'),
-          url('/fonts/gibson-normal-subset.ttf') format('truetype');
-        unicode-range: U+0-FF;
-        font-display: swap;
+          url('/fonts/gibson-normal-100.woff2') format('woff2'),
+          url('/fonts/gibson-normal-100.woff') format('woff'),
+          url('/fonts/gibson-normal-100.otf') format('opentype');
+        font-display: auto;
         font-style: normal;
+        font-weight: 100;
         font-stretch: normal;
       }
 
       @font-face {
         font-family: 'canada-type-gibson';
         src:
-          url('/fonts/gibson-italic-subset.woff2') format('woff2'),
-          url('/fonts/gibson-italic-subset.zopfli.woff') format('woff'),
-          url('/fonts/gibson-italic-subset.ttf') format('truetype');
-        unicode-range: U+0-FF;
-        font-display: swap;
+          url('/fonts/gibson-italic-100.woff2') format('woff2'),
+          url('/fonts/gibson-italic-100.woff') format('woff'),
+          url('/fonts/gibson-italic-100.wotf') format('opentype');
+        font-display: auto;
         font-style: italic;
+        font-weight: 100;
+        font-stretch: normal;
+      }
+
+      @font-face {
+        font-family: 'canada-type-gibson';
+        src:
+          url('/fonts/gibson-normal-200.woff2') format('woff2'),
+          url('/fonts/gibson-normal-200.woff') format('woff'),
+          url('/fonts/gibson-normal-200.otf') format('opentype');
+        font-display: auto;
+        font-style: normal;
+        font-weight: 200;
+        font-stretch: normal;
+      }
+
+      @font-face {
+        font-family: 'canada-type-gibson';
+        src:
+          url('/fonts/gibson-italic-200.woff2') format('woff2'),
+          url('/fonts/gibson-italic-200.woff') format('woff'),
+          url('/fonts/gibson-italic-200.otf') format('opentype');
+        font-display: auto;
+        font-style: italic;
+        font-weight: 200;
+        font-stretch: normal;
+      }
+
+      @font-face {
+        font-family: 'canada-type-gibson';
+        src:
+          url('/fonts/gibson-normal-300.woff2') format('woff2'),
+          url('/fonts/gibson-normal-300.woff') format('woff'),
+          url('/fonts/gibson-normal-300.otf') format('opentype');
+        font-display: auto;
+        font-style: normal;
+        font-weight: 300;
+        font-stretch: normal;
+      }
+
+      @font-face {
+        font-family: 'canada-type-gibson';
+        src:
+          url('/fonts/gibson-italic-300.woff2') format('woff2'),
+          url('/fonts/gibson-italic-300.woff') format('woff'),
+          url('/fonts/gibson-italic-300.otf') format('opentype');
+        font-display: auto;
+        font-style: italic;
+        font-weight: 300;
+        font-stretch: normal;
+      }
+
+      @font-face {
+        font-family: 'canada-type-gibson';
+        src:
+          url('/fonts/gibson-normal-400.woff2') format('woff2'),
+          url('/fonts/gibson-normal-400.woff') format('woff'),
+          url('/fonts/gibson-normal-400.otf') format('opentype');
+        font-display: auto;
+        font-style: normal;
+        font-weight: 400;
+        font-stretch: normal;
+      }
+
+      @font-face {
+        font-family: 'canada-type-gibson';
+        src:
+          url('/fonts/gibson-italic-400.woff2') format('woff2'),
+          url('/fonts/gibson-italic-400.woff') format('woff'),
+          url('/fonts/gibson-italic-400.otf') format('opentype');
+        font-display: auto;
+        font-style: italic;
+        font-weight: 400;
+        font-stretch: normal;
+      }
+
+      @font-face {
+        font-family: 'canada-type-gibson';
+        src:
+          url('/fonts/gibson-normal-500.woff2') format('woff2'),
+          url('/fonts/gibson-normal-500.woff') format('woff'),
+          url('/fonts/gibson-normal-500.otf') format('opentype');
+        font-display: auto;
+        font-style: normal;
+        font-weight: 500;
+        font-stretch: normal;
+      }
+
+      @font-face {
+        font-family: 'canada-type-gibson';
+        src:
+          url('/fonts/gibson-italic-500.woff') format('woff2'),
+          url('/fonts/gibson-italic-500.woff') format('woff'),
+          url('/fonts/gibson-italic-500.woff') format('opentype');
+        font-display: auto;
+        font-style: italic;
+        font-weight: 500;
+        font-stretch: normal;
+      }
+
+      @font-face {
+        font-family: 'canada-type-gibson';
+        src:
+          url('/fonts/gibson-normal-600.woff2') format('woff2'),
+          url('/fonts/gibson-normal-600.woff') format('woff'),
+          url('/fonts/gibson-normal-600.otf') format('opentype');
+        font-display: auto;
+        font-style: normal;
+        font-weight: 600;
+        font-stretch: normal;
+      }
+
+      @font-face {
+        font-family: 'canada-type-gibson';
+        src:
+          url('/fonts/gibson-italic-600.woff2') format('woff2'),
+          url('/fonts/gibson-italic-600.woff') format('woff'),
+          url('/fonts/gibson-italic-600.otf') format('opentype');
+        font-display: auto;
+        font-style: italic;
+        font-weight: 600;
+        font-stretch: normal;
+      }
+
+      @font-face {
+        font-family: 'canada-type-gibson';
+        src:
+          url('/fonts/gibson-normal-700.woff2') format('woff2'),
+          url('/fonts/gibson-normal-700.woff') format('woff'),
+          url('/fonts/gibson-normal-700.otf') format('opentype');
+        font-display: auto;
+        font-style: normal;
+        font-weight: 700;
+        font-stretch: normal;
+      }
+
+      @font-face {
+        font-family: 'canada-type-gibson';
+        src:
+          url('/fonts/gibson-italic-700.woff2') format('woff2'),
+          url('/fonts/gibson-italic-700.woff') format('woff'),
+          url('/fonts/gibson-italic-700.otf') format('opentype');
+        font-display: auto;
+        font-style: italic;
+        font-weight: 700;
+        font-stretch: normal;
+      }
+
+      @font-face {
+        font-family: 'canada-type-gibson';
+        src:
+          url('/fonts/gibson-normal-900.woff2') format('woff2'),
+          url('/fonts/gibson-normal-900.woff') format('woff'),
+          url('/fonts/gibson-normal-900.otf') format('opentype');
+        font-display: auto;
+        font-style: normal;
+        font-weight: 900;
+        font-stretch: normal;
+      }
+
+      @font-face {
+        font-family: 'canada-type-gibson';
+        src:
+          url('/fonts/gibson-italic-900.woff2') format('woff2'),
+          url('/fonts/gibson-italic-900.woff') format('woff'),
+          url('/fonts/gibson-italic-900.otf') format('opentype');
+        font-display: auto;
+        font-style: italic;
+        font-weight: 900;
         font-stretch: normal;
       }
 
@@ -183,18 +351,19 @@ const canonicalUrl = meta?.canonical
     <!-- Preload custom fonts -->
     <link
       rel="preload"
-      href="/fonts/gibson-normal-subset.woff2"
+      href="/fonts/gibson-normal-400.woff2"
       as="font"
       type="font/woff2"
       crossorigin="anonymous"
     />
     <link
       rel="preload"
-      href="/fonts/gibson-italic-subset.woff2"
+      href="/fonts/gibson-italic-400.woff2"
       as="font"
       type="font/woff2"
       crossorigin="anonymous"
     />
+
     <slot name="tradingview" />
 
     <meta name="honeybadger" content={Config.HONEYBADGER_API_KEY} />
