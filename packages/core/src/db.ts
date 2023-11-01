@@ -40,8 +40,9 @@ const { SecretString: secret } = await secretsManager.send(
   new GetSecretValueCommand({
     SecretId: process.env.POSTGRES_SECRET_ARN,
   }),
+  { requestTimeout: 5000 },
 )
-if (!secret) throw new Error('No secret found')
+if (!secret) throw new Error('No database secret found')
 
 const credentials = JSON.parse(secret) as {
   username: string
