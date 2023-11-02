@@ -93,7 +93,7 @@ export const handler = Handler('kinesis_stream', async (event) => {
       headerMap = parseHeaders(headers)
     } catch (e) {}
 
-    if (contentType === 'text/html') {
+    if (contentType === 'text/html' && !isBot) {
       try {
         const cookies = parseCookie(cookie ?? '')
         segment.track({
