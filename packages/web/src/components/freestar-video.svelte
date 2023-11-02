@@ -42,10 +42,10 @@
   {:else}
     <div bind:this={container} class={`${$$props.class} overflow-hidden z-0`}>
       {#if domain === 'nba'}
-        <div class="s2nPlayer k-GvH7HE8X-iw36bHUX" data-type="float" />
+        <div class="s2nPlayer k-WS5Rl6qj" data-type="float"></div>
         <script
           type="text/javascript"
-          src="https://embed.sendtonews.com/player3/embedcode.js?fk=GvH7HE8X-iw36bHUX&cid=15048"
+          src="//embed.sendtonews.com/player3/embedcode.js?fk=WS5Rl6qj&cid=15048&offsetx=0&offsety=0&floatwidth=400&floatposition=bottom-right"
           data-type="s2nScript"
         ></script>
       {:else if domain === 'nfl'}
