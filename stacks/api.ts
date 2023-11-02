@@ -1,4 +1,4 @@
-import { type StackContext, Api, Function, use } from 'sst/constructs'
+import { type StackContext, Api, use } from 'sst/constructs'
 import {
   Peer,
   Port,
@@ -23,7 +23,6 @@ import {
 } from 'aws-cdk-lib/aws-cloudfront'
 import { HttpOrigin } from 'aws-cdk-lib/aws-cloudfront-origins'
 import { Duration } from 'aws-cdk-lib/core'
-import { LambdaInsightsVersion } from 'aws-cdk-lib/aws-lambda'
 
 export function API({ stack }: StackContext) {
   const secrets = use(Secrets)
@@ -136,33 +135,15 @@ export function API({ stack }: StackContext) {
 
   const api = new Api(stack, 'api', {
     routes: {
-      // TODO: should be able to remove these next three as they
-      // were only used by mothra, I think
-      'POST /checkout': {
-        authorizer: 'simple',
-        function: 'packages/functions/src/stripe/checkout.handler',
-      },
-      'POST /user/delete': {
-        authorizer: 'simple',
-        function: 'packages/functions/src/user/delete.handler',
-      },
-      'POST /stripe/manage': {
-        authorizer: 'simple',
-        function: 'packages/functions/src/stripe/manage.handler',
-      },
       'GET /search/suggest': {
         function: {
           handler: 'packages/functions/src/search/sports-suggest.handler',
-          timeout: '3 seconds',
-          memorySize: '128 MB',
           retryAttempts: 0,
         },
       },
       'GET /money/search/suggest': {
         function: {
           handler: 'packages/functions/src/search/money-suggest.handler',
-          timeout: '3 seconds',
-          memorySize: '128 MB',
           retryAttempts: 0,
         },
       },
@@ -170,7 +151,6 @@ export function API({ stack }: StackContext) {
         function: {
           handler: 'packages/functions/src/stripe/webhooks.handler',
           timeout: '5 seconds',
-          memorySize: '128 MB',
         },
       },
     },
@@ -188,21 +168,6 @@ export function API({ stack }: StackContext) {
         securityGroups: [lambdaSecurityGroup],
         environment,
         nodejs: { install: ['pg'], esbuild: { external: ['pg-native'] } },
-        runtime: 'nodejs18.x',
-        architecture: 'arm_64',
-        tracing: 'disabled',
-        insightsVersion: LambdaInsightsVersion.VERSION_1_0_229_0,
-      },
-    },
-    authorizers: {
-      simple: {
-        type: 'lambda',
-        function: new Function(stack, 'simple-authorizer', {
-          handler: 'packages/functions/src/authorizer.handler',
-          bind: [secrets.API_KEY],
-        }),
-        resultsCacheTtl: '1 minute',
-        responseTypes: ['simple'],
       },
     },
     customDomain: {
@@ -213,10 +178,7 @@ export function API({ stack }: StackContext) {
 
   rdsCredentialsSecret.grantRead(api.getFunction('GET /search/suggest')!)
   rdsCredentialsSecret.grantRead(api.getFunction('GET /money/search/suggest')!)
-  rdsCredentialsSecret.grantRead(api.getFunction('POST /checkout')!)
-  rdsCredentialsSecret.grantRead(api.getFunction('POST /stripe/manage')!)
   rdsCredentialsSecret.grantRead(api.getFunction('POST /stripe/webhooks')!)
-  rdsCredentialsSecret.grantRead(api.getFunction('POST /user/delete')!)
 
   stack.addOutputs({ ApiEndpoint: api.url })
 

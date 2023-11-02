@@ -16,6 +16,15 @@ export default {
     }
   },
   stacks(app) {
+    app.setDefaultFunctionProps({
+      runtime: 'nodejs18.x',
+      architecture: 'arm_64',
+      tracing: 'disabled',
+      insightsVersion: undefined,
+      memorySize: '128 MB',
+      timeout: '3 seconds',
+    })
+
     app
       .stack(Imports)
       .stack(Secrets)
