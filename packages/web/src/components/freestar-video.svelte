@@ -56,10 +56,10 @@
           data-type="s2nScript"
         ></script>
       {:else if domain === 'nhl'}
-        <div class="s2nPlayer k-GvH7HE8X-Qe4apDTX" data-type="float" />
+        <div class="s2nPlayer k-bMGNbhM1" data-type="float"></div>
         <script
           type="text/javascript"
-          src="https://embed.sendtonews.com/player3/embedcode.js?fk=GvH7HE8X-Qe4apDTX&cid=15048"
+          src="//embed.sendtonews.com/player3/embedcode.js?fk=bMGNbhM1&cid=15048&offsetx=0&offsety=0&floatwidth=400&floatposition=bottom-right"
           data-type="s2nScript"
         ></script>
       {:else if domain === 'mlb'}
