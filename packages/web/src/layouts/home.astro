@@ -32,7 +32,7 @@ interface Props {
 
 const { domain = 'All', img, ...rest } = Astro.props
 
-const leagues = ['All', 'nba', 'nfl', 'nhl', 'mlb', 'pga']
+const leagues = ['All', 'nba', 'nfl', 'nhl', 'mlb', 'pga', 'epl']
 
 const trendingLinkText = (domain: string) => {
   switch (domain) {
@@ -42,6 +42,8 @@ const trendingLinkText = (domain: string) => {
       return 'See trending Money searches'
     case 'fantasy':
       return 'See trending Fantasy Football searches'
+    case 'epl':
+      return 'See trending Premiere League searches'
     default:
       return `See trending ${domain.toUpperCase()} searches`
   }
@@ -129,7 +131,13 @@ const Logo = domain === 'money' ? MoneyLogo : StandardLogo
                   league === domain && 'bg-primary text-white'
                 }`}
                 href={league === 'All' ? '/' : `/${league}`}
-                set:text={league === 'All' ? league : league.toUpperCase()}
+                set:text={
+                  league === 'All'
+                    ? league
+                    : league === 'epl'
+                    ? 'Premiere League'
+                    : league.toUpperCase()
+                }
               />
             ))
           }

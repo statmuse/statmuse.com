@@ -5,15 +5,15 @@ import { listOnboarding } from '@statmuse/core/examples'
 import { createAskPath } from '@statmuse/core/path'
 import { NOT_FOUND_404 } from '@lib/response'
 
-const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fantasy']
+const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fantasy', 'epl']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
   return NOT_FOUND_404
 
-type LeagueParam = 'nba' | 'nfl' | 'mlb' | 'nhl' | 'pga' | 'fantasy'
+type LeagueParam = 'nba' | 'nfl' | 'mlb' | 'nhl' | 'pga' | 'fantasy' | 'epl'
 const league = Astro.params.league as LeagueParam
 
 const onboardingExamples = await listOnboarding(
-  league === 'fantasy' ? 'nfl' : league,
+  league === 'fantasy' ? 'nfl' : league === "epl" ? 'nfl' : league,
   10,
 )
 const banner =
@@ -509,6 +509,64 @@ const fantasyExamples = [
   ],
 ]
 
+const eplExamples = [
+  [
+    'Player Outlooks & Projections',
+    [
+      'What is your projection for Justin Jefferson?',
+      'What is your outlook for Christian McCaffrey this week?',
+      'Where do you rank Joe Burrow?',
+      'Tell me about Russell Wilson.',
+      'Should I start Jonathan Taylor?',
+      'Should I sit Mike Williams?',
+      "What's the deal with Mark Andrews?",
+      'Who is the top-ranked quarterback?',
+      'Who will be the best fantasy wide receiver this week?',
+      'How will the Rams defense do this week?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'epl', query: q }),
+    })),
+  ],
+  [
+    'Player Comparisons',
+    [
+      'Alvin Kamara or Nick Chubb?',
+      "Ja'Marr Chase, Cooper Kupp or Tyreek Hill?",
+      'Who had more fantasy points last season? Chubb or Saquon?',
+      'Should I go with the Ravens defense or the Colts defense?',
+      'Justin Herbert or Joe Burrow?',
+      'How about Josh Allen or Jalen Hurts?',
+      'Christian McCaffrey, Austin Ekeler fantasy points last 3 seasons.',
+      'Who has more fantasy points per game in their career? Stefon Diggs or AJ Brown?',
+      'Waddle or Tyreek?',
+      'Kittle or Waller?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'epl', query: q }),
+    })),
+  ],
+  [
+    'Player & Team Fantasy Recaps',
+    [
+      'Patrick Mahomes vs Chargers.',
+      'Who scored the most fantasy points last season?',
+      'Which running back averaged the most fantasy points per game last season?',
+      'Which QB had the most DraftKings points last year?',
+      'Who has the most fantasy points per game in a season?',
+      "How many fantasy points per game is Ja'Marr Chase averaging this season?",
+      'Which team defense has scored the fewest fantasy points last year?',
+      'How did Tyreek Hill do?',
+      'Which rookie has the most fantasy points per game this season?',
+      'Which TE is leading in PPR this season?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'epl', query: q }),
+    })),
+  ],
+]
+
+
 type ExampleSet = [string, { query: string; path: string }[]]
 
 const examples = {
@@ -517,6 +575,7 @@ const examples = {
   mlb: mlbExamples as ExampleSet[],
   nhl: nhlExamples as ExampleSet[],
   pga: pgaExamples as ExampleSet[],
+  epl: eplExamples as ExampleSet[],
   fantasy: fantasyExamples as ExampleSet[],
 }
 

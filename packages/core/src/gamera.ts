@@ -160,6 +160,8 @@ export const fallbackIcon = (league: string) => {
       return '/icons/icon-nhl.svg'
     case 'pga':
       return '/icons/icon-pga.svg'
+    case 'epl':
+      return '/icons/icon-nfl.svg'
     default:
       throw new Error('Unknown league')
   }
@@ -175,6 +177,8 @@ export const getDefaultBustImageUrl = (domain: GameraDomain) => {
       return `${cdnBaseUrl}/img/player_profile/sm-hockey-player-lg.png`
     case 'NFL':
       return `${cdnBaseUrl}/img/player_profile/sm-football-player-lg.png`
+    case 'EPL':
+      return `${cdnBaseUrl}/img/player_profile/sm-football-player-lg.png`
     default:
       throw new Error('Unknown domain')
   }
@@ -189,6 +193,8 @@ export const getDefaultTeamLogoUrl = (domain: GameraDomain) => {
     case 'NHL':
       return `${cdnBaseUrl}/img/team_profile/sm-hockey-team-lg.png`
     case 'NFL':
+      return `${cdnBaseUrl}/img/team_profile/sm-football-team-lg.png`
+    case 'EPL':
       return `${cdnBaseUrl}/img/team_profile/sm-football-team-lg.png`
     default:
       throw new Error('Unknown domain')
@@ -266,7 +272,7 @@ const formatTokenTextOnly = (token: GameraToken) => {
   return token.omitLeadingSpace ? text : ' ' + text
 }
 
-export type GameraDomain = 'NBA' | 'NFL' | 'MLB' | 'NHL' | 'PGA'
+export type GameraDomain = 'NBA' | 'NFL' | 'MLB' | 'NHL' | 'PGA' | 'EPL'
 
 export type GameraToken = {
   text: string
@@ -662,6 +668,7 @@ export interface DetailBase {
     | 'nbaHistoricalBoxScore'
     | 'nflHistoricalBoxScore'
     | 'nhlHistoricalBoxScore'
+    | 'eplHistoricalBoxScore'
     | 'playerProfile'
     | 'teamProfile'
     | 'stats'

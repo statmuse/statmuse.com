@@ -33,6 +33,8 @@ Caching.swr(Astro)
           return <MlbBoxscore {data} />
         case 'NHL':
           return <NhlBoxscore {data} />
+        case 'EPL':
+          return <NhlBoxscore {data} />
         default:
           throw new Error('cannot render a boxscore for PGA')
       }
