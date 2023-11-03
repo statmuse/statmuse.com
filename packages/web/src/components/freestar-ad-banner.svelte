@@ -21,5 +21,6 @@
     src="https://a.pub.network/statmuse-com/pubfig.min.js"
     data-cfasync="false"
     async
+    type="module"
   ></script>
 {/if}

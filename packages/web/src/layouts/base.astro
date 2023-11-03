@@ -452,7 +452,6 @@ const canonicalUrl = meta?.canonical
     <script>
       document.addEventListener('astro:after-swap', () => {
         const freestar = window.freestar
-        console.log(freestar)
         if (freestar) {
           freestar.queue.push(function () {
             freestar.newStickyFooter('statmuse_stickyfooter')
