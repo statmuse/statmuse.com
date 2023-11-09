@@ -154,271 +154,324 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
       )
     }
   </div>
-  <div
-    class:list={{
-      'relative overflow-x-auto': !alternateStyle,
-      'overflow-auto border border-[#e4e4e4]': alternateStyle,
-    }}
-  >
-    <table
-      class:list={{
-        'text-[15px] whitespace-nowrap': !alternateStyle,
-        'border-spacing-0': alternateStyle,
-        'w-full': fullWidth,
-      }}
-    >
-      {
-        hideHead ? null : (
-          <thead>
-            <tr
-              class:list={{
-                'text-xs text-team-secondary uppercase tracking-[0.07rem]':
-                  !alternateStyle,
-                'border-b border-[#e4e4e4]': alternateStyle,
-              }}
-            >
-              {data.columns.map((col, index) => {
-                const textColumnStyles = getTextColumnStyles(col)
-                const textColumnHeaderStyles = getTextColumnHeaderStyles(col)
-                const hasImage = data.rows.some(
-                  (row) => row[col.rowItemKey].imageUrl,
-                )
-
-                return (
-                  <th
-                    class:list={{
-                      'first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5':
-                        !alternateStyle,
-                      'text-[#a8a8a8] font-normal px-3 py-2.5 text-center whitespace-nowrap first:border-r first:border-[#e4e4e4] first:min-w-[175px] first:w-[175px] first:sticky first:left-0 first:bg-white':
-                        alternateStyle,
-                      'pl-8': hasImage && !alternateStyle,
-                      'sticky left-0': index === 0 && !alternateStyle,
-                      [textColumnStyles]: !alternateStyle && !!textColumnStyles,
-                      [textColumnHeaderStyles]:
-                        !alternateStyle && !!textColumnHeaderStyles,
-                    }}
-                  >
-                    {col.title}
-                  </th>
-                )
-              })}
-            </tr>
-          </thead>
-        )
-      }
-      <tbody
+  <div>
+    <div style={{ maxHeight: '889px', overflow: 'hidden' }} data-accordion>
+      <div
         class:list={{
-          'divide-y divide-[#c7c8ca] leading-[22px]': !alternateStyle,
-          'divide-y divide-[#e4e4e4]': alternateStyle,
+          'relative overflow-x-auto': !alternateStyle,
+          'overflow-auto border border-[#e4e4e4]': alternateStyle,
         }}
       >
-        {
-          data.rows.map((row, rowIndex) => (
-            <tr
-              class:list={{
-                'bg-[#e9f9ff]': highlight === row[Object.keys(row)[0]].value,
-              }}
-            >
-              {data.columns.map((col, colIndex) => {
-                const getCellContent = (row: Row) => {
-                  const playerEntity = row.entity?.type.includes('player')
-
-                  if (row.imageUrl) {
-                    return (
-                      <div class="flex items-center">
-                        {row.imageUrl ? (
-                          <Image
-                            src={row.imageUrl}
-                            alt={
-                              row.display +
-                              (playerEntity ? ' illustration' : ' logo')
-                            }
-                            class:list={{
-                              'w-6 h-6 max-w-none object-cover rounded-full bg-white mr-2.5':
-                                playerEntity && !alternateStyle,
-                              'opacity-50':
-                                playerEntity &&
-                                row.imageUrl.includes('silhouette'),
-                              'w-4 h-4 max-w-none object-contain mr-2.5':
-                                !playerEntity && !alternateStyle,
-                              'inline-block w-6 h-6 object-contain mr-2.5 align-middle':
-                                alternateStyle,
-                            }}
-                            width={50}
-                            height={50}
-                          />
-                        ) : (
-                          <div class="w-4 h-4 mr-2.5" />
-                        )}
-                        {row.display}
-                      </div>
+        <table
+          class:list={{
+            'text-[15px] whitespace-nowrap': !alternateStyle,
+            'border-spacing-0': alternateStyle,
+            'w-full': fullWidth,
+          }}
+        >
+          {
+            hideHead ? null : (
+              <thead>
+                <tr
+                  class:list={{
+                    'text-xs text-team-secondary uppercase tracking-[0.07rem]':
+                      !alternateStyle,
+                    'border-b border-[#e4e4e4]': alternateStyle,
+                  }}
+                >
+                  {data.columns.map((col, index) => {
+                    const textColumnStyles = getTextColumnStyles(col)
+                    const textColumnHeaderStyles =
+                      getTextColumnHeaderStyles(col)
+                    const hasImage = data.rows.some(
+                      (row) => row[col.rowItemKey].imageUrl,
                     )
-                  }
 
-                  if (row.display?.match(dateRegex)) {
-                    const [, day, date] = row.display.match(dateRegex) || []
                     return (
-                      <div class="flex">
-                        <div class="w-8">{day}</div>
-                        <div>{date}</div>
-                      </div>
-                    )
-                  }
-
-                  if (row.display?.match(scoreRegex)) {
-                    const [, result, score] =
-                      row.display.match(scoreRegex) || []
-                    return (
-                      <div class="flex">
-                        <div class="w-5">{result}</div>
-                        <div>{score}</div>
-                      </div>
-                    )
-                  }
-
-                  return row.display
-                }
-
-                const { entity, imageUrl, value, display } = row[col.rowItemKey]
-                const content = getCellContent(row[col.rowItemKey])
-                const textColumnStyles = getTextColumnStyles(col)
-                const href = entity
-                  ? kanedama
-                    ? getUrlForEntityKanedama(
-                        entity as unknown as KanedamaEntity,
-                      )
-                    : getUrlForEntityGamera(entity)
-                  : undefined
-
-                const firstColumn = data.columns[0]
-                const isRanking =
-                  row[firstColumn.rowItemKey].display.includes('Rank')
-                const color = getRankingColor({ isRanking, display })
-
-                return (
-                  <td
-                    data-value={value}
-                    data-redact={
-                      limitRows && colIndex !== 0 && rowIndex >= freeRowLimit
-                    }
-                    class:list={{
-                      'px-2 py-1': !padding && !alternateStyle && !imageUrl,
-                      'px-2': !padding && !alternateStyle && !!imageUrl,
-                      'px-3 py-2.5 text-center whitespace-nowrap first:border-r first:border-[#e4e4e4] first:min-w-[175px] first:w-[175px] first:sticky first:left-0 first:bg-white first:text-left':
-                        alternateStyle,
-                      'first:bg-white':
-                        alternateStyle &&
-                        highlight !== row[Object.keys(row)[0]].value,
-                      'first:bg-[#e9f9ff]':
-                        alternateStyle &&
-                        highlight === row[Object.keys(row)[0]].value,
-                      'bg-white': !alternateStyle,
-                      'sticky left-0': colIndex === 0 && !alternateStyle,
-                      'w-2': !!imageUrl && !alternateStyle,
-                      [textColumnStyles]: !alternateStyle && !!textColumnStyles,
-                      [padding ?? '']: !!padding,
-                      [color]: isRanking,
-                    }}
-                  >
-                    {entity ? (
-                      <a
-                        title={entity.display}
-                        href={href}
+                      <th
                         class:list={{
-                          hidden:
-                            limitRows &&
-                            colIndex !== 0 &&
-                            rowIndex >= freeRowLimit,
+                          'first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5':
+                            !alternateStyle,
+                          'text-[#a8a8a8] font-normal px-3 py-2.5 text-center whitespace-nowrap first:border-r first:border-[#e4e4e4] first:min-w-[175px] first:w-[175px] first:sticky first:left-0 first:bg-white':
+                            alternateStyle,
+                          'pl-8': hasImage && !alternateStyle,
+                          'sticky left-0': index === 0 && !alternateStyle,
+                          [textColumnStyles]:
+                            !alternateStyle && !!textColumnStyles,
+                          [textColumnHeaderStyles]:
+                            !alternateStyle && !!textColumnHeaderStyles,
                         }}
                       >
-                        {content}
-                      </a>
-                    ) : (
-                      <span
-                        class:list={{
-                          hidden:
-                            limitRows &&
-                            colIndex !== 0 &&
-                            rowIndex >= freeRowLimit,
-                        }}
-                      >
-                        {content}
-                      </span>
-                    )}
-                    {limitRows &&
-                      colIndex !== 0 &&
-                      rowIndex >= freeRowLimit && (
-                        <a
-                          href="/signup"
-                          class="flex items-center justify-center"
-                        >
-                          <div class="bg-primary w-5 h-5 p-1 flex items-center justify-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width={2}
-                              stroke="white"
-                              class="w-full h-full"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+                        {col.title}
+                      </th>
+                    )
+                  })}
+                </tr>
+              </thead>
+            )
+          }
+          <tbody
+            class:list={{
+              'divide-y divide-[#c7c8ca] leading-[22px]': !alternateStyle,
+              'divide-y divide-[#e4e4e4]': alternateStyle,
+            }}
+          >
+            {
+              data.rows.map((row, rowIndex) => (
+                <tr
+                  class:list={{
+                    'bg-[#e9f9ff]':
+                      highlight === row[Object.keys(row)[0]].value,
+                  }}
+                >
+                  {data.columns.map((col, colIndex) => {
+                    const getCellContent = (row: Row) => {
+                      const playerEntity = row.entity?.type.includes('player')
+
+                      if (row.imageUrl) {
+                        return (
+                          <div class="flex items-center">
+                            {row.imageUrl ? (
+                              <Image
+                                src={row.imageUrl}
+                                alt={
+                                  row.display +
+                                  (playerEntity ? ' illustration' : ' logo')
+                                }
+                                class:list={{
+                                  'w-6 h-6 max-w-none object-cover rounded-full bg-white mr-2.5':
+                                    playerEntity && !alternateStyle,
+                                  'opacity-50':
+                                    playerEntity &&
+                                    row.imageUrl.includes('silhouette'),
+                                  'w-4 h-4 max-w-none object-contain mr-2.5':
+                                    !playerEntity && !alternateStyle,
+                                  'inline-block w-6 h-6 object-contain mr-2.5 align-middle':
+                                    alternateStyle,
+                                }}
+                                width={50}
+                                height={50}
                               />
-                            </svg>
+                            ) : (
+                              <div class="w-4 h-4 mr-2.5" />
+                            )}
+                            {row.display}
                           </div>
-                        </a>
-                      )}
-                  </td>
-                )
-              })}
-            </tr>
-          ))
-        }
-        {
-          data.aggregations?.map((row) => (
-            <tr class="text-sm font-semibold">
-              {data.columns.map((col, x) => {
-                const { display } = row[col.rowItemKey]
-                const textColumnStyles = getTextColumnStyles(col)
-                return (
-                  <td
-                    class:list={{
-                      'px-2 py-1 bg-white': true,
-                      'sticky left-0': x === 0,
-                      [textColumnStyles]: !!textColumnStyles,
-                    }}
-                  >
-                    {display}
-                  </td>
-                )
-              })}
-            </tr>
-          ))
-        }
-      </tbody>
-    </table>
+                        )
+                      }
+
+                      if (row.display?.match(dateRegex)) {
+                        const [, day, date] = row.display.match(dateRegex) || []
+                        return (
+                          <div class="flex">
+                            <div class="w-8">{day}</div>
+                            <div>{date}</div>
+                          </div>
+                        )
+                      }
+
+                      if (row.display?.match(scoreRegex)) {
+                        const [, result, score] =
+                          row.display.match(scoreRegex) || []
+                        return (
+                          <div class="flex">
+                            <div class="w-5">{result}</div>
+                            <div>{score}</div>
+                          </div>
+                        )
+                      }
+
+                      return row.display
+                    }
+
+                    const { entity, imageUrl, value, display } =
+                      row[col.rowItemKey]
+                    const content = getCellContent(row[col.rowItemKey])
+                    const textColumnStyles = getTextColumnStyles(col)
+                    const href = entity
+                      ? kanedama
+                        ? getUrlForEntityKanedama(
+                            entity as unknown as KanedamaEntity,
+                          )
+                        : getUrlForEntityGamera(entity)
+                      : undefined
+
+                    const firstColumn = data.columns[0]
+                    const isRanking =
+                      row[firstColumn.rowItemKey].display.includes('Rank')
+                    const color = getRankingColor({ isRanking, display })
+
+                    return (
+                      <td
+                        data-value={value}
+                        data-redact={
+                          limitRows &&
+                          colIndex !== 0 &&
+                          rowIndex >= freeRowLimit
+                        }
+                        class:list={{
+                          'px-2 py-1': !padding && !alternateStyle && !imageUrl,
+                          'px-2': !padding && !alternateStyle && !!imageUrl,
+                          'px-3 py-2.5 text-center whitespace-nowrap first:border-r first:border-[#e4e4e4] first:min-w-[175px] first:w-[175px] first:sticky first:left-0 first:bg-white first:text-left':
+                            alternateStyle,
+                          'first:bg-white':
+                            alternateStyle &&
+                            highlight !== row[Object.keys(row)[0]].value,
+                          'first:bg-[#e9f9ff]':
+                            alternateStyle &&
+                            highlight === row[Object.keys(row)[0]].value,
+                          'bg-white': !alternateStyle,
+                          'sticky left-0': colIndex === 0 && !alternateStyle,
+                          'w-2': !!imageUrl && !alternateStyle,
+                          [textColumnStyles]:
+                            !alternateStyle && !!textColumnStyles,
+                          [padding ?? '']: !!padding,
+                          [color]: isRanking,
+                        }}
+                      >
+                        {entity ? (
+                          <a
+                            title={entity.display}
+                            href={href}
+                            class:list={{
+                              hidden:
+                                limitRows &&
+                                colIndex !== 0 &&
+                                rowIndex >= freeRowLimit,
+                            }}
+                          >
+                            {content}
+                          </a>
+                        ) : (
+                          <span
+                            class:list={{
+                              hidden:
+                                limitRows &&
+                                colIndex !== 0 &&
+                                rowIndex >= freeRowLimit,
+                            }}
+                          >
+                            {content}
+                          </span>
+                        )}
+                        {limitRows &&
+                          colIndex !== 0 &&
+                          rowIndex >= freeRowLimit && (
+                            <a
+                              href="/signup"
+                              class="flex items-center justify-center"
+                            >
+                              <div class="bg-primary w-5 h-5 p-1 flex items-center justify-center">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke-width={2}
+                                  stroke="white"
+                                  class="w-full h-full"
+                                >
+                                  <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+                                  />
+                                </svg>
+                              </div>
+                            </a>
+                          )}
+                      </td>
+                    )
+                  })}
+                </tr>
+              ))
+            }
+            {
+              data.aggregations?.map((row) => (
+                <tr class="text-sm font-semibold">
+                  {data.columns.map((col, x) => {
+                    const { display } = row[col.rowItemKey]
+                    const textColumnStyles = getTextColumnStyles(col)
+                    return (
+                      <td
+                        class:list={{
+                          'px-2 py-1 bg-white': true,
+                          'sticky left-0': x === 0,
+                          [textColumnStyles]: !!textColumnStyles,
+                        }}
+                      >
+                        {display}
+                      </td>
+                    )
+                  })}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="hidden" data-subscribe-cta>
+      <a href="/auth/signup">Subscribe to see all 50+ rows</a>
+    </div>
+    <div class="hidden" data-expand-btn>
+      <a href="#">See all rows</a>
+    </div>
   </div>
 </div>
 
 <script>
   import { session } from '@lib/session-store'
+  const freeRowLimit = 25
 
   document.addEventListener('astro:page-load', () => {
     session.subscribe((s) => {
-      if (
-        s &&
-        s.type === 'user' &&
-        s.properties.subscriptionStatus === 'active'
-      ) {
-        document
-          .querySelectorAll<HTMLTableRowElement>('[data-redact]')
-          .forEach((elem) => {
-            const [content, lock] = elem.children
-            content.classList.remove('hidden')
-            lock.classList.add('hidden')
+      if (s) {
+        if (s.type === 'user' && s.properties.subscriptionStatus === 'active') {
+          document
+            .querySelectorAll<HTMLTableRowElement>('[data-redact]')
+            .forEach((elem) => {
+              const [content, lock] = elem.children
+              content.classList.remove('hidden')
+              lock.classList.add('hidden')
+            })
+
+          document.querySelectorAll('table').forEach((table) => {
+            const numRows = table.querySelectorAll('tbody tr').length
+            console.log('num rows: ', numRows)
+            if (numRows > freeRowLimit + 3) {
+              const expandBtn = table
+                .closest('[data-accordion]')
+                ?.parentElement?.querySelector<HTMLElement>('[data-expand-btn]')
+              if (expandBtn) {
+                expandBtn.classList.remove('hidden')
+                expandBtn.addEventListener('click', (e) => {
+                  e.preventDefault()
+                  console.log('expand now')
+                  const accordion = table.closest<HTMLElement>(
+                    '[data-accordion]',
+                  ) as HTMLElement
+                  accordion.style.maxHeight = ''
+                  expandBtn.classList.add('hidden')
+                })
+              }
+            }
           })
+        } else {
+          document.querySelectorAll('table').forEach((table) => {
+            const numRows = table.querySelectorAll('tbody tr').length
+            console.log('num rows: ', numRows)
+            if (numRows > freeRowLimit) {
+              const subscribeCta = table
+                .closest('[data-accordion]')
+                ?.parentElement?.querySelector<HTMLElement>(
+                  '[data-subscribe-cta]',
+                )
+              if (subscribeCta) {
+                subscribeCta.classList.remove('hidden')
+              }
+            }
+          })
+        }
       }
     })
 
