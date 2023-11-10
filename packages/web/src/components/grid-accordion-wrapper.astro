@@ -1,0 +1,57 @@
+<div>
+  <div style={{ maxHeight: '889px', overflow: 'hidden' }} data-accordion>
+    <slot />
+  </div>
+  <div class="hidden" data-subscribe-cta>
+    <a href="/auth/signup">Subscribe to see all 50+ rows</a>
+  </div>
+  <div class="hidden" data-expand-btn>
+    <a href="#">See all rows</a>
+  </div>
+</div>
+<script>
+  import { session } from '@lib/session-store'
+  const freeRowLimit = 25
+
+  document.addEventListener('astro:page-load', () => {
+    session.subscribe((s) => {
+      if (s) {
+        if (s.type === 'user' && s.properties.subscriptionStatus === 'active') {
+          document.querySelectorAll('table').forEach((table) => {
+            const numRows = table.querySelectorAll('tbody tr').length
+            if (numRows > freeRowLimit + 3) {
+              const expandBtn = table
+                .closest('[data-accordion]')
+                ?.parentElement?.querySelector<HTMLElement>('[data-expand-btn]')
+              if (expandBtn) {
+                expandBtn.classList.remove('hidden')
+                expandBtn.addEventListener('click', (e) => {
+                  e.preventDefault()
+                  const accordion = table.closest<HTMLElement>(
+                    '[data-accordion]',
+                  ) as HTMLElement
+                  accordion.style.maxHeight = ''
+                  expandBtn.classList.add('hidden')
+                })
+              }
+            }
+          })
+        } else {
+          document.querySelectorAll('table').forEach((table) => {
+            const numRows = table.querySelectorAll('tbody tr').length
+            if (numRows > freeRowLimit) {
+              const subscribeCta = table
+                .closest('[data-accordion]')
+                ?.parentElement?.querySelector<HTMLElement>(
+                  '[data-subscribe-cta]',
+                )
+              if (subscribeCta) {
+                subscribeCta.classList.remove('hidden')
+              }
+            }
+          })
+        }
+      }
+    })
+  })
+</script>
