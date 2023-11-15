@@ -1,9 +1,22 @@
-<div>
-  <div style={{ maxHeight: '889px', overflow: 'hidden' }} data-accordion>
+---
+import ElephantPlus from '@components/icons/elephant-plus.astro'
+---
+
+<div class="relative">
+  <div style={{ maxHeight: '892px', overflow: 'hidden' }} data-accordion>
     <slot />
   </div>
-  <div class="hidden" data-subscribe-cta>
-    <a href="/auth/signup">Subscribe to see all 50+ rows</a>
+  <div
+    class="hidden absolute bottom-4 left-1/2 -translate-x-1/2"
+    data-subscribe-cta
+  >
+    <a
+      href="/auth/signup"
+      class="flex gap-2 items-center w-fit py-3 px-4 bg-primary text-white text-lg rounded-md"
+    >
+      <span class="shrink-0 mt-[1px]">Unlock 2x data</span>
+      <ElephantPlus color="#fff" class="w-10" />
+    </a>
   </div>
   <div class="hidden" data-expand-btn>
     <a href="#">See all rows</a>
