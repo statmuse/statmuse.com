@@ -18,11 +18,7 @@ const { domain, additionalQuestions } = Astro.props
   <div
     class="grid md:grid-cols-[repeat(auto-fit,_minmax(425px,_1fr))] gap-4 items-start"
   >
-    <FreestarVideo
-      client:only="svelte"
-      transition:persist="video-player"
-      {domain}
-    />
+    <FreestarVideo client:only="svelte" {domain} />
     {
       additionalQuestions ? (
         <ul class="space-y-3" data-cy-related-questions>

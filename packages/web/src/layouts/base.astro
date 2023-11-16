@@ -444,11 +444,7 @@ const canonicalUrl = meta?.canonical
   <body class="text-black">
     <slot />
     <CookieConsent client:only="svelte" />
-    <FreestarAdBanner
-      transition:persist="ad-banner"
-      client:only="svelte"
-      {enableFreestarAdBanner}
-    />
+    <FreestarAdBanner client:only="svelte" {enableFreestarAdBanner} />
     <script>
       document.addEventListener('astro:after-swap', () => {
         const freestar = window.freestar
