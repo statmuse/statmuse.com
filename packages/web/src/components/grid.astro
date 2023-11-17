@@ -340,12 +340,14 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                     {limitRows &&
                       rowIndex >= freeRowLimit &&
                       (imageUrl ? (
-                        <div class="flex items-center gap-2.5">
-                          <div class="bg-[#c7c8ca] opacity-30 h-4 w-4 rounded-full" />
-                          <div class="bg-[#c7c8ca] opacity-30 h-5 flex-1 rounded-md" />
+                        <div class="flex items-center gap-2.5 h-[22px]">
+                          <div class="bg-[#c7c8ca]/30 h-4 w-4 rounded-full" />
+                          <div class="bg-[#c7c8ca]/30 h-5 flex-1 rounded-md" />
                         </div>
                       ) : (
-                        <div class="bg-[#c7c8ca] opacity-30 w-full h-5 rounded-md" />
+                        <div class="flex items-center h-[22px]">
+                          <div class="bg-[#c7c8ca]/30 w-full h-5 rounded-md" />
+                        </div>
                       ))}
                   </td>
                 )
