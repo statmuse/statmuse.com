@@ -298,9 +298,7 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                 return (
                   <td
                     data-value={value}
-                    data-redact={
-                      limitRows && colIndex !== 0 && rowIndex >= freeRowLimit
-                    }
+                    data-redact={limitRows && rowIndex >= freeRowLimit}
                     class:list={{
                       'px-2 py-1': !padding && !alternateStyle && !imageUrl,
                       'px-2': !padding && !alternateStyle && !!imageUrl,
@@ -325,10 +323,7 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                         title={entity.display}
                         href={href}
                         class:list={{
-                          hidden:
-                            limitRows &&
-                            colIndex !== 0 &&
-                            rowIndex >= freeRowLimit,
+                          hidden: limitRows && rowIndex >= freeRowLimit,
                         }}
                       >
                         {content}
@@ -336,40 +331,22 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                     ) : (
                       <span
                         class:list={{
-                          hidden:
-                            limitRows &&
-                            colIndex !== 0 &&
-                            rowIndex >= freeRowLimit,
+                          hidden: limitRows && rowIndex >= freeRowLimit,
                         }}
                       >
                         {content}
                       </span>
                     )}
                     {limitRows &&
-                      colIndex !== 0 &&
-                      rowIndex >= freeRowLimit && (
-                        <a
-                          href="/signup"
-                          class="flex items-center justify-center"
-                        >
-                          <div class="bg-primary w-5 h-5 p-1 flex items-center justify-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width={2}
-                              stroke="white"
-                              class="w-full h-full"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
-                              />
-                            </svg>
-                          </div>
-                        </a>
-                      )}
+                      rowIndex >= freeRowLimit &&
+                      (imageUrl ? (
+                        <div class="flex items-center gap-2.5">
+                          <div class="bg-[#c7c8ca] opacity-30 h-4 w-4 rounded-full" />
+                          <div class="bg-[#c7c8ca] opacity-30 h-5 flex-1 rounded-md" />
+                        </div>
+                      ) : (
+                        <div class="bg-[#c7c8ca] opacity-30 w-full h-5 rounded-md" />
+                      ))}
                   </td>
                 )
               })}

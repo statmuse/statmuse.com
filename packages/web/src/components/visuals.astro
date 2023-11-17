@@ -13,6 +13,7 @@ import NhlBoxscore from '@components/nhl-boxscore.astro'
 import Schedule from '@components/schedule.astro'
 import NbaShotChart from '@components/nba-shotchart'
 import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
+import GridAccordionWrapper from '@components/grid-accordion-wrapper.astro'
 
 interface Props {
   response: GameraResponse
@@ -163,13 +164,17 @@ const details =
                     )
                 })()}
                 {detail.grids.map((grid) => (
-                  <Grid data={grid} hideTitle limitRows />
+                  <GridAccordionWrapper>
+                    <Grid data={grid} hideTitle limitRows />
+                  </GridAccordionWrapper>
                 ))}
               </Fragment>
             )
           case 'genericGrids':
             return detail.grids.map((grid) => (
-              <Grid data={grid} hideTitle limitRows />
+              <GridAccordionWrapper>
+                <Grid data={grid} hideTitle limitRows />
+              </GridAccordionWrapper>
             ))
           case 'standings':
             switch (response.visual.domain) {
