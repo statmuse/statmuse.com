@@ -14,6 +14,7 @@ import Schedule from '@components/schedule.astro'
 import NbaShotChart from '@components/nba-shotchart'
 import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
 import GridAccordionWrapper from '@components/grid-accordion-wrapper.astro'
+import FreestarMedRec from '@components/freestar-med-rec.svelte'
 
 interface Props {
   response: GameraResponse
@@ -163,6 +164,9 @@ const details =
                       />
                     )
                 })()}
+                <div>
+                  <FreestarMedRec client:only="svelte" />
+                </div>
                 {detail.grids.map((grid) => (
                   <GridAccordionWrapper>
                     <Grid data={grid} hideTitle limitRows />
