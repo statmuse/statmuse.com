@@ -1,17 +1,22 @@
 <script lang="ts">
   import { session } from '@lib/session-store'
+  import { isMobileTest } from '@lib/useragent'
   import { onMount } from 'svelte'
+
+  let mobile = isMobileTest(navigator.userAgent)
 
   onMount(() => {
     return () => {
       if (window.freestar) {
-        freestar.deleteAdSlots('statmuse_incontent_1')
+        freestar.queue.push(function () {
+          freestar.deleteAdSlots('statmuse_incontent_1')
+        })
       }
     }
   })
 </script>
 
-{#if ($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active') || ($session?.type === 'visitor' && !$session?.properties.bot)}
+{#if import.meta.env.PROD && mobile && (($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active') || ($session?.type === 'visitor' && !$session?.properties.bot))}
   <script data-cfasync="false" type="text/javascript" data-astro-exec>
     if (window.freestar) {
       freestar.queue.push(function () {

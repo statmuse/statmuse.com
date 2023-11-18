@@ -6,6 +6,7 @@
   import { throttle, uniqBy } from 'lodash-es'
   import { session } from '@lib/session-store'
   import type { AskDocument } from '@statmuse/core/elastic'
+  import { isMobileTest } from '@lib/useragent'
 
   export let query: string = ''
   export let conversationToken: string = ''
@@ -183,9 +184,7 @@
   }
 
   onMount(() => {
-    const mobileRegex =
-      /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Kindle|NetFront|Silk-Accelerated|(hpw|web)OS|Fennec|Minimo|Opera M(obi|ini)|Blazer|Dolfin|Dolphin|Skyfire|Zune/
-    if (!mobileRegex.test(navigator.userAgent)) {
+    if (!isMobileTest(navigator.userAgent)) {
       input.focus()
     }
     shadowInput.value = query
