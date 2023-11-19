@@ -474,6 +474,15 @@ const canonicalUrl = meta?.canonical
       import type { Session } from '@lib/session'
       import { session as sessionStore } from '@lib/session-store'
 
+      // configure honeybadger
+      Honeybadger.configure({
+          apiKey: document.querySelector<HTMLMetaElement>(
+            'meta[name="honeybadger"]',
+          )?.content,
+          environment: import.meta.env.PUBLIC_STAGE,
+          reportData: import.meta.env.PROD
+        })
+
       const flattenObj = (key: string, obj?: {}) => {
         return !obj
           ? {}
@@ -527,15 +536,6 @@ const canonicalUrl = meta?.canonical
       })
 
       document.addEventListener('astro:page-load', async () => {
-        // configure honeybadger
-        Honeybadger.configure({
-          apiKey: document.querySelector<HTMLMetaElement>(
-            'meta[name="honeybadger"]',
-          )?.content,
-          environment: import.meta.env.PUBLIC_STAGE,
-          reportData: import.meta.env.PROD,
-        })
-
         /**
          * Given window and document, add or remove "selected" class to league nav
          * links if current window location matches nav href. Note that the argument
