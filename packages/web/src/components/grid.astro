@@ -208,8 +208,7 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
       }
       <tbody
         class:list={{
-          'divide-y divide-[#c7c8ca] leading-[22px]': !alternateStyle,
-          'divide-y divide-[#e4e4e4]': alternateStyle,
+          'leading-[22px]': !alternateStyle,
         }}
       >
         {
@@ -217,6 +216,8 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
             <tr
               class:list={{
                 'bg-[#e9f9ff]': highlight === row[Object.keys(row)[0]].value,
+                'border-t border-[#c7c8ca]': rowIndex !== 0,
+                'border-[#c7c8ca]/30': limitRows && rowIndex >= freeRowLimit,
               }}
             >
               {data.columns.map((col, colIndex) => {
@@ -392,11 +393,17 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
         s.properties.subscriptionStatus === 'active'
       ) {
         document
-          .querySelectorAll<HTMLTableRowElement>('[data-redact]')
+          .querySelectorAll<HTMLTableCellElement>('[data-redact]')
           .forEach((elem) => {
             const [content, lock] = elem.children
             content.classList.remove('hidden')
             lock.classList.add('hidden')
+          })
+
+        document
+          .querySelectorAll<HTMLTableRowElement>('.border-\\[\\#c7c8ca\\]\\/30')
+          .forEach((elem) => {
+            elem.classList.remove('border-[#c7c8ca]/30')
           })
       }
     })
