@@ -38,7 +38,7 @@ const tabs = Astro.props.titles.map((tab) => ({
             {name}
             type="radio"
             id={`tab-${tab.id}`}
-            class="absolute h-0 w-0 overflow-hidden peer"
+            class="appearance-none absolute h-0 w-0 overflow-hidden peer"
             checked={
               Astro.props.selected
                 ? tab.label === Astro.props.selected
