@@ -45,10 +45,15 @@ import ElephantPlus from '@components/icons/elephant-plus.astro'
     const container = document.querySelector('[data-accordion]') as HTMLElement
     if (container) {
       const thead = container?.querySelector('table thead')
-      const tr = container?.querySelector('table tbody tr')
-      const maxHeight =
-        (thead?.clientHeight || 0) + (tr?.clientHeight || 0) * 28 + 'px'
-      container.style.maxHeight = maxHeight
+      const tr = container?.querySelectorAll('table tbody tr')
+      let maxHeight = ''
+      if (tr.length > freeRowLimit + 3) {
+        maxHeight =
+          (thead?.getBoundingClientRect().height || 0) +
+          (tr[1].getBoundingClientRect().height || 0) * 28 +
+          'px'
+        container.style.maxHeight = maxHeight
+      }
 
       session.subscribe((s) => {
         if (s) {
