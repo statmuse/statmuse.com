@@ -325,10 +325,7 @@ export interface GameraPlayerBio {
     name: string
     years: number[]
   }[]
-  additionalQuestions: {
-    domain: string
-    text: string
-  }[]
+  additionalQuestions: AdditionalQuestion[]
   statsSummary?: {
     statsScope: string
     stats: {
@@ -653,6 +650,23 @@ export interface Summary {
 export interface AdditionalQuestion {
   domain: string
   text: string
+}
+
+export interface ContentReference {
+  domainTags?: {
+    domain: string
+  }
+  questionTags?: {
+    actorType: string
+    teamIds: number[]
+    playerIds: number[]
+    seasonYears: number[]
+  }
+  answerTags?: {
+    teamIds: number[]
+    playerIds: number[]
+    seasonYears: number[]
+  }
 }
 
 export interface DetailBase {
@@ -1202,3 +1216,50 @@ export type Detail =
   | StandingsDetail
   | ScheduleDetail
   | NbaShotsDetail
+
+export interface PlayerInfo {
+  entity: GameraEntity
+  imageUrl: string
+  colors: {
+    backgroundColor: string
+    foregroundColor: string
+  }
+  statDisplayValue: string
+}
+
+export interface PlayerCard {
+  stat: string
+  type: string
+  players: PlayerInfo[]
+}
+
+export interface PlayerCardResponse {
+  seasonYearDisplay: string
+  seasonType: string
+  cards: PlayerCard[]
+}
+
+export interface TeamInfo {
+  name: string
+  nickname: string
+  abbreviation: string
+  logoImageUrl: string
+  colors: {
+    foregroundColor: string
+    backgroundColor: string
+  }
+  entity: GameraEntity
+  statDisplayValue: string
+}
+
+export interface TeamCard {
+  stat: string
+  type: string
+  teams: TeamInfo[]
+}
+
+export interface TeamCardResponse {
+  seasonYearDisplay: string
+  seasonType: string
+  cards: TeamCard[]
+}
