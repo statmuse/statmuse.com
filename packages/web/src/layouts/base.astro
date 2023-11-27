@@ -463,6 +463,9 @@ const canonicalUrl = meta?.canonical
         const freestar = window.freestar
         if (freestar) {
           freestar.queue.push(function () {
+            freestar.deleteStickyFooter('statmuse_stickyfooter')
+          })
+          freestar.queue.push(function () {
             freestar.newStickyFooter('statmuse_stickyfooter')
           })
         }

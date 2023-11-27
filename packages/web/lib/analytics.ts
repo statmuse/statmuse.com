@@ -35,7 +35,8 @@ declare global {
       }
       initCallback: () => void
       newAdSlots: () => void
-      newStickyFooter: () => void
+      newStickyFooter: (x?: string) => void
+      deleteStickyFooter: (x?: string) => void
     }
   }
 }
