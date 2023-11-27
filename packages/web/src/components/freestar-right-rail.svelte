@@ -5,12 +5,12 @@
   let mobile = isMobileTest(navigator.userAgent)
 
   onMount(() => {
-    if (window.freestar && mobile) {
+    if (window.freestar && !mobile) {
       freestar.queue.push(function () {
         freestar.newAdSlots([
           {
-            placementName: 'statmuse_incontent_1',
-            slotId: 'statmuse_incontent_1',
+            placementName: 'statmuse_right_rail',
+            slotId: 'statmuse_right_rail',
           },
         ])
       })
@@ -18,17 +18,17 @@
     return () => {
       if (window.freestar) {
         freestar.queue.push(function () {
-          freestar.deleteAdSlots('statmuse_incontent_1')
+          freestar.deleteAdSlots('statmuse_right_rail')
         })
       }
     }
   })
 </script>
 
-{#if import.meta.env.PROD && mobile && (($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active') || ($session?.type === 'visitor' && !$session?.properties.bot))}
+{#if import.meta.env.PROD && !mobile && (($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active') || ($session?.type === 'visitor' && !$session?.properties.bot))}
   <div
     align="center"
-    data-freestar-ad="__300x250 __300x250"
-    id="statmuse_incontent_1"
+    data-freestar-ad="__300x600"
+    id="statmuse_right_rail"
   ></div>
 {/if}
