@@ -129,65 +129,86 @@ if (allowedDomains.includes(domain)) {
 ---
 
 {
-  playerCardsResp &&
-    teamCardsResp &&
-    (playerCardsResp.cards.length > 0 || teamCardsResp.cards.length > 0) && (
-      <Fragment>
-        <h3 class="text-3xl font-semibold">More Stats</h3>
-        {playerCardsResp?.cards.map((card) => (
-          <div class="my-4 relative -z-[1]">
-            <p class="font-semibold">
-              {`${cardTitle(card.stat)} ${playerCardsResp.seasonYearDisplay}`}
-            </p>
-            <div
-              class="flex max-w-sm rounded-2xl overflow-hidden"
-              style={{
-                backgroundColor: card.players[0].colors.backgroundColor,
-                color: card.players[0].colors.foregroundColor,
-              }}
-            >
-              {card?.players.map((player, i) => (
-                <div class="text-center flex-1 relative h-56">
-                  <h3 class="text-3xl mt-3">{player.statDisplayValue}</h3>
-                  <p class="text-sm font-thin uppercase">
-                    {lastName(player.entity.display)}
-                  </p>
-                  <img
-                    src={player.imageUrl}
-                    class=" h-36 absolute bottom-0 left-1/2 -translate-x-1/2"
-                    style={{ maxWidth: 'initial', zIndex: 3 - i }}
-                  />
+  playerCardsResp && teamCardsResp && (
+    <>
+      {playerCardsResp.cards.length > 0 && (
+        <Fragment>
+          <h3 class="text-3xl font-semibold">
+            {`${domain.toUpperCase()} ${
+              playerCardsResp.seasonYearDisplay
+            } Leaders`}
+          </h3>
+          <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-5">
+            {playerCardsResp?.cards.map((card) => (
+              <div class="relative -z-[1]">
+                <p class="font-semibold">
+                  {`${cardTitle(card.stat)} ${
+                    playerCardsResp.seasonYearDisplay
+                  }`}
+                </p>
+                <div
+                  class="flex rounded-2xl overflow-hidden"
+                  style={{
+                    backgroundColor: card.players[0].colors.backgroundColor,
+                    color: card.players[0].colors.foregroundColor,
+                  }}
+                >
+                  {card?.players.map((player, i) => (
+                    <div class="text-center flex-1 relative h-56">
+                      <h3 class="text-3xl mt-3">{player.statDisplayValue}</h3>
+                      <p class="text-sm font-thin uppercase">
+                        {lastName(player.entity.display)}
+                      </p>
+                      <img
+                        src={player.imageUrl}
+                        class=" h-36 absolute bottom-0 left-1/2 -translate-x-1/2"
+                        style={{ maxWidth: 'initial', zIndex: 3 - i }}
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        ))}
-        {teamCardsResp?.cards.map((card) => (
-          <div class="my-4">
-            <p class="font-semibold">
-              {`${cardTitle(card.stat)} ${teamCardsResp.seasonYearDisplay}`}
-            </p>
-            <div
-              class="flex flex-wrap max-w-sm rounded-2xl py-5 gap-y-5"
-              style={{
-                backgroundColor: card.teams[0].colors.backgroundColor,
-                color: card.teams[0].colors.foregroundColor,
-              }}
-            >
-              {card.teams.map((team) => (
-                <div class="w-1/3 text-center">
-                  <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center mx-auto">
-                    <img
-                      src={team.logoImageUrl}
-                      class="w-4/5 h-4/5 object-contain"
-                    />
-                  </div>
-                  <p class="text-3xl mt-2">{team.statDisplayValue}</p>
+        </Fragment>
+      )}
+      {teamCardsResp.cards.length > 0 && (
+        <Fragment>
+          <h3 class="text-3xl font-semibold">
+            {`${domain.toUpperCase()} ${
+              teamCardsResp.seasonYearDisplay
+            } Rankings`}
+          </h3>
+          <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-5">
+            {teamCardsResp?.cards.map((card) => (
+              <div>
+                <p class="font-semibold">
+                  {`${cardTitle(card.stat)} ${teamCardsResp.seasonYearDisplay}`}
+                </p>
+                <div
+                  class="flex flex-wrap rounded-2xl py-5 gap-y-5"
+                  style={{
+                    backgroundColor: card.teams[0].colors.backgroundColor,
+                    color: card.teams[0].colors.foregroundColor,
+                  }}
+                >
+                  {card.teams.map((team) => (
+                    <div class="w-1/3 text-center">
+                      <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center mx-auto">
+                        <img
+                          src={team.logoImageUrl}
+                          class="w-4/5 h-4/5 object-contain"
+                        />
+                      </div>
+                      <p class="text-3xl mt-2">{team.statDisplayValue}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </Fragment>
-    )
+        </Fragment>
+      )}
+    </>
+  )
 }
