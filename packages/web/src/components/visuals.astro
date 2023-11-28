@@ -15,6 +15,7 @@ import NbaShotChart from '@components/nba-shotchart'
 import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
 import GridAccordionWrapper from '@components/grid-accordion-wrapper.astro'
 import FreestarMedRec from '@components/freestar-med-rec.svelte'
+import FreestarRightRail from '@components/freestar-right-rail.svelte'
 
 interface Props {
   response: GameraResponse
@@ -168,17 +169,29 @@ const details =
                   <FreestarMedRec client:only="svelte" />
                 </div>
                 {detail.grids.map((grid) => (
-                  <GridAccordionWrapper>
-                    <Grid data={grid} hideTitle limitRows />
-                  </GridAccordionWrapper>
+                  <div>
+                    <div class="flex gap-4">
+                      <div class="flex-1 overflow-x-auto">
+                        <GridAccordionWrapper>
+                          <Grid data={grid} hideTitle limitRows />
+                        </GridAccordionWrapper>
+                      </div>
+                      <FreestarRightRail client:only="svelte" />
+                    </div>
+                  </div>
                 ))}
               </Fragment>
             )
           case 'genericGrids':
             return detail.grids.map((grid) => (
-              <GridAccordionWrapper>
-                <Grid data={grid} hideTitle limitRows />
-              </GridAccordionWrapper>
+              <div class="flex gap-4">
+                <div class="flex-1 overflow-x-auto">
+                  <GridAccordionWrapper>
+                    <Grid data={grid} hideTitle limitRows />
+                  </GridAccordionWrapper>
+                </div>
+                <FreestarRightRail client:only="svelte" />
+              </div>
             ))
           case 'standings':
             switch (response.visual.domain) {

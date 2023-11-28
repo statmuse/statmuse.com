@@ -50,10 +50,12 @@ export function API({ stack }: StackContext) {
       stack,
       'gamera-prod-alb-listener',
       {
-        loadBalancerArn:
-          'arn:aws:elasticloadbalancing:us-east-1:723112830140:loadbalancer/app/gamera-prod/69000dfcb10c6a79',
-        listenerArn:
-          'arn:aws:elasticloadbalancing:us-east-1:723112830140:listener/app/gamera-prod/69000dfcb10c6a79/66bcc3bb81da491a',
+        loadBalancerArn: isProd
+          ? 'arn:aws:elasticloadbalancing:us-east-1:723112830140:loadbalancer/app/gamera-prod/69000dfcb10c6a79'
+          : 'arn:aws:elasticloadbalancing:us-east-1:723112830140:loadbalancer/app/gamera-staging/7a5fdcd55dd05878',
+        listenerArn: isProd
+          ? 'arn:aws:elasticloadbalancing:us-east-1:723112830140:listener/app/gamera-prod/69000dfcb10c6a79/66bcc3bb81da491a'
+          : 'arn:aws:elasticloadbalancing:us-east-1:723112830140:listener/app/gamera-staging/7a5fdcd55dd05878/d327a2ddf431e908',
       },
     )
 

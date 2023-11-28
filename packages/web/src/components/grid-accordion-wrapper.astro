@@ -12,13 +12,13 @@ import ElephantPlus from '@components/icons/elephant-plus.astro'
   >
     <a
       href="/auth/signup"
-      class="flex gap-2 items-center w-fit py-3 px-4 bg-primary text-white text-lg rounded-md"
+      class="flex gap-2 items-center w-fit py-3 px-4 bg-primary text-white text-lg rounded-md hover:no-underline"
     >
       <span class="shrink-0 mt-[1px]">Unlock 2x data</span>
       <ElephantPlus color="#fff" class="w-10" />
     </a>
   </div>
-  <div class="hidden border-b border-[#c7c8ca] py-1" data-expand-btn>
+  <div class="hidden border-y border-[#c7c8ca] py-1 mt-0.5" data-expand-btn>
     <a href="#" class="text-primary flex items-center justify-center gap-2">
       Show more
       <span
@@ -27,7 +27,7 @@ import ElephantPlus from '@components/icons/elephant-plus.astro'
       </span>
     </a>
   </div>
-  <div class="hidden border-b border-[#c7c8ca] py-1" data-collapse-btn>
+  <div class="hidden border-y border-[#c7c8ca] py-1 mt-0.5" data-collapse-btn>
     <a href="#" class="text-primary flex items-center justify-center gap-2">
       Show less
       <span
@@ -42,61 +42,80 @@ import ElephantPlus from '@components/icons/elephant-plus.astro'
   const freeRowLimit = 25
 
   document.addEventListener('astro:page-load', () => {
-    session.subscribe((s) => {
-      if (s) {
-        if (s.type === 'user' && s.properties.subscriptionStatus === 'active') {
-          document.querySelectorAll('table').forEach((table) => {
-            const numRows = table.querySelectorAll('tbody tr').length
-            if (numRows > freeRowLimit + 3) {
-              const expandBtn = table
-                .closest('[data-accordion]')
-                ?.parentElement?.querySelector<HTMLElement>('[data-expand-btn]')
-              const collapseBtn = table
-                .closest('[data-accordion]')
-                ?.parentElement?.querySelector<HTMLElement>(
-                  '[data-collapse-btn]',
-                )
-              if (expandBtn) {
-                expandBtn.classList.remove('hidden')
-                expandBtn.addEventListener('click', (e) => {
-                  e.preventDefault()
-                  const accordion = table.closest<HTMLElement>(
-                    '[data-accordion]',
-                  ) as HTMLElement
-                  accordion.style.maxHeight = ''
-                  expandBtn.classList.add('hidden')
-                  collapseBtn?.classList.remove('hidden')
-                })
-              }
-              if (collapseBtn) {
-                collapseBtn.addEventListener('click', (e) => {
-                  e.preventDefault()
-                  const accordion = table.closest<HTMLElement>(
-                    '[data-accordion]',
-                  ) as HTMLElement
-                  accordion.style.maxHeight = '898px'
-                  collapseBtn.classList.add('hidden')
-                  expandBtn?.classList.remove('hidden')
-                })
-              }
-            }
-          })
-        } else {
-          document.querySelectorAll('table').forEach((table) => {
-            const numRows = table.querySelectorAll('tbody tr').length
-            if (numRows > freeRowLimit) {
-              const subscribeCta = table
-                .closest('[data-accordion]')
-                ?.parentElement?.querySelector<HTMLElement>(
-                  '[data-subscribe-cta]',
-                )
-              if (subscribeCta) {
-                subscribeCta.classList.remove('hidden')
-              }
-            }
-          })
-        }
+    const container = document.querySelector('[data-accordion]') as HTMLElement
+    if (container) {
+      const thead = container?.querySelector('table thead')
+      const tr = container?.querySelectorAll('table tbody tr')
+      let maxHeight = ''
+      if (tr.length > freeRowLimit + 3) {
+        maxHeight =
+          (thead?.getBoundingClientRect().height || 0) +
+          (tr[1].getBoundingClientRect().height || 0) * 28 +
+          'px'
+        container.style.maxHeight = maxHeight
       }
-    })
+
+      session.subscribe((s) => {
+        if (s) {
+          if (
+            s.type === 'user' &&
+            s.properties.subscriptionStatus === 'active'
+          ) {
+            document.querySelectorAll('table').forEach((table) => {
+              const numRows = table.querySelectorAll('tbody tr').length
+              if (numRows > freeRowLimit + 3) {
+                const expandBtn = table
+                  .closest('[data-accordion]')
+                  ?.parentElement?.querySelector<HTMLElement>(
+                    '[data-expand-btn]',
+                  )
+                const collapseBtn = table
+                  .closest('[data-accordion]')
+                  ?.parentElement?.querySelector<HTMLElement>(
+                    '[data-collapse-btn]',
+                  )
+                if (expandBtn) {
+                  expandBtn.classList.remove('hidden')
+                  expandBtn.addEventListener('click', (e) => {
+                    e.preventDefault()
+                    const accordion = table.closest<HTMLElement>(
+                      '[data-accordion]',
+                    ) as HTMLElement
+                    accordion.style.maxHeight = ''
+                    expandBtn.classList.add('hidden')
+                    collapseBtn?.classList.remove('hidden')
+                  })
+                }
+                if (collapseBtn) {
+                  collapseBtn.addEventListener('click', (e) => {
+                    e.preventDefault()
+                    const accordion = table.closest<HTMLElement>(
+                      '[data-accordion]',
+                    ) as HTMLElement
+                    accordion.style.maxHeight = maxHeight
+                    collapseBtn.classList.add('hidden')
+                    expandBtn?.classList.remove('hidden')
+                  })
+                }
+              }
+            })
+          } else {
+            document.querySelectorAll('table').forEach((table) => {
+              const numRows = table.querySelectorAll('tbody tr').length
+              if (numRows > freeRowLimit) {
+                const subscribeCta = table
+                  .closest('[data-accordion]')
+                  ?.parentElement?.querySelector<HTMLElement>(
+                    '[data-subscribe-cta]',
+                  )
+                if (subscribeCta) {
+                  subscribeCta.classList.remove('hidden')
+                }
+              }
+            })
+          }
+        }
+      })
+    }
   })
 </script>

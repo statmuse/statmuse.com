@@ -9,14 +9,14 @@ interface Props extends HTMLAttributes<'div'> {
 
 const detail = Astro.props.detail
 const eastStandings = detail.standings
-  .filter((x) => x.group.includes('Eastern Conference'))
+  .filter((x) => x.group.includes('Eastern'))
   .sort((a, b) => a.group.localeCompare(b.group))
 const westStandings = detail.standings
-  .filter((x) => x.group.includes('Western Conference'))
+  .filter((x) => x.group.includes('Western'))
   .sort((a, b) => a.group.localeCompare(b.group))
 const groups = [
-  { name: 'Eastern Conference', standings: eastStandings },
-  { name: 'Western Conference', standings: westStandings },
+  { name: 'Eastern', standings: eastStandings },
+  { name: 'Western', standings: westStandings },
 ]
 if (
   detail.topic?.group?.startsWith('Western') ||
