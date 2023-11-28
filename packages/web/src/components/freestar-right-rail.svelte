@@ -26,9 +26,11 @@
 </script>
 
 {#if import.meta.env.PROD && !mobile && (($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active') || ($session?.type === 'visitor' && !$session?.properties.bot))}
-  <div
-    align="center"
-    data-freestar-ad="__300x600"
-    id="statmuse_right_rail"
-  ></div>
+  <div class="w-[300px] hidden lg:block">
+    <div
+      align="center"
+      data-freestar-ad="__300x600"
+      id="statmuse_right_rail"
+    ></div>
+  </div>
 {/if}

@@ -169,23 +169,23 @@ const details =
                   <FreestarMedRec client:only="svelte" />
                 </div>
                 {detail.grids.map((grid) => (
-                  // <div>
-                  <div class="flex">
-                    <div class="w-full">
-                      <GridAccordionWrapper>
-                        <Grid data={grid} hideTitle limitRows />
-                      </GridAccordionWrapper>
+                  <div>
+                    <div class="flex ">
+                      <div class="flex-1 overflow-x-auto">
+                        <GridAccordionWrapper>
+                          <Grid data={grid} hideTitle limitRows />
+                        </GridAccordionWrapper>
+                      </div>
+                      <FreestarRightRail client:only="svelte" />
                     </div>
-                    <FreestarRightRail client:only="svelte" />
                   </div>
-                  // </div>
                 ))}
               </Fragment>
             )
           case 'genericGrids':
             return detail.grids.map((grid) => (
               <div class="flex">
-                <div class="w-full">
+                <div class="flex-1 overflow-x-auto">
                   <GridAccordionWrapper>
                     <Grid data={grid} hideTitle limitRows />
                   </GridAccordionWrapper>
