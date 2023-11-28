@@ -135,7 +135,7 @@ if (allowedDomains.includes(domain)) {
       <Fragment>
         <h3 class="text-3xl font-semibold">More Stats</h3>
         {playerCardsResp?.cards.map((card) => (
-          <div class="my-4">
+          <div class="my-4 relative -z-[1]">
             <p class="font-semibold">
               {`${cardTitle(card.stat)} ${playerCardsResp.seasonYearDisplay}`}
             </p>
