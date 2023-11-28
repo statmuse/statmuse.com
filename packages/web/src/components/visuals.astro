@@ -170,7 +170,7 @@ const details =
                 </div>
                 {detail.grids.map((grid) => (
                   <div>
-                    <div class="flex gap-2">
+                    <div class="flex gap-4">
                       <div class="flex-1 overflow-x-auto">
                         <GridAccordionWrapper>
                           <Grid data={grid} hideTitle limitRows />
@@ -184,7 +184,7 @@ const details =
             )
           case 'genericGrids':
             return detail.grids.map((grid) => (
-              <div class="flex gap-2">
+              <div class="flex gap-4">
                 <div class="flex-1 overflow-x-auto">
                   <GridAccordionWrapper>
                     <Grid data={grid} hideTitle limitRows />
