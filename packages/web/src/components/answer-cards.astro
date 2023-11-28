@@ -16,7 +16,7 @@ const lastName = (s: string) => {
   return names[names.length - 1]
 }
 
-const cardTitle = (title: string) => {
+const playerCardTitle = (title: string) => {
   switch (title) {
     // NBA Player
     case 'mostPointsPerGame':
@@ -30,88 +30,95 @@ const cardTitle = (title: string) => {
     case 'mostBlocksPerGame':
       return 'BPG Leaders'
     case 'mostThreePointersMadePerGame':
-      return '3PG Leaders'
+      return '3PM Leaders'
     case 'bestTrueShootingPercentage':
       return 'TS% Leaders'
-    // NBA Team
-    case 'bestOffensiveRating':
-      return 'Offensive Rating'
-    case 'bestDefensiveRating':
-      return 'Defensive Rating'
-    case 'bestNetRating':
-      return 'Net Rating'
-    case 'worstRecord':
-      return 'Worst Record'
     // NFL Player
     case 'mostPassingYards':
-      return 'Passing Yard Leaders'
+      return 'Pass Yards Leaders'
     case 'mostRushingYards':
-      return 'Rushing Yard Leaders'
+      return 'Rush Yards Leaders'
     case 'mostReceivingYards':
-      return 'Receiving Yard Leaders'
+      return 'Rec Yards Leaders'
     case 'mostPassingTouchdowns':
-      return 'Passing Touchdown Leaders'
+      return 'Pass TD Leaders'
     case 'mostRushingTouchdowns':
-      return 'Rushing Touchdown Leaders'
+      return 'Rush TD Leaders'
     case 'mostReceivingTouchdowns':
-      return 'Receiving Touchdown Leaders'
+      return 'Rec TD Leaders'
     case 'bestQuarterbackRating':
-      return 'Quarterback Rating Leaders'
+      return 'QB Rating Leaders'
     case 'mostDefensiveSacks':
       return 'Sack Leaders'
-    // NFL Team
-    case 'mostPointsPerGame':
-      return 'Team Points Rankings'
-    case 'leastPointsAllowedPerGame':
-      return 'Team Points Allowed Rankings'
-    case 'mostTotalYardsPerGame':
-      return 'Total Yards Per Game Rankings'
-    case 'mostRushingYardsPerGame':
-      return 'Rush Yards Per Game Rankings'
-    case 'mostPassingYardsPerGame':
-      return 'Pass Yards Per Game Rankings'
-    case 'mostDefensiveSacks':
-      return 'Team Sacks Rankings'
     // NHL Player
     case 'mostGoals':
-      return 'Goal Leaders'
+      return 'Goals Leaders'
     case 'mostAssists':
-      return 'Assist Leaders'
+      return 'Assists Leaders'
     case 'mostPoints':
-      return 'Point Leaders'
+      return 'Points Leaders'
     case 'bestPlusMinus':
-      return 'Plus Minus Leaders'
+      return '+/- Leaders'
     case 'bestGoalsAgainstAverage':
-      return 'Goals Against Avg Leaders'
-    // NHL Team
-    case 'mostGoalsPerGame':
-      return 'Goals Per Game Rankings'
-    case 'leastGoalsAllowedPerGame':
-      return 'Goals Allowed Per Game Rankings'
-    case 'bestPowerPlayPercentage':
-      return 'Power Play Percentage Rankings'
-    case 'bestPenaltyKillPercentage':
-      return 'Penalty Kill Percentage Rankings'
+      return 'Goals Against Leaders'
     // EPL Player
     case 'mostGoals':
-      return 'Goal Leaders'
+      return 'Goals Leaders'
     case 'mostAssists':
-      return 'Assist Leaders'
+      return 'Assists Leaders'
     case 'mostShotsOnTarget':
-      return 'Shot On Target Leaders'
+      return 'Shots on Target Leaders'
     case 'mostPasses':
-      return 'Pass Leaders'
+      return 'Passes Leaders'
     case 'mostTackles':
-      return 'Tackle Leaders'
+      return 'Tackles Leaders'
     case 'mostCleanSheets':
-      return 'Clean Sheet Leaders'
+      return 'Clean Sheets Leaders'
+    default:
+      return title
+  }
+}
+
+const teamCardTitle = (title: string) => {
+  switch (title) {
+    // NBA Team
+    case 'bestOffensiveRating':
+      return 'ORtg Rankings'
+    case 'bestDefensiveRating':
+      return 'DRtg Rankings'
+    case 'bestNetRating':
+      return 'NetRtg Rankings'
+    case 'worstRecord':
+      return 'Tank Leaderboard'
+    // NFL Team
+    case 'mostPointsPerGame':
+      return 'PPG Rankings'
+    case 'leastPointsAllowedPerGame':
+      return 'Opp PPG Rankings'
+    case 'mostTotalYardsPerGame':
+      return 'Total Yards Rankings'
+    case 'mostRushingYardsPerGame':
+      return 'Rush Yards Rankings'
+    case 'mostPassingYardsPerGame':
+      return 'Pass Yards Rankings'
+    case 'mostDefensiveSacks':
+      return 'Sack Leaders'
+    // NHL Team
+    case 'mostGoalsPerGame':
+      return 'Goals Rankings'
+    case 'leastGoalsAllowedPerGame':
+      return 'Goals Against Rankings'
+    case 'bestPowerPlayPercentage':
+      return 'Power Play Rankings'
+    case 'bestPenaltyKillPercentage':
+      return 'Penalty Kill Rankings'
     // EPL Team
     case 'mostGoals':
-      return 'Goal Rankings'
+      return 'Goals For Rankings'
     case 'leastGoalsAgainst':
-      return 'Least Goal Against Rankings'
+      return 'Goals Against Rankings'
     case 'bestGoalDifferential':
-      return 'Goal Differential Rankings'
+      return 'Goal Difference Rankings'
     default:
       return title
   }
@@ -141,11 +148,7 @@ if (allowedDomains.includes(domain)) {
           <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-5">
             {playerCardsResp?.cards.map((card) => (
               <div class="relative -z-[1]">
-                <p class="font-semibold">
-                  {`${cardTitle(card.stat)} ${
-                    playerCardsResp.seasonYearDisplay
-                  }`}
-                </p>
+                <p class="font-semibold">{playerCardTitle(card.stat)}</p>
                 <div
                   class="flex rounded-2xl overflow-hidden"
                   style={{
@@ -184,9 +187,7 @@ if (allowedDomains.includes(domain)) {
           <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-5">
             {teamCardsResp?.cards.map((card) => (
               <div>
-                <p class="font-semibold">
-                  {`${cardTitle(card.stat)} ${teamCardsResp.seasonYearDisplay}`}
-                </p>
+                <p class="font-semibold">{teamCardTitle(card.stat)}</p>
                 <div
                   class="flex flex-wrap rounded-2xl py-5 gap-y-5"
                   style={{
