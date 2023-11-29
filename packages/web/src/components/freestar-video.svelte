@@ -50,7 +50,7 @@
       Video Ad
     </div>
   {:else}
-    <div bind:this={container} class={`${$$props.class} overflow-hidden z-0`}>
+    <div bind:this={container} class={`${$$props.class} overflow-hidden`}>
       {#if domain === 'nba'}
         <div
           bind:this={video}
