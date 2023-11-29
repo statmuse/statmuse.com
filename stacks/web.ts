@@ -142,6 +142,7 @@ export function Web({ stack }: StackContext) {
         vpc: api.vpc,
         vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_EGRESS },
         securityGroups: [api.lambdaSecurityGroup],
+        layers: [layer],
       },
       distribution: {
         defaultBehavior: { realtimeLogConfig },
@@ -163,6 +164,7 @@ export function Web({ stack }: StackContext) {
       },
     },
     permissions: [[api.rdsCredentialsSecret, 'grantRead']],
+    invalidation: { paths: 'none' },
     customDomain: {
       hostedZone: dns.zone,
       domainName: isProd ? 'www.statmuse.com' : dns.domain,
