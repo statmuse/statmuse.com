@@ -17,8 +17,8 @@ const lastName = (s: string) => {
   return names[names.length - 1]
 }
 
-const playerCardTitle = (title: string) => {
-  switch (title) {
+const playerCardTitle = (stat: string) => {
+  switch (stat) {
     // NBA Player
     case 'mostPointsPerGame':
       return 'PPG Leaders'
@@ -76,12 +76,12 @@ const playerCardTitle = (title: string) => {
     case 'mostCleanSheets':
       return 'Clean Sheets Leaders'
     default:
-      return title
+      return stat
   }
 }
 
-const teamCardTitle = (title: string) => {
-  switch (title) {
+const teamCardTitle = (stat: string) => {
+  switch (stat) {
     // NBA Team
     case 'bestOffensiveRating':
       return 'ORtg Rankings'
@@ -121,7 +121,115 @@ const teamCardTitle = (title: string) => {
     case 'bestGoalDifferential':
       return 'Goal Difference Rankings'
     default:
-      return title
+      return stat
+  }
+}
+
+const playerAskLink = (domain: string, stat: string) => {
+  switch (stat) {
+    // NBA Player
+    case 'mostPointsPerGame':
+      return `/${domain}/ask/ppg-leaders-this-season`
+    case 'mostReboundsPerGame':
+      return `/${domain}/ask/rpg-leaders-this-season`
+    case 'mostAssistsPerGame':
+      return `/${domain}/ask/apg-leaders-this-season`
+    case 'mostStealsPerGame':
+      return `/${domain}/ask/spg-leaders-this-season`
+    case 'mostBlocksPerGame':
+      return `/${domain}/ask/bpg-leaders-this-season`
+    case 'mostThreePointersMadePerGame':
+      return `/${domain}/ask/3pm-leaders-this-season`
+    case 'bestTrueShootingPercentage':
+      return `/${domain}/ask?q=ts%25+leaders+this+season`
+    // NFL Player
+    case 'mostPassingYards':
+      return `/${domain}/ask/pass-yards-leaders-this-season`
+    case 'mostRushingYards':
+      return `/${domain}/ask/rush-yards-leaders-this-season`
+    case 'mostReceivingYards':
+      return `/${domain}/ask/rec-yards-leaders-this-season`
+    case 'mostPassingTouchdowns':
+      return `/${domain}/ask/pass-td-leaders-this-season`
+    case 'mostRushingTouchdowns':
+      return `/${domain}/ask/rush-td-leaders-this-season`
+    case 'mostReceivingTouchdowns':
+      return `/${domain}/ask/rec-td-leaders-this-season`
+    case 'bestQuarterbackRating':
+      return `/${domain}/ask/qb-rating-leaders-this-season`
+    case 'mostDefensiveSacks':
+      return `/${domain}/ask/sack-leaders-this-season`
+    // NHL Player
+    case 'mostGoals':
+      return `/${domain}/ask/goal-leaders-this-season`
+    case 'mostAssists':
+      return `/${domain}/ask/assist-leaders-this-season`
+    case 'mostPoints':
+      return `/${domain}/ask/points-leaders-this-season`
+    case 'bestPlusMinus':
+      return `/${domain}/ask?q=%2B%2F-+leaders+this+season`
+    case 'bestGoalsAgainstAverage':
+      return `/${domain}/ask/gaa-leaders-this-season`
+    // EPL Player
+    case 'mostGoals':
+      return 'Goals Leaders'
+    case 'mostAssists':
+      return 'Assists Leaders'
+    case 'mostShotsOnTarget':
+      return 'Shots on Target Leaders'
+    case 'mostPasses':
+      return 'Passes Leaders'
+    case 'mostTackles':
+      return 'Tackles Leaders'
+    case 'mostCleanSheets':
+      return 'Clean Sheets Leaders'
+    default:
+      return stat
+  }
+}
+
+const teamAskLink = (domain: string, stat: string) => {
+  switch (stat) {
+    // NBA Team
+    case 'bestOffensiveRating':
+      return `/${domain}/ask/team-ortg-rankings-this-season`
+    case 'bestDefensiveRating':
+      return `/${domain}/ask/team-drtg-rankings-this-season`
+    case 'bestNetRating':
+      return `/${domain}/ask/team-net-rating-rankings-this-season`
+    case 'worstRecord':
+      return `/${domain}/ask/worst-record-this-season`
+    // NFL Team
+    case 'mostPointsPerGame':
+      return `/${domain}/ask/team-ppg-rankings-this-season`
+    case 'leastPointsAllowedPerGame':
+      return `/${domain}/ask/fewest-points-allowed-per-game-by-a-team-this-season`
+    case 'mostTotalYardsPerGame':
+      return `/${domain}/ask/team-total-yards-per-game-rankings-this-season`
+    case 'mostRushingYardsPerGame':
+      return `/${domain}/ask/team-rush-yards-per-game-rankings-this-season`
+    case 'mostPassingYardsPerGame':
+      return `/${domain}/ask/team-pass-yards-per-game-rankings-this-season`
+    case 'mostDefensiveSacks':
+      return `/${domain}/ask/team-sack-rankings-this-season`
+    // NHL Team
+    case 'mostGoalsPerGame':
+      return `/${domain}/ask/most-goals-per-game-by-a-team-this-season`
+    case 'leastGoalsAllowedPerGame':
+      return `/${domain}/ask/fewest-goals-against-per-game-by-a-team-this-season`
+    case 'bestPowerPlayPercentage':
+      return `/${domain}/ask?q=most+pp%25+this+season`
+    case 'bestPenaltyKillPercentage':
+      return `/${domain}/ask?q=best+pk%25+by+a+team+this+season`
+    // EPL Team
+    case 'mostGoals':
+      return 'Goals For Rankings'
+    case 'leastGoalsAgainst':
+      return 'Goals Against Rankings'
+    case 'bestGoalDifferential':
+      return 'Goal Difference Rankings'
+    default:
+      return stat
   }
 }
 
@@ -149,9 +257,13 @@ if (allowedDomains.includes(domain)) {
           <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-5">
             {playerCardsResp?.cards.map((card) => (
               <div>
-                <p class="font-semibold">{playerCardTitle(card.stat)}</p>
-                <div
-                  class="flex rounded-2xl overflow-hidden px-2.5"
+                <div class="flex justify-between">
+                  <p class="font-semibold">{playerCardTitle(card.stat)}</p>
+                  <a href={playerAskLink(domain, card.stat)}>See more</a>
+                </div>
+                <a
+                  href={playerAskLink(domain, card.stat)}
+                  class="flex rounded-2xl overflow-hidden px-2.5 hover:no-underline"
                   style={{
                     backgroundColor: card.players[0].colors.backgroundColor,
                     color: card.players[0].colors.foregroundColor,
@@ -182,7 +294,7 @@ if (allowedDomains.includes(domain)) {
                       />
                     </div>
                   ))}
-                </div>
+                </a>
               </div>
             ))}
           </div>
@@ -198,9 +310,13 @@ if (allowedDomains.includes(domain)) {
           <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-5">
             {teamCardsResp?.cards.map((card) => (
               <div>
-                <p class="font-semibold">{teamCardTitle(card.stat)}</p>
-                <div
-                  class="flex flex-wrap rounded-2xl py-5 px-2.5 gap-y-5"
+                <div class="flex justify-between">
+                  <p class="font-semibold">{teamCardTitle(card.stat)}</p>
+                  <a href={teamAskLink(domain, card.stat)}>See more</a>
+                </div>
+                <a
+                  href={teamAskLink(domain, card.stat)}
+                  class="flex flex-wrap rounded-2xl py-5 px-2.5 gap-y-5 hover:no-underline"
                   style={{
                     backgroundColor: card.teams[0].colors.backgroundColor,
                     color: card.teams[0].colors.foregroundColor,
@@ -223,7 +339,7 @@ if (allowedDomains.includes(domain)) {
                       </p>
                     </div>
                   ))}
-                </div>
+                </a>
               </div>
             ))}
           </div>
