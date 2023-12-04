@@ -1,0 +1,92 @@
+---
+import Grid from '@components/grid.astro'
+import type {
+  StandingsTeam,
+  StandingsNba,
+  GameraGrid,
+} from '@statmuse/core/gamera'
+import { groupBy } from 'lodash-es'
+
+interface Props {
+  teams: StandingsTeam[]
+  group?: 'division' | 'conference'
+}
+
+const mapToGrid = (conference: string, teams: StandingsNba[]): GameraGrid => {
+  const columns = [
+    {
+      rowItemKey: 'rank',
+      title: '',
+      type: 'number',
+    },
+    {
+      rowItemKey: 'name',
+      title: conference,
+      type: 'string',
+    },
+    {
+      rowItemKey: 'wins',
+      title: 'W',
+      type: 'number',
+    },
+    {
+      rowItemKey: 'losses',
+      title: 'L',
+      type: 'number',
+    },
+    {
+      rowItemKey: 'winPercent',
+      title: 'PCT',
+      type: 'number',
+    },
+    {
+      rowItemKey: 'gamesBehind',
+      title: 'GB',
+      type: 'number',
+    },
+  ]
+
+  const rows = teams.map((team) => {
+    return {
+      rank: {
+        display: team.rank[group ?? 'conference'] + '',
+        value: team.rank[group ?? 'conference'],
+      },
+      name: {
+        display: team.team.nickname,
+        value: team.team.nickname,
+        imageUrl: team.team.logoImageUrl,
+      },
+      wins: team.stats.wins,
+      losses: team.stats.losses,
+      winPercent: team.stats.winPercent,
+      gamesBehind: team.stats.gamesBehind[group ?? 'conference'],
+    }
+  })
+
+  return { columns, rows }
+}
+
+const { teams, group } = Astro.props
+
+const firstTeam = teams[0]
+
+const grids = group
+  ? Object.entries(groupBy(teams, `${group}.name`)).map(([name, teams]) =>
+      mapToGrid(name, teams),
+    )
+  : [mapToGrid(firstTeam.conference.name, teams)]
+---
+
+<div
+  class="p-4 rounded-lg"
+  style={{
+    '--team-primary-color': firstTeam.team.colors.foregroundColor,
+    '--team-secondary-color': firstTeam.team.colors.backgroundColor,
+    '--team-line-color': firstTeam.team.colors.foregroundColor,
+    background: firstTeam.team.colors.backgroundColor,
+    color: firstTeam.team.colors.foregroundColor,
+  }}
+>
+  {grids.map((data) => <Grid {data} />)}
+</div>
