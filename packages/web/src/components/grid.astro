@@ -128,7 +128,7 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
               <select
                 name={key}
                 autocomplete="off"
-                class="grid-filter appearance-none font-semibold text-team-primary bg-white pr-3 cursor-pointer outline-none"
+                class="grid-filter appearance-none font-semibold text-team-primary pr-3 cursor-pointer outline-none"
               >
                 {value.values.map((v) => (
                   <option
@@ -216,7 +216,8 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
             <tr
               class:list={{
                 'bg-[#e9f9ff]': highlight === row[Object.keys(row)[0]].value,
-                'border-t border-[#c7c8ca]': rowIndex !== 0,
+                'border-t border-[color:var(--team-line-color,#c7c8ca)]':
+                  rowIndex !== 0,
                 'border-[#c7c8ca]/30': limitRows && rowIndex >= freeRowLimit,
               }}
             >
@@ -235,7 +236,7 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                               (playerEntity ? ' illustration' : ' logo')
                             }
                             class:list={{
-                              'w-6 h-6 max-w-none object-cover rounded-full bg-white mr-2.5':
+                              'w-6 h-6 max-w-none object-cover rounded-full mr-2.5':
                                 playerEntity && !alternateStyle,
                               'opacity-50':
                                 playerEntity &&
@@ -311,7 +312,6 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                       'first:bg-[#e9f9ff]':
                         alternateStyle &&
                         highlight === row[Object.keys(row)[0]].value,
-                      'bg-white': !alternateStyle,
                       'sticky left-0': colIndex === 0 && !alternateStyle,
                       'w-2': !!imageUrl && !alternateStyle,
                       [textColumnStyles]: !alternateStyle && !!textColumnStyles,
@@ -365,7 +365,7 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                 return (
                   <td
                     class:list={{
-                      'px-2 py-1 bg-white': true,
+                      'px-2 py-1': true,
                       'sticky left-0': x === 0,
                       [textColumnStyles]: !!textColumnStyles,
                     }}
@@ -461,10 +461,8 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
             if (tbody) {
               if (prevIdx > -1) {
                 tr.children[prevIdx].classList.remove('bg-[#fffbec]')
-                tr.children[prevIdx].classList.add('bg-white')
               }
               tr.children[idx].classList.add('bg-[#fffbec]')
-              tr.children[idx].classList.remove('bg-white')
               tbody.append(tr)
             }
           })
