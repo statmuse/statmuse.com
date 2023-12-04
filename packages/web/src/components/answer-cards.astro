@@ -1,12 +1,16 @@
 ---
+import { groupBy } from 'lodash-es'
 import { getPlayerCards, getTeamCards } from '@lib/related-content'
 import type {
   PlayerCard,
   PlayerCardResponse,
+  StandingsResponse,
   TeamCard,
   TeamCardResponse,
 } from '@statmuse/core/gamera'
+import StandingsCard from '@components/standings-card.astro'
 import Image from '@components/image.astro'
+import { getStandings } from '@lib/standings'
 
 interface Props {
   domain: string
@@ -296,12 +300,16 @@ const filterTeamCards = (card: TeamCard) =>
 
 let playerCardsResp: PlayerCardResponse | undefined
 let teamCardsResp: TeamCardResponse | undefined
+let standingsResp: StandingsResponse | undefined
 
 const allowedDomains = ['nba', 'nfl', 'nhl']
 
 if (allowedDomains.includes(domain)) {
-  playerCardsResp = await getPlayerCards({ context: Astro, domain })
-  teamCardsResp = await getTeamCards({ context: Astro, domain })
+  ;[playerCardsResp, teamCardsResp, standingsResp] = await Promise.all([
+    getPlayerCards({ context: Astro, domain }),
+    getTeamCards({ context: Astro, domain }),
+    getStandings({ context: Astro, domain }),
+  ])
 }
 ---
 
@@ -400,6 +408,23 @@ if (allowedDomains.includes(domain)) {
             </a>
           </div>
         ))}
+      </div>
+    </Fragment>
+  )
+}
+
+{
+  standingsResp && standingsResp.teams && (
+    <Fragment>
+      <h3 class="text-3xl font-semibold mb-1.5">
+        {`${domain.toUpperCase()} ${standingsResp.seasonYearDisplay} Standings`}
+      </h3>
+      <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
+        {Object.entries(groupBy(standingsResp.teams, 'conference.name')).map(
+          ([_, teams]) => (
+            <StandingsCard {teams} group="division" />
+          ),
+        )}
       </div>
     </Fragment>
   )
