@@ -14,9 +14,10 @@ interface Props {
   teams: StandingsTeam[]
   domain: string
   group?: 'division' | 'conference' | 'league'
+  limit?: number
 }
 
-const { teams, domain, group } = Astro.props
+const { teams, domain, group, limit } = Astro.props
 
 const getColumns = (domain: string, name: string) => {
   let columns = [
@@ -185,7 +186,7 @@ const mapToGrid = (
 ): GameraGrid => {
   const columns = getColumns(domain, conference)
 
-  const rows = teams.map((team) => getRow(domain, team))
+  const rows = teams.map((team) => getRow(domain, team)).slice(0, limit)
 
   return { columns, rows }
 }

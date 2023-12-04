@@ -426,6 +426,17 @@ if (allowedDomains.includes(domain)) {
               {teams}
               group={domain !== 'nba' ? 'division' : undefined}
               domain={domain}
+              limit={
+                domain === 'nba'
+                  ? 6
+                  : domain === 'nfl'
+                  ? 2
+                  : domain === 'nhl'
+                  ? 3
+                  : domain === 'mlb'
+                  ? 2
+                  : undefined
+              }
             />
           ),
         )}
