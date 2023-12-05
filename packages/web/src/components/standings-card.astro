@@ -154,7 +154,6 @@ const getRow = (domain: string, team: StandingsTeam) => {
       losses: nflTeam.stats.losses,
       ties: nflTeam.stats.ties,
       winPercent: nflTeam.stats.winPercent,
-      // gamesBehind: nflTeam.stats.gamesBehind[group ?? 'conference'],
     }
   }
 
@@ -186,7 +185,10 @@ const mapToGrid = (
 ): GameraGrid => {
   const columns = getColumns(domain, conference)
 
-  const rows = teams.map((team) => getRow(domain, team)).slice(0, limit)
+  const rows = teams
+    .map((team) => getRow(domain, team))
+    .sort((a, b) => a.rank.value - b?.rank.value)
+    .slice(0, limit)
 
   return { columns, rows }
 }
