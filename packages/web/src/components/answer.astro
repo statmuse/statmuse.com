@@ -11,6 +11,7 @@ import { title, description } from '@lib/meta'
 import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import * as Link from '@statmuse/core/link'
+import AnswerCards from '@components/answer-cards.astro'
 
 interface Props {
   answer: GameraDefaultResponse
@@ -103,4 +104,11 @@ const code = await Link.askShortCode(query, preferredDomain)
       additionalQuestions={answer.visual.additionalQuestions}
     />
   </Container>
+  {
+    preferredDomain && (
+      <Container>
+        <AnswerCards domain={preferredDomain.toLocaleLowerCase()} />
+      </Container>
+    )
+  }
 </Layout>
