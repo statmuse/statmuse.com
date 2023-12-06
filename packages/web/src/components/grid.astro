@@ -27,6 +27,7 @@ interface Props extends HTMLAttributes<'div'> {
   padding?: string
   kanedama?: boolean
   limitRows?: boolean
+  disableSort?: boolean
 }
 
 const {
@@ -43,6 +44,7 @@ const {
   padding,
   kanedama,
   limitRows = false,
+  disableSort = false,
 } = Astro.props
 
 const grids = Array.isArray(data) ? data : [data]
@@ -163,6 +165,7 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
     }}
   >
     <table
+      data-sort={!disableSort}
       class:list={{
         'text-[15px] whitespace-nowrap': !alternateStyle,
         'border-spacing-0': alternateStyle,
@@ -192,12 +195,13 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                     return (
                       <th
                         class:list={{
-                          'first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5':
+                          'first:rounded-l last:rounded-r bg-team-primary font-normal p-1.5':
                             !alternateStyle,
                           'text-[#a8a8a8] font-normal px-3 py-2.5 text-center whitespace-nowrap first:border-r first:border-[#e4e4e4] first:min-w-[175px] first:w-[175px] first:sticky first:left-0 first:bg-white':
                             alternateStyle,
                           'pl-8': hasImage && !alternateStyle,
                           'sticky left-0': index === 0 && !alternateStyle,
+                          'cursor-pointer': !disableSort,
                           [textColumnStyles]:
                             !alternateStyle && !!textColumnStyles,
                           [textColumnHeaderStyles]:
@@ -439,52 +443,55 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
       return x.dataset.value
     }
 
-    let prevIdx = -1
-    let desc = true
-    document.querySelectorAll('th').forEach((th) => {
-      th.addEventListener('click', () => {
-        const idx = Array.from(th.parentElement?.children || []).indexOf(th)
-        const table = th.closest('table')
-        desc = idx !== prevIdx || !desc
-        Array.from(
-          table?.querySelectorAll<HTMLTableRowElement>('tbody tr') || [],
-        )
-          .sort((a, b) => {
-            let result = 0
-            const sortOptions = [
-              { idx, desc },
-              { idx: 0, desc: false },
-            ]
-            for (const i in sortOptions) {
-              const { idx, desc } = sortOptions[i]
-              const ax = getValue(a, idx) ?? (desc ? -1000000 : 1000000)
-              const bx = getValue(b, idx) ?? (desc ? -1000000 : 1000000)
-              if (typeof ax === 'number' && typeof bx === 'number') {
-                result = desc ? bx - ax : ax - bx
-              }
-              if (typeof ax === 'string' && typeof bx === 'string') {
-                result = desc ? bx.localeCompare(ax) : ax.localeCompare(bx)
-              }
-              if (result !== 0) return result
-            }
-            return result
-          })
-          .forEach((tr) => {
-            if (prevIdx > -1) {
-              tr.children[prevIdx].classList.remove('bg-[#fffbec]')
-              tr.children[prevIdx].classList.add(
-                'bg-[color:var(--grid-bg-color,#fff)]',
-              )
-            }
-            tr.children[idx].classList.add('bg-[#fffbec]')
-            tr.children[idx].classList.remove(
-              'bg-[color:var(--grid-bg-color,#fff)]',
+    document
+      .querySelectorAll<HTMLTableElement>('table[data-sort]')
+      .forEach((table) => {
+        let prevIdx = -1
+        let desc = true
+        table.querySelectorAll('th').forEach((th) => {
+          th.addEventListener('click', () => {
+            const idx = Array.from(th.parentElement?.children || []).indexOf(th)
+            desc = idx !== prevIdx || !desc
+            Array.from(
+              table?.querySelectorAll<HTMLTableRowElement>('tbody tr') || [],
             )
-            tr.parentElement?.append(tr)
-          })
+              .sort((a, b) => {
+                let result = 0
+                const sortOptions = [
+                  { idx, desc },
+                  { idx: 0, desc: false },
+                ]
+                for (const i in sortOptions) {
+                  const { idx, desc } = sortOptions[i]
+                  const ax = getValue(a, idx) ?? (desc ? -1000000 : 1000000)
+                  const bx = getValue(b, idx) ?? (desc ? -1000000 : 1000000)
+                  if (typeof ax === 'number' && typeof bx === 'number') {
+                    result = desc ? bx - ax : ax - bx
+                  }
+                  if (typeof ax === 'string' && typeof bx === 'string') {
+                    result = desc ? bx.localeCompare(ax) : ax.localeCompare(bx)
+                  }
+                  if (result !== 0) return result
+                }
+                return result
+              })
+              .forEach((tr) => {
+                if (prevIdx > -1) {
+                  tr.children[prevIdx].classList.remove('bg-[#fffbec]')
+                  tr.children[prevIdx].classList.add(
+                    'bg-[color:var(--grid-bg-color,#fff)]',
+                  )
+                }
+                tr.children[idx].classList.add('bg-[#fffbec]')
+                tr.children[idx].classList.remove(
+                  'bg-[color:var(--grid-bg-color,#fff)]',
+                )
+                tr.parentElement?.append(tr)
+              })
 
-        prevIdx = idx
+            prevIdx = idx
+          })
+        })
       })
-    })
   })
 </script>
