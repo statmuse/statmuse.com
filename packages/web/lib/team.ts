@@ -24,9 +24,7 @@ export const getTeamSeasonOverview = async (props: {
   try {
     const teamId = parseTeamId(props.team)
     const yearId = parseYearId(props.year)
-    const path = `${props.domain}/teams${
-      props.domain.toLowerCase() !== 'epl' ? '/v2' : ''
-    }/${teamId}/${yearId}`
+    const path = `${props.domain}/teams/${teamId}/${yearId}`
     const data = await request<GameraTeamSeasonOverview & { error?: string }>(
       props.context,
       path,
@@ -48,9 +46,7 @@ export const getTeamSeasonBio = async (props: {
   try {
     const teamId = parseTeamId(props.team)
     const yearId = parseYearId(props.year)
-    const path = `${props.domain}/teams${
-      props.domain.toLowerCase() !== 'epl' ? '/v2' : ''
-    }/${teamId}/${yearId}/bio`
+    const path = `${props.domain}/teams/${teamId}/${yearId}/bio`
     return request<GameraTeamSeasonBio>(props.context, path)
   } catch (error) {
     console.error(error)
@@ -68,9 +64,7 @@ export const getTeamSeasonStats = async (props: {
   try {
     const teamId = parseTeamId(props.team)
     const yearId = parseYearId(props.year)
-    const path = `${props.domain}/teams${
-      props.domain.toLowerCase() !== 'epl' ? '/v2' : ''
-    }/${teamId}/${yearId}/stats`
+    const path = `${props.domain}/teams/${teamId}/${yearId}/stats`
     return request<GameraTeamSeasonStats>(props.context, path, props.params)
   } catch (error) {
     console.error(error)
@@ -88,9 +82,7 @@ export const getTeamSeasonPlayerStats = async (props: {
   try {
     const teamId = parseTeamId(props.team)
     const yearId = parseYearId(props.year)
-    const path = `${props.domain}/teams${
-      props.domain.toLowerCase() !== 'epl' ? '/v2' : ''
-    }/${teamId}/${yearId}/playerStats`
+    const path = `${props.domain}/teams/${teamId}/${yearId}/playerStats`
     return request<GameraTeamSeasonPlayerStats>(
       props.context,
       path,
@@ -111,9 +103,7 @@ export const getTeamSeasonGameResults = async (props: {
   try {
     const teamId = parseTeamId(props.team)
     const yearId = parseYearId(props.year)
-    const path = `${props.domain}/teams${
-      props.domain.toLowerCase() !== 'epl' ? '/v2' : ''
-    }/${teamId}/${yearId}/gameResults`
+    const path = `${props.domain}/teams/${teamId}/${yearId}/gameResults`
     return request<GameraTeamSeasonGameResults>(props.context, path)
   } catch (error) {
     console.error(error)
@@ -130,9 +120,7 @@ export const getTeamSeasonSchedule = async (props: {
   try {
     const teamId = parseTeamId(props.team)
     const yearId = parseYearId(props.year)
-    const path = `${props.domain}/teams${
-      props.domain.toLowerCase() !== 'epl' ? '/v2' : ''
-    }/${teamId}/${yearId}/schedule`
+    const path = `${props.domain}/teams/${teamId}/${yearId}/schedule`
     return request<GameraTeamSeasonSchedule>(props.context, path)
   } catch (error) {
     console.error(error)
@@ -149,9 +137,7 @@ export const getTeamSeasonRoster = async (props: {
   try {
     const teamId = parseTeamId(props.team)
     const yearId = parseYearId(props.year)
-    const path = `${props.domain}/teams${
-      props.domain.toLowerCase() !== 'epl' ? '/v2' : ''
-    }/${teamId}/${yearId}/roster`
+    const path = `${props.domain}/teams/${teamId}/${yearId}/roster`
     return request<GameraTeamSeasonRoster>(props.context, path)
   } catch (error) {
     console.error(error)
@@ -169,9 +155,7 @@ export const getTeamSeasonSplits = async (props: {
   try {
     const teamId = parseTeamId(props.team)
     const yearId = parseYearId(props.year)
-    const path = `${props.domain}/teams${
-      props.domain.toLowerCase() !== 'epl' ? '/v2' : ''
-    }/${teamId}/${yearId}/splits`
+    const path = `${props.domain}/teams/${teamId}/${yearId}/splits`
     return request<GameraTeamSeasonSplits>(props.context, path, props.params)
   } catch (error) {
     console.error(error)
@@ -186,9 +170,7 @@ export const getTeamFranchiseOverview = async (props: {
 }) => {
   try {
     const teamId = parseTeamId(props.team)
-    const path = `${props.domain}/teams${
-      props.domain.toLowerCase() !== 'epl' ? '/v2' : ''
-    }/${teamId}`
+    const path = `${props.domain}/teams/${teamId}`
     return request<GameraTeamFranchiseOverview>(props.context, path)
   } catch (error) {
     console.error(error)
