@@ -24,6 +24,7 @@ import reduce from 'lodash/fp/reduce'
 import sortBy from 'lodash/fp/sortBy'
 import filter from 'lodash/fp/filter'
 import min from 'lodash/fp/min'
+import GridAccordionWrapper from '@components/grid-accordion-wrapper.astro'
 
 interface Props {
   response: KanedamaResponse
@@ -196,13 +197,15 @@ const details =
             )
           case 'genericGrids':
             return detail.grids.map((grid) => (
-              <Grid
-                kanedama
-                data={grid}
-                hideTitle
-                columnStyles={{ DATE: 'text-left' }}
-                limitRows
-              />
+              <GridAccordionWrapper>
+                <Grid
+                  kanedama
+                  data={grid}
+                  hideTitle
+                  columnStyles={{ DATE: 'text-left' }}
+                  limitRows
+                />{' '}
+              </GridAccordionWrapper>
             ))
           case 'charts':
             return detail.charts.map((chart) => {

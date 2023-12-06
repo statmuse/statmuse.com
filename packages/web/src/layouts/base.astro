@@ -436,6 +436,19 @@ const canonicalUrl = meta?.canonical
             rel="stylesheet"
             href="https://a.pub.network/statmuse-com/cls.css"
           />
+          <script data-cfasync="false" type="text/javascript">
+            var freestar = freestar || {}
+            freestar.queue = freestar.queue || []
+            freestar.config = freestar.config || {}
+            freestar.config.enabled_slots = []
+            freestar.initCallback = function () {
+              if (freestar.config.enabled_slots.length === 0) {
+                freestar.initCallbackCalled = false
+              } else {
+                freestar.newAdSlots(freestar.config.enabled_slots)
+              }
+            }
+          </script>
           <link rel="stylesheet" href="/styles/freestar.css" />
         </Fragment>
       )
@@ -444,16 +457,14 @@ const canonicalUrl = meta?.canonical
   <body class="text-black">
     <slot />
     <CookieConsent client:only="svelte" />
-    <FreestarAdBanner
-      transition:persist="ad-banner"
-      client:only="svelte"
-      {enableFreestarAdBanner}
-    />
+    <FreestarAdBanner client:only="svelte" {enableFreestarAdBanner} />
     <script>
       document.addEventListener('astro:after-swap', () => {
         const freestar = window.freestar
-        console.log(freestar)
         if (freestar) {
+          freestar.queue.push(function () {
+            freestar.deleteStickyFooter('statmuse_stickyfooter')
+          })
           freestar.queue.push(function () {
             freestar.newStickyFooter('statmuse_stickyfooter')
           })
@@ -465,6 +476,15 @@ const canonicalUrl = meta?.canonical
       import { segment, getOrigin } from '@lib/analytics'
       import type { Session } from '@lib/session'
       import { session as sessionStore } from '@lib/session-store'
+
+      // configure honeybadger
+      Honeybadger.configure({
+          apiKey: document.querySelector<HTMLMetaElement>(
+            'meta[name="honeybadger"]',
+          )?.content,
+          environment: import.meta.env.PUBLIC_STAGE,
+          reportData: import.meta.env.PROD
+        })
 
       const flattenObj = (key: string, obj?: {}) => {
         return !obj
@@ -519,15 +539,6 @@ const canonicalUrl = meta?.canonical
       })
 
       document.addEventListener('astro:page-load', async () => {
-        // configure honeybadger
-        Honeybadger.configure({
-          apiKey: document.querySelector<HTMLMetaElement>(
-            'meta[name="honeybadger"]',
-          )?.content,
-          environment: import.meta.env.PUBLIC_STAGE,
-          reportData: import.meta.env.PROD,
-        })
-
         /**
          * Given window and document, add or remove "selected" class to league nav
          * links if current window location matches nav href. Note that the argument

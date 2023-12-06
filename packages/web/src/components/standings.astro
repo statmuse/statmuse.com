@@ -41,9 +41,7 @@ function addImageToGrid(grid: GameraGrid): GameraGrid {
         <TabPanel title={group.name}>
           {group.standings.map((x) => (
             <div>
-              <p class="font-semibold text-center py-2.5">
-                {x.group.replace('/', ' ').replace(group.name, '')}
-              </p>
+              <p class="font-semibold text-center py-2.5">{x.grid.name}</p>
               <Grid
                 data={addImageToGrid(x.grid)}
                 highlight={Astro.props.highlight}
