@@ -323,6 +323,7 @@ export interface GameraPlayerBio {
   birthdate: string
   birthplace: string
   age: number
+  nationality?: string
   college: string
   drafted: string
   experience: string

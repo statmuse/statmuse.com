@@ -123,37 +123,72 @@ const twitter = {
         </div>
         <div class="whitespace-nowrap text-center md:text-left">
           {
-            bio.heightFeetInches && (
-              <>
-                <span>
-                  {bio.heightFeetInches}, {bio.weightLbs} lbs
-                </span>
+            preferredDomain.toLowerCase() !== 'epl' ? (
+              <Fragment>
+                {bio.heightFeetInches && (
+                  <>
+                    <span>
+                      {bio.heightFeetInches}, {bio.weightLbs} lbs
+                    </span>
+                    <span class="last:hidden" set:text=" • " />
+                  </>
+                )}
+                {teamUrl ? (
+                  <a
+                    class="text-inherit underline"
+                    href={teamUrl}
+                    set:text={bio.team?.nickname || bio.team?.name}
+                  />
+                ) : (
+                  <>{bio.team?.nickname || bio.team?.name}</>
+                )}
                 <span class="last:hidden" set:text=" • " />
-              </>
-            )
-          }
-          {
-            teamUrl ? (
-              <a
-                class="text-inherit underline"
-                href={teamUrl}
-                set:text={bio.team?.nickname || bio.team?.name}
-              />
+                {bio.position && (
+                  <>
+                    <span>
+                      {`${bio.jerseyNumber ? '#' + bio.jerseyNumber : ''} ${
+                        bio.position
+                      }`}
+                    </span>
+                    <span class="last:hidden" set:text=" • " />
+                  </>
+                )}
+              </Fragment>
             ) : (
-              <>{bio.team?.nickname || bio.team?.name}</>
-            )
-          }
-          <span class="last:hidden" set:text=" • " />
-          {
-            bio.position && (
-              <>
-                <span>
-                  {`${bio.jerseyNumber ? '#' + bio.jerseyNumber : ''} ${
-                    bio.position
-                  }`}
-                </span>
+              <Fragment>
+                {bio.position && (
+                  <>
+                    <span>
+                      {`${bio.jerseyNumber ? '#' + bio.jerseyNumber : ''} ${
+                        bio.position
+                      }`}
+                    </span>
+                    <span class="last:hidden" set:text=" • " />
+                  </>
+                )}
+                {teamUrl ? (
+                  <a
+                    class="text-inherit underline"
+                    href={teamUrl}
+                    set:text={bio.team?.nickname || bio.team?.name}
+                  />
+                ) : (
+                  <>{bio.team?.nickname || bio.team?.name}</>
+                )}
                 <span class="last:hidden" set:text=" • " />
-              </>
+                {bio.nationality && (
+                  <>
+                    <span>{bio.nationality}</span>
+                    <span class="last:hidden" set:text=" • " />
+                  </>
+                )}
+                {bio.age && (
+                  <>
+                    <span>{bio.age}</span>
+                    <span class="last:hidden" set:text=" • " />
+                  </>
+                )}
+              </Fragment>
             )
           }
         </div>
