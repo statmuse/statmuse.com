@@ -78,6 +78,10 @@ Caching.swr(Astro)
         )
       }
     </div>
-    {playerGallery && <PlayerGallery images={playerGallery} class="mb-5" />}
+    {
+      playerGallery && playerGallery.length > 0 && (
+        <PlayerGallery images={playerGallery} class="mb-5" />
+      )
+    }
   </div>
 </FranchiseLayout>
