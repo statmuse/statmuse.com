@@ -6,6 +6,7 @@ import NbaBoxscore from '@components/nba-boxscore.astro'
 import NflBoxscore from '@components/nfl-boxscore.astro'
 import MlbBoxscore from '@components/mlb-boxscore.astro'
 import NhlBoxscore from '@components/nhl-boxscore.astro'
+import EplBoxscore from '@components/epl-boxscore.astro'
 import { Caching } from '@lib/caching'
 import { getGame } from '@lib/game'
 import { NOT_FOUND_404 } from '@lib/response'
@@ -34,7 +35,7 @@ Caching.swr(Astro)
         case 'NHL':
           return <NhlBoxscore {data} />
         case 'EPL':
-          return <NhlBoxscore {data} />
+          return <EplBoxscore {data} />
         default:
           throw new Error('cannot render a boxscore for PGA')
       }
