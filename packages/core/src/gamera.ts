@@ -958,6 +958,55 @@ export interface NhlHistoricalBoxScore extends DetailBase {
   }[]
 }
 
+export interface EplTeamGameStats {
+  goals: string
+  assists: string
+  shots: string
+  shotsOnTarget: string
+  saves: string
+  tackles: string
+  fouls: string
+  yellowCards: string
+  redCards: string
+  possessionPercentage: string
+  touches: string
+  passes: string
+  passesCompleted: string
+  offsides: string
+  corners: string
+}
+
+export interface EplHistoricalBoxScore extends DetailBase {
+  type: 'eplHistoricalBoxScore'
+  gameId: number
+  completedGameStatus: 'FT'
+  dameDate: string
+  homeTeam: Team
+  awayTeam: Team
+  teamDetail: {
+    homeTeam: EplTeamGameStats
+    awayTeam: EplTeamGameStats
+  }
+  playerDetail: {
+    homeTeam: {
+      team: string
+      grids: GameraGrid[]
+    }
+    awayTeam: {
+      team: string
+      grids: GameraGrid[]
+    }
+  }
+  gameSummary: {
+    eventType: string
+    period: string
+    minute: string
+    team: string
+    playerName: string
+    relatedPlayerName: string
+  }[]
+}
+
 export interface GameraGenericGridsDetail extends DetailBase {
   type: 'genericGrids'
   grids: GameraGrid[]
@@ -1059,6 +1108,11 @@ export interface NhlVisual extends Visual {
   detail: [NhlHistoricalBoxScore, GameraGenericGridsDetail]
 }
 
+export interface EplVisual extends Visual {
+  domain: 'EPL'
+  detail: [EplHistoricalBoxScore, GameraGenericGridsDetail]
+}
+
 export interface Conversation {
   token: string
   complete: boolean
@@ -1148,12 +1202,18 @@ export interface GameraNhlBoxScore extends GameraDefaultResponse {
   visual: NhlVisual
   nlg: Nlg
 }
+export interface GameraEplBoxScore extends GameraDefaultResponse {
+  domain: 'NHL'
+  visual: EplVisual
+  nlg: Nlg
+}
 
 export type GameraBoxScore =
   | GameraNbaBoxScore
   | GameraNflBoxScore
   | GameraMlbBoxScore
   | GameraNhlBoxScore
+  | GameraEplBoxScore
 
 export interface GameraTeamFranchiseOverview {
   domain: GameraDomain
