@@ -96,6 +96,16 @@ Caching.swr(Astro)
         )
       }
       {
+        recentGames?.columns && recentGames?.rows && (
+          <Grid
+            class="mb-5"
+            seeAllUrl={`${playerPath}/game-log`}
+            data={recentGames}
+            columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+          />
+        )
+      }
+      {
         bio.bustImageUrlGallery.length ? (
           <PlayerGallery images={bio.bustImageUrlGallery} class="mb-5" />
         ) : null
