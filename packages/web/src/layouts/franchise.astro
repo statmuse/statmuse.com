@@ -87,6 +87,8 @@ const twitter = {
     type: 'twitter',
   }),
 }
+
+console.log('bio: ', bio)
 ---
 
 <Layout
@@ -173,21 +175,23 @@ const twitter = {
             }
           </div>
         </div>
-        <div class="hidden md:block mt-6">
-          <div class="flex gap-5 mb-1 text-center">
-            {
-              bio.recordSummaries.map((summary) => (
-                <div>
-                  <p class="uppercase">{summary.recordScope}</p>
-                  <p class="text-3xl">{summary.winPercentage}</p>
-                  <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-                    {summary.record}
-                  </p>
-                </div>
-              ))
-            }
-          </div>
-        </div>
+        {
+          bio.recordSummaries && (
+            <div class="hidden md:block mt-6">
+              <div class="flex gap-5 mb-1 text-center">
+                {bio.recordSummaries.map((summary) => (
+                  <div>
+                    <p class="uppercase">{summary.recordScope}</p>
+                    <p class="text-3xl">{summary.winPercentage}</p>
+                    <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+                      {summary.record}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        }
       </div>
       <TeamRepresentatives
         representatives={bio.franchiseRepresentatives}
@@ -208,21 +212,23 @@ const twitter = {
       </div>
     </div>
   </Container>
-  <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
-    <div class="flex gap-5 mb-1 text-center">
-      {
-        bio.recordSummaries.map((summary) => (
-          <div>
-            <p class="uppercase">{summary.recordScope}</p>
-            <p class="text-3xl">{summary.winPercentage}</p>
-            <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-              {summary.record}
-            </p>
-          </div>
-        ))
-      }
-    </div>
-  </div>
+  {
+    bio.recordSummaries && (
+      <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
+        <div class="flex gap-5 mb-1 text-center">
+          {bio.recordSummaries.map((summary) => (
+            <div>
+              <p class="uppercase">{summary.recordScope}</p>
+              <p class="text-3xl">{summary.winPercentage}</p>
+              <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+                {summary.record}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
   <Container>
     <div class="flex flex-nowrap overflow-auto mb-5 space-x-5">
       {

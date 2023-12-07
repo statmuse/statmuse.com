@@ -1237,7 +1237,7 @@ export interface GameraTeamFranchiseOverview {
     conference: string
     league: string
     franchiseRepresentatives: GameraGalleryImage[]
-    recordSummaries: {
+    recordSummaries?: {
       recordScope: string
       winPercentage: string
       record: string
