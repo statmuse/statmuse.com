@@ -10,6 +10,7 @@ import MlbBoxscore from '@components/mlb-boxscore.astro'
 import NbaBoxscore from '@components/nba-boxscore.astro'
 import NflBoxscore from '@components/nfl-boxscore.astro'
 import NhlBoxscore from '@components/nhl-boxscore.astro'
+import EplBoxscore from '@components/epl-boxscore.astro'
 import Schedule from '@components/schedule.astro'
 import NbaShotChart from '@components/nba-shotchart'
 import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
@@ -40,7 +41,8 @@ const ignoreGenericGrids =
       d.type === 'mlbHistoricalBoxScore' ||
       d.type === 'nbaHistoricalBoxScore' ||
       d.type === 'nflHistoricalBoxScore' ||
-      d.type === 'nhlHistoricalBoxScore',
+      d.type === 'nhlHistoricalBoxScore' ||
+      d.type === 'eplHistoricalBoxScore',
   )
 const details =
   response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
@@ -217,6 +219,8 @@ const details =
             return <NflBoxscore {detail} />
           case 'nhlHistoricalBoxScore':
             return <NhlBoxscore {detail} />
+          case 'eplHistoricalBoxScore':
+            return <EplBoxscore {detail} />
           case 'nbaShots':
             return (
               <div>

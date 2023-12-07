@@ -1263,6 +1263,7 @@ export type Detail =
   | NflHistoricalBoxScore
   | NhlHistoricalBoxScore
   | MlbHistoricalBoxScore
+  | EplHistoricalBoxScore
   | GameraGenericGridsDetail
   | PlayerProfileDetail
   | TeamProfileDetail
