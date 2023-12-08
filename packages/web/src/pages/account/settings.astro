@@ -10,7 +10,11 @@ import { deleteCustomer } from '@statmuse/core/stripe'
 import * as Session from '@lib/session'
 import { Caching } from '@lib/caching'
 
-const meta = { title: 'Settings' }
+// export const prerender = true
+
+const meta = {
+  title: 'Settings',
+}
 
 Caching.none(Astro)
 
@@ -227,3 +231,27 @@ const manageAccountUrl =
     </div>
   </main>
 </AccountLayout>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const deleteAccountForm = document.getElementById(
+      'delete-account-form',
+    ) as HTMLFormElement
+    const deleteAccountButton = document.getElementById(
+      'delete-account-button',
+    ) as HTMLButtonElement
+
+    deleteAccountButton.addEventListener('click', (e) => {
+      e.preventDefault()
+
+      const confirmed = deleteAccountButton.dataset['confirmed'] === 'true'
+      if (confirmed) {
+        deleteAccountButton.disabled = true
+        deleteAccountForm.submit()
+      } else {
+        deleteAccountButton.dataset['confirmed'] = 'true'
+        deleteAccountButton.innerText = 'Are you sure?'
+      }
+    })
+  })
+</script>
