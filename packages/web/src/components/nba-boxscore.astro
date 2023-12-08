@@ -212,14 +212,14 @@ const awayTeamUrl = awayTeam.entity ? getUrlForEntity(awayTeam.entity) : ''
           <TabPanel title={awayTeam.name} class="space-y-5">
             {
               boxScoreData.playerDetail.awayTeam.grids.map((grid) => (
-                <Grid data={grid} alternateStyle />
+                <Grid data={grid} />
               ))
             }
           </TabPanel>
           <TabPanel title={homeTeam.name} class="space-y-5">
             {
               boxScoreData.playerDetail.homeTeam.grids.map((grid) => (
-                <Grid data={grid} alternateStyle />
+                <Grid data={grid} />
               ))
             }
           </TabPanel>

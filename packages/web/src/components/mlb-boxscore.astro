@@ -167,24 +167,12 @@ const innings = Object.entries(groupBy(plays, (p) => p.inning))
       <TabPanel title="Player Stats">
         <Tabs secondary titles={[awayTeam.name, homeTeam.name]}>
           <TabPanel title={awayTeam.name} class="space-y-5">
-            <Grid
-              data={boxScoreData.stats.awayTeam.batterStats}
-              alternateStyle
-            />
-            <Grid
-              data={boxScoreData.stats.awayTeam.pitcherStats}
-              alternateStyle
-            />
+            <Grid data={boxScoreData.stats.awayTeam.batterStats} />
+            <Grid data={boxScoreData.stats.awayTeam.pitcherStats} />
           </TabPanel>
           <TabPanel title={homeTeam.name} class="space-y-5">
-            <Grid
-              data={boxScoreData.stats.homeTeam.batterStats}
-              alternateStyle
-            />
-            <Grid
-              data={boxScoreData.stats.homeTeam.pitcherStats}
-              alternateStyle
-            />
+            <Grid data={boxScoreData.stats.homeTeam.batterStats} />
+            <Grid data={boxScoreData.stats.homeTeam.pitcherStats} />
           </TabPanel>
         </Tabs>
       </TabPanel>
