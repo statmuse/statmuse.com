@@ -518,7 +518,7 @@ export interface GameraTeamSeasonBio {
     }[]
   }
   logoImageUrl: string
-  colors: {
+  colors?: {
     foregroundColor: string
     backgroundColor: string
   }
@@ -1229,7 +1229,7 @@ export interface GameraTeamFranchiseOverview {
       nickname: string
     }
     logoImageUrl: string
-    colors: {
+    colors?: {
       foregroundColor: string
       backgroundColor: string
     }
