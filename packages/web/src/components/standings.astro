@@ -35,20 +35,33 @@ function addImageToGrid(grid: GameraGrid): GameraGrid {
 ---
 
 <div class="text-[#333] text-sm md:text-base">
-  <Tabs titles={groups.map((g) => g.name)}>
-    {
-      groups.map((group) => (
-        <TabPanel title={group.name}>
-          {group.standings.map((x) => (
-            <div class="my-4">
-              <Grid
-                data={addImageToGrid(x.grid)}
-                highlight={Astro.props.highlight}
-              />
-            </div>
-          ))}
-        </TabPanel>
-      ))
-    }
-  </Tabs>
+  {
+    groups.length > 1 ? (
+      <Tabs titles={groups.map((g) => g.name)}>
+        {groups.map((group) => (
+          <TabPanel title={group.name}>
+            {group.standings.map((x) => (
+              <div class="my-4">
+                <Grid
+                  data={addImageToGrid(x.grid)}
+                  highlight={Astro.props.highlight}
+                />
+              </div>
+            ))}
+          </TabPanel>
+        ))}
+      </Tabs>
+    ) : (
+      groups.map((group) =>
+        group.standings.map((x) => (
+          <div class="my-4">
+            <Grid
+              data={addImageToGrid(x.grid)}
+              highlight={Astro.props.highlight}
+            />
+          </div>
+        )),
+      )
+    )
+  }
 </div>

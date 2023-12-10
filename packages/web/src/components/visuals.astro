@@ -7,6 +7,7 @@ import NbaStandings from '@components/nba-standings.astro'
 import NflStandings from '@components/nfl-standings.astro'
 import NhlStandings from '@components/nhl-standings.astro'
 import MlbBoxscore from '@components/mlb-boxscore.astro'
+import Standings from '@components/standings.astro'
 import NbaBoxscore from '@components/nba-boxscore.astro'
 import NflBoxscore from '@components/nfl-boxscore.astro'
 import NhlBoxscore from '@components/nhl-boxscore.astro'
@@ -28,6 +29,7 @@ const query = Astro.props.query
 const conversationToken = Astro.props.conversationToken
 
 const response = Astro.props.response
+console.log('response: ', response.visual.detail)
 const summary = tokensToHtml(response.visual.summaryTokens)
 const showSummary = !!response.visual.summaryTokens?.find(
   (t) => t.type === 'inferred',
@@ -50,6 +52,7 @@ const details =
         ignoreGenericGrids ? d.type !== 'genericGrids' : true,
       )
     : undefined
+console.log('details: ', details[0])
 ---
 
 <Container>
@@ -205,7 +208,13 @@ const details =
                 return <NflStandings {detail} />
               case 'NHL':
                 return <NhlStandings {detail} />
-
+              case 'EPL':
+                return (
+                  <Standings
+                    groups={[{ name: 'EPL', standings: detail.standings }]}
+                    highlight={detail.topic?.team}
+                  />
+                )
               default:
                 return null
             }
