@@ -69,7 +69,12 @@ Caching.swr(Astro)
     {
       stats.grids.map((grid, i) => (
         <Fragment>
-          <Grid class="mb-5" data={grid} parameters={stats.parameters} />
+          <Grid
+            class="mb-5"
+            data={grid}
+            parameters={stats.parameters}
+            domain={league}
+          />
           {playerStats.grids[i] && (
             <Grid
               class="mb-5"

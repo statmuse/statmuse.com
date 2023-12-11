@@ -128,6 +128,7 @@ Caching.swr(Astro)
               data={data}
               class="mb-5"
               columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+              domain={league}
             >
               <a href={`stats/${year}`}>See stats</a>
             </Grid>
@@ -137,6 +138,7 @@ Caching.swr(Astro)
             data={stats}
             class="mb-5"
             columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+            domain={league}
           >
             <a href={`stats/${year}`}>See stats</a>
           </Grid>
