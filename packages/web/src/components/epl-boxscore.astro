@@ -5,6 +5,7 @@ import {
   getUrlForEntity,
 } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
+import { groupBy } from 'lodash-es'
 import Grid from '@components/grid.astro'
 import Image from '@components/image.astro'
 import TabPanel from '@components/tab-panel.astro'
@@ -29,10 +30,17 @@ const awayTeamStats = boxScoreData.teamDetail.awayTeam
 
 const homeTeamUrl = homeTeam.entity ? getUrlForEntity(homeTeam.entity) : ''
 const awayTeamUrl = awayTeam.entity ? getUrlForEntity(awayTeam.entity) : ''
+
+const plays = boxScoreData.gameSummary
+const periods = Object.entries(groupBy(plays, (p) => p.period))
+let awayTeamScore = 0
+let homeTeamScore = 0
 ---
 
 <div class="w-full max-w-3xl mx-auto text-[#333]">
-  <h3 class="font-semibold bg-[#e4f2ff] rounded-sm px-3 py-2 w-fit">Final</h3>
+  <h3 class="font-semibold bg-[#e4f2ff] rounded-sm px-3 py-2 w-fit mb-4">
+    Final
+  </h3>
   <div>
     <div class="flex items-center mb-6">
       <a title={awayTeam.name} href={awayTeamUrl}>
@@ -91,7 +99,77 @@ const awayTeamUrl = awayTeam.entity ? getUrlForEntity(awayTeam.entity) : ''
   </div>
 
   <div class="text-sm md:text-base">
-    <Tabs titles={['Team Stats', 'Player Stats']}>
+    <Tabs titles={['Summary', 'Team Stats', 'Player Stats']}>
+      <TabPanel title="Summary">
+        <div>
+          {
+            periods.map(([period, plays]) => (
+              <div class="border-b border-[#e4e4e4]">
+                <div class="flex text-[#a8a8a8] border-b border-[#e4e4e4]">
+                  <p class="flex-1 py-1">{period}</p>
+                  <p class="text-center py-1 w-16">{awayTeam.abbrev}</p>
+                  <p class="text-center py-1 w-16">{homeTeam.abbrev}</p>
+                </div>
+                {plays.map((play) => (
+                  <div class="flex py-1.5">
+                    <Image
+                      title={play.team}
+                      src={
+                        play.team === awayTeam.name
+                          ? awayTeam.logoUrl
+                          : homeTeam.logoUrl
+                      }
+                      alt={play.team}
+                      class="w-7 h-7 mt-2 object-contain"
+                      width={60}
+                      height={60}
+                    />
+                    <p class="flex-1 py-2 px-4 flex items-center">
+                      {play.eventType === 'yellow_card' ? (
+                        <>
+                          <span class="mr-2">{play.minute}</span>
+                          <span class="inline-block h-4 w-4 bg-yellow-300  mr-2" />{' '}
+                          {play.playerName}
+                        </>
+                      ) : play.eventType === 'red_car' ? (
+                        <>
+                          <span class="mr-2">{play.minute}</span>
+                          <span class="inline-block h-4 w-4 bg-red-600 mr-2" />{' '}
+                          {play.playerName}
+                        </>
+                      ) : play.eventType === 'goal' ? (
+                        `${play.minute} GOAL: ${play.playerName} ${
+                          play.relatedPlayerName
+                            ? 'ASSIST: ' + play.relatedPlayerName
+                            : ''
+                        }`
+                      ) : play.eventType === 'substitution' ? (
+                        `${play.minute} IN: ${play.playerName} OUT: ${play.relatedPlayerName}`
+                      ) : (
+                        play.playerName
+                      )}
+                    </p>
+                    <>
+                      <p class="w-16 text-center py-2 px-4">
+                        {play.eventType === 'goal' &&
+                        play.team === awayTeam.name
+                          ? ++awayTeamScore
+                          : awayTeamScore}
+                      </p>
+                      <p class="w-16 text-center py-2 px-4">
+                        {play.eventType === 'goal' &&
+                        play.team === homeTeam.name
+                          ? ++homeTeamScore
+                          : homeTeamScore}
+                      </p>
+                    </>
+                  </div>
+                ))}
+              </div>
+            ))
+          }
+        </div>
+      </TabPanel>
       <TabPanel title="Team Stats">
         <div class="flex">
           <p

@@ -51,7 +51,7 @@ const tabs = Astro.props.titles.map((tab) => ({
             class:list={{
               'block py-3 w-full h-full cursor-pointer': true,
               'peer-checked:font-semibold': !Astro.props.secondary,
-              'bg-team-secondary text-team-primary peer-checked:bg-team-primary peer-checked:text-team-secondary':
+              'bg-white text-team-primary peer-checked:bg-team-primary peer-checked:text-team-secondary':
                 Astro.props.secondary,
             }}
             for={`tab-${tab.id}`}
