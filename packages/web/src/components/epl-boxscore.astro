@@ -5,7 +5,7 @@ import {
   getUrlForEntity,
 } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
-import { groupBy } from 'lodash-es'
+import { groupBy, orderBy } from 'lodash-es'
 import Grid from '@components/grid.astro'
 import Image from '@components/image.astro'
 import TabPanel from '@components/tab-panel.astro'
@@ -31,7 +31,7 @@ const awayTeamStats = boxScoreData.teamDetail.awayTeam
 const homeTeamUrl = homeTeam.entity ? getUrlForEntity(homeTeam.entity) : ''
 const awayTeamUrl = awayTeam.entity ? getUrlForEntity(awayTeam.entity) : ''
 
-const plays = boxScoreData.gameSummary
+const plays = orderBy(boxScoreData.gameSummary, 'minute')
 const periods = Object.entries(groupBy(plays, (p) => p.period))
 let awayTeamScore = 0
 let homeTeamScore = 0
@@ -137,7 +137,8 @@ let homeTeamScore = 0
                           <span class="inline-block h-4 w-4 bg-red-600 mr-2" />{' '}
                           {play.playerName}
                         </>
-                      ) : play.eventType === 'goal' ? (
+                      ) : play.eventType === 'goal' ||
+                        play.eventType === 'penalty_goal' ? (
                         `${play.minute} GOAL: ${play.playerName} ${
                           play.relatedPlayerName
                             ? 'ASSIST: ' + play.relatedPlayerName
@@ -151,13 +152,15 @@ let homeTeamScore = 0
                     </p>
                     <>
                       <p class="w-16 text-center py-2 px-4">
-                        {play.eventType === 'goal' &&
+                        {(play.eventType === 'goal' ||
+                          play.eventType === 'penalty_goal') &&
                         play.team === awayTeam.name
                           ? ++awayTeamScore
                           : awayTeamScore}
                       </p>
                       <p class="w-16 text-center py-2 px-4">
-                        {play.eventType === 'goal' &&
+                        {(play.eventType === 'goal' ||
+                          play.eventType === 'penalty_goal') &&
                         play.team === homeTeam.name
                           ? ++homeTeamScore
                           : homeTeamScore}
