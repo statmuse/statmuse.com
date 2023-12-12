@@ -145,7 +145,8 @@ let homeTeamScore = 0
                           {play.playerName}
                         </>
                       ) : play.eventType === 'goal' ||
-                        play.eventType === 'penalty_goal' ? (
+                        play.eventType === 'penalty_goal' ||
+                        play.eventType === 'own_goal' ? (
                         `${play.minute} GOAL: ${play.playerName} ${
                           play.relatedPlayerName
                             ? 'ASSIST: ' + play.relatedPlayerName
@@ -159,16 +160,20 @@ let homeTeamScore = 0
                     </p>
                     <>
                       <p class="w-16 text-center py-2 px-4">
-                        {(play.eventType === 'goal' ||
+                        {((play.eventType === 'goal' ||
                           play.eventType === 'penalty_goal') &&
-                        play.team === awayTeam.name
+                          play.team === awayTeam.name) ||
+                        (play.eventType === 'own_goal' &&
+                          play.team === homeTeam.name)
                           ? ++awayTeamScore
                           : awayTeamScore}
                       </p>
                       <p class="w-16 text-center py-2 px-4">
-                        {(play.eventType === 'goal' ||
+                        {((play.eventType === 'goal' ||
                           play.eventType === 'penalty_goal') &&
-                        play.team === homeTeam.name
+                          play.team === homeTeam.name) ||
+                        (play.eventType === 'own_goal' &&
+                          play.team === awayTeam.name)
                           ? ++homeTeamScore
                           : homeTeamScore}
                       </p>
