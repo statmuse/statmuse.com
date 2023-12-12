@@ -131,9 +131,16 @@ let homeTeamScore = 0
                           <span class="inline-block h-4 w-4 bg-yellow-300  mr-2" />{' '}
                           {play.playerName}
                         </>
-                      ) : play.eventType === 'red_car' ? (
+                      ) : play.eventType === 'red_card' ? (
                         <>
                           <span class="mr-2">{play.minute}</span>
+                          <span class="inline-block h-4 w-4 bg-red-600 mr-2" />{' '}
+                          {play.playerName}
+                        </>
+                      ) : play.eventType === 'yellow_red_card' ? (
+                        <>
+                          <span class="mr-2">{play.minute}</span>
+                          <span class="inline-block h-4 w-4 bg-yellow-300  mr-2" />
                           <span class="inline-block h-4 w-4 bg-red-600 mr-2" />{' '}
                           {play.playerName}
                         </>
