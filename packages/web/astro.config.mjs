@@ -15,7 +15,10 @@ export default defineConfig({
   ],
   output: 'server',
   server: { port: 3000 },
-  adapter: aws(),
+  adapter: aws({
+    responseMode: 'buffer',
+    serverRoutes: ['ask', 'auth/*', 'account/*'],
+  }),
   vite: {
     optimizeDeps: ['sst'],
     build: { sourcemap: process.env.NODE_ENV === 'production' },

@@ -332,10 +332,7 @@ export interface GameraPlayerBio {
     name: string
     years: number[]
   }[]
-  additionalQuestions: {
-    domain: string
-    text: string
-  }[]
+  additionalQuestions: AdditionalQuestion[]
   statsSummary?: {
     statsScope: string
     stats: {
@@ -351,14 +348,12 @@ export interface GameraPlayerBio {
 }
 
 export interface GameraGrid {
-  name: string
-  columns: [
-    {
-      rowItemKey: string
-      title: string
-      type: string
-    },
-  ]
+  name?: string
+  columns: {
+    rowItemKey: string
+    title: string
+    type: string
+  }[]
   rows: Record<
     string,
     {
@@ -368,7 +363,7 @@ export interface GameraGrid {
       entity?: GameraEntity
     }
   >[]
-  aggregations: Record<
+  aggregations?: Record<
     string,
     {
       display: string
@@ -660,6 +655,23 @@ export interface Summary {
 export interface AdditionalQuestion {
   domain: string
   text: string
+}
+
+export interface ContentReference {
+  domainTags?: {
+    domain: string
+  }
+  questionTags?: {
+    actorType: string
+    teamIds: number[]
+    playerIds: number[]
+    seasonYears: number[]
+  }
+  answerTags?: {
+    teamIds: number[]
+    playerIds: number[]
+    seasonYears: number[]
+  }
 }
 
 export interface DetailBase {
@@ -1271,3 +1283,214 @@ export type Detail =
   | StandingsDetail
   | ScheduleDetail
   | NbaShotsDetail
+
+export interface PlayerInfo {
+  entity: GameraEntity
+  imageUrl: string
+  colors: {
+    backgroundColor: string
+    foregroundColor: string
+  }
+  statDisplayValue: string
+}
+
+export interface PlayerCard {
+  stat: string
+  type: string
+  players: PlayerInfo[]
+}
+
+export interface PlayerCardResponse {
+  seasonYearDisplay: string
+  seasonType: string
+  cards: PlayerCard[]
+}
+
+export interface TeamInfo {
+  name: string
+  nickname: string
+  abbreviation: string
+  logoImageUrl: string
+  colors: {
+    foregroundColor: string
+    backgroundColor: string
+  }
+  entity: GameraEntity
+  statDisplayValue: string
+}
+
+export interface TeamCard {
+  stat: string
+  type: string
+  teams: TeamInfo[]
+}
+
+export interface TeamCardResponse {
+  seasonYearDisplay: string
+  seasonType: string
+  cards: TeamCard[]
+}
+
+export interface StandingsBase {
+  team: {
+    name: string
+    nickname: string
+    logoImageUrl: string
+    colors: {
+      foregroundColor: string
+      backgroundColor: string
+    }
+    entity: GameraEntity
+  }
+  conference?: {
+    name: string
+  }
+  league?: {
+    name: string
+  }
+  division: {
+    name: string
+  }
+}
+
+export interface StandingsMlb extends StandingsBase {
+  rank: {
+    league: number
+    division: number
+  }
+  clinchedAbbrev: string
+  stats: {
+    gamesBehind: {
+      mlb: {
+        value: number
+        display: string
+      }
+      league: {
+        value: number
+        display: string
+      }
+      division: {
+        value: number
+        display: string
+      }
+    }
+    wins: {
+      value: number
+      display: string
+    }
+    losses: {
+      value: number
+      display: string
+    }
+    winPercent: {
+      value: number
+      display: string
+    }
+  }
+}
+
+export interface StandingsNba extends StandingsBase {
+  rank: {
+    conference: string
+    division: string
+  }
+  stats: {
+    gamesBehind: {
+      league: {
+        value: number
+        display: string
+      }
+      conference: {
+        value: number
+        display: string
+      }
+      division: {
+        value: number
+        display: string
+      }
+    }
+    wins: {
+      value: number
+      display: string
+    }
+    losses: {
+      value: number
+      display: string
+    }
+    winPercent: {
+      value: number
+      display: string
+    }
+  }
+}
+
+export interface StandingsNhl extends StandingsBase {
+  rank: {
+    conference: number
+    division: number
+    league: number
+  }
+  stats: {
+    points: {
+      value: number
+      display: string
+    }
+    wins: {
+      value: number
+      display: string
+    }
+    ties: {
+      value: number
+      display: string
+    }
+    losses: {
+      value: number
+      display: string
+    }
+    overtimeLosses: {
+      value: number
+      display: string
+    }
+    goalDifferential: {
+      value: number
+      display: string
+    }
+  }
+}
+
+export interface StandingsNfl extends StandingsBase {
+  rank: {
+    conference: number
+    division: number
+    league: number
+  }
+  stats: {
+    wins: {
+      value: number
+      display: string
+    }
+    losses: {
+      value: number
+      display: string
+    }
+    ties: {
+      value: number
+      display: string
+    }
+    winPercent: {
+      value: number
+      display: string
+    }
+  }
+}
+
+export type StandingsTeam =
+  | StandingsMlb
+  | StandingsNba
+  | StandingsNfl
+  | StandingsNhl
+
+export interface StandingsResponse {
+  seasonYearDisplay: string
+  teams: StandingsTeam[]
+}
