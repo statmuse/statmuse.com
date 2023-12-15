@@ -20,7 +20,7 @@ interface Props {
 
 const { teams, domain, group, limit } = Astro.props
 
-const getColumns = (domain: string, name: string) => {
+const getColumns = (domain: string, name?: string) => {
   let columns = [
     {
       rowItemKey: 'rank',
@@ -29,7 +29,7 @@ const getColumns = (domain: string, name: string) => {
     },
     {
       rowItemKey: 'name',
-      title: name,
+      title: name ?? '',
       type: 'string',
     },
     {
@@ -230,15 +230,15 @@ const getRow = (domain: string, team: StandingsTeam) => {
 }
 
 const mapToGrid = (
-  domain: string,
-  conference: string,
   teams: StandingsTeam[],
+  domain: string,
+  conference?: string,
 ): GameraGrid => {
   const columns = getColumns(domain, conference)
 
   const rows = teams
     .map((team) => getRow(domain, team))
-    .sort((a, b) => a.rank.value - b?.rank.value)
+    .sort((a, b) => a?.rank.value - b?.rank.value)
     .slice(0, limit)
 
   return { columns, rows }
@@ -248,9 +248,9 @@ const firstTeam = teams[0]
 
 const grids = group
   ? Object.entries(groupBy(teams, `${group}.name`)).map(([name, teams]) =>
-      mapToGrid(domain, name, teams),
+      mapToGrid(teams, domain, name),
     )
-  : [mapToGrid(domain, firstTeam.conference.name, teams)]
+  : [mapToGrid(teams, domain, firstTeam.conference?.name)]
 ---
 
 <div
