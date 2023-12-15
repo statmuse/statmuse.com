@@ -330,8 +330,9 @@ if (allowedDomains.includes(domain)) {
               href={playerAskLink(domain, card.stat)}
               class="flex rounded-2xl overflow-hidden px-2.5 hover:no-underline"
               style={{
-                backgroundColor: card.players[0].colors.backgroundColor,
-                color: card.players[0].colors.foregroundColor,
+                backgroundColor:
+                  card.players[0].colors?.backgroundColor ?? '#FFF',
+                color: card.players[0].colors?.foregroundColor ?? '#000',
               }}
             >
               {card?.players.map((player, i) => (
