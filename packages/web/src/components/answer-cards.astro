@@ -178,17 +178,17 @@ const playerAskLink = (domain: string, stat: string) => {
       return `/${domain}/ask/gaa-leaders-this-season`
     // EPL Player
     case 'mostGoals':
-      return 'Goals Leaders'
+      return `/${domain}/ask/goal-leaders-this-season`
     case 'mostAssists':
-      return 'Assists Leaders'
+      return `/${domain}/ask/assist-leaders-this-season`
     case 'mostShotsOnTarget':
-      return 'Shots on Target Leaders'
+      return `/${domain}/ask/shots-on-target-leaders-this-season`
     case 'mostPasses':
-      return 'Passes Leaders'
+      return ''
     case 'mostTackles':
-      return 'Tackles Leaders'
+      return ''
     case 'mostCleanSheets':
-      return 'Clean Sheets Leaders'
+      return `/${domain}/ask/clean-sheet-leaders-this-season`
     default:
       return stat
   }
@@ -229,11 +229,11 @@ const teamAskLink = (domain: string, stat: string) => {
       return `/${domain}/ask?q=best+pk%25+by+a+team+this+season`
     // EPL Team
     case 'mostGoals':
-      return 'Goals For Rankings'
+      return `/${domain}/ask/most-goals-by-a-team-this-season`
     case 'leastGoalsAgainst':
-      return 'Goals Against Rankings'
+      return `/${domain}/ask/fewest-goals-against-by-a-team-this-season`
     case 'bestGoalDifferential':
-      return 'Goal Difference Rankings'
+      return `/${domain}/ask/highest-goal-difference-by-a-team-this-season`
     default:
       return stat
   }
@@ -302,7 +302,7 @@ let playerCardsResp: PlayerCardResponse | undefined
 let teamCardsResp: TeamCardResponse | undefined
 let standingsResp: StandingsResponse | undefined
 
-const allowedDomains = ['nba', 'nfl', 'nhl']
+const allowedDomains = ['nba', 'nfl', 'nhl', 'epl']
 
 if (allowedDomains.includes(domain)) {
   ;[playerCardsResp, teamCardsResp, standingsResp] = await Promise.all([
