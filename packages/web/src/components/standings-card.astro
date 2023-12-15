@@ -7,6 +7,7 @@ import type {
   StandingsNfl,
   StandingsNhl,
   StandingsMlb,
+  StandingsEpl,
 } from '@statmuse/core/gamera'
 import { groupBy } from 'lodash-es'
 
@@ -96,6 +97,31 @@ const getColumns = (domain: string, name: string) => {
     ]
   }
 
+  if (domain === 'epl') {
+    const [first, second, third, ...rest] = columns
+    columns = [
+      first,
+      second,
+      {
+        rowItemKey: 'points',
+        title: 'PTS',
+        type: 'number',
+      },
+      third,
+      {
+        rowItemKey: 'draws',
+        title: 'D',
+        type: 'number',
+      },
+      ...rest,
+      {
+        rowItemKey: 'goalDifferential',
+        title: 'GD',
+        type: 'number',
+      },
+    ]
+  }
+
   return columns
 }
 
@@ -178,6 +204,27 @@ const getRow = (domain: string, team: StandingsTeam) => {
       points: nhlTeam.stats.points,
       goalDifferential: nhlTeam.stats.goalDifferential,
       overtimeLosses: nhlTeam.stats.overtimeLosses,
+    }
+  }
+
+  if (domain === 'epl') {
+    const eplTeam = team as StandingsEpl
+    return {
+      rank: {
+        display: eplTeam.rank.league + '',
+        value: eplTeam.rank.league,
+      },
+      name: {
+        display: eplTeam.team.nickname,
+        value: eplTeam.team.nickname,
+        imageUrl: eplTeam.team.logoImageUrl,
+        entity: eplTeam.team.entity,
+      },
+      wins: eplTeam.stats.wins,
+      losses: eplTeam.stats.losses,
+      points: eplTeam.stats.points,
+      draws: eplTeam.stats.draws,
+      goalDifferential: eplTeam.stats.goalDifferential,
     }
   }
 }

@@ -1484,11 +1484,40 @@ export interface StandingsNfl extends StandingsBase {
   }
 }
 
+export interface StandingsEpl extends StandingsBase {
+  rank: {
+    league: number
+  }
+  stats: {
+    points: {
+      value: number
+      display: string
+    }
+    wins: {
+      value: number
+      display: string
+    }
+    losses: {
+      value: number
+      display: string
+    }
+    draws: {
+      value: number
+      display: string
+    }
+    goalDifferential: {
+      value: number
+      display: string
+    }
+  }
+}
+
 export type StandingsTeam =
   | StandingsMlb
   | StandingsNba
   | StandingsNfl
   | StandingsNhl
+  | StandingsEpl
 
 export interface StandingsResponse {
   seasonYearDisplay: string

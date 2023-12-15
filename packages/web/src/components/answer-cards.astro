@@ -418,7 +418,7 @@ if (allowedDomains.includes(domain)) {
     <Fragment>
       <h3 class="text-3xl font-semibold mb-1.5">
         {`${domain.toUpperCase()} ${standingsResp.seasonYearDisplay} ${
-          domain === 'nba' ? 'Conference' : 'Division'
+          domain === 'nba' ? 'Conference' : domain === 'epl' ? '' : 'Division'
         } Standings`}
       </h3>
       <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
@@ -426,10 +426,14 @@ if (allowedDomains.includes(domain)) {
           ([_, teams]) => (
             <StandingsCard
               {teams}
-              group={domain !== 'nba' ? 'division' : undefined}
+              group={
+                domain !== 'nba' && domain !== 'epl' ? 'division' : undefined
+              }
               domain={domain}
               limit={
                 domain === 'nba'
+                  ? 6
+                  : domain === 'epl'
                   ? 6
                   : domain === 'nfl'
                   ? 2
