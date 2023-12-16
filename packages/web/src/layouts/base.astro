@@ -590,30 +590,30 @@ const canonicalUrl = meta?.canonical
 
         maybeRewriteUrl(window, document)
 
-        // try {
-        //   const session: Session = await fetch('/auth/session').then((r) =>
-        //     r.json(),
-        //   )
-        //   sessionStore.set(session)
+        try {
+          const session: Session = await fetch('/auth/session').then((r) =>
+            r.json(),
+          )
+          sessionStore.set(session)
 
-        //   if (session.type === 'visitor') {
-        //     segment.identify(`v:${session.properties.id}`, {
-        //       origin: session.properties.origin,
-        //       origin_scope: 'browser',
-        //     })
-        //   }
-        //   if (session.type === 'user') {
-        //     segment.identify(`u:${session.properties.id}`, {
-        //       origin: session.properties.origin,
-        //       origin_scope: 'browser',
-        //     })
-        //   }
+          if (session.type === 'visitor') {
+            segment.identify(`v:${session.properties.id}`, {
+              origin: session.properties.origin,
+              origin_scope: 'browser',
+            })
+          }
+          if (session.type === 'user') {
+            segment.identify(`u:${session.properties.id}`, {
+              origin: session.properties.origin,
+              origin_scope: 'browser',
+            })
+          }
 
-        //   Honeybadger.setContext({
-        //     user_id: session.properties.id,
-        //     user_type: session.type,
-        //   })
-        // } catch (e) {}
+          Honeybadger.setContext({
+            user_id: session.properties.id,
+            user_type: session.type,
+          })
+        } catch (e) {}
       })
     </script>
   </body>
