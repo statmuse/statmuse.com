@@ -11,6 +11,8 @@ import Image from '@components/image.astro'
 import TabPanel from '@components/tab-panel.astro'
 import Tabs from '@components/tabs.astro'
 import TeamStat from '@components/team-stat.astro'
+import Goal from '@components/icons/goal.astro'
+import Substitution from '@components/icons/substitution.astro'
 
 interface Props extends HTMLAttributes<'div'> {
   data?: GameraEplBoxScore
@@ -147,13 +149,21 @@ let homeTeamScore = 0
                       ) : play.eventType === 'goal' ||
                         play.eventType === 'penalty_goal' ||
                         play.eventType === 'own_goal' ? (
-                        `${play.minute} GOAL: ${play.playerName} ${
-                          play.relatedPlayerName
-                            ? 'ASSIST: ' + play.relatedPlayerName
-                            : ''
-                        }`
+                        <>
+                          <span class="mr-2">{play.minute}</span>
+                          <Goal class="w-5 mr-2" />
+                          {`${play.playerName}${
+                            play.relatedPlayerName
+                              ? ' (Assist: ' + play.relatedPlayerName + ')'
+                              : ''
+                          }`}
+                        </>
                       ) : play.eventType === 'substitution' ? (
-                        `${play.minute} IN: ${play.playerName} OUT: ${play.relatedPlayerName}`
+                        <>
+                          <span class="mr-2">{play.minute}</span>
+                          <Substitution class="w-5 mr-2" />
+                          {`${play.playerName} in, ${play.relatedPlayerName} out`}
+                        </>
                       ) : (
                         play.playerName
                       )}
