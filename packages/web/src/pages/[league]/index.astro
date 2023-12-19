@@ -13,7 +13,7 @@ type LeagueParam = 'nba' | 'nfl' | 'mlb' | 'nhl' | 'pga' | 'fantasy' | 'epl'
 const league = Astro.params.league as LeagueParam
 
 const onboardingExamples = await listOnboarding(
-  league === 'fantasy' ? 'nfl' : league === "epl" ? 'nfl' : league,
+  league === 'fantasy' ? 'nfl' : league === 'epl' ? 'nfl' : league,
   10,
 )
 const banner =
@@ -511,61 +511,83 @@ const fantasyExamples = [
 
 const eplExamples = [
   [
-    'Player Outlooks & Projections',
+    'Scores',
     [
-      'What is your projection for Justin Jefferson?',
-      'What is your outlook for Christian McCaffrey this week?',
-      'Where do you rank Joe Burrow?',
-      'Tell me about Russell Wilson.',
-      'Should I start Jonathan Taylor?',
-      'Should I sit Mike Williams?',
-      "What's the deal with Mark Andrews?",
-      'Who is the top-ranked quarterback?',
-      'Who will be the best fantasy wide receiver this week?',
-      'How will the Rams defense do this week?',
+      'Did Arsenal win?',
+      'What was the score of the last Man United vs Man City match?',
+      'What happened in the Newcastle match?',
     ].map((q) => ({
       query: q,
       path: createAskPath({ domain: 'epl', query: q }),
     })),
   ],
   [
-    'Player Comparisons',
+    'Fixtures',
     [
-      'Alvin Kamara or Nick Chubb?',
-      "Ja'Marr Chase, Cooper Kupp or Tyreek Hill?",
-      'Who had more fantasy points last season? Chubb or Saquon?',
-      'Should I go with the Ravens defense or the Colts defense?',
-      'Justin Herbert or Joe Burrow?',
-      'How about Josh Allen or Jalen Hurts?',
-      'Christian McCaffrey, Austin Ekeler fantasy points last 3 seasons.',
-      'Who has more fantasy points per game in their career? Stefon Diggs or AJ Brown?',
-      'Waddle or Tyreek?',
-      'Kittle or Waller?',
+      'What matches are on this week?',
+      'When is the next North West derby?',
+      'When do Tottenham play next?',
     ].map((q) => ({
       query: q,
       path: createAskPath({ domain: 'epl', query: q }),
     })),
   ],
   [
-    'Player & Team Fantasy Recaps',
+    'Table',
     [
-      'Patrick Mahomes vs Chargers.',
-      'Who scored the most fantasy points last season?',
-      'Which running back averaged the most fantasy points per game last season?',
-      'Which QB had the most DraftKings points last year?',
-      'Who has the most fantasy points per game in a season?',
-      "How many fantasy points per game is Ja'Marr Chase averaging this season?",
-      'Which team defense has scored the fewest fantasy points last year?',
-      'How did Tyreek Hill do?',
-      'Which rookie has the most fantasy points per game this season?',
-      'Which TE is leading in PPR this season?',
+      'Premier League table?',
+      'Who won the Premier League last season?',
+      "What was Liverpool's record last year?",
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'epl', query: q }),
+    })),
+  ],
+  [
+    'Stats',
+    [
+      'Who scored the most goals in a season?',
+      'Who has the most hat tricks all time?',
+      'Which team leads the league in passes per match?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'epl', query: q }),
+    })),
+  ],
+  [
+    'Bios',
+    [
+      'Tell me about Thierry Henry',
+      'How tall is Peter Crouch?',
+      'How old is Bukayo Saka?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'epl', query: q }),
+    })),
+  ],
+  [
+    'Recaps',
+    [
+      'How did Cristiano Ronaldo do in 2007-08 season?',
+      'How is Haaland doing?',
+      'Did Son Heung-Min have a good season last year?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'epl', query: q }),
+    })),
+  ],
+  [
+    'Beyond the Box Score',
+    [
+      'Who has the most touches in opponent box this season?',
+      'Who leads the league in big chances created?',
+      'Which player has the most passes in the final third last year?',
     ].map((q) => ({
       query: q,
       path: createAskPath({ domain: 'epl', query: q }),
     })),
   ],
 ]
-
 
 type ExampleSet = [string, { query: string; path: string }[]]
 
@@ -588,11 +610,15 @@ const meta = {
   } questions. Stats, projections, comparisons, outlooks, recaps and more — just ask.`,
   facebook: {
     imageUrl:
-      league === 'fantasy' ? 'https://www.statmuse.com/images/sm-fantasy-meta-banner.jpg' : undefined,
+      league === 'fantasy'
+        ? 'https://www.statmuse.com/images/sm-fantasy-meta-banner.jpg'
+        : undefined,
   },
   twitter: {
     imageUrl:
-      league === 'fantasy' ? 'https://www.statmuse.com/images/sm-fantasy-meta-banner.jpg' : undefined,
+      league === 'fantasy'
+        ? 'https://www.statmuse.com/images/sm-fantasy-meta-banner.jpg'
+        : undefined,
   },
 }
 
