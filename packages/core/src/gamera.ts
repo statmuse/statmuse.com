@@ -1025,6 +1025,8 @@ export interface EplHistoricalBoxScore extends DetailBase {
     team: string
     playerName: string
     relatedPlayerName: string
+    homeTeamScore: number
+    awayTeamScore: number
   }[]
 }
 

@@ -33,10 +33,14 @@ const awayTeamStats = boxScoreData.teamDetail.awayTeam
 const homeTeamUrl = homeTeam.entity ? getUrlForEntity(homeTeam.entity) : ''
 const awayTeamUrl = awayTeam.entity ? getUrlForEntity(awayTeam.entity) : ''
 
-const plays = orderBy(boxScoreData.gameSummary, 'minute')
+const plays = orderBy(
+  boxScoreData.gameSummary.map((play) => ({
+    ...play,
+    minuteRaw: play.minute.split("'").reduce((t, c) => t + Number(c), 0),
+  })),
+  'minuteRaw',
+)
 const periods = Object.entries(groupBy(plays, (p) => p.period))
-let awayTeamScore = 0
-let homeTeamScore = 0
 ---
 
 <div class="w-full max-w-3xl mx-auto text-[#333]">
@@ -170,22 +174,10 @@ let homeTeamScore = 0
                     </p>
                     <>
                       <p class="w-16 text-center py-2 px-4">
-                        {((play.eventType === 'goal' ||
-                          play.eventType === 'penalty_goal') &&
-                          play.team === homeTeam.name) ||
-                        (play.eventType === 'own_goal' &&
-                          play.team === awayTeam.name)
-                          ? ++homeTeamScore
-                          : homeTeamScore}
+                        {play.homeTeamScore}
                       </p>
                       <p class="w-16 text-center py-2 px-4">
-                        {((play.eventType === 'goal' ||
-                          play.eventType === 'penalty_goal') &&
-                          play.team === awayTeam.name) ||
-                        (play.eventType === 'own_goal' &&
-                          play.team === homeTeam.name)
-                          ? ++awayTeamScore
-                          : awayTeamScore}
+                        {play.awayTeamScore}
                       </p>
                     </>
                   </div>
