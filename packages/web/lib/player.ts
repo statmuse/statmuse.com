@@ -108,7 +108,8 @@ export const getPlayerBio = async (
 ) => {
   try {
     const playerId = parsePlayerId(player)
-    const path = `${domain}/players/${playerId}/bio`
+    const league = domain.toLowerCase() === 'fc' ? 'epl' : domain.toLowerCase()
+    const path = `${league}/players/${playerId}/bio`
 
     console.log('PATH: ', path)
     const data = await request<GameraPlayerBio & { error?: string }>(
@@ -130,7 +131,8 @@ export const getPlayerProfile = async (
 ) => {
   try {
     const playerId = parsePlayerId(player)
-    const path = `${domain}/players/${playerId}`
+    const league = domain.toLowerCase() === 'fc' ? 'epl' : domain.toLowerCase()
+    const path = `${league}/players/${playerId}`
     const data = await request<
       GameraPlayerProfileResponse & { error?: string }
     >(context, path)
@@ -150,7 +152,9 @@ export const getPlayerStats = async (props: {
 }) => {
   try {
     const playerId = parsePlayerId(props.player)
-    const path = `${props.domain}/players/${playerId}/careerStats`
+    const league =
+      props.domain.toLowerCase() === 'fc' ? 'epl' : props.domain.toLowerCase()
+    const path = `${league}/players/${playerId}/careerStats`
     return request<GameraPlayerStats>(props.context, path, props.params)
   } catch (error) {
     console.error(error)
@@ -166,7 +170,9 @@ export const getPlayerGameLog = async (props: {
 }) => {
   try {
     const playerId = parsePlayerId(props.player)
-    const path = `${props.domain}/players/${playerId}/gameLog`
+    const league =
+      props.domain.toLowerCase() === 'fc' ? 'epl' : props.domain.toLowerCase()
+    const path = `${league}/players/${playerId}/gameLog`
     return request<GameraPlayerGameLog>(props.context, path, props.params)
   } catch (error) {
     console.error(error)
@@ -182,7 +188,9 @@ export const getPlayerSplits = async (props: {
 }) => {
   try {
     const playerId = parsePlayerId(props.player)
-    const path = `${props.domain}/players/${playerId}/splits`
+    const league =
+      props.domain.toLowerCase() === 'fc' ? 'epl' : props.domain.toLowerCase()
+    const path = `${league}/players/${playerId}/splits`
     return request<GameraPlayerSplits>(props.context, path, props.params)
   } catch (error) {
     console.error(error)

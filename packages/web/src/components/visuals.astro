@@ -208,10 +208,10 @@ console.log('details: ', details[0])
                 return <NflStandings {detail} />
               case 'NHL':
                 return <NhlStandings {detail} />
-              case 'EPL':
+              case 'FC':
                 return (
                   <Standings
-                    groups={[{ name: 'EPL', standings: detail.standings }]}
+                    groups={[{ name: 'FC', standings: detail.standings }]}
                     highlight={detail.topic?.team}
                   />
                 )

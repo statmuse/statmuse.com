@@ -35,7 +35,7 @@ Caching.swr(Astro)
       <p set:html={summary} />
     </div>
     {
-      bio && league !== 'epl' && (
+      bio && league !== 'fc' && (
         <table class="mb-5 border-collapse leading-tight">
           <tbody>
             {bio.birthdate && (
@@ -76,7 +76,7 @@ Caching.swr(Astro)
       )
     }
     {
-      bio && league === 'epl' && (
+      bio && league === 'fc' && (
         <table class="mb-5 border-collapse leading-tight">
           <tbody>
             {bio.position && (

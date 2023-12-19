@@ -51,7 +51,7 @@ const playerPath = getUrlForEntity({
 const links = [
   { text: 'Overview', href: playerPath, page: 'overview' },
   { text: 'Stats', href: `${playerPath}/career-stats`, page: 'stats' },
-  preferredDomain === 'epl'
+  preferredDomain === 'fc'
     ? { text: 'Matches', href: `${playerPath}/matches`, page: 'matches' }
     : { text: 'Game Log', href: `${playerPath}/game-log`, page: 'game-log' },
   { text: 'Splits', href: `${playerPath}/splits`, page: 'splits' },
@@ -125,7 +125,7 @@ const twitter = {
         </div>
         <div class="whitespace-nowrap text-center md:text-left">
           {
-            preferredDomain.toLowerCase() !== 'epl' ? (
+            preferredDomain.toLowerCase() !== 'fc' ? (
               <Fragment>
                 {bio.heightFeetInches && (
                   <>

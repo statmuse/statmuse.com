@@ -29,7 +29,7 @@ const encodeRFC3986URIComponent = (str: string) => {
     encodeURIComponent(str)
       .replace(
         /[!'()*]/g,
-        (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`
+        (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
       )
       // application/x-www-form-urlencoded
       .replaceAll('%20', '+')
@@ -50,9 +50,11 @@ export const createAskPath = ({
   query: string
 }) => {
   if (hasSymbols(query)) {
-    return `/${domain}/ask?q=${encodeRFC3986URIComponent(clean(query))}`
+    return `/${
+      domain === 'epl' ? 'fc' : domain
+    }/ask?q=${encodeRFC3986URIComponent(clean(query))}`
   }
-  return `/${domain}/ask/${createSlug(query)}`
+  return `/${domain === 'epl' ? 'fc' : domain}/ask/${createSlug(query)}`
 }
 
 export const imageForgeUrl = ({
@@ -70,6 +72,6 @@ export const imageForgeUrl = ({
     `${url}?${new URLSearchParams({
       bg,
       t: type,
-    }).toString()}`
+    }).toString()}`,
   ).replaceAll('/', '_')}.png`
 }

@@ -5,15 +5,15 @@ import { listOnboarding } from '@statmuse/core/examples'
 import { createAskPath } from '@statmuse/core/path'
 import { NOT_FOUND_404 } from '@lib/response'
 
-const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fantasy', 'epl']
+const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fantasy', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
   return NOT_FOUND_404
 
-type LeagueParam = 'nba' | 'nfl' | 'mlb' | 'nhl' | 'pga' | 'fantasy' | 'epl'
+type LeagueParam = 'nba' | 'nfl' | 'mlb' | 'nhl' | 'pga' | 'fantasy' | 'fc'
 const league = Astro.params.league as LeagueParam
 
 const onboardingExamples = await listOnboarding(
-  league === 'fantasy' ? 'nfl' : league === 'epl' ? 'nfl' : league,
+  league === 'fantasy' ? 'nfl' : league === 'fc' ? 'nfl' : league,
   10,
 )
 const banner =
@@ -518,7 +518,7 @@ const eplExamples = [
       'What happened in the Newcastle match?',
     ].map((q) => ({
       query: q,
-      path: createAskPath({ domain: 'epl', query: q }),
+      path: createAskPath({ domain: 'fc', query: q }),
     })),
   ],
   [
@@ -529,7 +529,7 @@ const eplExamples = [
       'When do Tottenham play next?',
     ].map((q) => ({
       query: q,
-      path: createAskPath({ domain: 'epl', query: q }),
+      path: createAskPath({ domain: 'fc', query: q }),
     })),
   ],
   [
@@ -540,7 +540,7 @@ const eplExamples = [
       "What was Liverpool's record last year?",
     ].map((q) => ({
       query: q,
-      path: createAskPath({ domain: 'epl', query: q }),
+      path: createAskPath({ domain: 'fc', query: q }),
     })),
   ],
   [
@@ -551,7 +551,7 @@ const eplExamples = [
       'Which team leads the league in passes per match?',
     ].map((q) => ({
       query: q,
-      path: createAskPath({ domain: 'epl', query: q }),
+      path: createAskPath({ domain: 'fc', query: q }),
     })),
   ],
   [
@@ -562,7 +562,7 @@ const eplExamples = [
       'How old is Bukayo Saka?',
     ].map((q) => ({
       query: q,
-      path: createAskPath({ domain: 'epl', query: q }),
+      path: createAskPath({ domain: 'fc', query: q }),
     })),
   ],
   [
@@ -573,7 +573,7 @@ const eplExamples = [
       'Did Son Heung-Min have a good season last year?',
     ].map((q) => ({
       query: q,
-      path: createAskPath({ domain: 'epl', query: q }),
+      path: createAskPath({ domain: 'fc', query: q }),
     })),
   ],
   [
@@ -584,7 +584,7 @@ const eplExamples = [
       'Which player has the most passes in the final third last year?',
     ].map((q) => ({
       query: q,
-      path: createAskPath({ domain: 'epl', query: q }),
+      path: createAskPath({ domain: 'fc', query: q }),
     })),
   ],
 ]
@@ -597,7 +597,7 @@ const examples = {
   mlb: mlbExamples as ExampleSet[],
   nhl: nhlExamples as ExampleSet[],
   pga: pgaExamples as ExampleSet[],
-  epl: eplExamples as ExampleSet[],
+  fc: eplExamples as ExampleSet[],
   fantasy: fantasyExamples as ExampleSet[],
 }
 

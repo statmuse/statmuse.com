@@ -302,7 +302,7 @@ let playerCardsResp: PlayerCardResponse | undefined
 let teamCardsResp: TeamCardResponse | undefined
 let standingsResp: StandingsResponse | undefined
 
-const allowedDomains = ['nba', 'nfl', 'nhl', 'epl']
+const allowedDomains = ['nba', 'nfl', 'nhl', 'fc']
 
 if (allowedDomains.includes(domain)) {
   ;[playerCardsResp, teamCardsResp, standingsResp] = await Promise.all([
@@ -419,8 +419,8 @@ if (allowedDomains.includes(domain)) {
     <Fragment>
       <h3 class="text-3xl font-semibold mb-1.5">
         {`${domain.toUpperCase()} ${standingsResp.seasonYearDisplay} ${
-          domain === 'nba' ? 'Conference' : domain === 'epl' ? '' : 'Division'
-        } ${domain === 'epl' ? 'Table' : 'Standings'}`}
+          domain === 'nba' ? 'Conference' : domain === 'fc' ? '' : 'Division'
+        } ${domain === 'fc' ? 'Table' : 'Standings'}`}
       </h3>
       <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
         {Object.entries(groupBy(standingsResp.teams, 'conference.name')).map(
@@ -428,13 +428,13 @@ if (allowedDomains.includes(domain)) {
             <StandingsCard
               {teams}
               group={
-                domain !== 'nba' && domain !== 'epl' ? 'division' : undefined
+                domain !== 'nba' && domain !== 'fc' ? 'division' : undefined
               }
               domain={domain}
               limit={
                 domain === 'nba'
                   ? 6
-                  : domain === 'epl'
+                  : domain === 'fc'
                   ? 6
                   : domain === 'nfl'
                   ? 2

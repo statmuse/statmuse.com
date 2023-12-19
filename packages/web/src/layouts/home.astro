@@ -32,7 +32,7 @@ interface Props {
 
 const { domain = 'All', img, ...rest } = Astro.props
 
-const leagues = ['All', 'nba', 'nfl', 'nhl', 'mlb', 'pga', 'epl']
+const leagues = ['All', 'nba', 'nfl', 'nhl', 'mlb', 'pga', 'fc']
 
 const trendingLinkText = (domain: string) => {
   switch (domain) {
@@ -42,8 +42,8 @@ const trendingLinkText = (domain: string) => {
       return 'See trending Money searches'
     case 'fantasy':
       return 'See trending Fantasy Football searches'
-    case 'epl':
-      return 'See trending Premiere League searches'
+    case 'fc':
+      return 'See trending Premier League searches'
     default:
       return `See trending ${domain.toUpperCase()} searches`
   }
@@ -127,15 +127,15 @@ const Logo = domain === 'money' ? MoneyLogo : StandardLogo
           {
             leagues.map((league) => (
               <a
-                class={`flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 ${
+                class={`flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 text-center leading-[1.2] ${
                   league === domain && 'bg-primary text-white'
                 }`}
                 href={league === 'All' ? '/' : `/${league}`}
                 set:text={
                   league === 'All'
                     ? league
-                    : league === 'epl'
-                    ? 'Premiere League'
+                    : league === 'fc'
+                    ? 'Premier League'
                     : league.toUpperCase()
                 }
               />

@@ -160,7 +160,7 @@ export const fallbackIcon = (league: string) => {
       return '/icons/icon-nhl.svg'
     case 'pga':
       return '/icons/icon-pga.svg'
-    case 'epl':
+    case 'fc':
       return '/icons/icon-nfl.svg'
     default:
       throw new Error('Unknown league')
@@ -177,7 +177,7 @@ export const getDefaultBustImageUrl = (domain: GameraDomain) => {
       return `${cdnBaseUrl}/img/player_profile/sm-hockey-player-lg.png`
     case 'NFL':
       return `${cdnBaseUrl}/img/player_profile/sm-football-player-lg.png`
-    case 'EPL':
+    case 'FC':
       return `${cdnBaseUrl}/img/player_profile/sm-football-player-lg.png`
     default:
       throw new Error('Unknown domain')
@@ -194,7 +194,7 @@ export const getDefaultTeamLogoUrl = (domain: GameraDomain) => {
       return `${cdnBaseUrl}/img/team_profile/sm-hockey-team-lg.png`
     case 'NFL':
       return `${cdnBaseUrl}/img/team_profile/sm-football-team-lg.png`
-    case 'EPL':
+    case 'FC':
       return `${cdnBaseUrl}/img/team_profile/sm-football-team-lg.png`
     default:
       throw new Error('Unknown domain')
@@ -203,6 +203,7 @@ export const getDefaultTeamLogoUrl = (domain: GameraDomain) => {
 
 export const getUrlForEntity = (entity: GameraEntity) => {
   const { display, domain, type, parameters, id } = entity
+  const league = domain.toUpperCase() === 'EPL' ? 'fc' : domain.toLowerCase()
   const isPga = domain.toUpperCase() === 'PGA'
   const isEpl = domain.toUpperCase() === 'EPL'
   const [teamId, yearId] = id.split('/')
@@ -213,7 +214,7 @@ export const getUrlForEntity = (entity: GameraEntity) => {
     case 'player':
       url = isPga
         ? `/pga/ask/${parameterize(display)}-career-stats`
-        : `/${domain.toLowerCase()}/player/${parameterize(display)}-${id}${
+        : `/${league}/player/${parameterize(display)}-${id}${
             parameters && parameters['seasonYear']
               ? isEpl
                 ? '/matches'
@@ -222,21 +223,21 @@ export const getUrlForEntity = (entity: GameraEntity) => {
           }`
       break
     case 'teamSeason':
-      url = `/${domain.toLowerCase()}/${isEpl ? 'club' : 'team'}/${parameterize(
+      url = `/${league}/${isEpl ? 'club' : 'team'}/${parameterize(
         display.replaceAll('.', ''),
       )}-${teamId}${isPostseason ? '/schedule' : ''}${
         yearId ? `/${yearId}` : ''
       }`
       break
     case 'teamFranchise':
-      url = `/${domain.toLowerCase()}/${isEpl ? 'club' : 'team'}/${parameterize(
+      url = `/${league}/${isEpl ? 'club' : 'team'}/${parameterize(
         display.replaceAll('.', ''),
       )}-${id}/history`
       break
     case 'game':
-      url = `/${domain.toLowerCase()}/${
-        isEpl ? 'match' : 'game'
-      }/${parameterize(display.replaceAll(' @ ', ' at '))}-${id}`
+      url = `/${league}/${isEpl ? 'match' : 'game'}/${parameterize(
+        display.replaceAll(' @ ', ' at '),
+      )}-${id}`
       break
     default:
       throw new Error('Unknown entity type: ' + type)
@@ -277,7 +278,7 @@ const formatTokenTextOnly = (token: GameraToken) => {
   return token.omitLeadingSpace ? text : ' ' + text
 }
 
-export type GameraDomain = 'NBA' | 'NFL' | 'MLB' | 'NHL' | 'PGA' | 'EPL'
+export type GameraDomain = 'NBA' | 'NFL' | 'MLB' | 'NHL' | 'PGA' | 'FC'
 
 export type GameraToken = {
   text: string
@@ -1132,7 +1133,7 @@ export interface NhlVisual extends Visual {
 }
 
 export interface EplVisual extends Visual {
-  domain: 'EPL'
+  domain: 'FC'
   detail: [EplHistoricalBoxScore, GameraGenericGridsDetail]
 }
 
