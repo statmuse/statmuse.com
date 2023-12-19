@@ -214,7 +214,11 @@ export const getUrlForEntity = (entity: GameraEntity) => {
       url = isPga
         ? `/pga/ask/${parameterize(display)}-career-stats`
         : `/${domain.toLowerCase()}/player/${parameterize(display)}-${id}${
-            parameters && parameters['seasonYear'] ? '/game-log' : ''
+            parameters && parameters['seasonYear']
+              ? isEpl
+                ? '/matches'
+                : '/game-log'
+              : ''
           }`
       break
     case 'teamSeason':

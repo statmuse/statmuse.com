@@ -89,7 +89,11 @@ Caching.swr(Astro)
         recentGames?.grid && (
           <Grid
             class="mb-5"
-            seeAllUrl={`${playerPath}/game-log`}
+            seeAllUrl={
+              league === 'epl'
+                ? `${playerPath}/matches`
+                : `${playerPath}/game-log`
+            }
             data={recentGames.grid}
             columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
           />
@@ -99,7 +103,11 @@ Caching.swr(Astro)
         recentGames?.columns && recentGames?.rows && (
           <Grid
             class="mb-5"
-            seeAllUrl={`${playerPath}/game-log`}
+            seeAllUrl={
+              league === 'epl'
+                ? `${playerPath}/matches`
+                : `${playerPath}/game-log`
+            }
             data={recentGames}
             columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
           />
