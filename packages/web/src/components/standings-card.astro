@@ -102,11 +102,6 @@ const getColumns = (domain: string, name?: string) => {
     columns = [
       first,
       second,
-      {
-        rowItemKey: 'points',
-        title: 'PTS',
-        type: 'number',
-      },
       third,
       {
         rowItemKey: 'draws',
@@ -117,6 +112,11 @@ const getColumns = (domain: string, name?: string) => {
       {
         rowItemKey: 'goalDifferential',
         title: 'GD',
+        type: 'number',
+      },
+      {
+        rowItemKey: 'points',
+        title: 'PTS',
         type: 'number',
       },
     ]
