@@ -158,11 +158,9 @@ const twitter = {
               <Fragment>
                 {bio.position && (
                   <>
-                    <span>
-                      {`${bio.jerseyNumber ? '#' + bio.jerseyNumber : ''} ${
-                        bio.position
-                      }`}
-                    </span>
+                    <span>{`${bio.position} ${
+                      bio.jerseyNumber ? '#' + bio.jerseyNumber : ''
+                    } `}</span>
                     <span class="last:hidden" set:text=" • " />
                   </>
                 )}
@@ -184,7 +182,7 @@ const twitter = {
                 )}
                 {bio.age && (
                   <>
-                    <span>{bio.age}</span>
+                    <span>{bio.age} y/o</span>
                     <span class="last:hidden" set:text=" • " />
                   </>
                 )}
