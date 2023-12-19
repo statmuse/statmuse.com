@@ -324,7 +324,9 @@ export interface GameraPlayerBio {
   position: string
   jerseyNumber: string
   heightFeetInches: string
+  heightCentimeters?: string
   weightLbs: number
+  weightKgs: string
   birthdate: string
   birthplace: string
   age: number
@@ -332,6 +334,7 @@ export interface GameraPlayerBio {
   college: string
   drafted: string
   experience: string
+  preferredFoot?: string
   summaryNlg?: GameraToken[]
   awards: {
     name: string
