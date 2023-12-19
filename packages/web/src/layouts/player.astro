@@ -19,7 +19,7 @@ import TwitterShare from '@components/icons/twitter.astro'
 
 interface Props {
   bio: GameraPlayerBio
-  page: 'overview' | 'stats' | 'game-log' | 'splits' | 'bio'
+  page: 'overview' | 'stats' | 'game-log' | 'matches' | 'splits' | 'bio'
   meta?: Metadata
   league: string
   query?: string
@@ -51,7 +51,9 @@ const playerPath = getUrlForEntity({
 const links = [
   { text: 'Overview', href: playerPath, page: 'overview' },
   { text: 'Stats', href: `${playerPath}/career-stats`, page: 'stats' },
-  { text: 'Game Log', href: `${playerPath}/game-log`, page: 'game-log' },
+  preferredDomain === 'epl'
+    ? { text: 'Matches', href: `${playerPath}/matches`, page: 'matches' }
+    : { text: 'Game Log', href: `${playerPath}/game-log`, page: 'game-log' },
   { text: 'Splits', href: `${playerPath}/splits`, page: 'splits' },
   { text: 'Bio', href: `${playerPath}/bio`, page: 'bio' },
 ]
