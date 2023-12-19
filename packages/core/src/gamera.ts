@@ -204,6 +204,7 @@ export const getDefaultTeamLogoUrl = (domain: GameraDomain) => {
 export const getUrlForEntity = (entity: GameraEntity) => {
   const { display, domain, type, parameters, id } = entity
   const isPga = domain.toUpperCase() === 'PGA'
+  const isEpl = domain.toUpperCase() === 'EPL'
   const [teamId, yearId] = id.split('/')
   const isPostseason = parameters?.seasonType === 'postseason'
   let url = ''
@@ -217,14 +218,14 @@ export const getUrlForEntity = (entity: GameraEntity) => {
           }`
       break
     case 'teamSeason':
-      url = `/${domain.toLowerCase()}/team/${parameterize(
+      url = `/${domain.toLowerCase()}/${isEpl ? 'club' : 'team'}/${parameterize(
         display.replaceAll('.', ''),
       )}-${teamId}${isPostseason ? '/schedule' : ''}${
         yearId ? `/${yearId}` : ''
       }`
       break
     case 'teamFranchise':
-      url = `/${domain.toLowerCase()}/team/${parameterize(
+      url = `/${domain.toLowerCase()}/${isEpl ? 'club' : 'team'}/${parameterize(
         display.replaceAll('.', ''),
       )}-${id}/history`
       break

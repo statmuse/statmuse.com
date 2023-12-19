@@ -1,0 +1,30 @@
+---
+import { type GameraDomain } from '@statmuse/core/gamera'
+import { getTeamFranchiseLatestSeason } from '@lib/team'
+import { parseTeamId } from '@lib/parse'
+import { NOT_FOUND_404 } from '@lib/response'
+
+interface Props {
+  league?: string
+  team?: string
+  year?: string
+  query?: string
+}
+
+const league = Astro.props.league || Astro.params.league
+const team = Astro.props.team || Astro.params.team
+
+if (!team || !league) return NOT_FOUND_404
+
+const teamId = parseTeamId(team)
+
+const latestSeason = await getTeamFranchiseLatestSeason({
+  context: Astro,
+  domain: league as GameraDomain,
+  teamId: teamId.toString(),
+})
+const year = latestSeason?.entity.id.split('/')[1] as string
+if (!year) return NOT_FOUND_404
+
+return Astro.redirect(`/${league}/club/${team}/${year}`)
+---

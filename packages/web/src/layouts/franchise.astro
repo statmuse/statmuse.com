@@ -47,11 +47,17 @@ const links = [
     ? [
         { text: 'Overview', href: `${teamPath}/${yearId}`, page: 'overview' },
         { text: 'Stats', href: `${teamPath}/stats/${yearId}`, page: 'stats' },
-        {
-          text: 'Scores & Schedule',
-          href: `${teamPath}/schedule/${yearId}`,
-          page: 'schedule',
-        },
+        domain.toUpperCase() === 'EPL'
+          ? {
+              text: 'Fixtures',
+              href: `${teamPath}/fixtures/${yearId}`,
+              page: 'fixtures',
+            }
+          : {
+              text: 'Scores & Schedule',
+              href: `${teamPath}/schedule/${yearId}`,
+              page: 'schedule',
+            },
         {
           text: 'Roster',
           href: `${teamPath}/roster/${yearId}`,
