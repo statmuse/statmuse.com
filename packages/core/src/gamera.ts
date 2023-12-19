@@ -230,9 +230,9 @@ export const getUrlForEntity = (entity: GameraEntity) => {
       )}-${id}/history`
       break
     case 'game':
-      url = `/${domain.toLowerCase()}/game/${parameterize(
-        display.replaceAll(' @ ', ' at '),
-      )}-${id}`
+      url = `/${domain.toLowerCase()}/${
+        isEpl ? 'match' : 'game'
+      }/${parameterize(display.replaceAll(' @ ', ' at '))}-${id}`
       break
     default:
       throw new Error('Unknown entity type: ' + type)
