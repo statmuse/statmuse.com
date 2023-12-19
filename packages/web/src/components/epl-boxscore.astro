@@ -45,33 +45,6 @@ let homeTeamScore = 0
   </h3>
   <div>
     <div class="flex items-center mb-6">
-      <a title={awayTeam.name} href={awayTeamUrl}>
-        <Image
-          src={awayTeam.logoUrl}
-          alt={awayTeam.abbrev}
-          class="w-24 h-24 object-contain"
-          width={200}
-          height={200}
-          loading="eager"
-        />
-      </a>
-      <div class="flex-1 ml-5">
-        {
-          awayTeamUrl ? (
-            <a title={awayTeam.name} href={awayTeamUrl}>
-              <h1 class="font-semibold text-2xl md:text-3xl">
-                {awayTeam.name}
-              </h1>
-            </a>
-          ) : (
-            <h1 class="font-semibold text-2xl md:text-3xl">{awayTeam.name}</h1>
-          )
-        }
-        <p class="font-semibold md:text-xl">{awayTeam.record}</p>
-      </div>
-      <h2 class="font-semibold text-5xl">{awayTeam.score}</h2>
-    </div>
-    <div class="flex items-center mb-6">
       <a title={homeTeam.name} href={homeTeamUrl}>
         <Image
           class="w-24 h-24 object-contain"
@@ -98,6 +71,33 @@ let homeTeamScore = 0
       </div>
       <h2 class="font-semibold text-5xl">{homeTeam.score}</h2>
     </div>
+    <div class="flex items-center mb-6">
+      <a title={awayTeam.name} href={awayTeamUrl}>
+        <Image
+          src={awayTeam.logoUrl}
+          alt={awayTeam.abbrev}
+          class="w-24 h-24 object-contain"
+          width={200}
+          height={200}
+          loading="eager"
+        />
+      </a>
+      <div class="flex-1 ml-5">
+        {
+          awayTeamUrl ? (
+            <a title={awayTeam.name} href={awayTeamUrl}>
+              <h1 class="font-semibold text-2xl md:text-3xl">
+                {awayTeam.name}
+              </h1>
+            </a>
+          ) : (
+            <h1 class="font-semibold text-2xl md:text-3xl">{awayTeam.name}</h1>
+          )
+        }
+        <p class="font-semibold md:text-xl">{awayTeam.record}</p>
+      </div>
+      <h2 class="font-semibold text-5xl">{awayTeam.score}</h2>
+    </div>
   </div>
 
   <div class="text-sm md:text-base">
@@ -109,8 +109,8 @@ let homeTeamScore = 0
               <div class="border-b border-[#e4e4e4]">
                 <div class="flex text-[#a8a8a8] border-b border-[#e4e4e4]">
                   <p class="flex-1 py-1">{period}</p>
-                  <p class="text-center py-1 w-16">{awayTeam.abbrev}</p>
                   <p class="text-center py-1 w-16">{homeTeam.abbrev}</p>
+                  <p class="text-center py-1 w-16">{awayTeam.abbrev}</p>
                 </div>
                 {plays.map((play) => (
                   <div class="flex py-1.5">
@@ -172,20 +172,20 @@ let homeTeamScore = 0
                       <p class="w-16 text-center py-2 px-4">
                         {((play.eventType === 'goal' ||
                           play.eventType === 'penalty_goal') &&
-                          play.team === awayTeam.name) ||
-                        (play.eventType === 'own_goal' &&
-                          play.team === homeTeam.name)
-                          ? ++awayTeamScore
-                          : awayTeamScore}
-                      </p>
-                      <p class="w-16 text-center py-2 px-4">
-                        {((play.eventType === 'goal' ||
-                          play.eventType === 'penalty_goal') &&
                           play.team === homeTeam.name) ||
                         (play.eventType === 'own_goal' &&
                           play.team === awayTeam.name)
                           ? ++homeTeamScore
                           : homeTeamScore}
+                      </p>
+                      <p class="w-16 text-center py-2 px-4">
+                        {((play.eventType === 'goal' ||
+                          play.eventType === 'penalty_goal') &&
+                          play.team === awayTeam.name) ||
+                        (play.eventType === 'own_goal' &&
+                          play.team === homeTeam.name)
+                          ? ++awayTeamScore
+                          : awayTeamScore}
                       </p>
                     </>
                   </div>
@@ -204,102 +204,102 @@ let homeTeamScore = 0
           <p
             class="w-[85px] sm:w-24 py-2.5 text-center font-semibold border-b border-[#e4e4e4] whitespace-nowrap overflow-hidden text-ellipsis"
           >
-            {awayTeam.name}
+            {homeTeam.name}
           </p>
           <p
             class="w-[85px] sm:w-24 py-2.5 text-center font-semibold border-b border-[#e4e4e4] whitespace-nowrap overflow-hidden text-ellipsis"
           >
-            {homeTeam.name}
+            {awayTeam.name}
           </p>
         </div>
         <TeamStat
           title="Goals"
-          away={awayTeamStats.goals}
-          home={homeTeamStats.goals}
+          away={homeTeamStats.goals}
+          home={awayTeamStats.goals}
         />
         <TeamStat
           title="Assists"
-          away={awayTeamStats.assists}
-          home={homeTeamStats.assists}
+          away={homeTeamStats.assists}
+          home={awayTeamStats.assists}
         />
         <TeamStat
           title="Shots"
-          away={awayTeamStats.shots}
-          home={homeTeamStats.shots}
+          away={homeTeamStats.shots}
+          home={awayTeamStats.shots}
         />
         <TeamStat
           title="Shots On Target"
-          away={awayTeamStats.shotsOnTarget}
-          home={homeTeamStats.shotsOnTarget}
+          away={homeTeamStats.shotsOnTarget}
+          home={awayTeamStats.shotsOnTarget}
         />
         <TeamStat
           title="Saves"
-          away={awayTeamStats.saves}
-          home={homeTeamStats.saves}
+          away={homeTeamStats.saves}
+          home={awayTeamStats.saves}
         />
         <TeamStat
           title="Tackles"
-          away={awayTeamStats.tackles}
-          home={homeTeamStats.tackles}
+          away={homeTeamStats.tackles}
+          home={awayTeamStats.tackles}
         />
         <TeamStat
           title="Fouls"
-          away={awayTeamStats.fouls}
-          home={homeTeamStats.fouls}
+          away={homeTeamStats.fouls}
+          home={awayTeamStats.fouls}
         />
         <TeamStat
           title="Yellow Cards"
-          away={awayTeamStats.yellowCards}
-          home={homeTeamStats.yellowCards}
+          away={homeTeamStats.yellowCards}
+          home={awayTeamStats.yellowCards}
         />
         <TeamStat
           title="Red Cards"
-          away={awayTeamStats.redCards}
-          home={homeTeamStats.redCards}
+          away={homeTeamStats.redCards}
+          home={awayTeamStats.redCards}
         />
         <TeamStat
           title="Possession %"
-          away={awayTeamStats.possessionPercentage}
-          home={homeTeamStats.possessionPercentage}
+          away={homeTeamStats.possessionPercentage}
+          home={awayTeamStats.possessionPercentage}
         />
         <TeamStat
           title="Touches"
-          away={awayTeamStats.touches}
-          home={homeTeamStats.touches}
+          away={homeTeamStats.touches}
+          home={awayTeamStats.touches}
         />
         <TeamStat
           title="Passes"
-          away={awayTeamStats.passes}
-          home={homeTeamStats.passes}
+          away={homeTeamStats.passes}
+          home={awayTeamStats.passes}
         />
         <TeamStat
           title="Passes Completed"
-          away={awayTeamStats.passesCompleted}
-          home={homeTeamStats.passesCompleted}
+          away={homeTeamStats.passesCompleted}
+          home={awayTeamStats.passesCompleted}
         />
         <TeamStat
           title="Offsides"
-          away={awayTeamStats.offsides}
-          home={homeTeamStats.offsides}
+          away={homeTeamStats.offsides}
+          home={awayTeamStats.offsides}
         />
         <TeamStat
           title="Corners"
-          away={awayTeamStats.corners}
-          home={homeTeamStats.corners}
+          away={homeTeamStats.corners}
+          home={awayTeamStats.corners}
         />
       </TabPanel>
       <TabPanel title="Player Stats">
-        <Tabs secondary titles={[awayTeam.name, homeTeam.name]}>
-          <TabPanel title={awayTeam.name} class="space-y-5">
+        <Tabs secondary titles={[homeTeam.name, awayTeam.name]}>
+          <TabPanel title={homeTeam.name} class="space-y-5">
             {
-              boxScoreData.playerDetail.awayTeam.grids.map((grid) => (
+              boxScoreData.playerDetail.homeTeam.grids.map((grid) => (
                 <Grid data={grid} />
               ))
             }
           </TabPanel>
-          <TabPanel title={homeTeam.name} class="space-y-5">
+          <TabPanel title={awayTeam.name} class="space-y-5">
             {
-              boxScoreData.playerDetail.homeTeam.grids.map((grid) => (
+              boxScoreData.playerDetail.awayTeam.grids.map((grid) => (
                 <Grid data={grid} />
               ))
             }
