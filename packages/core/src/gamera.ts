@@ -278,7 +278,7 @@ const formatTokenTextOnly = (token: GameraToken) => {
   return token.omitLeadingSpace ? text : ' ' + text
 }
 
-export type GameraDomain = 'NBA' | 'NFL' | 'MLB' | 'NHL' | 'PGA' | 'FC'
+export type GameraDomain = 'NBA' | 'NFL' | 'MLB' | 'NHL' | 'PGA' | 'FC' | 'EPL'
 
 export type GameraToken = {
   text: string
