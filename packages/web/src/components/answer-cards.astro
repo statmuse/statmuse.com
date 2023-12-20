@@ -317,7 +317,9 @@ if (allowedDomains.includes(domain)) {
   playerCardsResp && playerCardsResp.cards.length > 0 && (
     <Fragment>
       <h3 class="text-3xl font-semibold mb-1.5">
-        {`${domain.toUpperCase()} ${playerCardsResp.seasonYearDisplay} Leaders`}
+        {`${domain.toUpperCase() === 'FC' ? 'PL' : domain.toUpperCase()} ${
+          playerCardsResp.seasonYearDisplay
+        } Leaders`}
       </h3>
       <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
         {playerCardsResp.cards.filter(filterPlayerCards).map((card) => (
@@ -372,7 +374,9 @@ if (allowedDomains.includes(domain)) {
   teamCardsResp && teamCardsResp.cards.length > 0 && (
     <Fragment>
       <h3 class="text-3xl font-semibold mb-1.5">
-        {`${domain.toUpperCase()} ${teamCardsResp.seasonYearDisplay} Rankings`}
+        {`${domain.toUpperCase() === 'FC' ? 'PL' : domain.toUpperCase()} ${
+          teamCardsResp.seasonYearDisplay
+        } Rankings`}
       </h3>
       <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
         {teamCardsResp?.cards.filter(filterTeamCards).map((card) => (
@@ -418,7 +422,9 @@ if (allowedDomains.includes(domain)) {
   standingsResp && standingsResp.teams && (
     <Fragment>
       <h3 class="text-3xl font-semibold mb-1.5">
-        {`${domain.toUpperCase()} ${standingsResp.seasonYearDisplay} ${
+        {`${domain.toUpperCase() === 'FC' ? 'PL' : domain.toUpperCase()} ${
+          standingsResp.seasonYearDisplay
+        } ${
           domain === 'nba' ? 'Conference' : domain === 'fc' ? '' : 'Division'
         } ${domain === 'fc' ? 'Table' : 'Standings'}`}
       </h3>
