@@ -32,14 +32,14 @@ const { bio, teamHistory, franchiseInfo, franchiseLeaders, playerGallery } =
   overview
 
 const title = `${bio.name} Team History`
-const description = `The ${bio.name} team history for the ${domain} regular season and playoffs`
+const description = `The ${bio.name} team history for premier league seasons`
 const keywords = `${getLeagueKeywords(domain)} ${
   bio.name
-} team history stats statistics`
+} club history stats statistics`
 const canonical = {
   url: `${getUrlForEntity({
     type: 'teamSeason',
-    domain,
+    domain: 'epl',
     id: overview.teamId.toString(),
     display: bio.name,
   })}/history`,

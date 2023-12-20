@@ -24,19 +24,19 @@ const splits = await getTeamSeasonSplits({
 if (!bio || !splits) return NOT_FOUND_404
 
 if (!bio.hasStats) {
-  return Astro.redirect(`/${league}/team/${team}/schedule/${year}`)
+  return Astro.redirect(`/${league}/club/${team}/fixtures/${year}`)
 }
 
 const title = `${bio.name} ${year} Splits`
-const description = `The ${year} ${bio.name} splits for the ${domain} regular season and playoffs`
+const description = `The ${year} ${bio.name} splits for the premier league season`
 const keywords = `${getLeagueKeywords(domain)} ${year} ${
   bio.name
-} team splits stats statistics`
+} club splits stats statistics`
 const canonical = {
   url:
     `${getUrlForEntity({
       type: 'teamSeason',
-      domain,
+      domain: 'epl',
       id: bio.teamId.toString(),
       display: bio.name,
     })}/splits/${year}` + Astro.url.search,

@@ -17,18 +17,18 @@ const roster = await getTeamSeasonRoster({ context: Astro, domain, team, year })
 if (!bio || !roster) return NOT_FOUND_404
 
 if (!bio.hasRoster) {
-  return Astro.redirect(`/${league}/team/${team}/schedule/${year}`)
+  return Astro.redirect(`/${league}/club/${team}/fixtures/${year}`)
 }
 
 const title = `${bio.name} ${year} Roster`
-const description = `The ${year} ${bio.name} roster for the ${domain} regular season and playoffs`
+const description = `The ${year} ${bio.name} roster for the premier league season`
 const keywords = `${getLeagueKeywords(domain)} ${year} ${
   bio.name
-} team roster stats statistics`
+} club roster stats statistics`
 const canonical = {
   url: `${getUrlForEntity({
     type: 'teamSeason',
-    domain,
+    domain: 'epl',
     id: bio.teamId.toString(),
     display: bio.name,
   })}/roster/${year}`,

@@ -60,7 +60,7 @@ const { bio, scoresAndSchedule, teamLeaders, standings, stats, playerGallery } =
   response
 
 if (!bio.hasStats && !isSearch) {
-  return Astro.redirect(`/${league}/team/${team}/schedule/${year}`)
+  return Astro.redirect(`/${league}/club/${team}/fixtures/${year}`)
 }
 
 const summary = bio.summaryNlg ? tokensToHtml(bio.summaryNlg) : undefined
@@ -68,14 +68,14 @@ const summary = bio.summaryNlg ? tokensToHtml(bio.summaryNlg) : undefined
 const title = `${bio.name} ${year} Scores, Stats, Schedule, Standings`
 const description = bio.summaryNlg
   ? tokensToText(bio.summaryNlg)
-  : `The ${year} ${bio.name} scores, stats, schedule, standings and more for the ${domain} regular season and playoffs`
+  : `The ${year} ${bio.name} scores, stats, fixtures, table and more for the premier league season`
 const keywords = `${getLeagueKeywords(domain)} ${year} ${
   bio.name
-} team player stats statistics`
+} club player stats statistics`
 const canonical = {
   url: `${getUrlForEntity({
     type: 'teamSeason',
-    domain,
+    domain: 'epl',
     id: bio.teamId.toString(),
     display: bio.name,
   })}/${year}`,

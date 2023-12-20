@@ -33,17 +33,17 @@ const schedule = await getTeamSeasonSchedule({
 if (!bio || !gameResults) return NOT_FOUND_404
 
 const title = `${bio.name} ${year} Fixtures`
-const description = `The ${year} ${bio.name} schedule and results for the ${domain} regular season and playoffs`
+const description = `The ${year} ${bio.name} fixtures for the premier league season`
 const keywords = `${getLeagueKeywords(domain)} ${year} ${
   bio.name
-} team schedule results stats statistics`
+} club fixtures schedule results stats statistics`
 const canonical = {
   url: `${getUrlForEntity({
     type: 'teamSeason',
-    domain,
+    domain: 'epl',
     id: bio.teamId.toString(),
     display: bio.name,
-  })}/schedule/${year}`,
+  })}/fixtures/${year}`,
   rewrite: true,
 }
 const meta = { title, description, keywords, canonical }

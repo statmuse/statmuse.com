@@ -39,21 +39,21 @@ const playerStats = await getTeamSeasonPlayerStats({
 if (!bio || !stats || !playerStats) return NOT_FOUND_404
 
 if (!bio.hasStats) {
-  return Astro.redirect(`/${league}/team/${team}/schedule/${year}`)
+  return Astro.redirect(`/${league}/club/${team}/fixtures/${year}`)
 }
 
 const title = `${bio.name} ${year} Team & Player Stats`
 const description = bio.summaryNlg
   ? tokensToText(bio.summaryNlg)
-  : `The ${year} ${bio.name} team and player stats for the ${domain} regular season and playoffs`
+  : `The ${year} ${bio.name} team and player stats for the premier league season`
 const keywords = `${getLeagueKeywords(domain)} ${year} ${
   bio.name
-} team player stats statistics`
+} club player stats statistics`
 const canonical = {
   url:
     `${getUrlForEntity({
       type: 'teamSeason',
-      domain,
+      domain: 'epl',
       id: bio.teamId.toString(),
       display: bio.name,
     })}/stats/${year}` + Astro.url.search,
