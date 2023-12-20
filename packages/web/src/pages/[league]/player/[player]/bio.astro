@@ -106,6 +106,12 @@ Caching.swr(Astro)
                 <td class="pl-4">{bio.heightCentimeters}</td>
               </tr>
             )}
+            {bio.weightKgs && (
+              <tr>
+                <td>Weight:</td>
+                <td class="pl-4">{bio.weightKgs} kg</td>
+              </tr>
+            )}
             {bio.preferredFoot && (
               <tr>
                 <td>Preferred Foot:</td>
