@@ -57,7 +57,13 @@ const meta = { title, description, keywords, canonical }
 Caching.swr(Astro)
 ---
 
-<PlayerLayout {bio} {meta} {league} {query} page="overview">
+<PlayerLayout
+  {bio}
+  {meta}
+  league={league.toLowerCase() === 'epl' ? 'fc' : league}
+  {query}
+  page="overview"
+>
   <div>
     <div class="mb-5 leading-snug">
       <p set:html={summary} />
