@@ -537,6 +537,7 @@ export interface GameraTeamSeasonBio {
   }
   standing: {
     record: string
+    points?: string
     leagueRank: string
     conferenceRank: string
     divisionRank: string

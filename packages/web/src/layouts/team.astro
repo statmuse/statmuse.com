@@ -176,6 +176,14 @@ const twitter = {
               )
             }
             {
+              bio.standing?.points && (
+                <>
+                  <span>{bio.standing.points} Pts</span>
+                  <span class="last:hidden" set:text=" • " />
+                </>
+              )
+            }
+            {
               bio.standing?.leagueRank && (
                 <>
                   <span>{bio.standing.leagueRank}</span>
