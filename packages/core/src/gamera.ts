@@ -815,6 +815,7 @@ export interface NbaTeamGameStats {
 
 export interface Team {
   name: string
+  shortName?: string
   abbrev: string
   record: string
   score: number

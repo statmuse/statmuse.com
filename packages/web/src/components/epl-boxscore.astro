@@ -196,12 +196,12 @@ const periods = Object.entries(groupBy(plays, (p) => p.period))
           <p
             class="w-[85px] sm:w-24 py-2.5 text-center font-semibold border-b border-[#e4e4e4] whitespace-nowrap overflow-hidden text-ellipsis"
           >
-            {homeTeam.name}
+            {homeTeam.shortName || homeTeam.name}
           </p>
           <p
             class="w-[85px] sm:w-24 py-2.5 text-center font-semibold border-b border-[#e4e4e4] whitespace-nowrap overflow-hidden text-ellipsis"
           >
-            {awayTeam.name}
+            {awayTeam.shortName || awayTeam.name}
           </p>
         </div>
         <TeamStat
