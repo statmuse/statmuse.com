@@ -1,7 +1,7 @@
 import tailwind from '@astrojs/tailwind'
 import react from '@astrojs/react'
 import svelte from '@astrojs/svelte'
-import aws from 'astro-sst/lambda'
+import aws from 'astro-sst'
 import { defineConfig } from 'astro/config'
 
 // https://astro.build/config
@@ -15,6 +15,7 @@ export default defineConfig({
   ],
   output: 'server',
   server: { port: 3000 },
+  devToolbar: { enabled: false },
   adapter: aws({
     responseMode: 'buffer',
     serverRoutes: ['ask', 'auth/*', 'account/*'],
