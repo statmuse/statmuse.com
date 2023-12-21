@@ -130,7 +130,7 @@ const imgSrc = imgs[Math.floor(Math.random() * imgs.length)]
 Caching.swr(Astro)
 ---
 
-<HomeLayout domain="money" img={{ src: imgSrc, text: 'magic money man' }}>
+<HomeLayout league="money" img={{ src: imgSrc, text: 'magic money man' }}>
   <div class="divide-y divide-[#e4e4e4]">
     {
       examples.map(([title, queries]) => (

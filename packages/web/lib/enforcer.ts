@@ -3,8 +3,9 @@ import * as Asks from '@statmuse/core/ask'
 const freeAskLimit = 35
 export const freeRowLimit = 25
 
-export const canQuery = async (locals: App.Locals) => {
+export const canQuery = async (locals: App.Locals, domain?: string) => {
   if (locals.subscribed) return locals.subscribed
+  if (domain === 'epl') return false
 
   const result = locals.user
     ? await Asks.countByUser(locals.user.id)

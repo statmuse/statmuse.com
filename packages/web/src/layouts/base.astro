@@ -609,6 +609,24 @@ const canonicalUrl = meta?.canonical
             })
           }
 
+          // TODO: remove for official premier league launch
+          document.querySelectorAll('a[data-disabled]').forEach(a => {
+            if (session.type === 'user' && session.properties.subscriptionStatus === 'active') {
+              a.classList.remove('border-[#c5c9cc]')
+              a.classList.remove('text-[#c5c9cc]')
+              a.classList.remove('pointer-events-none')
+
+              a.classList.add('border-primary')
+
+              if (location.pathname === '/fc') {
+                a.classList.add('text-white')
+                a.classList.add('bg-primary')
+              } else {
+                a.classList.add('text-primary')
+              }
+            }
+          })
+
           Honeybadger.setContext({
             user_id: session.properties.id,
             user_type: session.type,
