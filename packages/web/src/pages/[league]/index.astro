@@ -12,12 +12,33 @@ if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
 
 const league = Astro.params.league as LeagueParam
 
-const onboardingExamples = await listOnboarding(
-  league === 'fantasy' ? 'nfl' : league === 'fc' ? 'nfl' : league,
-  10,
-)
-const banner =
-  onboardingExamples[Math.floor(Math.random() * onboardingExamples.length)]
+let onboardingExamples
+let banner
+let fcImg
+if (league !== 'fc') {
+  onboardingExamples = await listOnboarding(
+    league === 'fantasy' ? 'nfl' : league,
+    10,
+  )
+  banner =
+    onboardingExamples[Math.floor(Math.random() * onboardingExamples.length)]
+} else {
+  const fcPlayers = [
+    {
+      src: 'https://cdn.statmuse.com/img/epl/players/cristiano-ronaldo-man-united-min--3gbipqds.png',
+      text: 'Cristiano Ronaldo',
+    },
+    {
+      src: 'https://cdn.statmuse.com/img/epl/players/arsenal-bukayo-saka-min--t5hmo2ay.png',
+      text: 'Bukayo Saka',
+    },
+    {
+      src: 'https://cdn.statmuse.com/img/epl/players/man-city-erling-haaland-min--mcidciur.png',
+      text: 'Erling Haaland',
+    },
+  ]
+  fcImg = fcPlayers[Math.floor(Math.random() * fcPlayers.length)]
+}
 
 const nbaExamples = [
   [
@@ -634,7 +655,11 @@ const meta = {
 Caching.swr(Astro)
 ---
 
-<HomeLayout {meta} {league} img={{ src: banner, text: banner.text }}>
+<HomeLayout
+  {meta}
+  {league}
+  img={league !== 'fc' ? { src: banner, text: banner.text } : fcImg}
+>
   <div class="divide-y divide-[#e4e4e4]">
     {
       examples[league || 'nba'].map(([title, queries]) => (
