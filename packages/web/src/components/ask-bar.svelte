@@ -33,6 +33,8 @@
     ? 'Search stocks, FX or bitcoin'
     : fantasy
     ? 'Search fantasy projections or points'
+    : preferredDomain === 'epl'
+    ? 'Search players, clubs or stats'
     : 'Search players, stats or odds'
   const apiUrl = `${import.meta.env.PUBLIC_API_URL}${
     money ? '/money/search/suggest' : '/search/suggest'

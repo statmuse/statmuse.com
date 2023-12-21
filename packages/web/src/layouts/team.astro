@@ -18,7 +18,14 @@ import type { AnalyticsPageviewProperties } from '@lib/analytics'
 
 interface Props {
   bio: GameraTeamSeasonBio
-  page: 'overview' | 'stats' | 'schedule' | 'roster' | 'splits' | 'history'
+  page:
+    | 'overview'
+    | 'stats'
+    | 'schedule'
+    | 'fixtures'
+    | 'roster'
+    | 'splits'
+    | 'history'
   meta?: Metadata
   query?: string
 }
@@ -47,7 +54,7 @@ const links = [
   ...(bio.hasStats
     ? [{ text: 'Stats', href: `${teamPath}/stats/${yearId}`, page: 'stats' }]
     : []),
-  domain.toUpperCase() === 'EPL'
+  domain === 'EPL'
     ? {
         text: 'Fixtures',
         href: `${teamPath}/fixtures/${yearId}`,
@@ -290,7 +297,7 @@ const twitter = {
     <div class="mb-1.5">
       <slot />
     </div>
-    <Explore domain={domain.toLowerCase()} />
+    <Explore league={domain === 'EPL' ? 'fc' : preferredDomain} />
   </Container>
 </Layout>
 

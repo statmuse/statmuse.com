@@ -47,7 +47,7 @@ const links = [
     ? [
         { text: 'Overview', href: `${teamPath}/${yearId}`, page: 'overview' },
         { text: 'Stats', href: `${teamPath}/stats/${yearId}`, page: 'stats' },
-        domain.toUpperCase() === 'EPL'
+        domain === 'EPL'
           ? {
               text: 'Fixtures',
               href: `${teamPath}/fixtures/${yearId}`,
@@ -93,8 +93,6 @@ const twitter = {
     type: 'twitter',
   }),
 }
-
-console.log('bio: ', bio)
 ---
 
 <Layout
@@ -256,7 +254,7 @@ console.log('bio: ', bio)
     <div class="mb-1.5">
       <slot />
     </div>
-    <Explore domain={domain.toLowerCase()} />
+    <Explore league={domain === 'EPL' ? 'fc' : preferredDomain} />
   </Container>
 </Layout>
 

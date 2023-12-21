@@ -29,7 +29,6 @@ const query = Astro.props.query
 const conversationToken = Astro.props.conversationToken
 
 const response = Astro.props.response
-console.log('response: ', response.visual.detail)
 const summary = tokensToHtml(response.visual.summaryTokens)
 const showSummary = !!response.visual.summaryTokens?.find(
   (t) => t.type === 'inferred',
@@ -52,7 +51,6 @@ const details =
         ignoreGenericGrids ? d.type !== 'genericGrids' : true,
       )
     : undefined
-console.log('details: ', details[0])
 ---
 
 <Container>
@@ -219,7 +217,7 @@ console.log('details: ', details[0])
                 return null
             }
           case 'schedule':
-            return <Schedule league={response.visual.domain} {detail} />
+            return <Schedule league={response.visual.domain ?? ''} {detail} />
           case 'mlbHistoricalBoxScore':
             return <MlbBoxscore {detail} />
           case 'nbaHistoricalBoxScore':

@@ -150,7 +150,7 @@ Caching.swr(Astro)
       response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
         <Container>
           <Explore
-            domain="fantasy"
+            league="fantasy"
             additionalQuestions={response.visual.additionalQuestions}
           />
         </Container>
@@ -159,7 +159,7 @@ Caching.swr(Astro)
     {
       response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
         <Container>
-          <AnswerCards domain="nfl" />
+          <AnswerCards league="nfl" />
         </Container>
       )
     }

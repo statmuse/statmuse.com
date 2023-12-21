@@ -34,7 +34,7 @@ export async function ask(
   },
   context: Context,
 ) {
-  const league = options.league === 'fc' ? 'epl' : options.league
+  const league = options.league
   const query = options.query
 
   const params: Record<string, string> = {
@@ -45,8 +45,7 @@ export async function ask(
     params['conversationToken'] = options.conversationToken
   }
   if (options.preferredDomain) {
-    params['preferredDomain'] =
-      options.preferredDomain === 'fc' ? 'epl' : options.preferredDomain
+    params['preferredDomain'] = options.preferredDomain
   }
 
   return request<GameraResponse>(

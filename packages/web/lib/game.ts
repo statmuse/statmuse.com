@@ -28,8 +28,7 @@ export async function getGame<T extends GameraDomain>(props: {
 
   try {
     const gameId = parseGameId(props.game)
-    const league =
-      props.domain.toLowerCase() === 'fc' ? 'epl' : props.domain.toLowerCase()
+    const league = props.domain.toLowerCase()
     const path = `${league}/games/${gameId}/answer`
     const data = await request<Response[T]>(props.context, path, props.params)
     if (data) data.domain = props.domain

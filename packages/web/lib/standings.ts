@@ -8,8 +8,7 @@ export const getStandings = async (props: {
   seasonYear?: number
 }) => {
   try {
-    const league =
-      props.domain.toLowerCase() === 'fc' ? 'epl' : props.domain.toLowerCase()
+    const league = props.domain.toLowerCase()
     const path = `${league}/standings`
     const data = await request<StandingsResponse>(props.context, path)
     return data

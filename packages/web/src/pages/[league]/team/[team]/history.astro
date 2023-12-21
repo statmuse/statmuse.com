@@ -3,11 +3,12 @@ import FranchiseLayout from '@layouts/franchise.astro'
 import Grid from '@components/grid.astro'
 import TeamLeaders from '@components/leaders.astro'
 import PlayerGallery from '@components/gallery.astro'
-import { getUrlForEntity, type GameraDomain } from '@statmuse/core/gamera'
+import { getUrlForEntity } from '@statmuse/core/gamera'
 import { getTeamFranchiseOverview } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
 import { NOT_FOUND_404 } from '@lib/response'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
 
 interface Props {
   league?: string
@@ -17,10 +18,10 @@ interface Props {
 
 const query = Astro.props.query
 const team = Astro.props.team || Astro.params.team
-const league = Astro.props.league || Astro.params.league
-if (!team || !league) return NOT_FOUND_404
+const leagueParam = (Astro.props.league || Astro.params.league) as LeagueParam
+if (!team || !leagueParam) return NOT_FOUND_404
 
-const domain = league.toUpperCase() as GameraDomain
+const domain = leagueToDomain(leagueParam)
 const overview = await getTeamFranchiseOverview({
   context: Astro,
   domain,

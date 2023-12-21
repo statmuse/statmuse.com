@@ -1,20 +1,18 @@
 ---
 import PlayerLayout from '@layouts/player.astro'
-import {
-  type GameraDomain,
-  tokensToText,
-  tokensToHtml,
-} from '@statmuse/core/gamera'
+import { tokensToText, tokensToHtml } from '@statmuse/core/gamera'
 import { formatDateString } from '@statmuse/core/time'
 import { getPlayerBio } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
 import { NOT_FOUND_404 } from '@lib/response'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
 
-const { league, player } = Astro.params
+const league = Astro.params.league as LeagueParam
+const player = Astro.params.player
 if (!player || !league) return NOT_FOUND_404
 
-const domain = league.toUpperCase() as GameraDomain
+const domain = leagueToDomain(league)
 const bio = await getPlayerBio(Astro, domain, player)
 if (!bio) return NOT_FOUND_404
 

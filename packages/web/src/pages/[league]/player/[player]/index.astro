@@ -2,9 +2,7 @@
 import PlayerLayout from '@layouts/player.astro'
 import Grid from '@components/grid.astro'
 import PlayerGallery from '@components/gallery.astro'
-
 import {
-  type GameraDomain,
   tokensToText,
   tokensToHtml,
   getUrlForEntity,
@@ -13,6 +11,7 @@ import { getPlayerProfile, getPositionName } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
 import { NOT_FOUND_404 } from '@lib/response'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
 
 interface Props {
   league?: string
@@ -22,11 +21,11 @@ interface Props {
 
 const query = Astro.props.query
 const player = Astro.props.player || Astro.params.player
-const league = Astro.props.league || Astro.params.league
+const leagueParam = (Astro.props.league || Astro.params.league) as LeagueParam
 
-if (!player || !league) return NOT_FOUND_404
+if (!player || !leagueParam) return NOT_FOUND_404
 
-const domain = league.toUpperCase() as GameraDomain
+const domain = leagueToDomain(leagueParam)
 const profile = await getPlayerProfile(Astro, domain, player)
 if (!profile) return NOT_FOUND_404
 
@@ -60,7 +59,7 @@ Caching.swr(Astro)
 <PlayerLayout
   {bio}
   {meta}
-  league={league.toLowerCase() === 'epl' ? 'fc' : league}
+  league={domain.toLowerCase() === 'epl' ? 'fc' : leagueParam}
   {query}
   page="overview"
 >
@@ -96,7 +95,7 @@ Caching.swr(Astro)
           <Grid
             class="mb-5"
             seeAllUrl={
-              league === 'fc'
+              domain.toLowerCase() === 'epl'
                 ? `${playerPath}/matches`
                 : `${playerPath}/game-log`
             }
@@ -110,7 +109,7 @@ Caching.swr(Astro)
           <Grid
             class="mb-5"
             seeAllUrl={
-              league === 'fc'
+              domain.toLowerCase() === 'epl'
                 ? `${playerPath}/matches`
                 : `${playerPath}/game-log`
             }

@@ -1,16 +1,17 @@
 ---
 import PlayerLayout from '@layouts/player.astro'
 import Grid from '@components/grid.astro'
-import type { GameraDomain } from '@statmuse/core/gamera'
 import { getPlayerBio, getPlayerGameLog } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
 import { NOT_FOUND_404 } from '@lib/response'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
 
-const { league, player } = Astro.params
+const league = Astro.params.league as LeagueParam
+const player = Astro.params.player
 if (!player || !league) return NOT_FOUND_404
 
-const domain = league.toUpperCase() as GameraDomain
+const domain = leagueToDomain(league)
 const params = Astro.url.searchParams
 const stats = await getPlayerGameLog({
   context: Astro,
@@ -29,7 +30,7 @@ const year = seasonYear ? ` ${seasonYear}` : ''
 const title = [bio.usedName, year?.trim(), 'Matches']
   .filter((w) => !!w)
   .join(' ')
-const description = `${bio.usedName}'s matcehs for the${year} ${domain} regular season and playoffs`
+const description = `${bio.usedName}'s matches for the${year} premier league season`
 const keywords = `${leagueKeywords} ${bio.usedName}${year} matches stats statistics`
 const meta = { title, description, keywords }
 

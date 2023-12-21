@@ -10,30 +10,24 @@ import {
   getDefaultBustImageUrl,
   tokensToText,
   type GameraPlayerBio,
-  type GameraDomain,
 } from '@statmuse/core/gamera'
 import { type Metadata, getLeagueKeywords } from '@lib/meta'
 import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import TwitterShare from '@components/icons/twitter.astro'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
 
 interface Props {
   bio: GameraPlayerBio
   page: 'overview' | 'stats' | 'game-log' | 'matches' | 'splits' | 'bio'
   meta?: Metadata
-  league: string
+  league: LeagueParam
   query?: string
 }
 
-const {
-  bio,
-  meta,
-  query,
-  league: preferredDomain,
-  page: pageType,
-} = Astro.props
+const { bio, meta, query, league, page: pageType } = Astro.props
 
-const domain = preferredDomain.toUpperCase() as GameraDomain
+const domain = leagueToDomain(league)
 const teamUrl = bio.team ? getUrlForEntity(bio.team.entity) : ''
 const bustImageUrl = bio.bustImageUrl || getDefaultBustImageUrl(domain)
 const bustImageAlt = bio.bustImageUrl?.includes('silhouette')
@@ -51,7 +45,7 @@ const playerPath = getUrlForEntity({
 const links = [
   { text: 'Overview', href: playerPath, page: 'overview' },
   { text: 'Stats', href: `${playerPath}/career-stats`, page: 'stats' },
-  preferredDomain === 'fc'
+  league === 'fc'
     ? { text: 'Matches', href: `${playerPath}/matches`, page: 'matches' }
     : { text: 'Game Log', href: `${playerPath}/game-log`, page: 'game-log' },
   { text: 'Splits', href: `${playerPath}/splits`, page: 'splits' },
@@ -104,7 +98,7 @@ const twitter = {
   }}
 >
   <Header
-    {preferredDomain}
+    preferredDomain={domain.toLowerCase()}
     {query}
     share={{
       type: 'profile',
@@ -125,7 +119,7 @@ const twitter = {
         </div>
         <div class="whitespace-nowrap text-center md:text-left">
           {
-            preferredDomain.toLowerCase() !== 'fc' ? (
+            league !== 'fc' ? (
               <Fragment>
                 {bio.heightFeetInches && (
                   <>
@@ -267,9 +261,6 @@ const twitter = {
       }
     </div>
     <slot />
-    <Explore
-      domain={domain.toLowerCase()}
-      additionalQuestions={bio.additionalQuestions}
-    />
+    <Explore {league} additionalQuestions={bio.additionalQuestions} />
   </Container>
 </Layout>

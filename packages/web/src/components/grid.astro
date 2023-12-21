@@ -3,6 +3,7 @@ import {
   type GameraGrid,
   type GameraParameter,
   getUrlForEntity as getUrlForEntityGamera,
+  type GameraDomain,
 } from '@statmuse/core/gamera'
 import {
   type KanedamaEntity,
@@ -14,7 +15,7 @@ import { freeRowLimit } from '@lib/enforcer'
 
 interface Props extends HTMLAttributes<'div'> {
   data: GameraGrid | GameraGrid[]
-  domain?: string
+  domain?: GameraDomain
   fullWidth?: boolean
   seeAllUrl?: string
   title?: string
@@ -86,8 +87,8 @@ const getTextColumnHeaderStyles = (col: Column) => {
   return ''
 }
 
-const topRank = () => (domain === 'fc' ? 5 : 10)
-const bottomRank = () => (domain === 'fc' ? 15 : 20)
+const topRank = () => (domain === 'EPL' ? 5 : 10)
+const bottomRank = () => (domain === 'EPL' ? 15 : 20)
 
 const getRankingColor = ({
   isRanking,

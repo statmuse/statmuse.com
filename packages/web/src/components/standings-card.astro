@@ -97,7 +97,7 @@ const getColumns = (domain: string, name?: string) => {
     ]
   }
 
-  if (domain === 'fc') {
+  if (domain === 'epl') {
     const [first, second, third, ...rest] = columns
     columns = [
       first,
@@ -207,7 +207,7 @@ const getRow = (domain: string, team: StandingsTeam) => {
     }
   }
 
-  if (domain === 'fc') {
+  if (domain === 'epl') {
     const eplTeam = team as StandingsEpl
     return {
       rank: {

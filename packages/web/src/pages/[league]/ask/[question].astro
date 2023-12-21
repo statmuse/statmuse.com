@@ -20,6 +20,7 @@ import * as Enforcer from '@lib/enforcer'
 import * as Link from '@statmuse/core/link'
 import { NOT_FOUND_404 } from '@lib/response'
 import AnswerCards from '@components/answer-cards.astro'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
 
 const canQuery = await Enforcer.canQuery(Astro.locals)
 
@@ -27,11 +28,13 @@ if (!canQuery) {
   return Astro.redirect('/auth/signup?limit')
 }
 
-const { league, question } = Astro.params
+const league = Astro.params.league as LeagueParam
+const domain = leagueToDomain(league).toLowerCase()
+const question = Astro.params.question
 if (!question) return Astro.redirect('/questions')
 let query = question.replaceAll('-', ' ')
 
-const response = (await ask({ league, query }, Astro)) as
+const response = (await ask({ league: domain, query }, Astro)) as
   | GameraDefaultResponse
   | undefined
 if (!response) return NOT_FOUND_404
@@ -46,7 +49,7 @@ query = clean(
   ),
 )
 
-const code = await Link.askShortCode(query, league as string)
+const code = await Link.askShortCode(query, domain)
 
 const meta =
   response.type !== 'error'
@@ -85,7 +88,7 @@ Caching.swr(Astro)
   analytics={{
     is_search: true,
     page_type: 'ask',
-    page_domain: league as AnalyticsPageviewProperties['page_domain'],
+    page_domain: domain as AnalyticsPageviewProperties['page_domain'],
     disposition: response.disposition,
     tokenizationScore: response.tokenizationScore,
     query,
@@ -97,7 +100,7 @@ Caching.swr(Astro)
     analytics={{
       is_search: true,
       page_type: 'ask',
-      page_domain: league as AnalyticsPageviewProperties['page_domain'],
+      page_domain: domain as AnalyticsPageviewProperties['page_domain'],
       disposition: response.disposition,
       tokenizationScore: response.tokenizationScore,
       query,
@@ -106,7 +109,7 @@ Caching.swr(Astro)
     <Header
       {query}
       {conversationToken}
-      preferredDomain={league}
+      preferredDomain={domain}
       share={{ type: 'ask', shortCode: code?.short_code, url: Astro.url.href }}
       audioUrl={response.visual.summary.narrator?.answerWithIntroAudioUrl ||
         response.visual.summary.narrator?.answerAudioUrl}
@@ -122,14 +125,14 @@ Caching.swr(Astro)
     <Visuals {response} {conversationToken} />
     <Container>
       <Explore
-        domain={league}
+        {league}
         additionalQuestions={response.visual.additionalQuestions}
       />
     </Container>
     {
       league && (
         <Container>
-          <AnswerCards domain={league} />
+          <AnswerCards {league} />
         </Container>
       )
     }

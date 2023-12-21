@@ -177,7 +177,7 @@ export const getDefaultBustImageUrl = (domain: GameraDomain) => {
       return `${cdnBaseUrl}/img/player_profile/sm-hockey-player-lg.png`
     case 'NFL':
       return `${cdnBaseUrl}/img/player_profile/sm-football-player-lg.png`
-    case 'FC':
+    case 'EPL':
       return `${cdnBaseUrl}/img/player_profile/sm-football-player-lg.png`
     default:
       throw new Error('Unknown domain')
@@ -194,7 +194,7 @@ export const getDefaultTeamLogoUrl = (domain: GameraDomain) => {
       return `${cdnBaseUrl}/img/team_profile/sm-hockey-team-lg.png`
     case 'NFL':
       return `${cdnBaseUrl}/img/team_profile/sm-football-team-lg.png`
-    case 'FC':
+    case 'EPL':
       return `${cdnBaseUrl}/img/team_profile/sm-football-team-lg.png`
     default:
       throw new Error('Unknown domain')
@@ -278,7 +278,7 @@ const formatTokenTextOnly = (token: GameraToken) => {
   return token.omitLeadingSpace ? text : ' ' + text
 }
 
-export type GameraDomain = 'NBA' | 'NFL' | 'MLB' | 'NHL' | 'PGA' | 'FC' | 'EPL'
+export type GameraDomain = 'NBA' | 'NFL' | 'MLB' | 'NHL' | 'PGA' | 'EPL'
 
 export type GameraToken = {
   text: string
@@ -1105,7 +1105,7 @@ export interface NhlBoxScoreDetail {
 }
 
 export interface Visual {
-  domain: GameraDomain
+  domain?: GameraDomain
   summary: Summary
   summaryTokens?: GameraToken[]
   isSuperlative: boolean

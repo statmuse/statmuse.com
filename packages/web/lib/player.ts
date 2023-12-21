@@ -108,10 +108,8 @@ export const getPlayerBio = async (
 ) => {
   try {
     const playerId = parsePlayerId(player)
-    const league = domain.toLowerCase() === 'fc' ? 'epl' : domain.toLowerCase()
+    const league = domain.toLowerCase()
     const path = `${league}/players/${playerId}/bio`
-
-    console.log('PATH: ', path)
     const data = await request<GameraPlayerBio & { error?: string }>(
       context,
       path,
@@ -131,7 +129,7 @@ export const getPlayerProfile = async (
 ) => {
   try {
     const playerId = parsePlayerId(player)
-    const league = domain.toLowerCase() === 'fc' ? 'epl' : domain.toLowerCase()
+    const league = domain.toLowerCase()
     const path = `${league}/players/${playerId}`
     const data = await request<
       GameraPlayerProfileResponse & { error?: string }
@@ -152,8 +150,7 @@ export const getPlayerStats = async (props: {
 }) => {
   try {
     const playerId = parsePlayerId(props.player)
-    const league =
-      props.domain.toLowerCase() === 'fc' ? 'epl' : props.domain.toLowerCase()
+    const league = props.domain.toLowerCase()
     const path = `${league}/players/${playerId}/careerStats`
     return request<GameraPlayerStats>(props.context, path, props.params)
   } catch (error) {
@@ -170,8 +167,7 @@ export const getPlayerGameLog = async (props: {
 }) => {
   try {
     const playerId = parsePlayerId(props.player)
-    const league =
-      props.domain.toLowerCase() === 'fc' ? 'epl' : props.domain.toLowerCase()
+    const league = props.domain.toLowerCase()
     const path = `${league}/players/${playerId}/gameLog`
     return request<GameraPlayerGameLog>(props.context, path, props.params)
   } catch (error) {
@@ -188,8 +184,7 @@ export const getPlayerSplits = async (props: {
 }) => {
   try {
     const playerId = parsePlayerId(props.player)
-    const league =
-      props.domain.toLowerCase() === 'fc' ? 'epl' : props.domain.toLowerCase()
+    const league = props.domain.toLowerCase()
     const path = `${league}/players/${playerId}/splits`
     return request<GameraPlayerSplits>(props.context, path, props.params)
   } catch (error) {

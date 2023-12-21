@@ -7,14 +7,18 @@ import { getAsksIndex } from '@statmuse/core/ask'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { parseSearchParams } from '@lib/asks'
 import { Caching } from '@lib/caching'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
 
-const league = Astro.params.league as string
+const league = Astro.params.league as LeagueParam
+const domain = leagueToDomain(league)
 const searchParams = parseSearchParams(Astro.url.searchParams)
-const asks = await getAsksIndex([league], searchParams)
+const asks = await getAsksIndex([domain.toLowerCase()], searchParams)
 
 const meta = {
-  title: `${league.toUpperCase()} Stats`,
-  description: `Instant answers to your ${league.toUpperCase()} questions. Stats, scores, schedules, standings, recaps and more — just ask.`,
+  title: `${domain === 'EPL' ? 'PL' : domain} Stats`,
+  description: `Instant answers to your ${
+    domain === 'EPL' ? 'PL' : domain
+  } questions. Stats, scores, schedules, standings, recaps and more — just ask.`,
   pageType: 'question',
 }
 
@@ -25,13 +29,14 @@ Caching.swr(Astro)
   {meta}
   analytics={{
     page_type: 'question',
-    page_domain: league as AnalyticsPageviewProperties['page_domain'],
+    page_domain:
+      domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
   }}
 >
-  <Header preferredDomain={league} />
+  <Header preferredDomain={domain.toLowerCase()} />
   <AskIndex
     selected={league}
-    headline={`Trending ${league.toUpperCase()} Searches`}
+    headline={`Trending ${domain === 'EPL' ? 'PL' : domain} Searches`}
     {asks}
     {searchParams}
   />

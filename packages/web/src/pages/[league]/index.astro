@@ -4,12 +4,12 @@ import { Caching } from '@lib/caching'
 import { listOnboarding } from '@statmuse/core/examples'
 import { createAskPath } from '@statmuse/core/path'
 import { NOT_FOUND_404 } from '@lib/response'
+import { type LeagueParam } from '@lib/params'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fantasy', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
   return NOT_FOUND_404
 
-type LeagueParam = 'nba' | 'nfl' | 'mlb' | 'nhl' | 'pga' | 'fantasy' | 'fc'
 const league = Astro.params.league as LeagueParam
 
 const onboardingExamples = await listOnboarding(
@@ -599,14 +599,23 @@ const examples = {
   pga: pgaExamples as ExampleSet[],
   fc: eplExamples as ExampleSet[],
   fantasy: fantasyExamples as ExampleSet[],
+  money: eplExamples as ExampleSet[],
 }
 
 const meta = {
   title: `${
-    league === 'fantasy' ? 'Fantasy Football' : league.toUpperCase()
+    league === 'fantasy'
+      ? 'Fantasy Football'
+      : league === 'fc'
+      ? 'Premier League'
+      : league.toUpperCase()
   } Stats`,
   description: `Instant answers to your ${
-    league === 'fantasy' ? 'fantasy football' : league.toUpperCase()
+    league === 'fantasy'
+      ? 'fantasy football'
+      : league === 'fc'
+      ? 'premier league'
+      : league.toUpperCase()
   } questions. Stats, projections, comparisons, outlooks, recaps and more — just ask.`,
   facebook: {
     imageUrl:
@@ -625,7 +634,7 @@ const meta = {
 Caching.swr(Astro)
 ---
 
-<HomeLayout {meta} domain={league} img={{ src: banner, text: banner.text }}>
+<HomeLayout {meta} {league} img={{ src: banner, text: banner.text }}>
   <div class="divide-y divide-[#e4e4e4]">
     {
       examples[league || 'nba'].map(([title, queries]) => (

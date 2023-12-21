@@ -12,8 +12,7 @@ export const getPlayerCards = async (props: {
   seasonYear?: number
 }) => {
   try {
-    const league =
-      props.domain.toLowerCase() === 'fc' ? 'epl' : props.domain.toLowerCase()
+    const league = props.domain.toLowerCase()
     const path = `${league}/relatedContent/playerCards`
     const data = await request<PlayerCardResponse>(props.context, path)
     return data
@@ -29,8 +28,7 @@ export const getTeamCards = async (props: {
   teamId?: number
 }) => {
   try {
-    const league =
-      props.domain.toLowerCase() === 'fc' ? 'epl' : props.domain.toLowerCase()
+    const league = props.domain.toLowerCase()
     const path = `${league}/relatedContent/teamCards`
     const data = await request<TeamCardResponse>(props.context, path)
     return data

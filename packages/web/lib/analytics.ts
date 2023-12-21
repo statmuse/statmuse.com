@@ -8,7 +8,15 @@ export type AnalyticsPageviewProperties = {
   method?: 'GET' | 'POST'
   origin?: 'web'
   origin_scope?: 'browser'
-  page_domain?: 'nba' | 'nfl' | 'nhl' | 'mlb' | 'pga' | 'finance' | 'unknown'
+  page_domain?:
+    | 'nba'
+    | 'nfl'
+    | 'nhl'
+    | 'mlb'
+    | 'pga'
+    | 'finance'
+    | 'epl'
+    | 'unknown'
   page_type?:
     | 'ask'
     | 'asset'

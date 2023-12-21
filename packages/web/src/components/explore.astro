@@ -2,11 +2,11 @@
 import { createAskPath } from '@statmuse/core/path'
 import FreestarVideo from '@components/freestar-video.svelte'
 interface Props {
-  domain?: string
+  league?: string
   additionalQuestions?: { domain?: string; text: string }[]
 }
 
-const { domain, additionalQuestions } = Astro.props
+const { league, additionalQuestions } = Astro.props
 ---
 
 <div class="mt-6 mb-4">
@@ -18,7 +18,7 @@ const { domain, additionalQuestions } = Astro.props
   <div
     class="grid md:grid-cols-[repeat(auto-fit,_minmax(425px,_1fr))] gap-4 items-start"
   >
-    <FreestarVideo client:only="svelte" {domain} />
+    <FreestarVideo client:only="svelte" {league} />
     {
       additionalQuestions ? (
         <ul class="space-y-3" data-cy-related-questions>
@@ -27,7 +27,7 @@ const { domain, additionalQuestions } = Astro.props
               <i class="w-5 h-5 shrink-0 explore-search-icon" />
               <a
                 href={createAskPath({
-                  domain: question.domain?.toLowerCase() || domain || '',
+                  domain: question.domain?.toLowerCase() || '',
                   query: question.text,
                 })}
                 data-track-click="Click Try-Also Query"
@@ -38,7 +38,7 @@ const { domain, additionalQuestions } = Astro.props
           ))}
           <li class="flex-1 min-w-[210px] my-1.5 sm:my-2.5 flex gap-1.5 leading-snug">
             <i class="w-5 h-5 shrink-0 explore-flame-icon" />
-            <a href={domain ? `/${domain}/questions` : '/questions'}>
+            <a href={league ? `/${league}/questions` : '/questions'}>
               See trending
             </a>
           </li>
