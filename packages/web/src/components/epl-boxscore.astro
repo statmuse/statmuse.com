@@ -155,7 +155,12 @@ const periods = Object.entries(groupBy(plays, (p) => p.period))
                         play.eventType === 'own_goal' ? (
                         <>
                           <span class="mr-2">{play.minute}</span>
-                          <Goal class="w-5 mr-2" />
+                          <Goal
+                            class="w-5 mr-2 shrink-0"
+                            color={
+                              play.eventType === 'own_goal' ? '#ed1c24' : '#000'
+                            }
+                          />
                           {`${play.playerName}${
                             play.relatedPlayerName
                               ? ' (Assist: ' + play.relatedPlayerName + ')'
@@ -165,7 +170,7 @@ const periods = Object.entries(groupBy(plays, (p) => p.period))
                       ) : play.eventType === 'substitution' ? (
                         <>
                           <span class="mr-2">{play.minute}</span>
-                          <Substitution class="w-5 mr-2" />
+                          <Substitution class="w-5 mr-2 shrink-0" />
                           {`${play.playerName} in, ${play.relatedPlayerName} out`}
                         </>
                       ) : (
