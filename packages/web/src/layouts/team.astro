@@ -232,7 +232,7 @@ const twitter = {
                   <p class="uppercase whitespace-nowrap">{stat.label}</p>
                   <p class="text-3xl">{stat.value}</p>
                   <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-                    {stat.rank}
+                    {stat.label !== 'FORM' ? stat.rank : 'last 5'}
                   </p>
                 </div>
               ))
@@ -268,7 +268,7 @@ const twitter = {
               <p class="uppercase">{stat.label}</p>
               <p class="text-3xl">{stat.value}</p>
               <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-                {stat.rank}
+                {stat.label !== 'FORM' ? stat.rank : 'last 5'}
               </p>
             </div>
           ))}
