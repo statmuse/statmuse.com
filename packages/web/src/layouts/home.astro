@@ -33,7 +33,7 @@ interface Props {
 
 const { league: leagueParam = 'All', img, ...rest } = Astro.props
 
-const leagues = ['All', 'nba', 'nfl', 'nhl', 'mlb', 'pga', 'fc']
+const leagues = ['All', 'nba', 'nfl', 'nhl', 'mlb', 'fc', 'pga']
 
 const trendingLinkText = (param: string) => {
   switch (param) {
