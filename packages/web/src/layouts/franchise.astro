@@ -196,6 +196,22 @@ const twitter = {
             </div>
           )
         }
+        {
+          bio.premierLeagueRecord && bio.premierLeagueTitles && (
+            <div class="hidden md:block mt-6">
+              <div class="flex gap-5 mb-1 text-center">
+                <div>
+                  <p class="uppercase">all time record</p>
+                  <p class="text-3xl">{bio.premierLeagueRecord}</p>
+                </div>
+                <div>
+                  <p class="uppercase">titles won</p>
+                  <p class="text-3xl">{bio.premierLeagueTitles}</p>
+                </div>
+              </div>
+            </div>
+          )
+        }
       </div>
       <TeamRepresentatives
         representatives={bio.franchiseRepresentatives}
@@ -229,6 +245,22 @@ const twitter = {
               </p>
             </div>
           ))}
+        </div>
+      </div>
+    )
+  }
+  {
+    bio.premierLeagueRecord && bio.premierLeagueTitles && (
+      <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
+        <div class="flex gap-5 mb-1 text-center">
+          <div>
+            <p class="uppercase">all time record</p>
+            <p class="text-3xl">{bio.premierLeagueRecord}</p>
+          </div>
+          <div>
+            <p class="uppercase">titles won</p>
+            <p class="text-3xl">{bio.premierLeagueTitles}</p>
+          </div>
         </div>
       </div>
     )

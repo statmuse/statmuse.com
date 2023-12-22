@@ -1267,6 +1267,8 @@ export interface GameraTeamFranchiseOverview {
       winPercentage: string
       record: string
     }[]
+    premierLeagueRecord?: string
+    premierLeagueTitles?: string
   }
   seasons: {
     name: string
