@@ -12,6 +12,8 @@ const messages: Record<string, string> = {
 }
 const code = Astro.url.searchParams.get('code')
 Caching.none(Astro)
+
+Astro.response.headers.set('Access-Control-Allow-Origin', '*')
 ---
 
 <Layout {meta} enableFreestarAdBanner={false}>
