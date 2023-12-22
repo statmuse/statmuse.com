@@ -31,7 +31,6 @@ if (Astro.request.method === 'POST') {
 Caching.none(Astro)
 
 const limit = Astro.url.searchParams.get('limit')
-const fc = Astro.url.searchParams.get('fc')
 const user = Astro.locals.user
 if (user && user.stripe_subscription_status !== 'active' && limit !== null) {
   const { url } =
@@ -66,7 +65,7 @@ const meta = {
   <Container class="px-[30px] py-[5px]">
     <div>
       {
-        (limit !== null || fc !== null) && (
+        limit !== null && (
           <div class="border-l-4 border-yellow-400 bg-yellow-50 p-4 max-w-md mx-auto mb-3">
             <div class="flex">
               <div class="flex-shrink-0">
@@ -88,9 +87,7 @@ const meta = {
               </div>
               <div class="ml-3">
                 <p class="text-sm text-yellow-700">
-                  {limit !== null &&
-                    `You've used up all free prompts for the day`}
-                  {fc !== null && `Subscribe for Premier League access`}
+                  You've used up all free prompts for the day
                 </p>
               </div>
             </div>

@@ -24,10 +24,7 @@ if (Astro.request.method === 'POST') {
   query = data.get('question[query]')?.toString()
   conversationToken = data.get('question[conversation_token]')?.toString()
 
-  const canQuery = await Enforcer.canQuery(Astro.locals, preferredDomain)
-  if (!canQuery && preferredDomain === 'epl') {
-    return Astro.redirect('/auth/signup?fc')
-  }
+  const canQuery = await Enforcer.canQuery(Astro.locals)
   if (!canQuery) {
     return Astro.redirect('/auth/signup?limit')
   }

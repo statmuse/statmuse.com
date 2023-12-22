@@ -134,16 +134,9 @@ const Logo = leagueParam === 'money' ? MoneyLogo : StandardLogo
           {
             leagues.map((league) => (
               <a
-                class:list={[
-                  'flex items-center justify-center border rounded-md hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 text-center leading-[1.2]',
-                  {
-                    'border-primary text-primary': league !== 'fc',
-                    'bg-primary text-white':
-                      league === leagueParam && league !== 'fc',
-                    'pointer-events-none': league === 'fc',
-                    'border-[#c5c9cc] text-[#c5c9cc]': league === 'fc',
-                  },
-                ]}
+                class={`flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 text-center leading-[1.2] ${
+                  league === leagueParam && 'bg-primary text-white'
+                }`}
                 href={league === 'All' ? '/' : `/${league}`}
                 set:text={
                   league === 'All'
@@ -152,7 +145,6 @@ const Logo = leagueParam === 'money' ? MoneyLogo : StandardLogo
                     ? 'Premier League'
                     : league.toUpperCase()
                 }
-                data-disabled={league === 'fc'}
               />
             ))
           }

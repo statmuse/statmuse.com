@@ -22,16 +22,14 @@ import { NOT_FOUND_404 } from '@lib/response'
 import AnswerCards from '@components/answer-cards.astro'
 import { type LeagueParam, leagueToDomain } from '@lib/params'
 
-const league = Astro.params.league as LeagueParam
-const domain = leagueToDomain(league).toLowerCase()
-const canQuery = await Enforcer.canQuery(Astro.locals, domain)
-if (!canQuery && domain === 'epl') {
-  return Astro.redirect('/auth/signup?fc')
-}
+const canQuery = await Enforcer.canQuery(Astro.locals)
+
 if (!canQuery) {
   return Astro.redirect('/auth/signup?limit')
 }
 
+const league = Astro.params.league as LeagueParam
+const domain = leagueToDomain(league).toLowerCase()
 const question = Astro.url.searchParams.get('q')
 if (!question) return Astro.redirect('/questions')
 
