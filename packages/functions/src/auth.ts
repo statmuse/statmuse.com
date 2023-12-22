@@ -31,6 +31,7 @@ export const handler = AuthHandler({
         return {
           statusCode: 302,
           headers: {
+            'Allow-Access-Control-Origin': '*.statmuse.com',
             Location:
               process.env.AUTH_FRONTEND_URL +
               '/auth/code?' +
