@@ -20,14 +20,7 @@ if (Astro.request.method === 'POST') {
     // @ts-expect-error
     new URLSearchParams(data).toString()
 
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: url,
-      Accept:
-        'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-    },
-  }) // Astro.redirect(url)
+  return Astro.redirect(url)
 }
 
 Caching.none(Astro)

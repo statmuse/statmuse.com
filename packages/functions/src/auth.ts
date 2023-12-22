@@ -31,6 +31,7 @@ export const handler = AuthHandler({
         return {
           statusCode: 302,
           headers: {
+            'Access-Control-Allow-Origin': '*',
             Location:
               process.env.AUTH_FRONTEND_URL +
               '/auth/code?' +
