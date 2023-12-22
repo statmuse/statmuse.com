@@ -171,7 +171,10 @@ const Logo = leagueParam === 'money' ? MoneyLogo : StandardLogo
             set:text="Money"
           />
         </div>
-        <div class="flex flex-nowrap gap-[5px] mb-2.5 lg:hidden">
+        <div
+          class="flex flex-nowrap gap-[5px] mb-2.5 lg:hidden"
+          style={{ height: '50.375px' }}
+        >
           <a
             class={`flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 max-w-fit ${
               leagueParam === 'fantasy' && 'bg-secondary text-white'
