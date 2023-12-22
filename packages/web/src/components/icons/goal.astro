@@ -1,0 +1,53 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+interface Props extends HTMLAttributes<'svg'> {
+  color: string
+}
+const { color, ...props } = Astro.props
+---
+
+<svg
+  enable-background="new 0 0 22.7 22.7"
+  viewBox="0 0 22.7 22.7"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  {...props}
+>
+  <defs>
+    <path
+      id="a"
+      d="m20.4 11.3c0 5-4 9.1-9.1 9.1s-9.1-4-9.1-9.1 4-9.1 9.1-9.1 9.1 4.1 9.1 9.1z"
+    >
+    </path><clipPath id="b"><use xlink:href="#a"></use></clipPath>
+  </defs><g
+    stroke={color}
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-miterlimit="10"
+  >
+    <g clip-path="url(#b)">
+      <path d="m11.3 7.2-4 2.9 1.6 4.7h4.9l1.5-4.7z" fill={color}></path><path
+        d="m13.8 14.8 1.3 1.8"
+        fill="none"
+      >
+      </path><path d="m19.6 16.5-4.5.1-1.4 4.3" fill={color}></path><path
+        d="m7.3 10.1-2.1-.7"
+        fill="none"
+      >
+      </path><path d="m1.6 12.1 3.6-2.7-1.3-4.3" fill={color}></path><path
+        d="m11.3 7.2v-2.3"
+        fill="none"
+      >
+      </path><path d="m7.7 2.4 3.6 2.5 3.7-2.5" fill={color}></path><path
+        d="m8.9 14.8-1.4 1.8"
+        fill="none"
+      >
+      </path><path d="m3.1 16.5 4.4.1 1.5 4.3" fill={color}></path><path
+        d="m15.3 10.1 2.2-.7"
+        fill="none"
+      >
+      </path><path d="m21 12.1-3.5-2.7 1.3-4.3" fill={color}></path>
+    </g><use fill="none" xlink:href="#a"></use>
+  </g>
+</svg>

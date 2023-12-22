@@ -7,6 +7,7 @@ import type {
   StandingsNfl,
   StandingsNhl,
   StandingsMlb,
+  StandingsEpl,
 } from '@statmuse/core/gamera'
 import { groupBy } from 'lodash-es'
 
@@ -19,7 +20,7 @@ interface Props {
 
 const { teams, domain, group, limit } = Astro.props
 
-const getColumns = (domain: string, name: string) => {
+const getColumns = (domain: string, name?: string) => {
   let columns = [
     {
       rowItemKey: 'rank',
@@ -28,7 +29,7 @@ const getColumns = (domain: string, name: string) => {
     },
     {
       rowItemKey: 'name',
-      title: name,
+      title: name ?? '',
       type: 'string',
     },
     {
@@ -91,6 +92,31 @@ const getColumns = (domain: string, name: string) => {
       {
         rowItemKey: 'goalDifferential',
         title: 'DIFF',
+        type: 'number',
+      },
+    ]
+  }
+
+  if (domain === 'epl') {
+    const [first, second, third, ...rest] = columns
+    columns = [
+      first,
+      second,
+      third,
+      {
+        rowItemKey: 'draws',
+        title: 'D',
+        type: 'number',
+      },
+      ...rest,
+      {
+        rowItemKey: 'goalDifferential',
+        title: 'GD',
+        type: 'number',
+      },
+      {
+        rowItemKey: 'points',
+        title: 'PTS',
         type: 'number',
       },
     ]
@@ -180,18 +206,39 @@ const getRow = (domain: string, team: StandingsTeam) => {
       overtimeLosses: nhlTeam.stats.overtimeLosses,
     }
   }
+
+  if (domain === 'epl') {
+    const eplTeam = team as StandingsEpl
+    return {
+      rank: {
+        display: eplTeam.rank.league + '',
+        value: eplTeam.rank.league,
+      },
+      name: {
+        display: eplTeam.team.nickname,
+        value: eplTeam.team.nickname,
+        imageUrl: eplTeam.team.logoImageUrl,
+        entity: eplTeam.team.entity,
+      },
+      wins: eplTeam.stats.wins,
+      losses: eplTeam.stats.losses,
+      points: eplTeam.stats.points,
+      draws: eplTeam.stats.draws,
+      goalDifferential: eplTeam.stats.goalDifferential,
+    }
+  }
 }
 
 const mapToGrid = (
-  domain: string,
-  conference: string,
   teams: StandingsTeam[],
+  domain: string,
+  conference?: string,
 ): GameraGrid => {
   const columns = getColumns(domain, conference)
 
   const rows = teams
     .map((team) => getRow(domain, team))
-    .sort((a, b) => a.rank.value - b?.rank.value)
+    .sort((a, b) => a?.rank.value - b?.rank.value)
     .slice(0, limit)
 
   return { columns, rows }
@@ -201,9 +248,9 @@ const firstTeam = teams[0]
 
 const grids = group
   ? Object.entries(groupBy(teams, `${group}.name`)).map(([name, teams]) =>
-      mapToGrid(domain, name, teams),
+      mapToGrid(teams, domain, name),
     )
-  : [mapToGrid(domain, firstTeam.conference.name, teams)]
+  : [mapToGrid(teams, domain, firstTeam.conference?.name)]
 ---
 
 <div

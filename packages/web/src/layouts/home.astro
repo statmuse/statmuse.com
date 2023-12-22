@@ -14,9 +14,10 @@ import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import NewsletterSignup from '@components/newsletter-signup.astro'
 import AuthMenu from '@components/auth-menu.svelte'
 import FreestarVideo from '@components/freestar-video.svelte'
+import type { LeagueParam } from '@lib/params'
 
 interface Props {
-  domain?: string
+  league?: LeagueParam
   img: {
     src: string | { answer: GameraResponse }
     text: string
@@ -30,38 +31,42 @@ interface Props {
   }
 }
 
-const { domain = 'All', img, ...rest } = Astro.props
+const { league: leagueParam = 'All', img, ...rest } = Astro.props
 
-const leagues = ['All', 'nba', 'nfl', 'nhl', 'mlb', 'pga']
+const leagues = ['All', 'nba', 'nfl', 'nhl', 'mlb', 'pga', 'fc']
 
-const trendingLinkText = (domain: string) => {
-  switch (domain) {
+const trendingLinkText = (param: string) => {
+  switch (param) {
     case 'All':
       return 'See trending searches'
     case 'money':
       return 'See trending Money searches'
     case 'fantasy':
       return 'See trending Fantasy Football searches'
+    case 'fc':
+      return 'See trending Premier League searches'
     default:
-      return `See trending ${domain.toUpperCase()} searches`
+      return `See trending ${param.toUpperCase()} searches`
   }
 }
 
-const Layout = domain === 'money' ? MoneyBaseLayout : BaseLayout
-const Logo = domain === 'money' ? MoneyLogo : StandardLogo
+const Layout = leagueParam === 'money' ? MoneyBaseLayout : BaseLayout
+const Logo = leagueParam === 'money' ? MoneyLogo : StandardLogo
 ---
 
 <Layout
   {...rest}
   analytics={{
     page_domain:
-      domain === 'All'
+      leagueParam === 'All'
         ? 'unknown'
-        : domain === 'fantasy'
+        : leagueParam === 'fantasy'
         ? 'nfl'
-        : domain === 'money'
+        : leagueParam === 'money'
         ? 'finance'
-        : (domain as AnalyticsPageviewProperties['page_domain']),
+        : leagueParam === 'fc'
+        ? 'epl'
+        : (leagueParam as AnalyticsPageviewProperties['page_domain']),
   }}
 >
   <main
@@ -114,9 +119,13 @@ const Logo = domain === 'money' ? MoneyLogo : StandardLogo
         <div>
           <AskBar
             client:load
-            money={domain === 'money'}
-            fantasy={domain === 'fantasy'}
-            preferredDomain={domain !== 'All' ? domain : undefined}
+            money={leagueParam === 'money'}
+            fantasy={leagueParam === 'fantasy'}
+            preferredDomain={leagueParam === 'All'
+              ? undefined
+              : leagueParam === 'fc'
+              ? 'epl'
+              : leagueParam}
           />
         </div>
       </div>
@@ -125,24 +134,38 @@ const Logo = domain === 'money' ? MoneyLogo : StandardLogo
           {
             leagues.map((league) => (
               <a
-                class={`flex items-center justify-center border border-primary rounded-md text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 ${
-                  league === domain && 'bg-primary text-white'
-                }`}
+                class:list={[
+                  'flex items-center justify-center border rounded-md hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 text-center leading-[1.2]',
+                  {
+                    'border-primary text-primary': league !== 'fc',
+                    'bg-primary text-white':
+                      league === leagueParam && league !== 'fc',
+                    'pointer-events-none': league === 'fc',
+                    'border-[#c5c9cc] text-[#c5c9cc]': league === 'fc',
+                  },
+                ]}
                 href={league === 'All' ? '/' : `/${league}`}
-                set:text={league === 'All' ? league : league.toUpperCase()}
+                set:text={
+                  league === 'All'
+                    ? league
+                    : league === 'fc'
+                    ? 'Premier League'
+                    : league.toUpperCase()
+                }
+                data-disabled={league === 'fc'}
               />
             ))
           }
           <a
             class={`hidden lg:flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 min-w-fit ${
-              domain === 'fantasy' && 'bg-secondary text-white'
+              leagueParam === 'fantasy' && 'bg-secondary text-white'
             }`}
             href="/fantasy"
             set:text="Fantasy"
           />
           <a
             class={`hidden lg:flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 min-w-fit ${
-              domain === 'money' && 'bg-[#003ca8] text-white'
+              leagueParam === 'money' && 'bg-[#003ca8] text-white'
             }`}
             href="/money"
             set:text="Money"
@@ -151,14 +174,14 @@ const Logo = domain === 'money' ? MoneyLogo : StandardLogo
         <div class="flex flex-nowrap gap-[5px] mb-2.5 lg:hidden">
           <a
             class={`flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 max-w-fit ${
-              domain === 'fantasy' && 'bg-secondary text-white'
+              leagueParam === 'fantasy' && 'bg-secondary text-white'
             }`}
             href="/fantasy"
             set:text="Fantasy"
           />
           <a
             class={`flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 max-w-fit ${
-              domain === 'money' && 'bg-[#003ca8] text-white'
+              leagueParam === 'money' && 'bg-[#003ca8] text-white'
             }`}
             href="/money"
             set:text="Money"
@@ -169,13 +192,17 @@ const Logo = domain === 'money' ? MoneyLogo : StandardLogo
         <FreestarVideo
           client:only="svelte"
           class="mb-[30px] mt-[32px] w-full lg:w-[425px]"
-          {domain}
+          league={leagueParam}
         />
       </div>
       <slot />
       <h4 class="font-semibold text-right py-4">
-        <a href={domain === 'All' ? '/questions' : `/${domain}/questions`}>
-          {trendingLinkText(domain)}
+        <a
+          href={leagueParam === 'All'
+            ? '/questions'
+            : `/${leagueParam}/questions`}
+        >
+          {trendingLinkText(leagueParam)}
         </a>
       </h4>
       <NewsletterSignup />

@@ -12,6 +12,7 @@ import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import * as Link from '@statmuse/core/link'
 import AnswerCards from '@components/answer-cards.astro'
+import type { LeagueParam } from '@lib/params'
 
 interface Props {
   answer: GameraDefaultResponse
@@ -25,6 +26,7 @@ const query = clean(
   ),
 )
 const preferredDomain = answer.visual.domain?.toLowerCase()
+const domain = answer.visual.domain
 const subject = answer.visual.summary.subject
 const heroProps = getHeroProps({ imageAlt: query, response: answer })
 const meta = {
@@ -32,7 +34,7 @@ const meta = {
   description: description(answer),
   canonical: {
     url: createAskPath({
-      domain: answer.visual.domain?.toLowerCase(),
+      domain: preferredDomain || '',
       query,
     }),
     rewrite: true,
@@ -58,7 +60,7 @@ const meta = {
   },
 }
 
-const code = await Link.askShortCode(query, preferredDomain)
+const code = await Link.askShortCode(query, preferredDomain || '')
 ---
 
 <Layout
@@ -67,8 +69,7 @@ const code = await Link.askShortCode(query, preferredDomain)
   analytics={{
     is_search: true,
     page_type: 'ask',
-    page_domain:
-      answer.visual.domain?.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
+    page_domain: preferredDomain as AnalyticsPageviewProperties['page_domain'],
     disposition: answer.disposition,
     tokenizationScore: answer.tokenizationScore,
     query,
@@ -100,14 +101,16 @@ const code = await Link.askShortCode(query, preferredDomain)
   <Visuals response={answer} {conversationToken} />
   <Container>
     <Explore
-      domain={preferredDomain?.toLowerCase()}
+      league={domain === 'EPL' ? 'fc' : preferredDomain}
       additionalQuestions={answer.visual.additionalQuestions}
     />
   </Container>
   {
     preferredDomain && (
       <Container>
-        <AnswerCards domain={preferredDomain.toLocaleLowerCase()} />
+        <AnswerCards
+          league={domain === 'EPL' ? 'fc' : (preferredDomain as LeagueParam)}
+        />
       </Container>
     )
   }

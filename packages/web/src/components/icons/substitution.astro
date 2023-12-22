@@ -1,0 +1,27 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+interface Props extends HTMLAttributes<'svg'> {}
+---
+
+<svg
+  enable-background="new 0 0 22.7 22.7"
+  viewBox="0 0 22.7 22.7"
+  xmlns="http://www.w3.org/2000/svg"
+  {...Astro.props}
+>
+  <g
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-miterlimit="10"
+  >
+    <path d="m7.1 15v-12.1" stroke="#00a14b"></path><path
+      d="m2.3 7.7 4.8-4.8 4.8 4.8"
+      stroke="#00a14b"
+    >
+    </path><g stroke="#ed1c24">
+      <path d="m15.6 7.7v12.1"></path><path d="m20.4 15-4.8 4.8-4.8-4.8"></path>
+    </g>
+  </g>
+</svg>

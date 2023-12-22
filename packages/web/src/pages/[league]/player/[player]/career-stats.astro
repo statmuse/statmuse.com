@@ -1,16 +1,18 @@
 ---
 import Grid from '@components/grid.astro'
 import PlayerLayout from '@layouts/player.astro'
-import { type GameraDomain, tokensToText } from '@statmuse/core/gamera'
+import { tokensToText } from '@statmuse/core/gamera'
 import { getPlayerBio, getPlayerStats } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
 import { NOT_FOUND_404 } from '@lib/response'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
 
-const { league, player } = Astro.params
+const league = Astro.params.league as LeagueParam
+const player = Astro.params.player
 if (!player || !league) return NOT_FOUND_404
 
-const domain = league as GameraDomain
+const domain = leagueToDomain(league)
 const params = Astro.url.searchParams
 const stats = await getPlayerStats({
   context: Astro,
@@ -18,7 +20,7 @@ const stats = await getPlayerStats({
   player,
   params,
 })
-const bio = await getPlayerBio(Astro, league as GameraDomain, player)
+const bio = await getPlayerBio(Astro, domain, player)
 if (!stats || !bio) return NOT_FOUND_404
 
 const { grids, parameters = {} } = stats

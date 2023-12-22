@@ -4,20 +4,41 @@ import { Caching } from '@lib/caching'
 import { listOnboarding } from '@statmuse/core/examples'
 import { createAskPath } from '@statmuse/core/path'
 import { NOT_FOUND_404 } from '@lib/response'
+import { type LeagueParam } from '@lib/params'
 
-const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fantasy']
+const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fantasy', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
   return NOT_FOUND_404
 
-type LeagueParam = 'nba' | 'nfl' | 'mlb' | 'nhl' | 'pga' | 'fantasy'
 const league = Astro.params.league as LeagueParam
 
-const onboardingExamples = await listOnboarding(
-  league === 'fantasy' ? 'nfl' : league,
-  10,
-)
-const banner =
-  onboardingExamples[Math.floor(Math.random() * onboardingExamples.length)]
+let onboardingExamples
+let banner
+let fcImg
+if (league !== 'fc') {
+  onboardingExamples = await listOnboarding(
+    league === 'fantasy' ? 'nfl' : league,
+    10,
+  )
+  banner =
+    onboardingExamples[Math.floor(Math.random() * onboardingExamples.length)]
+} else {
+  const fcPlayers = [
+    {
+      src: 'https://cdn.statmuse.com/img/epl/players/cristiano-ronaldo-man-united-min--3gbipqds.png',
+      text: 'Cristiano Ronaldo',
+    },
+    {
+      src: 'https://cdn.statmuse.com/img/epl/players/arsenal-bukayo-saka-min--t5hmo2ay.png',
+      text: 'Bukayo Saka',
+    },
+    {
+      src: 'https://cdn.statmuse.com/img/epl/players/man-city-erling-haaland-min--mcidciur.png',
+      text: 'Erling Haaland',
+    },
+  ]
+  fcImg = fcPlayers[Math.floor(Math.random() * fcPlayers.length)]
+}
 
 const nbaExamples = [
   [
@@ -509,6 +530,86 @@ const fantasyExamples = [
   ],
 ]
 
+const eplExamples = [
+  [
+    'Scores',
+    [
+      'Did Arsenal win?',
+      'What was the score of the last Man United vs Man City match?',
+      'What happened in the Newcastle match?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'fc', query: q }),
+    })),
+  ],
+  [
+    'Fixtures',
+    [
+      'What matches are on this week?',
+      'When is the next North West derby?',
+      'When do Tottenham play next?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'fc', query: q }),
+    })),
+  ],
+  [
+    'Table',
+    [
+      'Premier League table?',
+      'Who won the Premier League last season?',
+      "What was Liverpool's record last year?",
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'fc', query: q }),
+    })),
+  ],
+  [
+    'Stats',
+    [
+      'Who scored the most goals in a season?',
+      'Who has the most hat tricks all time?',
+      'Which team leads the league in passes per match?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'fc', query: q }),
+    })),
+  ],
+  [
+    'Bios',
+    [
+      'Tell me about Thierry Henry',
+      'How tall is Peter Crouch?',
+      'How old is Bukayo Saka?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'fc', query: q }),
+    })),
+  ],
+  [
+    'Recaps',
+    [
+      'How did Cristiano Ronaldo do in 2007-08 season?',
+      'How is Haaland doing?',
+      'Did Son Heung-Min have a good season last year?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'fc', query: q }),
+    })),
+  ],
+  [
+    'Beyond the Box Score',
+    [
+      'Who has the most touches in opponent box this season?',
+      'Who leads the league in big chances created?',
+      'Which player has the most passes in the final third last year?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'fc', query: q }),
+    })),
+  ],
+]
+
 type ExampleSet = [string, { query: string; path: string }[]]
 
 const examples = {
@@ -517,30 +618,48 @@ const examples = {
   mlb: mlbExamples as ExampleSet[],
   nhl: nhlExamples as ExampleSet[],
   pga: pgaExamples as ExampleSet[],
+  fc: eplExamples as ExampleSet[],
   fantasy: fantasyExamples as ExampleSet[],
+  money: eplExamples as ExampleSet[],
 }
 
 const meta = {
   title: `${
-    league === 'fantasy' ? 'Fantasy Football' : league.toUpperCase()
+    league === 'fantasy'
+      ? 'Fantasy Football'
+      : league === 'fc'
+      ? 'Premier League'
+      : league.toUpperCase()
   } Stats`,
   description: `Instant answers to your ${
-    league === 'fantasy' ? 'fantasy football' : league.toUpperCase()
+    league === 'fantasy'
+      ? 'fantasy football'
+      : league === 'fc'
+      ? 'premier league'
+      : league.toUpperCase()
   } questions. Stats, projections, comparisons, outlooks, recaps and more — just ask.`,
   facebook: {
     imageUrl:
-      league === 'fantasy' ? 'https://www.statmuse.com/images/sm-fantasy-meta-banner.jpg' : undefined,
+      league === 'fantasy'
+        ? 'https://www.statmuse.com/images/sm-fantasy-meta-banner.jpg'
+        : undefined,
   },
   twitter: {
     imageUrl:
-      league === 'fantasy' ? 'https://www.statmuse.com/images/sm-fantasy-meta-banner.jpg' : undefined,
+      league === 'fantasy'
+        ? 'https://www.statmuse.com/images/sm-fantasy-meta-banner.jpg'
+        : undefined,
   },
 }
 
 Caching.swr(Astro)
 ---
 
-<HomeLayout {meta} domain={league} img={{ src: banner, text: banner.text }}>
+<HomeLayout
+  {meta}
+  {league}
+  img={league !== 'fc' ? { src: banner, text: banner.text } : fcImg}
+>
   <div class="divide-y divide-[#e4e4e4]">
     {
       examples[league || 'nba'].map(([title, queries]) => (

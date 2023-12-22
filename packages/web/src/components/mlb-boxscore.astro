@@ -33,7 +33,9 @@ const innings = Object.entries(groupBy(plays, (p) => p.inning))
 ---
 
 <div class="w-full max-w-3xl mx-auto text-[#333]">
-  <h3 class="font-semibold bg-[#e4f2ff] rounded-sm px-3 py-2 w-fit">Final</h3>
+  <h3 class="font-semibold bg-[#e4f2ff] rounded-sm px-3 py-2 w-fit mb-4">
+    Final
+  </h3>
   <div>
     <div class="flex items-center mb-6">
       <a title={awayTeam.name} href={awayTeamUrl}>
@@ -167,24 +169,12 @@ const innings = Object.entries(groupBy(plays, (p) => p.inning))
       <TabPanel title="Player Stats">
         <Tabs secondary titles={[awayTeam.name, homeTeam.name]}>
           <TabPanel title={awayTeam.name} class="space-y-5">
-            <Grid
-              data={boxScoreData.stats.awayTeam.batterStats}
-              alternateStyle
-            />
-            <Grid
-              data={boxScoreData.stats.awayTeam.pitcherStats}
-              alternateStyle
-            />
+            <Grid data={boxScoreData.stats.awayTeam.batterStats} />
+            <Grid data={boxScoreData.stats.awayTeam.pitcherStats} />
           </TabPanel>
           <TabPanel title={homeTeam.name} class="space-y-5">
-            <Grid
-              data={boxScoreData.stats.homeTeam.batterStats}
-              alternateStyle
-            />
-            <Grid
-              data={boxScoreData.stats.homeTeam.pitcherStats}
-              alternateStyle
-            />
+            <Grid data={boxScoreData.stats.homeTeam.batterStats} />
+            <Grid data={boxScoreData.stats.homeTeam.pitcherStats} />
           </TabPanel>
         </Tabs>
       </TabPanel>

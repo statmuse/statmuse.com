@@ -11,12 +11,14 @@ import type {
 import StandingsCard from '@components/standings-card.astro'
 import Image from '@components/image.astro'
 import { getStandings } from '@lib/standings'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
 
 interface Props {
-  domain: string
+  league: LeagueParam
 }
 
-const { domain } = Astro.props
+const { league } = Astro.props
+const domain = leagueToDomain(league).toLowerCase()
 
 const lastName = (s: string) => {
   const names = s.split(' ')
@@ -131,109 +133,109 @@ const teamCardTitle = (stat: string) => {
   }
 }
 
-const playerAskLink = (domain: string, stat: string) => {
+const playerAskLink = (league: LeagueParam, stat: string) => {
   switch (stat) {
     // NBA Player
     case 'mostPointsPerGame':
-      return `/${domain}/ask/ppg-leaders-this-season`
+      return `/${league}/ask/ppg-leaders-this-season`
     case 'mostReboundsPerGame':
-      return `/${domain}/ask/rpg-leaders-this-season`
+      return `/${league}/ask/rpg-leaders-this-season`
     case 'mostAssistsPerGame':
-      return `/${domain}/ask/apg-leaders-this-season`
+      return `/${league}/ask/apg-leaders-this-season`
     case 'mostStealsPerGame':
-      return `/${domain}/ask/spg-leaders-this-season`
+      return `/${league}/ask/spg-leaders-this-season`
     case 'mostBlocksPerGame':
-      return `/${domain}/ask/bpg-leaders-this-season`
+      return `/${league}/ask/bpg-leaders-this-season`
     case 'mostThreePointersMadePerGame':
-      return `/${domain}/ask/3pm-leaders-this-season`
+      return `/${league}/ask/3pm-leaders-this-season`
     case 'bestTrueShootingPercentage':
-      return `/${domain}/ask?q=ts%25+leaders+this+season`
+      return `/${league}/ask?q=ts%25+leaders+this+season`
     // NFL Player
     case 'mostPassingYards':
-      return `/${domain}/ask/pass-yards-leaders-this-season`
+      return `/${league}/ask/pass-yards-leaders-this-season`
     case 'mostRushingYards':
-      return `/${domain}/ask/rush-yards-leaders-this-season`
+      return `/${league}/ask/rush-yards-leaders-this-season`
     case 'mostReceivingYards':
-      return `/${domain}/ask/rec-yards-leaders-this-season`
+      return `/${league}/ask/rec-yards-leaders-this-season`
     case 'mostPassingTouchdowns':
-      return `/${domain}/ask/pass-td-leaders-this-season`
+      return `/${league}/ask/pass-td-leaders-this-season`
     case 'mostRushingTouchdowns':
-      return `/${domain}/ask/rush-td-leaders-this-season`
+      return `/${league}/ask/rush-td-leaders-this-season`
     case 'mostReceivingTouchdowns':
-      return `/${domain}/ask/rec-td-leaders-this-season`
+      return `/${league}/ask/rec-td-leaders-this-season`
     case 'bestQuarterbackRating':
-      return `/${domain}/ask/qb-rating-leaders-this-season`
+      return `/${league}/ask/qb-rating-leaders-this-season`
     case 'mostDefensiveSacks':
-      return `/${domain}/ask/sack-leaders-this-season`
+      return `/${league}/ask/sack-leaders-this-season`
     // NHL Player
     case 'mostGoals':
-      return `/${domain}/ask/goal-leaders-this-season`
+      return `/${league}/ask/goal-leaders-this-season`
     case 'mostAssists':
-      return `/${domain}/ask/assist-leaders-this-season`
+      return `/${league}/ask/assist-leaders-this-season`
     case 'mostPoints':
-      return `/${domain}/ask/points-leaders-this-season`
+      return `/${league}/ask/points-leaders-this-season`
     case 'bestPlusMinus':
-      return `/${domain}/ask?q=%2B%2F-+leaders+this+season`
+      return `/${league}/ask?q=%2B%2F-+leaders+this+season`
     case 'bestGoalsAgainstAverage':
-      return `/${domain}/ask/gaa-leaders-this-season`
+      return `/${league}/ask/gaa-leaders-this-season`
     // EPL Player
     case 'mostGoals':
-      return 'Goals Leaders'
+      return `/${league}/ask/goal-leaders-this-season`
     case 'mostAssists':
-      return 'Assists Leaders'
+      return `/${league}/ask/assist-leaders-this-season`
     case 'mostShotsOnTarget':
-      return 'Shots on Target Leaders'
+      return `/${league}/ask/shots-on-target-leaders-this-season`
     case 'mostPasses':
-      return 'Passes Leaders'
+      return `/${league}/ask/passes-leaders-this-season`
     case 'mostTackles':
-      return 'Tackles Leaders'
+      return `/${league}/ask/tackles-leaders-this-season`
     case 'mostCleanSheets':
-      return 'Clean Sheets Leaders'
+      return `/${league}/ask/clean-sheet-leaders-this-season`
     default:
       return stat
   }
 }
 
-const teamAskLink = (domain: string, stat: string) => {
+const teamAskLink = (league: LeagueParam, stat: string) => {
   switch (stat) {
     // NBA Team
     case 'bestOffensiveRating':
-      return `/${domain}/ask/team-ortg-rankings-this-season`
+      return `/${league}/ask/team-ortg-rankings-this-season`
     case 'bestDefensiveRating':
-      return `/${domain}/ask/team-drtg-rankings-this-season`
+      return `/${league}/ask/team-drtg-rankings-this-season`
     case 'bestNetRating':
-      return `/${domain}/ask/team-net-rating-rankings-this-season`
+      return `/${league}/ask/team-net-rating-rankings-this-season`
     case 'worstRecord':
-      return `/${domain}/ask/worst-record-this-season`
+      return `/${league}/ask/worst-record-this-season`
     // NFL Team
     case 'mostPointsPerGame':
-      return `/${domain}/ask/team-ppg-rankings-this-season`
+      return `/${league}/ask/team-ppg-rankings-this-season`
     case 'leastPointsAllowedPerGame':
-      return `/${domain}/ask/fewest-points-allowed-per-game-by-a-team-this-season`
+      return `/${league}/ask/fewest-points-allowed-per-game-by-a-team-this-season`
     case 'mostTotalYardsPerGame':
-      return `/${domain}/ask/team-total-yards-per-game-rankings-this-season`
+      return `/${league}/ask/team-total-yards-per-game-rankings-this-season`
     case 'mostRushingYardsPerGame':
-      return `/${domain}/ask/team-rush-yards-per-game-rankings-this-season`
+      return `/${league}/ask/team-rush-yards-per-game-rankings-this-season`
     case 'mostPassingYardsPerGame':
-      return `/${domain}/ask/team-pass-yards-per-game-rankings-this-season`
+      return `/${league}/ask/team-pass-yards-per-game-rankings-this-season`
     case 'mostDefensiveSacks':
-      return `/${domain}/ask/team-sack-rankings-this-season`
+      return `/${league}/ask/team-sack-rankings-this-season`
     // NHL Team
     case 'mostGoalsPerGame':
-      return `/${domain}/ask/most-goals-per-game-by-a-team-this-season`
+      return `/${league}/ask/most-goals-per-game-by-a-team-this-season`
     case 'leastGoalsAllowedPerGame':
-      return `/${domain}/ask/fewest-goals-against-per-game-by-a-team-this-season`
+      return `/${league}/ask/fewest-goals-against-per-game-by-a-team-this-season`
     case 'bestPowerPlayPercentage':
-      return `/${domain}/ask?q=most+pp%25+this+season`
+      return `/${league}/ask?q=most+pp%25+this+season`
     case 'bestPenaltyKillPercentage':
-      return `/${domain}/ask?q=best+pk%25+by+a+team+this+season`
+      return `/${league}/ask?q=best+pk%25+by+a+team+this+season`
     // EPL Team
     case 'mostGoals':
-      return 'Goals For Rankings'
+      return `/${league}/ask/most-goals-by-a-team-this-season`
     case 'leastGoalsAgainst':
-      return 'Goals Against Rankings'
+      return `/${league}/ask/fewest-goals-against-by-a-team-this-season`
     case 'bestGoalDifferential':
-      return 'Goal Difference Rankings'
+      return `/${league}/ask/highest-goal-difference-by-a-team-this-season`
     default:
       return stat
   }
@@ -302,9 +304,9 @@ let playerCardsResp: PlayerCardResponse | undefined
 let teamCardsResp: TeamCardResponse | undefined
 let standingsResp: StandingsResponse | undefined
 
-const allowedDomains = ['nba', 'nfl', 'nhl']
+const allowedDomains = ['nba', 'nfl', 'nhl', 'fc']
 
-if (allowedDomains.includes(domain)) {
+if (allowedDomains.includes(league)) {
   ;[playerCardsResp, teamCardsResp, standingsResp] = await Promise.all([
     getPlayerCards({ context: Astro, domain }),
     getTeamCards({ context: Astro, domain }),
@@ -317,21 +319,24 @@ if (allowedDomains.includes(domain)) {
   playerCardsResp && playerCardsResp.cards.length > 0 && (
     <Fragment>
       <h3 class="text-3xl font-semibold mb-1.5">
-        {`${domain.toUpperCase()} ${playerCardsResp.seasonYearDisplay} Leaders`}
+        {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
+          playerCardsResp.seasonYearDisplay
+        } Leaders`}
       </h3>
       <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
         {playerCardsResp.cards.filter(filterPlayerCards).map((card) => (
           <div>
             <div class="flex justify-between">
               <p class="font-semibold">{playerCardTitle(card.stat)}</p>
-              <a href={playerAskLink(domain, card.stat)}>See more</a>
+              <a href={playerAskLink(league, card.stat)}>See more</a>
             </div>
             <a
-              href={playerAskLink(domain, card.stat)}
+              href={playerAskLink(league, card.stat)}
               class="flex rounded-2xl overflow-hidden px-2.5 hover:no-underline"
               style={{
-                backgroundColor: card.players[0].colors.backgroundColor,
-                color: card.players[0].colors.foregroundColor,
+                backgroundColor:
+                  card.players[0].colors?.backgroundColor ?? '#FFF',
+                color: card.players[0].colors?.foregroundColor ?? '#000',
               }}
             >
               {card?.players.map((player, i) => (
@@ -371,17 +376,19 @@ if (allowedDomains.includes(domain)) {
   teamCardsResp && teamCardsResp.cards.length > 0 && (
     <Fragment>
       <h3 class="text-3xl font-semibold mb-1.5">
-        {`${domain.toUpperCase()} ${teamCardsResp.seasonYearDisplay} Rankings`}
+        {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
+          teamCardsResp.seasonYearDisplay
+        } Rankings`}
       </h3>
       <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
         {teamCardsResp?.cards.filter(filterTeamCards).map((card) => (
           <div>
             <div class="flex justify-between">
               <p class="font-semibold">{teamCardTitle(card.stat)}</p>
-              <a href={teamAskLink(domain, card.stat)}>See more</a>
+              <a href={teamAskLink(league, card.stat)}>See more</a>
             </div>
             <a
-              href={teamAskLink(domain, card.stat)}
+              href={teamAskLink(league, card.stat)}
               class="flex flex-wrap rounded-2xl py-5 px-2.5 gap-y-5 hover:no-underline"
               style={{
                 backgroundColor: card.teams[0].colors.backgroundColor,
@@ -417,25 +424,31 @@ if (allowedDomains.includes(domain)) {
   standingsResp && standingsResp.teams && (
     <Fragment>
       <h3 class="text-3xl font-semibold mb-1.5">
-        {`${domain.toUpperCase()} ${standingsResp.seasonYearDisplay} ${
-          domain === 'nba' ? 'Conference' : 'Division'
-        } Standings`}
+        {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
+          standingsResp.seasonYearDisplay
+        } ${
+          league === 'nba' ? 'Conference' : league === 'fc' ? '' : 'Division'
+        } ${league === 'fc' ? 'Table' : 'Standings'}`}
       </h3>
       <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
         {Object.entries(groupBy(standingsResp.teams, 'conference.name')).map(
           ([_, teams]) => (
             <StandingsCard
               {teams}
-              group={domain !== 'nba' ? 'division' : undefined}
-              domain={domain}
+              {domain}
+              group={
+                league !== 'nba' && league !== 'fc' ? 'division' : undefined
+              }
               limit={
-                domain === 'nba'
+                league === 'nba'
                   ? 6
-                  : domain === 'nfl'
+                  : league === 'fc'
+                  ? 6
+                  : league === 'nfl'
                   ? 2
-                  : domain === 'nhl'
+                  : league === 'nhl'
                   ? 3
-                  : domain === 'mlb'
+                  : league === 'mlb'
                   ? 2
                   : undefined
               }

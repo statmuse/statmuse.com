@@ -160,6 +160,8 @@ export const fallbackIcon = (league: string) => {
       return '/icons/icon-nhl.svg'
     case 'pga':
       return '/icons/icon-pga.svg'
+    case 'fc':
+      return '/icons/icon-nfl.svg'
     default:
       throw new Error('Unknown league')
   }
@@ -174,6 +176,8 @@ export const getDefaultBustImageUrl = (domain: GameraDomain) => {
     case 'NHL':
       return `${cdnBaseUrl}/img/player_profile/sm-hockey-player-lg.png`
     case 'NFL':
+      return `${cdnBaseUrl}/img/player_profile/sm-football-player-lg.png`
+    case 'EPL':
       return `${cdnBaseUrl}/img/player_profile/sm-football-player-lg.png`
     default:
       throw new Error('Unknown domain')
@@ -190,6 +194,8 @@ export const getDefaultTeamLogoUrl = (domain: GameraDomain) => {
       return `${cdnBaseUrl}/img/team_profile/sm-hockey-team-lg.png`
     case 'NFL':
       return `${cdnBaseUrl}/img/team_profile/sm-football-team-lg.png`
+    case 'EPL':
+      return `${cdnBaseUrl}/img/team_profile/sm-football-team-lg.png`
     default:
       throw new Error('Unknown domain')
   }
@@ -197,7 +203,9 @@ export const getDefaultTeamLogoUrl = (domain: GameraDomain) => {
 
 export const getUrlForEntity = (entity: GameraEntity) => {
   const { display, domain, type, parameters, id } = entity
+  const league = domain.toUpperCase() === 'EPL' ? 'fc' : domain.toLowerCase()
   const isPga = domain.toUpperCase() === 'PGA'
+  const isEpl = domain.toUpperCase() === 'EPL'
   const [teamId, yearId] = id.split('/')
   const isPostseason = parameters?.seasonType === 'postseason'
   let url = ''
@@ -206,24 +214,28 @@ export const getUrlForEntity = (entity: GameraEntity) => {
     case 'player':
       url = isPga
         ? `/pga/ask/${parameterize(display)}-career-stats`
-        : `/${domain.toLowerCase()}/player/${parameterize(display)}-${id}${
-            parameters && parameters['seasonYear'] ? '/game-log' : ''
+        : `/${league}/player/${parameterize(display)}-${id}${
+            parameters && parameters['seasonYear']
+              ? isEpl
+                ? '/matches'
+                : '/game-log'
+              : ''
           }`
       break
     case 'teamSeason':
-      url = `/${domain.toLowerCase()}/team/${parameterize(
+      url = `/${league}/${isEpl ? 'club' : 'team'}/${parameterize(
         display.replaceAll('.', ''),
       )}-${teamId}${isPostseason ? '/schedule' : ''}${
         yearId ? `/${yearId}` : ''
       }`
       break
     case 'teamFranchise':
-      url = `/${domain.toLowerCase()}/team/${parameterize(
+      url = `/${league}/${isEpl ? 'club' : 'team'}/${parameterize(
         display.replaceAll('.', ''),
       )}-${id}/history`
       break
     case 'game':
-      url = `/${domain.toLowerCase()}/game/${parameterize(
+      url = `/${league}/${isEpl ? 'match' : 'game'}/${parameterize(
         display.replaceAll(' @ ', ' at '),
       )}-${id}`
       break
@@ -266,7 +278,7 @@ const formatTokenTextOnly = (token: GameraToken) => {
   return token.omitLeadingSpace ? text : ' ' + text
 }
 
-export type GameraDomain = 'NBA' | 'NFL' | 'MLB' | 'NHL' | 'PGA'
+export type GameraDomain = 'NBA' | 'NFL' | 'MLB' | 'NHL' | 'PGA' | 'EPL'
 
 export type GameraToken = {
   text: string
@@ -313,13 +325,17 @@ export interface GameraPlayerBio {
   position: string
   jerseyNumber: string
   heightFeetInches: string
+  heightCentimeters?: string
   weightLbs: number
+  weightKgs: string
   birthdate: string
   birthplace: string
   age: number
+  nationality?: string
   college: string
   drafted: string
   experience: string
+  preferredFoot?: string
   summaryNlg?: GameraToken[]
   awards: {
     name: string
@@ -506,7 +522,7 @@ export interface GameraTeamSeasonBio {
     }[]
   }
   logoImageUrl: string
-  colors: {
+  colors?: {
     foregroundColor: string
     backgroundColor: string
   }
@@ -521,6 +537,7 @@ export interface GameraTeamSeasonBio {
   }
   standing: {
     record: string
+    points?: string
     leagueRank: string
     conferenceRank: string
     divisionRank: string
@@ -674,6 +691,7 @@ export interface DetailBase {
     | 'nbaHistoricalBoxScore'
     | 'nflHistoricalBoxScore'
     | 'nhlHistoricalBoxScore'
+    | 'eplHistoricalBoxScore'
     | 'playerProfile'
     | 'teamProfile'
     | 'stats'
@@ -798,6 +816,7 @@ export interface NbaTeamGameStats {
 
 export interface Team {
   name: string
+  shortName?: string
   abbrev: string
   record: string
   score: number
@@ -963,6 +982,57 @@ export interface NhlHistoricalBoxScore extends DetailBase {
   }[]
 }
 
+export interface EplTeamGameStats {
+  goals: string
+  assists: string
+  shots: string
+  shotsOnTarget: string
+  saves: string
+  tackles: string
+  fouls: string
+  yellowCards: string
+  redCards: string
+  possessionPercentage: string
+  touches: string
+  passes: string
+  passesCompleted: string
+  offsides: string
+  corners: string
+}
+
+export interface EplHistoricalBoxScore extends DetailBase {
+  type: 'eplHistoricalBoxScore'
+  gameId: number
+  completedGameStatus: 'FT'
+  dameDate: string
+  homeTeam: Team
+  awayTeam: Team
+  teamDetail: {
+    homeTeam: EplTeamGameStats
+    awayTeam: EplTeamGameStats
+  }
+  playerDetail: {
+    homeTeam: {
+      team: string
+      grids: GameraGrid[]
+    }
+    awayTeam: {
+      team: string
+      grids: GameraGrid[]
+    }
+  }
+  gameSummary: {
+    eventType: string
+    period: string
+    minute: string
+    team: string
+    playerName: string
+    relatedPlayerName: string
+    homeTeamScore: number
+    awayTeamScore: number
+  }[]
+}
+
 export interface GameraGenericGridsDetail extends DetailBase {
   type: 'genericGrids'
   grids: GameraGrid[]
@@ -1035,7 +1105,7 @@ export interface NhlBoxScoreDetail {
 }
 
 export interface Visual {
-  domain: GameraDomain
+  domain?: GameraDomain
   summary: Summary
   summaryTokens?: GameraToken[]
   isSuperlative: boolean
@@ -1062,6 +1132,11 @@ export interface MlbVisual extends Visual {
 export interface NhlVisual extends Visual {
   domain: 'NHL'
   detail: [NhlHistoricalBoxScore, GameraGenericGridsDetail]
+}
+
+export interface EplVisual extends Visual {
+  domain: 'FC'
+  detail: [EplHistoricalBoxScore, GameraGenericGridsDetail]
 }
 
 export interface Conversation {
@@ -1153,12 +1228,18 @@ export interface GameraNhlBoxScore extends GameraDefaultResponse {
   visual: NhlVisual
   nlg: Nlg
 }
+export interface GameraEplBoxScore extends GameraDefaultResponse {
+  domain: 'NHL'
+  visual: EplVisual
+  nlg: Nlg
+}
 
 export type GameraBoxScore =
   | GameraNbaBoxScore
   | GameraNflBoxScore
   | GameraMlbBoxScore
   | GameraNhlBoxScore
+  | GameraEplBoxScore
 
 export interface GameraTeamFranchiseOverview {
   domain: GameraDomain
@@ -1173,7 +1254,7 @@ export interface GameraTeamFranchiseOverview {
       nickname: string
     }
     logoImageUrl: string
-    colors: {
+    colors?: {
       foregroundColor: string
       backgroundColor: string
     }
@@ -1181,11 +1262,13 @@ export interface GameraTeamFranchiseOverview {
     conference: string
     league: string
     franchiseRepresentatives: GameraGalleryImage[]
-    recordSummaries: {
+    recordSummaries?: {
       recordScope: string
       winPercentage: string
       record: string
     }[]
+    premierLeagueRecord?: string
+    premierLeagueTitles?: string
   }
   seasons: {
     name: string
@@ -1208,6 +1291,7 @@ export type Detail =
   | NflHistoricalBoxScore
   | NhlHistoricalBoxScore
   | MlbHistoricalBoxScore
+  | EplHistoricalBoxScore
   | GameraGenericGridsDetail
   | PlayerProfileDetail
   | TeamProfileDetail
@@ -1415,11 +1499,40 @@ export interface StandingsNfl extends StandingsBase {
   }
 }
 
+export interface StandingsEpl extends StandingsBase {
+  rank: {
+    league: number
+  }
+  stats: {
+    points: {
+      value: number
+      display: string
+    }
+    wins: {
+      value: number
+      display: string
+    }
+    losses: {
+      value: number
+      display: string
+    }
+    draws: {
+      value: number
+      display: string
+    }
+    goalDifferential: {
+      value: number
+      display: string
+    }
+  }
+}
+
 export type StandingsTeam =
   | StandingsMlb
   | StandingsNba
   | StandingsNfl
   | StandingsNhl
+  | StandingsEpl
 
 export interface StandingsResponse {
   seasonYearDisplay: string

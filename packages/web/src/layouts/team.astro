@@ -18,7 +18,14 @@ import type { AnalyticsPageviewProperties } from '@lib/analytics'
 
 interface Props {
   bio: GameraTeamSeasonBio
-  page: 'overview' | 'stats' | 'schedule' | 'roster' | 'splits' | 'history'
+  page:
+    | 'overview'
+    | 'stats'
+    | 'schedule'
+    | 'fixtures'
+    | 'roster'
+    | 'splits'
+    | 'history'
   meta?: Metadata
   query?: string
 }
@@ -47,11 +54,17 @@ const links = [
   ...(bio.hasStats
     ? [{ text: 'Stats', href: `${teamPath}/stats/${yearId}`, page: 'stats' }]
     : []),
-  {
-    text: 'Scores & Schedule',
-    href: `${teamPath}/schedule/${yearId}`,
-    page: 'schedule',
-  },
+  domain === 'EPL'
+    ? {
+        text: 'Fixtures',
+        href: `${teamPath}/fixtures/${yearId}`,
+        page: 'fixtures',
+      }
+    : {
+        text: 'Scores & Schedule',
+        href: `${teamPath}/schedule/${yearId}`,
+        page: 'schedule',
+      },
   ...(bio.hasRoster
     ? [{ text: 'Roster', href: `${teamPath}/roster/${yearId}`, page: 'roster' }]
     : []),
@@ -70,14 +83,14 @@ const keywords = `${getLeagueKeywords(domain)} ${
 const facebook = {
   imageUrl: imageForgeUrl({
     url: bio.logoImageUrl,
-    bgColor: domain === 'NFL' ? 'EFF4F8' : bio.colors.backgroundColor,
+    bgColor: domain === 'NFL' ? 'EFF4F8' : bio.colors?.backgroundColor,
     type: 'facebook',
   }),
 }
 const twitter = {
   imageUrl: imageForgeUrl({
     url: bio.logoImageUrl,
-    bgColor: domain === 'NFL' ? 'EFF4F8' : bio.colors.backgroundColor,
+    bgColor: domain === 'NFL' ? 'EFF4F8' : bio.colors?.backgroundColor,
     type: 'twitter',
   }),
 }
@@ -170,6 +183,14 @@ const twitter = {
               )
             }
             {
+              bio.standing?.points && (
+                <>
+                  <span>{bio.standing.points} Pts</span>
+                  <span class="last:hidden" set:text=" • " />
+                </>
+              )
+            }
+            {
               bio.standing?.leagueRank && (
                 <>
                   <span>{bio.standing.leagueRank}</span>
@@ -211,7 +232,7 @@ const twitter = {
                   <p class="uppercase whitespace-nowrap">{stat.label}</p>
                   <p class="text-3xl">{stat.value}</p>
                   <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-                    {stat.rank}
+                    {stat.label !== 'FORM' ? stat.rank : 'last 5'}
                   </p>
                 </div>
               ))
@@ -247,7 +268,7 @@ const twitter = {
               <p class="uppercase">{stat.label}</p>
               <p class="text-3xl">{stat.value}</p>
               <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-                {stat.rank}
+                {stat.label !== 'FORM' ? stat.rank : 'last 5'}
               </p>
             </div>
           ))}
@@ -276,7 +297,7 @@ const twitter = {
     <div class="mb-1.5">
       <slot />
     </div>
-    <Explore domain={domain.toLowerCase()} />
+    <Explore league={domain === 'EPL' ? 'fc' : preferredDomain} />
   </Container>
 </Layout>
 

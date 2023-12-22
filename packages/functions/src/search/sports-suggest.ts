@@ -77,6 +77,16 @@ export const handler = ApiHandler(async (_evt) => {
   const league = useQueryParam('league') as League
   const userId = useQueryParam('userId')
 
+  if (league === 'epl') {
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        sections: [],
+        timestamp: new Date().toISOString(),
+      }),
+    }
+  }
+
   let history: Partial<AskDocument>[] = []
   if (userId) {
     history = await getUserAskSuggestions(userId)

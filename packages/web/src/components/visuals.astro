@@ -7,9 +7,11 @@ import NbaStandings from '@components/nba-standings.astro'
 import NflStandings from '@components/nfl-standings.astro'
 import NhlStandings from '@components/nhl-standings.astro'
 import MlbBoxscore from '@components/mlb-boxscore.astro'
+import Standings from '@components/standings.astro'
 import NbaBoxscore from '@components/nba-boxscore.astro'
 import NflBoxscore from '@components/nfl-boxscore.astro'
 import NhlBoxscore from '@components/nhl-boxscore.astro'
+import EplBoxscore from '@components/epl-boxscore.astro'
 import Schedule from '@components/schedule.astro'
 import NbaShotChart from '@components/nba-shotchart'
 import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
@@ -40,7 +42,8 @@ const ignoreGenericGrids =
       d.type === 'mlbHistoricalBoxScore' ||
       d.type === 'nbaHistoricalBoxScore' ||
       d.type === 'nflHistoricalBoxScore' ||
-      d.type === 'nhlHistoricalBoxScore',
+      d.type === 'nhlHistoricalBoxScore' ||
+      d.type === 'eplHistoricalBoxScore',
   )
 const details =
   response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
@@ -203,12 +206,18 @@ const details =
                 return <NflStandings {detail} />
               case 'NHL':
                 return <NhlStandings {detail} />
-
+              case 'EPL':
+                return (
+                  <Standings
+                    groups={[{ name: 'FC', standings: detail.standings }]}
+                    highlight={detail.topic?.team}
+                  />
+                )
               default:
                 return null
             }
           case 'schedule':
-            return <Schedule league={response.visual.domain} {detail} />
+            return <Schedule league={response.visual.domain ?? ''} {detail} />
           case 'mlbHistoricalBoxScore':
             return <MlbBoxscore {detail} />
           case 'nbaHistoricalBoxScore':
@@ -217,6 +226,8 @@ const details =
             return <NflBoxscore {detail} />
           case 'nhlHistoricalBoxScore':
             return <NhlBoxscore {detail} />
+          case 'eplHistoricalBoxScore':
+            return <EplBoxscore {detail} />
           case 'nbaShots':
             return (
               <div>

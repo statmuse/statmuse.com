@@ -36,7 +36,9 @@ const periods = Object.entries(groupBy(plays, (p) => p.period))
 ---
 
 <div class="w-full max-w-3xl mx-auto text-[#333]">
-  <h3 class="font-semibold bg-[#e4f2ff] rounded-sm px-3 py-2 w-fit">Final</h3>
+  <h3 class="font-semibold bg-[#e4f2ff] rounded-sm px-3 py-2 w-fit mb-4">
+    Final
+  </h3>
   <div>
     <div class="flex items-center mb-6">
       <a title={awayTeam.name} href={awayTeamUrl}>
@@ -229,14 +231,14 @@ const periods = Object.entries(groupBy(plays, (p) => p.period))
           <TabPanel title={awayTeam.name} class="space-y-5">
             {
               boxScoreData.playerDetail.awayTeam.grids.map((grid) => (
-                <Grid data={grid} alternateStyle />
+                <Grid data={grid} />
               ))
             }
           </TabPanel>
           <TabPanel title={homeTeam.name} class="space-y-5">
             {
               boxScoreData.playerDetail.homeTeam.grids.map((grid) => (
-                <Grid data={grid} alternateStyle />
+                <Grid data={grid} />
               ))
             }
           </TabPanel>

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { session } from '@lib/session-store'
   import { onMount } from 'svelte'
-  export let domain: string
+  export let league: string
 
   let container: HTMLElement
   let video: HTMLElement
@@ -51,7 +51,7 @@
     </div>
   {:else}
     <div bind:this={container} class={`${$$props.class} overflow-hidden`}>
-      {#if domain === 'nba'}
+      {#if league === 'nba'}
         <div
           bind:this={video}
           class="s2nPlayer k-WS5Rl6qj"
@@ -63,7 +63,7 @@
           data-type="s2nScript"
           data-astro-exec
         ></script>
-      {:else if domain === 'nfl'}
+      {:else if league === 'nfl'}
         <div bind:this={video} class="s2nPlayer k-LT4Y9uw1" data-type="float" />
         <script
           type="text/javascript"
@@ -71,7 +71,7 @@
           data-type="s2nScript"
           data-astro-exec
         ></script>
-      {:else if domain === 'nhl'}
+      {:else if league === 'nhl'}
         <div
           bind:this={video}
           class="s2nPlayer k-bMGNbhM1"
@@ -83,7 +83,7 @@
           data-type="s2nScript"
           data-astro-exec
         ></script>
-      {:else if domain === 'mlb'}
+      {:else if league === 'mlb'}
         <div bind:this={video} class="s2nPlayer k-hYWeRTR4" data-type="float" />
         <script
           type="text/javascript"
@@ -91,7 +91,7 @@
           data-type="s2nScript"
           data-astro-exec
         ></script>
-      {:else if domain === 'pga'}
+      {:else if league === 'pga'}
         <div bind:this={video} class="s2nPlayer k-G4ZAb39z" data-type="float" />
         <script
           type="text/javascript"
@@ -99,7 +99,7 @@
           data-type="s2nScript"
           data-astro-exec
         ></script>
-      {:else if domain === 'fantasy'}
+      {:else if league === 'fantasy'}
         <div bind:this={video} class="s2nPlayer k-ipKWbzce" data-type="float" />
         <script
           type="text/javascript"
@@ -107,7 +107,7 @@
           data-type="s2nScript"
           data-astro-exec
         ></script>
-      {:else if domain === 'money'}
+      {:else if league === 'money'}
         <div bind:this={video} class="s2nPlayer k-sDqs3wE9" data-type="float" />
         <script
           type="text/javascript"

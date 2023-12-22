@@ -12,7 +12,8 @@ export const getPlayerCards = async (props: {
   seasonYear?: number
 }) => {
   try {
-    const path = `${props.domain}/relatedContent/playerCards`
+    const league = props.domain.toLowerCase()
+    const path = `${league}/relatedContent/playerCards`
     const data = await request<PlayerCardResponse>(props.context, path)
     return data
   } catch (error) {
@@ -27,7 +28,8 @@ export const getTeamCards = async (props: {
   teamId?: number
 }) => {
   try {
-    const path = `${props.domain}/relatedContent/teamCards`
+    const league = props.domain.toLowerCase()
+    const path = `${league}/relatedContent/teamCards`
     const data = await request<TeamCardResponse>(props.context, path)
     return data
   } catch (error) {

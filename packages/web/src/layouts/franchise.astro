@@ -47,11 +47,17 @@ const links = [
     ? [
         { text: 'Overview', href: `${teamPath}/${yearId}`, page: 'overview' },
         { text: 'Stats', href: `${teamPath}/stats/${yearId}`, page: 'stats' },
-        {
-          text: 'Scores & Schedule',
-          href: `${teamPath}/schedule/${yearId}`,
-          page: 'schedule',
-        },
+        domain === 'EPL'
+          ? {
+              text: 'Fixtures',
+              href: `${teamPath}/fixtures/${yearId}`,
+              page: 'fixtures',
+            }
+          : {
+              text: 'Scores & Schedule',
+              href: `${teamPath}/schedule/${yearId}`,
+              page: 'schedule',
+            },
         {
           text: 'Roster',
           href: `${teamPath}/roster/${yearId}`,
@@ -76,14 +82,14 @@ const keywords = `${getLeagueKeywords(domain)} ${
 const facebook = {
   imageUrl: imageForgeUrl({
     url: bio.logoImageUrl,
-    bgColor: domain === 'NFL' ? 'EFF4F8' : bio.colors.backgroundColor,
+    bgColor: domain === 'NFL' ? 'EFF4F8' : bio.colors?.backgroundColor,
     type: 'facebook',
   }),
 }
 const twitter = {
   imageUrl: imageForgeUrl({
     url: bio.logoImageUrl,
-    bgColor: domain === 'NFL' ? 'EFF4F8' : bio.colors.backgroundColor,
+    bgColor: domain === 'NFL' ? 'EFF4F8' : bio.colors?.backgroundColor,
     type: 'twitter',
   }),
 }
@@ -173,21 +179,39 @@ const twitter = {
             }
           </div>
         </div>
-        <div class="hidden md:block mt-6">
-          <div class="flex gap-5 mb-1 text-center">
-            {
-              bio.recordSummaries.map((summary) => (
+        {
+          bio.recordSummaries && (
+            <div class="hidden md:block mt-6">
+              <div class="flex gap-5 mb-1 text-center">
+                {bio.recordSummaries.map((summary) => (
+                  <div>
+                    <p class="uppercase">{summary.recordScope}</p>
+                    <p class="text-3xl">{summary.winPercentage}</p>
+                    <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+                      {summary.record}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        }
+        {
+          bio.premierLeagueRecord && bio.premierLeagueTitles && (
+            <div class="hidden md:block mt-6">
+              <div class="flex gap-5 mb-1 text-center">
                 <div>
-                  <p class="uppercase">{summary.recordScope}</p>
-                  <p class="text-3xl">{summary.winPercentage}</p>
-                  <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-                    {summary.record}
-                  </p>
+                  <p class="uppercase">all time record</p>
+                  <p class="text-3xl">{bio.premierLeagueRecord}</p>
                 </div>
-              ))
-            }
-          </div>
-        </div>
+                <div>
+                  <p class="uppercase">titles won</p>
+                  <p class="text-3xl">{bio.premierLeagueTitles}</p>
+                </div>
+              </div>
+            </div>
+          )
+        }
       </div>
       <TeamRepresentatives
         representatives={bio.franchiseRepresentatives}
@@ -208,21 +232,39 @@ const twitter = {
       </div>
     </div>
   </Container>
-  <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
-    <div class="flex gap-5 mb-1 text-center">
-      {
-        bio.recordSummaries.map((summary) => (
+  {
+    bio.recordSummaries && (
+      <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
+        <div class="flex gap-5 mb-1 text-center">
+          {bio.recordSummaries.map((summary) => (
+            <div>
+              <p class="uppercase">{summary.recordScope}</p>
+              <p class="text-3xl">{summary.winPercentage}</p>
+              <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+                {summary.record}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+  {
+    bio.premierLeagueRecord && bio.premierLeagueTitles && (
+      <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
+        <div class="flex gap-5 mb-1 text-center">
           <div>
-            <p class="uppercase">{summary.recordScope}</p>
-            <p class="text-3xl">{summary.winPercentage}</p>
-            <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-              {summary.record}
-            </p>
+            <p class="uppercase">all time record</p>
+            <p class="text-3xl">{bio.premierLeagueRecord}</p>
           </div>
-        ))
-      }
-    </div>
-  </div>
+          <div>
+            <p class="uppercase">titles won</p>
+            <p class="text-3xl">{bio.premierLeagueTitles}</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
   <Container>
     <div class="flex flex-nowrap overflow-auto mb-5 space-x-5">
       {
@@ -244,7 +286,7 @@ const twitter = {
     <div class="mb-1.5">
       <slot />
     </div>
-    <Explore domain={domain.toLowerCase()} />
+    <Explore league={domain === 'EPL' ? 'fc' : preferredDomain} />
   </Container>
 </Layout>
 

@@ -3,6 +3,7 @@ import {
   type GameraGrid,
   type GameraParameter,
   getUrlForEntity as getUrlForEntityGamera,
+  type GameraDomain,
 } from '@statmuse/core/gamera'
 import {
   type KanedamaEntity,
@@ -14,6 +15,7 @@ import { freeRowLimit } from '@lib/enforcer'
 
 interface Props extends HTMLAttributes<'div'> {
   data: GameraGrid | GameraGrid[]
+  domain?: GameraDomain
   fullWidth?: boolean
   seeAllUrl?: string
   title?: string
@@ -21,7 +23,6 @@ interface Props extends HTMLAttributes<'div'> {
   columnStyles?: Record<string, string>
   columnHeaderStyles?: Record<string, string>
   parameters?: Record<string, GameraParameter>
-  alternateStyle?: boolean
   highlight?: string
   hideHead?: boolean
   padding?: string
@@ -33,12 +34,12 @@ interface Props extends HTMLAttributes<'div'> {
 const {
   seeAllUrl,
   data,
+  domain,
   title,
   columnStyles,
   columnHeaderStyles,
   parameters,
   hideTitle,
-  alternateStyle,
   highlight,
   hideHead,
   padding,
@@ -86,6 +87,9 @@ const getTextColumnHeaderStyles = (col: Column) => {
   return ''
 }
 
+const topRank = () => (domain === 'EPL' ? 5 : 10)
+const bottomRank = () => (domain === 'EPL' ? 15 : 20)
+
 const getRankingColor = ({
   isRanking,
   display,
@@ -95,8 +99,8 @@ const getRankingColor = ({
 }) => {
   if (isRanking && display.match(/(\d+).*/)) {
     const [, num] = Array.from(display.match(/(\d+).*/) || [])
-    if (Number(num) <= 10) return 'text-[#009444]'
-    if (Number(num) >= 20) return 'text-[#BF1D2D]'
+    if (Number(num) <= topRank()) return 'text-[#009444]'
+    if (Number(num) >= bottomRank()) return 'text-[#BF1D2D]'
   }
   return ''
 }
@@ -158,32 +162,22 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
       )
     }
   </div>
-  <div
-    class:list={{
-      'relative overflow-x-auto': !alternateStyle,
-      'overflow-auto border border-[#e4e4e4]': alternateStyle,
-    }}
-  >
+  <div class="relative overflow-x-auto">
     <table
       data-sort={!disableSort}
-      class:list={{
-        'text-[15px] whitespace-nowrap': !alternateStyle,
-        'border-spacing-0': alternateStyle,
-        'w-full': fullWidth,
-      }}
+      class:list={[
+        'text-[15px] whitespace-nowrap',
+        {
+          'w-full': fullWidth,
+        },
+      ]}
     >
       {
         grids.map((grid) => (
           <Fragment>
             {hideHead ? null : (
               <thead>
-                <tr
-                  class:list={{
-                    'text-xs text-team-secondary uppercase tracking-[0.07rem]':
-                      !alternateStyle,
-                    'border-b border-[#e4e4e4]': alternateStyle,
-                  }}
-                >
+                <tr class="text-xs text-team-secondary uppercase tracking-[0.07rem]">
                   {grid.columns.map((col, index) => {
                     const textColumnStyles = getTextColumnStyles(col)
                     const textColumnHeaderStyles =
@@ -194,19 +188,16 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
 
                     return (
                       <th
-                        class:list={{
-                          'first:rounded-l last:rounded-r bg-team-primary font-normal p-1.5':
-                            !alternateStyle,
-                          'text-[#a8a8a8] font-normal px-3 py-2.5 text-center whitespace-nowrap first:border-r first:border-[#e4e4e4] first:min-w-[175px] first:w-[175px] first:sticky first:left-0 first:bg-white':
-                            alternateStyle,
-                          'pl-8': hasImage && !alternateStyle,
-                          'sticky left-0': index === 0 && !alternateStyle,
-                          'cursor-pointer': !disableSort,
-                          [textColumnStyles]:
-                            !alternateStyle && !!textColumnStyles,
-                          [textColumnHeaderStyles]:
-                            !alternateStyle && !!textColumnHeaderStyles,
-                        }}
+                        class:list={[
+                          'first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5',
+                          {
+                            'pl-8': hasImage,
+                            'sticky left-0': index === 0,
+                            'cursor-pointer': !disableSort,
+                            [textColumnStyles]: !!textColumnStyles,
+                            [textColumnHeaderStyles]: !!textColumnHeaderStyles,
+                          },
+                        ]}
                       >
                         {col.title}
                       </th>
@@ -215,11 +206,7 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                 </tr>
               </thead>
             )}
-            <tbody
-              class:list={{
-                'leading-[22px]': !alternateStyle,
-              }}
-            >
+            <tbody class="leading-[22px]">
               {grid.rows.map((row, rowIndex) => (
                 <tr
                   class:list={{
@@ -247,14 +234,12 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                                 }
                                 class:list={{
                                   'w-6 h-6 max-w-none object-cover rounded-full bg-white mr-2.5':
-                                    playerEntity && !alternateStyle,
+                                    playerEntity,
                                   'opacity-50':
                                     playerEntity &&
                                     row.imageUrl.includes('silhouette'),
                                   'w-4 h-4 max-w-none object-contain mr-2.5':
-                                    !playerEntity && !alternateStyle,
-                                  'inline-block w-6 h-6 object-contain mr-2.5 align-middle':
-                                    alternateStyle,
+                                    !playerEntity,
                                 }}
                                 width={50}
                                 height={50}
@@ -313,24 +298,15 @@ const scoreRegex = /(W|L)\s(\d+-\d+)/
                         data-value={value}
                         data-redact={limitRows && rowIndex >= freeRowLimit}
                         class:list={{
-                          'px-2 py-1': !padding && !alternateStyle && !imageUrl,
-                          'px-2': !padding && !alternateStyle && !!imageUrl,
-                          'px-3 py-2.5 text-center whitespace-nowrap first:border-r first:border-[#e4e4e4] first:min-w-[175px] first:w-[175px] first:sticky first:left-0 first:bg-white first:text-left':
-                            alternateStyle,
-                          'first:bg-white':
-                            alternateStyle &&
-                            highlight &&
-                            highlight !== row[Object.keys(row)[0]].value,
+                          'px-2 py-1': !padding && !imageUrl,
+                          'px-2': !padding && !!imageUrl,
                           'first:bg-[#e9f9ff]':
-                            alternateStyle &&
                             highlight &&
                             highlight === row[Object.keys(row)[0]].value,
-                          'bg-[color:var(--grid-bg-color,#fff)]':
-                            !alternateStyle,
-                          'sticky left-0': colIndex === 0 && !alternateStyle,
-                          'w-2': !!imageUrl && !alternateStyle,
-                          [textColumnStyles]:
-                            !alternateStyle && !!textColumnStyles,
+                          'bg-[color:var(--grid-bg-color,#fff)]': true,
+                          'sticky left-0': colIndex === 0,
+                          'w-2': !!imageUrl,
+                          [textColumnStyles]: !!textColumnStyles,
                           [padding ?? '']: !!padding,
                           [color]: isRanking,
                         }}

@@ -19,8 +19,8 @@ const tabs = Astro.props.titles.map((tab) => ({
   <div
     class:list={{
       'tabs-container flex': true,
-      'mt-6 bg-primary relative': !Astro.props.secondary,
-      'w-[80%] my-6 mx-auto border-2 border-primary rounded':
+      'mt-6 relative': !Astro.props.secondary,
+      'w-[80%] my-6 mx-auto border-2 border-team-primary rounded':
         Astro.props.secondary,
     }}
   >
@@ -30,7 +30,7 @@ const tabs = Astro.props.titles.map((tab) => ({
           data-label={tab.label}
           class:list={{
             'tab relative flex-1 text-center': true,
-            'text-white bg-primary': !Astro.props.secondary,
+            'text-team-secondary bg-team-primary': !Astro.props.secondary,
             'font-semibold text-xs md:text-base': Astro.props.secondary,
           }}
         >
@@ -51,7 +51,7 @@ const tabs = Astro.props.titles.map((tab) => ({
             class:list={{
               'block py-3 w-full h-full cursor-pointer': true,
               'peer-checked:font-semibold': !Astro.props.secondary,
-              'bg-white text-primary peer-checked:bg-primary peer-checked:text-white':
+              'bg-white text-team-primary peer-checked:bg-team-primary peer-checked:text-team-secondary':
                 Astro.props.secondary,
             }}
             for={`tab-${tab.id}`}
@@ -59,7 +59,7 @@ const tabs = Astro.props.titles.map((tab) => ({
             {tab.label}
           </label>
           {Astro.props.secondary ? null : (
-            <div class="hidden peer-checked:block bg-[#003ca8] absolute inset-x-0 h-1 bottom-0 transition-[left] ease-in-out" />
+            <div class="hidden peer-checked:block bg-team-secondary opacity-70 absolute inset-x-0 h-1 bottom-0 transition-[left] ease-in-out" />
           )}
         </div>
       ))
