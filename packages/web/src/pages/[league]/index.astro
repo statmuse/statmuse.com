@@ -645,13 +645,17 @@ const meta = {
   facebook: {
     imageUrl:
       league === 'fantasy'
-        ? 'https://www.statmuse.com/images/sm-fantasy-meta-banner.jpg'
+        ? `${Astro.url.origin}/images/sm-fantasy-meta-banner.jpg`
+        : league === 'fc'
+        ? `${Astro.url.origin}/images/sm-fc-meta-banner.jpg`
         : undefined,
   },
   twitter: {
     imageUrl:
       league === 'fantasy'
-        ? 'https://www.statmuse.com/images/sm-fantasy-meta-banner.jpg'
+        ? `${Astro.url.origin}/images/sm-fantasy-meta-banner.jpg`
+        : league === 'fc'
+        ? `${Astro.url.origin}/images/sm-fc-meta-banner.jpg`
         : undefined,
   },
 }
