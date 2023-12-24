@@ -18,7 +18,7 @@ export default defineConfig({
   // devToolbar: { enabled: false },
   adapter: aws({
     responseMode: 'buffer',
-    serverRoutes: ['ask', 'auth/*', 'account/*'],
+    serverRoutes: ['ask', 'money/ask', 'auth/*', 'account/*'],
   }),
   vite: {
     optimizeDeps: ['sst'],
