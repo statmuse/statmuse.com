@@ -632,16 +632,17 @@ const meta = {
     league === 'fantasy'
       ? 'Fantasy Football'
       : league === 'fc'
-      ? 'Premier League'
+      ? 'PL'
       : league.toUpperCase()
   } Stats`,
-  description: `Instant answers to your ${
+  description:
     league === 'fantasy'
-      ? 'fantasy football'
-      : league === 'fc'
-      ? 'premier league'
-      : league.toUpperCase()
-  } questions. Stats, projections, comparisons, outlooks, recaps and more — just ask.`,
+      ? 'Instant answers to your fantasy football questions. Stats, projections, comparisons, outlooks, recaps and more — just ask.'
+      : league === 'fc' || league === 'pga'
+      ? `Instant answers to your ${
+          league === 'pga' ? league.toUpperCase() : 'PL'
+        } questions. Stats, scores, bios, records and more — just ask.`
+      : `Instant answers to your ${league.toUpperCase()} questions. Stats, scores, bios, records, odds and more — just ask.`,
   facebook: {
     imageUrl:
       league === 'fantasy'
