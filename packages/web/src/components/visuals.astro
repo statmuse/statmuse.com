@@ -176,7 +176,14 @@ const details =
                     <div class="flex gap-4">
                       <div class="flex-1 overflow-x-auto">
                         <GridAccordionWrapper>
-                          <Grid data={grid} hideTitle limitRows />
+                          <Grid
+                            data={grid}
+                            columnStyles={{
+                              RESULT: 'text-left',
+                            }}
+                            hideTitle
+                            limitRows
+                          />
                         </GridAccordionWrapper>
                       </div>
                       <FreestarRightRail client:only="svelte" />
@@ -190,7 +197,14 @@ const details =
               <div class="flex gap-4">
                 <div class="flex-1 overflow-x-auto">
                   <GridAccordionWrapper>
-                    <Grid data={grid} hideTitle limitRows />
+                    <Grid
+                      data={grid}
+                      columnStyles={{
+                        RESULT: 'text-left',
+                      }}
+                      hideTitle
+                      limitRows
+                    />
                   </GridAccordionWrapper>
                 </div>
                 <FreestarRightRail client:only="svelte" />
