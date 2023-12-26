@@ -15,9 +15,9 @@ const searchParams = parseSearchParams(Astro.url.searchParams)
 const asks = await getAsksIndex([domain.toLowerCase()], searchParams)
 
 const meta = {
-  title: `${domain === 'EPL' ? 'PL' : domain} Stats`,
+  title: `${domain === 'EPL' ? 'Premier League' : domain} Stats`,
   description: `Instant answers to your ${
-    domain === 'EPL' ? 'PL' : domain
+    domain === 'EPL' ? 'Premier League' : domain
   } questions. Stats, scores, schedules, standings, recaps and more — just ask.`,
   pageType: 'question',
 }
