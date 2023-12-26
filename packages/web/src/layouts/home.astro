@@ -31,9 +31,16 @@ interface Props {
   }
 }
 
-const { league: leagueParam = 'All', img, ...rest } = Astro.props
+const { league = 'All', img, ...rest } = Astro.props
 
-const leagues = ['All', 'nba', 'nfl', 'nhl', 'mlb', 'fc', 'pga']
+const leagueBtns = [
+  { text: 'NBA', param: 'nba', href: '/nba' },
+  { text: 'NFL', param: 'nfl', href: '/nfl' },
+  { text: 'NHL', param: 'nhl', href: '/nhl' },
+  { text: 'MLB', param: 'mlb', href: '/mlb' },
+  { text: 'Premier League', param: 'fc', href: '/auth/signup?fc' },
+  { text: 'PGA', param: 'pga', href: '/pga' },
+]
 
 const trendingLinkText = (param: string) => {
   switch (param) {
@@ -50,23 +57,25 @@ const trendingLinkText = (param: string) => {
   }
 }
 
-const Layout = leagueParam === 'money' ? MoneyBaseLayout : BaseLayout
-const Logo = leagueParam === 'money' ? MoneyLogo : StandardLogo
+console.log('Astro url: ', Astro.url)
+
+const Layout = league === 'money' ? MoneyBaseLayout : BaseLayout
+const Logo = league === 'money' ? MoneyLogo : StandardLogo
 ---
 
 <Layout
   {...rest}
   analytics={{
     page_domain:
-      leagueParam === 'All'
+      league === 'All'
         ? 'unknown'
-        : leagueParam === 'fantasy'
+        : league === 'fantasy'
         ? 'nfl'
-        : leagueParam === 'money'
+        : league === 'money'
         ? 'finance'
-        : leagueParam === 'fc'
+        : league === 'fc'
         ? 'epl'
-        : (leagueParam as AnalyticsPageviewProperties['page_domain']),
+        : (league as AnalyticsPageviewProperties['page_domain']),
   }}
 >
   <main
@@ -119,53 +128,53 @@ const Logo = leagueParam === 'money' ? MoneyLogo : StandardLogo
         <div>
           <AskBar
             client:load
-            money={leagueParam === 'money'}
-            fantasy={leagueParam === 'fantasy'}
-            preferredDomain={leagueParam === 'All'
+            money={league === 'money'}
+            fantasy={league === 'fantasy'}
+            preferredDomain={league === 'All'
               ? undefined
-              : leagueParam === 'fc'
+              : league === 'fc'
               ? 'epl'
-              : leagueParam}
+              : league}
           />
         </div>
       </div>
       <div>
         <div class="flex flex-nowrap gap-[5px] mb-2.5">
+          <a
+            class:list={[
+              'flex items-center justify-center border rounded-md border-primary text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 text-center leading-[1.2]',
+              {
+                'bg-primary text-white': Astro.url.pathname === '/',
+              },
+            ]}
+            href="/"
+            set:text="All"
+          />
           {
-            leagues.map((league) => (
+            leagueBtns.map((btn) => (
               <a
                 class:list={[
-                  'flex items-center justify-center border rounded-md hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 text-center leading-[1.2]',
+                  'flex items-center justify-center border rounded-md border-primary text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 text-center leading-[1.2]',
                   {
-                    'border-primary text-primary': league !== 'fc',
-                    'bg-primary text-white':
-                      league === leagueParam && league !== 'fc',
-                    'pointer-events-none': league === 'fc',
-                    'border-[#c5c9cc] text-[#c5c9cc]': league === 'fc',
+                    'bg-primary text-white': btn.param === league,
                   },
                 ]}
-                href={league === 'All' ? '/' : `/${league}`}
-                set:text={
-                  league === 'All'
-                    ? league
-                    : league === 'fc'
-                    ? 'Premier League'
-                    : league.toUpperCase()
-                }
-                data-disabled={league === 'fc'}
+                href={btn.href}
+                set:text={btn.text}
+                data-beta={btn.text === 'Premier League'}
               />
             ))
           }
           <a
             class={`hidden lg:flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 min-w-fit ${
-              leagueParam === 'fantasy' && 'bg-secondary text-white'
+              league === 'fantasy' && 'bg-secondary text-white'
             }`}
             href="/fantasy"
             set:text="Fantasy"
           />
           <a
             class={`hidden lg:flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 min-w-fit ${
-              leagueParam === 'money' && 'bg-[#003ca8] text-white'
+              league === 'money' && 'bg-[#003ca8] text-white'
             }`}
             href="/money"
             set:text="Money"
@@ -177,14 +186,14 @@ const Logo = leagueParam === 'money' ? MoneyLogo : StandardLogo
         >
           <a
             class={`flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 max-w-fit ${
-              leagueParam === 'fantasy' && 'bg-secondary text-white'
+              league === 'fantasy' && 'bg-secondary text-white'
             }`}
             href="/fantasy"
             set:text="Fantasy"
           />
           <a
             class={`flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 max-w-fit ${
-              leagueParam === 'money' && 'bg-[#003ca8] text-white'
+              league === 'money' && 'bg-[#003ca8] text-white'
             }`}
             href="/money"
             set:text="Money"
@@ -195,19 +204,19 @@ const Logo = leagueParam === 'money' ? MoneyLogo : StandardLogo
         <FreestarVideo
           client:only="svelte"
           class="mb-[30px] mt-[32px] w-full lg:w-[425px]"
-          league={leagueParam}
+          {league}
         />
       </div>
       <slot />
-      <h4 class="font-semibold text-right py-4">
-        <a
-          href={leagueParam === 'All'
-            ? '/questions'
-            : `/${leagueParam}/questions`}
-        >
-          {trendingLinkText(leagueParam)}
-        </a>
-      </h4>
+      {
+        league !== 'fc' && (
+          <h4 class="font-semibold text-right py-4">
+            <a href={league === 'All' ? '/questions' : `/${league}/questions`}>
+              {trendingLinkText(league)}
+            </a>
+          </h4>
+        )
+      }
       <NewsletterSignup />
     </div>
     <div class="main">
@@ -215,3 +224,22 @@ const Logo = leagueParam === 'money' ? MoneyLogo : StandardLogo
     </div>
   </main>
 </Layout>
+<script>
+  import { session as sessionStore } from '@lib/session-store'
+
+  document.addEventListener('astro:page-load', () => {
+    // TODO: remove for official premier league launch
+    sessionStore.subscribe((session) => {
+      if (session) {
+        document.querySelectorAll('a[data-beta]').forEach((a) => {
+          if (
+            session.type === 'user' &&
+            session.properties.subscriptionStatus === 'active'
+          ) {
+            a.setAttribute('href', '/fc')
+          }
+        })
+      }
+    })
+  })
+</script>
