@@ -1135,7 +1135,7 @@ export interface NhlVisual extends Visual {
 }
 
 export interface EplVisual extends Visual {
-  domain: 'FC'
+  domain: 'EPL'
   detail: [EplHistoricalBoxScore, GameraGenericGridsDetail]
 }
 
@@ -1229,7 +1229,7 @@ export interface GameraNhlBoxScore extends GameraDefaultResponse {
   nlg: Nlg
 }
 export interface GameraEplBoxScore extends GameraDefaultResponse {
-  domain: 'NHL'
+  domain: 'EPL'
   visual: EplVisual
   nlg: Nlg
 }
