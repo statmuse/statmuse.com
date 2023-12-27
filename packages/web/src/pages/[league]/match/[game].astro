@@ -16,6 +16,7 @@ import type {
 } from '@statmuse/core/gamera'
 import { orderBy } from 'lodash-es'
 import Goal from '@components/icons/goal.astro'
+import Substitution from '@components/icons/substitution.astro'
 
 const league = Astro.params.league as LeagueParam
 const game = Astro.params.game
@@ -3519,6 +3520,93 @@ Caching.swr(Astro)
           ))
         }
       </div>
+    </div>
+  </Container>
+  <Container>
+    <div
+      class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 mb-5"
+    >
+      <div>
+        <p class="font-semibold">Timeline</p>
+        <div
+          class="flex justify-between bg-team-primary text-team-secondary rounded py-1.5"
+        >
+          <div class="flex items-center">
+            <Image
+              class="w-4 h-4 mx-1.5 object-contain"
+              src={homeTeam.logoUrl}
+              alt={homeTeam.abbrev}
+              width={50}
+              height={50}
+              loading="eager"
+            />
+            <span class="text-xs">{homeTeam.abbrev}</span>
+          </div>
+          <div class="flex items-center flex-row-reverse">
+            <Image
+              class="w-4 h-4 mx-1.5 object-contain"
+              src={awayTeam.logoUrl}
+              alt={awayTeam.abbrev}
+              width={50}
+              height={50}
+              loading="eager"
+            />
+            <span class="text-xs">{awayTeam.abbrev}</span>
+          </div>
+        </div>
+        <div class="divide-y divide-[#c7c8ca]">
+          {
+            plays.map((play) => (
+              <div
+                class:list={[
+                  'flex items-center py-0.5',
+                  { 'flex-row-reverse': play.team === awayTeam.name },
+                ]}
+              >
+                <span
+                  class:list={{
+                    'ml-1': play.team !== awayTeam.name,
+                    'mr-1': play.team === awayTeam.name,
+                  }}
+                >
+                  {play.minute}
+                </span>
+                {play.eventType === 'yellow_card' ? (
+                  <span class="inline-block h-4 w-4 bg-yellow-300  mx-2" />
+                ) : play.eventType === 'red_card' ? (
+                  <span class="inline-block h-4 w-4 bg-red-600 mr-2" />
+                ) : play.eventType === 'yellow_red_card' ? (
+                  <div>
+                    <span class="inline-block h-4 w-4 bg-yellow-300  mx-2" />
+                    <span class="inline-block h-4 w-4 bg-red-600 mr-2" />
+                  </div>
+                ) : play.eventType === 'goal' ||
+                  play.eventType === 'penalty_goal' ||
+                  play.eventType === 'own_goal' ? (
+                  <Goal
+                    class="w-5 mx-2 shrink-0"
+                    color={play.eventType === 'own_goal' ? '#ed1c24' : '#000'}
+                  />
+                ) : play.eventType === 'substitution' ? (
+                  <Substitution class="w-5 mx-2 shrink-0" />
+                ) : null}
+                {play.eventType !== 'substitution' ? (
+                  <p>{play.playerName}</p>
+                ) : (
+                  <div
+                    class:list={{ 'text-right': play.team === awayTeam.name }}
+                  >
+                    <p class="text-[#00a14b]">{play.playerName}</p>
+                    <p class="text-[#ed1c24]">{play.relatedPlayerName}</p>
+                  </div>
+                )}
+              </div>
+            ))
+          }
+        </div>
+      </div>
+      <div><p class="font-semibold">Lineups</p></div>
+      <div><p class="font-semibold">Stats</p></div>
     </div>
   </Container>
 </Layout>
