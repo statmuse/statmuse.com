@@ -1,44 +1,3524 @@
 ---
-import GameLayout from '@layouts/game.astro'
-import NbaBoxscore from '@components/nba-boxscore.astro'
-import NflBoxscore from '@components/nfl-boxscore.astro'
-import MlbBoxscore from '@components/mlb-boxscore.astro'
-import NhlBoxscore from '@components/nhl-boxscore.astro'
-import EplBoxscore from '@components/epl-boxscore.astro'
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Container from '@components/container.astro'
+import Image from '@components/image.astro'
 import { Caching } from '@lib/caching'
 import { getGame } from '@lib/game'
 import { NOT_FOUND_404 } from '@lib/response'
 import { type LeagueParam, leagueToDomain } from '@lib/params'
+import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import { imageForgeUrl } from '@statmuse/core/path'
+import { tokensToText } from '@statmuse/core/gamera'
+import type {
+  GameraEplBoxScore,
+  EplHistoricalBoxScore,
+} from '@statmuse/core/gamera'
+import { orderBy } from 'lodash-es'
+import Goal from '@components/icons/goal.astro'
 
 const league = Astro.params.league as LeagueParam
 const game = Astro.params.game
 if (!game || !league) return NOT_FOUND_404
 
-const domain = leagueToDomain(league)
-const data = await getGame({ context: Astro, domain, game })
+const domain = leagueToDomain(league) as 'EPL'
+// const data = await getGame({ context: Astro, domain, game })
+const data = {
+  nlg: {
+    text: {
+      answer: [
+        {
+          entity: {
+            display: '2023-24 Manchester United',
+            domain: 'EPL',
+            type: 'teamSeason',
+            id: '78/2024',
+            baseResourcePath: 'epl/teams/78/2024',
+          },
+          text: 'Manchester United',
+          type: 'entity',
+          omitLeadingSpace: true,
+        },
+        {
+          text: 'won against',
+          type: 'general',
+          omitLeadingSpace: false,
+        },
+        {
+          entity: {
+            display: '2023-24 Aston Villa',
+            domain: 'EPL',
+            type: 'teamSeason',
+            id: '8/2024',
+            baseResourcePath: 'epl/teams/8/2024',
+          },
+          text: 'Aston Villa',
+          type: 'entity',
+          omitLeadingSpace: false,
+        },
+        {
+          text: ', 3 to 2, yesterday.',
+          type: 'general',
+          omitLeadingSpace: true,
+        },
+      ],
+      promptConversational: 'What else?',
+    },
+    ssml: {
+      answer: 'Manchester United won against Aston Villa, 3 to 2, yesterday.',
+      promptConversational: 'What else?',
+      repromptConversational: 'What else?',
+    },
+  },
+  visual: {
+    domain: 'EPL',
+    summary: {
+      answer: [
+        {
+          entity: {
+            display: '2023-24 Manchester United',
+            domain: 'EPL',
+            type: 'teamSeason',
+            id: '78/2024',
+            baseResourcePath: 'epl/teams/78/2024',
+          },
+          text: 'Manchester United',
+          type: 'entity',
+          omitLeadingSpace: true,
+        },
+        {
+          text: 'won against',
+          type: 'general',
+          omitLeadingSpace: false,
+        },
+        {
+          entity: {
+            display: '2023-24 Aston Villa',
+            domain: 'EPL',
+            type: 'teamSeason',
+            id: '8/2024',
+            baseResourcePath: 'epl/teams/8/2024',
+          },
+          text: 'Aston Villa',
+          type: 'entity',
+          omitLeadingSpace: false,
+        },
+        {
+          text: ', 3 to 2, yesterday.',
+          type: 'general',
+          omitLeadingSpace: true,
+        },
+      ],
+      subject: {
+        actor: {
+          year: 2024,
+          ids: [
+            {
+              id: '35a77816-fbe2-4604-ac26-ac7e474699b5',
+              type: 'team',
+            },
+            {
+              id: '001843b8-ac4b-4bd4-854d-13f0c253da07',
+              type: 'league',
+            },
+          ],
+        },
+        imageUrl:
+          'https://cdn.statmuse.com/img/epl/players/man-united-marcus-rashford-min--rdjn30ej.png',
+        colors: {
+          foreground: '#FFFFFF',
+          background: '#B6261A',
+        },
+        entities: [
+          {
+            display: '2023-24 Manchester United',
+            domain: 'EPL',
+            type: 'teamSeason',
+            id: '78/2024',
+            baseResourcePath: 'epl/teams/78/2024',
+          },
+        ],
+      },
+      text: [
+        {
+          text: 'Manchester United won against Aston Villa, 3 to 2, yesterday.',
+          type: 'general',
+          omitLeadingSpace: true,
+        },
+      ],
+    },
+    detail: [
+      {
+        gameId: 11451,
+        completedGameStatus: 'FT',
+        gameDate: '2023-12-26',
+        homeTeam: {
+          name: 'Manchester United',
+          shortName: 'Man United',
+          abbrev: 'MUN',
+          record: '10-1-8',
+          score: 3,
+          logoUrl:
+            'https://cdn.statmuse.com/img/epl/players/manchester-united-1998-logo-min--6x6paozk.png',
+          entity: {
+            display: '2023-24 Manchester United',
+            domain: 'EPL',
+            type: 'teamSeason',
+            id: '78/2024',
+            baseResourcePath: 'epl/teams/78/2024',
+          },
+          lineup: [
+            {
+              entity: {
+                display: 'Aaron Wan-Bissaka',
+                domain: 'EPL',
+                type: 'player',
+                id: '21',
+                baseResourcePath: 'epl/players/21',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 2,
+              shirtNumber: 29,
+            },
+            {
+              entity: {
+                display: 'Bruno Fernandes',
+                domain: 'EPL',
+                type: 'player',
+                id: '795',
+                baseResourcePath: 'epl/players/795',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/man-united-bruno-fernandes-min--xv_fmwlt.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: true,
+              isStarter: true,
+              isCaptain: true,
+              formationIndex: 9,
+              shirtNumber: 8,
+            },
+            {
+              entity: {
+                display: 'Christian Eriksen',
+                domain: 'EPL',
+                type: 'player',
+                id: '1043',
+                baseResourcePath: 'epl/players/1043',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 7,
+              shirtNumber: 14,
+            },
+            {
+              entity: {
+                display: 'Diogo Dalot',
+                domain: 'EPL',
+                type: 'player',
+                id: '1663',
+                baseResourcePath: 'epl/players/1663',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 5,
+              shirtNumber: 20,
+            },
+            {
+              entity: {
+                display: 'Donny van de Beek',
+                domain: 'EPL',
+                type: 'player',
+                id: '1704',
+                baseResourcePath: 'epl/players/1704',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 34,
+            },
+            {
+              entity: {
+                display: 'Facundo Pellistri',
+                domain: 'EPL',
+                type: 'player',
+                id: '1927',
+                baseResourcePath: 'epl/players/1927',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 28,
+            },
+            {
+              entity: {
+                display: 'Hannibal Mejbri',
+                domain: 'EPL',
+                type: 'player',
+                id: '2349',
+                baseResourcePath: 'epl/players/2349',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 46,
+            },
+            {
+              entity: {
+                display: 'Jonny Evans',
+                domain: 'EPL',
+                type: 'player',
+                id: '3170',
+                baseResourcePath: 'epl/players/3170',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 4,
+              shirtNumber: 35,
+            },
+            {
+              entity: {
+                display: 'Marcus Rashford',
+                domain: 'EPL',
+                type: 'player',
+                id: '4007',
+                baseResourcePath: 'epl/players/4007',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/man-united-marcus-rashford-min--rdjn30ej.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: true,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 10,
+              shirtNumber: 10,
+            },
+            {
+              entity: {
+                display: 'Raphaël Varane',
+                domain: 'EPL',
+                type: 'player',
+                id: '5233',
+                baseResourcePath: 'epl/players/5233',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 3,
+              shirtNumber: 19,
+            },
+            {
+              entity: {
+                display: 'Scott McTominay',
+                domain: 'EPL',
+                type: 'player',
+                id: '5710',
+                baseResourcePath: 'epl/players/5710',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 39,
+            },
+            {
+              entity: {
+                display: 'Sergio Reguilón',
+                domain: 'EPL',
+                type: 'player',
+                id: '5782',
+                baseResourcePath: 'epl/players/5782',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 15,
+            },
+            {
+              entity: {
+                display: 'Altay Bayındır',
+                domain: 'EPL',
+                type: 'player',
+                id: '6969',
+                baseResourcePath: 'epl/players/6969',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 1,
+            },
+            {
+              entity: {
+                display: 'André Onana',
+                domain: 'EPL',
+                type: 'player',
+                id: '6970',
+                baseResourcePath: 'epl/players/6970',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 1,
+              shirtNumber: 24,
+            },
+            {
+              entity: {
+                display: 'Daniel Gore',
+                domain: 'EPL',
+                type: 'player',
+                id: '6975',
+                baseResourcePath: 'epl/players/6975',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 44,
+            },
+            {
+              entity: {
+                display: 'Rasmus Højlund',
+                domain: 'EPL',
+                type: 'player',
+                id: '6978',
+                baseResourcePath: 'epl/players/6978',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 11,
+              shirtNumber: 11,
+            },
+            {
+              entity: {
+                display: 'Antony',
+                domain: 'EPL',
+                type: 'player',
+                id: '6979',
+                baseResourcePath: 'epl/players/6979',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 21,
+            },
+            {
+              entity: {
+                display: 'Alejandro Garnacho',
+                domain: 'EPL',
+                type: 'player',
+                id: '6980',
+                baseResourcePath: 'epl/players/6980',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 8,
+              shirtNumber: 17,
+            },
+            {
+              entity: {
+                display: 'Kobbie Mainoo',
+                domain: 'EPL',
+                type: 'player',
+                id: '7063',
+                baseResourcePath: 'epl/players/7063',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 6,
+              shirtNumber: 37,
+            },
+            {
+              entity: {
+                display: 'Willy Kambwala',
+                domain: 'EPL',
+                type: 'player',
+                id: '7553',
+                baseResourcePath: 'epl/players/7553',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#FFFFFF',
+                backgroundColor: '#B6261A',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 53,
+            },
+          ],
+        },
+        awayTeam: {
+          name: 'Aston Villa',
+          shortName: 'Aston Villa',
+          abbrev: 'AVL',
+          record: '12-3-4',
+          score: 2,
+          logoUrl:
+            'https://cdn.statmuse.com/img/epl/players/aston-villa-2023-logo-min--eiocpnkf.png',
+          entity: {
+            display: '2023-24 Aston Villa',
+            domain: 'EPL',
+            type: 'teamSeason',
+            id: '8/2024',
+            baseResourcePath: 'epl/teams/8/2024',
+          },
+          lineup: [
+            {
+              entity: {
+                display: 'Calum Chambers',
+                domain: 'EPL',
+                type: 'player',
+                id: '850',
+                baseResourcePath: 'epl/players/850',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 16,
+            },
+            {
+              entity: {
+                display: 'Douglas Luiz',
+                domain: 'EPL',
+                type: 'player',
+                id: '1714',
+                baseResourcePath: 'epl/players/1714',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 7,
+              shirtNumber: 6,
+            },
+            {
+              entity: {
+                display: 'Emiliano Martínez',
+                domain: 'EPL',
+                type: 'player',
+                id: '1827',
+                baseResourcePath: 'epl/players/1827',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 1,
+              shirtNumber: 1,
+            },
+            {
+              entity: {
+                display: 'Ezri Konsa',
+                domain: 'EPL',
+                type: 'player',
+                id: '1901',
+                baseResourcePath: 'epl/players/1901',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 2,
+              shirtNumber: 4,
+            },
+            {
+              entity: {
+                display: 'Jacob Ramsey',
+                domain: 'EPL',
+                type: 'player',
+                id: '2605',
+                baseResourcePath: 'epl/players/2605',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 10,
+              shirtNumber: 41,
+            },
+            {
+              entity: {
+                display: 'John McGinn',
+                domain: 'EPL',
+                type: 'player',
+                id: '3072',
+                baseResourcePath: 'epl/players/3072',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: true,
+              formationIndex: 9,
+              shirtNumber: 7,
+            },
+            {
+              entity: {
+                display: 'Leander Dendoncker',
+                domain: 'EPL',
+                type: 'player',
+                id: '3632',
+                baseResourcePath: 'epl/players/3632',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 6,
+              shirtNumber: 32,
+            },
+            {
+              entity: {
+                display: 'Leon Bailey',
+                domain: 'EPL',
+                type: 'player',
+                id: '3711',
+                baseResourcePath: 'epl/players/3711',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 8,
+              shirtNumber: 31,
+            },
+            {
+              entity: {
+                display: 'Lucas Digne',
+                domain: 'EPL',
+                type: 'player',
+                id: '3829',
+                baseResourcePath: 'epl/players/3829',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 5,
+              shirtNumber: 12,
+            },
+            {
+              entity: {
+                display: 'Ollie Watkins',
+                domain: 'EPL',
+                type: 'player',
+                id: '4839',
+                baseResourcePath: 'epl/players/4839',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/aston-villa-ollie-watkins-min--vhlpjybz.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: true,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 11,
+              shirtNumber: 11,
+            },
+            {
+              entity: {
+                display: 'Tim Iroegbunam',
+                domain: 'EPL',
+                type: 'player',
+                id: '6228',
+                baseResourcePath: 'epl/players/6228',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 47,
+            },
+            {
+              entity: {
+                display: 'Filip Marshall',
+                domain: 'EPL',
+                type: 'player',
+                id: '6832',
+                baseResourcePath: 'epl/players/6832',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 42,
+            },
+            {
+              entity: {
+                display: 'Clément Lenglet',
+                domain: 'EPL',
+                type: 'player',
+                id: '6834',
+                baseResourcePath: 'epl/players/6834',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 4,
+              shirtNumber: 17,
+            },
+            {
+              entity: {
+                display: 'Pau Torres',
+                domain: 'EPL',
+                type: 'player',
+                id: '6836',
+                baseResourcePath: 'epl/players/6836',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 14,
+            },
+            {
+              entity: {
+                display: 'Alex Moreno',
+                domain: 'EPL',
+                type: 'player',
+                id: '6837',
+                baseResourcePath: 'epl/players/6837',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 15,
+            },
+            {
+              entity: {
+                display: 'Diego Carlos',
+                domain: 'EPL',
+                type: 'player',
+                id: '6839',
+                baseResourcePath: 'epl/players/6839',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: true,
+              isCaptain: false,
+              formationIndex: 3,
+              shirtNumber: 3,
+            },
+            {
+              entity: {
+                display: 'Nicolò Zaniolo',
+                domain: 'EPL',
+                type: 'player',
+                id: '6840',
+                baseResourcePath: 'epl/players/6840',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 22,
+            },
+            {
+              entity: {
+                display: 'Moussa Diaby',
+                domain: 'EPL',
+                type: 'player',
+                id: '6842',
+                baseResourcePath: 'epl/players/6842',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 19,
+            },
+            {
+              entity: {
+                display: 'Jhon Durán',
+                domain: 'EPL',
+                type: 'player',
+                id: '6843',
+                baseResourcePath: 'epl/players/6843',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 24,
+            },
+            {
+              entity: {
+                display: 'Sam Proctor',
+                domain: 'EPL',
+                type: 'player',
+                id: '7552',
+                baseResourcePath: 'epl/players/7552',
+              },
+              imageUrl:
+                'https://cdn.statmuse.com/img/epl/players/epl-silhouette-min--c8gxw-uu.png',
+              colors: {
+                foregroundColor: '#99BCE3',
+                backgroundColor: '#5E0E35',
+              },
+              hasBustImage: false,
+              isStarter: false,
+              isCaptain: false,
+              shirtNumber: 78,
+            },
+          ],
+        },
+        teamDetail: {
+          homeTeam: {
+            formation: '4-2-3-1',
+            goals: '3',
+            assists: '1',
+            shots: '13',
+            shotsOnTarget: '7',
+            saves: '1',
+            tackles: '21',
+            fouls: '10',
+            yellowCards: '1',
+            redCards: '0',
+            possessionPercentage: '46',
+            touches: '591',
+            passes: '395',
+            passesCompleted: '318',
+            offsides: '9',
+            corners: '3',
+          },
+          awayTeam: {
+            formation: '4-2-3-1',
+            goals: '2',
+            assists: '1',
+            shots: '10',
+            shotsOnTarget: '4',
+            saves: '4',
+            tackles: '14',
+            fouls: '10',
+            yellowCards: '3',
+            redCards: '0',
+            possessionPercentage: '54',
+            touches: '642',
+            passes: '452',
+            passesCompleted: '373',
+            offsides: '0',
+            corners: '6',
+          },
+        },
+        playerDetail: {
+          homeTeam: {
+            team: 'MUN',
+            grids: [
+              {
+                name: 'Player Stats',
+                columns: [
+                  {
+                    rowItemKey: 'NAME',
+                    title: 'NAME',
+                    type: 'string',
+                  },
+                  {
+                    rowItemKey: 'MIN',
+                    title: 'MIN',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'G',
+                    title: 'G',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'A',
+                    title: 'A',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'SH',
+                    title: 'SH',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'ST',
+                    title: 'ST',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'FOUL',
+                    title: 'FOUL',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'FOULED',
+                    title: 'FOULED',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'YC',
+                    title: 'YC',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'RC',
+                    title: 'RC',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'SV',
+                    title: 'SV',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'OG',
+                    title: 'OG',
+                    type: 'number',
+                  },
+                ],
+                rows: [
+                  {
+                    NAME: {
+                      value: 'Dalot, Diogo',
+                      display: 'Diogo Dalot',
+                      entity: {
+                        display: 'Diogo Dalot',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '1663',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/1663',
+                      },
+                    },
+                    MIN: {
+                      value: 90,
+                      display: '90',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 1,
+                      display: '1',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOULED: {
+                      value: 1,
+                      display: '1',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Eriksen, Christian',
+                      display: 'Christian Eriksen',
+                      entity: {
+                        display: 'Christian Eriksen',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '1043',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/1043',
+                      },
+                    },
+                    MIN: {
+                      value: 90,
+                      display: '90',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 2,
+                      display: '2',
+                    },
+                    ST: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOUL: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Evans, Jonny',
+                      display: 'Jonny Evans',
+                      entity: {
+                        display: 'Jonny Evans',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '3170',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/3170',
+                      },
+                    },
+                    MIN: {
+                      value: 90,
+                      display: '90',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Fernandes, Bruno',
+                      display: 'Bruno Fernandes',
+                      entity: {
+                        display: 'Bruno Fernandes',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '795',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/795',
+                      },
+                    },
+                    MIN: {
+                      value: 90,
+                      display: '90',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 2,
+                      display: '2',
+                    },
+                    ST: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOUL: {
+                      value: 2,
+                      display: '2',
+                    },
+                    FOULED: {
+                      value: 2,
+                      display: '2',
+                    },
+                    YC: {
+                      value: 1,
+                      display: '1',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Garnacho Ferreira, Alejandro',
+                      display: 'Alejandro Garnacho',
+                      entity: {
+                        display: 'Alejandro Garnacho',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '6980',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/6980',
+                      },
+                    },
+                    MIN: {
+                      value: 90,
+                      display: '90',
+                    },
+                    G: {
+                      value: 2,
+                      display: '2',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 4,
+                      display: '4',
+                    },
+                    ST: {
+                      value: 2,
+                      display: '2',
+                    },
+                    FOUL: {
+                      value: 2,
+                      display: '2',
+                    },
+                    FOULED: {
+                      value: 3,
+                      display: '3',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Højlund, Rasmus',
+                      display: 'Rasmus Højlund',
+                      entity: {
+                        display: 'Rasmus Højlund',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '6978',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/6978',
+                      },
+                    },
+                    MIN: {
+                      value: 89,
+                      display: '89',
+                    },
+                    G: {
+                      value: 1,
+                      display: '1',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 1,
+                      display: '1',
+                    },
+                    ST: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOUL: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOULED: {
+                      value: 2,
+                      display: '2',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Mainoo, Kobbie',
+                      display: 'Kobbie Mainoo',
+                      entity: {
+                        display: 'Kobbie Mainoo',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '7063',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/7063',
+                      },
+                    },
+                    MIN: {
+                      value: 81,
+                      display: '81',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Onana, André',
+                      display: 'André Onana',
+                      entity: {
+                        display: 'André Onana',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '6970',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/6970',
+                      },
+                    },
+                    MIN: {
+                      value: 90,
+                      display: '90',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 1,
+                      display: '1',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Rashford, Marcus',
+                      display: 'Marcus Rashford',
+                      entity: {
+                        display: 'Marcus Rashford',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '4007',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/4007',
+                      },
+                    },
+                    MIN: {
+                      value: 80,
+                      display: '80',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 1,
+                      display: '1',
+                    },
+                    SH: {
+                      value: 3,
+                      display: '3',
+                    },
+                    ST: {
+                      value: 2,
+                      display: '2',
+                    },
+                    FOUL: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Varane, Raphaël',
+                      display: 'Raphaël Varane',
+                      entity: {
+                        display: 'Raphaël Varane',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '5233',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/5233',
+                      },
+                    },
+                    MIN: {
+                      value: 90,
+                      display: '90',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Wan-Bissaka, Aaron',
+                      display: 'Aaron Wan-Bissaka',
+                      entity: {
+                        display: 'Aaron Wan-Bissaka',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '21',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/21',
+                      },
+                    },
+                    MIN: {
+                      value: 90,
+                      display: '90',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Gore, Daniel',
+                      display: 'Daniel Gore',
+                      entity: {
+                        display: 'Daniel Gore',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '6975',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/6975',
+                      },
+                    },
+                    MIN: {
+                      value: 1,
+                      display: '1',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOULED: {
+                      value: 1,
+                      display: '1',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Kambwalandengushi, Willy',
+                      display: 'Willy Kambwala',
+                      entity: {
+                        display: 'Willy Kambwala',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '7553',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/7553',
+                      },
+                    },
+                    MIN: {
+                      value: 1,
+                      display: '1',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'McTominay, Scott',
+                      display: 'Scott McTominay',
+                      entity: {
+                        display: 'Scott McTominay',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '5710',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/5710',
+                      },
+                    },
+                    MIN: {
+                      value: 9,
+                      display: '9',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Mejbri, Hannibal',
+                      display: 'Hannibal Mejbri',
+                      entity: {
+                        display: 'Hannibal Mejbri',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '2349',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/2349',
+                      },
+                    },
+                    MIN: {
+                      value: 1,
+                      display: '1',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOULED: {
+                      value: 1,
+                      display: '1',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'dos Santos, Antony',
+                      display: 'Antony',
+                      entity: {
+                        display: 'Antony',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '6979',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/6979',
+                      },
+                    },
+                    MIN: {
+                      value: 10,
+                      display: '10',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          awayTeam: {
+            team: 'AVL',
+            grids: [
+              {
+                name: 'Player Stats',
+                columns: [
+                  {
+                    rowItemKey: 'NAME',
+                    title: 'NAME',
+                    type: 'string',
+                  },
+                  {
+                    rowItemKey: 'MIN',
+                    title: 'MIN',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'G',
+                    title: 'G',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'A',
+                    title: 'A',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'SH',
+                    title: 'SH',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'ST',
+                    title: 'ST',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'FOUL',
+                    title: 'FOUL',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'FOULED',
+                    title: 'FOULED',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'YC',
+                    title: 'YC',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'RC',
+                    title: 'RC',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'SV',
+                    title: 'SV',
+                    type: 'number',
+                  },
+                  {
+                    rowItemKey: 'OG',
+                    title: 'OG',
+                    type: 'number',
+                  },
+                ],
+                rows: [
+                  {
+                    NAME: {
+                      value: 'Bailey, Leon',
+                      display: 'Leon Bailey',
+                      entity: {
+                        display: 'Leon Bailey',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '3711',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/3711',
+                      },
+                    },
+                    MIN: {
+                      value: 77,
+                      display: '77',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 2,
+                      display: '2',
+                    },
+                    ST: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOUL: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOULED: {
+                      value: 1,
+                      display: '1',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Dendoncker, Leander',
+                      display: 'Leander Dendoncker',
+                      entity: {
+                        display: 'Leander Dendoncker',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '3632',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/3632',
+                      },
+                    },
+                    MIN: {
+                      value: 86,
+                      display: '86',
+                    },
+                    G: {
+                      value: 1,
+                      display: '1',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 1,
+                      display: '1',
+                    },
+                    ST: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOUL: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOULED: {
+                      value: 1,
+                      display: '1',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Digne, Lucas',
+                      display: 'Lucas Digne',
+                      entity: {
+                        display: 'Lucas Digne',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '3829',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/3829',
+                      },
+                    },
+                    MIN: {
+                      value: 50,
+                      display: '50',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOULED: {
+                      value: 1,
+                      display: '1',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Konsa, Ezri',
+                      display: 'Ezri Konsa',
+                      entity: {
+                        display: 'Ezri Konsa',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '1901',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/1901',
+                      },
+                    },
+                    MIN: {
+                      value: 90,
+                      display: '90',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 1,
+                      display: '1',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOULED: {
+                      value: 4,
+                      display: '4',
+                    },
+                    YC: {
+                      value: 1,
+                      display: '1',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Lenglet, Clément',
+                      display: 'Clément Lenglet',
+                      entity: {
+                        display: 'Clément Lenglet',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '6834',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/6834',
+                      },
+                    },
+                    MIN: {
+                      value: 90,
+                      display: '90',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 1,
+                      display: '1',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Luiz, Douglas',
+                      display: 'Douglas Luiz',
+                      entity: {
+                        display: 'Douglas Luiz',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '1714',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/1714',
+                      },
+                    },
+                    MIN: {
+                      value: 90,
+                      display: '90',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 1,
+                      display: '1',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Martínez, Emiliano',
+                      display: 'Emiliano Martínez',
+                      entity: {
+                        display: 'Emiliano Martínez',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '1827',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/1827',
+                      },
+                    },
+                    MIN: {
+                      value: 90,
+                      display: '90',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 4,
+                      display: '4',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'McGinn, John',
+                      display: 'John McGinn',
+                      entity: {
+                        display: 'John McGinn',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '3072',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/3072',
+                      },
+                    },
+                    MIN: {
+                      value: 86,
+                      display: '86',
+                    },
+                    G: {
+                      value: 1,
+                      display: '1',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 3,
+                      display: '3',
+                    },
+                    ST: {
+                      value: 2,
+                      display: '2',
+                    },
+                    FOUL: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOULED: {
+                      value: 1,
+                      display: '1',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Ramsey, Jacob',
+                      display: 'Jacob Ramsey',
+                      entity: {
+                        display: 'Jacob Ramsey',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '2605',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/2605',
+                      },
+                    },
+                    MIN: {
+                      value: 77,
+                      display: '77',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 1,
+                      display: '1',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOULED: {
+                      value: 1,
+                      display: '1',
+                    },
+                    YC: {
+                      value: 1,
+                      display: '1',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Santos Silva, Diego',
+                      display: 'Diego Carlos',
+                      entity: {
+                        display: 'Diego Carlos',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '6839',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/6839',
+                      },
+                    },
+                    MIN: {
+                      value: 90,
+                      display: '90',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 1,
+                      display: '1',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 2,
+                      display: '2',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 1,
+                      display: '1',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Watkins, Ollie',
+                      display: 'Ollie Watkins',
+                      entity: {
+                        display: 'Ollie Watkins',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '4839',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/4839',
+                      },
+                    },
+                    MIN: {
+                      value: 90,
+                      display: '90',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Diaby, Moussa',
+                      display: 'Moussa Diaby',
+                      entity: {
+                        display: 'Moussa Diaby',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '6842',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/6842',
+                      },
+                    },
+                    MIN: {
+                      value: 13,
+                      display: '13',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Durán Palacio, Jhon',
+                      display: 'Jhon Durán',
+                      entity: {
+                        display: 'Jhon Durán',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '6843',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/6843',
+                      },
+                    },
+                    MIN: {
+                      value: 4,
+                      display: '4',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Iroegbunam, Tim',
+                      display: 'Tim Iroegbunam',
+                      entity: {
+                        display: 'Tim Iroegbunam',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '6228',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/6228',
+                      },
+                    },
+                    MIN: {
+                      value: 4,
+                      display: '4',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOULED: {
+                      value: 1,
+                      display: '1',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Moreno Lopera, Alexandre',
+                      display: 'Alex Moreno',
+                      entity: {
+                        display: 'Alex Moreno',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '6837',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/6837',
+                      },
+                    },
+                    MIN: {
+                      value: 40,
+                      display: '40',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                  {
+                    NAME: {
+                      value: 'Zaniolo, Nicolò',
+                      display: 'Nicolò Zaniolo',
+                      entity: {
+                        display: 'Nicolò Zaniolo',
+                        domain: 'EPL',
+                        type: 'player',
+                        id: '6840',
+                        parameters: {
+                          seasonYear: 2024,
+                        },
+                        baseResourcePath: 'epl/players/6840',
+                      },
+                    },
+                    MIN: {
+                      value: 13,
+                      display: '13',
+                    },
+                    G: {
+                      value: 0,
+                      display: '0',
+                    },
+                    A: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SH: {
+                      value: 0,
+                      display: '0',
+                    },
+                    ST: {
+                      value: 0,
+                      display: '0',
+                    },
+                    FOUL: {
+                      value: 1,
+                      display: '1',
+                    },
+                    FOULED: {
+                      value: 0,
+                      display: '0',
+                    },
+                    YC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    RC: {
+                      value: 0,
+                      display: '0',
+                    },
+                    SV: {
+                      value: 0,
+                      display: '0',
+                    },
+                    OG: {
+                      value: 0,
+                      display: '0',
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        gameSummary: [
+          {
+            eventType: 'goal',
+            period: '1st Half',
+            minute: "21'",
+            team: 'Aston Villa',
+            playerName: 'John McGinn',
+            homeTeamScore: 0,
+            awayTeamScore: 1,
+          },
+          {
+            eventType: 'goal',
+            period: '1st Half',
+            minute: "26'",
+            team: 'Aston Villa',
+            playerName: 'Leander Dendoncker',
+            relatedPlayerName: 'Clément Lenglet',
+            homeTeamScore: 0,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'yellow_card',
+            period: '1st Half',
+            minute: "45'+2'",
+            team: 'Aston Villa',
+            playerName: 'Jacob Ramsey',
+            homeTeamScore: 0,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'substitution',
+            period: '2nd Half',
+            minute: "50'",
+            team: 'Aston Villa',
+            playerName: 'Alex Moreno',
+            relatedPlayerName: 'Lucas Digne',
+            homeTeamScore: 0,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'goal',
+            period: '2nd Half',
+            minute: "59'",
+            team: 'Manchester United',
+            playerName: 'Alejandro Garnacho',
+            relatedPlayerName: 'Marcus Rashford',
+            homeTeamScore: 1,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'goal',
+            period: '2nd Half',
+            minute: "71'",
+            team: 'Manchester United',
+            playerName: 'Alejandro Garnacho',
+            homeTeamScore: 2,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'yellow_card',
+            period: '2nd Half',
+            minute: "73'",
+            team: 'Manchester United',
+            playerName: 'Bruno Fernandes',
+            homeTeamScore: 2,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'yellow_card',
+            period: '2nd Half',
+            minute: "74'",
+            team: 'Aston Villa',
+            playerName: 'Diego Carlos',
+            homeTeamScore: 2,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'substitution',
+            period: '2nd Half',
+            minute: "77'",
+            team: 'Aston Villa',
+            playerName: 'Moussa Diaby',
+            relatedPlayerName: 'Jacob Ramsey',
+            homeTeamScore: 2,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'substitution',
+            period: '2nd Half',
+            minute: "77'",
+            team: 'Aston Villa',
+            playerName: 'Nicolò Zaniolo',
+            relatedPlayerName: 'Leon Bailey',
+            homeTeamScore: 2,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'substitution',
+            period: '2nd Half',
+            minute: "80'",
+            team: 'Manchester United',
+            playerName: 'Antony',
+            relatedPlayerName: 'Marcus Rashford',
+            homeTeamScore: 2,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'substitution',
+            period: '2nd Half',
+            minute: "81'",
+            team: 'Manchester United',
+            playerName: 'Scott McTominay',
+            relatedPlayerName: 'Kobbie Mainoo',
+            homeTeamScore: 2,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'goal',
+            period: '2nd Half',
+            minute: "82'",
+            team: 'Manchester United',
+            playerName: 'Rasmus Højlund',
+            homeTeamScore: 3,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'substitution',
+            period: '2nd Half',
+            minute: "86'",
+            team: 'Aston Villa',
+            playerName: 'Tim Iroegbunam',
+            relatedPlayerName: 'Leander Dendoncker',
+            homeTeamScore: 3,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'substitution',
+            period: '2nd Half',
+            minute: "86'",
+            team: 'Aston Villa',
+            playerName: 'Jhon Durán',
+            relatedPlayerName: 'John McGinn',
+            homeTeamScore: 3,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'yellow_card',
+            period: '2nd Half',
+            minute: "87'",
+            team: 'Aston Villa',
+            playerName: 'Ezri Konsa',
+            homeTeamScore: 3,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'substitution',
+            period: '2nd Half',
+            minute: "89'",
+            team: 'Manchester United',
+            playerName: 'Willy Kambwala',
+            relatedPlayerName: 'Rasmus Højlund',
+            homeTeamScore: 3,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'substitution',
+            period: '2nd Half',
+            minute: "90'+4'",
+            team: 'Manchester United',
+            playerName: 'Daniel Gore',
+            relatedPlayerName: 'Christian Eriksen',
+            homeTeamScore: 3,
+            awayTeamScore: 2,
+          },
+          {
+            eventType: 'substitution',
+            period: '2nd Half',
+            minute: "90'+5'",
+            team: 'Manchester United',
+            playerName: 'Hannibal Mejbri',
+            relatedPlayerName: 'Alejandro Garnacho',
+            homeTeamScore: 3,
+            awayTeamScore: 2,
+          },
+        ],
+        type: 'eplHistoricalBoxScore',
+      },
+      {
+        grids: [
+          {
+            name: 'game result',
+            columns: [
+              {
+                rowItemKey: 'TEAM',
+                title: 'TEAM',
+                type: 'string',
+              },
+              {
+                rowItemKey: 'ALIGNMENT',
+                title: '',
+                type: 'string',
+              },
+              {
+                rowItemKey: 'OPPONENT',
+                title: 'OPPONENT',
+                type: 'string',
+              },
+              {
+                rowItemKey: 'RESULT',
+                title: 'RESULT',
+                type: 'number',
+              },
+              {
+                rowItemKey: 'DATE',
+                title: 'DATE',
+                type: 'date',
+              },
+            ],
+            rows: [
+              {
+                TEAM: {
+                  value: 'Manchester United',
+                  display: 'Manchester United',
+                },
+                ALIGNMENT: {
+                  value: 'vs',
+                  display: 'vs',
+                },
+                OPPONENT: {
+                  value: 'Aston Villa',
+                  display: 'Aston Villa',
+                },
+                RESULT: {
+                  value: 1,
+                  display: 'W 3-2',
+                },
+                DATE: {
+                  value: '2023-12-26T00:00:00',
+                  display: 'Dec 26, 2023',
+                },
+              },
+            ],
+          },
+        ],
+        type: 'genericGrids',
+      },
+    ],
+    summaryTokens: [
+      {
+        text: 'GAME ID 11451',
+        type: 'general',
+        omitLeadingSpace: true,
+      },
+    ],
+    isSuperlative: false,
+    additionalQuestions: [
+      {
+        domain: 'EPL',
+        text: 'Which player has the most second-half goals this season?',
+      },
+      {
+        domain: 'EPL',
+        text: 'Who was the last goalkeeper with a goal in a match?',
+      },
+      {
+        domain: 'EPL',
+        text: 'What club has the most Premier League titles?',
+      },
+      {
+        domain: 'EPL',
+        text: 'What player has the most Premier League titles?',
+      },
+      {
+        domain: 'EPL',
+        text: 'Which club has the most second-half goals this season?',
+      },
+      {
+        domain: 'EPL',
+        text: 'What are the most goals in a season by a player?',
+      },
+      {
+        domain: 'EPL',
+        text: 'What are the most yellow cards by a club in a match since 2015?',
+      },
+      {
+        domain: 'EPL',
+        text: 'Who had the fastest goal in a Manchester derby?',
+      },
+      {
+        domain: 'EPL',
+        text: 'Which player had the most shots on target without a goal in a match?',
+      },
+      {
+        domain: 'EPL',
+        text: 'What are the most Premier League goals by an American?',
+      },
+    ],
+    contentReference: {
+      domainTags: {
+        domain: 'EPL',
+      },
+      questionTags: {
+        actorType: 'team',
+        teamIds: [],
+        playerIds: [],
+        seasonYears: [],
+      },
+    },
+  },
+  conversation: {
+    token:
+      'GhIJ4OAZEvRR1UARiz1uxLGhGJYilAEKkQEKDwoNR0FNRSBJRCAxMTQ1MRIFCgNFUEwaFQoRTWFuY2hlc3RlciBVbml0ZWQQARoPCgtBc3RvbiBWaWxsYRABMk8KPwo9TWFuY2hlc3RlciBVbml0ZWQgd29uIGFnYWluc3QgQXN0b24gVmlsbGEsIDMgdG8gMiwgeWVzdGVyZGF5LhIMCgpXaGF0IGVsc2U_KAE',
+    complete: false,
+  },
+  disposition: {
+    responseType: 'results',
+    resultsType: 'answer',
+    intent: 'SportsQuestion:Stats:GameResult',
+  },
+  tokenizationScore: {
+    max: 2,
+    median: 2,
+    average: 2,
+  },
+  type: 'nlgAnswerNotPossibleVisualsRequired',
+} as GameraEplBoxScore
 if (!data) return NOT_FOUND_404
 if (data.type === 'error') return NOT_FOUND_404
+
+const boxscoreData = data.visual.detail[0] as EplHistoricalBoxScore
+const homeTeam = boxscoreData.homeTeam
+const awayTeam = boxscoreData.awayTeam
+
+const subject = data.visual.summary.subject
+const preferredDomain = domain.toLowerCase()
+
+const plays = orderBy(
+  boxscoreData.gameSummary.map((play) => ({
+    ...play,
+    minuteRaw: play.minute.split("'").reduce((t, c) => t + Number(c), 0),
+  })),
+  'minuteRaw',
+)
+
+const homeTeamGoals = plays.filter(
+  (p) =>
+    (p.eventType === 'goal' || p.eventType === 'pen_goal') &&
+    p.team === homeTeam.name,
+)
+const awayTeamGoals = plays.filter(
+  (p) =>
+    (p.eventType === 'goal' || p.eventType === 'pen_goal') &&
+    p.team === awayTeam.name,
+)
+
+const meta = {
+  title: tokensToText(data.nlg.text.answer),
+  pageType: 'game',
+  facebook: {
+    imageUrl: imageForgeUrl({
+      url: data.visual.summary.subject.imageUrl,
+      bgColor: subject.colors.background,
+      type: 'facebook',
+    }),
+  },
+  twitter: {
+    imageUrl: imageForgeUrl({
+      url: data.visual.summary.subject.imageUrl,
+      bgColor: subject.colors.background,
+      type: 'twitter',
+    }),
+  },
+}
 
 Caching.swr(Astro)
 ---
 
-<GameLayout {data}>
-  {
-    (function () {
-      switch (data.domain) {
-        case 'NBA':
-          return <NbaBoxscore {data} />
-        case 'NFL':
-          return <NflBoxscore {data} />
-        case 'MLB':
-          return <MlbBoxscore {data} />
-        case 'NHL':
-          return <NhlBoxscore {data} />
-        case 'EPL':
-          return <EplBoxscore {data} />
-        default:
-          throw new Error('cannot render a boxscore for PGA')
-      }
-    })()
-  }
-</GameLayout>
+<Layout
+  colors={subject?.colors}
+  {meta}
+  analytics={{
+    is_search: true,
+    page_domain: preferredDomain as AnalyticsPageviewProperties['page_domain'],
+    page_type: 'game',
+  }}
+>
+  <Header {preferredDomain} share={{ url: Astro.url.href }} />
+  <Container class="mb-5 bg-team-primary text-team-secondary py-5 space-y-5">
+    <div class="flex gap-8 items-center justify-center">
+      <div class="flex flex-1 gap-4 items-center justify-end">
+        <div class="text-right">
+          <h1 class="text-3xl">{homeTeam.name}</h1>
+          <p class="text-xs">{homeTeam.record}</p>
+        </div>
+        <Image
+          class="w-20 h-20 object-contain"
+          src={homeTeam.logoUrl}
+          alt={homeTeam.abbrev}
+          width={200}
+          height={200}
+          loading="eager"
+        />
+      </div>
+      <p class="text-4xl">
+        {homeTeam.score}
+      </p>
+      <p class="text-xs mx-4">{boxscoreData.completedGameStatus}</p>
+      <p class="text-4xl">
+        {awayTeam.score}
+      </p>
+      <div class="flex flex-1 gap-4 items-center flex-row-reverse justify-end">
+        <div>
+          <h1 class="text-3xl">{awayTeam.name}</h1>
+          <p class="text-xs">{awayTeam.record}</p>
+        </div>
+        <Image
+          class="w-20 h-20 object-contain"
+          src={awayTeam.logoUrl}
+          alt={awayTeam.abbrev}
+          width={200}
+          height={200}
+          loading="eager"
+        />
+      </div>
+    </div>
+    <div class="flex items-start justify-center">
+      <div class="flex-1 text-right mx-0.5">
+        {
+          homeTeamGoals.map((play) => (
+            <p class="text-sm">{`${play.playerName.split(' ')[1]} ${
+              play.minute
+            }`}</p>
+          ))
+        }
+      </div>
+      <Goal class="w-5 shrink-0 mx-24" color="#000" />
+      <div class="flex-1 mx-0.5">
+        {
+          awayTeamGoals.map((play) => (
+            <p class="text-sm">{`${play.playerName.split(' ')[1]} ${
+              play.minute
+            }`}</p>
+          ))
+        }
+      </div>
+    </div>
+  </Container>
+</Layout>
