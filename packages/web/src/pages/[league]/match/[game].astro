@@ -41,7 +41,7 @@ const data = {
           omitLeadingSpace: true,
         },
         {
-          text: 'won against',
+          text: 'defeated',
           type: 'general',
           omitLeadingSpace: false,
         },
@@ -58,7 +58,7 @@ const data = {
           omitLeadingSpace: false,
         },
         {
-          text: ', 3 to 2, yesterday.',
+          text: ', 3 to 2, on Tuesday.',
           type: 'general',
           omitLeadingSpace: true,
         },
@@ -66,7 +66,7 @@ const data = {
       promptConversational: 'What else?',
     },
     ssml: {
-      answer: 'Manchester United won against Aston Villa, 3 to 2, yesterday.',
+      answer: 'Manchester United defeated Aston Villa, 3 to 2, on Tuesday.',
       promptConversational: 'What else?',
       repromptConversational: 'What else?',
     },
@@ -88,7 +88,7 @@ const data = {
           omitLeadingSpace: true,
         },
         {
-          text: 'won against',
+          text: 'defeated',
           type: 'general',
           omitLeadingSpace: false,
         },
@@ -105,7 +105,7 @@ const data = {
           omitLeadingSpace: false,
         },
         {
-          text: ', 3 to 2, yesterday.',
+          text: ', 3 to 2, on Tuesday.',
           type: 'general',
           omitLeadingSpace: true,
         },
@@ -142,7 +142,7 @@ const data = {
       },
       text: [
         {
-          text: 'Manchester United won against Aston Villa, 3 to 2, yesterday.',
+          text: 'Manchester United defeated Aston Villa, 3 to 2, on Tuesday.',
           type: 'general',
           omitLeadingSpace: true,
         },
@@ -3333,35 +3333,15 @@ const data = {
     additionalQuestions: [
       {
         domain: 'EPL',
-        text: 'Which player has the most second-half goals this season?',
-      },
-      {
-        domain: 'EPL',
-        text: 'Who was the last goalkeeper with a goal in a match?',
-      },
-      {
-        domain: 'EPL',
-        text: 'What club has the most Premier League titles?',
-      },
-      {
-        domain: 'EPL',
-        text: 'What player has the most Premier League titles?',
-      },
-      {
-        domain: 'EPL',
-        text: 'Which club has the most second-half goals this season?',
-      },
-      {
-        domain: 'EPL',
-        text: 'What are the most goals in a season by a player?',
-      },
-      {
-        domain: 'EPL',
         text: 'What are the most yellow cards by a club in a match since 2015?',
       },
       {
         domain: 'EPL',
-        text: 'Who had the fastest goal in a Manchester derby?',
+        text: 'What are the most Premier League goals by an American?',
+      },
+      {
+        domain: 'EPL',
+        text: 'What are the most goals in a season by a club?',
       },
       {
         domain: 'EPL',
@@ -3369,7 +3349,27 @@ const data = {
       },
       {
         domain: 'EPL',
-        text: 'What are the most Premier League goals by an American?',
+        text: 'Which player has the most second-half goals this season?',
+      },
+      {
+        domain: 'EPL',
+        text: 'What player has the most Premier League titles?',
+      },
+      {
+        domain: 'EPL',
+        text: 'Which player has the most career red cards?',
+      },
+      {
+        domain: 'EPL',
+        text: 'Who had the fastest goal in a Manchester derby?',
+      },
+      {
+        domain: 'EPL',
+        text: 'Who was the last goalkeeper with a goal in a match?',
+      },
+      {
+        domain: 'EPL',
+        text: 'What are the most goals in a season by a player?',
       },
     ],
     contentReference: {
@@ -3386,7 +3386,7 @@ const data = {
   },
   conversation: {
     token:
-      'GhIJ4OAZEvRR1UARiz1uxLGhGJYilAEKkQEKDwoNR0FNRSBJRCAxMTQ1MRIFCgNFUEwaFQoRTWFuY2hlc3RlciBVbml0ZWQQARoPCgtBc3RvbiBWaWxsYRABMk8KPwo9TWFuY2hlc3RlciBVbml0ZWQgd29uIGFnYWluc3QgQXN0b24gVmlsbGEsIDMgdG8gMiwgeWVzdGVyZGF5LhIMCgpXaGF0IGVsc2U_KAE',
+      'GhIJ1VcR_fJtVEERgJKkI9pgIgcikgEKjwEKDwoNR0FNRSBJRCAxMTQ1MRIFCgNFUEwaFQoRTWFuY2hlc3RlciBVbml0ZWQQARoPCgtBc3RvbiBWaWxsYRABMk0KPQo7TWFuY2hlc3RlciBVbml0ZWQgZGVmZWF0ZWQgQXN0b24gVmlsbGEsIDMgdG8gMiwgb24gVHVlc2RheS4SDAoKV2hhdCBlbHNlPygB',
     complete: false,
   },
   disposition: {
@@ -3400,7 +3400,8 @@ const data = {
     average: 2,
   },
   type: 'nlgAnswerNotPossibleVisualsRequired',
-} as GameraEplBoxScore
+}
+
 if (!data) return NOT_FOUND_404
 if (data.type === 'error') return NOT_FOUND_404
 
@@ -3456,7 +3457,7 @@ Caching.swr(Astro)
 ---
 
 <Layout
-  colors={subject?.colors}
+  colors={{ foreground: '#000', background: '#b8b8b8' }}
   {meta}
   analytics={{
     is_search: true,
@@ -3640,14 +3641,19 @@ Caching.swr(Astro)
         <p class="text-center py-0.5">Possession %</p>
         <div class="flex pb-1 border-b border-[#c7c8ca]">
           <div
-            class="bg-team-primary text-team-secondary text-xs py-1.5 pl-1.5 rounded-l-full"
-            style={{ width: homeTeamStats.possessionPercentage + '%' }}
+            class="text-xs py-1.5 pl-1.5 rounded-l-full"
+            style={{
+              width: homeTeamStats.possessionPercentage + '%',
+              color: subject?.colors.foreground,
+              backgroundColor: subject?.colors.background,
+            }}
           >
             {homeTeamStats.possessionPercentage + '%'}
           </div>
           <div
             class="flex-1 text-team-primary text-xs py-1.5 pr-1.5 rounded-r-full text-right"
             style={{
+              color: subject?.colors.background,
               backgroundColor:
                 subject?.colors.foreground === '#FFFFFF'
                   ? '#00000011'
