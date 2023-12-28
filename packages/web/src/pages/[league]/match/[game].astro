@@ -3400,7 +3400,7 @@ const data = {
     average: 2,
   },
   type: 'nlgAnswerNotPossibleVisualsRequired',
-}
+} as GameraEplBoxScore
 
 if (!data) return NOT_FOUND_404
 if (data.type === 'error') return NOT_FOUND_404
@@ -3467,10 +3467,14 @@ Caching.swr(Astro)
 >
   <Header {preferredDomain} share={{ url: Astro.url.href }} />
   <Container class="mb-5 bg-team-primary text-team-secondary py-5 space-y-5">
-    <div class="flex gap-8 items-center justify-center">
-      <div class="flex flex-1 gap-4 items-center justify-end">
-        <div class="text-right">
-          <h1 class="text-3xl">{homeTeam.name}</h1>
+    <div class="flex gap-2 md:gap-8 md:items-center justify-center">
+      <div
+        class="flex-1 flex flex-col-reverse md:flex-row gap-1 md:gap-4 items-center justify-end"
+      >
+        <div class="text-center md:text-right">
+          <h1 class="font-semibold md:text-3xl">
+            {homeTeam.name}
+          </h1>
           <p class="text-xs">{homeTeam.record}</p>
         </div>
         <Image
@@ -3482,16 +3486,22 @@ Caching.swr(Astro)
           loading="eager"
         />
       </div>
-      <p class="text-4xl">
-        {homeTeam.score}
-      </p>
-      <p class="text-xs mx-4">{boxscoreData.completedGameStatus}</p>
-      <p class="text-4xl">
-        {awayTeam.score}
-      </p>
-      <div class="flex flex-1 gap-4 items-center flex-row-reverse justify-end">
-        <div>
-          <h1 class="text-3xl">{awayTeam.name}</h1>
+      <div class="h-fit flex items-center gap-4 md:gap-8 mt-5 md:mt-0">
+        <p class="text-4xl font-semibold">
+          {homeTeam.score}
+        </p>
+        <p class="text-xs mx-4">{boxscoreData.completedGameStatus}</p>
+        <p class="text-4xl font-semibold">
+          {awayTeam.score}
+        </p>
+      </div>
+      <div
+        class="flex-1 flex flex-col-reverse md:flex-row-reverse gap-1 md:gap-4 items-center justify-end"
+      >
+        <div class="text-center md:text-left">
+          <h1 class="font-semibold md:text-3xl">
+            {awayTeam.name}
+          </h1>
           <p class="text-xs">{awayTeam.record}</p>
         </div>
         <Image
@@ -3514,7 +3524,7 @@ Caching.swr(Astro)
           ))
         }
       </div>
-      <Goal class="w-5 shrink-0 mx-24" color="#000" />
+      <Goal class="w-5 shrink-0 mx-4 md:mx-24" color="#000" />
       <div class="flex-1 mx-0.5">
         {
           awayTeamGoals.map((play) => (
