@@ -22,7 +22,7 @@ if (data.type === 'error') return NOT_FOUND_404
 Caching.swr(Astro)
 ---
 
-<GameLayout {data}>
+<GameLayout {data} preferredDomain={domain.toLowerCase()}>
   {
     (function () {
       switch (data.domain) {

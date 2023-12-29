@@ -16,11 +16,12 @@ import { NOT_FOUND_404 } from '@lib/response'
 
 interface Props {
   data: GameraBoxScore
+  preferredDomain: string
   meta?: Metadata
 }
 
-const { data } = Astro.props
-const { league: preferredDomain, game } = Astro.params
+const { data, preferredDomain } = Astro.props
+const { league, game } = Astro.params
 if (!game || !preferredDomain) return NOT_FOUND_404
 
 // const domain = league.toUpperCase() as GameraDomain
@@ -70,9 +71,6 @@ const meta = {
   />
   <Container>
     <slot />
-    <Explore
-      league={preferredDomain}
-      additionalQuestions={data.visual.additionalQuestions}
-    />
+    <Explore {league} additionalQuestions={data.visual.additionalQuestions} />
   </Container>
 </Layout>
