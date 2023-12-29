@@ -53,10 +53,15 @@ export const set = (context: Context, token: string) => {
   const tomorrow = new Date()
   tomorrow.setDate(tomorrow.getDate() + 1)
 
-  const local = context.url.hostname === 'localhost'
+  const isLocal = context.url.hostname === 'localhost'
+  const isStaging = context.url.hostname.includes('v2.statmuse.com')
   context.cookies.set(SESSION_COOKIE, token, {
     path: '/',
-    domain: local ? undefined : 'statmuse.com',
+    domain: isLocal
+      ? undefined
+      : isStaging
+      ? context.url.hostname
+      : 'statmuse.com',
     expires: tomorrow,
     maxAge: 31536000,
     secure: true,
