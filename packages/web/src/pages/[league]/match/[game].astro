@@ -3400,7 +3400,7 @@ const data = {
     average: 2,
   },
   type: 'nlgAnswerNotPossibleVisualsRequired',
-} as GameraEplBoxScore
+} as unknown as GameraEplBoxScore
 
 if (!data) return NOT_FOUND_404
 if (data.type === 'error') return NOT_FOUND_404
@@ -3457,7 +3457,7 @@ Caching.swr(Astro)
 ---
 
 <Layout
-  colors={{ foreground: '#000', background: '#b8b8b8' }}
+  colors={{ foreground: '#000', background: '#e0e0e0' }}
   {meta}
   analytics={{
     is_search: true,
@@ -3541,7 +3541,7 @@ Caching.swr(Astro)
       class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 mb-5"
     >
       <div>
-        <p class="font-semibold">Timeline</p>
+        <p class="font-semibold text-[#b8b8b8]">Timeline</p>
         <div
           class="flex justify-between bg-team-primary text-team-secondary rounded py-1.5"
         >
