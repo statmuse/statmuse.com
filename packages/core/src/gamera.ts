@@ -822,6 +822,19 @@ export interface Team {
   score: number
   logoUrl: string
   entity?: GameraEntity
+  lineup?: {
+    entity: GameraEntity
+    imageUrl: string
+    colors: {
+      backgroundColor: string
+      foregroundColor: string
+    }
+    hasBustImage: boolean
+    isStarter: boolean
+    isCaptain: boolean
+    formationIndex: number
+    shirtNumber: number
+  }[]
 }
 
 export interface NbaHistoricalBoxScore extends DetailBase {
@@ -982,6 +995,31 @@ export interface NhlHistoricalBoxScore extends DetailBase {
   }[]
 }
 
+export type SoccerFormation =
+  | '3-1-4-2'
+  | '3-2-4-1'
+  | '3-4-1-2'
+  | '3-4-2-1'
+  | '3-4-3'
+  | '3-4-3 diamond'
+  | '3-5-1-1'
+  | '3-5-2'
+  | '4-1-3-2'
+  | '4-1-4-1'
+  | '4-2-2-2'
+  | '4-2-3-1'
+  | '4-3-1-2'
+  | '4-3-2-1'
+  | '4-3-3'
+  | '4-3-3 flat'
+  | '4-4-1-1'
+  | '4-4-2'
+  | '4-4-2 diamond'
+  | '4-4-2-diamond'
+  | '4-5-1'
+  | '5-3-2'
+  | '5-4-1'
+
 export interface EplTeamGameStats {
   goals: string
   assists: string
@@ -998,6 +1036,7 @@ export interface EplTeamGameStats {
   passesCompleted: string
   offsides: string
   corners: string
+  formation: SoccerFormation
 }
 
 export interface EplHistoricalBoxScore extends DetailBase {

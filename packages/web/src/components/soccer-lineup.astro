@@ -1,0 +1,199 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+import { orderBy } from 'lodash-es'
+import Image from '@components/image.astro'
+import type {
+  EplHistoricalBoxScore,
+  SoccerFormation,
+} from '@statmuse/core/gamera'
+import Goal from '@components/icons/goal.astro'
+
+Goal
+
+interface TeamLineup {
+  name: string
+  logoUrl: string
+  formation: SoccerFormation
+  lineup: EplHistoricalBoxScore['homeTeam']['lineup']
+  goals: string[]
+}
+
+interface Props extends HTMLAttributes<'div'> {
+  homeTeam: TeamLineup
+  awayTeam: TeamLineup
+}
+
+const { homeTeam, awayTeam, class: className, ...rest } = Astro.props
+
+const lineupFormation = (
+  formation: SoccerFormation,
+  lineup: EplHistoricalBoxScore['homeTeam']['lineup'],
+) => {
+  if (!lineup) return []
+  switch (formation) {
+    case '4-2-3-1':
+      return [
+        lineup.slice(0, 1),
+        lineup.slice(1, 5),
+        lineup.slice(5, 7),
+        lineup.slice(7, 10),
+        lineup.slice(10, 11),
+      ]
+    default:
+      return []
+  }
+}
+
+const homeLineup = lineupFormation(
+  homeTeam.formation,
+  orderBy(
+    homeTeam.lineup?.filter((p) => p.isStarter),
+    'formationIndex',
+  ),
+)
+
+const awayLineup = lineupFormation(
+  awayTeam.formation,
+  orderBy(
+    awayTeam.lineup?.filter((p) => p.isStarter),
+    'formationIndex',
+  ),
+)
+
+console.log(homeTeam.goals)
+---
+
+<div class:list={[className, 'relative']} {...rest}>
+  <svg
+    enable-background="new 0 0 285.2 531.4"
+    viewBox="0 0 285.2 531.4"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="m0 526.4v-521.4c0-2.8 2.2-5 5-5h275.2c2.8 0 5 2.2 5 5v521.4c0 2.8-2.2 5-5 5h-275.2c-2.8 0-5-2.2-5-5z"
+      fill="#7fd3a6"
+    >
+    </path><g
+      fill="none"
+      opacity=".25"
+      stroke="#000"
+      stroke-miterlimit="10"
+      stroke-width=".5"
+    >
+      <path d="m0 265.8h285.2"></path><circle cx="142.6" cy="265.8" r="41.8">
+      </circle><path d="m100.8 0v32.1h83.6v-32.1"></path><path
+        d="m59.8 0v63.6h165.7v-63.6"
+      >
+      </path><path d="m107 63.6c7.3 12 20.6 20 35.6 20s28.3-8 35.6-20z">
+      </path><path d="m184.4 531.4v-32.1h-83.6v32.1"></path><path
+        d="m225.5 531.4v-63.6h-165.7v63.6"
+      >
+      </path><path d="m178.3 467.8c-7.3-12-20.6-20-35.6-20s-28.3 8-35.6 20z">
+      </path>
+    </g>
+  </svg>
+  <div class="absolute top-0 left-0 flex items-center mt-1.5">
+    <Image
+      class="w-4 h-4 mx-1.5 object-contain"
+      src={homeTeam.logoUrl}
+      alt={homeTeam.name}
+      width={50}
+      height={50}
+      loading="eager"
+    />
+    <span class="text-xs">{homeTeam.name}</span>
+  </div>
+  <div class="absolute bottom-0 left-0 flex items-center mb-1.5">
+    <Image
+      class="w-4 h-4 mx-1.5 object-contain"
+      src={awayTeam.logoUrl}
+      alt={awayTeam.name}
+      width={50}
+      height={50}
+      loading="eager"
+    />
+    <span class="text-xs">{awayTeam.name}</span>
+  </div>
+  <div class="absolute top-0 right-0 m-1.5 text-xs">
+    {homeTeam.formation}
+  </div>
+  <div class="absolute bottom-0 right-0 m-1.5 text-xs">
+    {awayTeam.formation}
+  </div>
+  <div class="absolute top-0 w-full h-full flex flex-col">
+    <div class="flex-1 flex flex-col justify-evenly">
+      {
+        homeLineup.map((line) => (
+          <div class="flex justify-center gap-10">
+            {line.map((player) => (
+              <div
+                style={{
+                  backgroundColor: player.colors.backgroundColor,
+                  color: player.colors.foregroundColor,
+                }}
+                class="w-10 h-10 rounded-full bg-white relative flex items-center justify-center"
+              >
+                {player.hasBustImage ? (
+                  <div class="w-10 h-10 overflow-hidden rounded-full flex items-center justify-center">
+                    <Image
+                      class="w-10 h-10 max-w-none object-cover -mb-1.5"
+                      src={player.imageUrl}
+                      alt={player.entity.display}
+                      width={200}
+                      height={200}
+                      loading="eager"
+                    />
+                  </div>
+                ) : (
+                  <h3>{player.shirtNumber}</h3>
+                )}
+                {homeTeam.goals.includes(player.entity.display) && (
+                  <div class="absolute top-0 left-0 w-3 h-3 bg-white rounded-full flex items-center justify-center">
+                    <Goal class="w-3 h-3" color="#000" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+    <div class="flex-1 flex flex-col-reverse justify-evenly">
+      {
+        awayLineup.map((line) => (
+          <div class="flex flex-row-reverse justify-center gap-10">
+            {line.map((player) => (
+              <div
+                style={{
+                  backgroundColor: player.colors.backgroundColor,
+                  color: player.colors.foregroundColor,
+                }}
+                class="w-10 h-10 rounded-full bg-white relative flex items-center justify-center"
+              >
+                {player.hasBustImage ? (
+                  <div class="w-10 h-10 overflow-hidden rounded-full flex items-center justify-center">
+                    <Image
+                      class="w-10 h-10 max-w-none object-cover -mb-1.5"
+                      src={player.imageUrl}
+                      alt={player.entity.display}
+                      width={200}
+                      height={200}
+                      loading="eager"
+                    />
+                  </div>
+                ) : (
+                  <h3>{player.shirtNumber}</h3>
+                )}
+                {awayTeam.goals.includes(player.entity.display) && (
+                  <div class="absolute top-0 left-0 w-3 h-3 bg-white rounded-full flex items-center justify-center">
+                    <Goal class="w-3 h-3" color="#000" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>

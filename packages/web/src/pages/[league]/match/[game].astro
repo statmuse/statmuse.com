@@ -17,6 +17,7 @@ import type {
 import { orderBy } from 'lodash-es'
 import Goal from '@components/icons/goal.astro'
 import Substitution from '@components/icons/substitution.astro'
+import SoccerLineup from '@components/soccer-lineup.astro'
 
 const league = Astro.params.league as LeagueParam
 const game = Astro.params.game
@@ -3430,6 +3431,18 @@ const awayTeamGoals = plays.filter(
     (p.eventType === 'goal' || p.eventType === 'pen_goal') &&
     p.team === awayTeam.name,
 )
+const homeTeamYellows = plays.filter(
+  (p) => p.eventType === 'yellow_card' && p.team === homeTeam.name,
+)
+const awayTeamYellows = plays.filter(
+  (p) => p.eventType === 'yellow_card' && p.team === awayTeam.name,
+)
+const homeTeamReds = plays.filter(
+  (p) => p.eventType === 'red_card' && p.team === homeTeam.name,
+)
+const awayTeamReds = plays.filter(
+  (p) => p.eventType === 'red_card' && p.team === awayTeam.name,
+)
 
 const homeTeamStats = boxscoreData.teamDetail.homeTeam
 const awayTeamStats = boxscoreData.teamDetail.awayTeam
@@ -3619,9 +3632,27 @@ Caching.swr(Astro)
           }
         </div>
       </div>
-      <div><p class="font-semibold">Lineups</p></div>
       <div>
-        <p class="font-semibold">Stats</p>
+        <p class="font-semibold text-[#b8b8b8]">Lineups</p>
+        <SoccerLineup
+          homeTeam={{
+            name: homeTeam.abbrev,
+            logoUrl: homeTeam.logoUrl,
+            formation: homeTeamStats.formation,
+            lineup: homeTeam.lineup,
+            goals: homeTeamGoals.map((g) => g.playerName),
+          }}
+          awayTeam={{
+            name: awayTeam.abbrev,
+            logoUrl: awayTeam.logoUrl,
+            formation: awayTeamStats.formation,
+            lineup: awayTeam.lineup,
+            goals: awayTeamGoals.map((g) => g.playerName),
+          }}
+        />
+      </div>
+      <div>
+        <p class="font-semibold text-[#b8b8b8]">Stats</p>
         <div
           class="flex justify-between bg-team-primary text-team-secondary rounded py-1.5"
         >
