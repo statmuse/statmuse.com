@@ -3443,6 +3443,12 @@ const homeTeamReds = plays.filter(
 const awayTeamReds = plays.filter(
   (p) => p.eventType === 'red_card' && p.team === awayTeam.name,
 )
+const homeTeamSubstitutions = plays.filter(
+  (p) => p.eventType === 'substitution' && p.team === homeTeam.name,
+)
+const awayTeamSubstitutions = plays.filter(
+  (p) => p.eventType === 'substitution' && p.team === awayTeam.name,
+)
 
 const homeTeamStats = boxscoreData.teamDetail.homeTeam
 const awayTeamStats = boxscoreData.teamDetail.awayTeam
@@ -3641,6 +3647,9 @@ Caching.swr(Astro)
             formation: homeTeamStats.formation,
             lineup: homeTeam.lineup,
             goals: homeTeamGoals.map((g) => g.playerName),
+            yellows: homeTeamYellows.map((p) => p.playerName),
+            reds: homeTeamReds.map((p) => p.playerName),
+            subOuts: homeTeamSubstitutions.map((p) => p.relatedPlayerName),
           }}
           awayTeam={{
             name: awayTeam.abbrev,
@@ -3648,6 +3657,9 @@ Caching.swr(Astro)
             formation: awayTeamStats.formation,
             lineup: awayTeam.lineup,
             goals: awayTeamGoals.map((g) => g.playerName),
+            yellows: awayTeamYellows.map((p) => p.playerName),
+            reds: awayTeamReds.map((p) => p.playerName),
+            subOuts: awayTeamSubstitutions.map((p) => p.relatedPlayerName),
           }}
         />
       </div>
