@@ -3500,6 +3500,9 @@ const awayBench = orderBy(
 const homeTeamStats = boxscoreData.teamDetail.homeTeam
 const awayTeamStats = boxscoreData.teamDetail.awayTeam
 
+const homeTeamColors = homeTeam.lineup[0].colors
+const awayTeamColors = awayTeam.lineup[0].colors
+
 const meta = {
   title: tokensToText(data.nlg.text.answer),
   pageType: 'game',
@@ -3836,8 +3839,8 @@ Caching.swr(Astro)
             class="text-xs py-1.5 pl-1.5 rounded-l-full"
             style={{
               width: homeTeamStats.possessionPercentage + '%',
-              color: subject?.colors.foreground,
-              backgroundColor: subject?.colors.background,
+              color: homeTeamColors.foregroundColor,
+              backgroundColor: homeTeamColors.backgroundColor,
             }}
           >
             {homeTeamStats.possessionPercentage + '%'}
@@ -3845,11 +3848,8 @@ Caching.swr(Astro)
           <div
             class="flex-1 text-team-primary text-xs py-1.5 pr-1.5 rounded-r-full text-right"
             style={{
-              color: subject?.colors.background,
-              backgroundColor:
-                subject?.colors.foreground === '#FFFFFF'
-                  ? '#00000011'
-                  : undefined,
+              color: awayTeamColors.foregroundColor,
+              backgroundColor: awayTeamColors.backgroundColor,
             }}
           >
             {awayTeamStats.possessionPercentage + '%'}
