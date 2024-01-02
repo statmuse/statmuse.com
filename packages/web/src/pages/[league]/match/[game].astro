@@ -18,6 +18,7 @@ import { orderBy } from 'lodash-es'
 import Goal from '@components/icons/goal.astro'
 import Substitution from '@components/icons/substitution.astro'
 import SoccerLineup from '@components/soccer-lineup.astro'
+import SubArrow from '@components/icons/sub-arrow.astro'
 
 const league = Astro.params.league as LeagueParam
 const game = Astro.params.game
@@ -3420,34 +3421,80 @@ const plays = orderBy(
   })),
   'minuteRaw',
 )
-
-const homeTeamGoals = plays.filter(
+const homeGoals = plays.filter(
   (p) =>
     (p.eventType === 'goal' || p.eventType === 'pen_goal') &&
     p.team === homeTeam.name,
 )
-const awayTeamGoals = plays.filter(
+const awayGoals = plays.filter(
   (p) =>
     (p.eventType === 'goal' || p.eventType === 'pen_goal') &&
-    p.team === awayTeam.name,
+    p.team === homeTeam.name,
 )
-const homeTeamYellows = plays.filter(
-  (p) => p.eventType === 'yellow_card' && p.team === homeTeam.name,
+
+const homeTeamGoals = plays
+  .filter(
+    (p) =>
+      (p.eventType === 'goal' || p.eventType === 'pen_goal') &&
+      p.team === homeTeam.name,
+  )
+  .map((p) => p.playerName)
+const awayTeamGoals = plays
+  .filter(
+    (p) =>
+      (p.eventType === 'goal' || p.eventType === 'pen_goal') &&
+      p.team === awayTeam.name,
+  )
+  .map((p) => p.playerName)
+const homeTeamYellows = plays
+  .filter((p) => p.eventType === 'yellow_card' && p.team === homeTeam.name)
+  .map((p) => p.playerName)
+const awayTeamYellows = plays
+  .filter((p) => p.eventType === 'yellow_card' && p.team === awayTeam.name)
+  .map((p) => p.playerName)
+const homeTeamReds = plays
+  .filter((p) => p.eventType === 'red_card' && p.team === homeTeam.name)
+  .map((p) => p.playerName)
+const awayTeamReds = plays
+  .filter((p) => p.eventType === 'red_card' && p.team === awayTeam.name)
+  .map((p) => p.playerName)
+const homeTeamSubIns = plays
+  .filter((p) => p.eventType === 'substitution' && p.team === homeTeam.name)
+  .map((p) => p.playerName)
+const awayTeamSubIns = plays
+  .filter((p) => p.eventType === 'substitution' && p.team === awayTeam.name)
+  .map((p) => p.playerName)
+const homeTeamSubOuts = plays
+  .filter((p) => p.eventType === 'substitution' && p.team === homeTeam.name)
+  .map((p) => p.relatedPlayerName)
+const awayTeamSubOuts = plays
+  .filter((p) => p.eventType === 'substitution' && p.team === awayTeam.name)
+  .map((p) => p.relatedPlayerName)
+
+const homeSubs = orderBy(
+  homeTeam.lineup?.filter(
+    (p) => !p.isStarter && homeTeamSubIns.includes(p.entity.display),
+  ),
+  'shirtNumber',
 )
-const awayTeamYellows = plays.filter(
-  (p) => p.eventType === 'yellow_card' && p.team === awayTeam.name,
+const homeBench = orderBy(
+  homeTeam.lineup?.filter(
+    (p) => !p.isStarter && !homeTeamSubIns.includes(p.entity.display),
+  ),
+  'shirtNumber',
 )
-const homeTeamReds = plays.filter(
-  (p) => p.eventType === 'red_card' && p.team === homeTeam.name,
+
+const awaySubs = orderBy(
+  awayTeam.lineup?.filter(
+    (p) => !p.isStarter && awayTeamSubIns.includes(p.entity.display),
+  ),
+  'shirtNumber',
 )
-const awayTeamReds = plays.filter(
-  (p) => p.eventType === 'red_card' && p.team === awayTeam.name,
-)
-const homeTeamSubstitutions = plays.filter(
-  (p) => p.eventType === 'substitution' && p.team === homeTeam.name,
-)
-const awayTeamSubstitutions = plays.filter(
-  (p) => p.eventType === 'substitution' && p.team === awayTeam.name,
+const awayBench = orderBy(
+  awayTeam.lineup?.filter(
+    (p) => !p.isStarter && !awayTeamSubIns.includes(p.entity.display),
+  ),
+  'shirtNumber',
 )
 
 const homeTeamStats = boxscoreData.teamDetail.homeTeam
@@ -3536,7 +3583,7 @@ Caching.swr(Astro)
     <div class="flex items-start justify-center">
       <div class="flex-1 text-right mx-0.5">
         {
-          homeTeamGoals.map((play) => (
+          homeGoals.map((play) => (
             <p class="text-sm">{`${play.playerName.split(' ')[1]} ${
               play.minute
             }`}</p>
@@ -3546,7 +3593,7 @@ Caching.swr(Astro)
       <Goal class="w-5 shrink-0 mx-4 md:mx-24" color="#000" />
       <div class="flex-1 mx-0.5">
         {
-          awayTeamGoals.map((play) => (
+          awayGoals.map((play) => (
             <p class="text-sm">{`${play.playerName.split(' ')[1]} ${
               play.minute
             }`}</p>
@@ -3646,22 +3693,114 @@ Caching.swr(Astro)
             logoUrl: homeTeam.logoUrl,
             formation: homeTeamStats.formation,
             lineup: homeTeam.lineup,
-            goals: homeTeamGoals.map((g) => g.playerName),
-            yellows: homeTeamYellows.map((p) => p.playerName),
-            reds: homeTeamReds.map((p) => p.playerName),
-            subOuts: homeTeamSubstitutions.map((p) => p.relatedPlayerName),
+            goals: homeTeamGoals,
+            yellows: homeTeamYellows,
+            reds: homeTeamReds,
+            subOuts: homeTeamSubOuts,
           }}
           awayTeam={{
             name: awayTeam.abbrev,
             logoUrl: awayTeam.logoUrl,
             formation: awayTeamStats.formation,
             lineup: awayTeam.lineup,
-            goals: awayTeamGoals.map((g) => g.playerName),
-            yellows: awayTeamYellows.map((p) => p.playerName),
-            reds: awayTeamReds.map((p) => p.playerName),
-            subOuts: awayTeamSubstitutions.map((p) => p.relatedPlayerName),
+            goals: awayTeamGoals,
+            yellows: awayTeamYellows,
+            reds: awayTeamReds,
+            subOuts: awayTeamSubOuts,
           }}
         />
+        <div class="flex justify-between py-1.5 mt-2 q">
+          <div class="flex items-center">
+            <Image
+              class="w-4 h-4 mx-1.5 object-contain"
+              src={homeTeam.logoUrl}
+              alt={homeTeam.abbrev}
+              width={50}
+              height={50}
+              loading="eager"
+            />
+            <span class="text-xs">{homeTeam.abbrev}</span>
+          </div>
+          <p class="text-xs uppercase">substitutes</p>
+          <div class="flex items-center flex-row-reverse">
+            <Image
+              class="w-4 h-4 mx-1.5 object-contain"
+              src={awayTeam.logoUrl}
+              alt={awayTeam.abbrev}
+              width={50}
+              height={50}
+              loading="eager"
+              q
+            />
+            <span class="text-xs">{awayTeam.abbrev}</span>
+          </div>
+        </div>
+        <div class="flex">
+          <div class="flex-1">
+            {
+              homeSubs.map((player) => (
+                <div class="flex items-center">
+                  <>
+                    <p class="w-[19px] mx-1">{player.shirtNumber}</p>
+                    <p>{player.entity.display}</p>
+                    <SubArrow class="w-3 h-3" color="#00a14b" />
+                    {homeTeamYellows.includes(player.entity.display) && (
+                      <div class="w-2 h-3 bg-yellow-300" />
+                    )}
+                    {homeTeamReds.includes(player.entity.display) && (
+                      <div class="w-2 h-3 bg-red-600" />
+                    )}
+                    {homeTeamGoals.includes(player.entity.display) && (
+                      <Goal class="w-3 h-3" color="#000" />
+                    )}
+                  </>
+                </div>
+              ))
+            }
+            {
+              homeBench.map((player) => (
+                <div class="flex items-center">
+                  <>
+                    <p class="w-[19px] mx-1">{player.shirtNumber}</p>
+                    <p>{player.entity.display}</p>
+                  </>
+                </div>
+              ))
+            }
+          </div>
+          <div class="flex-1">
+            {
+              awaySubs.map((player) => (
+                <div class="flex flex-row-reverse items-center">
+                  <>
+                    <p class="w-[19px] mx-1">{player.shirtNumber}</p>
+                    <p>{player.entity.display}</p>
+                    <SubArrow class="w-3 h-3" color="#00a14b" />
+                    {awayTeamYellows.includes(player.entity.display) && (
+                      <div class="w-2 h-3 bg-yellow-300" />
+                    )}
+                    {awayTeamReds.includes(player.entity.display) && (
+                      <div class="w-2 h-3 bg-red-600" />
+                    )}
+                    {awayTeamGoals.includes(player.entity.display) && (
+                      <Goal class="w-3 h-3" color="#000" />
+                    )}
+                  </>
+                </div>
+              ))
+            }
+            {
+              awayBench.map((player) => (
+                <div class="flex flex-row-reverse items-center">
+                  <>
+                    <p class="w-[19px] mx-1">{player.shirtNumber}</p>
+                    <p>{player.entity.display}</p>
+                  </>
+                </div>
+              ))
+            }
+          </div>
+        </div>
       </div>
       <div>
         <p class="font-semibold text-[#b8b8b8]">Stats</p>
