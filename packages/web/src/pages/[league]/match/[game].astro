@@ -313,12 +313,16 @@ Caching.swr(Astro)
                       })()}
                     </span>
                     {play.eventType === 'yellow_card' ? (
-                      <span class="inline-block h-4 w-4 bg-yellow-300 mx-2" />
+                      <div class="w-5 h-4 mx-2">
+                        <span class="block h-4 w-3 bg-yellow-300 mx-auto" />
+                      </div>
                     ) : play.eventType === 'red_card' ? (
-                      <span class="inline-block h-4 w-4 bg-red-600 mr-2" />
+                      <div class="w-5 h-4 mx-2">
+                        <span class="block h-4 w-3 bg-red-600 mx-auto" />
+                      </div>
                     ) : play.eventType === 'yellow_red_card' ? (
-                      <div class="inline-block h-4 w-4 bg-yellow-300 mx-2 relative">
-                        <span class="absolute right-0 h-4 w-3/4 bg-red-600" />
+                      <div class="inline-block h-4 w-5 bg-yellow-300 mx-2 relative">
+                        <span class="absolute right-0 h-4 w-3 bg-red-600" />
                       </div>
                     ) : play.eventType === 'goal' ||
                       play.eventType === 'penalty_goal' ||
