@@ -248,7 +248,9 @@ const awayLineup = lineupFormation(
       height={50}
       loading="eager"
     />
-    <span class="text-xs">{homeTeam.name}</span>
+    <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
+      {homeTeam.name}
+    </span>
   </div>
   <div class="absolute bottom-0 left-0 flex items-center mb-1.5">
     <Image
@@ -259,12 +261,14 @@ const awayLineup = lineupFormation(
       height={50}
       loading="eager"
     />
-    <span class="text-xs">{awayTeam.name}</span>
+    <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
+      {awayTeam.name}
+    </span>
   </div>
-  <div class="absolute top-0 right-0 m-1.5 text-xs">
+  <div class="absolute top-0 right-0 m-1.5 text-[0.8rem] tracking-[0.07rem]">
     {homeTeam.formation}
   </div>
-  <div class="absolute bottom-0 right-0 m-1.5 text-xs">
+  <div class="absolute bottom-0 right-0 m-1.5 text-[0.8rem] tracking-[0.07rem]">
     {awayTeam.formation}
   </div>
   <div class="absolute top-0 w-full h-full flex flex-col">

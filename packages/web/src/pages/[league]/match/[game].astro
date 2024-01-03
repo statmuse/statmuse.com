@@ -176,7 +176,9 @@ Caching.swr(Astro)
               {homeTeam.name}
             </h1>
           </EntityLink>
-          <p class="text-xs">{homeTeam.record}</p>
+          <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+            {homeTeam.record}
+          </p>
         </div>
         <EntityLink entity={homeTeam.entity}>
           <Image
@@ -193,7 +195,9 @@ Caching.swr(Astro)
         <p class="text-4xl font-semibold">
           {homeTeam.score}
         </p>
-        <p class="text-xs mx-4">{boxscoreData.completedGameStatus}</p>
+        <p class="text-[0.8rem] uppercase tracking-[0.07rem] mx-4">
+          {boxscoreData.completedGameStatus}
+        </p>
         <p class="text-4xl font-semibold">
           {awayTeam.score}
         </p>
@@ -207,7 +211,9 @@ Caching.swr(Astro)
               {awayTeam.name}
             </h1>
           </EntityLink>
-          <p class="text-xs">{awayTeam.record}</p>
+          <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+            {awayTeam.record}
+          </p>
         </div>
         <EntityLink class="text-current" entity={awayTeam.entity}>
           <Image
@@ -250,7 +256,7 @@ Caching.swr(Astro)
       <div>
         <p class="font-semibold text-[#b8b8b8]">Timeline</p>
         <div
-          class="flex justify-between bg-team-primary text-team-secondary rounded py-1.5"
+          class="flex justify-between bg-team-primary text-team-secondary rounded py-1"
         >
           <div class="flex items-center">
             <Image
@@ -261,7 +267,9 @@ Caching.swr(Astro)
               height={50}
               loading="eager"
             />
-            <span class="text-xs">{homeTeam.abbrev}</span>
+            <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
+              {homeTeam.abbrev}
+            </span>
           </div>
           <div class="flex items-center flex-row-reverse">
             <Image
@@ -272,7 +280,9 @@ Caching.swr(Astro)
               height={50}
               loading="eager"
             />
-            <span class="text-xs">{awayTeam.abbrev}</span>
+            <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
+              {awayTeam.abbrev}
+            </span>
           </div>
         </div>
         <div>
@@ -403,9 +413,11 @@ Caching.swr(Astro)
               height={50}
               loading="eager"
             />
-            <span class="text-xs">{homeTeam.abbrev}</span>
+            <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
+              {homeTeam.abbrev}
+            </span>
           </div>
-          <p class="text-xs uppercase">substitutes</p>
+          <p class="text-[0.8rem] uppercase tracking-[0.07rem]">substitutes</p>
           <div class="flex items-center flex-row-reverse">
             <Image
               class="w-4 h-4 mx-1.5 object-contain"
@@ -416,7 +428,9 @@ Caching.swr(Astro)
               loading="eager"
               q
             />
-            <span class="text-xs">{awayTeam.abbrev}</span>
+            <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
+              {awayTeam.abbrev}
+            </span>
           </div>
         </div>
         <div class="flex">
@@ -527,7 +541,7 @@ Caching.swr(Astro)
       <div>
         <p class="font-semibold text-[#b8b8b8]">Stats</p>
         <div
-          class="flex justify-between bg-team-primary text-team-secondary rounded py-1.5"
+          class="flex justify-between bg-team-primary text-team-secondary rounded py-1"
         >
           <div class="flex items-center">
             <Image
@@ -538,7 +552,9 @@ Caching.swr(Astro)
               height={50}
               loading="eager"
             />
-            <span class="text-xs">{homeTeam.abbrev}</span>
+            <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
+              {homeTeam.abbrev}
+            </span>
           </div>
           <div class="flex items-center flex-row-reverse">
             <Image
@@ -549,7 +565,9 @@ Caching.swr(Astro)
               height={50}
               loading="eager"
             />
-            <span class="text-xs">{awayTeam.abbrev}</span>
+            <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
+              {awayTeam.abbrev}
+            </span>
           </div>
         </div>
         <p class="text-center py-0.5">Possession %</p>
