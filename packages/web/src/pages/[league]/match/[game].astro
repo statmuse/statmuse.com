@@ -426,7 +426,9 @@ Caching.swr(Astro)
                 <div class="flex items-center">
                   <>
                     <p class="w-[19px] mx-1">{player.shirtNumber}</p>
-                    <p>{player.entity.display}</p>
+                    <EntityLink entity={player.entity} class="text-current">
+                      {player.entity.display}
+                    </EntityLink>
                     <SubArrow class="w-3 h-3" color="#00a14b" />
                     {(() => {
                       if (homeTeamReds.includes(player.entity.display)) {
@@ -455,7 +457,9 @@ Caching.swr(Astro)
                 <div class="flex items-center">
                   <>
                     <p class="w-[19px] mx-1">{player.shirtNumber}</p>
-                    <p>{player.entity.display}</p>
+                    <EntityLink entity={player.entity} class="text-current">
+                      {player.entity.display}
+                    </EntityLink>
                   </>
                 </div>
               ))
@@ -466,8 +470,10 @@ Caching.swr(Astro)
               awaySubs.map((player) => (
                 <div class="flex flex-row-reverse items-center">
                   <>
-                    <p class="w-[19px] mx-1">{player.shirtNumber}</p>
-                    <p>{player.entity.display}</p>
+                    <p class="w-[19px] mx-1 text-right">{player.shirtNumber}</p>
+                    <EntityLink entity={player.entity} class="text-current">
+                      {player.entity.display}
+                    </EntityLink>
                     <SubArrow class="w-3 h-3" color="#00a14b" />
                     {(() => {
                       if (awayTeamReds.includes(player.entity.display)) {
@@ -495,8 +501,10 @@ Caching.swr(Astro)
               awayBench.map((player) => (
                 <div class="flex flex-row-reverse items-center">
                   <>
-                    <p class="w-[19px] mx-1">{player.shirtNumber}</p>
-                    <p>{player.entity.display}</p>
+                    <p class="w-[19px] mx-1 text-right">{player.shirtNumber}</p>
+                    <EntityLink entity={player.entity} class="text-current">
+                      {player.entity.display}
+                    </EntityLink>
                   </>
                 </div>
               ))
