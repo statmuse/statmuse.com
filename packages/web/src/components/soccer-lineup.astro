@@ -298,35 +298,35 @@ const awayLineup = lineupFormation(
                   <p class="text-xs text-black absolute top-full flex items-center">
                     <span>{lastName(player.entity.display)}</span>
                     {player.isCaptain ? (
-                      <span class="ml-0.5 w-4 h-4 rounded-full text-[#e0e0e0] bg-[#a8a9ac] flex items-center justify-center">
+                      <span class="ml-0.5 w-4 h-4 rounded-full text-[#7fd3a6] bg-black flex items-center justify-center">
                         C
                       </span>
                     ) : null}
                   </p>
                   {homeTeam.goals.includes(player.entity.display) && (
-                    <div class="absolute top-0 left-0 w-3 h-3 bg-white rounded-full flex items-center justify-center">
-                      <Goal class="w-3 h-3" color="#000" />
+                    <div class="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
+                      <Goal class="w-4 h-4" color="#000" />
                     </div>
                   )}
                   {homeTeam.yellows.includes(player.entity.display) && (
-                    <div class="absolute top-0 right-0 w-3 h-3 bg-white rounded-full flex items-center justify-center">
-                      <div class="w-2 h-2 bg-yellow-300" />
+                    <div class="absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
+                      <div class="w-2 h-3 bg-yellow-300" />
                     </div>
                   )}
                   {homeTeam.reds.includes(player.entity.display) && (
-                    <div class="absolute top-0 right-0 w-3 h-3 bg-white rounded-full flex items-center justify-center">
-                      <div class="w-2 h-2 bg-red-600" />
+                    <div class="absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
+                      <div class="w-2 h-3 bg-red-600" />
                     </div>
                   )}
                   {homeTeam.yellowReds.includes(player.entity.display) && (
-                    <div class="absolute top-0 right-0 w-3 h-3 bg-white rounded-full flex items-center justify-center">
-                      <div class="w-2 h-2 bg-yellow-300 relative">
-                        <span class="w-3/4 h-2 bg-red-600 absolute right-0" />
+                    <div class="absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
+                      <div class="w-3 h-3 bg-yellow-300 relative">
+                        <span class="w-3/4 h-3 bg-red-600 absolute right-0" />
                       </div>
                     </div>
                   )}
                   {homeTeam.subOuts.includes(player.entity.display) && (
-                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-white rounded-full flex items-center justify-center">
+                    <div class="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
                       <SubArrow class="w-3 h-3 rotate-180" color="#ed1c24" />
                     </div>
                   )}
@@ -367,35 +367,35 @@ const awayLineup = lineupFormation(
                   <p class="text-xs text-black absolute top-full flex items-center">
                     <span>{lastName(player.entity.display)}</span>
                     {player.isCaptain ? (
-                      <span class="ml-0.5 w-4 h-4 rounded-full text-[#e0e0e0] bg-[#a8a9ac] flex items-center justify-center">
+                      <span class="ml-0.5 w-4 h-4 rounded-full text-[#7fd3a6] bg-black flex items-center justify-center">
                         C
                       </span>
                     ) : null}
                   </p>
                   {awayTeam.goals.includes(player.entity.display) && (
-                    <div class="absolute top-0 left-0 w-3 h-3 bg-white rounded-full flex items-center justify-center">
-                      <Goal class="w-3 h-3" color="#000" />
+                    <div class="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
+                      <Goal class="w-4 h-4" color="#000" />
                     </div>
                   )}
                   {awayTeam.yellows.includes(player.entity.display) && (
-                    <div class="absolute top-0 right-0 w-3 h-3 bg-white rounded-full flex items-center justify-center">
-                      <div class="w-2 h-2 bg-yellow-300" />
+                    <div class="absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
+                      <div class="w-2 h-3 bg-yellow-300" />
                     </div>
                   )}
                   {awayTeam.reds.includes(player.entity.display) && (
-                    <div class="absolute top-0 right-0 w-3 h-3 bg-white rounded-full flex items-center justify-center">
-                      <div class="w-2 h-2 bg-red-600" />
+                    <div class="absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
+                      <div class="w-2 h-3 bg-red-600" />
                     </div>
                   )}
                   {awayTeam.yellowReds.includes(player.entity.display) && (
-                    <div class="absolute top-0 right-0 w-3 h-3 bg-white rounded-full flex items-center justify-center">
-                      <div class="w-2 h-2 bg-yellow-300 relative">
-                        <span class="w-3/4 h-2 bg-red-600 absolute right-0" />
+                    <div class="absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
+                      <div class="w-3 h-3 bg-yellow-300 relative">
+                        <span class="w-2 h-3 bg-red-600 absolute right-0" />
                       </div>
                     </div>
                   )}
                   {awayTeam.subOuts.includes(player.entity.display) && (
-                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-white rounded-full flex items-center justify-center">
+                    <div class="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
                       <SubArrow class="w-3 h-3 rotate-180" color="#ed1c24" />
                     </div>
                   )}
