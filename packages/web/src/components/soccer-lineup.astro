@@ -16,6 +16,7 @@ interface TeamLineup {
   formation: SoccerFormation
   lineup: EplHistoricalBoxScore['homeTeam']['lineup']
   goals: string[]
+  ownGoals: string[]
   yellows: string[]
   reds: string[]
   yellowReds: string[]
@@ -307,6 +308,11 @@ const awayLineup = lineupFormation(
                       </span>
                     ) : null}
                   </p>
+                  {homeTeam.ownGoals.includes(player.entity.display) && (
+                    <div class="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
+                      <Goal class="w-4 h-4" color="#ed1c24" />
+                    </div>
+                  )}
                   {homeTeam.goals.includes(player.entity.display) && (
                     <div class="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
                       <Goal class="w-4 h-4" color="#000" />
@@ -376,6 +382,11 @@ const awayLineup = lineupFormation(
                       </span>
                     ) : null}
                   </p>
+                  {awayTeam.ownGoals.includes(player.entity.display) && (
+                    <div class="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
+                      <Goal class="w-4 h-4" color="#ed1c24" />
+                    </div>
+                  )}
                   {awayTeam.goals.includes(player.entity.display) && (
                     <div class="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
                       <Goal class="w-4 h-4" color="#000" />

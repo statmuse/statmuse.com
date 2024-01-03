@@ -38,22 +38,31 @@ const preferredDomain = domain.toLowerCase()
 const plays = orderBy(
   boxscoreData.gameSummary.map((play) => ({
     ...play,
+    side:
+      (play.eventType !== 'own_goal' && play.team === homeTeam.name) ||
+      (play.eventType === 'own_goal' && play.team === awayTeam.name)
+        ? 'home'
+        : 'away',
     minuteRaw: play.minute.split("'").reduce((t, c) => t + Number(c), 0),
   })),
   'minuteRaw',
 )
 
+type Play = (typeof plays)[0]
+
 const playsByPeriod = groupBy(plays, 'period')
 
 const homeGoals = plays.filter(
   (p) =>
-    (p.eventType === 'goal' || p.eventType === 'penalty_goal') &&
-    p.team === homeTeam.name,
+    ((p.eventType === 'goal' || p.eventType === 'penalty_goal') &&
+      p.team === homeTeam.name) ||
+    (p.eventType === 'own_goal' && p.team === awayTeam.name),
 )
 const awayGoals = plays.filter(
   (p) =>
-    (p.eventType === 'goal' || p.eventType === 'penalty_goal') &&
-    p.team === awayTeam.name,
+    ((p.eventType === 'goal' || p.eventType === 'penalty_goal') &&
+      p.team === awayTeam.name) ||
+    (p.eventType === 'own_goal' && p.team === homeTeam.name),
 )
 
 const homeTeamGoals = plays
@@ -69,6 +78,12 @@ const awayTeamGoals = plays
       (p.eventType === 'goal' || p.eventType === 'penalty_goal') &&
       p.team === awayTeam.name,
   )
+  .map((p) => p.playerName)
+const homeTeamOwnGoals = plays
+  .filter((p) => p.eventType === 'own_goal' && p.team === homeTeam.name)
+  .map((p) => p.playerName)
+const awayTeamOwnGoals = plays
+  .filter((p) => p.eventType === 'own_goal' && p.team === awayTeam.name)
   .map((p) => p.playerName)
 const homeTeamYellows = plays
   .filter((p) => p.eventType === 'yellow_card' && p.team === homeTeam.name)
@@ -132,6 +147,8 @@ const awayTeamStats = boxscoreData.teamDetail.awayTeam
 
 const homeTeamColors = homeTeam.lineup[0].colors
 const awayTeamColors = awayTeam.lineup[0].colors
+
+const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
 
 const meta = {
   title: tokensToText(data.nlg.text.answer),
@@ -231,8 +248,12 @@ Caching.swr(Astro)
       <div class="flex-1 text-right mx-0.5">
         {
           homeGoals.map((play) => (
-            <p class="text-sm">{`${play.playerName.split(' ')[1]} ${
-              play.minute
+            <p class="text-sm">{`${lastName(play.playerName)} ${play.minute}${
+              play.eventType === 'own_goal'
+                ? ' (OG)'
+                : play.eventType === 'penalty_goal'
+                ? ' (PK)'
+                : ''
             }`}</p>
           ))
         }
@@ -241,8 +262,12 @@ Caching.swr(Astro)
       <div class="flex-1 mx-0.5">
         {
           awayGoals.map((play) => (
-            <p class="text-sm">{`${play.playerName.split(' ')[1]} ${
-              play.minute
+            <p class="text-sm">{`${lastName(play.playerName)} ${play.minute}${
+              play.eventType === 'own_goal'
+                ? ' (OG)'
+                : play.eventType === 'penalty_goal'
+                ? ' (PK)'
+                : ''
             }`}</p>
           ))
         }
@@ -288,22 +313,20 @@ Caching.swr(Astro)
         <div>
           {
             (() => {
-              const renderPlays = (
-                plays: EplHistoricalBoxScore['gameSummary'],
-              ) =>
+              const renderPlays = (plays: Play[]) =>
                 plays.map((play) => (
                   <div
                     class:list={[
                       'flex items-center py-0.5 border-b border-[#c7c8ca]',
-                      { 'flex-row-reverse': play.team === awayTeam.name },
+                      { 'flex-row-reverse': play.side === 'away' },
                     ]}
                   >
                     <span
                       class:list={[
                         'w-8 relative',
                         {
-                          'ml-1': play.team !== awayTeam.name,
-                          'mr-1': play.team === awayTeam.name,
+                          'ml-1': play.side === 'home',
+                          'mr-1': play.side === 'away',
                         },
                       ]}
                     >
@@ -347,7 +370,13 @@ Caching.swr(Astro)
                       <Substitution class="w-5 mx-2 shrink-0" />
                     ) : null}
                     {play.eventType !== 'substitution' ? (
-                      <p>{play.playerName}</p>
+                      <p>{`${play.playerName}${
+                        play.eventType === 'own_goal'
+                          ? ' (OG)'
+                          : play.eventType === 'penalty_goal'
+                          ? ' (PK)'
+                          : ''
+                      }`}</p>
                     ) : (
                       <div
                         class:list={{
@@ -386,6 +415,7 @@ Caching.swr(Astro)
             formation: homeTeamStats.formation,
             lineup: homeTeam.lineup,
             goals: homeTeamGoals,
+            ownGoals: homeTeamOwnGoals,
             yellows: homeTeamYellows,
             reds: homeTeamReds,
             yellowReds: homeTeamYellowReds,
@@ -397,6 +427,7 @@ Caching.swr(Astro)
             formation: awayTeamStats.formation,
             lineup: awayTeam.lineup,
             goals: awayTeamGoals,
+            ownGoals: awayTeamOwnGoals,
             yellows: awayTeamYellows,
             reds: awayTeamReds,
             yellowReds: awayTeamYellowReds,
