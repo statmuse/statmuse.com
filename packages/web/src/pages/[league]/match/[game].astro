@@ -46,26 +46,26 @@ const playsByPeriod = groupBy(plays, 'period')
 
 const homeGoals = plays.filter(
   (p) =>
-    (p.eventType === 'goal' || p.eventType === 'pen_goal') &&
+    (p.eventType === 'goal' || p.eventType === 'penalty_goal') &&
     p.team === homeTeam.name,
 )
 const awayGoals = plays.filter(
   (p) =>
-    (p.eventType === 'goal' || p.eventType === 'pen_goal') &&
+    (p.eventType === 'goal' || p.eventType === 'penalty_goal') &&
     p.team === awayTeam.name,
 )
 
 const homeTeamGoals = plays
   .filter(
     (p) =>
-      (p.eventType === 'goal' || p.eventType === 'pen_goal') &&
+      (p.eventType === 'goal' || p.eventType === 'penalty_goal') &&
       p.team === homeTeam.name,
   )
   .map((p) => p.playerName)
 const awayTeamGoals = plays
   .filter(
     (p) =>
-      (p.eventType === 'goal' || p.eventType === 'pen_goal') &&
+      (p.eventType === 'goal' || p.eventType === 'penalty_goal') &&
       p.team === awayTeam.name,
   )
   .map((p) => p.playerName)
@@ -80,6 +80,12 @@ const homeTeamReds = plays
   .map((p) => p.playerName)
 const awayTeamReds = plays
   .filter((p) => p.eventType === 'red_card' && p.team === awayTeam.name)
+  .map((p) => p.playerName)
+const homeTeamYellowReds = plays
+  .filter((p) => p.eventType === 'yellow_red_card' && p.team === homeTeam.name)
+  .map((p) => p.playerName)
+const awayTeamYellowReds = plays
+  .filter((p) => p.eventType === 'yellow_red_card' && p.team === awayTeam.name)
   .map((p) => p.playerName)
 const homeTeamSubIns = plays
   .filter((p) => p.eventType === 'substitution' && p.team === homeTeam.name)
@@ -298,13 +304,12 @@ Caching.swr(Astro)
                       })()}
                     </span>
                     {play.eventType === 'yellow_card' ? (
-                      <span class="inline-block h-4 w-4 bg-yellow-300  mx-2" />
+                      <span class="inline-block h-4 w-4 bg-yellow-300 mx-2" />
                     ) : play.eventType === 'red_card' ? (
                       <span class="inline-block h-4 w-4 bg-red-600 mr-2" />
                     ) : play.eventType === 'yellow_red_card' ? (
-                      <div>
-                        <span class="inline-block h-4 w-4 bg-yellow-300  mx-2" />
-                        <span class="inline-block h-4 w-4 bg-red-600 mr-2" />
+                      <div class="inline-block h-4 w-4 bg-yellow-300 mx-2 relative">
+                        <span class="absolute right-0 h-4 w-3/4 bg-red-600" />
                       </div>
                     ) : play.eventType === 'goal' ||
                       play.eventType === 'penalty_goal' ||
@@ -360,6 +365,7 @@ Caching.swr(Astro)
             goals: homeTeamGoals,
             yellows: homeTeamYellows,
             reds: homeTeamReds,
+            yellowReds: homeTeamYellowReds,
             subOuts: homeTeamSubOuts,
           }}
           awayTeam={{
@@ -370,6 +376,7 @@ Caching.swr(Astro)
             goals: awayTeamGoals,
             yellows: awayTeamYellows,
             reds: awayTeamReds,
+            yellowReds: awayTeamYellowReds,
             subOuts: awayTeamSubOuts,
           }}
         />
@@ -408,12 +415,21 @@ Caching.swr(Astro)
                     <p class="w-[19px] mx-1">{player.shirtNumber}</p>
                     <p>{player.entity.display}</p>
                     <SubArrow class="w-3 h-3" color="#00a14b" />
-                    {homeTeamYellows.includes(player.entity.display) && (
-                      <div class="w-2 h-3 bg-yellow-300" />
-                    )}
-                    {homeTeamReds.includes(player.entity.display) && (
-                      <div class="w-2 h-3 bg-red-600" />
-                    )}
+                    {(() => {
+                      if (homeTeamReds.includes(player.entity.display)) {
+                        return <div class="w-2 h-3 bg-red-600" />
+                      }
+                      if (homeTeamYellowReds.includes(player.entity.display)) {
+                        return (
+                          <div class="w-2 h-3 bg-yellow-300 relative">
+                            <div class="w-3/4 h-3 bg-red-600 absolute right-0" />
+                          </div>
+                        )
+                      }
+                      if (homeTeamYellows.includes(player.entity.display)) {
+                        return <div class="w-2 h-3 bg-yellow-300" />
+                      }
+                    })()}
                     {homeTeamGoals.includes(player.entity.display) && (
                       <Goal class="w-3 h-3" color="#000" />
                     )}
@@ -440,12 +456,21 @@ Caching.swr(Astro)
                     <p class="w-[19px] mx-1">{player.shirtNumber}</p>
                     <p>{player.entity.display}</p>
                     <SubArrow class="w-3 h-3" color="#00a14b" />
-                    {awayTeamYellows.includes(player.entity.display) && (
-                      <div class="w-2 h-3 bg-yellow-300" />
-                    )}
-                    {awayTeamReds.includes(player.entity.display) && (
-                      <div class="w-2 h-3 bg-red-600" />
-                    )}
+                    {(() => {
+                      if (awayTeamReds.includes(player.entity.display)) {
+                        return <div class="w-2 h-3 bg-red-600" />
+                      }
+                      if (awayTeamYellowReds.includes(player.entity.display)) {
+                        return (
+                          <div class="w-2 h-3 bg-yellow-300 relative">
+                            <div class="w-3/4 h-3 bg-red-600 absolute right-0" />
+                          </div>
+                        )
+                      }
+                      if (awayTeamYellows.includes(player.entity.display)) {
+                        return <div class="w-2 h-3 bg-yellow-300" />
+                      }
+                    })()}
                     {awayTeamGoals.includes(player.entity.display) && (
                       <Goal class="w-3 h-3" color="#000" />
                     )}
