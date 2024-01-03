@@ -16,6 +16,7 @@ import Goal from '@components/icons/goal.astro'
 import Substitution from '@components/icons/substitution.astro'
 import SoccerLineup from '@components/soccer-lineup.astro'
 import SubArrow from '@components/icons/sub-arrow.astro'
+import EntityLink from '@components/entity-link.astro'
 
 const league = Astro.params.league as LeagueParam
 const game = Astro.params.game
@@ -170,19 +171,23 @@ Caching.swr(Astro)
         class="flex-1 flex flex-col-reverse md:flex-row gap-1 md:gap-4 items-center justify-end"
       >
         <div class="text-center md:text-right">
-          <h1 class="font-semibold md:text-3xl">
-            {homeTeam.name}
-          </h1>
+          <EntityLink class="text-current" entity={homeTeam.entity}>
+            <h1 class="font-semibold md:text-3xl">
+              {homeTeam.name}
+            </h1>
+          </EntityLink>
           <p class="text-xs">{homeTeam.record}</p>
         </div>
-        <Image
-          class="w-20 h-20 object-contain"
-          src={homeTeam.logoUrl}
-          alt={homeTeam.abbrev}
-          width={200}
-          height={200}
-          loading="eager"
-        />
+        <EntityLink entity={homeTeam.entity}>
+          <Image
+            class="w-20 h-20 object-contain"
+            src={homeTeam.logoUrl}
+            alt={homeTeam.abbrev}
+            width={200}
+            height={200}
+            loading="eager"
+          />
+        </EntityLink>
       </div>
       <div class="h-fit flex items-center gap-4 md:gap-8 mt-5 md:mt-0">
         <p class="text-4xl font-semibold">
@@ -197,19 +202,23 @@ Caching.swr(Astro)
         class="flex-1 flex flex-col-reverse md:flex-row-reverse gap-1 md:gap-4 items-center justify-end"
       >
         <div class="text-center md:text-left">
-          <h1 class="font-semibold md:text-3xl">
-            {awayTeam.name}
-          </h1>
+          <EntityLink class="text-current" entity={awayTeam.entity}>
+            <h1 class="font-semibold md:text-3xl">
+              {awayTeam.name}
+            </h1>
+          </EntityLink>
           <p class="text-xs">{awayTeam.record}</p>
         </div>
-        <Image
-          class="w-20 h-20 object-contain"
-          src={awayTeam.logoUrl}
-          alt={awayTeam.abbrev}
-          width={200}
-          height={200}
-          loading="eager"
-        />
+        <EntityLink class="text-current" entity={awayTeam.entity}>
+          <Image
+            class="w-20 h-20 object-contain"
+            src={awayTeam.logoUrl}
+            alt={awayTeam.abbrev}
+            width={200}
+            height={200}
+            loading="eager"
+          />
+        </EntityLink>
       </div>
     </div>
     <div class="flex items-start justify-center">

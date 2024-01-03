@@ -3,12 +3,12 @@ import { getUrlForEntity, type GameraEntity } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
 
 interface Props extends HTMLAttributes<'a'> {
-  entity: GameraEntity
+  entity?: GameraEntity
 }
 
 const entity = Astro.props.entity
 // const entityDisplay = get(entity, 'display')
-const url = getUrlForEntity(entity)
+const url = entity ? getUrlForEntity(entity) : undefined
 // const title = children !== entityDisplay ? entityDisplay : ''
 const title = ''
 ---
