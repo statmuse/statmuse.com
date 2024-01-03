@@ -301,9 +301,11 @@ const awayLineup = lineupFormation(
                     <h3>{player.shirtNumber}</h3>
                   )}
                   <p class="text-xs text-black absolute top-full flex items-center">
-                    <span>{lastName(player.entity.display)}</span>
+                    <span class="whitespace-nowrap">
+                      {lastName(player.entity.display)}
+                    </span>
                     {player.isCaptain ? (
-                      <span class="ml-0.5 w-4 h-4 rounded-full text-[#7fd3a6] bg-black flex items-center justify-center">
+                      <span class="ml-0.5 w-4 h-4 rounded-full text-[#7fd3a6] bg-black flex items-center justify-center shrink-0">
                         C
                       </span>
                     ) : null}
@@ -375,9 +377,11 @@ const awayLineup = lineupFormation(
                     <h3>{player.shirtNumber}</h3>
                   )}
                   <p class="text-xs text-black absolute top-full flex items-center">
-                    <span>{lastName(player.entity.display)}</span>
+                    <span class="whitespace-nowrap">
+                      {lastName(player.entity.display)}
+                    </span>
                     {player.isCaptain ? (
-                      <span class="ml-0.5 w-4 h-4 rounded-full text-[#7fd3a6] bg-black flex items-center justify-center">
+                      <span class="ml-0.5 w-4 h-4 rounded-full text-[#7fd3a6] bg-black flex items-center justify-center shrink-0">
                         C
                       </span>
                     ) : null}
