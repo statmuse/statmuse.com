@@ -17,6 +17,7 @@ import Substitution from '@components/icons/substitution.astro'
 import SoccerLineup from '@components/soccer-lineup.astro'
 import SubArrow from '@components/icons/sub-arrow.astro'
 import EntityLink from '@components/entity-link.astro'
+import type { GameraEntity } from '@statmuse/core/gamera'
 
 const league = Astro.params.league as LeagueParam
 const game = Astro.params.game
@@ -147,6 +148,17 @@ const awayTeamStats = boxscoreData.teamDetail.awayTeam
 
 const homeTeamColors = homeTeam.lineup[0].colors
 const awayTeamColors = awayTeam.lineup[0].colors
+
+const playerEntityMap = [
+  ...(homeTeam.lineup || []),
+  ...(awayTeam.lineup || []),
+].reduce(
+  (obj, player) => ({
+    ...obj,
+    [player.entity.display]: player.entity,
+  }),
+  {} as Record<string, GameraEntity>,
+)
 
 const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
 
@@ -370,21 +382,41 @@ Caching.swr(Astro)
                       <Substitution class="w-5 mx-2 shrink-0" />
                     ) : null}
                     {play.eventType !== 'substitution' ? (
-                      <p>{`${play.playerName}${
-                        play.eventType === 'own_goal'
+                      <p>
+                        <EntityLink
+                          class="text-current"
+                          entity={playerEntityMap[play.playerName]}
+                        >
+                          {play.playerName}
+                        </EntityLink>
+                        {play.eventType === 'own_goal'
                           ? ' (OG)'
                           : play.eventType === 'penalty_goal'
                           ? ' (PK)'
-                          : ''
-                      }`}</p>
+                          : ''}
+                      </p>
                     ) : (
                       <div
                         class:list={{
-                          'text-right': play.team === awayTeam.name,
+                          'text-right': play.side === 'away',
                         }}
                       >
-                        <p class="text-[#00a14b]">{play.playerName}</p>
-                        <p class="text-[#ed1c24]">{play.relatedPlayerName}</p>
+                        <p class="text-[#00a14b]">
+                          <EntityLink
+                            class="text-current"
+                            entity={playerEntityMap[play.playerName]}
+                          >
+                            {play.playerName}
+                          </EntityLink>
+                        </p>
+                        <p class="text-[#ed1c24]">
+                          <EntityLink
+                            class="text-current"
+                            entity={playerEntityMap[play.relatedPlayerName]}
+                          >
+                            {play.relatedPlayerName}
+                          </EntityLink>
+                        </p>
                       </div>
                     )}
                   </div>
