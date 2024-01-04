@@ -518,14 +518,11 @@ Caching.swr(Astro)
                         <p class="w-[19px] mx-1">{player.shirtNumber}</p>
                         <EntityLink
                           entity={player.entity}
-                          class="text-current whitespace-nowrap"
+                          class="text-current whitespace-nowrap mr-1"
                         >
                           {player.entity.display}
                         </EntityLink>
-                        <SubArrow
-                          class="w-4 h-4 ml-1 shrink-0"
-                          color="#00a14b"
-                        />
+                        <SubArrow class="w-4 h-4 shrink-0" color="#00a14b" />
                         {(() => {
                           if (homeTeamReds.includes(player.entity.display)) {
                             return <div class="w-3 h-4 bg-red-600 ml-0.5" />
@@ -572,14 +569,11 @@ Caching.swr(Astro)
                         </p>
                         <EntityLink
                           entity={player.entity}
-                          class="text-current whitespace-nowrap"
+                          class="text-current whitespace-nowrap ml-1"
                         >
                           {player.entity.display}
                         </EntityLink>
-                        <SubArrow
-                          class="w-4 h-4 mr-1 shrink-0"
-                          color="#00a14b"
-                        />
+                        <SubArrow class="w-4 h-4 shrink-0" color="#00a14b" />
                         {(() => {
                           if (awayTeamReds.includes(player.entity.display)) {
                             return <div class="w-3 h-4 bg-red-600 mr-0.5" />
@@ -662,13 +656,13 @@ Caching.swr(Astro)
                         <p class="w-[19px] mx-1">{player.shirtNumber}</p>
                         <EntityLink
                           entity={player.entity}
-                          class="text-current whitespace-nowrap"
+                          class="text-current whitespace-nowrap mr-1"
                         >
                           {player.entity.display}
                         </EntityLink>
                         {homeTeamSubOuts.includes(player.entity.display) && (
                           <SubArrow
-                            class="w-4 h-4 ml-1 shrink-0 rotate-180"
+                            class="w-4 h-4 shrink-0 rotate-180"
                             color="#ed1c24"
                           />
                         )}
@@ -705,13 +699,13 @@ Caching.swr(Astro)
                         </p>
                         <EntityLink
                           entity={player.entity}
-                          class="text-current whitespace-nowrap"
+                          class="text-current whitespace-nowrap ml-1"
                         >
                           {player.entity.display}
                         </EntityLink>
                         {awayTeamSubOuts.includes(player.entity.display) && (
                           <SubArrow
-                            class="w-4 h-4 mr-1 shrink-0 rotate-180"
+                            class="w-4 h-4 shrink-0 rotate-180"
                             color="#ed1c24"
                           />
                         )}
@@ -751,14 +745,11 @@ Caching.swr(Astro)
                         <p class="w-[19px] mx-1">{player.shirtNumber}</p>
                         <EntityLink
                           entity={player.entity}
-                          class="text-current whitespace-nowrap"
+                          class="text-current whitespace-nowrap mr-1"
                         >
                           {player.entity.display}
                         </EntityLink>
-                        <SubArrow
-                          class="w-4 h-4 ml-1 shrink-0"
-                          color="#00a14b"
-                        />
+                        <SubArrow class="w-4 h-4 shrink-0" color="#00a14b" />
                         {(() => {
                           if (homeTeamReds.includes(player.entity.display)) {
                             return <div class="w-3 h-4 bg-red-600 ml-0.5" />
@@ -805,14 +796,11 @@ Caching.swr(Astro)
                         </p>
                         <EntityLink
                           entity={player.entity}
-                          class="text-current whitespace-nowrap"
+                          class="text-current whitespace-nowrap ml-1"
                         >
                           {player.entity.display}
                         </EntityLink>
-                        <SubArrow
-                          class="w-4 h-4 mr-1 shrink-0"
-                          color="#00a14b"
-                        />
+                        <SubArrow class="w-4 h-4 shrink-0" color="#00a14b" />
                         {(() => {
                           if (awayTeamReds.includes(player.entity.display)) {
                             return <div class="w-3 h-4 bg-red-600 mr-0.5" />
@@ -889,123 +877,182 @@ Caching.swr(Astro)
             </span>
           </div>
         </div>
-        <p class="text-center py-0.5">Possession %</p>
-        <div class="flex pb-1 border-b border-[#c7c8ca] relative">
-          <div
-            class="text-xs py-1.5 pl-1.5 rounded-l-full"
-            style={{
-              width: homeTeamStats.possessionPercentage + '%',
-              color: homeTeamColors.foregroundColor,
-              backgroundColor: homeTeamColors.backgroundColor,
-            }}
-          >
-            {homeTeamStats.possessionPercentage + '%'}
-          </div>
-          <div
-            style={{
-              left: homeTeamStats.possessionPercentage + '%',
-              width: '1px',
-            }}
-            class="absolute h-full bg-white"
-          >
-          </div>
-          <div
-            class="flex-1 text-team-primary text-xs py-1.5 pr-1.5 rounded-r-full text-right"
-            style={{
-              color: awayTeamColors.foregroundColor,
-              backgroundColor: awayTeamColors.backgroundColor,
-            }}
-          >
-            {awayTeamStats.possessionPercentage + '%'}
-          </div>
-        </div>
+        {
+          homeTeamStats.possessionPercentage &&
+            awayTeamStats.possessionPercentage && (
+              <>
+                <p class="text-center py-0.5">Possession %</p>
+                <div class="flex pb-1 border-b border-[#c7c8ca] relative">
+                  <div
+                    class="text-xs py-1.5 pl-1.5 rounded-l-full"
+                    style={{
+                      width: homeTeamStats.possessionPercentage + '%',
+                      color: homeTeamColors.foregroundColor,
+                      backgroundColor: homeTeamColors.backgroundColor,
+                    }}
+                  >
+                    {homeTeamStats.possessionPercentage + '%'}
+                  </div>
+                  <div
+                    style={{
+                      left: homeTeamStats.possessionPercentage + '%',
+                      width: '1px',
+                    }}
+                    class="absolute h-full bg-white"
+                  />
+                  <div
+                    class="flex-1 text-team-primary text-xs py-1.5 pr-1.5 rounded-r-full text-right"
+                    style={{
+                      color: awayTeamColors.foregroundColor,
+                      backgroundColor: awayTeamColors.backgroundColor,
+                    }}
+                  >
+                    {awayTeamStats.possessionPercentage + '%'}
+                  </div>
+                </div>
+              </>
+            )
+        }
 
-        <div class="flex py-0.5 border-b border-[#c7c8ca]">
-          <p class="ml-1">{homeTeamStats.shotsOnTarget}</p>
-          <p class="flex-1 text-center">Shots on target</p>
-          <p class="mr-1">{awayTeamStats.shotsOnTarget}</p>
-        </div>
-        <div class="flex py-0.5 border-b border-[#c7c8ca]">
-          <p class="ml-1">{homeTeamStats.shots}</p>
-          <p class="flex-1 text-center">Shots</p>
-          <p class="mr-1">{awayTeamStats.shots}</p>
-        </div>
-        <div class="flex py-0.5 border-b border-[#c7c8ca]">
-          <p class="ml-1">{homeTeamStats.bigChancesCreated}</p>
-          <p class="flex-1 text-center">Big chances</p>
-          <p class="mr-1">{awayTeamStats.bigChancesCreated}</p>
-        </div>
-        <div class="flex py-0.5 border-b border-[#c7c8ca]">
-          <p class="ml-1">{homeTeamStats.passes}</p>
-          <p class="flex-1 text-center">Passes</p>
-          <p class="mr-1">{awayTeamStats.passes}</p>
-        </div>
-        <div class="flex py-0.5 border-b border-[#c7c8ca]">
-          <p class="ml-1">
-            {
-              Math.round(
-                (homeTeamStats.passesCompleted / homeTeamStats.passes) * 1000,
-              ) /
-                10 +
-                '%'
-            }
-          </p>
-          <p class="flex-1 text-center">Pass accuracy</p>
-          <p class="mr-1">
-            {
-              Math.round(
-                (awayTeamStats.passesCompleted / awayTeamStats.passes) * 1000,
-              ) /
-                10 +
-                '%'
-            }
-          </p>
-        </div>
-        <div class="flex py-0.5 border-b border-[#c7c8ca]">
-          <p class="ml-1">{homeTeamStats.touches}</p>
-          <p class="flex-1 text-center">Touches</p>
-          <p class="mr-1">{awayTeamStats.touches}</p>
-        </div>
-        <div class="flex py-0.5 border-b border-[#c7c8ca]">
-          <p class="ml-1">{homeTeamStats.corners}</p>
-          <p class="flex-1 text-center">Corners</p>
-          <p class="mr-1">{awayTeamStats.corners}</p>
-        </div>
-        <div class="flex py-0.5 border-b border-[#c7c8ca]">
-          <p class="ml-1">{homeTeamStats.tackles}</p>
-          <p class="flex-1 text-center">Tackles</p>
-          <p class="mr-1">{awayTeamStats.tackles}</p>
-        </div>
-        <div class="flex py-0.5 border-b border-[#c7c8ca]">
-          <p class="ml-1">{homeTeamStats.clearances}</p>
-          <p class="flex-1 text-center">Clearances</p>
-          <p class="mr-1">{awayTeamStats.clearances}</p>
-        </div>
-        <div class="flex py-0.5 border-b border-[#c7c8ca]">
-          <p class="ml-1">{homeTeamStats.saves}</p>
-          <p class="flex-1 text-center">Saves</p>
-          <p class="mr-1">{awayTeamStats.saves}</p>
-        </div>
-        <div class="flex py-0.5 border-b border-[#c7c8ca]">
-          <p class="ml-1">{homeTeamStats.offsides}</p>
-          <p class="flex-1 text-center">Offsides</p>
-          <p class="mr-1">{awayTeamStats.offsides}</p>
-        </div>
-        <div class="flex py-0.5 border-b border-[#c7c8ca]">
-          <p class="ml-1">{homeTeamStats.fouls}</p>
-          <p class="flex-1 text-center">Fouls</p>
-          <p class="mr-1">{awayTeamStats.fouls}</p>
-        </div>
-        <div class="flex py-0.5 border-b border-[#c7c8ca]">
-          <p class="ml-1">{homeTeamStats.yellowCards}</p>
-          <p class="flex-1 text-center">Yellow cards</p>
-          <p class="mr-1">{awayTeamStats.yellowCards}</p>
-        </div>
-        <div class="flex py-0.5 border-b border-[#c7c8ca]">
-          <p class="ml-1">{homeTeamStats.redCards}</p>
-          <p class="flex-1 text-center">Red cards</p>
-          <p class="mr-1">{awayTeamStats.redCards}</p>
-        </div>
+        {
+          (homeTeamStats.shotsOnTarget || awayTeamStats.shotsOnTarget) && (
+            <div class="flex py-0.5 border-b border-[#c7c8ca]">
+              <p class="ml-1">{homeTeamStats.shotsOnTarget}</p>
+              <p class="flex-1 text-center">Shots on target</p>
+              <p class="mr-1">{awayTeamStats.shotsOnTarget}</p>
+            </div>
+          )
+        }
+        {
+          (homeTeamStats.shots || awayTeamStats.shots) && (
+            <div class="flex py-0.5 border-b border-[#c7c8ca]">
+              <p class="ml-1">{homeTeamStats.shots}</p>
+              <p class="flex-1 text-center">Shots</p>
+              <p class="mr-1">{awayTeamStats.shots}</p>
+            </div>
+          )
+        }
+        {
+          (homeTeamStats.bigChancesCreated ||
+            awayTeamStats.bigChancesCreated) && (
+            <div class="flex py-0.5 border-b border-[#c7c8ca]">
+              <p class="ml-1">{homeTeamStats.bigChancesCreated}</p>
+              <p class="flex-1 text-center">Big chances</p>
+              <p class="mr-1">{awayTeamStats.bigChancesCreated}</p>
+            </div>
+          )
+        }
+        {
+          (homeTeamStats.passes || awayTeamStats.passes) && (
+            <div class="flex py-0.5 border-b border-[#c7c8ca]">
+              <p class="ml-1">{homeTeamStats.passes}</p>
+              <p class="flex-1 text-center">Passes</p>
+              <p class="mr-1">{awayTeamStats.passes}</p>
+            </div>
+          )
+        }
+        {
+          (homeTeamStats.passesCompleted || awayTeamStats.passesCompleted) && (
+            <div class="flex py-0.5 border-b border-[#c7c8ca]">
+              <p class="ml-1">
+                {Math.round(
+                  (homeTeamStats.passesCompleted / homeTeamStats.passes) * 1000,
+                ) /
+                  10 +
+                  '%'}
+              </p>
+              <p class="flex-1 text-center">Pass accuracy</p>
+              <p class="mr-1">
+                {Math.round(
+                  (awayTeamStats.passesCompleted / awayTeamStats.passes) * 1000,
+                ) /
+                  10 +
+                  '%'}
+              </p>
+            </div>
+          )
+        }
+        {
+          (homeTeamStats.touches || awayTeamStats.touches) && (
+            <div class="flex py-0.5 border-b border-[#c7c8ca]">
+              <p class="ml-1">{homeTeamStats.touches}</p>
+              <p class="flex-1 text-center">Touches</p>
+              <p class="mr-1">{awayTeamStats.touches}</p>
+            </div>
+          )
+        }
+        {
+          (homeTeamStats.corners || awayTeamStats.corners) && (
+            <div class="flex py-0.5 border-b border-[#c7c8ca]">
+              <p class="ml-1">{homeTeamStats.corners}</p>
+              <p class="flex-1 text-center">Corners</p>
+              <p class="mr-1">{awayTeamStats.corners}</p>
+            </div>
+          )
+        }
+        {
+          (homeTeamStats.tackles || awayTeamStats.tackles) && (
+            <div class="flex py-0.5 border-b border-[#c7c8ca]">
+              <p class="ml-1">{homeTeamStats.tackles}</p>
+              <p class="flex-1 text-center">Tackles</p>
+              <p class="mr-1">{awayTeamStats.tackles}</p>
+            </div>
+          )
+        }
+        {
+          (homeTeamStats.clearances || awayTeamStats.clearances) && (
+            <div class="flex py-0.5 border-b border-[#c7c8ca]">
+              <p class="ml-1">{homeTeamStats.clearances}</p>
+              <p class="flex-1 text-center">Clearances</p>
+              <p class="mr-1">{awayTeamStats.clearances}</p>
+            </div>
+          )
+        }
+        {
+          (homeTeamStats.saves || awayTeamStats.saves) && (
+            <div class="flex py-0.5 border-b border-[#c7c8ca]">
+              <p class="ml-1">{homeTeamStats.saves}</p>
+              <p class="flex-1 text-center">Saves</p>
+              <p class="mr-1">{awayTeamStats.saves}</p>
+            </div>
+          )
+        }
+        {
+          (homeTeamStats.offsides || awayTeamStats.offsides) && (
+            <div class="flex py-0.5 border-b border-[#c7c8ca]">
+              <p class="ml-1">{homeTeamStats.offsides}</p>
+              <p class="flex-1 text-center">Offsides</p>
+              <p class="mr-1">{awayTeamStats.offsides}</p>
+            </div>
+          )
+        }
+        {
+          (homeTeamStats.fouls || awayTeamStats.fouls) && (
+            <div class="flex py-0.5 border-b border-[#c7c8ca]">
+              <p class="ml-1">{homeTeamStats.fouls}</p>
+              <p class="flex-1 text-center">Fouls</p>
+              <p class="mr-1">{awayTeamStats.fouls}</p>
+            </div>
+          )
+        }
+        {
+          (homeTeamStats.yellowCards || awayTeamStats.yellowCards) && (
+            <div class="flex py-0.5 border-b border-[#c7c8ca]">
+              <p class="ml-1">{homeTeamStats.yellowCards}</p>
+              <p class="flex-1 text-center">Yellow cards</p>
+              <p class="mr-1">{awayTeamStats.yellowCards}</p>
+            </div>
+          )
+        }
+        {
+          (homeTeamStats.redCards || awayTeamStats.redCards) && (
+            <div class="flex py-0.5 border-b border-[#c7c8ca]">
+              <p class="ml-1">{homeTeamStats.redCards}</p>
+              <p class="flex-1 text-center">Red cards</p>
+              <p class="mr-1">{awayTeamStats.redCards}</p>
+            </div>
+          )
+        }
       </div>
     </div>
   </Container>
