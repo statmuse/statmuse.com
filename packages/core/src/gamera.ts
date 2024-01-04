@@ -1037,6 +1037,8 @@ export interface EplTeamGameStats {
   offsides: string
   corners: string
   formation: SoccerFormation
+  clearances: string
+  bigChancesCreated: string
 }
 
 export interface EplHistoricalBoxScore extends DetailBase {
