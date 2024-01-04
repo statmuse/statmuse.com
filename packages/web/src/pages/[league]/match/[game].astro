@@ -392,11 +392,11 @@ Caching.swr(Astro)
 
               return (
                 <>
-                  {renderPlays(playsByPeriod['1st Half'])}
+                  {renderPlays(playsByPeriod['1st Half'] || [])}
                   <div class="text-center text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] py-1.5 border-b border-[#c7c8ca]">
                     half time
                   </div>
-                  {renderPlays(playsByPeriod['2nd Half'])}
+                  {renderPlays(playsByPeriod['2nd Half'] || [])}
                   <div class="text-center text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] py-1.5 border-b border-[#c7c8ca]">
                     full time
                   </div>
