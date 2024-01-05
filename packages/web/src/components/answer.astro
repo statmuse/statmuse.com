@@ -1,117 +1,74 @@
 ---
-import { getHeroProps } from '@lib/gamera'
-import Layout from '@layouts/main.astro'
-import Header from '@components/header.astro'
-import Hero from '@components/hero.astro'
-import Visuals from '@components/visuals.astro'
-import Explore from '@components/explore.astro'
-import Container from '@components/container.astro'
-import { type GameraDefaultResponse, tokensToText } from '@statmuse/core/gamera'
-import { title, description } from '@lib/meta'
-import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
+import ErrorLayout from '@layouts/error.astro'
+import AnswerVisual from '@components/answer-visual.astro'
+import AnswerPrompt from '@components/answer-prompt.astro'
+import AnswerEplBoxscore from '@components/epl/answer-boxscore.astro'
+import PlayerProfile from '../pages/[league]/player/[player]/index.astro'
+import TeamFranchiseProfile from '../pages/[league]/team/[team]/history.astro'
+import TeamSeasonProfile from '../pages/[league]/team/[team]/[year]/index.astro'
+import {
+  handleAskResponseFromPost,
+  tokensToText,
+  type GameraResponse,
+} from '@statmuse/core/gamera'
+import { clean } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
-import * as Link from '@statmuse/core/link'
-import AnswerCards from '@components/answer-cards.astro'
-import type { LeagueParam } from '@lib/params'
 
 interface Props {
-  answer: GameraDefaultResponse
+  data: GameraResponse
 }
 
-const { answer } = Astro.props
-const conversationToken = answer.conversation.token
+const { data } = Astro.props
+
+const handled = handleAskResponseFromPost(data)
 const query = clean(
-  tokensToText(
-    answer.visual.summaryTokens?.filter((t) => t.type !== 'inferred'),
-  ),
+  tokensToText(data.visual.summaryTokens?.filter((t) => t.type !== 'inferred')),
 )
-const preferredDomain = answer.visual.domain?.toLowerCase()
-const domain = answer.visual.domain
-const subject = answer.visual.summary.subject
-const heroProps = getHeroProps({ imageAlt: query, response: answer })
-const meta = {
-  title: title(query),
-  description: description(answer),
-  canonical: {
-    url: createAskPath({
-      domain: preferredDomain || '',
-      query,
-    }),
-    rewrite: true,
-  },
-  pageType: 'ask',
-  facebook: {
-    imageUrl:
-      heroProps?.imageUrl &&
-      imageForgeUrl({
-        url: heroProps.imageUrl,
-        bgColor: subject.colors?.background,
-        type: 'facebook',
-      }),
-  },
-  twitter: {
-    imageUrl:
-      heroProps?.imageUrl &&
-      imageForgeUrl({
-        url: heroProps.imageUrl,
-        bgColor: subject.colors?.background,
-        type: 'twitter',
-      }),
-  },
-}
-
-const code = await Link.askShortCode(query, preferredDomain || '')
 ---
 
-<Layout
-  colors={subject?.colors}
-  {meta}
+<ErrorLayout
+  render={data.type === 'error'}
+  status={422}
+  message={tokensToText(data.visual.summary.answer)}
+  {query}
   analytics={{
     is_search: true,
     page_type: 'ask',
-    page_domain: preferredDomain as AnalyticsPageviewProperties['page_domain'],
-    disposition: answer.disposition,
-    tokenizationScore: answer.tokenizationScore,
+    page_domain:
+      data.type === 'error'
+        ? (data.visual.domain?.toLowerCase() as AnalyticsPageviewProperties['page_domain'])
+        : undefined,
+    disposition: data.disposition,
+    tokenizationScore: data.tokenizationScore,
     query,
   }}
 >
-  <Header
-    {query}
-    {conversationToken}
-    {preferredDomain}
-    share={preferredDomain
-      ? {
-          type: 'ask',
-          shortCode: code?.short_code,
-          query,
-          domain: preferredDomain,
-        }
-      : undefined}
-    audioUrl={answer.visual.summary.narrator?.answerWithIntroAudioUrl ||
-      answer.visual.summary.narrator?.answerAudioUrl}
-  />
   {
-    heroProps ? (
-      <Hero
-        {...heroProps}
-        shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`}
+    data.type === 'nlgPromptForMoreInfoVisualChoicesOptional' ? (
+      <AnswerPrompt answer={data} />
+    ) : handled.type === 'player' ? (
+      <PlayerProfile
+        query={handled.query}
+        player={handled.player}
+        league={handled.league}
       />
-    ) : null
+    ) : handled.type === 'teamSeason' ? (
+      <TeamSeasonProfile
+        query={handled.query}
+        team={handled.team}
+        league={handled.league}
+        year={handled.year}
+      />
+    ) : handled.type === 'teamFranchise' ? (
+      <TeamFranchiseProfile
+        query={handled.query}
+        team={handled.team}
+        league={handled.league}
+      />
+    ) : handled.type === 'eplHistoricalBoxScore' ? (
+      <AnswerEplBoxscore data={handled.data} />
+    ) : data.type === 'nlgAnswerNotPossibleVisualsRequired' ? (
+      <AnswerVisual answer={data} />
+    ) : undefined
   }
-  <Visuals response={answer} {conversationToken} />
-  <Container>
-    <Explore
-      league={domain === 'EPL' ? 'fc' : preferredDomain}
-      additionalQuestions={answer.visual.additionalQuestions}
-    />
-  </Container>
-  {
-    preferredDomain && (
-      <Container>
-        <AnswerCards
-          league={domain === 'EPL' ? 'fc' : (preferredDomain as LeagueParam)}
-        />
-      </Container>
-    )
-  }
-</Layout>
+</ErrorLayout>

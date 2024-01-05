@@ -1,5 +1,5 @@
 import type {
-  GameraDomain,
+  GameraEplBoxScore,
   GameraMlbBoxScore,
   GameraNbaBoxScore,
   GameraNflBoxScore,
@@ -14,10 +14,13 @@ interface Response {
   NFL: GameraNflBoxScore
   MLB: GameraMlbBoxScore
   NHL: GameraNhlBoxScore
+  EPL: GameraEplBoxScore
   PGA: never
 }
 
-export async function getGame<T extends GameraDomain>(props: {
+type Domain = keyof Response
+
+export async function getGame<T extends Domain>(props: {
   context: Context
   domain: T
   game: string
