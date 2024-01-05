@@ -1,25 +1,13 @@
 ---
-import Layout from '@layouts/main.astro'
-import Error from '@layouts/error.astro'
-import Header from '@components/header.astro'
-import Hero from '@components/hero.astro'
-import Visuals from '@components/visuals.astro'
-import Explore from '@components/explore.astro'
-import Container from '@components/container.astro'
+import Answer from '@components/answer.astro'
 import {
   type GameraDefaultResponse,
   handleResponse,
-  tokensToText,
 } from '@statmuse/core/gamera'
-import { ask, getHeroProps } from '@lib/gamera'
-import { description, title } from '@lib/meta'
-import { clean, imageForgeUrl } from '@statmuse/core/path'
-import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import { ask } from '@lib/gamera'
 import { Caching } from '@lib/caching'
 import * as Enforcer from '@lib/enforcer'
-import * as Link from '@statmuse/core/link'
 import { NOT_FOUND_404 } from '@lib/response'
-import AnswerCards from '@components/answer-cards.astro'
 import { type LeagueParam, leagueToDomain } from '@lib/params'
 
 const league = Astro.params.league as LeagueParam
@@ -40,102 +28,10 @@ const response = (await ask({ query: question, league: domain }, Astro)) as
   | undefined
 if (!response) return NOT_FOUND_404
 
-const { subject, redirectUrl, conversationToken } = handleResponse(response)
+const { redirectUrl } = handleResponse(response)
 if (redirectUrl) return Astro.redirect(redirectUrl)
-
-const query = clean(
-  tokensToText(
-    response.visual.summaryTokens?.filter((t) => t.type !== 'inferred'),
-  ),
-)
-const heroProps = getHeroProps({ imageAlt: query, response })
-
-const code = await Link.askShortCode(query, domain)
-
-const meta =
-  response.type !== 'error'
-    ? {
-        title: title(query),
-        description: description(response),
-        facebook: {
-          imageUrl:
-            heroProps?.imageUrl &&
-            imageForgeUrl({
-              url: heroProps.imageUrl,
-              bgColor: subject.colors?.background,
-              type: 'facebook',
-            }),
-        },
-        twitter: {
-          imageUrl:
-            heroProps?.imageUrl &&
-            imageForgeUrl({
-              url: heroProps.imageUrl,
-              bgColor: subject.colors?.background,
-              type: 'twitter',
-            }),
-        },
-      }
-    : {}
 
 Caching.swr(Astro)
 ---
 
-<Error
-  render={response.type === 'error'}
-  status={422}
-  message={tokensToText(response.visual.summary.answer)}
-  {query}
-  analytics={{
-    is_search: true,
-    page_type: 'ask',
-    page_domain: domain as AnalyticsPageviewProperties['page_domain'],
-    disposition: response.disposition,
-    tokenizationScore: response.tokenizationScore,
-    query,
-  }}
->
-  <Layout
-    {meta}
-    colors={subject?.colors}
-    analytics={{
-      is_search: true,
-      page_type: 'ask',
-      page_domain: domain as AnalyticsPageviewProperties['page_domain'],
-      disposition: response.disposition,
-      tokenizationScore: response.tokenizationScore,
-      query,
-    }}
-  >
-    <Header
-      {query}
-      {conversationToken}
-      preferredDomain={domain}
-      share={{ type: 'ask', shortCode: code?.short_code, url: Astro.url.href }}
-      audioUrl={response.visual.summary.narrator?.answerWithIntroAudioUrl ||
-        response.visual.summary.narrator?.answerAudioUrl}
-    />
-    {
-      heroProps ? (
-        <Hero
-          {...heroProps}
-          shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`}
-        />
-      ) : null
-    }
-    <Visuals {response} {conversationToken} />
-    <Container>
-      <Explore
-        {league}
-        additionalQuestions={response.visual.additionalQuestions}
-      />
-    </Container>
-    {
-      league && (
-        <Container>
-          <AnswerCards {league} />
-        </Container>
-      )
-    }
-  </Layout>
-</Error>
+<Answer data={response} />
