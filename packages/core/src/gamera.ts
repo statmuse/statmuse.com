@@ -84,6 +84,18 @@ export function handleAskResponseFromPost(response: GameraResponse) {
     }
   }
 
+  const eplBoxscore = response.visual.detail?.find(
+    (d) => d.type === 'eplHistoricalBoxScore',
+  ) as EplHistoricalBoxScore
+
+  if (eplBoxscore) {
+    return {
+      query,
+      type: eplBoxscore.type,
+      data: response as GameraEplBoxScore,
+    }
+  }
+
   return { query }
 }
 
