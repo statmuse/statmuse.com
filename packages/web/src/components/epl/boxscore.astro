@@ -53,6 +53,17 @@ const awayGoals = plays.filter(
     (p.eventType === 'own_goal' && p.team === homeTeam.name),
 )
 
+const homeReds = plays.filter(
+  (p) =>
+    (p.eventType === 'red_card' || p.eventType === 'yellow_red_card') &&
+    p.team === homeTeam.name,
+)
+const awayReds = plays.filter(
+  (p) =>
+    (p.eventType === 'red_card' || p.eventType === 'yellow_red_card') &&
+    p.team === awayTeam.name,
+)
+
 const homeTeamGoals = plays
   .filter(
     (p) =>
@@ -220,34 +231,59 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       </EntityLink>
     </div>
   </div>
-  <div class="flex items-start justify-center">
-    <div class="flex-1 text-right mx-0.5">
-      {
-        homeGoals.map((play) => (
-          <p class="text-sm">{`${lastName(play.playerName)} ${play.minute}${
-            play.eventType === 'own_goal'
-              ? ' (OG)'
-              : play.eventType === 'penalty_goal'
-              ? ' (PK)'
-              : ''
-          }`}</p>
-        ))
-      }
-    </div>
-    <Goal class="w-5 shrink-0 mx-4 md:mx-24" color="#000" />
-    <div class="flex-1 mx-0.5">
-      {
-        awayGoals.map((play) => (
-          <p class="text-sm">{`${lastName(play.playerName)} ${play.minute}${
-            play.eventType === 'own_goal'
-              ? ' (OG)'
-              : play.eventType === 'penalty_goal'
-              ? ' (PK)'
-              : ''
-          }`}</p>
-        ))
-      }
-    </div>
+  <div>
+    {
+      (homeGoals.length > 0 || awayGoals.length > 0) && (
+        <div class="flex items-start justify-center">
+          <div class="flex-1 text-right mx-0.5">
+            {homeGoals.map((play) => (
+              <p class="text-sm">{`${lastName(play.playerName)} ${play.minute}${
+                play.eventType === 'own_goal'
+                  ? ' (OG)'
+                  : play.eventType === 'penalty_goal'
+                  ? ' (PK)'
+                  : ''
+              }`}</p>
+            ))}
+          </div>
+          <Goal class="w-5 shrink-0 mx-4 md:mx-24" color="#000" />
+          <div class="flex-1 mx-0.5">
+            {awayGoals.map((play) => (
+              <p class="text-sm">{`${lastName(play.playerName)} ${play.minute}${
+                play.eventType === 'own_goal'
+                  ? ' (OG)'
+                  : play.eventType === 'penalty_goal'
+                  ? ' (PK)'
+                  : ''
+              }`}</p>
+            ))}
+          </div>
+        </div>
+      )
+    }
+    {
+      (homeReds.length > 0 || awayReds.length > 0) && (
+        <div class="flex items-start justify-center">
+          <div class="flex-1 text-right mx-0.5">
+            {homeReds.map((play) => (
+              <p class="text-sm">{`${lastName(play.playerName)} ${
+                play.minute
+              }`}</p>
+            ))}
+          </div>
+          <div class="w-5 h-5 shrink-0 mx-4 md:mx-24">
+            <span class="block w-4 h-5 mx-auto bg-red-600" />
+          </div>
+          <div class="flex-1 mx-0.5">
+            {awayReds.map((play) => (
+              <p class="text-sm">{`${lastName(play.playerName)} ${
+                play.minute
+              }`}</p>
+            ))}
+          </div>
+        </div>
+      )
+    }
   </div>
 </Container>
 <Container>
