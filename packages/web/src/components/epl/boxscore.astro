@@ -394,7 +394,60 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                   ) : play.eventType === 'substitution' ? (
                     <Substitution class="w-5 mx-2 shrink-0" />
                   ) : null}
-                  {play.eventType !== 'substitution' ? (
+                  {play.eventType === 'substitution' ? (
+                    <div
+                      class:list={{
+                        'text-right': play.side === 'away',
+                      }}
+                    >
+                      <EntityLink
+                        class="text-[#00a14b] block"
+                        entity={playerEntityMap[play.playerName]}
+                      >
+                        {play.playerName}
+                      </EntityLink>
+
+                      <EntityLink
+                        class="text-[#ed1c24] block"
+                        entity={playerEntityMap[play.relatedPlayerName]}
+                      >
+                        {play.relatedPlayerName}
+                      </EntityLink>
+                    </div>
+                  ) : play.eventType === 'goal' ||
+                    play.eventType === 'penalty_goal' ||
+                    play.eventType === 'own_goal' ? (
+                    <div
+                      class:list={{
+                        'text-right': play.side === 'away',
+                      }}
+                    >
+                      <p>
+                        <EntityLink
+                          class="text-current"
+                          entity={playerEntityMap[play.playerName]}
+                        >
+                          {play.playerName}
+                        </EntityLink>
+                        {play.eventType === 'own_goal'
+                          ? ' (OG)'
+                          : play.eventType === 'penalty_goal'
+                          ? ' (PK)'
+                          : ''}
+                      </p>
+                      {play.relatedPlayerName && (
+                        <p class="text-[#969ca1]">
+                          Assist:{' '}
+                          <EntityLink
+                            class="text-current"
+                            entity={playerEntityMap[play.relatedPlayerName]}
+                          >
+                            {play.relatedPlayerName}
+                          </EntityLink>
+                        </p>
+                      )}
+                    </div>
+                  ) : (
                     <p>
                       <EntityLink
                         class="text-current"
@@ -408,29 +461,6 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                         ? ' (PK)'
                         : ''}
                     </p>
-                  ) : (
-                    <div
-                      class:list={{
-                        'text-right': play.side === 'away',
-                      }}
-                    >
-                      <p class="text-[#00a14b]">
-                        <EntityLink
-                          class="text-current"
-                          entity={playerEntityMap[play.playerName]}
-                        >
-                          {play.playerName}
-                        </EntityLink>
-                      </p>
-                      <p class="text-[#ed1c24]">
-                        <EntityLink
-                          class="text-current"
-                          entity={playerEntityMap[play.relatedPlayerName]}
-                        >
-                          {play.relatedPlayerName}
-                        </EntityLink>
-                      </p>
-                    </div>
                   )}
                 </div>
               ))
