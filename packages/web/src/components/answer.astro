@@ -3,9 +3,9 @@ import ErrorLayout from '@layouts/error.astro'
 import AnswerVisual from '@components/answer-visual.astro'
 import AnswerPrompt from '@components/answer-prompt.astro'
 import AnswerEplBoxscore from '@components/epl/answer-boxscore.astro'
-import PlayerProfile from '../pages/[league]/player/[player]/index.astro'
-import TeamFranchiseProfile from '../pages/[league]/team/[team]/history.astro'
-import TeamSeasonProfile from '../pages/[league]/team/[team]/[year]/index.astro'
+import PlayerProfile from '@components/player-profile.astro'
+import TeamFranchiseProfile from '@components/team-franchise-profile.astro'
+import TeamSeasonProfile from '@components/team-season-profile.astro'
 import {
   handleAskResponseFromPost,
   tokensToText,
@@ -13,6 +13,7 @@ import {
 } from '@statmuse/core/gamera'
 import { clean } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import type { LeagueParam } from '@lib/params'
 
 interface Props {
   data: GameraResponse
@@ -50,20 +51,20 @@ const query = clean(
       <PlayerProfile
         query={handled.query}
         player={handled.player}
-        league={handled.league}
+        league={handled.league as LeagueParam}
       />
     ) : handled.type === 'teamSeason' ? (
       <TeamSeasonProfile
         query={handled.query}
         team={handled.team}
-        league={handled.league}
+        league={handled.league as LeagueParam}
         year={handled.year}
       />
     ) : handled.type === 'teamFranchise' ? (
       <TeamFranchiseProfile
         query={handled.query}
         team={handled.team}
-        league={handled.league}
+        league={handled.league as LeagueParam}
       />
     ) : handled.type === 'eplHistoricalBoxScore' ? (
       <AnswerEplBoxscore data={handled.data} />
