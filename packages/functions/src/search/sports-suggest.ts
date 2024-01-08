@@ -51,6 +51,14 @@ const pgaExamples = [
   'Highest FWY% by Phil Mickelson in a season?',
 ].map((display) => ({ type: 'answer', league: 'pga', display }))
 
+const eplExamples = [
+  'Most G+A by a player under 21 this season?',
+  'Score of the last North London derby?',
+  'Who leads the league in big chances created?',
+  'Which active right winger has the most career hat tricks?',
+  'All-time Man United goal scorer',
+].map((display) => ({ type: 'answer', league: 'epl', display }))
+
 const examples = {
   fantasy: fantasyExamples,
   nba: nbaExamples,
@@ -58,6 +66,7 @@ const examples = {
   nhl: nhlExamples,
   mlb: mlbExamples,
   pga: pgaExamples,
+  epl: eplExamples,
 }
 
 type League = keyof typeof examples
@@ -76,16 +85,6 @@ export const handler = ApiHandler(async (_evt) => {
   const query = useQueryParam('query') as string
   const league = useQueryParam('league') as League
   const userId = useQueryParam('userId')
-
-  if (league === 'epl') {
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        sections: [],
-        timestamp: new Date().toISOString(),
-      }),
-    }
-  }
 
   let history: Partial<AskDocument>[] = []
   if (userId) {
