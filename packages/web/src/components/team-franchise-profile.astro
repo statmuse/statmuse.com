@@ -1,0 +1,85 @@
+---
+import FranchiseLayout from '@layouts/franchise.astro'
+import Grid from '@components/grid.astro'
+import TeamLeaders from '@components/leaders.astro'
+import PlayerGallery from '@components/gallery.astro'
+import { getUrlForEntity } from '@statmuse/core/gamera'
+import { getTeamFranchiseOverview } from '@lib/team'
+import { getLeagueKeywords } from '@lib/meta'
+import { NOT_FOUND_404 } from '@lib/response'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
+
+interface Props {
+  league: LeagueParam
+  team: string
+  query?: string
+}
+
+const query = Astro.props.query
+const team = Astro.props.team
+const leagueParam = Astro.props.league
+if (!team || !leagueParam) return NOT_FOUND_404
+
+const domain = leagueToDomain(leagueParam)
+const overview = await getTeamFranchiseOverview({
+  context: Astro,
+  domain,
+  team,
+})
+if (!overview) return NOT_FOUND_404
+
+const { bio, teamHistory, franchiseInfo, franchiseLeaders, playerGallery } =
+  overview
+
+const title = `${bio.name} Team History`
+const description = `The ${bio.name} team history for the ${domain} regular season and playoffs`
+const keywords = `${getLeagueKeywords(domain)} ${
+  bio.name
+} team history stats statistics`
+const canonical = {
+  url: `${getUrlForEntity({
+    type: 'teamSeason',
+    domain,
+    id: overview.teamId.toString(),
+    display: bio.name,
+  })}/history`,
+  rewrite: true,
+}
+const meta = { title, description, keywords, canonical }
+---
+
+<FranchiseLayout {overview} {meta} {query} page="history">
+  <div class="space-y-5 mb-5">
+    {
+      teamHistory && (
+        <Grid
+          data={teamHistory}
+          columnStyles={{
+            POSTSEASON: 'text-left',
+            CHAMPION: 'w-2',
+            default: 'text-center w-20',
+          }}
+        />
+      )
+    }
+    <div
+      class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 mb-5"
+    >
+      {franchiseInfo && <Grid data={franchiseInfo} class="mb-5" />}
+      {
+        franchiseLeaders && (
+          <TeamLeaders
+            leaders={franchiseLeaders}
+            title="Franchise Leaders"
+            class="mb-5"
+          />
+        )
+      }
+    </div>
+    {
+      playerGallery && playerGallery.length > 0 && (
+        <PlayerGallery images={playerGallery} class="mb-5" />
+      )
+    }
+  </div>
+</FranchiseLayout>

@@ -1,0 +1,125 @@
+---
+import PlayerLayout from '@layouts/player.astro'
+import Grid from '@components/grid.astro'
+import PlayerGallery from '@components/gallery.astro'
+import {
+  tokensToText,
+  tokensToHtml,
+  getUrlForEntity,
+} from '@statmuse/core/gamera'
+import { getPlayerProfile, getPositionName } from '@lib/player'
+import { getLeagueKeywords } from '@lib/meta'
+import { NOT_FOUND_404 } from '@lib/response'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
+
+interface Props {
+  league: LeagueParam
+  player: string
+  query?: string
+}
+
+const query = Astro.props.query
+const player = Astro.props.player
+const leagueParam = Astro.props.league
+
+if (!player || !leagueParam) return NOT_FOUND_404
+
+const domain = leagueToDomain(leagueParam)
+const profile = await getPlayerProfile(Astro, domain, player)
+if (!profile) return NOT_FOUND_404
+
+const { bio, stats, recentGames, nextGame } = profile
+
+const isNextGameHome =
+  profile.bio.team?.abbreviation === nextGame?.homeTeam.abbreviation
+
+const summary = bio.summaryNlg ? tokensToHtml(bio.summaryNlg) : undefined
+const playerPath = getUrlForEntity({
+  type: 'player',
+  domain: bio.domain,
+  id: bio.playerId.toString(),
+  display: bio.usedName,
+})
+
+const position = getPositionName(bio)
+const title = `${bio.usedName} - ${bio.team?.name || bio.domain} ${
+  position || 'Player'
+}`
+const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
+const keywords = `${getLeagueKeywords(domain)} ${
+  bio.usedName
+} career stats statistics`
+const canonical = { url: playerPath, rewrite: true }
+const meta = { title, description, keywords, canonical }
+---
+
+<PlayerLayout
+  {bio}
+  {meta}
+  league={domain.toLowerCase() === 'epl' ? 'fc' : leagueParam}
+  {query}
+  page="overview"
+>
+  <div>
+    <div class="mb-5 leading-snug">
+      <p set:html={summary} />
+    </div>
+    <div class="mb-5">
+      {
+        nextGame?.grid && (
+          <Grid
+            class="mb-5"
+            data={nextGame.grid}
+            title={`Next Game ${isNextGameHome ? 'vs' : '@'} ${
+              isNextGameHome
+                ? nextGame.awayTeam.abbreviation
+                : nextGame.homeTeam.abbreviation
+            }`}
+          />
+        )
+      }
+      {
+        stats?.grid && (
+          <Grid
+            class="mb-5"
+            seeAllUrl={`${playerPath}/career-stats`}
+            data={stats.grid}
+          />
+        )
+      }
+      {
+        recentGames?.grid && (
+          <Grid
+            class="mb-5"
+            seeAllUrl={
+              domain.toLowerCase() === 'epl'
+                ? `${playerPath}/matches`
+                : `${playerPath}/game-log`
+            }
+            data={recentGames.grid}
+            columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+          />
+        )
+      }
+      {
+        recentGames?.columns && recentGames?.rows && (
+          <Grid
+            class="mb-5"
+            seeAllUrl={
+              domain.toLowerCase() === 'epl'
+                ? `${playerPath}/matches`
+                : `${playerPath}/game-log`
+            }
+            data={recentGames}
+            columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+          />
+        )
+      }
+      {
+        bio.bustImageUrlGallery.length ? (
+          <PlayerGallery images={bio.bustImageUrlGallery} class="mb-5" />
+        ) : null
+      }
+    </div>
+  </div>
+</PlayerLayout>
