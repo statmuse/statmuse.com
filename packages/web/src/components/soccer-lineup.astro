@@ -9,6 +9,7 @@ import type {
 import Goal from '@components/icons/goal.astro'
 import SubArrow from '@components/icons/sub-arrow.astro'
 import EntityLink from '@components/entity-link.astro'
+import Captain from '@components/icons/captain.astro'
 
 interface TeamLineup {
   name: string
@@ -354,9 +355,7 @@ const awayLineup = lineupFormation(
                     {lastName(player.entity.display)}
                   </span>
                   {player.isCaptain ? (
-                    <span class="ml-0.5 w-3 h-3 rounded-full text-[8px] text-[#7fd3a6] bg-black flex items-center justify-center shrink-0">
-                      C
-                    </span>
+                    <Captain class="ml-0.5 w-3 h-3 shrink-0" />
                   ) : null}
                 </p>
               </div>
@@ -432,9 +431,7 @@ const awayLineup = lineupFormation(
                     {lastName(player.entity.display)}
                   </span>
                   {player.isCaptain ? (
-                    <span class="ml-0.5 w-3 h-3 rounded-full text-[8px] text-[#7fd3a6] bg-black flex items-center justify-center shrink-0">
-                      C
-                    </span>
+                    <Captain class="ml-0.5 w-3 h-3 shrink-0" />
                   ) : null}
                 </p>
               </div>
