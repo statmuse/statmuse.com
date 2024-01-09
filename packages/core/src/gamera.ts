@@ -111,6 +111,17 @@ const parameterize = (text: string) => {
   return text.replaceAll(' ', '-').replaceAll('/', '-').toLowerCase()
 }
 
+const arrangeTeamInfo = (text: string) => {
+  const gameDisplayRegex = /(.*)\s(.*)\s@\s(.*)/
+  if (gameDisplayRegex.test(text)) {
+    const [_all, date, awayTeam, homeTeam] = Array.from(
+      text.match(gameDisplayRegex) || [],
+    )
+    return `${date} ${homeTeam} vs ${awayTeam}`
+  }
+  return ''
+}
+
 export const getDomain = (response: GameraResponse) => {
   try {
     return (
@@ -247,9 +258,13 @@ export const getUrlForEntity = (entity: GameraEntity) => {
       )}-${id}/history`
       break
     case 'game':
-      url = `/${league}/${isEpl ? 'match' : 'game'}/${parameterize(
-        display.replaceAll(' @ ', ' at '),
-      )}-${id}`
+      if (isEpl) {
+        url = `/${league}/match/${parameterize(arrangeTeamInfo(display))}-${id}`
+      } else {
+        url = `/${league}/game/${parameterize(
+          display.replaceAll(' @ ', ' at '),
+        )}-${id}`
+      }
       break
     default:
       throw new Error('Unknown entity type: ' + type)
