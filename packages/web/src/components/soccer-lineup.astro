@@ -291,7 +291,11 @@ const awayLineup = lineupFormation(
     <div class="flex-1 flex flex-col justify-between py-2.5">
       {
         homeLineup.map((line) => (
-          <div class="flex justify-center gap-10">
+          <div
+            class={`flex justify-center ${
+              line.length < 5 ? ' gap-10' : 'gap-8'
+            }`}
+          >
             {line.map((player) => (
               <div class="w-10 flex flex-col items-center">
                 <EntityLink class="hover:no-underline" entity={player.entity}>
@@ -367,7 +371,11 @@ const awayLineup = lineupFormation(
     <div class="flex-1 flex flex-col-reverse justify-between py-2.5">
       {
         awayLineup.map((line) => (
-          <div class="flex flex-row-reverse justify-center gap-10">
+          <div
+            class={`flex flex-row-reverse justify-center ${
+              line.length < 5 ? ' gap-10' : 'gap-8'
+            }`}
+          >
             {line.map((player) => (
               <div class="w-10 flex flex-col items-center">
                 <EntityLink class="hover:no-underline" entity={player.entity}>
