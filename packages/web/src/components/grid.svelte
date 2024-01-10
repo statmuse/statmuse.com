@@ -15,6 +15,12 @@
   export let stickyColumns: string[] = []
   export let limitRows: boolean = false
   export let fullWidth: boolean = true
+  export let columnStyles = {}
+
+  const styles = Object.assign(
+    { ALIGNMENT: 'w-2', SEASON: 'text-center' },
+    columnStyles,
+  ) as Record<string, string>
 
   let sortKey = ''
   let sortOrder: 'asc' | 'desc'
@@ -76,6 +82,11 @@
       default:
         return 'text-center'
     }
+  }
+
+  const applyStyles = (col: Column) => {
+    const style = styles[col.rowItemKey] || styles['default']
+    return `${textAlign(col)} ${style ?? ''}`
   }
 
   const imgClass = ({ imageUrl = '', entity }: Row) => {
@@ -154,7 +165,7 @@
             {#each columns as col (row[col.rowItemKey])}
               {@const { display, imageUrl } = row[col.rowItemKey]}
               <td
-                class={`${textAlign(col)} px-2`}
+                class={`${applyStyles(col)} px-2`}
                 class:py-1={!imageUrl}
                 class:sticky={col.sticky}
                 class:left-0={col.sticky}
@@ -184,13 +195,17 @@
                     {display}
                   </div>
                 {:else if dateRegex.test(display)}
-                  {@const [, day, date] = display.match(dateRegex)}
+                  {@const [, day, date] = Array.from(
+                    display.match(dateRegex) || [],
+                  )}
                   <div class="flex">
                     <div class="w-8">{day}</div>
                     <div>{date}</div>
                   </div>
                 {:else if scoreRegex.test(display)}
-                  {@const [, result, score] = display.match(scoreRegex)}
+                  {@const [, result, score] = Array.from(
+                    display.match(scoreRegex) || [],
+                  )}
                   <div class="flex">
                     <div class="w-5">{result}</div>
                     <div>{score}</div>
