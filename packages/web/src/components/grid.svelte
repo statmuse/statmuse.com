@@ -2,6 +2,7 @@
   import { orderBy, some } from 'lodash-es'
   import { session } from '@lib/session-store'
   import type { GameraGrid } from '@statmuse/core/gamera'
+  import EntityLink from '@components/entity-link.svelte'
 
   const freeRowLimit = 25
 
@@ -163,7 +164,7 @@
         {#each rows as row (row)}
           <tr>
             {#each columns as col (row[col.rowItemKey])}
-              {@const { display, imageUrl } = row[col.rowItemKey]}
+              {@const { display, imageUrl, entity } = row[col.rowItemKey]}
               <td
                 class={`${applyStyles(col)} px-2`}
                 class:py-1={!imageUrl}
@@ -173,46 +174,48 @@
                 class:bg-[#fffbec]={sortKey.includes(col.rowItemKey)}
                 class:w-2={imageUrl}
               >
-                {#if col.rowItemKey === 'IMAGE'}
-                  {#if imageUrl}
-                    <img
-                      src={imageUrl}
-                      alt={display}
-                      class={imgClass(row[col.rowItemKey])}
-                    />
-                  {/if}
-                {:else if col.hasImage}
-                  <div class="flex items-center">
+                <EntityLink {entity}>
+                  {#if col.rowItemKey === 'IMAGE'}
                     {#if imageUrl}
                       <img
                         src={imageUrl}
                         alt={display}
-                        class={`${imgClass(row[col.rowItemKey])} mr-2.5`}
+                        class={imgClass(row[col.rowItemKey])}
                       />
-                    {:else}
-                      <div class="w-4 h-4 mr-2.5" />
                     {/if}
+                  {:else if col.hasImage}
+                    <div class="flex items-center">
+                      {#if imageUrl}
+                        <img
+                          src={imageUrl}
+                          alt={display}
+                          class={`${imgClass(row[col.rowItemKey])} mr-2.5`}
+                        />
+                      {:else}
+                        <div class="w-4 h-4 mr-2.5" />
+                      {/if}
+                      {display}
+                    </div>
+                  {:else if dateRegex.test(display)}
+                    {@const [, day, date] = Array.from(
+                      display.match(dateRegex) || [],
+                    )}
+                    <div class="flex">
+                      <div class="w-8">{day}</div>
+                      <div>{date}</div>
+                    </div>
+                  {:else if scoreRegex.test(display)}
+                    {@const [, result, score] = Array.from(
+                      display.match(scoreRegex) || [],
+                    )}
+                    <div class="flex">
+                      <div class="w-5">{result}</div>
+                      <div>{score}</div>
+                    </div>
+                  {:else}
                     {display}
-                  </div>
-                {:else if dateRegex.test(display)}
-                  {@const [, day, date] = Array.from(
-                    display.match(dateRegex) || [],
-                  )}
-                  <div class="flex">
-                    <div class="w-8">{day}</div>
-                    <div>{date}</div>
-                  </div>
-                {:else if scoreRegex.test(display)}
-                  {@const [, result, score] = Array.from(
-                    display.match(scoreRegex) || [],
-                  )}
-                  <div class="flex">
-                    <div class="w-5">{result}</div>
-                    <div>{score}</div>
-                  </div>
-                {:else}
-                  {display}
-                {/if}
+                  {/if}
+                </EntityLink>
               </td>
             {/each}
           </tr>
