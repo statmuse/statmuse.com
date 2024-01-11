@@ -63,10 +63,12 @@ Caching.swr(Astro)
             client:load
             data={teamHistory}
             columnStyles={{
-              POSTSEASON: 'text-left',
+              SEASON: 'text-center w-20',
+              POSTSEASON: 'text-left w-20',
               CHAMPION: 'w-2',
               default: 'text-center w-20',
             }}
+            fullWidth={false}
           />
         </div>
       )
