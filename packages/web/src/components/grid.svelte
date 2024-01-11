@@ -17,6 +17,8 @@
   export let limitRows: boolean = false
   export let fullWidth: boolean = true
   export let columnStyles = {}
+  export let padding = 'px-2'
+  export let head = true
 
   const styles = Object.assign(
     { ALIGNMENT: 'w-2', SEASON: 'text-center' },
@@ -112,7 +114,7 @@
     sortKey = `${key}.value`
   }
 
-  const onClickExpand = (e) => {
+  const onClickExpand = (e: Event) => {
     e.preventDefault()
     expand = !expand
   }
@@ -166,7 +168,7 @@
             {#each columns as col (row[col.rowItemKey])}
               {@const { display, imageUrl, entity } = row[col.rowItemKey]}
               <td
-                class={`${applyStyles(col)} px-2`}
+                  class={`${applyStyles(col)} ${padding}`}
                 class:py-1={!imageUrl}
                 class:sticky={col.sticky}
                 class:left-0={col.sticky}
@@ -227,7 +229,7 @@
             <tr class="border-t border-[#c7c8ca]/30">
               {#each columns as col}
                 <td
-                  class={`${textAlign(col)} px-2 py-1`}
+                    class={`${textAlign(col)} ${padding} py-1`}
                   class:sticky={col.sticky}
                   class:left-0={col.sticky}
                   class:bg-white={col.sticky}
