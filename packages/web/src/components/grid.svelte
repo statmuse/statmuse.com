@@ -12,7 +12,7 @@
   }
   type Row = GameraGrid['rows'][0][string]
 
-  export let data: GameraGrid
+  export let data: GameraGrid | GameraGrid[]
   export let stickyColumns: string[] = []
   export let limitRows: boolean = false
   export let fullWidth: boolean = true
@@ -29,50 +29,58 @@
   let sortOrder: 'asc' | 'desc'
   let expand = false
 
-  let columns = data.columns.flatMap((col) => {
-    const isSticky = stickyColumns.includes(col.rowItemKey)
-    const hasImage = some(data.rows, `${col.rowItemKey}.imageUrl`)
+  let grids = (Array.isArray(data) ? data : [data]).map((grid) => {
+    let columns = grid.columns.flatMap((col) => {
+      const isSticky = stickyColumns.includes(col.rowItemKey)
+      const hasImage = some(grid.rows, `${col.rowItemKey}.imageUrl`)
 
-    if (isSticky && hasImage) {
-      return [
-        { rowItemKey: 'IMAGE', title: '', type: 'string' },
-        { ...col, sticky: true },
-      ]
-    }
-
-    if (isSticky) {
-      return { ...col, sticky: true }
-    }
-
-    if (hasImage) {
-      return { ...col, hasImage: true }
-    }
-
-    return col
-  }) as Column[]
-
-  if (!some(columns, 'sticky')) {
-    const [firstColumn, ...rest] = columns
-    columns = [{ ...firstColumn, sticky: true }, ...rest]
-  }
-
-  const allRows = data.rows.map((row) =>
-    stickyColumns.reduce((r, key) => {
-      if (r[key]?.imageUrl) {
-        return {
-          ...r,
-          [key]: {
-            ...r[key],
-            imageUrl: undefined,
-          },
-          IMAGE: r[key],
-        }
+      if (isSticky && hasImage) {
+        return [
+          { rowItemKey: 'IMAGE', title: '', type: 'string' },
+          { ...col, sticky: true },
+        ]
       }
-      return r
-    }, row),
-  )
 
-  let rows = limitRows ? allRows.slice(0, 25) : allRows
+      if (isSticky) {
+        return { ...col, sticky: true }
+      }
+
+      if (hasImage) {
+        return { ...col, hasImage: true }
+      }
+
+      return col
+    }) as Column[]
+
+    if (!some(columns, 'sticky')) {
+      const [firstColumn, ...rest] = columns
+      columns = [{ ...firstColumn, sticky: true }, ...rest]
+    }
+
+    const allRows = grid.rows.map((row) =>
+      stickyColumns.reduce((r, key) => {
+        if (r[key]?.imageUrl) {
+          return {
+            ...r,
+            [key]: {
+              ...r[key],
+              imageUrl: undefined,
+            },
+            IMAGE: r[key],
+          }
+        }
+        return r
+      }, row),
+    )
+
+    let rows = limitRows ? allRows.slice(0, 25) : allRows
+
+    return {
+      allRows,
+      columns,
+      rows,
+    }
+  })
 
   const textAlign = (col: Column) => {
     switch (col.type) {
@@ -128,16 +136,25 @@
         $session?.type === 'user' &&
         $session.properties.subscriptionStatus === 'active'
       ) {
-        rows = expand ? allRows : allRows.slice(0, 25)
+        grids = grids.map((grid) => ({
+          ...grid,
+          rows: expand ? grid.allRows : grid.allRows.slice(0, 25),
+        }))
       }
     } else {
-      rows = allRows
+      grids = grids.map((grid) => ({
+        ...grid,
+        rows: grid.allRows,
+      }))
     }
   }
 
   $: {
     if (sortKey) {
-      rows = orderBy(rows, sortKey, sortOrder)
+      grids = grids.map((grid) => ({
+        ...grid,
+        rows: orderBy(grid.rows, sortKey, sortOrder),
+      }))
     }
   }
 </script>
@@ -145,118 +162,125 @@
 <div class="relative">
   <div class="relative overflow-x-auto">
     <table class="text-[15px] whitespace-nowrap" class:w-full={fullWidth}>
-      <thead>
-        <tr class="text-xs text-team-secondary uppercase tracking-[0.07rem]">
-          {#each columns as col (col.title)}
-            <th
-              class={`first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5 ${textAlign(
-                col,
-              )}`}
-              class:pl-8={col.hasImage}
-              class:sticky={col.sticky}
-              class:left-0={col.sticky}
-              on:click={onClickSort(col.rowItemKey)}
+      {#each grids as grid}
+        {@const { columns, rows } = grid}
+        {#if head}
+          <thead>
+            <tr
+              class="text-xs text-team-secondary uppercase tracking-[0.07rem]"
             >
-              {col.title}
-            </th>
-          {/each}
-        </tr>
-      </thead>
+              {#each columns as col (col.title)}
+                <th
+                  class={`first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5 ${textAlign(
+                    col,
+                  )}`}
+                  class:pl-8={col.hasImage}
+                  class:sticky={col.sticky}
+                  class:left-0={col.sticky}
+                  on:click={onClickSort(col.rowItemKey)}
+                >
+                  {col.title}
+                </th>
+              {/each}
+            </tr>
+          </thead>
+        {/if}
       <tbody class="divide-y divide-[#c7c8ca] leading-[22px]">
-        {#each rows as row (row)}
-          <tr>
-            {#each columns as col (row[col.rowItemKey])}
-              {@const { display, imageUrl, entity } = row[col.rowItemKey]}
-              <td
+          {#each rows as row (row)}
+            <tr>
+              {#each columns as col (row[col.rowItemKey])}
+                {@const { display, imageUrl, entity } = row[col.rowItemKey]}
+                <td
                   class={`${applyStyles(col)} ${padding}`}
-                class:py-1={!imageUrl}
-                class:sticky={col.sticky}
-                class:left-0={col.sticky}
+                  class:py-1={!imageUrl}
+                  class:sticky={col.sticky}
+                  class:left-0={col.sticky}
                 class:bg-white={col.sticky && !sortKey.includes(col.rowItemKey)}
-                class:bg-[#fffbec]={sortKey.includes(col.rowItemKey)}
-                class:w-2={imageUrl}
-              >
+                  class:bg-[#fffbec]={sortKey.includes(col.rowItemKey)}
+                  class:w-2={imageUrl}
+                >
                 <EntityLink {entity}>
-                  {#if col.rowItemKey === 'IMAGE'}
-                    {#if imageUrl}
-                      <img
-                        src={imageUrl}
-                        alt={display}
-                        class={imgClass(row[col.rowItemKey])}
-                      />
-                    {/if}
-                  {:else if col.hasImage}
-                    <div class="flex items-center">
+                    {#if col.rowItemKey === 'IMAGE'}
                       {#if imageUrl}
                         <img
                           src={imageUrl}
                           alt={display}
-                          class={`${imgClass(row[col.rowItemKey])} mr-2.5`}
+                          class={imgClass(row[col.rowItemKey])}
                         />
-                      {:else}
-                        <div class="w-4 h-4 mr-2.5" />
                       {/if}
+                    {:else if col.hasImage}
+                      <div class="flex items-center">
+                        {#if imageUrl}
+                          <img
+                            src={imageUrl}
+                            alt={display}
+                            class={`${imgClass(row[col.rowItemKey])} mr-2.5`}
+                          />
+                        {:else}
+                          <div class="w-4 h-4 mr-2.5" />
+                        {/if}
+                        {display}
+                      </div>
+                    {:else if dateRegex.test(display)}
+                      {@const [, day, date] = Array.from(
+                        display.match(dateRegex) || [],
+                      )}
+                      <div class="flex">
+                        <div class="w-8">{day}</div>
+                        <div>{date}</div>
+                      </div>
+                    {:else if scoreRegex.test(display)}
+                      {@const [, result, score] = Array.from(
+                        display.match(scoreRegex) || [],
+                      )}
+                      <div class="flex">
+                        <div class="w-5">{result}</div>
+                        <div>{score}</div>
+                      </div>
+                    {:else}
                       {display}
-                    </div>
-                  {:else if dateRegex.test(display)}
-                    {@const [, day, date] = Array.from(
-                      display.match(dateRegex) || [],
-                    )}
-                    <div class="flex">
-                      <div class="w-8">{day}</div>
-                      <div>{date}</div>
-                    </div>
-                  {:else if scoreRegex.test(display)}
-                    {@const [, result, score] = Array.from(
-                      display.match(scoreRegex) || [],
-                    )}
-                    <div class="flex">
-                      <div class="w-5">{result}</div>
-                      <div>{score}</div>
-                    </div>
-                  {:else}
-                    {display}
-                  {/if}
-                </EntityLink>
-              </td>
-            {/each}
-          </tr>
-        {/each}
-      </tbody>
-      {#if limitRows && allRows.length > freeRowLimit && ($session?.type === 'visitor' || $session?.properties.subscriptionStatus !== 'active')}
-        <tbody>
-          {#each Array(3) as _row}
-            <tr class="border-t border-[#c7c8ca]/30">
-              {#each columns as col}
-                <td
-                    class={`${textAlign(col)} ${padding} py-1`}
-                  class:sticky={col.sticky}
-                  class:left-0={col.sticky}
-                  class:bg-white={col.sticky}
-                >
-                  {#if col.rowItemKey === 'IMAGE'}
-                    <div class="flex items-center h-[22px]">
-                      <div class="bg-[#c7c8ca]/30 h-5 w-5 rounded-full" />
-                    </div>
-                  {:else if col.hasImage}
-                    <div class="flex items-center gap-2.5 h-[22px]">
-                      <div class="bg-[#c7c8ca]/30 h-4 w-4 rounded-full" />
-                      <div class="bg-[#c7c8ca]/30 h-5 flex-1 rounded-md" />
-                    </div>
-                  {:else}
-                    <div class="flex items-center h-[22px]">
-                      <div class="bg-[#c7c8ca]/30 w-full h-5 rounded-md" />
-                    </div>
-                  {/if}
+                    {/if}
+                  </EntityLink>
                 </td>
               {/each}
             </tr>
           {/each}
         </tbody>
-      {/if}
+        {#if limitRows && grids[0].allRows.length > freeRowLimit && ($session?.type === 'visitor' || $session?.properties.subscriptionStatus !== 'active')}
+          <tbody>
+            {#each Array(3) as _row}
+              <tr class="border-t border-[#c7c8ca]/30">
+                {#each columns as col}
+                  <td
+                    class={`${textAlign(col)} ${padding} py-1`}
+                    class:sticky={col.sticky}
+                    class:left-0={col.sticky}
+                    class:bg-white={col.sticky}
+                  >
+                    {#if col.rowItemKey === 'IMAGE'}
+                      <div class="flex items-center h-[22px]">
+                        <div class="bg-[#c7c8ca]/30 h-5 w-5 rounded-full" />
+                      </div>
+                    {:else if col.hasImage}
+                      <div class="flex items-center gap-2.5 h-[22px]">
+                        <div class="bg-[#c7c8ca]/30 h-4 w-4 rounded-full" />
+                        <div class="bg-[#c7c8ca]/30 h-5 flex-1 rounded-md" />
+                      </div>
+                    {:else}
+                      <div class="flex items-center h-[22px]">
+                        <div class="bg-[#c7c8ca]/30 w-full h-5 rounded-md" />
+                      </div>
+                    {/if}
+                  </td>
+                {/each}
+              </tr>
+            {/each}
+          </tbody>
+        {/if}
+      {/each}
     </table>
   </div>
-  {#if limitRows && allRows.length > freeRowLimit && ($session?.type === 'visitor' || $session?.properties.subscriptionStatus !== 'active')}
+  {#if limitRows && grids[0].allRows.length > freeRowLimit && ($session?.type === 'visitor' || $session?.properties.subscriptionStatus !== 'active')}
     <div class="absolute bottom-5 left-1/2 -translate-x-1/2">
       <a
         href="/auth/signup"
@@ -266,7 +290,7 @@
       </a>
     </div>
   {/if}
-  {#if limitRows && allRows.length > freeRowLimit && $session?.type === 'user' && $session.properties.subscriptionStatus === 'active'}
+  {#if limitRows && grids[0].allRows.length > freeRowLimit && $session?.type === 'user' && $session.properties.subscriptionStatus === 'active'}
     <div class="border-y border-[#c7c8ca] py-1 mt-0.5" on:click={onClickExpand}>
       <a href="#" class="text-primary flex items-center justify-center gap-2">
         Show {expand ? 'less' : 'more'}
