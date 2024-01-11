@@ -75,7 +75,7 @@ Caching.swr(Astro)
                 <GridDropdown parameters={stats.parameters} />
               )}
             </div>
-            <Grid client:load data={grid} />
+            <Grid client:load data={grid} rankingRange={[5, 15]} />
           </div>
           {playerStats.grids[i] && (
             <div class="mb-5">

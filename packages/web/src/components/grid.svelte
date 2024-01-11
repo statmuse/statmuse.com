@@ -13,7 +13,7 @@
     hasImage?: boolean
     sticky?: boolean
   }
-  type Row = GameraGrid['rows'][0][string]
+  type RowItem = GameraGrid['rows'][0][string]
 
   export let data: GameraGrid | GameraGrid[]
   export let stickyColumns: string[] = []
@@ -23,6 +23,7 @@
   export let padding = 'px-2'
   export let head = true
   export let color = false
+  export let rankingRange = [10, 20]
 
   const styles = Object.assign(
     { ALIGNMENT: 'w-2', SEASON: 'text-center' },
@@ -108,7 +109,7 @@
     return `${textAlign(col)} ${style ?? ''}`
   }
 
-  const imgClass = ({ imageUrl = '', entity }: Row) => {
+  const imgClass = ({ imageUrl = '', entity }: RowItem) => {
     if (entity?.type.includes('player')) {
       return [
         'w-6',
@@ -137,6 +138,16 @@
 
   const dateRegex = /(Sun|Mon|Tue|Wed|Thu|Fri|Sat)\s(\d+\/\d+)/
   const scoreRegex = /(W|L|T|D)\s(\d+-\d+)/
+
+  const [topRank, bottomRank] = rankingRange
+  const rankingColor = (row: RowItem, display: string) => {
+    if (row.display.includes('Rank') && display.match(/(\d+).*/)) {
+      const [, num] = Array.from(display.match(/(\d+).*/) || [])
+      if (Number(num) <= topRank) return 'text-[#009444]'
+      if (Number(num) >= bottomRank) return 'text-[#BF1D2D]'
+    }
+    return ''
+  }
 
   $: {
     if (limitRows) {
@@ -205,7 +216,7 @@
                 <td
                   class={`${applyStyles(col)} ${padding} ${
                     imageUrl ? 'w-2' : ''
-                  }`}
+                  } ${rankingColor(row[columns[0].rowItemKey], display)}`}
                   class:py-1={!imageUrl}
                   class:sticky={col.sticky}
                   class:left-0={col.sticky}

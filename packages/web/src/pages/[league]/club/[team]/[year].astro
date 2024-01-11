@@ -137,7 +137,7 @@ Caching.swr(Astro)
                 <h3 class="font-semibold text-team-primary">{data.name}</h3>
                 <a href={`stats/${year}`}>See stats</a>
               </div>
-              <Grid client:load data={data} />
+              <Grid client:load data={data} rankingRange={[5, 15]} />
             </div>
           ))
         ) : (
@@ -146,7 +146,7 @@ Caching.swr(Astro)
               <h3 class="font-semibold text-team-primary">{stats.name}</h3>
               <a href={`stats/${year}`}>See stats</a>
             </div>
-            <Grid client:load data={stats} />
+            <Grid client:load data={stats} rankingRange={[5, 15]} />
           </div>
         ))
     }
