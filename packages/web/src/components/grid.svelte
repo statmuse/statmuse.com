@@ -1,3 +1,6 @@
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-invalid-attribute -->
 <script lang="ts">
   import { orderBy, some } from 'lodash-es'
   import { session } from '@lib/session-store'
@@ -77,6 +80,7 @@
     let rows = limitRows ? allRows.slice(0, 25) : allRows
 
     return {
+      ...grid,
       allRows,
       columns,
       rows,
@@ -167,7 +171,7 @@
   <div class="relative overflow-x-auto">
     <table class="text-[15px] whitespace-nowrap" class:w-full={fullWidth}>
       {#each grids as grid}
-        {@const { columns, rows } = grid}
+        {@const { columns, rows, aggregations } = grid}
         {#if head}
           <thead>
             <tr
@@ -257,6 +261,24 @@
               {/each}
             </tr>
           {/each}
+          {#if aggregations}
+            {#each aggregations as row (row)}
+              <tr class="text-sm font-semibold">
+                {#each columns as col (row[col.rowItemKey])}
+                  {@const { display } = row[col.rowItemKey]}
+                  <td
+                    class={`${applyStyles(col)} ${padding} py-1`}
+                    class:sticky={col.sticky}
+                    class:left-0={col.sticky}
+                    class:bg-white={col.sticky && !color}
+                    class:bg-team-secondary={color}
+                  >
+                    {display}
+                  </td>
+                {/each}
+              </tr>
+            {/each}
+          {/if}
         </tbody>
         {#if limitRows && grids[0].allRows.length > freeRowLimit && ($session?.type === 'visitor' || $session?.properties.subscriptionStatus !== 'active')}
           <tbody>
