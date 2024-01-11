@@ -7,6 +7,7 @@ import {
   tokensToText,
   tokensToHtml,
   getUrlForEntity,
+  type GameraTeamSeasonOverview,
 } from '@statmuse/core/gamera'
 import { getTeamFranchiseLatestSeason, getTeamSeasonOverview } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
@@ -18,33 +19,20 @@ interface Props {
   team: string
   year: string
   query?: string
+  overview?: GameraTeamSeasonOverview
 }
 
 const query = Astro.props.query
 const leagueParam = Astro.props.league
 const team = Astro.props.team
 let year = Astro.props.year
-const isSearch = Astro.url.pathname === '/ask'
+let overview = Astro.props.overview
 
 if (!team || !leagueParam || !year) return NOT_FOUND_404
 
 const domain = leagueToDomain(leagueParam)
-let response = await getTeamSeasonOverview({
-  context: Astro,
-  domain,
-  team,
-  year,
-})
-
-// re-fetch team season overview from latest season if initial reponse has no stats
-if (response && !response.bio.hasStats && Astro.request.method === 'POST') {
-  const latestSeason = await getTeamFranchiseLatestSeason({
-    context: Astro,
-    domain,
-    teamId: response.teamId.toString(),
-  })
-  year = latestSeason?.entity.id.split('/')[1] as string
-  response = await getTeamSeasonOverview({
+if (!overview) {
+  overview = await getTeamSeasonOverview({
     context: Astro,
     domain,
     team,
@@ -52,14 +40,26 @@ if (response && !response.bio.hasStats && Astro.request.method === 'POST') {
   })
 }
 
-if (!response) return NOT_FOUND_404
+// re-fetch team season overview from latest season if initial reponse has no stats
+if (overview && !overview.bio.hasStats && Astro.request.method === 'POST') {
+  const latestSeason = await getTeamFranchiseLatestSeason({
+    context: Astro,
+    domain,
+    teamId: overview.teamId.toString(),
+  })
+  year = latestSeason?.entity.id.split('/')[1] as string
+  overview = await getTeamSeasonOverview({
+    context: Astro,
+    domain,
+    team,
+    year,
+  })
+}
+
+if (!overview) return NOT_FOUND_404
 
 const { bio, scoresAndSchedule, teamLeaders, standings, stats, playerGallery } =
-  response
-
-if (!bio.hasStats && !isSearch) {
-  return Astro.redirect(`/${league}/team/${team}/schedule/${year}`)
-}
+  overview
 
 const summary = bio.summaryNlg ? tokensToHtml(bio.summaryNlg) : undefined
 

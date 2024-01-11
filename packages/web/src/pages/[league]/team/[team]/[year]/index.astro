@@ -1,13 +1,31 @@
 ---
 import TeamSeasonProfile from '@components/team-season-profile.astro'
 import { Caching } from '@lib/caching'
-import type { LeagueParam } from '@lib/params'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
+import { getTeamSeasonOverview } from '@lib/team'
+import { NOT_FOUND_404 } from '@lib/response'
 
 const leagueParam = (Astro.props.league || Astro.params.league) as LeagueParam
 const team = Astro.params.team as string
 const year = Astro.params.year as string
 
+const domain = leagueToDomain(leagueParam)
+let response = await getTeamSeasonOverview({
+  context: Astro,
+  domain,
+  team,
+  year,
+})
+
+if (!response) return NOT_FOUND_404
+
+const { bio } = response
+
+if (!bio.hasStats) {
+  return Astro.redirect(`/${leagueParam}/team/${team}/schedule/${year}`)
+}
+
 Caching.swr(Astro)
 ---
 
-<TeamSeasonProfile league={leagueParam} {team} {year} />
+<TeamSeasonProfile overview={response} league={leagueParam} {team} {year} />
