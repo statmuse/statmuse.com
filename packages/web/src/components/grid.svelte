@@ -127,8 +127,8 @@
   }
 
   const onClickSort = (key: string) => () => {
-    sortOrder = sortKey.includes(key) && sortOrder === 'desc' ? 'asc' : 'desc'
-    sortKey = `${key}.value`
+    sortOrder = sortKey === key && sortOrder === 'desc' ? 'asc' : 'desc'
+    sortKey = key
   }
 
   const onClickExpand = (e: Event) => {
@@ -172,7 +172,7 @@
     if (sortKey) {
       grids = grids.map((grid) => ({
         ...grid,
-        rows: orderBy(grid.rows, sortKey, sortOrder),
+        rows: orderBy(grid.rows, `${sortKey}.value`, sortOrder),
       }))
     }
   }
@@ -224,7 +224,7 @@
                     !sortKey.includes(col.rowItemKey) &&
                     !color}
                   class:bg-team-secondary={color}
-                  class:bg-[#fffbec]={sortKey.includes(col.rowItemKey)}
+                  class:bg-[#fffbec]={sortKey === col.rowItemKey}
                 >
                   <EntityLink {entity} class={color ? 'text-team-primary' : ''}>
                     {#if col.rowItemKey === 'IMAGE'}
