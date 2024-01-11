@@ -529,6 +529,9 @@ export interface GameraPlayerProfileResponse {
   recentGames: {
     grid: GameraGrid
   }
+  fantasy?: {
+    grid: GameraGrid
+  }
 }
 
 export interface GameraTeamSeasonBio {
