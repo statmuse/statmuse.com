@@ -98,6 +98,9 @@
 
   const applyStyles = (col: Column) => {
     const style = styles[col.rowItemKey] || styles['default']
+    if (/text\-(left|center|right)/.test(style)) {
+      return style
+    }
     return `${textAlign(col)} ${style ?? ''}`
   }
 
@@ -129,7 +132,7 @@
   }
 
   const dateRegex = /(Sun|Mon|Tue|Wed|Thu|Fri|Sat)\s(\d+\/\d+)/
-  const scoreRegex = /(W|L)\s(\d+-\d+)/
+  const scoreRegex = /(W|L|T|D)\s(\d+-\d+)/
 
   $: {
     if (limitRows) {
@@ -172,7 +175,7 @@
             >
               {#each columns as col (col.title)}
                 <th
-                  class={`first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5 ${textAlign(
+                  class={`first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5 ${applyStyles(
                     col,
                   )}`}
                   class:pl-8={col.hasImage}
@@ -196,7 +199,9 @@
               {#each columns as col (row[col.rowItemKey])}
                 {@const { display, imageUrl, entity } = row[col.rowItemKey]}
                 <td
-                  class={`${applyStyles(col)} ${padding}`}
+                  class={`${applyStyles(col)} ${padding} ${
+                    imageUrl ? 'w-2' : ''
+                  }`}
                   class:py-1={!imageUrl}
                   class:sticky={col.sticky}
                   class:left-0={col.sticky}
@@ -205,7 +210,6 @@
                     !color}
                   class:bg-team-secondary={color}
                   class:bg-[#fffbec]={sortKey.includes(col.rowItemKey)}
-                  class:w-2={imageUrl}
                 >
                   <EntityLink {entity} class={color ? 'text-team-primary' : ''}>
                     {#if col.rowItemKey === 'IMAGE'}
