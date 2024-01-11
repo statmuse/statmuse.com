@@ -19,6 +19,7 @@
   export let columnStyles = {}
   export let padding = 'px-2'
   export let head = true
+  export let color = false
 
   const styles = Object.assign(
     { ALIGNMENT: 'w-2', SEASON: 'text-center' },
@@ -185,7 +186,11 @@
             </tr>
           </thead>
         {/if}
-      <tbody class="divide-y divide-[#c7c8ca] leading-[22px]">
+        <tbody
+          class={`divide-y ${
+            color ? 'divide-team-primary' : 'divide-[#c7c8ca]'
+          } leading-[22px]`}
+        >
           {#each rows as row (row)}
             <tr>
               {#each columns as col (row[col.rowItemKey])}
@@ -195,11 +200,14 @@
                   class:py-1={!imageUrl}
                   class:sticky={col.sticky}
                   class:left-0={col.sticky}
-                class:bg-white={col.sticky && !sortKey.includes(col.rowItemKey)}
+                  class:bg-white={col.sticky &&
+                    !sortKey.includes(col.rowItemKey) &&
+                    !color}
+                  class:bg-team-secondary={color}
                   class:bg-[#fffbec]={sortKey.includes(col.rowItemKey)}
                   class:w-2={imageUrl}
                 >
-                <EntityLink {entity}>
+                  <EntityLink {entity} class={color ? 'text-team-primary' : ''}>
                     {#if col.rowItemKey === 'IMAGE'}
                       {#if imageUrl}
                         <img

@@ -1,5 +1,5 @@
 ---
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
 import type {
   StandingsTeam,
   StandingsNba,
@@ -258,11 +258,9 @@ const grids = group
   style={{
     '--team-primary-color': firstTeam.team.colors.foregroundColor,
     '--team-secondary-color': firstTeam.team.colors.backgroundColor,
-    '--grid-line-color': firstTeam.team.colors.foregroundColor,
-    '--grid-bg-color': firstTeam.team.colors.backgroundColor,
     background: firstTeam.team.colors.backgroundColor,
     color: firstTeam.team.colors.foregroundColor,
   }}
 >
-  <Grid data={grids} disableSort />
+  <Grid data={grids} color columnStyles={{ rank: 'w-2' }} />
 </div>
