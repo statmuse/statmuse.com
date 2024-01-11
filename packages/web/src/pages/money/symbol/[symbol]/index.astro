@@ -1,5 +1,5 @@
 ---
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
 import MoneyLayout from '@layouts/money.astro'
 import TradingviewChart from '@components/tradingview-chart.astro'
 import { getAssetProfile } from '@lib/kanedama'
@@ -61,18 +61,24 @@ Caching.swr(Astro)
         {
           stats ? (
             <div class="mb-5">
-              <Grid hideHead padding="py-1" data={stats}>
+              <div class="flex justify-between mb-0.5 border-b border-[#c7c8ca]">
+                <h3 class="font-semibold text-team-primary">{stats.name}</h3>
                 <a href={statsPath} set:text="See more" />
-              </Grid>
+              </div>
+              <Grid head={false} padding="" data={stats} />
             </div>
           ) : null
         }
         {
           financials ? (
             <div class="mb-5">
-              <Grid hideHead padding="py-1" data={financials}>
+              <div class="flex justify-between mb-0.5 border-b border-[#c7c8ca]">
+                <h3 class="font-semibold text-team-primary">
+                  {financials.name}
+                </h3>
                 <a href={financialsPath} set:text="See more" />
-              </Grid>
+              </div>
+              <Grid head={false} padding="" data={financials} />
             </div>
           ) : null
         }
@@ -105,12 +111,10 @@ Caching.swr(Astro)
         {
           companyProfile ? (
             <div class="mb-5">
-              <Grid
-                hideHead
-                padding="py-1"
-                title="About"
-                data={companyProfile}
-              />
+              <h3 class="font-semibold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
+                About
+              </h3>
+              <Grid head={false} padding="" data={companyProfile} />
             </div>
           ) : null
         }

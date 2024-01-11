@@ -1,6 +1,6 @@
 ---
 import TeamLayout from '@layouts/team.astro'
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
 import TeamLeaders from '@components/leaders.astro'
 import PlayerGallery from '@components/gallery.astro'
 import {
@@ -95,12 +95,19 @@ Caching.swr(Astro)
     >
       {
         scoresAndSchedule && (
-          <Grid
-            data={scoresAndSchedule}
-            columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
-          >
-            <a href={`fixtures/${year}`}>See fixtures</a>
-          </Grid>
+          <div>
+            <div class="flex justify-between mb-0.5">
+              <h3 class="font-semibold text-team-primary">
+                {scoresAndSchedule.name}
+              </h3>
+              <a href={`fixtures/${year}`}>See fixtures</a>
+            </div>
+            <Grid
+              client:load
+              data={scoresAndSchedule}
+              columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+            />
+          </div>
         )
       }
       {
@@ -112,10 +119,12 @@ Caching.swr(Astro)
       }
       {
         standings && (
-          <Grid
-            data={standings}
-            columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
-          />
+          <div>
+            <h3 class="font-semibold text-team-primary mb-0.5">
+              {standings.name}
+            </h3>
+            <Grid client:load data={standings} />
+          </div>
         )
       }
     </div>
@@ -123,24 +132,22 @@ Caching.swr(Astro)
       stats &&
         (Array.isArray(stats) ? (
           stats.map((data) => (
-            <Grid
-              data={data}
-              class="mb-5"
-              columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
-              {domain}
-            >
-              <a href={`stats/${year}`}>See stats</a>
-            </Grid>
+            <div class="mb-5">
+              <div class="flex justify-between mb-0.5">
+                <h3 class="font-semibold text-team-primary">{data.name}</h3>
+                <a href={`stats/${year}`}>See stats</a>
+              </div>
+              <Grid client:load data={data} />
+            </div>
           ))
         ) : (
-          <Grid
-            data={stats}
-            class="mb-5"
-            columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
-            {domain}
-          >
-            <a href={`stats/${year}`}>See stats</a>
-          </Grid>
+          <div class="mb-5">
+            <div class="flex justify-between mb-0.5">
+              <h3 class="font-semibold text-team-primary">{stats.name}</h3>
+              <a href={`stats/${year}`}>See stats</a>
+            </div>
+            <Grid client:load data={stats} />
+          </div>
         ))
     }
     {

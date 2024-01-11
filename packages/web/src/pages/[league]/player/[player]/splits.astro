@@ -1,6 +1,7 @@
 ---
 import PlayerLayout from '@layouts/player.astro'
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
+import GridDropdown from '@components/grid-dropdown.astro'
 import { getPlayerBio, getPlayerSplits } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
@@ -37,12 +38,17 @@ Caching.swr(Astro)
     {
       grids &&
         grids.map((grid) => (
-          <Grid
-            class="mb-5"
-            data={grid}
-            columnStyles={{ SPLIT: 'text-left w-24 min-w-[96px]' }}
-            {parameters}
-          />
+          <div class="mb-5">
+            <div class="flex justify-between mb-0.5">
+              <h3 class="font-semibold text-team-primary">{grid.name}</h3>
+              {parameters && <GridDropdown {parameters} />}
+            </div>
+            <Grid
+              client:load
+              data={grid}
+              columnStyles={{ SPLIT: 'text-left w-24 min-w-[96px]' }}
+            />
+          </div>
         ))
     }
   </div>

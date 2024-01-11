@@ -1,5 +1,5 @@
 ---
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
 import MoneyLayout from '@layouts/money.astro'
 import { Caching } from '@lib/caching'
 import { getAssetProfile } from '@lib/kanedama'
@@ -33,9 +33,12 @@ Caching.swr(Astro)
         {
           priceHistory ? (
             <div class="mb-5">
+              <h3 class="font-semibold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
+                {priceHistory.name}
+              </h3>
               <Grid
-                hideHead
-                padding="py-1"
+                head={false}
+                padding=""
                 data={priceHistory}
                 columnStyles={{ value: 'text-right' }}
               />
@@ -45,14 +48,20 @@ Caching.swr(Astro)
         {
           shareStats ? (
             <div class="mb-5">
-              <Grid hideHead padding="py-1" data={shareStats} />
+              <h3 class="font-semibold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
+                {shareStats.name}
+              </h3>
+              <Grid head={false} padding="" data={shareStats} />
             </div>
           ) : null
         }
         {
           shortStats ? (
             <div class="mb-5">
-              <Grid hideHead padding="py-1" data={shortStats} />
+              <h3 class="font-semibold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
+                {shortStats.name}
+              </h3>
+              <Grid head={false} padding="" data={shortStats} />
             </div>
           ) : null
         }
@@ -61,7 +70,10 @@ Caching.swr(Astro)
         {
           valuation ? (
             <div class="mb-5">
-              <Grid hideHead padding="py-1" data={valuation} />
+              <h3 class="font-semibold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
+                {valuation.name}
+              </h3>
+              <Grid head={false} padding="" data={valuation} />
             </div>
           ) : null
         }

@@ -1,6 +1,6 @@
 ---
 import TeamLayout from '@layouts/team.astro'
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
 import { getUrlForEntity } from '@statmuse/core/gamera'
 import { getTeamSeasonBio, getTeamSeasonRoster } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
@@ -45,11 +45,18 @@ Caching.swr(Astro)
   <div class="mb-5">
     {
       roster?.grid && (
-        <Grid
-          data={roster?.grid}
-          columnStyles={{ 'NO.': 'text-left' }}
-          columnHeaderStyles={{ NAME: 'pl-10' }}
-        />
+        <div class="mb-5">
+          <h3 class="font-semibold text-team-primary mb-0.5">
+            {roster.grid.name}
+          </h3>
+          <Grid
+            client:load
+            data={roster?.grid}
+            columnStyles={{ 'NO.': 'w-2', IMAGE: 'w-2', default: 'w-20' }}
+            stickyColumns={['NAME']}
+            fullWidth={false}
+          />
+        </div>
       )
     }
   </div>

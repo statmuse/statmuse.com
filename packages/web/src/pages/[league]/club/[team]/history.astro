@@ -1,6 +1,6 @@
 ---
 import FranchiseLayout from '@layouts/franchise.astro'
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
 import TeamLeaders from '@components/leaders.astro'
 import PlayerGallery from '@components/gallery.astro'
 import { getUrlForEntity } from '@statmuse/core/gamera'
@@ -55,20 +55,35 @@ Caching.swr(Astro)
   <div class="space-y-5 mb-5">
     {
       teamHistory && (
-        <Grid
-          data={teamHistory}
-          columnStyles={{
-            POSTSEASON: 'text-left',
-            CHAMPION: 'w-2',
-            default: 'text-center w-20',
-          }}
-        />
+        <div class="mb-5">
+          <h3 class="font-semibold text-team-primary mb-0.5">
+            {teamHistory.name}
+          </h3>
+          <Grid
+            client:load
+            data={teamHistory}
+            columnStyles={{
+              POSTSEASON: 'text-left',
+              CHAMPION: 'w-2',
+              default: 'text-center w-20',
+            }}
+          />
+        </div>
       )
     }
     <div
       class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 mb-5"
     >
-      {franchiseInfo && <Grid data={franchiseInfo} class="mb-5" />}
+      {
+        franchiseInfo && (
+          <div class="mb-5">
+            <h3 class="font-semibold text-team-primary mb-0.5">
+              {franchiseInfo.name}
+            </h3>
+            <Grid client:load data={franchiseInfo} />
+          </div>
+        )
+      }
       {
         franchiseLeaders && (
           <TeamLeaders

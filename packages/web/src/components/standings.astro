@@ -3,7 +3,7 @@ import type { Standings, GameraGrid } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
 import Tabs from '@components/tabs.astro'
 import TabPanel from '@components/tab-panel.astro'
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
 
 interface Props extends HTMLAttributes<'div'> {
   groups: {
@@ -42,7 +42,12 @@ function addImageToGrid(grid: GameraGrid): GameraGrid {
           <TabPanel title={group.name}>
             {group.standings.map((x) => (
               <div class="my-4">
+                <h3 class="font-semibold text-team-primary mb-0.5">
+                  {x.grid.name}
+                </h3>
                 <Grid
+                  stickyColumns={['TEAM']}
+                  columnStyles={{ TEAM: 'w-28' }}
                   data={addImageToGrid(x.grid)}
                   highlight={Astro.props.highlight}
                 />
@@ -55,7 +60,12 @@ function addImageToGrid(grid: GameraGrid): GameraGrid {
       groups.map((group) =>
         group.standings.map((x) => (
           <div class="my-4">
+            <h3 class="font-semibold text-team-primary mb-0.5">
+              {x.grid.name}
+            </h3>
             <Grid
+              stickyColumns={['TEAM']}
+              columnStyles={{ TEAM: 'w-28' }}
               data={addImageToGrid(x.grid)}
               highlight={Astro.props.highlight}
             />

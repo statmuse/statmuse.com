@@ -5,8 +5,7 @@ import map from 'lodash/fp/map'
 import orderBy from 'lodash/fp/orderBy'
 import pipe from 'lodash/fp/pipe'
 import reduce from 'lodash/fp/reduce'
-import Grid from '@components/grid.astro'
-import GridAccordionWrapper from '@components/grid-accordion-wrapper.astro'
+import Grid from '@components/grid.svelte'
 import type { Frequency } from '@statmuse/core/frequency'
 import type { AssetPriceDataDetail, Timeframe } from '@statmuse/core/kanedama'
 import type { AssetPair, AssetPriceData, Price } from '@lib/kanedama'
@@ -413,11 +412,11 @@ const grid =
 grid.rows = orderBy('DATE.value', 'desc')(grid.rows)
 ---
 
-<GridAccordionWrapper>
+<div>
   <Grid
-    class="w-full text-[15px] whitespace-nowrap"
+    client:load
     data={grid as GameraGrid}
     columnStyles={{ DATE: 'text-left' }}
     limitRows
   />
-</GridAccordionWrapper>
+</div>

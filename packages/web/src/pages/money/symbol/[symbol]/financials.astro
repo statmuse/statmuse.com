@@ -1,5 +1,5 @@
 ---
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
 import MoneyLayout from '@layouts/money.astro'
 import { Caching } from '@lib/caching'
 import { getAssetProfile } from '@lib/kanedama'
@@ -32,29 +32,30 @@ Caching.swr(Astro)
       {
         quarterlyFinancials ? (
           <div class="mb-5">
-            <Grid
-              padding="py-1"
-              title="Quarterly Financials"
-              data={quarterlyFinancials}
-            />
+            <h3 class="font-semibold text-team-primary mb-0.5">
+              Quarterly Financials
+            </h3>
+            <Grid client:load data={quarterlyFinancials} />
           </div>
         ) : null
       }
       {
         annualFinancials ? (
           <div class="mb-5">
-            <Grid
-              padding="py-1"
-              title="Annual Financials"
-              data={annualFinancials}
-            />
+            <h3 class="font-semibold text-team-primary mb-0.5">
+              Annual Financials
+            </h3>
+            <Grid client:load data={annualFinancials} />
           </div>
         ) : null
       }
       {
         earningsCalls ? (
           <div class="mb-5">
-            <Grid padding="py-1" data={earningsCalls} />
+            <h3 class="font-semibold text-team-primary mb-0.5">
+              {earningsCalls.name}
+            </h3>
+            <Grid client:load data={earningsCalls} />
           </div>
         ) : null
       }
