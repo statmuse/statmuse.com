@@ -53,6 +53,7 @@ Caching.swr(Astro)
 ---
 
 <ErrorLayout
+  money
   render={response.type === 'error'}
   status={422}
   message={tokensToText(response.visual.summary.answer)}

@@ -1,8 +1,6 @@
 ---
 import MainLayout from '@layouts/main.astro'
 import Header from '@components/header.astro'
-import Container from '@components/container.astro'
-import Image from '@components/image.astro'
 import sample from 'lodash/sample'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import Hero from '@components/hero.astro'
@@ -18,6 +16,8 @@ interface Props {
   }
   analytics?: AnalyticsPageviewProperties
   enableFreestarAdBanner?: boolean
+  money?: boolean
+  fantasy?: boolean
 }
 
 const images = [
@@ -40,6 +40,8 @@ const {
   message,
   query,
   status,
+  money,
+  fantasy,
   image = sample(images),
   enableFreestarAdBanner,
 } = Astro.props
@@ -56,7 +58,7 @@ if (render) {
       colors={{ foreground: '#fff', background: '#0086ff' }}
       {enableFreestarAdBanner}
     >
-      <Header {query} />
+      <Header {query} {money} {fantasy} />
       <Hero content={message} imageUrl={image?.url} imageAlt={image?.alt} />
     </MainLayout>
   ) : (

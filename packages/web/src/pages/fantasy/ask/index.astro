@@ -101,6 +101,7 @@ Caching.swr(Astro)
 ---
 
 <ErrorLayout
+  fantasy
   render={response.type === 'error'}
   status={422}
   message={tokensToText(response.visual.summary.answer)}
