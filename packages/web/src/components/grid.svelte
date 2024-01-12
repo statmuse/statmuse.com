@@ -24,6 +24,7 @@
   export let head = true
   export let color = false
   export let rankingRange = [10, 20]
+  export let highlight: string | undefined
 
   const styles = Object.assign(
     { ALIGNMENT: 'w-2', SEASON: 'text-center' },
@@ -149,6 +150,13 @@
     return ''
   }
 
+  const shouldApplyRowHighlight = (row: RowItem, highlight?: string) => {
+    if (highlight) {
+      return highlight === row.value
+    }
+    return false
+  }
+
   $: {
     if (limitRows) {
       if (
@@ -210,6 +218,10 @@
           } leading-[22px]`}
         >
           {#each rows as row (row)}
+            {@const rowHighlight = shouldApplyRowHighlight(
+              row[columns[0].rowItemKey],
+              highlight,
+            )}
             <tr>
               {#each columns as col (row[col.rowItemKey])}
                 {@const { display, imageUrl, entity } = row[col.rowItemKey]}
@@ -221,9 +233,11 @@
                   class:sticky={col.sticky}
                   class:left-0={col.sticky}
                   class:bg-white={col.sticky &&
-                    !sortKey.includes(col.rowItemKey) &&
-                    !color}
+                    !(sortKey === col.rowItemKey) &&
+                    !color &&
+                    !rowHighlight}
                   class:bg-team-secondary={color}
+                  class:bg-[#e9f9ff]={rowHighlight}
                   class:bg-[#fffbec]={sortKey === col.rowItemKey}
                 >
                   <EntityLink {entity} class={color ? 'text-team-primary' : ''}>
@@ -281,8 +295,7 @@
                     class={`${applyStyles(col)} ${padding} py-1`}
                     class:sticky={col.sticky}
                     class:left-0={col.sticky}
-                    class:bg-white={col.sticky && !color}
-                    class:bg-team-secondary={color}
+                    class:bg-white={col.sticky}
                   >
                     {display}
                   </td>
