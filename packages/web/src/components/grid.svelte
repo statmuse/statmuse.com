@@ -196,7 +196,7 @@
             <tr
               class="text-xs text-team-secondary uppercase tracking-[0.07rem]"
             >
-              {#each columns as col (col.title)}
+              {#each columns as col (col.rowItemKey)}
                 <th
                   class={`first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5 ${applyStyles(
                     col,
@@ -217,7 +217,7 @@
             color ? 'divide-team-primary' : 'divide-[#c7c8ca]'
           } leading-[22px]`}
         >
-          {#each rows as row (JSON.stringify(row))}
+          {#each rows as row (row)}
             {@const rowHighlight = shouldApplyRowHighlight(
               row[columns[0].rowItemKey],
               highlight,
