@@ -42,6 +42,18 @@ const playerCardTitle = (stat: string) => {
       return '3PM Leaders'
     case 'bestTrueShootingPercentage':
       return 'TS% Leaders'
+    case 'mostFanDuelPoints':
+      return 'Fanduel Points Leaders'
+    case 'mostDraftKingsPoints':
+      return 'DraftKings Points Leaders'
+    case 'mostFanDuelPointsPerMinute':
+      return 'Fanduel Points Per Minute Leaders'
+    case 'mostDraftKingsPointsPerMinute':
+      return 'DraftKings Points Per Minute Leaders'
+    case 'bestUsagePercentage':
+      return 'Usage Percentage Leaders'
+    case 'mostMinutesPerGame':
+      return 'Most Minutes Per Game Leaders'
     // NFL Player
     case 'mostPassingYards':
       return 'Pass Yards Leaders'
@@ -59,6 +71,16 @@ const playerCardTitle = (stat: string) => {
       return 'QB Rating Leaders'
     case 'mostDefensiveSacks':
       return 'Sack Leaders'
+    case 'mostQuarterbackFantasyPoints':
+      return 'Fantasy QB Rankings'
+    case 'mostRunningBackFantasyPoints':
+      return 'Fantasy RB Rankings'
+    case 'mostWideReceiverFantasyPoints':
+      return 'Fantasy WR Rankings'
+    case 'mostTightEndFantasyPoints':
+      return 'Fantasy TE Rankings'
+    case 'mostKickerFantasyPoints':
+      return 'Fantasy K Rankings'
     // NHL Player
     case 'mostGoals':
       return 'Goals Leaders'
@@ -150,6 +172,18 @@ const playerAskLink = (league: LeagueParam, stat: string) => {
       return `/${league}/ask/3pm-leaders-this-season`
     case 'bestTrueShootingPercentage':
       return `/${league}/ask?q=ts%25+leaders+this+season`
+    case 'mostFanDuelPoints':
+      return `/${league}/ask/most-fanduel-points-this-season`
+    case 'mostDraftKingsPoints':
+      return `/${league}/ask/most-draftkings-points-this-season`
+    case 'mostFanDuelPointsPerMinute':
+      return `/${league}/ask/most-fanduel-points-per-minute-this-season-minimum-20-min-minimum-10-mpg`
+    case 'mostDraftKingsPointsPerMinute':
+      return `/${league}/ask/most-draftkings-points-per-minute-this-season-minimum-20-min-minimum-10-mpg`
+    case 'bestUsagePercentage':
+      return `/${league}/ask?q=usage%25+leaders`
+    case 'mostMinutesPerGame':
+      return `/${league}/ask/mpg-leaders-nba`
     // NFL Player
     case 'mostPassingYards':
       return `/${league}/ask/pass-yards-leaders-this-season`
@@ -167,6 +201,16 @@ const playerAskLink = (league: LeagueParam, stat: string) => {
       return `/${league}/ask/qb-rating-leaders-this-season`
     case 'mostDefensiveSacks':
       return `/${league}/ask/sack-leaders-this-season`
+    case 'mostQuarterbackFantasyPoints':
+      return `/${league}/ask/most-fantasy-points-by-a-qb-this-season`
+    case 'mostRunningBackFantasyPoints':
+      return `/${league}/ask/most-fantasy-points-by-a-rb-this-season`
+    case 'mostWideReceiverFantasyPoints':
+      return `/${league}/ask/most-fantasy-points-by-a-wr-this-season`
+    case 'mostTightEndFantasyPoints':
+      return `/${league}/ask/most-fantasy-points-by-a-te-this-season`
+    case 'mostKickerFantasyPoints':
+      return `/${league}/ask/most-fantasy-points-by-a-kicker-this-season`
     // NHL Player
     case 'mostGoals':
       return `/${league}/ask/goal-leaders-this-season`
@@ -300,6 +344,23 @@ const filterTeamCards = (card: TeamCard) =>
     'bestGoalDifferential',
   ].includes(card.stat)
 
+const filterFantasyCards = (card: PlayerCard) =>
+  [
+    // NBA Team
+    'mostFanDuelPoints',
+    'mostDraftKingsPoints',
+    'mostFanDuelPointsPerMinute',
+    'mostDraftKingsPointsPerMinute',
+    'bestUsagePercentage',
+    'mostMinutesPerGame',
+    // NFL Team
+    'mostQuarterbackFantasyPoints',
+    'mostRunningBackFantasyPoints',
+    'mostWideReceiverFantasyPoints',
+    'mostTightEndFantasyPoints',
+    'mostKickerFantasyPoints',
+  ].includes(card.stat)
+
 let playerCardsResp: PlayerCardResponse | undefined
 let teamCardsResp: TeamCardResponse | undefined
 let standingsResp: StandingsResponse | undefined
@@ -313,10 +374,25 @@ if (allowedDomains.includes(league)) {
     getStandings({ context: Astro, domain }),
   ])
 }
+
+let playerLeaderCards: PlayerCard[] = []
+if (playerCardsResp) {
+  playerLeaderCards = playerCardsResp.cards.filter(filterPlayerCards)
+}
+
+let teamRankingCards: TeamCard[] = []
+if (teamCardsResp) {
+  teamRankingCards = teamCardsResp.cards.filter(filterTeamCards)
+}
+
+let fantasyCards: PlayerCard[] = []
+if (playerCardsResp) {
+  fantasyCards = playerCardsResp.cards.filter(filterFantasyCards)
+}
 ---
 
 {
-  playerCardsResp && playerCardsResp.cards.length > 0 && (
+  playerCardsResp && playerLeaderCards.length > 0 && (
     <Fragment>
       <h3 class="text-3xl font-semibold mb-1.5">
         {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
@@ -324,7 +400,7 @@ if (allowedDomains.includes(league)) {
         } Leaders`}
       </h3>
       <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
-        {playerCardsResp.cards.filter(filterPlayerCards).map((card) => (
+        {playerLeaderCards.map((card) => (
           <div>
             <div class="flex justify-between">
               <p class="font-semibold">{playerCardTitle(card.stat)}</p>
@@ -373,7 +449,7 @@ if (allowedDomains.includes(league)) {
 }
 
 {
-  teamCardsResp && teamCardsResp.cards.length > 0 && (
+  teamCardsResp && teamRankingCards.length > 0 && (
     <Fragment>
       <h3 class="text-3xl font-semibold mb-1.5">
         {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
@@ -381,7 +457,7 @@ if (allowedDomains.includes(league)) {
         } Rankings`}
       </h3>
       <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
-        {teamCardsResp?.cards.filter(filterTeamCards).map((card) => (
+        {teamRankingCards.map((card) => (
           <div>
             <div class="flex justify-between">
               <p class="font-semibold">{teamCardTitle(card.stat)}</p>
@@ -410,6 +486,63 @@ if (allowedDomains.includes(league)) {
                   <p class="text-3xl mt-2" style="line-height: normal;">
                     {team.statDisplayValue}
                   </p>
+                </div>
+              ))}
+            </a>
+          </div>
+        ))}
+      </div>
+    </Fragment>
+  )
+}
+
+{
+  playerCardsResp && fantasyCards.length > 0 && (
+    <Fragment>
+      <h3 class="text-3xl font-semibold mb-1.5">
+        {`Fantasy ${
+          league === 'nba' ? 'Basketball' : league === 'nfl' ? 'Football' : ''
+        } ${playerCardsResp.seasonYearDisplay}`}
+      </h3>
+      <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
+        {fantasyCards.map((card) => (
+          <div>
+            <div class="flex justify-between">
+              <p class="font-semibold">{playerCardTitle(card.stat)}</p>
+              <a href={playerAskLink(league, card.stat)}>See more</a>
+            </div>
+            <a
+              href={playerAskLink(league, card.stat)}
+              class="flex rounded-2xl overflow-hidden px-2.5 hover:no-underline"
+              style={{
+                backgroundColor:
+                  card.players[0].colors?.backgroundColor ?? '#FFF',
+                color: card.players[0].colors?.foregroundColor ?? '#000',
+              }}
+            >
+              {card?.players.map((player, i) => (
+                <div class="text-center w-1/3 h-56 flex flex-col justify-between items-center">
+                  <div>
+                    <h3 class="text-3xl mt-3" style="line-height: normal;">
+                      {player.statDisplayValue}
+                    </h3>
+                    <p class="uppercase text-xs tracking-[0.07rem]">
+                      {lastName(player.entity.display)}
+                    </p>
+                  </div>
+                  <Image
+                    class="h-36"
+                    style={{
+                      maxWidth: 'initial',
+                      width: 'initial',
+                      zIndex: 3 - i,
+                    }}
+                    src={player.imageUrl}
+                    alt={player.entity.display}
+                    width={400}
+                    height={400}
+                    loading="eager"
+                  />
                 </div>
               ))}
             </a>
