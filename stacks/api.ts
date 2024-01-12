@@ -165,6 +165,7 @@ export function API({ stack }: StackContext) {
           secrets.STRIPE_PRICE_ID,
           secrets.SENDGRID_API_KEY,
         ],
+        prefetchSecrets: true,
         vpc,
         vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_EGRESS },
         securityGroups: [lambdaSecurityGroup],
