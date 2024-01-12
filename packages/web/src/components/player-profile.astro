@@ -1,6 +1,6 @@
 ---
 import PlayerLayout from '@layouts/player.astro'
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
 import PlayerGallery from '@components/gallery.astro'
 import {
   tokensToText,
@@ -28,7 +28,7 @@ const domain = leagueToDomain(leagueParam)
 const profile = await getPlayerProfile(Astro, domain, player)
 if (!profile) return NOT_FOUND_404
 
-const { bio, stats, recentGames, nextGame } = profile
+const { bio, stats, recentGames, nextGame, fantasy } = profile
 
 const isNextGameHome =
   profile.bio.team?.abbreviation === nextGame?.homeTeam.abbreviation
@@ -67,52 +67,87 @@ const meta = { title, description, keywords, canonical }
     <div class="mb-5">
       {
         nextGame?.grid && (
-          <Grid
-            class="mb-5"
-            data={nextGame.grid}
-            title={`Next Game ${isNextGameHome ? 'vs' : '@'} ${
+          <div class="mb-5">
+            <h3 class="font-semibold text-team-primary mb-0.5">{`Next Game ${
+              isNextGameHome ? 'vs' : '@'
+            } ${
               isNextGameHome
                 ? nextGame.awayTeam.abbreviation
                 : nextGame.homeTeam.abbreviation
-            }`}
-          />
+            }`}</h3>
+            <Grid client:load data={nextGame.grid} />
+          </div>
         )
       }
       {
         stats?.grid && (
-          <Grid
-            class="mb-5"
-            seeAllUrl={`${playerPath}/career-stats`}
-            data={stats.grid}
-          />
+          <div class="mb-5">
+            <div class="flex justify-between mb-0.5">
+              <h3 class="font-semibold text-team-primary">{stats.grid.name}</h3>
+              <a href={`${playerPath}/career-stats`}>See all</a>
+            </div>
+            <Grid client:load data={stats.grid} />
+          </div>
         )
       }
       {
         recentGames?.grid && (
-          <Grid
-            class="mb-5"
-            seeAllUrl={
-              domain.toLowerCase() === 'epl'
-                ? `${playerPath}/matches`
-                : `${playerPath}/game-log`
-            }
-            data={recentGames.grid}
-            columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
-          />
+          <div class="mb-5">
+            <div class="flex justify-between mb-0.5">
+              <h3 class="font-semibold text-team-primary">
+                {recentGames.grid.name}
+              </h3>
+              <a
+                href={
+                  domain.toLowerCase() === 'epl'
+                    ? `${playerPath}/matches`
+                    : `${playerPath}/game-log`
+                }
+              >
+                See all
+              </a>
+            </div>
+            <Grid
+              client:load
+              data={recentGames.grid}
+              columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+            />
+          </div>
         )
       }
       {
         recentGames?.columns && recentGames?.rows && (
-          <Grid
-            class="mb-5"
-            seeAllUrl={
-              domain.toLowerCase() === 'epl'
-                ? `${playerPath}/matches`
-                : `${playerPath}/game-log`
-            }
-            data={recentGames}
-            columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
-          />
+          <div class="mb-5">
+            <div class="flex justify-between mb-0.5">
+              <h3 class="font-semibold text-team-primary">
+                {recentGames.name}
+              </h3>
+              <a
+                href={
+                  domain.toLowerCase() === 'epl'
+                    ? `${playerPath}/matches`
+                    : `${playerPath}/game-log`
+                }
+              >
+                See all
+              </a>
+            </div>
+            <Grid
+              client:load
+              data={recentGames}
+              columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+            />
+          </div>
+        )
+      }
+      {
+        fantasy?.grid && (
+          <div class="mb-5">
+            <h3 class="font-semibold text-team-primary mb-0.5">
+              {fantasy.grid.name}
+            </h3>
+            <Grid client:load data={fantasy.grid} />
+          </div>
         )
       }
       {

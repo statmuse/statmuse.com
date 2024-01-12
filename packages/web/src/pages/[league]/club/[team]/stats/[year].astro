@@ -1,6 +1,7 @@
 ---
 import TeamLayout from '@layouts/team.astro'
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
+import GridDropdown from '@components/grid-dropdown.astro'
 import { getUrlForEntity, tokensToText } from '@statmuse/core/gamera'
 import {
   getTeamSeasonBio,
@@ -67,33 +68,48 @@ Caching.swr(Astro)
     {
       stats.grids.map((grid, i) => (
         <Fragment>
-          <Grid
-            class="mb-5"
-            data={grid}
-            parameters={stats.parameters}
-            {domain}
-          />
+          <div class="mb-5">
+            <div class="flex justify-between mb-0.5">
+              <h3 class="font-semibold text-team-primary">{grid.name}</h3>
+              {stats.parameters && (
+                <GridDropdown parameters={stats.parameters} />
+              )}
+            </div>
+            <Grid client:load data={grid} rankingRange={[5, 15]} />
+          </div>
           {playerStats.grids[i] && (
-            <Grid
-              class="mb-5"
-              data={playerStats.grids[i]}
-              parameters={playerStats.parameters}
-            />
+            <div class="mb-5">
+              <div class="flex justify-between mb-0.5">
+                <h3 class="font-semibold text-team-primary">
+                  {playerStats.grids[i].name}
+                </h3>
+                {playerStats.parameters && (
+                  <GridDropdown parameters={playerStats.parameters} />
+                )}
+              </div>
+              <Grid
+                client:load
+                data={playerStats.grids[i]}
+                stickyColumns={['PLAYER']}
+              />
+            </div>
           )}
         </Fragment>
       ))
     }
     {
       playerStats.grids.length > stats.grids.length
-        ? playerStats.grids
-            .slice(stats.grids.length)
-            .map((grid) => (
-              <Grid
-                class="mb-5"
-                data={grid}
-                parameters={playerStats.parameters}
-              />
-            ))
+        ? playerStats.grids.slice(stats.grids.length).map((grid) => (
+            <div class="mb-5">
+              <div class="flex justify-between mb-0.5">
+                <h3 class="font-semibold text-team-primary">{grid.name}</h3>
+                {playerStats.parameters && (
+                  <GridDropdown parameters={playerStats.parameters} />
+                )}
+              </div>
+              <Grid client:load data={grid} stickyColumns={['PLAYER']} />
+            </div>
+          ))
         : null
     }
   </div>

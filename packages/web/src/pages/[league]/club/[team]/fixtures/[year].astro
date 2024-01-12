@@ -1,6 +1,6 @@
 ---
 import TeamLayout from '@layouts/team.astro'
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
 import { getUrlForEntity } from '@statmuse/core/gamera'
 import {
   getTeamSeasonBio,
@@ -57,31 +57,36 @@ Caching.swr(Astro)
   <div class="space-y-5 mb-5">
     {
       schedule?.grid && schedule.grid.columns.length > 0 && (
-        <Grid
-          data={schedule.grid}
-          fullWidth={false}
-          columnStyles={{
-            DATE: 'text-left w-20',
-            SCORE: 'text-left w-20',
-            OPP: 'text-left w-20',
-            RECORD: 'text-right w-20',
-          }}
-        />
+        <div class="mb-5">
+          <h3 class="font-semibold text-team-primary mb-0.5">
+            {schedule.grid.name}
+          </h3>
+          <Grid
+            data={schedule.grid}
+            fullWidth={false}
+            columnStyles={{
+              DATE: 'text-left w-20',
+              default: 'w-20',
+            }}
+          />
+        </div>
       )
     }
     {
       gameResults?.grids &&
         gameResults.grids.map((data) => (
-          <Grid
-            {data}
-            fullWidth={false}
-            columnStyles={{
-              DATE: 'text-left w-20',
-              SCORE: 'text-left w-20',
-              OPP: 'text-left w-20',
-              RECORD: 'text-right w-20',
-            }}
-          />
+          <div class="mb-5">
+            <h3 class="font-semibold text-team-primary mb-0.5">{data.name}</h3>
+            <Grid
+              {data}
+              fullWidth={false}
+              columnStyles={{
+                DATE: 'text-left w-20',
+                SCORE: 'text-left w-20',
+                default: 'w-20',
+              }}
+            />
+          </div>
         ))
     }
   </div>

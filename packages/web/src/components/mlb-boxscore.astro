@@ -8,7 +8,7 @@ import {
 import type { HTMLAttributes } from 'astro/types'
 import Tabs from '@components/tabs.astro'
 import TabPanel from '@components/tab-panel.astro'
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
 import Image from '@components/image.astro'
 
 interface Props extends HTMLAttributes<'div'> {
@@ -169,12 +169,32 @@ const innings = Object.entries(groupBy(plays, (p) => p.inning))
       <TabPanel title="Player Stats">
         <Tabs secondary titles={[awayTeam.name, homeTeam.name]}>
           <TabPanel title={awayTeam.name} class="space-y-5">
-            <Grid data={boxScoreData.stats.awayTeam.batterStats} />
-            <Grid data={boxScoreData.stats.awayTeam.pitcherStats} />
+            <div>
+              <h3 class="font-semibold text-team-primary mb-0.5">
+                {boxScoreData.stats.awayTeam.batterStats.name}
+              </h3>
+              <Grid data={boxScoreData.stats.awayTeam.batterStats} />
+            </div>
+            <div>
+              <h3 class="font-semibold text-team-primary mb-0.5">
+                {boxScoreData.stats.awayTeam.pitcherStats.name}
+              </h3>
+              <Grid data={boxScoreData.stats.awayTeam.pitcherStats} />
+            </div>
           </TabPanel>
           <TabPanel title={homeTeam.name} class="space-y-5">
-            <Grid data={boxScoreData.stats.homeTeam.batterStats} />
-            <Grid data={boxScoreData.stats.homeTeam.pitcherStats} />
+            <div>
+              <h3 class="font-semibold text-team-primary mb-0.5">
+                {boxScoreData.stats.homeTeam.batterStats.name}
+              </h3>
+              <Grid data={boxScoreData.stats.homeTeam.batterStats} />
+            </div>
+            <div>
+              <h3 class="font-semibold text-team-primary mb-0.5">
+                {boxScoreData.stats.homeTeam.pitcherStats.name}
+              </h3>
+              <Grid data={boxScoreData.stats.homeTeam.pitcherStats} />
+            </div>
           </TabPanel>
         </Tabs>
       </TabPanel>

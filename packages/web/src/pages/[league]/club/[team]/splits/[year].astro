@@ -1,6 +1,7 @@
 ---
 import TeamLayout from '@layouts/team.astro'
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
+import GridDropdown from '@components/grid-dropdown.astro'
 import { getUrlForEntity } from '@statmuse/core/gamera'
 import { getTeamSeasonBio, getTeamSeasonSplits } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
@@ -54,11 +55,19 @@ Caching.swr(Astro)
     {
       splits?.grids &&
         splits.grids.map((data) => (
-          <Grid
-            {data}
-            parameters={splits.parameters}
-            columnStyles={{ SPLIT: 'w-24 min-w-[96px] text-left' }}
-          />
+          <div>
+            <div class="flex justify-between mb-0.5">
+              <h3 class="font-semibold text-team-primary">{data.name}</h3>
+              {splits.parameters && (
+                <GridDropdown parameters={splits.parameters} />
+              )}
+            </div>
+            <Grid
+              client:load
+              {data}
+              columnStyles={{ SPLIT: 'w-24 min-w-[96px] text-left' }}
+            />
+          </div>
         ))
     }
   </div>

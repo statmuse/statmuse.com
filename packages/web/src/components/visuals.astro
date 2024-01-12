@@ -1,5 +1,5 @@
 ---
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
 import Chart from '@components/chart.astro'
 import Container from '@components/container.astro'
 import MlbStandings from '@components/mlb-standings.astro'
@@ -15,7 +15,6 @@ import EplBoxscore from '@components/epl-boxscore.astro'
 import Schedule from '@components/schedule.astro'
 import NbaShotChart from '@components/nba-shotchart'
 import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
-import GridAccordionWrapper from '@components/grid-accordion-wrapper.astro'
 import FreestarMedRec from '@components/freestar-med-rec.svelte'
 import FreestarRightRail from '@components/freestar-right-rail.svelte'
 
@@ -175,16 +174,15 @@ const details =
                   <div>
                     <div class="flex gap-4">
                       <div class="flex-1 overflow-x-auto">
-                        <GridAccordionWrapper>
-                          <Grid
-                            data={grid}
-                            columnStyles={{
-                              RESULT: 'text-left',
-                            }}
-                            hideTitle
-                            limitRows
-                          />
-                        </GridAccordionWrapper>
+                        <Grid
+                          client:load
+                          data={grid}
+                          columnStyles={{
+                            RESULT: 'text-left',
+                          }}
+                          stickyColumns={['NAME', 'TEAM', 'PLAYER']}
+                          limitRows
+                        />
                       </div>
                       <FreestarRightRail client:only="svelte" />
                     </div>
@@ -196,16 +194,15 @@ const details =
             return detail.grids.map((grid) => (
               <div class="flex gap-4">
                 <div class="flex-1 overflow-x-auto">
-                  <GridAccordionWrapper>
-                    <Grid
-                      data={grid}
-                      columnStyles={{
-                        RESULT: 'text-left',
-                      }}
-                      hideTitle
-                      limitRows
-                    />
-                  </GridAccordionWrapper>
+                  <Grid
+                    client:load
+                    data={grid}
+                    columnStyles={{
+                      RESULT: 'text-left',
+                    }}
+                    stickyColumns={['NAME', 'TEAM', 'PLAYER']}
+                    limitRows
+                  />
                 </div>
                 <FreestarRightRail client:only="svelte" />
               </div>

@@ -4,7 +4,7 @@ import AssetPriceReturnsChart from '@components/asset-price-chart.astro'
 import AssetPriceGrid from '@components/asset-price-grid.astro'
 import CategoricalColumnChart from '@components/categorical-column-chart.astro'
 import TimeSeriesLineChart from '@components/time-series-line-chart.astro'
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
 import { type KanedamaResponse, tokensToHtml } from '@statmuse/core/kanedama'
 import {
   type Asset,
@@ -24,7 +24,6 @@ import reduce from 'lodash/fp/reduce'
 import sortBy from 'lodash/fp/sortBy'
 import filter from 'lodash/fp/filter'
 import min from 'lodash/fp/min'
-import GridAccordionWrapper from '@components/grid-accordion-wrapper.astro'
 
 interface Props {
   response: KanedamaResponse
@@ -40,8 +39,6 @@ const details =
   response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
     ? response.visual.detail
     : undefined
-
-// console.log(JSON.stringify(details, null, 2))
 ---
 
 <Container>
@@ -197,15 +194,14 @@ const details =
             )
           case 'genericGrids':
             return detail.grids.map((grid) => (
-              <GridAccordionWrapper>
+              <div>
                 <Grid
-                  kanedama
+                  client:load
                   data={grid}
-                  hideTitle
                   columnStyles={{ DATE: 'text-left' }}
                   limitRows
-                />{' '}
-              </GridAccordionWrapper>
+                />
+              </div>
             ))
           case 'charts':
             return detail.charts.map((chart) => {

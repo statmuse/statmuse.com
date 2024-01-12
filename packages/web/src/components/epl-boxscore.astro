@@ -6,7 +6,7 @@ import {
 } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
 import { groupBy, orderBy } from 'lodash-es'
-import Grid from '@components/grid.astro'
+import Grid from '@components/grid.svelte'
 import Image from '@components/image.astro'
 import TabPanel from '@components/tab-panel.astro'
 import Tabs from '@components/tabs.astro'
@@ -290,14 +290,24 @@ const periods = Object.entries(groupBy(plays, (p) => p.period))
           <TabPanel title={homeTeam.name} class="space-y-5">
             {
               boxScoreData.playerDetail.homeTeam.grids.map((grid) => (
-                <Grid data={grid} />
+                <div>
+                  <h3 class="font-semibold text-team-primary mb-0.5">
+                    {grid.name}
+                  </h3>
+                  <Grid data={grid} />
+                </div>
               ))
             }
           </TabPanel>
           <TabPanel title={awayTeam.name} class="space-y-5">
             {
               boxScoreData.playerDetail.awayTeam.grids.map((grid) => (
-                <Grid data={grid} />
+                <div>
+                  <h3 class="font-semibold text-team-primary mb-0.5">
+                    {grid.name}
+                  </h3>
+                  <Grid data={grid} />
+                </div>
               ))
             }
           </TabPanel>
