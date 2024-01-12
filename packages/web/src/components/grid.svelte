@@ -24,7 +24,7 @@
   export let head = true
   export let color = false
   export let rankingRange = [10, 20]
-  export let highlight: string | undefined
+  export let highlight: string | undefined = undefined
 
   const styles = Object.assign(
     { ALIGNMENT: 'w-2', SEASON: 'text-center' },
@@ -217,7 +217,7 @@
             color ? 'divide-team-primary' : 'divide-[#c7c8ca]'
           } leading-[22px]`}
         >
-          {#each rows as row (row)}
+          {#each rows as row (JSON.stringify(row))}
             {@const rowHighlight = shouldApplyRowHighlight(
               row[columns[0].rowItemKey],
               highlight,
@@ -345,6 +345,32 @@
         class="flex gap-2 items-center w-fit py-3 px-4 bg-primary text-white text-lg rounded-md hover:no-underline"
       >
         <span class="shrink-0 mt-[1px]">Unlock 2x data</span>
+        <svg
+          enable-background="new 0 0 126.2 70.9"
+          viewBox="0 0 126.2 70.9"
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-10"
+        >
+          <path d="m51.3 1.7h15.1v67.4h-15.1z" fill="#fff"></path>
+          <path
+            d="m95.6 49.2c3.1-1 6-2.7 8-5.3-3.1.8-5.9 1.4-8.7 1.5-1.8.1-3.5.1-5.3-.1v-11-8.8c0-9.9-8-17.9-17.9-17.9v35.4c3.1 0 5.7 2.5 5.7 5.7v8.2c0 6.8 5.5 12.3 12.3 12.3h8.9v-8.9h-3.4c-3 0-5.5-2.5-5.5-5.5v-4.6c2-.1 4-.4 5.9-1zm-16.8-20c-1.4-1.4-1.4-3.8 0-5.2 0 1 .6 2.4 1.8 3.5 1.1 1.1 2.5 1.7 3.5 1.8-1.5 1.4-3.9 1.4-5.3-.1z"
+            fill="#fff"
+          ></path>
+          <path d="m30.9 17.2h15.1v51.9h-15.1z" fill="#fff"></path>
+          <path
+            d="m10.5 28.3v20.2c0 1.8-1.1 4-3 5.9s-4.1 3-5.9 3c2.5 2.4 6.4 2.4 8.9 0v11.8h15.1v-56c-8.3 0-15.1 6.7-15.1 15.1z"
+            fill="#fff"
+          ></path>
+          <path
+            d="m113 36.2h-7.6v-28.5c4.2 0 7.6 3.4 7.6 7.6z"
+            fill="#fff"
+          ></path>
+          <path
+            d="m105.4 7.7h7.6v28.6h-7.6z"
+            transform="matrix(0 -1 1 0 87.2674 131.158)"
+            fill="#fff"
+          ></path>
+        </svg>
       </a>
     </div>
   {/if}
