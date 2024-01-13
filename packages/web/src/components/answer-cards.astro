@@ -12,6 +12,7 @@ import StandingsCard from '@components/standings-card.astro'
 import Image from '@components/image.astro'
 import { getStandings } from '@lib/standings'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
+import { createAskPath } from '@statmuse/core/path'
 
 interface Props {
   league: LeagueParam
@@ -133,109 +134,334 @@ const teamCardTitle = (stat: string) => {
   }
 }
 
-const playerAskLink = (league: LeagueParam, stat: string) => {
+const playerAskLink = (
+  stat: string,
+  league: LeagueParam,
+  season: string,
+  year: string,
+) => {
   switch (stat) {
     // NBA Player
     case 'mostPointsPerGame':
-      return `/${league}/ask/ppg-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `ppg leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostReboundsPerGame':
-      return `/${league}/ask/rpg-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `rpg leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostAssistsPerGame':
-      return `/${league}/ask/apg-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `apg leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostStealsPerGame':
-      return `/${league}/ask/spg-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `spg leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostBlocksPerGame':
-      return `/${league}/ask/bpg-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `bpg leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostThreePointersMadePerGame':
-      return `/${league}/ask/3pm-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `3pm leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'bestTrueShootingPercentage':
-      return `/${league}/ask?q=ts%25+leaders+this+season`
+      return createAskPath({
+        domain: league,
+        query: `ts% leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     // NFL Player
     case 'mostPassingYards':
-      return `/${league}/ask/pass-yards-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `pass yards leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostRushingYards':
-      return `/${league}/ask/rush-yards-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `rush yards leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostReceivingYards':
-      return `/${league}/ask/rec-yards-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `rec yards leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostPassingTouchdowns':
-      return `/${league}/ask/pass-td-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `pass td leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostRushingTouchdowns':
-      return `/${league}/ask/rush-td-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `rush td leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostReceivingTouchdowns':
-      return `/${league}/ask/rec-td-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `rec td leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'bestQuarterbackRating':
-      return `/${league}/ask/qb-rating-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `qb rating leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostDefensiveSacks':
-      return `/${league}/ask/sack-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `sack leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     // NHL Player
     case 'mostGoals':
-      return `/${league}/ask/goal-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `goal leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostAssists':
-      return `/${league}/ask/assist-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `assist leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostPoints':
-      return `/${league}/ask/points-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `points leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'bestPlusMinus':
-      return `/${league}/ask?q=%2B%2F-+leaders+this+season`
+      return createAskPath({
+        domain: league,
+        query: `+/- leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'bestGoalsAgainstAverage':
-      return `/${league}/ask/gaa-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `gaa leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     // EPL Player
     case 'mostGoals':
-      return `/${league}/ask/goal-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `goal leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostAssists':
-      return `/${league}/ask/assist-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `assist leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostShotsOnTarget':
-      return `/${league}/ask/shots-on-target-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `shots on target leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostPasses':
-      return `/${league}/ask/passes-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `passes leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostTackles':
-      return `/${league}/ask/tackles-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `tackles leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostCleanSheets':
-      return `/${league}/ask/clean-sheet-leaders-this-season`
+      return createAskPath({
+        domain: league,
+        query: `clean sheet leaders ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     default:
       return stat
   }
 }
 
-const teamAskLink = (league: LeagueParam, stat: string) => {
+const teamAskLink = (
+  stat: string,
+  league: LeagueParam,
+  season: string,
+  year: string,
+) => {
   switch (stat) {
     // NBA Team
     case 'bestOffensiveRating':
-      return `/${league}/ask/team-ortg-rankings-this-season`
+      return createAskPath({
+        domain: league,
+        query: `team ortg rankings ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'bestDefensiveRating':
-      return `/${league}/ask/team-drtg-rankings-this-season`
+      return createAskPath({
+        domain: league,
+        query: `team drtg rankings ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'bestNetRating':
-      return `/${league}/ask/team-net-rating-rankings-this-season`
+      return createAskPath({
+        domain: league,
+        query: `team net rating rankings ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'worstRecord':
-      return `/${league}/ask/worst-record-this-season`
+      return createAskPath({
+        domain: league,
+        query: `worst record ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     // NFL Team
     case 'mostPointsPerGame':
-      return `/${league}/ask/team-ppg-rankings-this-season`
+      return createAskPath({
+        domain: league,
+        query: `team ppg rankings ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'leastPointsAllowedPerGame':
-      return `/${league}/ask/fewest-points-allowed-per-game-by-a-team-this-season`
+      return createAskPath({
+        domain: league,
+        query: `fewest points allowed per game by a team ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostTotalYardsPerGame':
-      return `/${league}/ask/team-total-yards-per-game-rankings-this-season`
+      return createAskPath({
+        domain: league,
+        query: `team total yards per game rankings ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostRushingYardsPerGame':
-      return `/${league}/ask/team-rush-yards-per-game-rankings-this-season`
+      return createAskPath({
+        domain: league,
+        query: `team rush yards per game rankings ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostPassingYardsPerGame':
-      return `/${league}/ask/team-pass-yards-per-game-rankings-this-season`
+      return createAskPath({
+        domain: league,
+        query: `team pass yards per game rankings ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'mostDefensiveSacks':
-      return `/${league}/ask/team-sack-rankings-this-season`
+      return createAskPath({
+        domain: league,
+        query: `team sack rankings ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     // NHL Team
     case 'mostGoalsPerGame':
-      return `/${league}/ask/most-goals-per-game-by-a-team-this-season`
+      return createAskPath({
+        domain: league,
+        query: `most goals per game by a team ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'leastGoalsAllowedPerGame':
-      return `/${league}/ask/fewest-goals-against-per-game-by-a-team-this-season`
+      return createAskPath({
+        domain: league,
+        query: `fewest goals against per game by a team ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'bestPowerPlayPercentage':
-      return `/${league}/ask?q=most+pp%25+this+season`
+      return createAskPath({
+        domain: league,
+        query: `most pp% ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'bestPenaltyKillPercentage':
-      return `/${league}/ask?q=best+pk%25+by+a+team+this+season`
+      return createAskPath({
+        domain: league,
+        query: `best pk% by a team ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     // EPL Team
     case 'mostGoals':
-      return `/${league}/ask/most-goals-by-a-team-this-season`
+      return createAskPath({
+        domain: league,
+        query: `most goals by a team ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'leastGoalsAgainst':
-      return `/${league}/ask/fewest-goals-against-by-a-team-this-season`
+      return createAskPath({
+        domain: league,
+        query: `fewest goals against by a team ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     case 'bestGoalDifferential':
-      return `/${league}/ask/highest-goal-difference-by-a-team-this-season`
+      return createAskPath({
+        domain: league,
+        query: `highest goal difference by a team ${year}${
+          season === 'postSeason' ? ' postseason' : ''
+        }`,
+      })
     default:
       return stat
   }
@@ -328,10 +554,24 @@ if (allowedDomains.includes(league)) {
           <div>
             <div class="flex justify-between">
               <p class="font-semibold">{playerCardTitle(card.stat)}</p>
-              <a href={playerAskLink(league, card.stat)}>See more</a>
+              <a
+                href={playerAskLink(
+                  card.stat,
+                  league,
+                  playerCardsResp.seasonType,
+                  playerCardsResp.seasonYearDisplay,
+                )}
+              >
+                See more
+              </a>
             </div>
             <a
-              href={playerAskLink(league, card.stat)}
+              href={playerAskLink(
+                card.stat,
+                league,
+                playerCardsResp.seasonType,
+                playerCardsResp.seasonYearDisplay,
+              )}
               class="flex rounded-2xl overflow-hidden px-2.5 hover:no-underline"
               style={{
                 backgroundColor:
@@ -381,14 +621,28 @@ if (allowedDomains.includes(league)) {
         } Rankings`}
       </h3>
       <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
-        {teamCardsResp?.cards.filter(filterTeamCards).map((card) => (
+        {teamCardsResp.cards.filter(filterTeamCards).map((card) => (
           <div>
             <div class="flex justify-between">
               <p class="font-semibold">{teamCardTitle(card.stat)}</p>
-              <a href={teamAskLink(league, card.stat)}>See more</a>
+              <a
+                href={teamAskLink(
+                  card.stat,
+                  league,
+                  teamCardsResp.seasonType,
+                  teamCardsResp.seasonYearDisplay,
+                )}
+              >
+                See more
+              </a>
             </div>
             <a
-              href={teamAskLink(league, card.stat)}
+              href={teamAskLink(
+                card.stat,
+                league,
+                teamCardsResp.seasonType,
+                teamCardsResp.seasonYearDisplay,
+              )}
               class="flex flex-wrap rounded-2xl py-5 px-2.5 gap-y-5 hover:no-underline"
               style={{
                 backgroundColor: card.teams[0].colors.backgroundColor,
