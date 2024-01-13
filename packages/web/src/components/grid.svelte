@@ -290,15 +290,19 @@
             {#each aggregations as row (row)}
               <tr class="text-sm font-semibold">
                 {#each columns as col (row[col.rowItemKey])}
-                  {@const { display } = row[col.rowItemKey]}
-                  <td
-                    class={`${applyStyles(col)} ${padding} py-1`}
-                    class:sticky={col.sticky}
-                    class:left-0={col.sticky}
-                    class:bg-white={col.sticky}
-                  >
-                    {display}
-                  </td>
+                  {#if row[col.rowItemKey]}
+                    {@const { display } = row[col.rowItemKey]}
+                    <td
+                      class={`${applyStyles(col)} ${padding} py-1`}
+                      class:sticky={col.sticky}
+                      class:left-0={col.sticky}
+                      class:bg-white={col.sticky}
+                    >
+                      {display}
+                    </td>
+                  {:else}
+                    <td></td>
+                  {/if}
                 {/each}
               </tr>
             {/each}
