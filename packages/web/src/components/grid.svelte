@@ -286,26 +286,28 @@
               {/each}
             </tr>
           {/each}
-          {#if aggregations}
-            {#each aggregations as row (row)}
-              <tr class="text-sm font-semibold">
-                {#each columns as col (row[col.rowItemKey])}
-                  {#if row[col.rowItemKey]}
-                    {@const { display } = row[col.rowItemKey]}
-                    <td
-                      class={`${applyStyles(col)} ${padding} py-1`}
-                      class:sticky={col.sticky}
-                      class:left-0={col.sticky}
-                      class:bg-white={col.sticky}
-                    >
-                      {display}
-                    </td>
-                  {:else}
-                    <td></td>
-                  {/if}
-                {/each}
-              </tr>
-            {/each}
+          {#if !limitRows || (limitRows && $session?.type === 'user' && $session.properties.subscriptionStatus === 'active')}
+            {#if aggregations}
+              {#each aggregations as row (row)}
+                <tr class="text-sm font-semibold">
+                  {#each columns as col (row[col.rowItemKey])}
+                    {#if row[col.rowItemKey]}
+                      {@const { display } = row[col.rowItemKey]}
+                      <td
+                        class={`${applyStyles(col)} ${padding} py-1`}
+                        class:sticky={col.sticky}
+                        class:left-0={col.sticky}
+                        class:bg-white={col.sticky}
+                      >
+                        {display}
+                      </td>
+                    {:else}
+                      <td></td>
+                    {/if}
+                  {/each}
+                </tr>
+              {/each}
+            {/if}
           {/if}
         </tbody>
         {#if limitRows && grids[0].allRows.length > freeRowLimit && ($session?.type === 'visitor' || $session?.properties.subscriptionStatus !== 'active')}
