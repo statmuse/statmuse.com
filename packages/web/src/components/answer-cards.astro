@@ -4,6 +4,7 @@ import { getPlayerCards, getTeamCards } from '@lib/related-content'
 import type {
   PlayerCard,
   PlayerCardResponse,
+  ScheduleResponse,
   StandingsResponse,
   TeamCard,
   TeamCardResponse,
@@ -13,6 +14,8 @@ import Image from '@components/image.astro'
 import { getStandings } from '@lib/standings'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import { createAskPath } from '@statmuse/core/path'
+import { getSchedule } from '@lib/game'
+import ScheduleCard from './schedule-card.astro'
 
 interface Props {
   league: LeagueParam
@@ -637,15 +640,18 @@ const filterBettingCards = (card: TeamCard) =>
 let playerCardsResp: PlayerCardResponse | undefined
 let teamCardsResp: TeamCardResponse | undefined
 let standingsResp: StandingsResponse | undefined
+let scheduleResp: ScheduleResponse | undefined
 
 const allowedDomains = ['nba', 'nfl', 'nhl', 'fc']
 
 if (allowedDomains.includes(league)) {
-  ;[playerCardsResp, teamCardsResp, standingsResp] = await Promise.all([
-    getPlayerCards({ context: Astro, domain }),
-    getTeamCards({ context: Astro, domain }),
-    getStandings({ context: Astro, domain }),
-  ])
+  ;[playerCardsResp, teamCardsResp, standingsResp, scheduleResp] =
+    await Promise.all([
+      getPlayerCards({ context: Astro, domain }),
+      getTeamCards({ context: Astro, domain }),
+      getStandings({ context: Astro, domain }),
+      getSchedule({ context: Astro, domain }),
+    ])
 }
 
 let playerLeaderCards: PlayerCard[] = []
@@ -970,6 +976,16 @@ if (teamCardsResp) {
             />
           ),
         )}
+      </div>
+    </Fragment>
+  )
+}
+{
+  scheduleResp && scheduleResp.games.length > 0 && (
+    <Fragment>
+      <h3 class="text-3xl font-semibold mb-1.5">Scores & Schedule</h3>
+      <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
+        <ScheduleCard data={scheduleResp} />
       </div>
     </Fragment>
   )
