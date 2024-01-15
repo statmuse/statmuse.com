@@ -50,8 +50,8 @@ export const create = async (context: Context) => {
 }
 
 export const set = (context: Context, token: string) => {
-  const tomorrow = new Date()
-  tomorrow.setDate(tomorrow.getDate() + 1)
+  const expires = new Date()
+  expires.setDate(expires.getDate() + 90)
 
   const isLocal = context.url.hostname === 'localhost'
   const isStaging = context.url.hostname.includes('v2.statmuse.com')
@@ -62,7 +62,7 @@ export const set = (context: Context, token: string) => {
       : isStaging
       ? context.url.hostname
       : 'statmuse.com',
-    expires: tomorrow,
+    expires,
     maxAge: 31536000,
     secure: true,
     httpOnly: true,
