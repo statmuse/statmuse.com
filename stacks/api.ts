@@ -41,79 +41,9 @@ export function API({ stack }: StackContext) {
     'allow lambda connection to rds proxy',
   )
 
-  let GAMERA_API_URL = isProd
-    ? 'http://gamera.statmuse.com/'
-    : 'http://gamera.staging.statmuse.com/'
-
-  if (isProd || isStaging) {
-    const albListener = ApplicationListener.fromLookup(
-      stack,
-      'gamera-prod-alb-listener',
-      {
-        loadBalancerArn: isProd
-          ? 'arn:aws:elasticloadbalancing:us-east-1:723112830140:loadbalancer/app/gamera-prod/69000dfcb10c6a79'
-          : 'arn:aws:elasticloadbalancing:us-east-1:723112830140:loadbalancer/app/gamera-staging/7a5fdcd55dd05878',
-        listenerArn: isProd
-          ? 'arn:aws:elasticloadbalancing:us-east-1:723112830140:listener/app/gamera-prod/69000dfcb10c6a79/66bcc3bb81da491a'
-          : 'arn:aws:elasticloadbalancing:us-east-1:723112830140:listener/app/gamera-staging/7a5fdcd55dd05878/d327a2ddf431e908',
-      },
-    )
-
-    const vpcLinkSg = new SecurityGroup(stack, 'gamera-proxy-vpc-link-sg', {
-      vpc,
-      allowAllOutbound: true,
-    })
-    vpcLinkSg.addIngressRule(Peer.anyIpv4(), Port.tcp(80))
-    vpcLinkSg.addIngressRule(Peer.anyIpv4(), Port.tcp(443))
-
-    const subnets = [
-      Subnet.fromSubnetId(stack, 'gamera-proxy-vpc-link-1a', 'subnet-db00adad'),
-      Subnet.fromSubnetId(stack, 'gamera-proxy-vpc-link-1b', 'subnet-e718dfbf'),
-      Subnet.fromSubnetId(stack, 'gamera-proxy-vpc-link-1d', 'subnet-81e211ab'),
-      Subnet.fromSubnetId(
-        stack,
-        'gamera-proxy-vpc-link-1f',
-        'subnet-0a08534ad323b86d7',
-      ),
-    ]
-
-    const vpcLink = new VpcLink(stack, 'gamera-proxy-vpc-link', {
-      vpc,
-      subnets: { subnets },
-      securityGroups: [vpcLinkSg],
-    })
-
-    const gameraProxy = new HttpApi(stack, 'gamera-proxy-api', {
-      apiName: `${stack.stage}-gamera-proxy-api`,
-      defaultIntegration: new HttpAlbIntegration(
-        'gamera-proxy-api-integration',
-        albListener,
-        { vpcLink },
-      ),
-    })
-
-    const gameraCfDistro = new Distribution(stack, 'gamera-proxy-cf', {
-      priceClass: PriceClass.PRICE_CLASS_100,
-      defaultBehavior: {
-        origin: new HttpOrigin(
-          `${gameraProxy.httpApiId}.execute-api.${stack.region}.amazonaws.com`,
-          { originShieldRegion: stack.region },
-        ),
-        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-        allowedMethods: AllowedMethods.ALLOW_ALL,
-        cachePolicy: new CachePolicy(stack, 'gamera-proxy-cf-cache-policy', {
-          queryStringBehavior: CacheQueryStringBehavior.all(),
-          enableAcceptEncodingGzip: true,
-          enableAcceptEncodingBrotli: true,
-          // minTtl: Duration.seconds(0),
-          defaultTtl: Duration.minutes(5),
-        }),
-        originRequestPolicy: OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
-      },
-    })
-
-    GAMERA_API_URL = `https://${gameraCfDistro.distributionDomainName}/`
-  }
+  const GAMERA_API_URL = isProd
+    ? 'https://gamera-prod.public.statmuse.com/'
+    : 'https://gamera-staging.public.statmuse.com/'
 
   const environment: Record<string, string> = {
     POSTGRES_SECRET_ARN: rdsCredentialsSecret.secretArn,

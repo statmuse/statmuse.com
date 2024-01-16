@@ -4,6 +4,7 @@ import type { Musing } from '@statmuse/core/musing'
 import type { HeroProps } from './props'
 import type { Context } from './session'
 export const gameraApiUrl = import.meta.env.GAMERA_API_URL
+export const gameraApiKey = import.meta.env.GAMERA_API_KEY
 
 export async function request<T>(
   context: Context,
@@ -84,6 +85,7 @@ export const getGameraHeaders = (context: Context) => {
     'x-origin-scope': 'browser',
     'x-origin-version': '2.0',
     'x-visitor-id': visitor.id,
+    'x-statmuse-api-key': gameraApiKey,
     // 'x-request-id': context.request.
   }
 
