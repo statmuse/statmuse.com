@@ -1,28 +1,8 @@
 import { type StackContext, Api, use } from 'sst/constructs'
-import {
-  Peer,
-  Port,
-  SecurityGroup,
-  Subnet,
-  SubnetType,
-} from 'aws-cdk-lib/aws-ec2'
-import { HttpApi, VpcLink } from '@aws-cdk/aws-apigatewayv2-alpha'
-import { HttpAlbIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha'
+import { Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2'
 import { Imports } from './imports'
 import { Secrets } from './secrets'
 import { DNS } from './dns'
-import { ApplicationListener } from 'aws-cdk-lib/aws-elasticloadbalancingv2'
-import {
-  AllowedMethods,
-  CachePolicy,
-  CacheQueryStringBehavior,
-  Distribution,
-  OriginRequestPolicy,
-  PriceClass,
-  ViewerProtocolPolicy,
-} from 'aws-cdk-lib/aws-cloudfront'
-import { HttpOrigin } from 'aws-cdk-lib/aws-cloudfront-origins'
-import { Duration } from 'aws-cdk-lib/core'
 
 export function API({ stack }: StackContext) {
   const secrets = use(Secrets)
@@ -94,6 +74,7 @@ export function API({ stack }: StackContext) {
           secrets.STRIPE_WEBHOOK_SECRET,
           secrets.STRIPE_PRICE_ID,
           secrets.SENDGRID_API_KEY,
+          secrets.GAMERA_API_KEY,
         ],
         prefetchSecrets: true,
         vpc,

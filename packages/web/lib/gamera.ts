@@ -3,8 +3,9 @@ import { relativeTimeFromDates } from '@statmuse/core/time'
 import type { Musing } from '@statmuse/core/musing'
 import type { HeroProps } from './props'
 import type { Context } from './session'
+import { Config } from 'sst/node/config'
 export const gameraApiUrl = import.meta.env.GAMERA_API_URL
-export const gameraApiKey = import.meta.env.GAMERA_API_KEY
+export const gameraApiKey = Config.GAMERA_API_KEY
 
 export async function request<T>(
   context: Context,
