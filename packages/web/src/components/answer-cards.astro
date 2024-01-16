@@ -16,8 +16,8 @@ import { getStandings } from '@lib/standings'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import { createAskPath } from '@statmuse/core/path'
 import { getGames, getSchedule } from '@lib/game'
-import ScheduleCard from './schedule-card.astro'
-import ScoresCard from './scores-card.astro'
+import ScheduleCard from '@components/schedule-card.astro'
+import ScoresCard from '@components/scores-card.astro'
 
 interface Props {
   league: LeagueParam
