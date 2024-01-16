@@ -1664,3 +1664,35 @@ export interface ScheduleResponse {
   teams: ScheduleTeam[]
   games: ScheduleGame[]
 }
+
+export interface ScoreGame {
+  id: number
+  season: {
+    type: string
+  }
+  gameDate: string
+  homeTeam: {
+    teamId: number
+    score: number
+    record: {
+      wins: number
+      losses: number
+    }
+    gameResult: string
+  }
+  awayTeam: {
+    teamId: number
+    score: number
+    record: {
+      wins: number
+      losses: number
+    }
+    gameResult: string
+  }
+}
+
+export interface ScoresResponse {
+  seasonYearDisplay: string
+  teams: ScheduleTeam[] // find better abstract type for teams
+  games: ScoreGame[]
+}
