@@ -292,7 +292,7 @@ const awayLineup = lineupFormation(
       {
         homeLineup.map((line) => (
           <div
-            class={`flex justify-center ${
+            class={`flex flex-row-reverse justify-center ${
               line.length < 5 ? ' gap-10' : 'gap-8'
             }`}
           >
@@ -372,7 +372,7 @@ const awayLineup = lineupFormation(
       {
         awayLineup.map((line) => (
           <div
-            class={`flex flex-row-reverse justify-center ${
+            class={`flex flex-row justify-center ${
               line.length < 5 ? ' gap-10' : 'gap-8'
             }`}
           >
