@@ -290,15 +290,20 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
   </div>
 </Container>
 <Container>
-  <div class="flex flex-nowrap overflow-auto mb-5 space-x-5 md:hidden">
+  <div
+    class="flex flex-nowrap overflow-auto mb-5 space-x-5 md:hidden"
+    data-hash-links
+  >
     {
       [
         { text: 'Timeline', href: '#timeline' },
         { text: 'Lineups', href: '#lineups' },
         { text: 'Stats', href: '#stats' },
-      ].map(({ href, text }) => (
+      ].map(({ href, text }, index) => (
         <a
-          class="text-black text-3xl font-semibold shrink-0 hover:text-team-primary"
+          class={`text-black text-3xl font-semibold shrink-0 hover:text-team-primary ${
+            index === 0 ? 'text-team-primary' : ''
+          }`}
           {href}
         >
           {text}
@@ -1107,3 +1112,19 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
     </div>
   </div>
 </Container>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const container = document.querySelector('[data-hash-links]')
+    if (container) {
+      container.querySelectorAll('a').forEach((anchor) => {
+        anchor.addEventListener('click', () => {
+          container
+            .querySelectorAll('a')
+            .forEach((x) => x.classList.remove('text-team-primary'))
+          anchor.classList.add('text-team-primary')
+        })
+      })
+    }
+  })
+</script>
