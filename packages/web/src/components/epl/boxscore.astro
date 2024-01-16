@@ -13,6 +13,7 @@ import Substitution from '@components/icons/substitution.astro'
 import SoccerLineup from '@components/soccer-lineup.astro'
 import SubArrow from '@components/icons/sub-arrow.astro'
 import EntityLink from '@components/entity-link.astro'
+import dayjs from 'dayjs'
 
 interface Props {
   data: GameraEplBoxScore
@@ -288,6 +289,9 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       )
     }
   </div>
+  <p class="text-center text-sm uppercase tracking-[0.07rem]">
+    {dayjs(boxscoreData.gameDate).format('ddd D MMM YYYY')}
+  </p>
 </Container>
 <Container>
   <div

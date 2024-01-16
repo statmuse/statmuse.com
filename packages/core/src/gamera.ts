@@ -1075,6 +1075,7 @@ export interface EplTeamGameStats {
 export interface EplHistoricalBoxScore extends DetailBase {
   type: 'eplHistoricalBoxScore'
   gameId: number
+  gameDate: string
   completedGameStatus: 'FT'
   dameDate: string
   homeTeam: Team
