@@ -11,6 +11,7 @@ export function getStaticPaths() {
     { params: { league: 'mlb' } },
     { params: { league: 'nhl' } },
     { params: { league: 'pga' } },
+    { params: { league: 'fc' } },
   ]
 }
 
@@ -31,6 +32,7 @@ const data = [
       'Game-by-game coverage for all other official statistics dating back to 1960.',
       'Game results and team standings dating back to 1920.',
     ],
+    poweredBy: 'sportsradar',
     glossaryItems: [
       {
         term: 'Assisted Tackles',
@@ -382,6 +384,7 @@ const data = [
       'Game-by-game coverage for all other official statistics dating back to 1984-85.',
       'Game results and team standings dating back to 1946-47.',
     ],
+    poweredBy: 'sportsradar',
     glossaryItems: [
       {
         term: '3-Point Field Goal Percentage',
@@ -600,6 +603,7 @@ const data = [
       'Game-by-game coverage for all official statistics dating back to 1908.',
       'Game results and team standings dating back to 1876.',
     ],
+    poweredBy: 'sportsradar',
     glossaryItems: [
       {
         term: 'At Bats',
@@ -821,6 +825,7 @@ const data = [
       'Game-by-game coverage for all official statistics dating back to 1917-18.',
       'Game results and team standings dating back to 1917-18.',
     ],
+    poweredBy: 'sportsradar',
     glossaryItems: [
       {
         term: 'Assists',
@@ -1112,6 +1117,7 @@ const data = [
       'Coverage for scrambling percentage dating back to 1991-92.',
       'Coverage for eagles, birdies, bogeys, double bogeys and holes in one dating back to 2011-12.',
     ],
+    poweredBy: 'sportsradar',
     glossaryItems: [
       {
         term: 'Birdies/Birdies per round',
@@ -1184,11 +1190,83 @@ const data = [
       },
     ],
   },
+  {
+    league: 'FC',
+    coverage: [
+      'Match-by-match coverage for basic stats dating back to 1992-93.',
+      'Match-by-match coverage for advanced stats dating back to 2014-15.',
+    ],
+    poweredBy: 'data-sports-group',
+    glossaryItems: [
+      { term: 'Aerials lost (AER-L)' },
+      { term: 'Aerials won (AER-W)' },
+      { term: 'Assists (A)' },
+      { term: 'Ball recovered (REC)' },
+      { term: 'Big chance created (BIG CHNC)' },
+      { term: 'Blocked crosses (BLK-CRS)' },
+      { term: 'Blocked shots (BLK-SH)' },
+      { term: 'Clean sheet (CS)' },
+      { term: 'Clearances (CLR)' },
+      { term: 'Corner kicks (CNR)' },
+      { term: 'Corner kicks won (CNR-W)' },
+      { term: 'Crosses (CRS)' },
+      { term: 'Defender (DF)' },
+      { term: 'Duels lost (DUEL-L)' },
+      { term: 'Duels won (DUEL-W)' },
+      { term: 'Error leading to goal (ERR-G)' },
+      { term: 'Error leading to shot (ERR-SH)' },
+      { term: 'Expected goals (xG)' },
+      { term: 'Forward (FW)' },
+      { term: 'Fouled (FOULED)' },
+      { term: 'Fouls (FOUL)' },
+      { term: 'Free kick goals (FK)' },
+      { term: 'Goal difference (GD)' },
+      { term: 'Goalkeeper (GK)' },
+      { term: 'Goals (G)' },
+      { term: 'Goals + assists (G+A)' },
+      { term: 'Goals against (GA)' },
+      { term: 'Goals conceded (GC)' },
+      { term: 'Goals for (GF)' },
+      { term: 'Hit woodwork (WOOD)' },
+      { term: 'Interceptions (INT)' },
+      { term: 'Key passes (PASS-KEY)' },
+      { term: 'Last man tackles (TKL-LM)' },
+      { term: 'Long ball passes (PASS-LNG)' },
+      { term: 'Matches (M)' },
+      { term: 'Matches started (START)' },
+      { term: 'Midfielder (MF)' },
+      { term: 'Minutes played (MIN)' },
+      { term: 'Offside (O F)' },
+      { term: 'Opponent (OPP)' },
+      { term: 'Own goals (OG)' },
+      { term: 'Pass accuracy (PASS%)' },
+      { term: 'Pass attempts (PASS-ATT)' },
+      { term: 'Passes (PASS)' },
+      { term: 'Passes in the final third (PASS-F3RD)' },
+      { term: 'Penalty kick conversion rate (PK%)' },
+      { term: 'Penalty kick goals (PK)' },
+      { term: 'Penalty kicks conceded (PKC)' },
+      { term: 'Penalty kicks saved (SV-PK)' },
+      { term: 'Penalty kicks won (PK-W)' },
+      { term: 'Possessions lost (POSS-L)' },
+      { term: 'Red cards (RC)' },
+      { term: 'Saves (SV)' },
+      { term: 'Shot accuracy (SH%)' },
+      { term: 'Shots (SH)' },
+      { term: 'Shots on target (ST)' },
+      { term: 'Tackles (TKL)' },
+      { term: 'Tackles won (TKL-W)' },
+      { term: 'Touches (TCH)' },
+      { term: 'Touches in opponents box (TCH-BOX)' },
+      { term: 'Win-Draw-Loss (W-D-L)' },
+      { term: 'Yellow cards (YC)' },
+    ],
+  },
 ]
 
-const { coverage, glossaryItems } = data.find(
+const { coverage, poweredBy, glossaryItems } = data.find(
   (x) => x.league.toLowerCase() === league,
-) || { coverage: [], glossaryItems: [] }
+) || { coverage: [], poweredBy: '', glossaryItems: [] }
 
 Caching.swr(Astro)
 ---
@@ -1211,8 +1289,16 @@ Caching.swr(Astro)
         <p class="inline-block mr-[0.45em]">Real-time scores and stats</p>
         <img
           class="inline-block h-[20px] object-contain"
-          alt="Sportradar"
-          src="https://developer.sportradar.com/files/powered-by-sportradar-1000w.png"
+          alt={poweredBy === 'sportsradar'
+            ? 'Sportradar'
+            : poweredBy === 'data-sports-group'
+            ? 'Data Sports Group'
+            : ''}
+          src={poweredBy === 'sportsradar'
+            ? 'https://developer.sportradar.com/files/powered-by-sportradar-1000w.png'
+            : poweredBy === 'data-sports-group'
+            ? '/affiliations/data-sports-group.png'
+            : ''}
         />
       </li>
     </ul>
