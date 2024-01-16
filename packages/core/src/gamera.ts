@@ -1062,6 +1062,7 @@ export interface EplTeamGameStats {
   redCards: string
   possessionPercentage: string
   touches: string
+  touchesInOpponentsBox: string
   passes: string
   passesCompleted: string
   offsides: string
