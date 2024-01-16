@@ -2,10 +2,11 @@
 import { orderBy, groupBy } from 'lodash-es'
 import Container from '@components/container.astro'
 import Image from '@components/image.astro'
-import type {
-  EplHistoricalBoxScore,
-  GameraEplBoxScore,
-  GameraEntity,
+import {
+  type EplHistoricalBoxScore,
+  type GameraEplBoxScore,
+  type GameraEntity,
+  tokensToText,
 } from '@statmuse/core/gamera'
 import Goal from '@components/icons/goal.astro'
 import Substitution from '@components/icons/substitution.astro'
@@ -22,6 +23,8 @@ const { data } = Astro.props
 const boxscoreData = data.visual.detail[0] as EplHistoricalBoxScore
 const homeTeam = boxscoreData.homeTeam
 const awayTeam = boxscoreData.awayTeam
+
+const summary = tokensToText(data.nlg.text.answer)
 
 const plays = orderBy(
   boxscoreData.gameSummary.map((play) => ({
@@ -1099,6 +1102,8 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
           </div>
         )
       }
+      <p class="font-semibold text-[#b8b8b8] mt-5">Summary</p>
+      <p>{summary}</p>
     </div>
   </div>
 </Container>
