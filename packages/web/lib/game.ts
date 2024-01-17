@@ -4,6 +4,8 @@ import type {
   GameraNbaBoxScore,
   GameraNflBoxScore,
   GameraNhlBoxScore,
+  ScheduleResponse,
+  ScoresResponse,
 } from '@statmuse/core/gamera'
 import { parseGameId } from '@lib/parse'
 import { request } from '@lib/gamera'
@@ -35,6 +37,41 @@ export async function getGame<T extends Domain>(props: {
     const path = `${league}/games/${gameId}/answer`
     const data = await request<Response[T]>(props.context, path, props.params)
     if (data) data.domain = props.domain
+    return data
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
+}
+
+export const getGames = async (props: {
+  context: Context
+  domain: string
+  teamId?: number
+  seasonYear?: number
+}) => {
+  try {
+    const { domain, context, ...params } = props
+    const league = domain.toLowerCase()
+    const path = `${league}/games/v2`
+    const data = await request<ScoresResponse>(context, path, params)
+    return data
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
+}
+
+export const getSchedule = async (props: {
+  context: Context
+  domain: string
+  teamId?: number
+}) => {
+  try {
+    const { domain, context, ...params } = props
+    const league = domain.toLowerCase()
+    const path = `${league}/schedule`
+    const data = await request<ScheduleResponse>(context, path, params)
     return data
   } catch (error) {
     console.error(error)

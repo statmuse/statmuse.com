@@ -10,10 +10,10 @@ export const gameraApiKey = Config.GAMERA_API_KEY
 export async function request<T>(
   context: Context,
   path: string,
-  params?: Record<string, string> | URLSearchParams,
+  params?: Record<string, string | number> | URLSearchParams,
 ): Promise<T | undefined> {
   const requestUrl = `${gameraApiUrl}${path}?${new URLSearchParams(
-    params,
+    params as Record<string, string>,
   ).toString()}`
 
   try {

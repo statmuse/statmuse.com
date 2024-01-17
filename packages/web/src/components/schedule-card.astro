@@ -1,0 +1,82 @@
+---
+import dayjs from 'dayjs'
+import Grid from '@components/grid.svelte'
+import type { ScheduleResponse, GameraGrid } from '@statmuse/core/gamera'
+
+interface Props {
+  data: ScheduleResponse
+}
+
+const data = Astro.props.data
+
+const teams = data.teams.reduce(
+  (result, team) => ({
+    ...result,
+    [team.teamId]: team,
+  }),
+  {} as Record<number, ScheduleResponse['teams'][0]>,
+)
+
+const games = data.games.slice(0, 5)
+
+const columns = [
+  { rowItemKey: 'DATE', title: 'DATE', type: 'date' },
+  { rowItemKey: 'TEAM', title: 'MATCHUP', type: 'string' },
+  { rowItemKey: 'ALIGNMENT', title: '', type: 'string' },
+  { rowItemKey: 'OPP', title: '', type: 'time' },
+  { rowItemKey: 'TIME', title: 'TIME (ET)', type: 'string' },
+]
+const grid: GameraGrid = {
+  columns,
+  rows: games.map((g) => {
+    const awayTeam = teams[g.awayTeamId]
+    const homeTeam = teams[g.homeTeamId]
+    return {
+      DATE: {
+        value: g.gameTimestamp,
+        display: dayjs(g.gameTimestamp).format('ddd M/D'),
+      },
+      TEAM: {
+        value: awayTeam.abbreviation,
+        display: awayTeam.abbreviation,
+        imageUrl: awayTeam.logoImageUrl,
+        entity: awayTeam.entity,
+      },
+      ALIGNMENT: {
+        value: '@',
+        display: '@',
+      },
+      OPP: {
+        value: homeTeam.abbreviation,
+        display: homeTeam.abbreviation,
+        imageUrl: homeTeam.logoImageUrl,
+        entity: homeTeam.entity,
+      },
+      TIME: {
+        value: g.gameTimestamp,
+        display: dayjs(g.gameTimestamp).format('h:mm A'),
+      },
+    }
+  }),
+}
+
+const colors = teams[games[0].homeTeamId].colors
+---
+
+<div
+  class="p-4 rounded-lg"
+  style={{
+    '--team-primary-color': colors.foregroundColor,
+    '--team-secondary-color': colors.backgroundColor,
+    background: colors.backgroundColor,
+    color: colors.foregroundColor,
+  }}
+>
+  <Grid
+    data={grid}
+    columnStyles={{
+      DATE: 'text-left',
+    }}
+    color
+  />
+</div>

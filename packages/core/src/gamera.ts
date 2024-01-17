@@ -1620,3 +1620,90 @@ export interface StandingsResponse {
   seasonYearDisplay: string
   teams: StandingsTeam[]
 }
+
+export interface ScheduleTeam {
+  teamId: number
+  seasonYear: number
+  name: string
+  nickname: string
+  abbreviation: string
+  logoImageUrl: string
+  colors: {
+    foregroundColor: string
+    backgroundColor: string
+  }
+  entity: GameraEntity
+}
+
+export interface ScheduleGame {
+  homeTeamId: number
+  awayTeamId: number
+  gameTimestamp: string
+  networkName: string
+  odds?: {
+    sportsbooks: {
+      id: string
+      homeTeam: {
+        spread: {
+          value: number
+          display: string
+        }
+        moneline: {
+          value: number
+          display: string
+        }
+      }
+      awayTeam: {
+        spread: {
+          value: number
+          display: string
+        }
+        moneline: {
+          value: number
+          display: string
+        }
+      }
+      overUnder: {
+        value: number
+        display: string
+      }
+    }[]
+  }
+}
+
+export interface ScheduleResponse {
+  teams: ScheduleTeam[]
+  games: ScheduleGame[]
+}
+
+export interface ScoreGame {
+  id: number
+  season: {
+    type: string
+  }
+  gameDate: string
+  homeTeam: {
+    teamId: number
+    score: number
+    record: {
+      wins: number
+      losses: number
+    }
+    gameResult: string
+  }
+  awayTeam: {
+    teamId: number
+    score: number
+    record: {
+      wins: number
+      losses: number
+    }
+    gameResult: string
+  }
+}
+
+export interface ScoresResponse {
+  seasonYearDisplay: string
+  teams: ScheduleTeam[] // find better abstract type for teams
+  games: ScoreGame[]
+}
