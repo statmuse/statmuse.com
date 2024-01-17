@@ -863,6 +863,15 @@ export interface Team {
     isStarter: boolean
     isCaptain: boolean
     formationIndex: number
+    formationPosition?:
+      | 'goalkeeper'
+      | 'defender'
+      | 'defensive_midfielder'
+      | 'midfielder'
+      | 'attacking_midfielder'
+      | 'forward'
+    formationAlignment?: 'left' | 'center' | 'right'
+    position: 'goalkeeper' | 'defender' | 'midfielder' | 'forward'
     shirtNumber: number
   }[]
 }
@@ -1062,6 +1071,7 @@ export interface EplTeamGameStats {
   redCards: string
   possessionPercentage: string
   touches: string
+  touchesInOpponentsBox: string
   passes: string
   passesCompleted: string
   offsides: string
@@ -1074,6 +1084,7 @@ export interface EplTeamGameStats {
 export interface EplHistoricalBoxScore extends DetailBase {
   type: 'eplHistoricalBoxScore'
   gameId: number
+  gameDate: string
   completedGameStatus: 'FT'
   dameDate: string
   homeTeam: Team

@@ -1,6 +1,7 @@
 ---
 import ProductLayout from '@layouts/product.astro'
 import { Caching } from '@lib/caching'
+import { createAskPath } from '@statmuse/core/path'
 
 // export const prerender = true
 
@@ -1116,6 +1117,86 @@ const pgaExampleSets = [
   },
 ]
 
+const eplExampleSets = [
+  {
+    title: 'Scores',
+    examples: [
+      'Did Arsenal win?',
+      'What was the score of the last Man United vs Man City match?',
+      'What happened in the Newcastle match?',
+    ].map((q) => ({
+      query: q,
+      askPath: createAskPath({ domain: 'fc', query: q }),
+    })),
+  },
+  {
+    title: 'Fixtures',
+    examples: [
+      'What matches are on this week?',
+      'When is the next North West derby?',
+      'When do Tottenham play next?',
+    ].map((q) => ({
+      query: q,
+      askPath: createAskPath({ domain: 'fc', query: q }),
+    })),
+  },
+  {
+    title: 'Table',
+    examples: [
+      'Premier League table?',
+      'Who won the Premier League last season?',
+      "What was Liverpool's record last year?",
+    ].map((q) => ({
+      query: q,
+      askPath: createAskPath({ domain: 'fc', query: q }),
+    })),
+  },
+  {
+    title: 'Stats',
+    examples: [
+      'Who scored the most goals in a season?',
+      'Who has the most hat tricks all time?',
+      'Which team leads the league in passes per match?',
+    ].map((q) => ({
+      query: q,
+      askPath: createAskPath({ domain: 'fc', query: q }),
+    })),
+  },
+  {
+    title: 'Bios',
+    examples: [
+      'Tell me about Thierry Henry',
+      'How tall is Peter Crouch?',
+      'How old is Bukayo Saka?',
+    ].map((q) => ({
+      query: q,
+      askPath: createAskPath({ domain: 'fc', query: q }),
+    })),
+  },
+  {
+    title: 'Recaps',
+    examples: [
+      'How did Cristiano Ronaldo do in 2007-08 season?',
+      'How is Haaland doing?',
+      'Did Son Heung-Min have a good season last year?',
+    ].map((q) => ({
+      query: q,
+      askPath: createAskPath({ domain: 'fc', query: q }),
+    })),
+  },
+  {
+    title: 'Beyond the Box Score',
+    examples: [
+      'Who has the most touches in opponent box this season?',
+      'Who leads the league in big chances created?',
+      'Which player has the most passes in the final third last year?',
+    ].map((q) => ({
+      query: q,
+      askPath: createAskPath({ domain: 'fc', query: q }),
+    })),
+  },
+]
+
 const leagueSets = [
   {
     league: 'NBA',
@@ -1136,6 +1217,10 @@ const leagueSets = [
   {
     league: 'PGA',
     exampleSets: pgaExampleSets,
+  },
+  {
+    league: 'fc',
+    exampleSets: eplExampleSets,
   },
 ]
 

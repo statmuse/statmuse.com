@@ -11,7 +11,7 @@ interface Props {
 
 const { league, meta, prefixPath, ...rest } = Astro.props
 
-const domains = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
+const domains = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA', 'Premier League']
 
 const productPages = [
   {
@@ -42,7 +42,9 @@ const productPages = [
           {
             domains.map((domain) => (
               <option
-                value={domain.toLowerCase()}
+                value={
+                  domain === 'Premier League' ? 'fc' : domain.toLowerCase()
+                }
                 selected={domain.toLowerCase() === league}
               >
                 {domain}
@@ -56,12 +58,16 @@ const productPages = [
           domains.map((domain) => (
             <li
               class={`rounded-md hover:bg-[#f4f6f9] ${
-                league === domain.toLowerCase() && 'font-semibold bg-[#f4f6f9]'
+                ((domain === 'Premier League' && league === 'fc') ||
+                  league === domain.toLowerCase()) &&
+                'font-semibold bg-[#f4f6f9]'
               }`}
             >
               <a
                 class="block p-3 cursor-pointer"
-                href={`${prefixPath}/${domain.toLowerCase()}`}
+                href={`${prefixPath}/${
+                  domain === 'Premier League' ? 'fc' : domain.toLowerCase()
+                }`}
               >
                 {domain}
               </a>

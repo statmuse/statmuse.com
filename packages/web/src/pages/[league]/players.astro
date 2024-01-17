@@ -12,4 +12,4 @@ const players = await getPlayerGalleryList(domain)
 Caching.swr(Astro)
 ---
 
-<PlayerGallery league={domain} {players} />
+<PlayerGallery {domain} {players} />

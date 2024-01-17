@@ -9,13 +9,21 @@ import FreestarVideo from '@components/freestar-video.svelte'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 
 interface Props {
-  league?: string
+  domain?: GameraDomain
   players: PlayerGalleryItem[]
 }
 
-const { league, players } = Astro.props
+const { domain, players } = Astro.props
 
-const leagues = ['All', 'NBA', 'NFL', 'NHL', 'MLB', 'PGA']
+const leagues = [
+  { text: 'All', domain: undefined, href: '/players' },
+  { text: 'NBA', domain: 'NBA', href: '/nba/players' },
+  { text: 'NFL', domain: 'NFL', href: '/nfl/players' },
+  { text: 'NHL', domain: 'NHL', href: '/nhl/players' },
+  { text: 'MLB', domain: 'MLB', href: '/mlb/players' },
+  { text: 'PGA', domain: 'PGA', href: '/pga/players' },
+  { text: 'Premier League', domain: 'EPL', href: '/fc/players' },
+]
 
 const alphabet = [...Array(26)].map((_x, i) =>
   String.fromCharCode(i + 65).toLowerCase(),
@@ -42,9 +50,11 @@ const colors = {
 }
 
 const meta = {
-  title: league ? `${league} Player Gallery` : 'Player Gallery',
+  title: domain
+    ? `${domain === 'EPL' ? 'Premier League' : domain} Player Gallery`
+    : 'Player Gallery',
   description: `Browse the largest gallery of ${
-    league ? `${league} ` : ''
+    domain ? `${domain === 'EPL' ? 'Premier League' : domain} ` : ''
   }player illustrations in the world.`,
 }
 ---
@@ -53,8 +63,8 @@ const meta = {
   {meta}
   {colors}
   analytics={{
-    page_domain: league
-      ? (league.toLowerCase() as AnalyticsPageviewProperties['page_domain'])
+    page_domain: domain
+      ? (domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'])
       : 'unknown',
     page_type: 'player',
   }}
@@ -74,13 +84,11 @@ const meta = {
           <li class="mx-3 md:mx-6">
             <a
               class={`text-sm md:text-base flex items-center h-11 md:h-[50px] text-white hover:no-underline hover:opacity-100 ${
-                x === (league || 'All')
-                  ? 'opacity-100 font-semibold'
-                  : 'opacity-80'
+                x.domain === domain ? 'opacity-100 font-semibold' : 'opacity-80'
               }`}
-              href={x === 'All' ? '/players' : `/${x.toLowerCase()}/players`}
+              href={x.href}
             >
-              {x}
+              {x.text}
             </a>
           </li>
         ))
@@ -92,7 +100,7 @@ const meta = {
       <FreestarVideo
         client:only="svelte"
         class="w-full md:w-[425px] mx-auto mt-4"
-        domain={league?.toLowerCase()}
+        domain={domain?.toLowerCase()}
       />
     </div>
     <div
