@@ -863,6 +863,15 @@ export interface Team {
     isStarter: boolean
     isCaptain: boolean
     formationIndex: number
+    formationPosition?:
+      | 'goalkeeper'
+      | 'defender'
+      | 'defensive_midfielder'
+      | 'midfielder'
+      | 'attacking_midfielder'
+      | 'forward'
+    formationAlignment?: 'left' | 'center' | 'right'
+    position: 'goalkeeper' | 'defender' | 'midfielder' | 'forward'
     shirtNumber: number
   }[]
 }
