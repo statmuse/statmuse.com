@@ -49,17 +49,17 @@ const playerCardTitle = (stat: string) => {
     case 'bestTrueShootingPercentage':
       return 'TS% Leaders'
     case 'mostFanDuelPoints':
-      return 'Fanduel Points Leaders'
+      return 'FanDuel Points Leaders'
     case 'mostDraftKingsPoints':
       return 'DraftKings Points Leaders'
     case 'mostFanDuelPointsPerMinute':
-      return 'Fanduel Points Per Minute Leaders'
+      return 'FanDuel PTS/MIN Leaders'
     case 'mostDraftKingsPointsPerMinute':
-      return 'DraftKings Points Per Minute Leaders'
+      return 'DraftKings PTS/MIN Leaders'
     case 'bestUsagePercentage':
-      return 'Usage Percentage Leaders'
+      return 'USG% Leaders'
     case 'mostMinutesPerGame':
-      return 'Most Minutes Per Game Leaders'
+      return 'MPG Leaders'
     // NFL Player
     case 'mostPassingYards':
       return 'Pass Yards Leaders'
@@ -862,7 +862,7 @@ if (teamCardsResp) {
                   <div class="text-center w-1/3 h-56 flex flex-col justify-between items-center">
                     <div>
                       <h3 class="text-3xl mt-3" style="line-height: normal;">
-                        {player.statDisplayValue}
+                        {player.statDisplayValue.replace(',', '')}
                       </h3>
                       <p class="uppercase text-xs tracking-[0.07rem]">
                         {lastName(player.entity.display)}
