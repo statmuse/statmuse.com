@@ -59,6 +59,14 @@ const grid: GameraGrid = {
       SCORE: {
         value: g.awayTeam.score,
         display: `${g.awayTeam.score}-${g.homeTeam.score}`,
+        entity: {
+          display: `${dayjs(g.gameDate).format('M/D/YYYY')} ${
+            awayTeam.abbreviation
+          } @ ${homeTeam.abbreviation}`,
+          domain: homeTeam.entity.domain,
+          type: 'game',
+          id: g.id.toString(),
+        },
       },
     }
   }),
