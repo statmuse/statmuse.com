@@ -52,10 +52,10 @@ const pgaExamples = [
 ].map((display) => ({ type: 'answer', league: 'pga', display }))
 
 const eplExamples = [
-  'Most G+A by a player under 21 this season?',
+  'Most G+A by a player under 21 years old this season?',
   'Score of the last North London derby?',
   'Who leads the league in big chances created?',
-  'Which active right winger has the most career hat tricks?',
+  'Which active winger has the most hat tricks?',
   'All-time Man United goal scorer',
 ].map((display) => ({ type: 'answer', league: 'epl', display }))
 
