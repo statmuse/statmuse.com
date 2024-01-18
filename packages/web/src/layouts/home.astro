@@ -152,15 +152,35 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
             leagueBtns.map((btn) => (
               <a
                 class:list={[
-                  'flex items-center justify-center border rounded-md border-primary text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 text-center leading-[1.2]',
+                  'relative flex items-center justify-center border rounded-md border-primary text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 text-center leading-[1.2]',
                   {
                     'bg-primary text-white': btn.param === league,
                   },
                 ]}
                 href={btn.href}
-                set:text={btn.text}
                 data-beta={btn.text === 'Premier League'}
-              />
+              >
+                {btn.text}
+                {btn.text === 'Premier League' && (
+                  <svg
+                    enable-background="new 0 0 361.9 152.6"
+                    viewBox="0 0 361.9 152.6"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-3/4"
+                  >
+                    <path
+                      d="m46.6 25.2h272.8v109.6h-272.8z"
+                      fill="#fff"
+                      stroke="#fff"
+                      stroke-miterlimit="10"
+                    />
+                    <path
+                      d="m285.6 0h-209.3c-42.1 0-76.3 34.2-76.3 76.3s34.2 76.3 76.3 76.3h209.3c42.1 0 76.3-34.2 76.3-76.3s-34.2-76.3-76.3-76.3zm-163.2 115.6h-10.8l-45.4-62.8s.2 10.6.2 20.9v41.9h-11v-78.7h11.6l44.6 61.9s-.1-9.7-.1-20.1v-41.8h10.8v78.7zm68.6 0h-47v-78.7h46.1v9.2h-35v23.5h33.1v9.2h-33.2v27.4h36zm92.7.1h-10.8l-18.9-63.7-18.8 63.7h-10.8l-22.7-78.9h11.6l17 62.1 18.1-62.1h11.3l18.1 62.2 17-62.1h11.6z"
+                      fill="#00c1d8"
+                    />
+                  </svg>
+                )}
+              </a>
             ))
           }
           <a
