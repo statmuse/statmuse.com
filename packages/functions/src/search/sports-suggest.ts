@@ -76,7 +76,7 @@ const getExampleSuggestions = (league?: League) => {
     return examples[league]
   }
 
-  return (['nba', 'nfl', 'nhl', 'mlb', 'pga'] as League[]).map((key) =>
+  return (['nba', 'nfl', 'nhl', 'mlb', 'epl', 'pga'] as League[]).map((key) =>
     sample(examples[key]),
   )
 }
