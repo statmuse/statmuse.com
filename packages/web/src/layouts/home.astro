@@ -38,7 +38,7 @@ const leagueBtns = [
   { text: 'NFL', param: 'nfl', href: '/nfl' },
   { text: 'NHL', param: 'nhl', href: '/nhl' },
   { text: 'MLB', param: 'mlb', href: '/mlb' },
-  { text: 'Premier League', param: 'fc', href: '/auth/signup?fc' },
+  { text: 'Premier League', param: 'fc', href: '/fc' },
   { text: 'PGA', param: 'pga', href: '/pga' },
 ]
 
@@ -222,22 +222,3 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
     </div>
   </main>
 </Layout>
-<script>
-  import { session as sessionStore } from '@lib/session-store'
-
-  document.addEventListener('astro:page-load', () => {
-    // TODO: remove for official premier league launch
-    sessionStore.subscribe((session) => {
-      if (session) {
-        document.querySelectorAll('a[data-beta]').forEach((a) => {
-          if (
-            session.type === 'user' &&
-            session.properties.subscriptionStatus === 'active'
-          ) {
-            a.setAttribute('href', '/fc')
-          }
-        })
-      }
-    })
-  })
-</script>
