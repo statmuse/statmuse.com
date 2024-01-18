@@ -51,20 +51,20 @@ const query = clean(
       <PlayerProfile
         query={handled.query}
         player={handled.player}
-        league={handled.league as LeagueParam}
+        league={handled.league.toLowerCase() as LeagueParam}
       />
     ) : handled.type === 'teamSeason' ? (
       <TeamSeasonProfile
         query={handled.query}
         team={handled.team}
-        league={handled.league as LeagueParam}
+        league={handled.league.toLowerCase() as LeagueParam}
         year={handled.year}
       />
     ) : handled.type === 'teamFranchise' ? (
       <TeamFranchiseProfile
         query={handled.query}
         team={handled.team}
-        league={handled.league as LeagueParam}
+        league={handled.league.toLowerCase() as LeagueParam}
       />
     ) : handled.type === 'eplHistoricalBoxScore' ? (
       <AnswerEplBoxscore data={handled.data} />
