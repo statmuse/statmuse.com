@@ -1,7 +1,6 @@
 ---
 import HomeLayout from '@layouts/home.astro'
 import { Caching } from '@lib/caching'
-import { listOnboarding } from '@statmuse/core/examples'
 import { createAskPath } from '@statmuse/core/path'
 import { NOT_FOUND_404 } from '@lib/response'
 import { type LeagueParam } from '@lib/params'
@@ -11,42 +10,6 @@ if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
   return NOT_FOUND_404
 
 const league = Astro.params.league as LeagueParam
-
-let onboardingExamples
-let banner
-let fcImg
-if (league !== 'fc') {
-  onboardingExamples = await listOnboarding(
-    league === 'fantasy' ? 'nfl' : league,
-    10,
-  )
-  banner =
-    onboardingExamples[Math.floor(Math.random() * onboardingExamples.length)]
-} else {
-  const fcPlayers = [
-    {
-      src: 'https://cdn.statmuse.com/img/epl/players/cristiano-ronaldo-man-united-min--3gbipqds.png',
-      text: 'Cristiano Ronaldo',
-    },
-    {
-      src: 'https://cdn.statmuse.com/img/epl/players/arsenal-bukayo-saka-min--t5hmo2ay.png',
-      text: 'Bukayo Saka',
-    },
-    {
-      src: 'https://cdn.statmuse.com/img/epl/players/alan-shearer-newcastle-min--kjhnkvwi.png',
-      text: 'Alan Shearer',
-    },
-    {
-      src: 'https://cdn.statmuse.com/img/epl/players/man-city-erling-haaland-min--mcidciur.png',
-      text: 'Erling Haaland',
-    },
-    {
-      src: 'https://cdn.statmuse.com/img/epl/players/liverpool-mohamed-salah-min--8vtshmmg.png',
-      text: 'Mohamed Salah',
-    },
-  ]
-  fcImg = fcPlayers[Math.floor(Math.random() * fcPlayers.length)]
-}
 
 const nbaExamples = [
   [
@@ -668,11 +631,7 @@ const meta = {
 Caching.swr(Astro)
 ---
 
-<HomeLayout
-  {meta}
-  {league}
-  img={league !== 'fc' ? { src: banner, text: banner.text } : fcImg}
->
+<HomeLayout {meta} {league}>
   <div class="divide-y divide-[#e4e4e4]">
     {
       examples[league || 'nba'].map(([title, queries]) => (
