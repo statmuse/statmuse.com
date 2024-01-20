@@ -56,7 +56,7 @@ const eplExamples = [
   'Score of the last North London derby?',
   'Who leads the league in big chances created?',
   'Which active winger has the most hat tricks?',
-  'All-time Man United goal scorer',
+  'Record goals by an Asian player',
 ].map((display) => ({ type: 'answer', league: 'epl', display }))
 
 const examples = {
