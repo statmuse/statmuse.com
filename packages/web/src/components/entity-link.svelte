@@ -1,9 +1,26 @@
 <script lang="ts">
-  import { getUrlForEntity, type GameraEntity } from '@statmuse/core/gamera'
+  import {
+    getUrlForEntity as getUrlForGameraEntity,
+    type GameraEntity,
+  } from '@statmuse/core/gamera'
+  import {
+    getUrlForEntity as getUrlForKanedamaEntity,
+    type KanedamaEntity,
+  } from '@statmuse/core/kanedama'
 
-  export let entity: GameraEntity | undefined
+  export let entity: GameraEntity | KanedamaEntity | undefined
 
-  let url = entity ? getUrlForEntity(entity) : ''
+  let url = ''
+
+  const isKanedamaEntity = (
+    x: GameraEntity | KanedamaEntity,
+  ): x is KanedamaEntity => x.type === 'assetProfile' || x.type === 'btcBlock'
+
+  if (entity) {
+    url = isKanedamaEntity(entity)
+      ? getUrlForKanedamaEntity(entity)
+      : getUrlForGameraEntity(entity)
+  }
   let title = entity?.display ?? ''
 </script>
 
