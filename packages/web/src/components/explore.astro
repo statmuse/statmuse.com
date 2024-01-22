@@ -7,6 +7,8 @@ interface Props {
 }
 
 const { league, additionalQuestions } = Astro.props
+
+console.log('additional questions: ', additionalQuestions)
 ---
 
 <div class="mt-6 mb-4">
@@ -27,7 +29,7 @@ const { league, additionalQuestions } = Astro.props
               <i class="w-5 h-5 shrink-0 explore-search-icon" />
               <a
                 href={createAskPath({
-                  domain: question.domain?.toLowerCase() || '',
+                  domain: question.domain?.toLowerCase() || league || '',
                   query: question.text,
                 })}
                 data-track-click="Click Try-Also Query"
