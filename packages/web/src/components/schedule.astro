@@ -44,7 +44,11 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
               return (
                 <div class="border-t border-[#e4e4e4] py-2">
                   <div class="flex">
-                    <div class="flex-1">
+                    <div
+                      class={`flex-1 flex ${
+                        league === 'epl' ? 'flex-col-reverse' : 'flex-col'
+                      }`}
+                    >
                       <div class="flex items center py-2.5">
                         <EntityLink entity={game.awayTeam.entity}>
                           <Image
@@ -120,7 +124,11 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
               return (
                 <div class="border-t border-[#e4e4e4] py-2">
                   <div class="flex">
-                    <div class="flex-1">
+                    <div
+                      class={`flex-1 flex ${
+                        league === 'epl' ? 'flex-col-reverse' : 'flex-col'
+                      }`}
+                    >
                       <div class="flex items center py-2.5">
                         <EntityLink entity={game.awayTeam.entity}>
                           <Image
@@ -166,7 +174,11 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
               )
             case 'scheduled':
               return (
-                <div class="border-t border-[#e4e4e4] py-2">
+                <div
+                  class={`border-t border-[#e4e4e4] py-2 flex ${
+                    league === 'epl' ? 'flex-col-reverse' : 'flex-col'
+                  }`}
+                >
                   <div class="flex items center py-2.5">
                     <EntityLink entity={game.awayTeam.entity}>
                       <Image
