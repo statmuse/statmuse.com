@@ -10,6 +10,7 @@ import {
   isExcludedQuery,
   cdnBaseUrl,
   tokensToHtml,
+  isGameraDefaultResponse,
 } from '../gamera'
 import { tokensToText as tokensToTextFinance } from '../kanedama'
 import type {
@@ -17,6 +18,7 @@ import type {
   FinanceAnswerType,
   NewAsk,
   NewAskEvent,
+  NewAskSuggest,
   NewAskUser,
   NewFinanceAsk,
   NewFinanceAskEvent,
@@ -159,6 +161,31 @@ export const upsert = async (params: {
         .values(newLink)
         .returningAll()
         .executeTakeFirst()
+    }
+
+    if (isGameraDefaultResponse(response)) {
+      const newAskSuggests: NewAskSuggest[] | undefined =
+        response.visual.additionalQuestions?.map((q) => ({
+          id: randomUUID(),
+          query: q.text,
+          domain: q.domain ?? '',
+          count: 1,
+          inserted_at: now,
+          updated_at: now,
+        }))
+
+      if (newAskSuggests) {
+        await db
+          .insertInto('ask_suggests')
+          .values(newAskSuggests)
+          .onConflict((oc) =>
+            oc.columns(['domain', 'query']).doUpdateSet((eb) => ({
+              count: eb.bxp('excluded.count', '+', 1),
+              updated_at: now,
+            })),
+          )
+          .execute()
+      }
     }
 
     return ask

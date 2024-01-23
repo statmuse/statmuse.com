@@ -95,6 +95,19 @@ export type AskEvent = Selectable<AskEventTable>
 export type NewAskEvent = Insertable<AskEventTable>
 export type AskEventUpdate = Updateable<AskEventTable>
 
+export interface AskSuggestTable {
+  id: string
+  domain: string
+  query: string
+  count: number
+  inserted_at: ColumnType<Date, string | undefined, string | undefined>
+  updated_at: ColumnType<Date, string | undefined, string | undefined>
+}
+
+export type AskSuggest = Selectable<AskSuggestTable>
+export type NewAskSuggest = Insertable<AskSuggestTable>
+export type AskSuggestUpdate = Updateable<AskSuggestTable>
+
 export type FinanceAnswerType = 'answer' | 'asset' | 'error' | 'unknown'
 
 export interface FinanceAskTable {

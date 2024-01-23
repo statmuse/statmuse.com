@@ -21,6 +21,7 @@ import type {
 import type { UsersVisitorTable, VisitorTable } from './visitor'
 import type {
   AskEventTable,
+  AskSuggestTable,
   AskTable,
   AskUserTable,
   FinanceAskEventTable,
@@ -108,6 +109,7 @@ export interface Database {
   users_visitors: UsersVisitorTable
   asks: AskTable
   ask_events: AskEventTable
+  ask_suggests: AskSuggestTable
   asks_users: AskUserTable
   contexts: ContextTable
   finance_asks: FinanceAskTable
