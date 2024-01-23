@@ -175,7 +175,7 @@ export const upsert = async (params: {
         }))
 
       if (newAskSuggests) {
-        await db
+        await trx
           .insertInto('ask_suggests')
           .values(newAskSuggests)
           .onConflict((oc) =>
