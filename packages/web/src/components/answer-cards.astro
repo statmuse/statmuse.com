@@ -722,9 +722,7 @@ if (teamCardsResp) {
               {card?.players.map((player, i) => (
                 <div class="text-center w-1/3 h-56 flex flex-col justify-between items-center">
                   <div>
-                    <h3 class="text-3xl mt-3" style="line-height: normal;">
-                      {player.statDisplayValue}
-                    </h3>
+                    <h3 class="text-3xl mt-3">{player.statDisplayValue}</h3>
                     <p class="uppercase text-xs tracking-[0.07rem]">
                       {lastName(player.entity.display)}
                     </p>
@@ -803,9 +801,7 @@ if (teamCardsResp) {
                       loading="eager"
                     />
                   </div>
-                  <p class="text-3xl mt-2" style="line-height: normal;">
-                    {team.statDisplayValue}
-                  </p>
+                  <p class="text-3xl mt-2">{team.statDisplayValue}</p>
                 </div>
               ))}
             </a>
@@ -861,7 +857,7 @@ if (teamCardsResp) {
                 {card?.players.map((player, i) => (
                   <div class="text-center w-1/3 h-56 flex flex-col justify-between items-center">
                     <div>
-                      <h3 class="text-3xl mt-3" style="line-height: normal;">
+                      <h3 class="text-3xl mt-3">
                         {player.statDisplayValue.replace(',', '')}
                       </h3>
                       <p class="uppercase text-xs tracking-[0.07rem]">
@@ -940,9 +936,7 @@ if (teamCardsResp) {
                       loading="eager"
                     />
                   </div>
-                  <p class="text-3xl mt-2" style="line-height: normal;">
-                    {team.statDisplayValue}
-                  </p>
+                  <p class="text-3xl mt-2">{team.statDisplayValue}</p>
                 </div>
               ))}
             </a>
