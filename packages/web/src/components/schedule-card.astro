@@ -1,7 +1,12 @@
 ---
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import Grid from '@components/grid.svelte'
 import type { ScheduleResponse, GameraGrid } from '@statmuse/core/gamera'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 interface Props {
   data: ScheduleResponse
@@ -34,7 +39,9 @@ const grid: GameraGrid = {
     return {
       DATE: {
         value: g.gameTimestamp,
-        display: dayjs(g.gameTimestamp).format('ddd M/D'),
+        display: dayjs(g.gameTimestamp)
+          .tz('America/New_York')
+          .format('ddd M/D'),
       },
       TEAM: {
         value: awayTeam.abbreviation,
@@ -54,7 +61,7 @@ const grid: GameraGrid = {
       },
       TIME: {
         value: g.gameTimestamp,
-        display: dayjs(g.gameTimestamp).format('h:mm A'),
+        display: dayjs(g.gameTimestamp).tz('America/New_York').format('h:mm A'),
       },
     }
   }),
