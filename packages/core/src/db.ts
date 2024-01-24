@@ -152,7 +152,7 @@ export const executeQueryWithTimeout = async <T>(
   const queryPromise = queryFn()
   const timeoutPromise = new Promise((_, reject) => {
     setTimeout(() => {
-      reject(new Error('Query timed out'))
+      reject(new Error('Postgres query timed out'))
     }, timeout)
   })
 
@@ -160,12 +160,7 @@ export const executeQueryWithTimeout = async <T>(
     const result = (await Promise.race([queryPromise, timeoutPromise])) as T
     return result
   } catch (error) {
-    // Handle timeout or other errors
-    if (error.message === 'Query timed out') {
-      throw new Error('Query execution timed out.')
-    } else {
-      throw error
-    }
+    console.error(error)
   }
 }
 

@@ -166,30 +166,26 @@ export const upsert = async (params: {
     return ask
   })
 
-  try {
-    if (isGameraDefaultResponse(response)) {
-      executeQueryWithTimeout(async () => {
-        const newAskSuggests: NewAskSuggest[] | undefined =
-          response.visual.additionalQuestions?.map((q) => ({
-            id: randomUUID(),
-            query: q.text,
-            domain: q.domain ?? '',
-            count: 1,
-            inserted_at: now,
-            updated_at: now,
-          }))
+  if (isGameraDefaultResponse(response)) {
+    executeQueryWithTimeout(async () => {
+      const newAskSuggests: NewAskSuggest[] | undefined =
+        response.visual.additionalQuestions?.map((q) => ({
+          id: randomUUID(),
+          query: q.text,
+          domain: q.domain ?? '',
+          count: 1,
+          inserted_at: now,
+          updated_at: now,
+        }))
 
-        if (newAskSuggests) {
-          return db
-            .insertInto('ask_suggests')
-            .values(newAskSuggests)
-            .onConflict((oc) => oc.columns(['domain', 'query']).doNothing())
-            .execute()
-        }
-      }, 500)
-    }
-  } catch (error) {
-    console.error('Upsert Ask Suggest: ', error)
+      if (newAskSuggests) {
+        return db
+          .insertInto('ask_suggests')
+          .values(newAskSuggests)
+          .onConflict((oc) => oc.columns(['domain', 'query']).doNothing())
+          .execute()
+      }
+    }, 500)
   }
 
   return ask
