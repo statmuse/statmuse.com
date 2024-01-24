@@ -181,12 +181,7 @@ export const upsert = async (params: {
       if (newAskSuggests) {
         db.insertInto('ask_suggests')
           .values(newAskSuggests)
-          .onConflict((oc) =>
-            oc.columns(['domain', 'query']).doUpdateSet((eb) => ({
-              count: eb.bxp('excluded.count', '+', 1),
-              updated_at: now,
-            })),
-          )
+          .onConflict((oc) => oc.columns(['domain', 'query']).doNothing())
           .execute()
       }
     }
