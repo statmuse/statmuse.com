@@ -56,7 +56,7 @@ const eplExamples = [
   'Score of the last North London derby?',
   'Who leads the league in big chances created?',
   'Which active winger has the most hat tricks?',
-  'All-time Man United goal scorer',
+  'Goal record for an Asian player',
 ].map((display) => ({ type: 'answer', league: 'epl', display }))
 
 const examples = {
@@ -76,7 +76,7 @@ const getExampleSuggestions = (league?: League) => {
     return examples[league]
   }
 
-  return (['nba', 'nfl', 'nhl', 'mlb', 'pga'] as League[]).map((key) =>
+  return (['nba', 'nfl', 'nhl', 'mlb', 'epl', 'pga'] as League[]).map((key) =>
     sample(examples[key]),
   )
 }

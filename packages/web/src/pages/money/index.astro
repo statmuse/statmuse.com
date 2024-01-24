@@ -120,17 +120,10 @@ const dataCoverage = [
   'Data providers include Twelve Data and EOD Historical Data',
 ]
 
-const imgs = [
-  'https://cdn.statmuse.com/finance/asset_img/statmuse-finance-btc--jgfo5tnv.png',
-  'https://cdn.statmuse.com/finance/asset_img/kanedama-cyborg-01-min--fc2wcyxt.png',
-]
-
-const imgSrc = imgs[Math.floor(Math.random() * imgs.length)]
-
 Caching.swr(Astro)
 ---
 
-<HomeLayout league="money" img={{ src: imgSrc, text: 'magic money man' }}>
+<HomeLayout league="money">
   <div class="divide-y divide-[#e4e4e4]">
     {
       examples.map(([title, queries]) => (

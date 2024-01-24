@@ -15,13 +15,10 @@ import NewsletterSignup from '@components/newsletter-signup.astro'
 import AuthMenu from '@components/auth-menu.svelte'
 import FreestarVideo from '@components/freestar-video.svelte'
 import type { LeagueParam } from '@lib/params'
+import { sample } from 'lodash-es'
 
 interface Props {
-  league?: LeagueParam
-  img: {
-    src: string | { answer: GameraResponse }
-    text: string
-  }
+  league?: LeagueParam | 'All'
   meta?: Metadata
   colors?: {
     foreground?: string
@@ -31,16 +28,116 @@ interface Props {
   }
 }
 
-const { league = 'All', img, ...rest } = Astro.props
+const { league = 'All', ...rest } = Astro.props
 
 const leagueBtns = [
   { text: 'NBA', param: 'nba', href: '/nba' },
   { text: 'NFL', param: 'nfl', href: '/nfl' },
   { text: 'NHL', param: 'nhl', href: '/nhl' },
   { text: 'MLB', param: 'mlb', href: '/mlb' },
-  { text: 'Premier League', param: 'fc', href: '/auth/signup?fc' },
+  { text: 'Premier League', param: 'fc', href: '/fc' },
   { text: 'PGA', param: 'pga', href: '/pga' },
 ]
+
+const playerIllustrations = {
+  nba: [
+    {
+      src: 'https://cdn.statmuse.com/img/nba/players/golden-state-warriors-stephen-curry2021-min-1---hw2hav_b.png',
+      text: 'Steph c]Curry',
+    },
+    {
+      src: 'https://cdn.statmuse.com/img/nba/players/allen-iverson-philladelphia-76ers-min--07f2nx7k.png',
+      text: 'Allen Iverson',
+    },
+    {
+      src: 'https://cdn.statmuse.com/img/nba/players/milwaukee-bucks-giannis-antetokounmpo2021-min--neyqqrdy.png',
+      text: 'Giannis Antetokoumnpo',
+    },
+    {
+      src: 'https://cdn.statmuse.com/img/nba/players/los-angeles-lakers-lebron-james2021-min--i_ura2lt.png',
+      text: 'Lebron James',
+    },
+  ],
+  nfl: [
+    {
+      src: 'https://cdn.statmuse.com/img/nfl/players/tennessee-titans-derrick-henry-min--rop_mtxx.png',
+      text: 'Derrick Henry',
+    },
+    {
+      src: 'https://cdn.statmuse.com/img/nfl/players/tampa-bay-buccaneers-tom-brady2021-min--uuyzey5t.png',
+      text: 'Tom Brady',
+    },
+    {
+      src: 'https://cdn.statmuse.com/img/nfl/players/randy-moss-minnesota-vikings-alternate-min--wzmjzrs7.png',
+      text: 'Randy Moss',
+    },
+  ],
+  mlb: [
+    {
+      src: 'https://cdn.statmuse.com/img/mlb/players/be6933d9-3f70-4392-9f77-99e2a389674e.png',
+      text: 'Hank Aaron',
+    },
+    {
+      src: 'https://cdn.statmuse.com/img/mlb/players/san-francisco-giants-barry-bonds-new-compressor--tz1nvgaf.png',
+      text: 'Barry Bonds',
+    },
+  ],
+  nhl: [
+    {
+      src: 'https://cdn.statmuse.com/img/nhl/players/edmonton-oilers-wayne-gretzky-compressor--ps1jclsq.png',
+      text: 'Wayne Gretzky',
+    },
+    {
+      src: 'https://cdn.statmuse.com/img/nhl/players/-washington-capitals-alexander-ovechkin--wnfrbm3x.png',
+      text: 'Alex Ovechkin',
+    },
+  ],
+  pga: [
+    {
+      src: 'https://cdn.statmuse.com/img/pga/players/tiger-woods-pga-min--o5qnzsw6.png',
+      text: 'Tiger Woods',
+    },
+  ],
+  fc: [
+    {
+      src: 'https://cdn.statmuse.com/img/epl/players/cristiano-ronaldo-man-united-min--3gbipqds.png',
+      text: 'Cristiano Ronaldo',
+    },
+    {
+      src: 'https://cdn.statmuse.com/img/epl/players/arsenal-bukayo-saka-min--t5hmo2ay.png',
+      text: 'Bukayo Saka',
+    },
+    {
+      src: 'https://cdn.statmuse.com/img/epl/players/alan-shearer-newcastle-min--kjhnkvwi.png',
+      text: 'Alan Shearer',
+    },
+    {
+      src: 'https://cdn.statmuse.com/img/epl/players/man-city-erling-haaland-min--mcidciur.png',
+      text: 'Erling Haaland',
+    },
+    {
+      src: 'https://cdn.statmuse.com/img/epl/players/liverpool-mohamed-salah-min--8vtshmmg.png',
+      text: 'Mohamed Salah',
+    },
+  ],
+  money: [
+    {
+      src: 'https://cdn.statmuse.com/finance/asset_img/statmuse-finance-btc--jgfo5tnv.png',
+      text: 'Bitcoin Wizard',
+    },
+    {
+      src: 'https://cdn.statmuse.com/finance/asset_img/kanedama-cyborg-01-min--fc2wcyxt.png',
+      text: 'Finance Cyborg',
+    },
+  ],
+} as Record<LeagueParam, { src: string; text: string }[]>
+
+const getImage = (league: LeagueParam | 'All') => {
+  if (league === 'All') {
+    return sample(Object.values(playerIllustrations).flatMap((x) => x))
+  }
+  return sample(playerIllustrations[league])
+}
 
 const trendingLinkText = (param: string) => {
   switch (param) {
@@ -56,6 +153,8 @@ const trendingLinkText = (param: string) => {
       return `See trending ${param.toUpperCase()} searches`
   }
 }
+
+const img = getImage(league === 'fantasy' ? 'nfl' : league)
 
 const Layout = league === 'money' ? MoneyBaseLayout : BaseLayout
 const Logo = league === 'money' ? MoneyLogo : StandardLogo
@@ -106,14 +205,18 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
           <div class="flex-1 mb-[34px] md:-mr-[20px] md:mb-0">
             <Logo />
           </div>
-          <Image
-            class="max-w-[70%] md:max-w-[260px] md:h-[205px] md:pr-[10px] object-contain object-bottom z-[5]"
-            src={img.src}
-            alt={img.text}
-            width={750}
-            height={750}
-            loading="eager"
-          />
+          {
+            img && (
+              <Image
+                class="max-w-[70%] md:max-w-[260px] md:h-[205px] md:pr-[10px] object-contain object-bottom z-[5]"
+                src={img.src}
+                alt={img.text}
+                width={750}
+                height={750}
+                loading="eager"
+              />
+            )
+          }
         </div>
       </div>
       <div
@@ -152,15 +255,28 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
             leagueBtns.map((btn) => (
               <a
                 class:list={[
-                  'flex items-center justify-center border rounded-md border-primary text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 text-center leading-[1.2]',
+                  'relative flex items-center justify-center border rounded-md border-primary text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 text-center leading-[1.2]',
                   {
                     'bg-primary text-white': btn.param === league,
                   },
                 ]}
                 href={btn.href}
-                set:text={btn.text}
-                data-beta={btn.text === 'Premier League'}
-              />
+              >
+                {btn.text}
+                {btn.text === 'Premier League' && (
+                  <svg
+                    enable-background="new 0 0 448 472.7"
+                    viewBox="0 0 448 472.7"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 absolute top-0 right-0 translate-x-1/4 -translate-y-1/2"
+                  >
+                    <path
+                      d="m223.6.9 54 69.6 84.7-24.5 2.7 88 83 29.9-49.6 72.9 49.6 72.9-83 29.9-2.7 88-84.7-24.5-54 69.6-54-69.6-84.6 24.5-2.8-88-82.9-29.9 49.5-72.9-49.5-72.9 82.9-29.9 2.8-88 84.6 24.5z"
+                      fill="#00c5dc"
+                    />
+                  </svg>
+                )}
+              </a>
             ))
           }
           <a
@@ -206,15 +322,11 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
         />
       </div>
       <slot />
-      {
-        league !== 'fc' && (
-          <h4 class="font-semibold text-right py-4">
-            <a href={league === 'All' ? '/questions' : `/${league}/questions`}>
-              {trendingLinkText(league)}
-            </a>
-          </h4>
-        )
-      }
+      <h4 class="font-semibold text-right py-4">
+        <a href={league === 'All' ? '/questions' : `/${league}/questions`}>
+          {trendingLinkText(league)}
+        </a>
+      </h4>
       <NewsletterSignup />
     </div>
     <div class="main">
@@ -222,22 +334,3 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
     </div>
   </main>
 </Layout>
-<script>
-  import { session as sessionStore } from '@lib/session-store'
-
-  document.addEventListener('astro:page-load', () => {
-    // TODO: remove for official premier league launch
-    sessionStore.subscribe((session) => {
-      if (session) {
-        document.querySelectorAll('a[data-beta]').forEach((a) => {
-          if (
-            session.type === 'user' &&
-            session.properties.subscriptionStatus === 'active'
-          ) {
-            a.setAttribute('href', '/fc')
-          }
-        })
-      }
-    })
-  })
-</script>
