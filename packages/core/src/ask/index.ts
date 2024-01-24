@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import { db } from '../db'
+import { db, executeQueryWithTimeout } from '../db'
 import { sql } from 'kysely'
 import {
   type GameraResponse,
@@ -163,7 +163,11 @@ export const upsert = async (params: {
         .executeTakeFirst()
     }
 
-    if (isGameraDefaultResponse(response)) {
+    return ask
+  })
+
+  if (isGameraDefaultResponse(response)) {
+    executeQueryWithTimeout(async () => {
       const newAskSuggests: NewAskSuggest[] | undefined =
         response.visual.additionalQuestions?.map((q) => ({
           id: randomUUID(),
@@ -175,21 +179,14 @@ export const upsert = async (params: {
         }))
 
       if (newAskSuggests) {
-        await trx
+        return db
           .insertInto('ask_suggests')
           .values(newAskSuggests)
-          .onConflict((oc) =>
-            oc.columns(['domain', 'query']).doUpdateSet((eb) => ({
-              count: eb.bxp('excluded.count', '+', 1),
-              updated_at: now,
-            })),
-          )
+          .onConflict((oc) => oc.columns(['domain', 'query']).doNothing())
           .execute()
       }
-    }
-
-    return ask
-  })
+    }, 500)
+  }
 
   return ask
 }
