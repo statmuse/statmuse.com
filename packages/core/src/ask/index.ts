@@ -163,6 +163,10 @@ export const upsert = async (params: {
         .executeTakeFirst()
     }
 
+    return ask
+  })
+
+  try {
     if (isGameraDefaultResponse(response)) {
       const newAskSuggests: NewAskSuggest[] | undefined =
         response.visual.additionalQuestions?.map((q) => ({
@@ -175,8 +179,7 @@ export const upsert = async (params: {
         }))
 
       if (newAskSuggests) {
-        await trx
-          .insertInto('ask_suggests')
+        db.insertInto('ask_suggests')
           .values(newAskSuggests)
           .onConflict((oc) =>
             oc.columns(['domain', 'query']).doUpdateSet((eb) => ({
@@ -187,9 +190,9 @@ export const upsert = async (params: {
           .execute()
       }
     }
-
-    return ask
-  })
+  } catch (error) {
+    console.error('Upsert Ask Suggest: ', error)
+  }
 
   return ask
 }
