@@ -23,7 +23,7 @@ export function API({ stack }: StackContext) {
 
   const GAMERA_API_URL = isProd
     ? 'https://gamera-prod.public.statmuse.com/'
-    : 'http://gamera-staging-epl.ecs.statmuse.com/'
+    : 'https://gamera-staging.public.statmuse.com/'
 
   const environment: Record<string, string> = {
     POSTGRES_SECRET_ARN: rdsCredentialsSecret.secretArn,
