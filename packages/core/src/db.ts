@@ -145,6 +145,30 @@ types.setTypeParser(types.builtins.TIMESTAMP, (datetimeString) => {
   )
 })
 
+export const executeQueryWithTimeout = async <T>(
+  queryFn: () => Promise<T>,
+  timeout: number,
+) => {
+  const queryPromise = queryFn()
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error('Query timed out'))
+    }, timeout)
+  })
+
+  try {
+    const result = (await Promise.race([queryPromise, timeoutPromise])) as T
+    return result
+  } catch (error) {
+    // Handle timeout or other errors
+    if (error.message === 'Query timed out') {
+      throw new Error('Query execution timed out.')
+    } else {
+      throw error
+    }
+  }
+}
+
 export const db = new Kysely<Database>({
   dialect: new PostgresDialect({
     pool: new Pool({

@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import { db } from '../db'
+import { db, executeQueryWithTimeout } from '../db'
 import { sql } from 'kysely'
 import {
   type GameraResponse,
@@ -168,22 +168,25 @@ export const upsert = async (params: {
 
   try {
     if (isGameraDefaultResponse(response)) {
-      const newAskSuggests: NewAskSuggest[] | undefined =
-        response.visual.additionalQuestions?.map((q) => ({
-          id: randomUUID(),
-          query: q.text,
-          domain: q.domain ?? '',
-          count: 1,
-          inserted_at: now,
-          updated_at: now,
-        }))
+      executeQueryWithTimeout(async () => {
+        const newAskSuggests: NewAskSuggest[] | undefined =
+          response.visual.additionalQuestions?.map((q) => ({
+            id: randomUUID(),
+            query: q.text,
+            domain: q.domain ?? '',
+            count: 1,
+            inserted_at: now,
+            updated_at: now,
+          }))
 
-      if (newAskSuggests) {
-        db.insertInto('ask_suggests')
-          .values(newAskSuggests)
-          .onConflict((oc) => oc.columns(['domain', 'query']).doNothing())
-          .execute()
-      }
+        if (newAskSuggests) {
+          return db
+            .insertInto('ask_suggests')
+            .values(newAskSuggests)
+            .onConflict((oc) => oc.columns(['domain', 'query']).doNothing())
+            .execute()
+        }
+      }, 500)
     }
   } catch (error) {
     console.error('Upsert Ask Suggest: ', error)
