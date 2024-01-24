@@ -36,26 +36,28 @@ if (overflow && (searchParams.p || searchParams.page === 'last')) {
 
 const paginationOptions = paginate(asks, searchParams, overflow)
 
-const leagues = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA']
+const leagueBtns = [
+  { text: 'All', param: 'All', href: '/questions' },
+  { text: 'NBA', param: 'nba', href: '/nba/questions' },
+  { text: 'NFL', param: 'nfl', href: '/nfl/questions' },
+  { text: 'NHL', param: 'nhl', href: '/nhl/questions' },
+  { text: 'MLB', param: 'mlb', href: '/mlb/questions' },
+  { text: 'Premier League', param: 'fc', href: '/fc/questions' },
+  { text: 'PGA', param: 'pga', href: '/pga/questions' },
+]
 ---
 
 <Container>
   <nav style="margin-top: 15px;">
     <div style="display: flex; gap: 10px;">
       {
-        ['All', ...leagues].map((league) => (
+        leagueBtns.map((btn) => (
           <a
             class={`flex items-center justify-center min-w-[80px] border border-primary rounded-md hover:no-underline hover:text-white hover:bg-primary p-[5px] ${
-              league.toLowerCase() === (selected || 'all')
-                ? 'bg-primary text-white'
-                : 'text-primary'
-            } %>`}
-            href={
-              league === 'All'
-                ? '/questions'
-                : `/${league.toLowerCase()}/questions`
-            }
-            set:html={league}
+              selected === btn.param ? 'bg-primary text-white' : 'text-primary'
+            }`}
+            href={btn.href}
+            set:html={btn.text}
           />
         ))
       }

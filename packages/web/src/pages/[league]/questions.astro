@@ -36,7 +36,9 @@ Caching.swr(Astro)
   <Header preferredDomain={domain.toLowerCase()} />
   <AskIndex
     selected={league}
-    headline={`Trending ${domain === 'EPL' ? 'PL' : domain} Searches`}
+    headline={`Trending ${
+      domain === 'EPL' ? 'Premier League' : domain
+    } Searches`}
     {asks}
     {searchParams}
   />

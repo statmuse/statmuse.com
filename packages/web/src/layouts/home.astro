@@ -261,7 +261,6 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
                   },
                 ]}
                 href={btn.href}
-                data-beta={btn.text === 'Premier League'}
               >
                 {btn.text}
                 {btn.text === 'Premier League' && (
@@ -323,15 +322,11 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
         />
       </div>
       <slot />
-      {
-        league !== 'fc' && (
-          <h4 class="font-semibold text-right py-4">
-            <a href={league === 'All' ? '/questions' : `/${league}/questions`}>
-              {trendingLinkText(league)}
-            </a>
-          </h4>
-        )
-      }
+      <h4 class="font-semibold text-right py-4">
+        <a href={league === 'All' ? '/questions' : `/${league}/questions`}>
+          {trendingLinkText(league)}
+        </a>
+      </h4>
       <NewsletterSignup />
     </div>
     <div class="main">
