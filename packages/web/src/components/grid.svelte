@@ -142,7 +142,7 @@
 
   const [topRank, bottomRank] = rankingRange
   const rankingColor = (row: RowItem, display: string) => {
-    if (row.display.includes('Rank') && display.match(/(\d+).*/)) {
+    if (row?.display.includes('Rank') && display.match(/(\d+).*/)) {
       const [, num] = Array.from(display.match(/(\d+).*/) || [])
       if (Number(num) <= topRank) return 'text-[#009444]'
       if (Number(num) >= bottomRank) return 'text-[#BF1D2D]'
@@ -224,65 +224,72 @@
             )}
             <tr>
               {#each columns as col (row[col.rowItemKey])}
-                {@const { display, imageUrl, entity } = row[col.rowItemKey]}
-                <td
-                  class={`${applyStyles(col)} ${padding} ${
-                    imageUrl ? 'w-2' : ''
-                  } ${rankingColor(row[columns[0].rowItemKey], display)}`}
-                  class:py-1={!imageUrl}
-                  class:sticky={col.sticky}
-                  class:left-0={col.sticky}
-                  class:bg-white={col.sticky &&
-                    !(sortKey === col.rowItemKey) &&
-                    !color &&
-                    !rowHighlight}
-                  class:bg-team-secondary={color}
-                  class:bg-[#e9f9ff]={rowHighlight}
-                  class:bg-[#fffbec]={sortKey === col.rowItemKey}
-                >
-                  <EntityLink {entity} class={color ? 'text-team-primary' : ''}>
-                    {#if col.rowItemKey === 'IMAGE'}
-                      {#if imageUrl}
-                        <img
-                          src={imageUrl}
-                          alt={display}
-                          class={imgClass(row[col.rowItemKey])}
-                        />
-                      {/if}
-                    {:else if col.hasImage}
-                      <div class="flex items-center">
+                {#if row[col.rowItemKey]}
+                  {@const { display, imageUrl, entity } = row[col.rowItemKey]}
+                  <td
+                    class={`${applyStyles(col)} ${padding} ${
+                      imageUrl ? 'w-2' : ''
+                    } ${rankingColor(row[columns[0].rowItemKey], display)}`}
+                    class:py-1={!imageUrl}
+                    class:sticky={col.sticky}
+                    class:left-0={col.sticky}
+                    class:bg-white={col.sticky &&
+                      !(sortKey === col.rowItemKey) &&
+                      !color &&
+                      !rowHighlight}
+                    class:bg-team-secondary={color}
+                    class:bg-[#e9f9ff]={rowHighlight}
+                    class:bg-[#fffbec]={sortKey === col.rowItemKey}
+                  >
+                    <EntityLink
+                      {entity}
+                      class={color ? 'text-team-primary' : ''}
+                    >
+                      {#if col.rowItemKey === 'IMAGE'}
                         {#if imageUrl}
                           <img
                             src={imageUrl}
                             alt={display}
-                            class={`${imgClass(row[col.rowItemKey])} mr-2.5`}
+                            class={imgClass(row[col.rowItemKey])}
                           />
-                        {:else}
-                          <div class="w-4 h-4 mr-2.5" />
                         {/if}
+                      {:else if col.hasImage}
+                        <div class="flex items-center">
+                          {#if imageUrl}
+                            <img
+                              src={imageUrl}
+                              alt={display}
+                              class={`${imgClass(row[col.rowItemKey])} mr-2.5`}
+                            />
+                          {:else}
+                            <div class="w-4 h-4 mr-2.5" />
+                          {/if}
+                          {display}
+                        </div>
+                      {:else if dateRegex.test(display)}
+                        {@const [, day, date] = Array.from(
+                          display.match(dateRegex) || [],
+                        )}
+                        <div class="flex">
+                          <div class="w-8">{day}</div>
+                          <div>{date}</div>
+                        </div>
+                      {:else if scoreRegex.test(display)}
+                        {@const [, result, score] = Array.from(
+                          display.match(scoreRegex) || [],
+                        )}
+                        <div class="flex">
+                          <div class="w-5">{result}</div>
+                          <div>{score}</div>
+                        </div>
+                      {:else}
                         {display}
-                      </div>
-                    {:else if dateRegex.test(display)}
-                      {@const [, day, date] = Array.from(
-                        display.match(dateRegex) || [],
-                      )}
-                      <div class="flex">
-                        <div class="w-8">{day}</div>
-                        <div>{date}</div>
-                      </div>
-                    {:else if scoreRegex.test(display)}
-                      {@const [, result, score] = Array.from(
-                        display.match(scoreRegex) || [],
-                      )}
-                      <div class="flex">
-                        <div class="w-5">{result}</div>
-                        <div>{score}</div>
-                      </div>
-                    {:else}
-                      {display}
-                    {/if}
-                  </EntityLink>
-                </td>
+                      {/if}
+                    </EntityLink>
+                  </td>
+                {:else}
+                  <td></td>
+                {/if}
               {/each}
             </tr>
           {/each}
