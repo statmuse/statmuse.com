@@ -18,6 +18,7 @@ import { createAskPath } from '@statmuse/core/path'
 import { getGames, getSchedule } from '@lib/game'
 import ScheduleCard from '@components/schedule-card.astro'
 import ScoresCard from '@components/scores-card.astro'
+import PlayerCardComponent from '@components/cards/player.astro'
 
 interface Props {
   league: LeagueParam
@@ -712,36 +713,9 @@ if (teamCardsResp) {
                 playerCardsResp.seasonType,
                 playerCardsResp.seasonYearDisplay,
               )}
-              class="flex rounded-2xl overflow-hidden px-2.5 hover:no-underline"
-              style={{
-                backgroundColor:
-                  card.players[0].colors?.backgroundColor ?? '#FFF',
-                color: card.players[0].colors?.foregroundColor ?? '#000',
-              }}
+              class="hover:no-underline"
             >
-              {card?.players.map((player, i) => (
-                <div class="text-center w-1/3 h-56 flex flex-col justify-between items-center">
-                  <div>
-                    <h3 class="text-3xl mt-3">{player.statDisplayValue}</h3>
-                    <p class="uppercase text-xs tracking-[0.07rem]">
-                      {lastName(player.entity.display)}
-                    </p>
-                  </div>
-                  <Image
-                    class="h-36"
-                    style={{
-                      maxWidth: 'initial',
-                      width: 'initial',
-                      zIndex: 3 - i,
-                    }}
-                    src={player.imageUrl}
-                    alt={player.entity.display}
-                    width={400}
-                    height={400}
-                    loading="eager"
-                  />
-                </div>
-              ))}
+              <PlayerCardComponent card={card} />
             </a>
           </div>
         ))}
@@ -847,38 +821,9 @@ if (teamCardsResp) {
                   playerCardsResp.seasonType,
                   playerCardsResp.seasonYearDisplay,
                 )}
-                class="flex rounded-2xl overflow-hidden px-2.5 hover:no-underline"
-                style={{
-                  backgroundColor:
-                    card.players[0].colors?.backgroundColor ?? '#FFF',
-                  color: card.players[0].colors?.foregroundColor ?? '#000',
-                }}
+                class="hover:no-underline"
               >
-                {card?.players.map((player, i) => (
-                  <div class="text-center w-1/3 h-56 flex flex-col justify-between items-center">
-                    <div>
-                      <h3 class="text-3xl mt-3">
-                        {player.statDisplayValue.replace(',', '')}
-                      </h3>
-                      <p class="uppercase text-xs tracking-[0.07rem]">
-                        {lastName(player.entity.display)}
-                      </p>
-                    </div>
-                    <Image
-                      class="h-36"
-                      style={{
-                        maxWidth: 'initial',
-                        width: 'initial',
-                        zIndex: 3 - i,
-                      }}
-                      src={player.imageUrl}
-                      alt={player.entity.display}
-                      width={400}
-                      height={400}
-                      loading="eager"
-                    />
-                  </div>
-                ))}
+                <PlayerCardComponent card={card} />
               </a>
             </div>
           ))}
