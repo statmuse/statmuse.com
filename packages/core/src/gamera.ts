@@ -446,7 +446,7 @@ export interface GameraParameter {
 
 export interface GameraPlayerStats {
   playerId: number
-  parameters: Record<string, GameraParameter>
+  parameters?: Record<string, GameraParameter>
   grids: GameraGrid[]
 }
 

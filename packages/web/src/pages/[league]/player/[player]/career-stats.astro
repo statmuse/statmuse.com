@@ -26,10 +26,16 @@ if (!stats || !bio) return NOT_FOUND_404
 
 const { grids, parameters } = stats
 
-const [firstParam] = Object.values(parameters)
-const firstParamDisplay = firstParam
-  ? firstParam.values.find((v) => v.id === firstParam.selectedValueId)?.display
-  : undefined
+let firstParamDisplay: string | undefined
+
+if (parameters) {
+  const [firstParam] = Object.values(parameters)
+  firstParamDisplay = firstParam
+    ? firstParam.values.find((v) => v.id === firstParam.selectedValueId)
+        ?.display
+    : undefined
+}
+
 const title = `${bio.usedName} Career Stats${
   firstParamDisplay ? ` (${firstParamDisplay})` : ''
 }`
