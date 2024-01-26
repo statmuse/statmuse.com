@@ -9,6 +9,7 @@ import type {
   StandingsResponse,
   TeamCard,
   TeamCardResponse,
+  GameraTeamSeasonBio,
 } from '@statmuse/core/gamera'
 import StandingsCard from '@components/standings-card.astro'
 import Image from '@components/image.astro'
@@ -18,6 +19,7 @@ import { createAskPath } from '@statmuse/core/path'
 import { getGames, getSchedule } from '@lib/game'
 import ScheduleCard from '@components/schedule-card.astro'
 import ScoresCard from '@components/scores-card.astro'
+import { getTeamSeasonBio } from '@lib/team'
 import PlayerCardComponent from '@components/cards/player.astro'
 import TeamCardComponent from '@components/cards/team.astro'
 
@@ -723,6 +725,7 @@ if (teamCardsResp) {
 
 let teamSpecificPlayerCards: PlayerCardResponse | undefined
 let teamLeaders: PlayerCard | undefined
+let teamSeasonBio: GameraTeamSeasonBio | undefined
 if (allowedDomains.includes(league) && teamId && seasonYear) {
   teamSpecificPlayerCards = await getPlayerCards({
     context: Astro,
@@ -735,6 +738,13 @@ if (allowedDomains.includes(league) && teamId && seasonYear) {
     type: 'stats',
     players: filterTeamLeaders(teamSpecificPlayerCards?.cards ?? [], domain),
   }
+
+  teamSeasonBio = await getTeamSeasonBio({
+    context: Astro,
+    domain: leagueToDomain(league),
+    team: `team-${teamId}`,
+    year: seasonYear.toString(),
+  })
 }
 ---
 
@@ -747,6 +757,31 @@ if (allowedDomains.includes(league) && teamId && seasonYear) {
           <div>
             <p class="font-semibold">Team Leaders</p>
             <PlayerCardComponent card={teamLeaders} />
+          </div>
+        )}
+        {teamSeasonBio && teamSeasonBio.statsSummary && (
+          <div>
+            <p class="font-semibold">Team Rankings</p>
+            <div
+              class="flex rounded-2xl overflow-hidden px-2.5 hover:no-underline"
+              style={{
+                backgroundColor:
+                  teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
+                color: teamLeaders.players[0].colors?.foregroundColor ?? '#000',
+              }}
+            >
+              <div class="flex gap-5 mb-1 text-center mx-auto">
+                {teamSeasonBio.statsSummary.stats.map((stat) => (
+                  <div>
+                    <p class="uppercase whitespace-nowrap">{stat.label}</p>
+                    <p class="text-3xl">{stat.value}</p>
+                    <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+                      {stat.label !== 'FORM' ? stat.rank : 'last 5'}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>
