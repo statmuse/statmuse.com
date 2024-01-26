@@ -1402,6 +1402,19 @@ export interface PlayerCardResponse {
   seasonYearDisplay: string
   seasonType: string
   cards: PlayerCard[]
+  team?: {
+    teamId: number
+    seasonYear: number
+    name: string
+    nickname: string
+    abbreviation: string
+    logoImageUrl: string
+    colors: {
+      foregroundColor: string
+      backgroundColor: string
+    }
+    entity: GameraEntity
+  }
 }
 
 export interface TeamInfo {
