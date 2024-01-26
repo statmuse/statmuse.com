@@ -723,6 +723,7 @@ let teamSpecificPlayerCards: PlayerCardResponse | undefined
 let teamLeaders: PlayerCard | undefined
 let teamSeasonBio: GameraTeamSeasonBio | undefined
 let teamSeasonOverview: GameraTeamSeasonOverview | undefined
+let teamScheduleResponse: ScheduleResponse | undefined
 if (allowedDomains.includes(league) && teamId && seasonYear) {
   teamSpecificPlayerCards = await getPlayerCards({
     context: Astro,
@@ -749,6 +750,8 @@ if (allowedDomains.includes(league) && teamId && seasonYear) {
     team: `team-${teamId}`,
     year: seasonYear.toString(),
   })
+
+  teamScheduleResponse = await getSchedule({ context: Astro, domain, teamId })
 }
 ---
 
@@ -802,10 +805,24 @@ if (allowedDomains.includes(league) && teamId && seasonYear) {
             />
           </div>
         )}
+        {teamScheduleResponse && teamScheduleResponse.games.length > 0 && (
+          <div>
+            <p class="font-semibold">Schedule</p>
+            <ScheduleCard
+              data={teamScheduleResponse}
+              colors={{
+                backgroundColor:
+                  teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
+                foregroundColor:
+                  teamLeaders.players[0].colors?.foregroundColor ?? '#000',
+              }}
+            />
+          </div>
+        )}
       </div>
     </Fragment>
   )
-  }
+}
 
 {
   playerCardsResp && playerLeaderCards.length > 0 && (
