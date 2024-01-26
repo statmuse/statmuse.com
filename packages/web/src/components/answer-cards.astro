@@ -10,18 +10,19 @@ import type {
   TeamCard,
   TeamCardResponse,
   GameraTeamSeasonBio,
+  GameraTeamSeasonOverview,
 } from '@statmuse/core/gamera'
 import StandingsCard from '@components/standings-card.astro'
-import Image from '@components/image.astro'
 import { getStandings } from '@lib/standings'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import { createAskPath } from '@statmuse/core/path'
 import { getGames, getSchedule } from '@lib/game'
 import ScheduleCard from '@components/schedule-card.astro'
 import ScoresCard from '@components/scores-card.astro'
-import { getTeamSeasonBio } from '@lib/team'
+import { getTeamSeasonBio, getTeamSeasonOverview } from '@lib/team'
 import PlayerCardComponent from '@components/cards/player.astro'
 import TeamCardComponent from '@components/cards/team.astro'
+import GridCard from '@components/cards/grid.astro'
 
 interface Props {
   league: LeagueParam
@@ -31,11 +32,6 @@ interface Props {
 
 const { league, teamId, seasonYear } = Astro.props
 const domain = leagueToDomain(league).toLowerCase()
-
-const lastName = (s: string) => {
-  const names = s.split(' ')
-  return names[names.length - 1]
-}
 
 const playerCardTitle = (stat: string) => {
   switch (stat) {
@@ -726,6 +722,7 @@ if (teamCardsResp) {
 let teamSpecificPlayerCards: PlayerCardResponse | undefined
 let teamLeaders: PlayerCard | undefined
 let teamSeasonBio: GameraTeamSeasonBio | undefined
+let teamSeasonOverview: GameraTeamSeasonOverview | undefined
 if (allowedDomains.includes(league) && teamId && seasonYear) {
   teamSpecificPlayerCards = await getPlayerCards({
     context: Astro,
@@ -740,6 +737,13 @@ if (allowedDomains.includes(league) && teamId && seasonYear) {
   }
 
   teamSeasonBio = await getTeamSeasonBio({
+    context: Astro,
+    domain: leagueToDomain(league),
+    team: `team-${teamId}`,
+    year: seasonYear.toString(),
+  })
+
+  teamSeasonOverview = await getTeamSeasonOverview({
     context: Astro,
     domain: leagueToDomain(league),
     team: `team-${teamId}`,
@@ -782,6 +786,20 @@ if (allowedDomains.includes(league) && teamId && seasonYear) {
                 ))}
               </div>
             </div>
+          </div>
+        )}
+        {teamSeasonOverview && (
+          <div>
+            <p class="font-semibold">{teamSeasonOverview.standings.name}</p>
+            <GridCard
+              grid={teamSeasonOverview.standings}
+              colors={{
+                backgroundColor:
+                  teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
+                foregroundColor:
+                  teamLeaders.players[0].colors?.foregroundColor ?? '#000',
+              }}
+            />
           </div>
         )}
       </div>
