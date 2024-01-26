@@ -23,9 +23,11 @@ import TeamCardComponent from '@components/cards/team.astro'
 
 interface Props {
   league: LeagueParam
+  teamId?: number
+  seasonYear?: number
 }
 
-const { league } = Astro.props
+const { league, teamId, seasonYear } = Astro.props
 const domain = leagueToDomain(league).toLowerCase()
 
 const lastName = (s: string) => {
@@ -641,6 +643,45 @@ const filterBettingCards = (card: TeamCard) =>
     'worstRecordAgainstTheSpread',
   ].includes(card.stat)
 
+const filterTeamLeaders = (cards: PlayerCard[], domain: string) => {
+  switch (domain) {
+    case 'nba':
+      return cards
+        .filter((c) =>
+          [
+            'mostPointsPerGame',
+            'mostReboundsPerGame',
+            'mostAssistsPerGame',
+          ].includes(c.stat),
+        )
+        .map((c) => c.players[0])
+    case 'nfl':
+      return cards
+        .filter((c) =>
+          [
+            'mostPassingYards',
+            'mostRushingYards',
+            'mostReceivingYards',
+          ].includes(c.stat),
+        )
+        .map((c) => c.players[0])
+    case 'nhl':
+      return cards
+        .filter((c) =>
+          ['mostGoals', 'mostAssists', 'bestPlusMinus'].includes(c.stat),
+        )
+        .map((c) => c.players[0])
+    case 'epl':
+      return cards
+        .filter((c) =>
+          ['mostGoals', 'mostAssists', 'mostCleanSheets'].includes(c.stat),
+        )
+        .map((c) => c.players[0])
+    default:
+      return []
+  }
+}
+
 let playerCardsResp: PlayerCardResponse | undefined
 let teamCardsResp: TeamCardResponse | undefined
 let standingsResp: StandingsResponse | undefined
@@ -679,7 +720,39 @@ let bettingCards: TeamCard[] = []
 if (teamCardsResp) {
   bettingCards = teamCardsResp.cards.filter(filterBettingCards)
 }
+
+let teamSpecificPlayerCards: PlayerCardResponse | undefined
+let teamLeaders: PlayerCard | undefined
+if (allowedDomains.includes(league) && teamId && seasonYear) {
+  teamSpecificPlayerCards = await getPlayerCards({
+    context: Astro,
+    domain,
+    teamId,
+    seasonYear,
+  })
+  teamLeaders = {
+    stat: '',
+    type: 'stats',
+    players: filterTeamLeaders(teamSpecificPlayerCards?.cards ?? [], domain),
+  }
+}
 ---
+
+{
+  teamSpecificPlayerCards && (
+    <Fragment>
+      <h3 class="text-3xl font-semibold mb-1.5">{`More ${teamSpecificPlayerCards.team?.nickname} Stats`}</h3>
+      <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
+        {teamLeaders && teamLeaders.players.length > 0 && (
+          <div>
+            <p class="font-semibold">Team Leaders</p>
+            <PlayerCardComponent card={teamLeaders} />
+          </div>
+        )}
+      </div>
+    </Fragment>
+  )
+  }
 
 {
   playerCardsResp && playerLeaderCards.length > 0 && (
