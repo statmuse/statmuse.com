@@ -10,9 +10,14 @@ dayjs.extend(timezone)
 
 interface Props {
   data: ScheduleResponse
+  colors?: {
+    foregroundColor: string
+    backgroundColor: string
+  }
 }
 
 const data = Astro.props.data
+let colors = Astro.props.colors
 
 const teams = data.teams.reduce(
   (result, team) => ({
@@ -67,7 +72,7 @@ const grid: GameraGrid = {
   }),
 }
 
-const colors = teams[games[0].homeTeamId].colors
+colors = colors || teams[games[0].homeTeamId].colors
 ---
 
 <div
