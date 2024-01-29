@@ -309,8 +309,8 @@ async function update(
 
     const image = subject?.imageUrl
 
-    const background = subject?.colors.background
-    const foreground = subject?.colors.foreground
+    const background = subject?.colors?.background
+    const foreground = subject?.colors?.foreground
 
     queries.push({
       uri,
