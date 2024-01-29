@@ -426,7 +426,7 @@ async function ask(options: {
   conversationToken?: string
   preferredDomain?: string
 }) {
-  const league = options.league
+  const league = options.league === 'FC' ? 'epl' : options.league
   const query = options.query
 
   const params: Record<string, string> = {
