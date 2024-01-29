@@ -7,6 +7,7 @@ import { Secrets } from './stacks/secrets'
 import { Auth } from './stacks/auth'
 import { AnalyticsProxy } from './stacks/analytics-proxy'
 import { RedirectMoney } from './stacks/redirect'
+import { Trending } from './stacks/trending'
 
 export default {
   config(_input) {
@@ -24,7 +25,7 @@ export default {
       insightsVersion: undefined,
       memorySize: '128 MB',
       timeout: '3 seconds',
-      prefetchSecrets: true,
+      // prefetchSecrets: true,
     })
 
     app
@@ -35,6 +36,7 @@ export default {
       .stack(Auth)
       .stack(AnalyticsProxy)
       .stack(RedirectMoney)
+      .stack(Trending)
       .stack(Web)
   },
 } satisfies SSTConfig

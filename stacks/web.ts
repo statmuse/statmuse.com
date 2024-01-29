@@ -29,6 +29,7 @@ import {
   StartingPosition,
 } from 'aws-cdk-lib/aws-lambda'
 import { StreamMode } from 'aws-cdk-lib/aws-kinesis'
+import { Trending } from './trending'
 
 export function Web({ stack }: StackContext) {
   const dns = use(DNS)
@@ -37,6 +38,7 @@ export function Web({ stack }: StackContext) {
   const imports = use(Imports)
   const secrets = use(Secrets)
   const analytics = use(AnalyticsProxy)
+  const trending = use(Trending)
 
   const isProd = stack.stage === 'production'
 
@@ -129,6 +131,7 @@ export function Web({ stack }: StackContext) {
       secrets.SEGMENT_WRITE_KEY,
       secrets.HONEYBADGER_API_KEY,
       secrets.GAMERA_API_KEY,
+      trending.table,
     ],
     environment: {
       ...api.environment,

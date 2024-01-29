@@ -1192,6 +1192,7 @@ export interface Visual {
   summaryTokens?: GameraToken[]
   isSuperlative: boolean
   additionalQuestions?: AdditionalQuestion[]
+  contentReference?: ContentReference
   detail?: Detail[]
   disclaimers?: [string]
   contentReference: ContentReference

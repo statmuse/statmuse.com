@@ -1,0 +1,15 @@
+---
+import Trending from '@components/trending.astro'
+import { Caching } from '@lib/caching'
+import { type LeagueParam } from '@lib/params'
+
+const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fantasy', 'fc']
+if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
+  return NOT_FOUND_404
+
+const league = Astro.params.league as LeagueParam
+
+Caching.swr(Astro)
+---
+
+<Trending league={league} selected={league} />

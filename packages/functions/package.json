@@ -14,13 +14,17 @@
     "stripe-event-types": "^2.3.0"
   },
   "dependencies": {
+    "@aws-sdk/client-athena": "^3.499.0",
+    "@aws-sdk/client-dynamodb": "^3.499.0",
     "@aws-sdk/client-s3": "^3.374.0",
     "@aws-sdk/client-secrets-manager": "^3.354.0",
     "@aws-sdk/client-sesv2": "^3.391.0",
+    "@aws-sdk/lib-dynamodb": "^3.499.0",
     "@elastic/elasticsearch": "^8.9.0",
     "@segment/analytics-node": "^1.1.1",
     "@sendgrid/client": "^7.7.0",
     "@sendgrid/mail": "^7.7.0",
+    "athena-express-plus": "^8.0.10",
     "client-sesv2": "link:@types/@aws-sdk/client-sesv2",
     "kysely": "^0.25.0",
     "lodash-es": "^4.17.21",

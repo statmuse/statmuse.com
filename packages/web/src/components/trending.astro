@@ -1,0 +1,383 @@
+---
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import Image from '@components/image.astro'
+import { Caching } from '@lib/caching'
+import { Table } from 'sst/node/table'
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import {
+  GetCommand,
+  QueryCommand,
+  DynamoDBDocumentClient,
+} from '@aws-sdk/lib-dynamodb'
+import Container from '@components/container.astro'
+
+const db = DynamoDBDocumentClient.from(new DynamoDBClient({}), {
+  marshallOptions: { removeUndefinedValues: true },
+})
+
+interface Props {
+  league: string
+  selected?: string
+}
+
+const { league, selected } = Astro.props
+const country = Astro.url.searchParams.get('country')
+const timeframe = Astro.url.searchParams.get('timeframe')
+const pk = `${league.toUpperCase()}#${timeframe ?? 'LAST_24_HOURS'}#${
+  country ?? 'GLOBAL'
+}`
+
+const data = await db.send(
+  new GetCommand({
+    TableName: Table['trending-table'].tableName,
+    Key: {
+      pk,
+      sk: new Date().toISOString().split('T')[0],
+    },
+  }),
+)
+
+let item = data.Item as Item | undefined
+
+if (!item) {
+  item = await db
+    .send(
+      new QueryCommand({
+        TableName: Table['trending-table'].tableName,
+        KeyConditionExpression: 'pk = :pk',
+        ExpressionAttributeValues: { ':pk': pk },
+        ScanIndexForward: false,
+        Limit: 1,
+      }),
+    )
+    .then((res) => res.Items?.[0] as Item)
+}
+
+type Query = {
+  league: string
+  query: string
+  uri: string
+  image: string
+  background: string
+  foreground: string
+  count: number
+}
+
+type Item = {
+  players: {
+    id: number
+    league: string
+    name: string
+    image: string
+    uri: string
+    background: string
+    foreground: string
+    count: number
+    queries?: Query[]
+  }[]
+  queries: Query[]
+  teams: {
+    id: number
+    league: string
+    name: { abbreviation: string; nickname: string; market: string }
+    reps: { image: string; name: string }[]
+    image: string
+    uri: string
+    background: string
+    foreground: string
+    count: number
+    queries?: Query[]
+  }[]
+  updated: string
+}
+
+const leagues = [
+  { text: 'ALL', param: 'all', href: '/trending' },
+  { text: 'FC', param: 'fc', href: '/fc/trending' },
+  { text: 'NBA', param: 'nba', href: '/nba/trending' },
+  { text: 'NFL', param: 'nfl', href: '/nfl/trending' },
+  { text: 'NHL', param: 'nhl', href: '/nhl/trending' },
+  { text: 'MLB', param: 'mlb', href: '/mlb/trending' },
+  { text: 'PGA', param: 'pga', href: '/pga/trending' },
+  { text: 'FANTASY', param: 'fantasy', href: '/fantasy/trending' },
+  { text: 'MONEY', param: 'money', href: '/money/trending' },
+]
+
+const topPlayer = item?.players?.[0]
+const topTeam = item?.teams?.[0]
+
+Caching.swr(Astro)
+---
+
+<Layout
+  analytics={{ page_type: 'trending' }}
+  meta={{ title: 'Trending' }}
+  colors={{ foreground: '#fff', background: '#00c1d8' }}
+>
+  <Header />
+  <Container class="text-white bg-primary">
+    <div class="pt-8 pb-8 md:pt-[90px] md:pb-16">
+      <h1 class="text-center font-semibold text-4xl md:text-6xl">Trending</h1>
+    </div>
+  </Container>
+  <div class="bg-gray-50 p-3 space-y-3">
+    <nav class="flex gap-3 overflow-x-scroll no-scrollbar -mx-3 px-3">
+      {
+        leagues.map((league) => (
+          <a
+            class:list={{
+              'p-1.5 px-3 text-center whitespace-nowrap border rounded-full': true,
+              'hover:no-underline hover:text-white hover:bg-primary': true,
+              'bg-primary text-white border-primary font-semibold':
+                selected === league.param,
+              'bg-white text-gray-700 border-gray-200':
+                selected !== league.param,
+            }}
+            href={league.href}
+            set:html={league.text}
+          />
+        ))
+      }
+    </nav>
+    <div
+      class="space-y-3 sm:flex sm:flex-wrap sm:space-y-0 sm:gap-3 [&>*]:sm:w-[360px]"
+    >
+      <div class="bg-white rounded-3xl border border-gray-200 overflow-clip">
+        <h3 class="font-semibold my-2 mx-4">Trending Searches</h3>
+        {
+          item?.queries?.length ? (
+            <ol class="list-none text-gray-700 divide-y divide-gray-200">
+              {item.queries.slice(0, 10).map((query, index) => (
+                <li>
+                  <a
+                    href={query.uri}
+                    class="grid grid-cols-3 pt-3 text-gray-700"
+                  >
+                    <div class="flex gap-3 col-span-2">
+                      <p class="self-center w-10 flex-shrink-0 text-center">
+                        {index + 1}
+                      </p>
+                      <p class="self-center leading-5">{query.query}</p>
+                    </div>
+                    <Image
+                      class="h-24 object-contain object-bottom overflow-visible"
+                      src={query.image}
+                      alt={query.query}
+                      width={450}
+                      height={450}
+                      loading="eager"
+                    />
+                  </a>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <div class="h-96">
+              <div class="h-full w-full flex justify-center items-center text-center text-gray-400">
+                <div>
+                  <p>Gathering data</p>
+                  <p>Check back later</p>
+                </div>
+              </div>
+            </div>
+          )
+        }
+      </div>
+      <div class="bg-white rounded-3xl border border-gray-200 overflow-clip">
+        <h3 class="font-semibold my-2 mx-4">Trending Players</h3>
+        {
+          item?.players?.length ? (
+            <ol class="list-none text-gray-700 divide-y divide-gray-200">
+              {item.players.slice(0, 10).map((player, index) => (
+                <li>
+                  <a
+                    href={player.uri}
+                    class="grid grid-cols-3 pt-3 text-gray-700"
+                  >
+                    <div class="flex gap-3 col-span-2">
+                      <p class="self-center w-10 flex-shrink-0 text-center">
+                        {index + 1}
+                      </p>
+                      <p class="self-center leading-5 text-xl">{player.name}</p>
+                    </div>
+                    <Image
+                      class="h-24 object-contain object-bottom overflow-visible"
+                      src={player.image}
+                      alt={player.name}
+                      width={450}
+                      height={450}
+                    />
+                  </a>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <div class="h-96">
+              <div class="h-full w-full flex justify-center items-center text-center text-gray-400">
+                <div>
+                  <p>Gathering data</p>
+                  <p>Check back later</p>
+                </div>
+              </div>
+            </div>
+          )
+        }
+      </div>
+      <div class="bg-white rounded-3xl border border-gray-200 overflow-clip">
+        <h3 class="font-semibold my-2 mx-4">Trending Teams</h3>
+        {
+          item?.teams?.length ? (
+            <ol class="list-none text-gray-700 divide-y divide-gray-200">
+              {item.teams.slice(0, 10).map((team, index) => (
+                <li>
+                  <a
+                    href={team.uri}
+                    class="grid grid-cols-3 pt-3 text-gray-700"
+                  >
+                    <div class="flex gap-3">
+                      <p class="self-center w-10 flex-shrink-0 text-center">
+                        {index + 1}
+                      </p>
+                      <div class="self-center leading-5 text-xl">
+                        <p class="whitespace-pre">{team.name.market}</p>
+                        <p class="whitespace-pre">{team.name.nickname}</p>
+                      </div>
+                    </div>
+                    <div class:list={{ 'relative flex h-24 ml-8 -mr-8': true }}>
+                      {team.reps.length ? (
+                        <Image
+                          data-cy-illustration
+                          class:list={{
+                            'object-contain object-bottom': true,
+                          }}
+                          alt={team.reps[0].name ?? ''}
+                          src={team.reps[0].image}
+                          width={450}
+                          height={450}
+                        />
+                      ) : (
+                        <Image
+                          data-cy-illustration
+                          class:list={{
+                            'object-contain object-bottom': true,
+                          }}
+                          alt={team.name.nickname ?? ''}
+                          src={team.image}
+                          width={450}
+                          height={450}
+                        />
+                      )}
+                      {team.reps.length > 1 ? (
+                        <Image
+                          data-cy-illustration
+                          class:list={{
+                            'object-contain object-bottom': true,
+                            'absolute bottom-0 left-0 h-24 translate-x-1/2 z-[1]': true,
+                          }}
+                          alt={team.reps[1].name ?? ''}
+                          src={team.reps[1].image}
+                          width={450}
+                          height={450}
+                        />
+                      ) : null}
+                      {team.reps.length > 2 ? (
+                        <Image
+                          data-cy-illustration
+                          class="object-contain object-bottom"
+                          alt={team.reps[2].name ?? ''}
+                          src={team.reps[2].image}
+                          width={450}
+                          height={450}
+                        />
+                      ) : null}
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <div class="h-96">
+              <div class="h-full w-full flex justify-center items-center text-center text-gray-400">
+                <div>
+                  <p>Gathering data</p>
+                  <p>Check back later</p>
+                </div>
+              </div>
+            </div>
+          )
+        }
+      </div>
+      {
+        topPlayer && topPlayer.queries?.length ? (
+          <div class="bg-white rounded-3xl border border-gray-200 overflow-clip">
+            <h3
+              class="font-semibold my-2 mx-4"
+              set:html={`Trending ${topPlayer.name} Searches`}
+            />
+            <ol class="list-none text-gray-700 divide-y divide-gray-200">
+              {topPlayer.queries.slice(0, 10).map((query, index) => (
+                <li>
+                  <a
+                    href={query.uri}
+                    class="grid grid-cols-3 pt-3 text-gray-700"
+                  >
+                    <div class="flex gap-3 col-span-2">
+                      <p class="self-center w-10 flex-shrink-0 text-center">
+                        {index + 1}
+                      </p>
+                      <p class="self-center leading-5">{query.query}</p>
+                    </div>
+                    <Image
+                      class="h-24 object-contain object-bottom overflow-visible"
+                      src={query.image}
+                      alt={query.query}
+                      width={450}
+                      height={450}
+                      loading="eager"
+                    />
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ) : null
+      }
+      {
+        topTeam && topTeam.queries?.length ? (
+          <div class="bg-white rounded-3xl border border-gray-200 overflow-clip">
+            <h3
+              class="font-semibold my-2 mx-4"
+              set:html={`Trending ${topTeam.name.nickname} Searches`}
+            />
+            <ol class="list-none text-gray-700 divide-y divide-gray-200">
+              {topTeam.queries.slice(0, 10).map((query, index) => (
+                <li>
+                  <a
+                    href={query.uri}
+                    class="grid grid-cols-3 pt-3 text-gray-700"
+                  >
+                    <div class="flex gap-3 col-span-2">
+                      <p class="self-center w-10 flex-shrink-0 text-center">
+                        {index + 1}
+                      </p>
+                      <p class="self-center leading-5">{query.query}</p>
+                    </div>
+                    <Image
+                      class="h-24 object-contain object-bottom overflow-visible"
+                      src={query.image}
+                      alt={query.query}
+                      width={450}
+                      height={450}
+                      loading="eager"
+                    />
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ) : null
+      }
+    </div>
+  </div>
+</Layout>
