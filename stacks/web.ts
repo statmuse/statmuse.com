@@ -142,7 +142,7 @@ export function Web({ stack }: StackContext) {
       PUBLIC_STAGE: stack.stage,
       AUTH_ID: auth.id,
     },
-    // regional: { prefetchSecrets: true },
+    regional: { prefetchSecrets: true },
     nodejs: { install: ['pg'], esbuild: { external: ['pg-native', 'sharp'] } },
     cdk: {
       server: {
