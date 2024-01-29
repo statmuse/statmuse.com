@@ -24,6 +24,7 @@ export function Trending({ stack }: StackContext) {
 
   const job = new Job(stack, 'trending', {
     architecture: 'arm_64',
+    runtime: "nodejs18.x",
     handler: 'packages/functions/src/trending/index.handler',
     memorySize: '15 GB',
     bind: [secrets.GAMERA_API_KEY, table],
