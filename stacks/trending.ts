@@ -6,7 +6,7 @@ import { Secrets } from './secrets'
 
 export function Trending({ stack }: StackContext) {
   const { vpc } = use(Imports)
-  const { lambdaSecurityGroup, environment } = use(API)
+  const { lambdaSecurityGroup, environment, rdsCredentialsSecret } = use(API)
   const secrets = use(Secrets)
 
   const table = new Table(stack, 'trending-table', {
@@ -24,7 +24,7 @@ export function Trending({ stack }: StackContext) {
 
   const job = new Job(stack, 'trending', {
     architecture: 'arm_64',
-    runtime: "nodejs18.x",
+    runtime: 'nodejs18.x',
     handler: 'packages/functions/src/trending/index.handler',
     memorySize: '15 GB',
     bind: [secrets.GAMERA_API_KEY, table],
@@ -35,7 +35,7 @@ export function Trending({ stack }: StackContext) {
     },
     environment,
     nodejs: { install: ['pg'], esbuild: { external: ['pg-native'] } },
-    permissions: ['athena', 's3', 'glue'],
+    permissions: ['athena', 's3', 'glue', 'rds'],
   })
 
   const hourly = new Cron(stack, 'hourly', {
@@ -49,6 +49,8 @@ export function Trending({ stack }: StackContext) {
 
   hourly.bind([job])
   daily.bind([job])
+
+  rdsCredentialsSecret.grantRead(job.cdk.codeBuildProject)
 
   return { table }
 }
