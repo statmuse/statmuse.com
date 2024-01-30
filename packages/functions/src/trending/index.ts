@@ -291,7 +291,9 @@ async function update(
       const context_id = contexts.find((c) =>
         leagueName === 'fc' ? c.name === 'epl' : c.name === leagueName
       )?.id
+      console.log('context_id', context_id)
       const ask = await Ask.get({ context_id, query })
+      console.log('ask', ask)
       const response = ask?.answer
       // const response = await ask({ league, query })
       if (!response || response.type === 'error') return
@@ -299,35 +301,36 @@ async function update(
       const subject = response.visual?.summary?.subject
       const contentReference = response.visual?.contentReference
 
-      const players = contentReference?.questionTags?.playerIds
-        .map((id) => {
-          const player = leaguePlayers[league].find((p) => p.id === id)
-          if (!player) {
-            console.log('no player found', id)
-            console.log('query', query)
-            console.log('contentReference', contentReference)
-            return undefined
-          }
+      const players =
+        contentReference?.questionTags?.playerIds
+          .map((id) => {
+            const player = leaguePlayers[league].find((p) => p.id === id)
+            if (!player) {
+              console.log('no player found', id)
+              console.log('query', query)
+              console.log('contentReference', contentReference)
+              return undefined
+            }
 
-          return player
-        })
-        .filter((p) => !!p)
-      const teams = contentReference?.questionTags?.teamIds
-        .map((id) => {
-          const team = leagueTeams[league].find((t) => t.id === id)
-          if (!team) {
-            console.log('no team found', id)
-            console.log('query', query)
-            console.log('contentReference', contentReference)
-            return undefined
-          }
+            return player
+          })
+          .filter((p) => !!p) || []
+      const teams =
+        contentReference?.questionTags?.teamIds
+          .map((id) => {
+            const team = leagueTeams[league].find((t) => t.id === id)
+            if (!team) {
+              console.log('no team found', id)
+              console.log('query', query)
+              console.log('contentReference', contentReference)
+              return undefined
+            }
 
-          return team
-        })
-        .filter((p) => !!p)
+            return team
+          })
+          .filter((p) => !!p) || []
 
       const image = subject?.imageUrl
-
       const background = subject?.colors?.background
       const foreground = subject?.colors?.foreground
 

@@ -5,7 +5,8 @@ import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
 
 export function Imports({ stack }: StackContext) {
   // const isStaging = stack.stage === 'staging'
-  const isProd = stack.stage === 'production'
+  const isProd =
+    stack.stage === 'production' || stack.stage === 'staging-trending'
   // const isDev = !isStaging && !isProd
 
   const statmuseProdBucket = CdkBucket.fromBucketAttributes(
@@ -14,7 +15,7 @@ export function Imports({ stack }: StackContext) {
     {
       bucketArn: 'arn:aws:s3:::statmuse-prod',
       bucketName: 'statmuse-prod',
-    },
+    }
   )
 
   const vpc = Vpc.fromLookup(stack, 'vpc', {
@@ -24,13 +25,13 @@ export function Imports({ stack }: StackContext) {
   const rdsCredentialsSecret = Secret.fromSecretNameV2(
     stack,
     'rds-credentials-secret',
-    isProd ? 'mothra-prod-db-astro' : 'mothra-stage-db-astro',
+    isProd ? 'mothra-prod-db-astro' : 'mothra-stage-db-astro'
   )
 
   const rdsProxySecurityGroup = SecurityGroup.fromSecurityGroupId(
     stack,
     'rds-proxy-sg',
-    isProd ? 'sg-0de7a55637720b011' : 'sg-071ce3a4bc11c29b1',
+    isProd ? 'sg-0de7a55637720b011' : 'sg-071ce3a4bc11c29b1'
   )
 
   return {

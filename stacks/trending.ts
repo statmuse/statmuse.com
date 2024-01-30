@@ -35,7 +35,7 @@ export function Trending({ stack }: StackContext) {
     },
     environment,
     nodejs: { install: ['pg'], esbuild: { external: ['pg-native'] } },
-    permissions: ['athena', 's3', 'glue', 'rds'],
+    permissions: ['athena', 's3', 'glue', 'rds', 'secretsmanager'],
   })
 
   const hourly = new Cron(stack, 'hourly', {
