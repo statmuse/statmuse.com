@@ -408,6 +408,7 @@ async function update(
         players: undefined,
         teams: undefined,
       }))
+      .sort((a, b) => b.count - a.count)
       .slice(0, STORE),
     players: players.slice(0, STORE),
     teams: teams.slice(0, STORE),
