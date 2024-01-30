@@ -291,9 +291,7 @@ async function update(
       const context_id = contexts.find((c) =>
         leagueName === 'fc' ? c.name === 'epl' : c.name === leagueName
       )?.id
-      console.log('context_id', context_id)
       const ask = await Ask.get({ context_id, query })
-      console.log('ask', ask)
       const response = ask?.answer
       // const response = await ask({ league, query })
       if (!response || response.type === 'error') return
