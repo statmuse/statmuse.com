@@ -2,6 +2,7 @@
   "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
     "module": "esnext",
+    "target": "es2018",
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {

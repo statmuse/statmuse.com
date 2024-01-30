@@ -9,6 +9,8 @@ import {
   type GameraEntity,
   type GameraTeamSeasonBio,
 } from '@statmuse/core/gamera'
+import * as Context from '@statmuse/core/context'
+import * as Ask from '@statmuse/core/ask'
 import { Table } from 'sst/node/table'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { PutCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
@@ -98,6 +100,8 @@ const countries = [
   'ES',
   'SE',
 ] as const
+
+const contexts = await Context.list()
 
 type League = (typeof leagues)[number]
 type Timeframe = (typeof timeframes)[number]
@@ -276,7 +280,12 @@ async function update(
     if (!query) query = record.uri.split('?q=')[1]?.replace(/\+/g, ' ')
     query = decodeURIComponent(decodeURIComponent(query))
 
-    const response = await ask({ league, query })
+    const context_id = contexts.find((c) =>
+      leagueName === 'fc' ? c.name === 'epl' : c.name === leagueName
+    )?.id
+    const ask = await Ask.get({ context_id, query })
+    const response = ask?.answer
+    // const response = await ask({ league, query })
     if (!response || response.type === 'error') continue
 
     const subject = response.visual?.summary?.subject

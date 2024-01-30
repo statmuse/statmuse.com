@@ -2,6 +2,9 @@ import { db } from '../db'
 import type { Context } from './context.sql'
 export * from './context.sql'
 
+export const list = async (): Promise<Context[] | undefined> =>
+  db.selectFrom('contexts').selectAll().execute()
+
 export const getByName = async (name: string): Promise<Context | undefined> => {
   const result = await db
     .selectFrom('contexts')
