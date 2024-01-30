@@ -213,6 +213,12 @@ async function populateTeams() {
   }
 }
 
+function* chunk<T>(arr: T[], n: number): Generator<T[], void> {
+  for (let i = 0; i < arr.length; i += n) {
+    yield arr.slice(i, i + n)
+  }
+}
+
 async function update(
   timeframe: Timeframe,
   league: League,
@@ -268,72 +274,77 @@ async function update(
     teams: Team[]
   }[] = []
 
-  for (const record of results) {
-    const uri = record.uri
-    const count = Number(record.count)
+  const chunks = chunk(results, 10)
+  for (const batch of chunks) {
+    const promises = batch.map(async (record) => {
+      const uri = record.uri
+      const count = Number(record.count)
 
-    let [, leagueName, , query] = record.uri.split('/')
-    const league = leagueName.toUpperCase() as League
-    if (query) query = query.replace(/-/g, ' ')
-    if (!query && !record.uri.includes('?q=')) continue
+      let [, leagueName, , query] = record.uri.split('/')
+      const league = leagueName.toUpperCase() as League
+      if (query) query = query.replace(/-/g, ' ')
+      if (!query && !record.uri.includes('?q=')) return
 
-    if (!query) query = record.uri.split('?q=')[1]?.replace(/\+/g, ' ')
-    query = decodeURIComponent(decodeURIComponent(query))
+      if (!query) query = record.uri.split('?q=')[1]?.replace(/\+/g, ' ')
+      query = decodeURIComponent(decodeURIComponent(query))
 
-    const context_id = contexts.find((c) =>
-      leagueName === 'fc' ? c.name === 'epl' : c.name === leagueName
-    )?.id
-    const ask = await Ask.get({ context_id, query })
-    const response = ask?.answer
-    // const response = await ask({ league, query })
-    if (!response || response.type === 'error') continue
+      const context_id = contexts.find((c) =>
+        leagueName === 'fc' ? c.name === 'epl' : c.name === leagueName
+      )?.id
+      const ask = await Ask.get({ context_id, query })
+      const response = ask?.answer
+      // const response = await ask({ league, query })
+      if (!response || response.type === 'error') return
 
-    const subject = response.visual?.summary?.subject
-    const contentReference = response.visual?.contentReference
+      const subject = response.visual?.summary?.subject
+      const contentReference = response.visual?.contentReference
 
-    const players = contentReference?.questionTags?.playerIds
-      .map((id) => {
-        const player = leaguePlayers[league].find((p) => p.id === id)
-        if (!player) {
-          console.log('no player found', id)
-          console.log('query', query)
-          console.log('contentReference', contentReference)
-          return undefined
-        }
+      const players = contentReference?.questionTags?.playerIds
+        .map((id) => {
+          const player = leaguePlayers[league].find((p) => p.id === id)
+          if (!player) {
+            console.log('no player found', id)
+            console.log('query', query)
+            console.log('contentReference', contentReference)
+            return undefined
+          }
 
-        return player
+          return player
+        })
+        .filter((p) => !!p)
+      const teams = contentReference?.questionTags?.teamIds
+        .map((id) => {
+          const team = leagueTeams[league].find((t) => t.id === id)
+          if (!team) {
+            console.log('no team found', id)
+            console.log('query', query)
+            console.log('contentReference', contentReference)
+            return undefined
+          }
+
+          return team
+        })
+        .filter((p) => !!p)
+
+      const image = subject?.imageUrl
+
+      const background = subject?.colors?.background
+      const foreground = subject?.colors?.foreground
+
+      queries.push({
+        uri,
+        league,
+        query,
+        count,
+        image,
+        background,
+        foreground,
+        players,
+        teams,
       })
-      .filter((p) => !!p)
-    const teams = contentReference?.questionTags?.teamIds
-      .map((id) => {
-        const team = leagueTeams[league].find((t) => t.id === id)
-        if (!team) {
-          console.log('no team found', id)
-          console.log('query', query)
-          console.log('contentReference', contentReference)
-          return undefined
-        }
-
-        return team
-      })
-      .filter((p) => !!p)
-
-    const image = subject?.imageUrl
-
-    const background = subject?.colors?.background
-    const foreground = subject?.colors?.foreground
-
-    queries.push({
-      uri,
-      league,
-      query,
-      count,
-      image,
-      background,
-      foreground,
-      players,
-      teams,
     })
+
+    await Promise.all(promises)
   }
 
   const uniquePlayers = Array.from(
