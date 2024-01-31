@@ -785,22 +785,32 @@ if (allowedDomains.includes(league) && teamId && seasonYear) {
       <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
         {teamLeaders && teamLeaders.players.length > 0 && (
           <div>
-            <p class="font-semibold">Team Leaders</p>
+            <div class="flex justify-between">
+              <p class="font-semibold">Team Leaders</p>
+              <EntityLink entity={teamSpecificPlayerCards.team?.entity}>
+                See More
+              </EntityLink>
+            </div>
             <PlayerCardComponent card={teamLeaders} />
           </div>
         )}
         {teamSeasonBio && teamSeasonBio.statsSummary && (
-          <div>
-            <p class="font-semibold">Team Rankings</p>
+          <div class="flex flex-col">
+            <div class="flex justify-between">
+              <p class="font-semibold">Team Rankings</p>
+              <EntityLink entity={teamSpecificPlayerCards.team?.entity}>
+                See More
+              </EntityLink>
+            </div>
             <div
-              class="flex rounded-2xl overflow-hidden px-2.5 hover:no-underline"
+              class="flex-1 rounded-2xl overflow-hidden py-10 px-2.5 flex items-center"
               style={{
                 backgroundColor:
                   teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
                 color: teamLeaders.players[0].colors?.foregroundColor ?? '#000',
               }}
             >
-              <div class="flex gap-5 mb-1 text-center mx-auto">
+              <div class="flex gap-5 text-center mx-auto">
                 {teamSeasonBio.statsSummary.stats.map((stat) => (
                   <div>
                     <p class="uppercase whitespace-nowrap">{stat.label}</p>
@@ -816,7 +826,17 @@ if (allowedDomains.includes(league) && teamId && seasonYear) {
         )}
         {teamSeasonOverview && (
           <div>
-            <p class="font-semibold">{teamSeasonOverview.standings.name}</p>
+            <div class="flex justify-between">
+              <p class="font-semibold">{teamSeasonOverview.standings.name}</p>
+              <a
+                href={createAskPath({
+                  domain,
+                  query: `${teamSpecificPlayerCards.team?.nickname} standings`,
+                })}
+              >
+                See more
+              </a>
+            </div>
             <GridCard
               grid={teamSeasonOverview.standings}
               colors={{
@@ -830,7 +850,17 @@ if (allowedDomains.includes(league) && teamId && seasonYear) {
         )}
         {teamScheduleResponse && teamScheduleResponse.games.length > 0 && (
           <div>
-            <p class="font-semibold">Schedule</p>
+            <div class="flex justify-between">
+              <p class="font-semibold">Schedule</p>
+              <a
+                href={createAskPath({
+                  domain,
+                  query: `${teamSpecificPlayerCards.team?.nickname} schedule`,
+                })}
+              >
+                See more
+              </a>
+            </div>
             <ScheduleCard
               data={teamScheduleResponse}
               colors={{
