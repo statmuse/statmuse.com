@@ -5,7 +5,8 @@ import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
 
 export function Imports({ stack }: StackContext) {
   // const isStaging = stack.stage === 'staging'
-  const isProd = stack.stage === 'production'
+  const isProd =
+    stack.stage === 'production' || stack.stage === 'staging-trending'
   // const isDev = !isStaging && !isProd
 
   const statmuseProdBucket = CdkBucket.fromBucketAttributes(
