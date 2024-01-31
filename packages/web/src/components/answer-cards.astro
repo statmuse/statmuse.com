@@ -11,18 +11,22 @@ import type {
   TeamCardResponse,
   GameraTeamSeasonBio,
   GameraTeamSeasonOverview,
+  Team,
 } from '@statmuse/core/gamera'
 import StandingsCard from '@components/standings-card.astro'
 import { getStandings } from '@lib/standings'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import { createAskPath } from '@statmuse/core/path'
-import { getGames, getSchedule } from '@lib/game'
+import { getGame, getGames, getSchedule } from '@lib/game'
 import ScheduleCard from '@components/schedule-card.astro'
 import ScoresCard from '@components/scores-card.astro'
 import { getTeamSeasonBio, getTeamSeasonOverview } from '@lib/team'
 import PlayerCardComponent from '@components/cards/player.astro'
 import TeamCardComponent from '@components/cards/team.astro'
 import GridCard from '@components/cards/grid.astro'
+import EntityLink from '@components/entity-link.astro'
+import Image from '@components/image.astro'
+import dayjs from 'dayjs'
 
 interface Props {
   league: LeagueParam
@@ -724,6 +728,15 @@ let teamLeaders: PlayerCard | undefined
 let teamSeasonBio: GameraTeamSeasonBio | undefined
 let teamSeasonOverview: GameraTeamSeasonOverview | undefined
 let teamScheduleResponse: ScheduleResponse | undefined
+
+interface Boxscore {
+  homeTeam: Team
+  awayTeam: Team
+  completedGameStatus: string
+  gameDate: string
+}
+let teamLastGame: Boxscore | undefined
+
 if (allowedDomains.includes(league) && teamId && seasonYear) {
   teamSpecificPlayerCards = await getPlayerCards({
     context: Astro,
@@ -752,6 +765,16 @@ if (allowedDomains.includes(league) && teamId && seasonYear) {
   })
 
   teamScheduleResponse = await getSchedule({ context: Astro, domain, teamId })
+
+  if (teamSeasonOverview && teamSeasonOverview.scoresAndSchedule) {
+    const score = teamSeasonOverview.scoresAndSchedule.rows[1].SCORE
+    const res = await getGame({
+      context: Astro,
+      domain: leagueToDomain(league),
+      game: `game-${score.entity.id}`,
+    })
+    teamLastGame = res?.visual.detail[0]
+  }
 }
 ---
 
@@ -817,6 +840,88 @@ if (allowedDomains.includes(league) && teamId && seasonYear) {
                   teamLeaders.players[0].colors?.foregroundColor ?? '#000',
               }}
             />
+          </div>
+        )}
+        {teamLastGame && (
+          <div class="flex flex-col">
+            <div class="flex justify-between">
+              <p class="font-semibold">Last Game</p>
+              <a
+                href={createAskPath({
+                  domain,
+                  query: `${teamSpecificPlayerCards.team?.nickname} last game`,
+                })}
+              >
+                See more
+              </a>
+            </div>
+            <div
+              class="flex gap-4 flex-1 rounded-2xl overflow-hidden py-10 px-2.5 hover:no-underline relative"
+              style={{
+                backgroundColor:
+                  teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
+                color: teamLeaders.players[0].colors?.foregroundColor ?? '#000',
+              }}
+            >
+              <div class="flex-1 flex flex-col items-end justify-center">
+                <EntityLink entity={teamLastGame.homeTeam.entity}>
+                  <Image
+                    class="w-11 h-11 object-contain"
+                    src={teamLastGame.homeTeam.logoUrl}
+                    alt={teamLastGame.homeTeam.abbrev}
+                    width={100}
+                    height={100}
+                    loading="eager"
+                  />
+                </EntityLink>
+                <EntityLink
+                  entity={teamLastGame.homeTeam.entity}
+                  class="font-semibold text-current"
+                >
+                  {teamLastGame.homeTeam.shortName ||
+                    teamLastGame.homeTeam.name}
+                </EntityLink>
+                <p class="text-[0.8rem] tracking-[0.07rem]">
+                  {teamLastGame.homeTeam.record}
+                </p>
+              </div>
+              <div class="flex items-center gap-4 -mt-[38px]">
+                <p class="text-2xl font-semibold">
+                  {teamLastGame.homeTeam.score}
+                </p>
+                <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+                  {teamLastGame.completedGameStatus}
+                </p>
+                <p class="text-2xl font-semibold">
+                  {teamLastGame.awayTeam.score}
+                </p>
+              </div>
+              <div class="flex-1 flex flex-col justify-center">
+                <EntityLink entity={teamLastGame.awayTeam.entity}>
+                  <Image
+                    class="w-11 h-11 object-contain"
+                    src={teamLastGame.awayTeam.logoUrl}
+                    alt={teamLastGame.awayTeam.abbrev}
+                    width={100}
+                    height={100}
+                    loading="eager"
+                  />
+                </EntityLink>
+                <EntityLink
+                  entity={teamLastGame.awayTeam.entity}
+                  class="font-semibold text-current"
+                >
+                  {teamLastGame.awayTeam.shortName ||
+                    teamLastGame.awayTeam.name}
+                </EntityLink>
+                <p class="text-[0.8rem] tracking-[0.07rem]">
+                  {teamLastGame.awayTeam.record}
+                </p>
+              </div>
+              <p class="absolute bottom-5 left-1/2 -translate-x-1/2 text-[0.8rem] uppercase tracking-[0.07rem]">
+                {dayjs(teamLastGame.gameDate).format('ddd D MMM YYYY')}
+              </p>
+            </div>
           </div>
         )}
       </div>
