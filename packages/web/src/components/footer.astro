@@ -47,6 +47,23 @@ import Container from '@components/container.astro'
             <li class="inline-block sm:block pr-4 sm:p-0 my-2">
               <a href="/privacy">Privacy</a>
             </li>
+            <li class="inline-block sm:block pr-4 sm:p-0 my-2">
+              <style is:inline>
+                #pmLink {
+                  visibility: hidden;
+                  text-decoration: none;
+                  cursor: pointer;
+                  background: transparent;
+                  border: none;
+                }
+
+                #pmLink:hover {
+                  visibility: visible;
+                  color: grey;
+                }
+              </style>
+              <button id="pmLink">Privacy Manager</button>
+            </li>
           </ul>
         </li>
       </ul>
