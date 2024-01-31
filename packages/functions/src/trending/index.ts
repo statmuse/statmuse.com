@@ -253,6 +253,7 @@ async function update(
         league === 'ALL' ? '\\w+' : `${league.toLowerCase()}`
       }/ask[/|?]')
       AND method = 'GET'
+      AND prefetch = false
       AND ${timeframePredicate}
       ${location !== 'GLOBAL' ? `AND country = '${location}'` : ''}
     GROUP BY uri
