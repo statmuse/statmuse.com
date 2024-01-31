@@ -31,10 +31,9 @@ import dayjs from 'dayjs'
 interface Props {
   league: LeagueParam
   teamId?: number
-  seasonYear?: number
 }
 
-const { league, teamId, seasonYear } = Astro.props
+const { league, teamId } = Astro.props
 const domain = leagueToDomain(league).toLowerCase()
 
 const playerCardTitle = (stat: string) => {
@@ -656,7 +655,7 @@ const filterTeamLeaders = (cards: PlayerCard[], domain: string) => {
             'mostAssistsPerGame',
           ].includes(c.stat),
         )
-        .map((c) => c.players[0])
+        .map((c) => ({ ...c.players[0], stat: c.stat }))
     case 'nfl':
       return cards
         .filter((c) =>
@@ -666,19 +665,19 @@ const filterTeamLeaders = (cards: PlayerCard[], domain: string) => {
             'mostReceivingYards',
           ].includes(c.stat),
         )
-        .map((c) => c.players[0])
+        .map((c) => ({ ...c.players[0], stat: c.stat }))
     case 'nhl':
       return cards
         .filter((c) =>
           ['mostGoals', 'mostAssists', 'bestPlusMinus'].includes(c.stat),
         )
-        .map((c) => c.players[0])
+        .map((c) => ({ ...c.players[0], stat: c.stat }))
     case 'epl':
       return cards
         .filter((c) =>
           ['mostGoals', 'mostAssists', 'mostCleanSheets'].includes(c.stat),
         )
-        .map((c) => c.players[0])
+        .map((c) => ({ ...c.players[0], stat: c.stat }))
     default:
       return []
   }
@@ -737,37 +736,48 @@ interface Boxscore {
 }
 let teamLastGame: Boxscore | undefined
 
-if (allowedDomains.includes(league) && teamId && seasonYear) {
-  teamSpecificPlayerCards = await getPlayerCards({
-    context: Astro,
-    domain,
-    teamId,
-    seasonYear,
-  })
+if (allowedDomains.includes(league) && teamId) {
+  ;[teamSpecificPlayerCards, teamScheduleResponse] = await Promise.all([
+    getPlayerCards({
+      context: Astro,
+      domain,
+      teamId,
+    }),
+    getSchedule({
+      context: Astro,
+      domain,
+      teamId,
+    }),
+  ])
+
   teamLeaders = {
     stat: '',
     type: 'stats',
     players: filterTeamLeaders(teamSpecificPlayerCards?.cards ?? [], domain),
   }
 
-  teamSeasonBio = await getTeamSeasonBio({
-    context: Astro,
-    domain: leagueToDomain(league),
-    team: `team-${teamId}`,
-    year: seasonYear.toString(),
-  })
-
-  teamSeasonOverview = await getTeamSeasonOverview({
-    context: Astro,
-    domain: leagueToDomain(league),
-    team: `team-${teamId}`,
-    year: seasonYear.toString(),
-  })
-
-  teamScheduleResponse = await getSchedule({ context: Astro, domain, teamId })
+  if (teamSpecificPlayerCards) {
+    ;[teamSeasonBio, teamSeasonOverview] = await Promise.all([
+      getTeamSeasonBio({
+        context: Astro,
+        domain: leagueToDomain(league),
+        team: `team-${teamId}`,
+        year: teamSpecificPlayerCards.team?.seasonYear.toString() ?? '',
+      }),
+      getTeamSeasonOverview({
+        context: Astro,
+        domain: leagueToDomain(league),
+        team: `team-${teamId}`,
+        year: teamSpecificPlayerCards.team?.seasonYear.toString() ?? '',
+      }),
+    ])
+  }
 
   if (teamSeasonOverview && teamSeasonOverview.scoresAndSchedule) {
-    const score = teamSeasonOverview.scoresAndSchedule.rows[1].SCORE
+    const score = teamSeasonOverview.scoresAndSchedule.rows.find(
+      (r) => r.SCORE,
+    )?.SCORE
+    console.log('score: ', score)
     const res = await getGame({
       context: Astro,
       domain: leagueToDomain(league),
