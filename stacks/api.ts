@@ -74,6 +74,7 @@ export function API({ stack }: StackContext) {
           secrets.STRIPE_WEBHOOK_SECRET,
           secrets.STRIPE_PRICE_ID,
           secrets.SENDGRID_API_KEY,
+          secrets.SENDGRID_TRANSACTIONAL_API_KEY,
           secrets.GAMERA_API_KEY,
         ],
         prefetchSecrets: true,

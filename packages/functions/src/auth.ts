@@ -6,8 +6,7 @@ import contacts from '@sendgrid/client'
 import { Config } from 'sst/node/config'
 import { sessions } from './session'
 
-sendgrid.setApiKey(Config.SENDGRID_API_KEY)
-sendgrid.setSubstitutionWrappers('%', '%')
+sendgrid.setApiKey(Config.SENDGRID_TRANSACTIONAL_API_KEY)
 contacts.setApiKey(Config.SENDGRID_API_KEY)
 
 export const handler = AuthHandler({
@@ -18,8 +17,8 @@ export const handler = AuthHandler({
         console.log('sending email to', claims.email)
 
         await sendgrid.send({
-          templateId: 'b1bc651e-e4ae-48d8-af47-d1cce2923527',
-          substitutions: {
+          templateId: 'd-dcd901efab0544ed841ce254e900832a',
+          dynamicTemplateData: {
             pin_code: code,
             sign_in_token_expires_in_minutes: '30',
           },
