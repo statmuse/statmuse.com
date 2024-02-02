@@ -263,6 +263,6 @@ const twitter = {
     </div>
     <slot />
     <Explore {league} additionalQuestions={bio.additionalQuestions} />
-    <AnswerCards {league} />
+    <AnswerCards {league} teamId={bio.team.entity.id.split('/')[0]} />
   </Container>
 </Layout>

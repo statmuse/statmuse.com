@@ -30,7 +30,7 @@ import dayjs from 'dayjs'
 
 interface Props {
   league: LeagueParam
-  teamId?: number
+  teamId?: number | string
 }
 
 const { league, teamId } = Astro.props
@@ -775,15 +775,16 @@ if (allowedDomains.includes(league) && teamId) {
 
   if (teamSeasonOverview && teamSeasonOverview.scoresAndSchedule) {
     const score = teamSeasonOverview.scoresAndSchedule.rows.find(
-      (r) => r.SCORE,
+      (r) => r.SCORE.entity,
     )?.SCORE
-    console.log('score: ', score)
-    const res = await getGame({
-      context: Astro,
-      domain: leagueToDomain(league),
-      game: `game-${score.entity.id}`,
-    })
-    teamLastGame = res?.visual.detail[0]
+    if (score.entity) {
+      const res = await getGame({
+        context: Astro,
+        domain: leagueToDomain(league),
+        game: `game-${score.entity.id}`,
+      })
+      teamLastGame = res?.visual.detail[0]
+    }
   }
 }
 ---

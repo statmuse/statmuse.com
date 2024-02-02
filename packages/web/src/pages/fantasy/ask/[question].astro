@@ -44,6 +44,8 @@ query = clean(
   ),
 )
 
+const contentReference = response.visual.contentReference
+
 const code = await Link.askShortCode(query, 'nfl')
 
 const meta =
@@ -122,7 +124,14 @@ Caching.swr(Astro)
     </Container>
 
     <Container>
-      <AnswerCards league="nfl" />
+      <AnswerCards
+        league="nfl"
+        teamId={contentReference.questionTags?.teamIds.length > 0
+          ? contentReference.questionTags?.teamIds[0]
+          : contentReference.answerTags?.teamIds.length > 0
+          ? contentReference.answerTags?.teamIds[0]
+          : undefined}
+      />
     </Container>
   </Layout>
 </Error>
