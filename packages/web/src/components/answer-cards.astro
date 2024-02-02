@@ -9,27 +9,32 @@ import type {
   StandingsResponse,
   TeamCard,
   TeamCardResponse,
+  GameraTeamSeasonBio,
+  GameraTeamSeasonOverview,
+  Team,
 } from '@statmuse/core/gamera'
 import StandingsCard from '@components/standings-card.astro'
-import Image from '@components/image.astro'
 import { getStandings } from '@lib/standings'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import { createAskPath } from '@statmuse/core/path'
-import { getGames, getSchedule } from '@lib/game'
+import { getGame, getGames, getSchedule } from '@lib/game'
 import ScheduleCard from '@components/schedule-card.astro'
 import ScoresCard from '@components/scores-card.astro'
+import { getTeamSeasonBio, getTeamSeasonOverview } from '@lib/team'
+import PlayerCardComponent from '@components/cards/player.astro'
+import TeamCardComponent from '@components/cards/team.astro'
+import GridCard from '@components/cards/grid.astro'
+import EntityLink from '@components/entity-link.astro'
+import Image from '@components/image.astro'
+import dayjs from 'dayjs'
 
 interface Props {
   league: LeagueParam
+  teamId?: number | string
 }
 
-const { league } = Astro.props
+const { league, teamId } = Astro.props
 const domain = leagueToDomain(league).toLowerCase()
-
-const lastName = (s: string) => {
-  const names = s.split(' ')
-  return names[names.length - 1]
-}
 
 const playerCardTitle = (stat: string) => {
   switch (stat) {
@@ -639,6 +644,45 @@ const filterBettingCards = (card: TeamCard) =>
     'worstRecordAgainstTheSpread',
   ].includes(card.stat)
 
+const filterTeamLeaders = (cards: PlayerCard[], domain: string) => {
+  switch (domain) {
+    case 'nba':
+      return cards
+        .filter((c) =>
+          [
+            'mostPointsPerGame',
+            'mostReboundsPerGame',
+            'mostAssistsPerGame',
+          ].includes(c.stat),
+        )
+        .map((c) => ({ ...c.players[0], stat: c.stat }))
+    case 'nfl':
+      return cards
+        .filter((c) =>
+          [
+            'mostPassingYards',
+            'mostRushingYards',
+            'mostReceivingYards',
+          ].includes(c.stat),
+        )
+        .map((c) => ({ ...c.players[0], stat: c.stat }))
+    case 'nhl':
+      return cards
+        .filter((c) =>
+          ['mostGoals', 'mostAssists', 'bestPlusMinus'].includes(c.stat),
+        )
+        .map((c) => ({ ...c.players[0], stat: c.stat }))
+    case 'epl':
+      return cards
+        .filter((c) =>
+          ['mostGoals', 'mostAssists', 'mostCleanSheets'].includes(c.stat),
+        )
+        .map((c) => ({ ...c.players[0], stat: c.stat }))
+    default:
+      return []
+  }
+}
+
 let playerCardsResp: PlayerCardResponse | undefined
 let teamCardsResp: TeamCardResponse | undefined
 let standingsResp: StandingsResponse | undefined
@@ -677,7 +721,254 @@ let bettingCards: TeamCard[] = []
 if (teamCardsResp) {
   bettingCards = teamCardsResp.cards.filter(filterBettingCards)
 }
+
+let teamSpecificPlayerCards: PlayerCardResponse | undefined
+let teamLeaders: PlayerCard | undefined
+let teamSeasonBio: GameraTeamSeasonBio | undefined
+let teamSeasonOverview: GameraTeamSeasonOverview | undefined
+let teamScheduleResponse: ScheduleResponse | undefined
+
+interface Boxscore {
+  homeTeam: Team
+  awayTeam: Team
+  completedGameStatus: string
+  gameDate: string
+}
+let teamLastGame: Boxscore | undefined
+
+if (allowedDomains.includes(league) && teamId) {
+  ;[teamSpecificPlayerCards, teamScheduleResponse] = await Promise.all([
+    getPlayerCards({
+      context: Astro,
+      domain,
+      teamId,
+    }),
+    getSchedule({
+      context: Astro,
+      domain,
+      teamId,
+    }),
+  ])
+
+  teamLeaders = {
+    stat: '',
+    type: 'stats',
+    players: filterTeamLeaders(teamSpecificPlayerCards?.cards ?? [], domain),
+  }
+
+  if (teamSpecificPlayerCards) {
+    ;[teamSeasonBio, teamSeasonOverview] = await Promise.all([
+      getTeamSeasonBio({
+        context: Astro,
+        domain: leagueToDomain(league),
+        team: `team-${teamId}`,
+        year: teamSpecificPlayerCards.team?.seasonYear.toString() ?? '',
+      }),
+      getTeamSeasonOverview({
+        context: Astro,
+        domain: leagueToDomain(league),
+        team: `team-${teamId}`,
+        year: teamSpecificPlayerCards.team?.seasonYear.toString() ?? '',
+      }),
+    ])
+  }
+
+  if (teamSeasonOverview && teamSeasonOverview.scoresAndSchedule) {
+    const score = teamSeasonOverview.scoresAndSchedule.rows.find(
+      (r) => r.SCORE.entity,
+    )?.SCORE
+    if (score.entity) {
+      const res = await getGame({
+        context: Astro,
+        domain: leagueToDomain(league),
+        game: `game-${score.entity.id}`,
+      })
+      teamLastGame = res?.visual.detail[0]
+    }
+  }
+}
 ---
+
+{
+  teamSpecificPlayerCards && (
+    <Fragment>
+      <h3 class="text-3xl font-semibold mb-1.5">{`More ${teamSpecificPlayerCards.team?.nickname} Stats`}</h3>
+      <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
+        {teamLeaders && teamLeaders.players.length > 0 && (
+          <div>
+            <div class="flex justify-between">
+              <p class="font-semibold">Team Leaders</p>
+              <EntityLink entity={teamSpecificPlayerCards.team?.entity}>
+                See more
+              </EntityLink>
+            </div>
+            <PlayerCardComponent card={teamLeaders} />
+          </div>
+        )}
+        {teamSeasonBio && teamSeasonBio.statsSummary && (
+          <div class="flex flex-col">
+            <div class="flex justify-between">
+              <p class="font-semibold">Team Rankings</p>
+              <EntityLink entity={teamSpecificPlayerCards.team?.entity}>
+                See more
+              </EntityLink>
+            </div>
+            <div
+              class="flex-1 rounded-2xl overflow-hidden py-10 px-2.5 flex items-center"
+              style={{
+                backgroundColor:
+                  teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
+                color: teamLeaders.players[0].colors?.foregroundColor ?? '#000',
+              }}
+            >
+              <div class="flex gap-5 text-center mx-auto">
+                {teamSeasonBio.statsSummary.stats.map((stat) => (
+                  <div>
+                    <p class="uppercase whitespace-nowrap">{stat.label}</p>
+                    <p class="text-3xl">{stat.value}</p>
+                    <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+                      {stat.label !== 'FORM' ? stat.rank : 'last 5'}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+        {teamSeasonOverview && (
+          <div>
+            <div class="flex justify-between">
+              <p class="font-semibold">{teamSeasonOverview.standings.name}</p>
+              <a
+                href={createAskPath({
+                  domain,
+                  query: `${teamSpecificPlayerCards.team?.nickname} standings`,
+                })}
+              >
+                See more
+              </a>
+            </div>
+            <GridCard
+              grid={teamSeasonOverview.standings}
+              colors={{
+                backgroundColor:
+                  teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
+                foregroundColor:
+                  teamLeaders.players[0].colors?.foregroundColor ?? '#000',
+              }}
+            />
+          </div>
+        )}
+        {teamScheduleResponse && teamScheduleResponse.games.length > 0 && (
+          <div>
+            <div class="flex justify-between">
+              <p class="font-semibold">Schedule</p>
+              <a
+                href={createAskPath({
+                  domain,
+                  query: `${teamSpecificPlayerCards.team?.nickname} schedule`,
+                })}
+              >
+                See more
+              </a>
+            </div>
+            <ScheduleCard
+              data={teamScheduleResponse}
+              colors={{
+                backgroundColor:
+                  teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
+                foregroundColor:
+                  teamLeaders.players[0].colors?.foregroundColor ?? '#000',
+              }}
+            />
+          </div>
+        )}
+        {teamLastGame && (
+          <div class="flex flex-col">
+            <div class="flex justify-between">
+              <p class="font-semibold">Last Game</p>
+              <a
+                href={createAskPath({
+                  domain,
+                  query: `${teamSpecificPlayerCards.team?.nickname} last game`,
+                })}
+              >
+                See more
+              </a>
+            </div>
+            <div
+              class="flex gap-4 flex-1 rounded-2xl overflow-hidden py-10 px-2.5 hover:no-underline relative"
+              style={{
+                backgroundColor:
+                  teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
+                color: teamLeaders.players[0].colors?.foregroundColor ?? '#000',
+              }}
+            >
+              <div class="flex-1 flex flex-col items-end justify-center">
+                <EntityLink entity={teamLastGame.homeTeam.entity}>
+                  <Image
+                    class="w-11 h-11 object-contain"
+                    src={teamLastGame.homeTeam.logoUrl}
+                    alt={teamLastGame.homeTeam.abbrev}
+                    width={100}
+                    height={100}
+                    loading="eager"
+                  />
+                </EntityLink>
+                <EntityLink
+                  entity={teamLastGame.homeTeam.entity}
+                  class="font-semibold text-current"
+                >
+                  {teamLastGame.homeTeam.shortName ||
+                    teamLastGame.homeTeam.name}
+                </EntityLink>
+                <p class="text-[0.8rem] tracking-[0.07rem]">
+                  {teamLastGame.homeTeam.record}
+                </p>
+              </div>
+              <div class="flex items-center gap-4 -mt-[38px]">
+                <p class="text-2xl font-semibold">
+                  {teamLastGame.homeTeam.score}
+                </p>
+                <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+                  {teamLastGame.completedGameStatus}
+                </p>
+                <p class="text-2xl font-semibold">
+                  {teamLastGame.awayTeam.score}
+                </p>
+              </div>
+              <div class="flex-1 flex flex-col justify-center">
+                <EntityLink entity={teamLastGame.awayTeam.entity}>
+                  <Image
+                    class="w-11 h-11 object-contain"
+                    src={teamLastGame.awayTeam.logoUrl}
+                    alt={teamLastGame.awayTeam.abbrev}
+                    width={100}
+                    height={100}
+                    loading="eager"
+                  />
+                </EntityLink>
+                <EntityLink
+                  entity={teamLastGame.awayTeam.entity}
+                  class="font-semibold text-current"
+                >
+                  {teamLastGame.awayTeam.shortName ||
+                    teamLastGame.awayTeam.name}
+                </EntityLink>
+                <p class="text-[0.8rem] tracking-[0.07rem]">
+                  {teamLastGame.awayTeam.record}
+                </p>
+              </div>
+              <p class="absolute bottom-5 left-1/2 -translate-x-1/2 text-[0.8rem] uppercase tracking-[0.07rem]">
+                {dayjs(teamLastGame.gameDate).format('ddd D MMM YYYY')}
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+    </Fragment>
+  )
+}
 
 {
   playerCardsResp && playerLeaderCards.length > 0 && (
@@ -712,36 +1003,9 @@ if (teamCardsResp) {
                 playerCardsResp.seasonType,
                 playerCardsResp.seasonYearDisplay,
               )}
-              class="flex rounded-2xl overflow-hidden px-2.5 hover:no-underline"
-              style={{
-                backgroundColor:
-                  card.players[0].colors?.backgroundColor ?? '#FFF',
-                color: card.players[0].colors?.foregroundColor ?? '#000',
-              }}
+              class="hover:no-underline"
             >
-              {card?.players.map((player, i) => (
-                <div class="text-center w-1/3 h-56 flex flex-col justify-between items-center">
-                  <div>
-                    <h3 class="text-3xl mt-3">{player.statDisplayValue}</h3>
-                    <p class="uppercase text-xs tracking-[0.07rem]">
-                      {lastName(player.entity.display)}
-                    </p>
-                  </div>
-                  <Image
-                    class="h-36"
-                    style={{
-                      maxWidth: 'initial',
-                      width: 'initial',
-                      zIndex: 3 - i,
-                    }}
-                    src={player.imageUrl}
-                    alt={player.entity.display}
-                    width={400}
-                    height={400}
-                    loading="eager"
-                  />
-                </div>
-              ))}
+              <PlayerCardComponent card={card} />
             </a>
           </div>
         ))}
@@ -783,27 +1047,9 @@ if (teamCardsResp) {
                 teamCardsResp.seasonType,
                 teamCardsResp.seasonYearDisplay,
               )}
-              class="flex flex-wrap rounded-2xl py-5 px-2.5 gap-y-5 hover:no-underline"
-              style={{
-                backgroundColor: card.teams[0].colors.backgroundColor,
-                color: card.teams[0].colors.foregroundColor,
-              }}
+              class="hover:no-underline"
             >
-              {card.teams.map((team) => (
-                <div class="w-1/3 text-center">
-                  <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center mx-auto">
-                    <Image
-                      class="w-[70%] h-[70%] object-contain"
-                      src={team.logoImageUrl}
-                      alt={team.nickname}
-                      width={100}
-                      height={100}
-                      loading="eager"
-                    />
-                  </div>
-                  <p class="text-3xl mt-2">{team.statDisplayValue}</p>
-                </div>
-              ))}
+              <TeamCardComponent card={card} />
             </a>
           </div>
         ))}
@@ -847,38 +1093,9 @@ if (teamCardsResp) {
                   playerCardsResp.seasonType,
                   playerCardsResp.seasonYearDisplay,
                 )}
-                class="flex rounded-2xl overflow-hidden px-2.5 hover:no-underline"
-                style={{
-                  backgroundColor:
-                    card.players[0].colors?.backgroundColor ?? '#FFF',
-                  color: card.players[0].colors?.foregroundColor ?? '#000',
-                }}
+                class="hover:no-underline"
               >
-                {card?.players.map((player, i) => (
-                  <div class="text-center w-1/3 h-56 flex flex-col justify-between items-center">
-                    <div>
-                      <h3 class="text-3xl mt-3">
-                        {player.statDisplayValue.replace(',', '')}
-                      </h3>
-                      <p class="uppercase text-xs tracking-[0.07rem]">
-                        {lastName(player.entity.display)}
-                      </p>
-                    </div>
-                    <Image
-                      class="h-36"
-                      style={{
-                        maxWidth: 'initial',
-                        width: 'initial',
-                        zIndex: 3 - i,
-                      }}
-                      src={player.imageUrl}
-                      alt={player.entity.display}
-                      width={400}
-                      height={400}
-                      loading="eager"
-                    />
-                  </div>
-                ))}
+                <PlayerCardComponent card={card} />
               </a>
             </div>
           ))}
@@ -918,27 +1135,9 @@ if (teamCardsResp) {
                 teamCardsResp.seasonType,
                 teamCardsResp.seasonYearDisplay,
               )}
-              class="flex flex-wrap rounded-2xl py-5 px-2.5 gap-y-5 hover:no-underline"
-              style={{
-                backgroundColor: card.teams[0].colors.backgroundColor,
-                color: card.teams[0].colors.foregroundColor,
-              }}
+              class="hover:no-underline"
             >
-              {card.teams.map((team) => (
-                <div class="w-1/3 text-center">
-                  <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center mx-auto">
-                    <Image
-                      class="w-[70%] h-[70%] object-contain"
-                      src={team.logoImageUrl}
-                      alt={team.nickname}
-                      width={100}
-                      height={100}
-                      loading="eager"
-                    />
-                  </div>
-                  <p class="text-3xl mt-2">{team.statDisplayValue}</p>
-                </div>
-              ))}
+              <TeamCardComponent card={card} />
             </a>
           </div>
         ))}

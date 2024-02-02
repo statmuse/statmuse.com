@@ -31,6 +31,7 @@ if (!game || !preferredDomain) return NOT_FOUND_404
 // const canonical = Astro.url.pathname + Astro.url.search
 const answer = tokensToHtml(data.nlg.text.answer)
 const subject = data.visual.summary.subject
+const teamId = data.visual.detail[0].homeTeam.entity?.id.split('/')[0]
 
 const meta = {
   title: tokensToText(data.nlg.text.answer),
@@ -74,6 +75,6 @@ const meta = {
   <Container>
     <slot />
     <Explore {league} additionalQuestions={data.visual.additionalQuestions} />
-    <AnswerCards league={league as LeagueParam} />
+    <AnswerCards league={league as LeagueParam} {teamId} />
   </Container>
 </Layout>

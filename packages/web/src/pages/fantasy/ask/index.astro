@@ -65,6 +65,8 @@ const heroProps = getHeroProps({ imageAlt: query, response })
 
 const code = await Link.askShortCode(query, 'nfl')
 
+const contentReference = response.visual.contentReference
+
 const meta =
   response.type !== 'error'
     ? {
@@ -158,11 +160,21 @@ Caching.swr(Astro)
       )
     }
     {
-      response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
-        <Container>
-          <AnswerCards league="nfl" />
-        </Container>
-      )
+      response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' &&
+        response.type !== 'error' && (
+          <Container>
+            <AnswerCards
+              league="nfl"
+              teamId={
+                contentReference.questionTags?.teamIds.length > 0
+                  ? contentReference.questionTags?.teamIds[0]
+                  : contentReference.answerTags?.teamIds.length > 0
+                  ? contentReference.answerTags?.teamIds[0]
+                  : undefined
+              }
+            />
+          </Container>
+        )
     }
   </Layout>
 </ErrorLayout>

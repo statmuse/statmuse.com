@@ -12,9 +12,10 @@ export const getPlayerCards = async (props: {
   seasonYear?: number
 }) => {
   try {
-    const league = props.domain.toLowerCase()
+    const { context, domain, ...params } = props
+    const league = domain.toLowerCase()
     const path = `${league}/relatedContent/playerCards`
-    const data = await request<PlayerCardResponse>(props.context, path)
+    const data = await request<PlayerCardResponse>(context, path, params)
     return data
   } catch (error) {
     console.error(error)
@@ -28,9 +29,10 @@ export const getTeamCards = async (props: {
   teamId?: number
 }) => {
   try {
-    const league = props.domain.toLowerCase()
+    const { context, domain, ...params } = props
+    const league = domain.toLowerCase()
     const path = `${league}/relatedContent/teamCards`
-    const data = await request<TeamCardResponse>(props.context, path)
+    const data = await request<TeamCardResponse>(context, path, params)
     return data
   } catch (error) {
     console.error(error)

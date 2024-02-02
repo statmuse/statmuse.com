@@ -9,6 +9,8 @@ import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { imageForgeUrl } from '@statmuse/core/path'
 import { tokensToText } from '@statmuse/core/gamera'
 import EplBoxscore from '@components/epl/boxscore.astro'
+import Container from '@components/container.astro'
+import AnswerCards from '@components/answer-cards.astro'
 
 const league = Astro.params.league as LeagueParam
 const game = Astro.params.game
@@ -42,6 +44,8 @@ const meta = {
   },
 }
 
+const teamId = data.visual.detail[0].homeTeam.entity?.id.split('/')[0]
+
 Caching.swr(Astro)
 ---
 
@@ -56,4 +60,7 @@ Caching.swr(Astro)
 >
   <Header {preferredDomain} share={{ url: Astro.url.href }} />
   <EplBoxscore {data} />
+  <Container>
+    <AnswerCards league="fc" {teamId} />
+  </Container>
 </Layout>

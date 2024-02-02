@@ -1,0 +1,26 @@
+---
+import Grid from '@components/grid.svelte'
+import type { GameraGrid } from '@statmuse/core/gamera'
+
+interface Props {
+  grid: GameraGrid
+  colors: {
+    backgroundColor: string
+    foregroundColor: string
+  }
+}
+
+const { grid, colors } = Astro.props
+---
+
+<div
+  class="p-4 rounded-lg"
+  style={{
+    '--team-primary-color': colors.foregroundColor,
+    '--team-secondary-color': colors.backgroundColor,
+    background: colors.backgroundColor,
+    color: colors.foregroundColor,
+  }}
+>
+  <Grid data={grid} color columnStyles={{ rank: 'w-2' }} />
+</div>

@@ -699,7 +699,7 @@ export interface AdditionalQuestion {
 
 export interface ContentReference {
   domainTags?: {
-    domain: string
+    domain: GameraDomain
   }
   questionTags?: {
     actorType: string
@@ -1194,6 +1194,7 @@ export interface Visual {
   additionalQuestions?: AdditionalQuestion[]
   detail?: Detail[]
   disclaimers?: [string]
+  contentReference: ContentReference
 }
 
 export interface NbaVisual extends Visual {
@@ -1401,6 +1402,19 @@ export interface PlayerCardResponse {
   seasonYearDisplay: string
   seasonType: string
   cards: PlayerCard[]
+  team?: {
+    teamId: number
+    seasonYear: number
+    name: string
+    nickname: string
+    abbreviation: string
+    logoImageUrl: string
+    colors: {
+      foregroundColor: string
+      backgroundColor: string
+    }
+    entity: GameraEntity
+  }
 }
 
 export interface TeamInfo {
