@@ -222,7 +222,7 @@ function* chunk<T>(arr: T[], n: number): Generator<T[], void> {
 async function update(
   timeframe: Timeframe,
   league: League,
-  location: Location
+  location: Location,
 ) {
   if (leaguePlayers.NBA === undefined) await populatePlayers()
   if (leagueTeams.NBA === undefined) await populateTeams()
@@ -287,10 +287,15 @@ async function update(
       if (!query && !record.uri.includes('?q=')) return
 
       if (!query) query = record.uri.split('?q=')[1]?.replace(/\+/g, ' ')
-      query = decodeURIComponent(decodeURIComponent(query))
+      try {
+        query = decodeURIComponent(decodeURIComponent(query))
+      } catch (error) {
+        console.log('error decoding', query)
+        console.error(error)
+      }
 
       const context_id = contexts.find((c) =>
-        leagueName === 'fc' ? c.name === 'epl' : c.name === leagueName
+        leagueName === 'fc' ? c.name === 'epl' : c.name === leagueName,
       )?.id
       const ask = await Ask.get({ context_id, query })
       const response = ask?.answer
@@ -350,7 +355,7 @@ async function update(
   }
 
   const uniquePlayers = Array.from(
-    new Set(queries.map((q) => q.players.map((p) => JSON.stringify(p))).flat())
+    new Set(queries.map((q) => q.players.map((p) => JSON.stringify(p))).flat()),
   ).map((s) => JSON.parse(s) as Player)
 
   const players = uniquePlayers
@@ -375,7 +380,7 @@ async function update(
     })
 
   const uniqueTeams = Array.from(
-    new Set(queries.map((q) => q.teams.map((t) => JSON.stringify(t))).flat())
+    new Set(queries.map((q) => q.teams.map((t) => JSON.stringify(t))).flat()),
   ).map((s) => JSON.parse(s) as Team)
 
   const teams = uniqueTeams
@@ -419,7 +424,7 @@ async function update(
     new PutCommand({
       TableName: Table['trending-table'].tableName,
       Item: item,
-    })
+    }),
   )
 }
 
@@ -467,7 +472,7 @@ async function ask(options: {
 
   const path = `${league ? league.toLowerCase() + '/' : ''}answer`
   const requestUrl = `${gameraApiUrl}${path}?${new URLSearchParams(
-    params as Record<string, string>
+    params as Record<string, string>,
   ).toString()}`
 
   try {
@@ -491,7 +496,7 @@ async function getPlayers(options: { league: League }) {
     try {
       const response = await fetch(
         requestUrl + (cursor ? '?cursor=' + cursor : ''),
-        { headers }
+        { headers },
       )
       const json: GameraPlayers = await response.json()
       players.push(...json.items)
@@ -567,7 +572,7 @@ type GameraTeams = {
       name: string
       nickname: string
       teamId: number
-    }
+    },
   ]
 }
 
