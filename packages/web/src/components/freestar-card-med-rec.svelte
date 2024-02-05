@@ -59,7 +59,7 @@
 </script>
 
 {#if import.meta.env.PROD && (($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active') || ($session?.type === 'visitor' && !$session?.properties.bot))}
-  <div bind:this={container} class=" min-h-[250px] bg-primary rounded-2xl">
+  <div bind:this={container} class="min-h-[210px] p-4 bg-primary rounded-2xl">
     <div
       align="center"
       data-freestar-ad="__300x250 __300x250"
