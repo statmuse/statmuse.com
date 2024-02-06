@@ -5,6 +5,8 @@ import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
 import * as cert from 'aws-cdk-lib/aws-certificatemanager'
 import * as cdk from 'aws-cdk-lib/core'
 import * as s3 from 'aws-cdk-lib/aws-s3'
+import { ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53'
+import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets'
 import { DNS } from './dns'
 
 export function RedirectMoney({ stack }: StackContext) {
@@ -69,5 +71,11 @@ export function RedirectMoney({ stack }: StackContext) {
         certificate: cfCert,
       },
     )
+
+    const aRecord = new ARecord(stack, 'money-redirect-arecord', {
+      zone: hostedZone,
+      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+      recordName: cfDomain,
+    })
   }
 }
