@@ -42,7 +42,8 @@ declare global {
         enabled_slots: any[]
       }
       initCallback: () => void
-      newAdSlots: () => void
+      newAdSlots: (x: any) => void
+      deleteAdSlots: (x: string) => void
       newStickyFooter: (x?: string) => void
       deleteStickyFooter: (x?: string) => void
     }

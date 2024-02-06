@@ -27,6 +27,7 @@ import GridCard from '@components/cards/grid.astro'
 import EntityLink from '@components/entity-link.astro'
 import Image from '@components/image.astro'
 import dayjs from 'dayjs'
+import FreestarCardMedRec from './freestar-card-med-rec.svelte'
 
 interface Props {
   league: LeagueParam
@@ -789,287 +790,209 @@ if (allowedDomains.includes(league) && teamId) {
 }
 ---
 
-{
-  teamSpecificPlayerCards && (
-    <Fragment>
-      <h3 class="text-3xl font-semibold mb-1.5">{`More ${teamSpecificPlayerCards.team?.nickname} Stats`}</h3>
-      <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
-        {teamLeaders && teamLeaders.players.length > 0 && (
-          <div>
-            <div class="flex justify-between">
-              <p class="font-semibold">Team Leaders</p>
-              <EntityLink entity={teamSpecificPlayerCards.team?.entity}>
-                See more
-              </EntityLink>
+<div class="space-y-10 mb-10">
+  {
+    teamSpecificPlayerCards && (
+      <div>
+        <h3 class="text-3xl font-semibold mb-1.5">{`More ${teamSpecificPlayerCards.team?.nickname} Stats`}</h3>
+        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+          {teamLeaders && teamLeaders.players.length > 0 && (
+            <div>
+              <div class="flex justify-between">
+                <p class="font-semibold">Team Leaders</p>
+                <EntityLink entity={teamSpecificPlayerCards.team?.entity}>
+                  See more
+                </EntityLink>
+              </div>
+              <PlayerCardComponent card={teamLeaders} />
             </div>
-            <PlayerCardComponent card={teamLeaders} />
-          </div>
-        )}
-        {teamSeasonBio && teamSeasonBio.statsSummary && (
-          <div class="flex flex-col">
-            <div class="flex justify-between">
-              <p class="font-semibold">Team Rankings</p>
-              <EntityLink entity={teamSpecificPlayerCards.team?.entity}>
-                See more
-              </EntityLink>
-            </div>
-            <div
-              class="flex-1 rounded-2xl overflow-hidden py-10 px-2.5 flex items-center"
-              style={{
-                backgroundColor:
-                  teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
-                color: teamLeaders.players[0].colors?.foregroundColor ?? '#000',
-              }}
-            >
-              <div class="flex gap-5 text-center mx-auto">
-                {teamSeasonBio.statsSummary.stats.map((stat) => (
-                  <div>
-                    <p class="uppercase whitespace-nowrap">{stat.label}</p>
-                    <p class="text-3xl">{stat.value}</p>
-                    <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-                      {stat.label !== 'FORM' ? stat.rank : 'last 5'}
-                    </p>
-                  </div>
-                ))}
+          )}
+          {teamSeasonBio && teamSeasonBio.statsSummary && (
+            <div class="flex flex-col">
+              <div class="flex justify-between">
+                <p class="font-semibold">Team Rankings</p>
+                <EntityLink entity={teamSpecificPlayerCards.team?.entity}>
+                  See more
+                </EntityLink>
+              </div>
+              <div
+                class="flex-1 rounded-2xl overflow-hidden py-10 px-2.5 flex items-center"
+                style={{
+                  backgroundColor:
+                    teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
+                  color:
+                    teamLeaders.players[0].colors?.foregroundColor ?? '#000',
+                }}
+              >
+                <div class="flex gap-5 text-center mx-auto">
+                  {teamSeasonBio.statsSummary.stats.map((stat) => (
+                    <div>
+                      <p class="uppercase whitespace-nowrap">{stat.label}</p>
+                      <p class="text-3xl">{stat.value}</p>
+                      <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+                        {stat.label !== 'FORM' ? stat.rank : 'last 5'}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        )}
-        {teamSeasonOverview && (
-          <div>
-            <div class="flex justify-between">
-              <p class="font-semibold">{teamSeasonOverview.standings.name}</p>
-              <a
-                href={createAskPath({
-                  domain,
-                  query: `${teamSpecificPlayerCards.team?.nickname} standings`,
-                })}
-              >
-                See more
-              </a>
-            </div>
-            <GridCard
-              grid={teamSeasonOverview.standings}
-              colors={{
-                backgroundColor:
-                  teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
-                foregroundColor:
-                  teamLeaders.players[0].colors?.foregroundColor ?? '#000',
-              }}
-            />
-          </div>
-        )}
-        {teamScheduleResponse && teamScheduleResponse.games.length > 0 && (
-          <div>
-            <div class="flex justify-between">
-              <p class="font-semibold">Schedule</p>
-              <a
-                href={createAskPath({
-                  domain,
-                  query: `${teamSpecificPlayerCards.team?.nickname} schedule`,
-                })}
-              >
-                See more
-              </a>
-            </div>
-            <ScheduleCard
-              data={teamScheduleResponse}
-              colors={{
-                backgroundColor:
-                  teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
-                foregroundColor:
-                  teamLeaders.players[0].colors?.foregroundColor ?? '#000',
-              }}
-            />
-          </div>
-        )}
-        {teamLastGame && (
-          <div class="flex flex-col">
-            <div class="flex justify-between">
-              <p class="font-semibold">Last Game</p>
-              <a
-                href={createAskPath({
-                  domain,
-                  query: `${teamSpecificPlayerCards.team?.nickname} last game`,
-                })}
-              >
-                See more
-              </a>
-            </div>
-            <div
-              class="flex gap-4 flex-1 rounded-2xl overflow-hidden py-10 px-2.5 hover:no-underline relative"
-              style={{
-                backgroundColor:
-                  teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
-                color: teamLeaders.players[0].colors?.foregroundColor ?? '#000',
-              }}
-            >
-              <div class="flex-1 flex flex-col items-end justify-center">
-                <EntityLink entity={teamLastGame.homeTeam.entity}>
-                  <Image
-                    class="w-11 h-11 object-contain"
-                    src={teamLastGame.homeTeam.logoUrl}
-                    alt={teamLastGame.homeTeam.abbrev}
-                    width={100}
-                    height={100}
-                    loading="eager"
-                  />
-                </EntityLink>
-                <EntityLink
-                  entity={teamLastGame.homeTeam.entity}
-                  class="font-semibold text-current"
+          )}
+          {teamSeasonOverview && (
+            <div>
+              <div class="flex justify-between">
+                <p class="font-semibold">{teamSeasonOverview.standings.name}</p>
+                <a
+                  href={createAskPath({
+                    domain,
+                    query: `${teamSpecificPlayerCards.team?.nickname} standings`,
+                  })}
                 >
-                  {teamLastGame.homeTeam.shortName ||
-                    teamLastGame.homeTeam.name}
-                </EntityLink>
-                <p class="text-[0.8rem] tracking-[0.07rem]">
-                  {teamLastGame.homeTeam.record}
-                </p>
+                  See more
+                </a>
               </div>
-              <div class="flex items-center gap-4 -mt-[38px]">
-                <p class="text-2xl font-semibold">
-                  {teamLastGame.homeTeam.score}
-                </p>
-                <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-                  {teamLastGame.completedGameStatus}
-                </p>
-                <p class="text-2xl font-semibold">
-                  {teamLastGame.awayTeam.score}
-                </p>
-              </div>
-              <div class="flex-1 flex flex-col justify-center">
-                <EntityLink entity={teamLastGame.awayTeam.entity}>
-                  <Image
-                    class="w-11 h-11 object-contain"
-                    src={teamLastGame.awayTeam.logoUrl}
-                    alt={teamLastGame.awayTeam.abbrev}
-                    width={100}
-                    height={100}
-                    loading="eager"
-                  />
-                </EntityLink>
-                <EntityLink
-                  entity={teamLastGame.awayTeam.entity}
-                  class="font-semibold text-current"
+              <GridCard
+                grid={teamSeasonOverview.standings}
+                colors={{
+                  backgroundColor:
+                    teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
+                  foregroundColor:
+                    teamLeaders.players[0].colors?.foregroundColor ?? '#000',
+                }}
+              />
+            </div>
+          )}
+          {teamScheduleResponse && teamScheduleResponse.games.length > 0 && (
+            <div>
+              <div class="flex justify-between">
+                <p class="font-semibold">Schedule</p>
+                <a
+                  href={createAskPath({
+                    domain,
+                    query: `${teamSpecificPlayerCards.team?.nickname} schedule`,
+                  })}
                 >
-                  {teamLastGame.awayTeam.shortName ||
-                    teamLastGame.awayTeam.name}
-                </EntityLink>
-                <p class="text-[0.8rem] tracking-[0.07rem]">
-                  {teamLastGame.awayTeam.record}
+                  See more
+                </a>
+              </div>
+              <ScheduleCard
+                data={teamScheduleResponse}
+                colors={{
+                  backgroundColor:
+                    teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
+                  foregroundColor:
+                    teamLeaders.players[0].colors?.foregroundColor ?? '#000',
+                }}
+              />
+            </div>
+          )}
+          {teamLastGame && (
+            <div class="flex flex-col">
+              <div class="flex justify-between">
+                <p class="font-semibold">Last Game</p>
+                <a
+                  href={createAskPath({
+                    domain,
+                    query: `${teamSpecificPlayerCards.team?.nickname} last game`,
+                  })}
+                >
+                  See more
+                </a>
+              </div>
+              <div
+                class="flex gap-4 flex-1 rounded-2xl overflow-hidden py-10 px-2.5 hover:no-underline relative"
+                style={{
+                  backgroundColor:
+                    teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
+                  color:
+                    teamLeaders.players[0].colors?.foregroundColor ?? '#000',
+                }}
+              >
+                <div class="flex-1 flex flex-col items-end justify-center">
+                  <EntityLink entity={teamLastGame.homeTeam.entity}>
+                    <Image
+                      class="w-11 h-11 object-contain"
+                      src={teamLastGame.homeTeam.logoUrl}
+                      alt={teamLastGame.homeTeam.abbrev}
+                      width={100}
+                      height={100}
+                      loading="eager"
+                    />
+                  </EntityLink>
+                  <EntityLink
+                    entity={teamLastGame.homeTeam.entity}
+                    class="font-semibold text-current"
+                  >
+                    {teamLastGame.homeTeam.shortName ||
+                      teamLastGame.homeTeam.name}
+                  </EntityLink>
+                  <p class="text-[0.8rem] tracking-[0.07rem]">
+                    {teamLastGame.homeTeam.record}
+                  </p>
+                </div>
+                <div class="flex items-center gap-4 -mt-[38px]">
+                  <p class="text-2xl font-semibold">
+                    {teamLastGame.homeTeam.score}
+                  </p>
+                  <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+                    {teamLastGame.completedGameStatus}
+                  </p>
+                  <p class="text-2xl font-semibold">
+                    {teamLastGame.awayTeam.score}
+                  </p>
+                </div>
+                <div class="flex-1 flex flex-col justify-center">
+                  <EntityLink entity={teamLastGame.awayTeam.entity}>
+                    <Image
+                      class="w-11 h-11 object-contain"
+                      src={teamLastGame.awayTeam.logoUrl}
+                      alt={teamLastGame.awayTeam.abbrev}
+                      width={100}
+                      height={100}
+                      loading="eager"
+                    />
+                  </EntityLink>
+                  <EntityLink
+                    entity={teamLastGame.awayTeam.entity}
+                    class="font-semibold text-current"
+                  >
+                    {teamLastGame.awayTeam.shortName ||
+                      teamLastGame.awayTeam.name}
+                  </EntityLink>
+                  <p class="text-[0.8rem] tracking-[0.07rem]">
+                    {teamLastGame.awayTeam.record}
+                  </p>
+                </div>
+                <p class="absolute bottom-5 left-1/2 -translate-x-1/2 text-[0.8rem] uppercase tracking-[0.07rem]">
+                  {dayjs(teamLastGame.gameDate).format('ddd D MMM YYYY')}
                 </p>
               </div>
-              <p class="absolute bottom-5 left-1/2 -translate-x-1/2 text-[0.8rem] uppercase tracking-[0.07rem]">
-                {dayjs(teamLastGame.gameDate).format('ddd D MMM YYYY')}
-              </p>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </Fragment>
-  )
-}
-
-{
-  playerCardsResp && playerLeaderCards.length > 0 && (
-    <Fragment>
-      <h3 class="text-3xl font-semibold mb-1.5">
-        {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
-          playerCardsResp.seasonYearDisplay
-        } Leaders`}
-      </h3>
-      <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
-        {playerLeaderCards.map((card) => (
-          <div>
-            <div class="flex justify-between">
-              <p class="font-semibold">{`${
-                playerCardsResp?.seasonType === 'postseason' ? 'Playoff ' : ''
-              }${playerCardTitle(card.stat)}`}</p>
-              <a
-                href={playerAskLink(
-                  card.stat,
-                  league,
-                  playerCardsResp.seasonType,
-                  playerCardsResp.seasonYearDisplay,
-                )}
-              >
-                See more
-              </a>
-            </div>
-            <a
-              href={playerAskLink(
-                card.stat,
-                league,
-                playerCardsResp.seasonType,
-                playerCardsResp.seasonYearDisplay,
-              )}
-              class="hover:no-underline"
-            >
-              <PlayerCardComponent card={card} />
-            </a>
-          </div>
-        ))}
-      </div>
-    </Fragment>
-  )
-}
-
-{
-  teamCardsResp && teamRankingCards.length > 0 && (
-    <Fragment>
-      <h3 class="text-3xl font-semibold mb-1.5">
-        {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
-          teamCardsResp.seasonYearDisplay
-        } Rankings`}
-      </h3>
-      <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
-        {teamRankingCards.map((card) => (
-          <div>
-            <div class="flex justify-between">
-              <p class="font-semibold">{`${
-                teamCardsResp?.seasonType === 'postseason' ? 'Playoff ' : ''
-              }${teamCardTitle(card.stat)}`}</p>
-              <a
-                href={teamAskLink(
-                  card.stat,
-                  league,
-                  teamCardsResp.seasonType,
-                  teamCardsResp.seasonYearDisplay,
-                )}
-              >
-                See more
-              </a>
-            </div>
-            <a
-              href={teamAskLink(
-                card.stat,
-                league,
-                teamCardsResp.seasonType,
-                teamCardsResp.seasonYearDisplay,
-              )}
-              class="hover:no-underline"
-            >
-              <TeamCardComponent card={card} />
-            </a>
-          </div>
-        ))}
-      </div>
-    </Fragment>
-  )
-}
-
-{
-  playerCardsResp &&
-    playerCardsResp.seasonType !== 'postseason' &&
-    fantasyCards.length > 0 && (
-      <Fragment>
+    )
+  }
+  <div>
+    {
+      teamSpecificPlayerCards && (
+        <FreestarCardMedRec
+          client:only="svelte"
+          slotId="statmuse_incontent_cards_1"
+        />
+      )
+    }
+  </div>
+  {
+    playerCardsResp && playerLeaderCards.length > 0 && (
+      <div>
         <h3 class="text-3xl font-semibold mb-1.5">
-          {`Fantasy ${
-            league === 'nba' ? 'Basketball' : league === 'nfl' ? 'Football' : ''
-          } ${playerCardsResp.seasonYearDisplay}`}
+          {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
+            playerCardsResp.seasonYearDisplay
+          } Leaders`}
         </h3>
-        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
-          {fantasyCards.map((card) => (
+        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+          {playerLeaderCards.map((card) => (
             <div>
               <div class="flex justify-between">
                 <p class="font-semibold">{`${
@@ -1100,23 +1023,45 @@ if (allowedDomains.includes(league) && teamId) {
             </div>
           ))}
         </div>
-      </Fragment>
+      </div>
     )
-}
-
-{
-  teamCardsResp && bettingCards.length > 0 && (
-    <Fragment>
-      <h3 class="text-3xl font-semibold mb-1.5">
-        {`${league === 'fc' ? 'Premier League' : domain.toUpperCase()} ${
-          teamCardsResp.seasonYearDisplay
-        } Betting`}
-      </h3>
-      <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
-        {bettingCards.map((card) => (
-          <div>
-            <div class="flex justify-between">
-              <p class="font-semibold">{teamCardTitle(card.stat)}</p>
+  }
+  {
+    playerCardsResp && playerLeaderCards.length > 0 && (
+      <div>
+        <FreestarCardMedRec
+          client:only="svelte"
+          slotId="statmuse_incontent_cards_2"
+        />
+      </div>
+    )
+  }
+  {
+    teamCardsResp && teamRankingCards.length > 0 && (
+      <div>
+        <h3 class="text-3xl font-semibold mb-1.5">
+          {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
+            teamCardsResp.seasonYearDisplay
+          } Rankings`}
+        </h3>
+        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+          {teamRankingCards.map((card) => (
+            <div>
+              <div class="flex justify-between">
+                <p class="font-semibold">{`${
+                  teamCardsResp?.seasonType === 'postseason' ? 'Playoff ' : ''
+                }${teamCardTitle(card.stat)}`}</p>
+                <a
+                  href={teamAskLink(
+                    card.stat,
+                    league,
+                    teamCardsResp.seasonType,
+                    teamCardsResp.seasonYearDisplay,
+                  )}
+                >
+                  See more
+                </a>
+              </div>
               <a
                 href={teamAskLink(
                   card.stat,
@@ -1124,89 +1069,203 @@ if (allowedDomains.includes(league) && teamId) {
                   teamCardsResp.seasonType,
                   teamCardsResp.seasonYearDisplay,
                 )}
+                class="hover:no-underline"
               >
-                See more
+                <TeamCardComponent card={card} />
               </a>
             </div>
-            <a
-              href={teamAskLink(
-                card.stat,
-                league,
-                teamCardsResp.seasonType,
-                teamCardsResp.seasonYearDisplay,
-              )}
-              class="hover:no-underline"
-            >
-              <TeamCardComponent card={card} />
-            </a>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </Fragment>
-  )
-}
-
-{
-  standingsResp && standingsResp.teams && (
-    <Fragment>
-      <h3 class="text-3xl font-semibold mb-1.5">
-        {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
-          standingsResp.seasonYearDisplay
-        } ${
-          league === 'nba' ? 'Conference' : league === 'fc' ? '' : 'Division'
-        } ${league === 'fc' ? 'Table' : 'Standings'}`}
-      </h3>
-      <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
-        {Object.entries(groupBy(standingsResp.teams, 'conference.name')).map(
-          ([_, teams]) => (
-            <StandingsCard
-              {teams}
-              {domain}
-              group={
-                league !== 'nba' && league !== 'fc' ? 'division' : undefined
-              }
-              limit={
-                league === 'nba'
-                  ? 6
-                  : league === 'fc'
-                  ? 6
-                  : league === 'nfl'
-                  ? 2
-                  : league === 'nhl'
-                  ? 3
-                  : league === 'mlb'
-                  ? 2
-                  : undefined
-              }
-            />
-          ),
-        )}
+    )
+  }
+  {
+    teamCardsResp && teamRankingCards.length > 0 && (
+      <div>
+        <FreestarCardMedRec
+          client:only="svelte"
+          slotId="statmuse_incontent_cards_3"
+        />
       </div>
-    </Fragment>
-  )
-}
-{
-  scheduleResp &&
-    scheduleResp.games.length > 0 &&
-    scoresResp &&
-    scoresResp.games.length > 0 && (
-      <Fragment>
-        <h3 class="text-3xl font-semibold mb-1.5">
-          {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
-            scoresResp.seasonYearDisplay
-          }`}
-          Scores & Schedule
-        </h3>
-        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4 mb-10">
-          <div>
-            <p class="font-semibold">Scores</p>
-            <ScoresCard data={scoresResp} />
-          </div>
-          <div>
-            <p class="font-semibold">Schedule</p>
-            <ScheduleCard data={scheduleResp} />
+    )
+  }
+  {
+    playerCardsResp &&
+      playerCardsResp.seasonType !== 'postseason' &&
+      fantasyCards.length > 0 && (
+        <div>
+          <h3 class="text-3xl font-semibold mb-1.5">
+            {`Fantasy ${
+              league === 'nba'
+                ? 'Basketball'
+                : league === 'nfl'
+                ? 'Football'
+                : ''
+            } ${playerCardsResp.seasonYearDisplay}`}
+          </h3>
+          <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+            {fantasyCards.map((card) => (
+              <div>
+                <div class="flex justify-between">
+                  <p class="font-semibold">{`${
+                    playerCardsResp?.seasonType === 'postseason'
+                      ? 'Playoff '
+                      : ''
+                  }${playerCardTitle(card.stat)}`}</p>
+                  <a
+                    href={playerAskLink(
+                      card.stat,
+                      league,
+                      playerCardsResp.seasonType,
+                      playerCardsResp.seasonYearDisplay,
+                    )}
+                  >
+                    See more
+                  </a>
+                </div>
+                <a
+                  href={playerAskLink(
+                    card.stat,
+                    league,
+                    playerCardsResp.seasonType,
+                    playerCardsResp.seasonYearDisplay,
+                  )}
+                  class="hover:no-underline"
+                >
+                  <PlayerCardComponent card={card} />
+                </a>
+              </div>
+            ))}
           </div>
         </div>
-      </Fragment>
+      )
+  }
+  {
+    playerCardsResp &&
+      playerCardsResp.seasonType !== 'postseason' &&
+      fantasyCards.length > 0 && (
+        <div>
+          <FreestarCardMedRec
+            client:only="svelte"
+            slotId="statmuse_incontent_cards_4"
+          />
+        </div>
+      )
+  }
+  {
+    teamCardsResp && bettingCards.length > 0 && (
+      <div>
+        <h3 class="text-3xl font-semibold mb-1.5">
+          {`${league === 'fc' ? 'Premier League' : domain.toUpperCase()} ${
+            teamCardsResp.seasonYearDisplay
+          } Betting`}
+        </h3>
+        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+          {bettingCards.map((card) => (
+            <div>
+              <div class="flex justify-between">
+                <p class="font-semibold">{teamCardTitle(card.stat)}</p>
+                <a
+                  href={teamAskLink(
+                    card.stat,
+                    league,
+                    teamCardsResp.seasonType,
+                    teamCardsResp.seasonYearDisplay,
+                  )}
+                >
+                  See more
+                </a>
+              </div>
+              <a
+                href={teamAskLink(
+                  card.stat,
+                  league,
+                  teamCardsResp.seasonType,
+                  teamCardsResp.seasonYearDisplay,
+                )}
+                class="hover:no-underline"
+              >
+                <TeamCardComponent card={card} />
+              </a>
+            </div>
+          ))}
+        </div>
+      </div>
     )
-}
+  }
+
+  {
+    standingsResp && standingsResp.teams && (
+      <div>
+        <h3 class="text-3xl font-semibold mb-1.5">
+          {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
+            standingsResp.seasonYearDisplay
+          } ${
+            league === 'nba' ? 'Conference' : league === 'fc' ? '' : 'Division'
+          } ${league === 'fc' ? 'Table' : 'Standings'}`}
+        </h3>
+        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+          {Object.entries(groupBy(standingsResp.teams, 'conference.name')).map(
+            ([_, teams]) => (
+              <StandingsCard
+                {teams}
+                {domain}
+                group={
+                  league !== 'nba' && league !== 'fc' ? 'division' : undefined
+                }
+                limit={
+                  league === 'nba'
+                    ? 6
+                    : league === 'fc'
+                    ? 6
+                    : league === 'nfl'
+                    ? 2
+                    : league === 'nhl'
+                    ? 3
+                    : league === 'mlb'
+                    ? 2
+                    : undefined
+                }
+              />
+            ),
+          )}
+        </div>
+      </div>
+    )
+  }
+  {
+    standingsResp && standingsResp.teams && (
+      <div>
+        <FreestarCardMedRec
+          client:only="svelte"
+          slotId="statmuse_incontent_cards_5"
+        />
+      </div>
+    )
+  }
+  {
+    scheduleResp &&
+      scheduleResp.games.length > 0 &&
+      scoresResp &&
+      scoresResp.games.length > 0 && (
+        <div>
+          <h3 class="text-3xl font-semibold mb-1.5">
+            {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
+              scoresResp.seasonYearDisplay
+            }`}
+            Scores & Schedule
+          </h3>
+          <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+            <div>
+              <p class="font-semibold">Scores</p>
+              <ScoresCard data={scoresResp} />
+            </div>
+            <div>
+              <p class="font-semibold">Schedule</p>
+              <ScheduleCard data={scheduleResp} />
+            </div>
+          </div>
+        </div>
+      )
+  }
+</div>
