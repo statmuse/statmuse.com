@@ -23,7 +23,7 @@
   })
 
   $: {
-    if ('IntersectionObserver' in window && container) {
+    if ('IntersectionObserver' in window && mobile && container) {
       const options = {
         root: null,
         rootMargin: '50px',
@@ -58,7 +58,7 @@
   }
 </script>
 
-{#if import.meta.env.PROD && (($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active') || ($session?.type === 'visitor' && !$session?.properties.bot))}
+{#if import.meta.env.PROD && mobile && (($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active') || ($session?.type === 'visitor' && !$session?.properties.bot))}
   <div bind:this={container} class="min-h-[210px] p-4 bg-primary rounded-2xl">
     <div
       align="center"
