@@ -1,6 +1,7 @@
 import tailwind from '@astrojs/tailwind'
 import react from '@astrojs/react'
-import svelte from '@astrojs/svelte'
+import svelte, { vitePreprocess } from '@astrojs/svelte'
+import { preprocessMeltUI } from '@melt-ui/pp'
 import aws from 'astro-sst'
 import { defineConfig } from 'astro/config'
 
@@ -11,7 +12,7 @@ export default defineConfig({
       applyBaseStyles: false,
     }),
     react(),
-    svelte(),
+    svelte({ preprocess: [vitePreprocess(), preprocessMeltUI()] }),
   ],
   output: 'server',
   server: { port: 3000 },

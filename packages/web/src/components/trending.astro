@@ -2,15 +2,15 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Image from '@components/image.astro'
+import Select from '@components/select.svelte'
 import { Caching } from '@lib/caching'
 import { Table } from 'sst/node/table'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import {
-  GetCommand,
-  QueryCommand,
-  DynamoDBDocumentClient,
-} from '@aws-sdk/lib-dynamodb'
+import { QueryCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import Container from '@components/container.astro'
+import tailwindConfig from '../../tailwind.config.ts'
+
+const colors = tailwindConfig.theme.extend.colors
 
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({}), {
   marshallOptions: { removeUndefinedValues: true },
@@ -21,38 +21,36 @@ interface Props {
   selected?: string
 }
 
+const timeframes: Record<string, string> = {
+  // latest: 'LATEST',
+  last24Hours: 'LAST_24_HOURS',
+  last7Days: 'LAST_7_DAYS',
+  last30Days: 'LAST_30_DAYS',
+  thisYear: 'THIS_YEAR',
+}
+
 const { league, selected } = Astro.props
-const country = Astro.url.searchParams.get('country')
-const timeframe = Astro.url.searchParams.get('timeframe')
+const countryParam = Astro.url.searchParams.get('country')
+const timeframeParam = Astro.url.searchParams.get('timeframe')
+const country = countryParam?.toUpperCase()
+const timeframe = timeframes[timeframeParam ?? 'last24Hours']
+
 const pk = `${league.toUpperCase()}#${timeframe ?? 'LAST_24_HOURS'}#${
   country ?? 'GLOBAL'
 }`
 
 const data = await db.send(
-  new GetCommand({
+  new QueryCommand({
     TableName: Table['trending-table'].tableName,
-    Key: {
-      pk,
-      sk: new Date().toISOString().split('T')[0],
-    },
+    KeyConditionExpression: 'pk = :pk',
+    ExpressionAttributeValues: { ':pk': pk },
+    ScanIndexForward: false,
+    Limit: 1,
   }),
 )
 
-let item = data.Item as Item | undefined
-
-if (!item) {
-  item = await db
-    .send(
-      new QueryCommand({
-        TableName: Table['trending-table'].tableName,
-        KeyConditionExpression: 'pk = :pk',
-        ExpressionAttributeValues: { ':pk': pk },
-        ScanIndexForward: false,
-        Limit: 1,
-      }),
-    )
-    .then((res) => res.Items?.[0] as Item)
-}
+const items = data.Items as Item[] | undefined
+const [item] = items ?? []
 
 type Query = {
   league: string
@@ -80,7 +78,12 @@ type Item = {
   teams: {
     id: number
     league: string
-    name: { abbreviation: string; nickname: string; market: string }
+    name: {
+      abbreviation: string
+      nickname?: string
+      market?: string
+      name?: string
+    }
     reps: { image: string; name: string }[]
     image: string
     uri: string
@@ -93,18 +96,20 @@ type Item = {
 }
 
 const leagues = [
-  { text: 'ALL', param: 'all', href: '/trending' },
-  { text: 'FC', param: 'fc', href: '/fc/trending' },
-  { text: 'NBA', param: 'nba', href: '/nba/trending' },
-  { text: 'NFL', param: 'nfl', href: '/nfl/trending' },
-  { text: 'NHL', param: 'nhl', href: '/nhl/trending' },
-  { text: 'MLB', param: 'mlb', href: '/mlb/trending' },
-  { text: 'PGA', param: 'pga', href: '/pga/trending' },
-  { text: 'MONEY', param: 'money', href: '/money/trending' },
+  { text: 'ALL', param: 'all', href: '/trending' + Astro.url.search },
+  { text: 'FC', param: 'fc', href: '/fc/trending' + Astro.url.search },
+  { text: 'NBA', param: 'nba', href: '/nba/trending' + Astro.url.search },
+  { text: 'NFL', param: 'nfl', href: '/nfl/trending' + Astro.url.search },
+  { text: 'NHL', param: 'nhl', href: '/nhl/trending' + Astro.url.search },
+  { text: 'MLB', param: 'mlb', href: '/mlb/trending' + Astro.url.search },
+  { text: 'PGA', param: 'pga', href: '/pga/trending' + Astro.url.search },
+  { text: 'MONEY', param: 'money', href: '/money/trending' + Astro.url.search },
 ]
 
 const topPlayer = item?.players?.[0]
 const topTeam = item?.teams?.[0]
+
+console.log('item', item)
 
 Caching.swr(Astro)
 ---
@@ -112,26 +117,27 @@ Caching.swr(Astro)
 <Layout
   analytics={{ page_type: 'trending' }}
   meta={{ title: 'Trending' }}
-  colors={{ foreground: '#fff', background: '#00c1d8' }}
+  colors={{ foreground: colors.gray['8'], background: colors.teal }}
 >
   <Header />
-  <Container class="text-white bg-primary">
+  <Container class="text-gray-8 bg-teal">
     <div class="pt-8 pb-8 md:pt-[90px] md:pb-16">
       <h1 class="text-center font-semibold text-4xl md:text-6xl">Trending</h1>
     </div>
   </Container>
-  <div class="bg-gray-50 p-3 space-y-3">
-    <nav class="flex gap-3 overflow-x-scroll no-scrollbar -mx-3 px-3">
+  <div class="bg-gray-7 p-3 space-y-3">
+    <nav
+      class="flex gap-3 overflow-x-scroll no-scrollbar -mx-3 px-3 md:justify-center"
+    >
       {
         leagues.map((league) => (
           <a
             class:list={{
               'p-1.5 px-3 text-center whitespace-nowrap border rounded-full': true,
-              'hover:no-underline hover:text-white hover:bg-primary': true,
-              'bg-primary text-white border-primary font-semibold':
+              'hover:no-underline hover:text-gray-8 hover:bg-teal': true,
+              'bg-teal text-gray-8 border-teal font-semibold':
                 selected === league.param,
-              'bg-white text-gray-700 border-gray-200':
-                selected !== league.param,
+              'bg-gray-8 text-gray-2 border-gray-6': selected !== league.param,
             }}
             href={league.href}
             set:html={league.text}
@@ -139,6 +145,56 @@ Caching.swr(Astro)
         ))
       }
     </nav>
+    <div
+      class="grid grid-cols-2 gap-3 md:grid-cols-none md:flex md:justify-center"
+    >
+      <Select
+        client:load
+        class="md:w-[200px]"
+        hideLabel
+        label="Timeframe"
+        param="timeframe"
+        initial={Astro.url.searchParams.get('timeframe')}
+        options={[
+          // { label: 'Latest', value: 'latest' },
+          { label: 'Last 24 Hours', value: 'last24Hours' },
+          { label: 'Last 7 Days', value: 'last7Days' },
+          { label: 'Last 30 Days', value: 'last30Days' },
+          { label: 'This Year', value: 'thisYear' },
+        ]}
+      />
+      <Select
+        client:load
+        class="md:w-[200px]"
+        hideLabel
+        label="Location"
+        param="location"
+        initial={Astro.url.searchParams.get('location')}
+        options={[
+          { label: 'Global', value: 'global' },
+          { label: 'United States', value: 'US' },
+          { label: 'France', value: 'FR' },
+          { label: 'Finland', value: 'FI' },
+          { label: 'Canada', value: 'CA' },
+          { label: 'Netherlands', value: 'NL' },
+          { label: 'Philippines', value: 'PH' },
+          { label: 'Australia', value: 'AU' },
+          { label: 'Ireland', value: 'IE' },
+          { label: 'United Kingdom', value: 'GB' },
+          { label: 'Germany', value: 'DE' },
+          { label: 'Brazil', value: 'BR' },
+          { label: 'Mexico', value: 'MX' },
+          { label: 'India', value: 'IN' },
+          { label: 'Italy', value: 'IT' },
+          { label: 'Singapore', value: 'SG' },
+          { label: 'Japan', value: 'JP' },
+          { label: 'New Zealand', value: 'NZ' },
+          { label: 'Poland', value: 'PL' },
+          { label: 'Spain', value: 'ES' },
+          { label: 'Sweden', value: 'SE' },
+        ]}
+      />
+    </div>
     <div
       class="space-y-3 sm:flex sm:flex-wrap sm:space-y-0 sm:gap-3 [&>*]:sm:w-[360px]"
     >
@@ -239,8 +295,12 @@ Caching.swr(Astro)
                         {index + 1}
                       </p>
                       <div class="self-center leading-5 text-xl">
-                        <p class="whitespace-pre">{team.name.market}</p>
-                        <p class="whitespace-pre">{team.name.nickname}</p>
+                        {team.name.market ? (
+                          <p class="whitespace-pre">{team.name.market}</p>
+                        ) : null}
+                        <p class="whitespace-pre">
+                          {team.name.nickname ?? team.name.name}
+                        </p>
                       </div>
                     </div>
                     <div class:list={{ 'relative flex h-24 ml-8 -mr-8': true }}>
@@ -261,7 +321,7 @@ Caching.swr(Astro)
                           class:list={{
                             'object-contain object-bottom': true,
                           }}
-                          alt={team.name.nickname ?? ''}
+                          alt={team.name.nickname ?? team.name.name ?? ''}
                           src={team.image}
                           width={450}
                           height={450}
@@ -347,7 +407,9 @@ Caching.swr(Astro)
           <div class="bg-white rounded-3xl border border-gray-200 overflow-clip">
             <h3
               class="font-semibold my-2 mx-4"
-              set:html={`Trending ${topTeam.name.nickname} Searches`}
+              set:html={`Trending ${
+                topTeam.name.nickname ?? topTeam.name.name
+              } Searches`}
             />
             <ol class="list-none text-gray-700 divide-y divide-gray-200">
               {topTeam.queries.slice(0, 10).map((query, index) => (

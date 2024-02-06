@@ -6,7 +6,7 @@ import { Secrets } from './secrets'
 
 export function Trending({ stack }: StackContext) {
   const { vpc } = use(Imports)
-  const { lambdaSecurityGroup, environment, rdsCredentialsSecret } = use(API)
+  const { lambdaSecurityGroup, environment } = use(API)
   const secrets = use(Secrets)
 
   const table = new Table(stack, 'trending-table', {
@@ -35,7 +35,7 @@ export function Trending({ stack }: StackContext) {
     },
     environment,
     nodejs: { install: ['pg'], esbuild: { external: ['pg-native'] } },
-    permissions: ['athena', 's3', 'glue', 'rds', 'secretsmanager'],
+    permissions: ['athena', 's3', 'glue'],
   })
 
   const hourly = new Cron(stack, 'hourly', {
@@ -49,8 +49,6 @@ export function Trending({ stack }: StackContext) {
 
   hourly.bind([job])
   daily.bind([job])
-
-  rdsCredentialsSecret.grantRead(job.cdk.codeBuildProject)
 
   return { table }
 }

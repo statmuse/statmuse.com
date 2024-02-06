@@ -1,6 +1,7 @@
-const defaultTheme = require('tailwindcss/defaultTheme')
+import type { Config } from 'tailwindcss'
+import defaultTheme from 'tailwindcss/defaultTheme'
 
-module.exports = {
+export default {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
   theme: {
     screens: {
@@ -17,6 +18,20 @@ module.exports = {
         'team-primary': 'var(--team-primary-color, #fff)',
         'team-secondary': 'var(--team-secondary-color, #333)',
         'team-secondary-sm-default': 'var(--team-secondary-color, #00c1d8)',
+        gray: {
+          1: '#333333',
+          2: '#151516',
+          3: '#202124',
+          4: '#303134',
+          5: '#909396',
+          6: '#ebebeb',
+          7: '#f7f7f7',
+          8: '#ffffff',
+        },
+        teal: '#00c1d8',
+        green: '#32c771',
+        orange: '#efa125',
+        red: '#dd3636',
       },
       fontFamily: {
         sans: [
@@ -29,4 +44,4 @@ module.exports = {
     },
   },
   plugins: [],
-}
+} satisfies Config

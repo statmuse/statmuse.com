@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.3.3",
-    "@melt-ui/pp": "^0.1.2",
+    "@melt-ui/pp": "^0.3.0",
     "@melt-ui/svelte": "^0.49.1",
     "@types/d3-array": "^3.0.5",
     "@types/d3-scale": "^4.0.3",
