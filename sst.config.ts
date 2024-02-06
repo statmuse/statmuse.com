@@ -6,6 +6,7 @@ import { Imports } from './stacks/imports'
 import { Secrets } from './stacks/secrets'
 import { Auth } from './stacks/auth'
 import { AnalyticsProxy } from './stacks/analytics-proxy'
+import { RedirectMoney } from './stacks/redirect'
 
 export default {
   config(_input) {
@@ -33,6 +34,7 @@ export default {
       .stack(API)
       .stack(Auth)
       .stack(AnalyticsProxy)
+      .stack(RedirectMoney)
       .stack(Web)
   },
 } satisfies SSTConfig
