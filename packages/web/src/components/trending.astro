@@ -294,11 +294,15 @@ Caching.swr(Astro)
                       </p>
                       <div class="self-center leading-5 text-xl">
                         {team.name.market ? (
-                          <p class="whitespace-pre">{team.name.market}</p>
+                          <p
+                            class="whitespace-pre"
+                            set:text={team.name.market}
+                          />
                         ) : null}
-                        <p class="whitespace-pre">
-                          {team.name.nickname ?? team.name.name}
-                        </p>
+                        <p
+                          class="whitespace-pre"
+                          set:text={team.name.nickname ?? team.name.name}
+                        />
                       </div>
                     </div>
                     <div class:list={{ 'relative flex h-24 ml-8 -mr-8': true }}>
