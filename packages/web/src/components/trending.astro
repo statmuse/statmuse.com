@@ -109,8 +109,6 @@ const leagues = [
 const topPlayer = item?.players?.[0]
 const topTeam = item?.teams?.[0]
 
-console.log('item', item)
-
 Caching.swr(Astro)
 ---
 
@@ -168,8 +166,8 @@ Caching.swr(Astro)
         class="md:w-[200px]"
         hideLabel
         label="Location"
-        param="location"
-        initial={Astro.url.searchParams.get('location')}
+        param="country"
+        initial={Astro.url.searchParams.get('country')}
         options={[
           { label: 'Global', value: 'global' },
           { label: 'United States', value: 'US' },
