@@ -757,19 +757,19 @@ if (allowedDomains.includes(league) && teamId) {
     players: filterTeamLeaders(teamSpecificPlayerCards?.cards ?? [], domain),
   }
 
-  if (teamSpecificPlayerCards) {
+  if (teamSpecificPlayerCards && teamSpecificPlayerCards.team?.seasonYear) {
     ;[teamSeasonBio, teamSeasonOverview] = await Promise.all([
       getTeamSeasonBio({
         context: Astro,
         domain: leagueToDomain(league),
         team: `team-${teamId}`,
-        year: teamSpecificPlayerCards.team?.seasonYear.toString() ?? '',
+        year: teamSpecificPlayerCards.team.seasonYear.toString() ?? '',
       }),
       getTeamSeasonOverview({
         context: Astro,
         domain: leagueToDomain(league),
         team: `team-${teamId}`,
-        year: teamSpecificPlayerCards.team?.seasonYear.toString() ?? '',
+        year: teamSpecificPlayerCards.team.seasonYear.toString() ?? '',
       }),
     ])
   }
@@ -778,7 +778,7 @@ if (allowedDomains.includes(league) && teamId) {
     const score = teamSeasonOverview.scoresAndSchedule.rows.find(
       (r) => r.SCORE.entity,
     )?.SCORE
-    if (score.entity) {
+    if (score?.entity) {
       const res = await getGame({
         context: Astro,
         domain: leagueToDomain(league),
