@@ -733,7 +733,7 @@ interface Boxscore {
   homeTeam: Team
   awayTeam: Team
   completedGameStatus: string
-  gameDate: string
+  gameDate?: string
 }
 let teamLastGame: Boxscore | undefined
 
@@ -792,15 +792,15 @@ if (allowedDomains.includes(league) && teamId) {
 
 <div class="space-y-10 mb-10">
   {
-    teamSpecificPlayerCards && (
+    teamSpecificPlayerCards && teamSpecificPlayerCards.team && (
       <div>
-        <h3 class="text-3xl font-semibold mb-1.5">{`More ${teamSpecificPlayerCards.team?.nickname} Stats`}</h3>
+        <h3 class="text-3xl font-semibold mb-1.5">{`More ${teamSpecificPlayerCards.team.nickname} Stats`}</h3>
         <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
           {teamLeaders && teamLeaders.players.length > 0 && (
             <div>
               <div class="flex justify-between">
                 <p class="font-semibold">Team Leaders</p>
-                <EntityLink entity={teamSpecificPlayerCards.team?.entity}>
+                <EntityLink entity={teamSpecificPlayerCards.team.entity}>
                   See more
                 </EntityLink>
               </div>
@@ -811,7 +811,7 @@ if (allowedDomains.includes(league) && teamId) {
             <div class="flex flex-col">
               <div class="flex justify-between">
                 <p class="font-semibold">Team Rankings</p>
-                <EntityLink entity={teamSpecificPlayerCards.team?.entity}>
+                <EntityLink entity={teamSpecificPlayerCards.team.entity}>
                   See more
                 </EntityLink>
               </div>
@@ -819,9 +819,9 @@ if (allowedDomains.includes(league) && teamId) {
                 class="flex-1 rounded-2xl overflow-hidden py-10 px-2.5 flex items-center"
                 style={{
                   backgroundColor:
-                    teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
+                    teamLeaders?.players[0].colors?.backgroundColor ?? '#FFF',
                   color:
-                    teamLeaders.players[0].colors?.foregroundColor ?? '#000',
+                    teamLeaders?.players[0].colors?.foregroundColor ?? '#000',
                 }}
               >
                 <div class="flex gap-5 text-center mx-auto">
@@ -855,9 +855,9 @@ if (allowedDomains.includes(league) && teamId) {
                 grid={teamSeasonOverview.standings}
                 colors={{
                   backgroundColor:
-                    teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
+                    teamLeaders?.players[0].colors?.backgroundColor ?? '#FFF',
                   foregroundColor:
-                    teamLeaders.players[0].colors?.foregroundColor ?? '#000',
+                    teamLeaders?.players[0].colors?.foregroundColor ?? '#000',
                 }}
               />
             </div>
@@ -879,9 +879,9 @@ if (allowedDomains.includes(league) && teamId) {
                 data={teamScheduleResponse}
                 colors={{
                   backgroundColor:
-                    teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
+                    teamLeaders?.players[0].colors?.backgroundColor ?? '#FFF',
                   foregroundColor:
-                    teamLeaders.players[0].colors?.foregroundColor ?? '#000',
+                    teamLeaders?.players[0].colors?.foregroundColor ?? '#000',
                 }}
               />
             </div>
@@ -903,9 +903,9 @@ if (allowedDomains.includes(league) && teamId) {
                 class="flex gap-4 flex-1 rounded-2xl overflow-hidden py-10 px-2.5 hover:no-underline relative"
                 style={{
                   backgroundColor:
-                    teamLeaders.players[0].colors?.backgroundColor ?? '#FFF',
+                    teamLeaders?.players[0].colors?.backgroundColor ?? '#FFF',
                   color:
-                    teamLeaders.players[0].colors?.foregroundColor ?? '#000',
+                    teamLeaders?.players[0].colors?.foregroundColor ?? '#000',
                 }}
               >
                 <div class="flex-1 flex flex-col items-end justify-center">
@@ -963,9 +963,11 @@ if (allowedDomains.includes(league) && teamId) {
                     {teamLastGame.awayTeam.record}
                   </p>
                 </div>
-                <p class="absolute bottom-5 left-1/2 -translate-x-1/2 text-[0.8rem] uppercase tracking-[0.07rem]">
-                  {dayjs(teamLastGame.gameDate).format('ddd D MMM YYYY')}
-                </p>
+                {teamLastGame.gameDate ? (
+                  <p class="absolute bottom-5 left-1/2 -translate-x-1/2 text-[0.8rem] uppercase tracking-[0.07rem]">
+                    {dayjs(teamLastGame.gameDate).format('ddd D MMM YYYY')}
+                  </p>
+                ) : null}
               </div>
             </div>
           )}
@@ -996,14 +998,14 @@ if (allowedDomains.includes(league) && teamId) {
             <div>
               <div class="flex justify-between">
                 <p class="font-semibold">{`${
-                  playerCardsResp?.seasonType === 'postseason' ? 'Playoff ' : ''
+                  playerCardsResp!.seasonType === 'postseason' ? 'Playoff ' : ''
                 }${playerCardTitle(card.stat)}`}</p>
                 <a
                   href={playerAskLink(
                     card.stat,
                     league,
-                    playerCardsResp.seasonType,
-                    playerCardsResp.seasonYearDisplay,
+                    playerCardsResp!.seasonType,
+                    playerCardsResp!.seasonYearDisplay,
                   )}
                 >
                   See more
@@ -1013,8 +1015,8 @@ if (allowedDomains.includes(league) && teamId) {
                 href={playerAskLink(
                   card.stat,
                   league,
-                  playerCardsResp.seasonType,
-                  playerCardsResp.seasonYearDisplay,
+                  playerCardsResp!.seasonType,
+                  playerCardsResp!.seasonYearDisplay,
                 )}
                 class="hover:no-underline"
               >
@@ -1055,8 +1057,8 @@ if (allowedDomains.includes(league) && teamId) {
                   href={teamAskLink(
                     card.stat,
                     league,
-                    teamCardsResp.seasonType,
-                    teamCardsResp.seasonYearDisplay,
+                    teamCardsResp!.seasonType,
+                    teamCardsResp!.seasonYearDisplay,
                   )}
                 >
                   See more
@@ -1066,8 +1068,8 @@ if (allowedDomains.includes(league) && teamId) {
                 href={teamAskLink(
                   card.stat,
                   league,
-                  teamCardsResp.seasonType,
-                  teamCardsResp.seasonYearDisplay,
+                  teamCardsResp!.seasonType,
+                  teamCardsResp!.seasonYearDisplay,
                 )}
                 class="hover:no-underline"
               >
@@ -1116,8 +1118,8 @@ if (allowedDomains.includes(league) && teamId) {
                     href={playerAskLink(
                       card.stat,
                       league,
-                      playerCardsResp.seasonType,
-                      playerCardsResp.seasonYearDisplay,
+                      playerCardsResp!.seasonType,
+                      playerCardsResp!.seasonYearDisplay,
                     )}
                   >
                     See more
@@ -1127,8 +1129,8 @@ if (allowedDomains.includes(league) && teamId) {
                   href={playerAskLink(
                     card.stat,
                     league,
-                    playerCardsResp.seasonType,
-                    playerCardsResp.seasonYearDisplay,
+                    playerCardsResp!.seasonType,
+                    playerCardsResp!.seasonYearDisplay,
                   )}
                   class="hover:no-underline"
                 >
@@ -1169,8 +1171,8 @@ if (allowedDomains.includes(league) && teamId) {
                   href={teamAskLink(
                     card.stat,
                     league,
-                    teamCardsResp.seasonType,
-                    teamCardsResp.seasonYearDisplay,
+                    teamCardsResp!.seasonType,
+                    teamCardsResp!.seasonYearDisplay,
                   )}
                 >
                   See more
@@ -1180,8 +1182,8 @@ if (allowedDomains.includes(league) && teamId) {
                 href={teamAskLink(
                   card.stat,
                   league,
-                  teamCardsResp.seasonType,
-                  teamCardsResp.seasonYearDisplay,
+                  teamCardsResp!.seasonType,
+                  teamCardsResp!.seasonYearDisplay,
                 )}
                 class="hover:no-underline"
               >

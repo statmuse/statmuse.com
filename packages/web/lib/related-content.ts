@@ -8,7 +8,7 @@ import type { Context } from '@lib/session'
 export const getPlayerCards = async (props: {
   context: Context
   domain: string
-  teamId?: number
+  teamId?: string | number
   seasonYear?: number
 }) => {
   try {

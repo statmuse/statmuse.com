@@ -47,7 +47,7 @@ export async function getGame<T extends Domain>(props: {
 export const getGames = async (props: {
   context: Context
   domain: string
-  teamId?: number
+  teamId?: string | number
   seasonYear?: number
 }) => {
   try {
@@ -65,7 +65,7 @@ export const getGames = async (props: {
 export const getSchedule = async (props: {
   context: Context
   domain: string
-  teamId?: number
+  teamId?: string | number
 }) => {
   try {
     const { domain, context, ...params } = props
