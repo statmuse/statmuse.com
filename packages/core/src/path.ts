@@ -39,7 +39,7 @@ const encodeRFC3986URIComponent = (str: string) => {
 const hasSymbols = (s: string) =>
   contains(encodeRFC3986URIComponent(clean(s)), ['%', '-'])
 
-const createSlug = (s: string) =>
+export const createSlug = (s: string) =>
   clean(s).replaceAll(' ', '-').replace(/-+$/, '')
 
 export const createAskPath = ({

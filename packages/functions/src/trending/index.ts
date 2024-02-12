@@ -14,6 +14,7 @@ import * as Ask from '@statmuse/core/ask'
 import { Table } from 'sst/node/table'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { PutCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+import { createSlug } from '@statmuse/core/path'
 const gameraApiUrl = process.env.GAMERA_API_URL
 const gameraApiKey = Config.GAMERA_API_KEY
 const kanedamaApiUrl = process.env.KANEDAMA_API_URL
@@ -239,13 +240,14 @@ async function getAsset(assetId: string) {
 
   const [image] = profile.images || []
   const [color] = image?.colors || []
+  const name = profile.asset.canonicalName || profile.asset.officialName
   const asset = {
     id: profile.asset.assetId,
-    name: profile.asset.canonicalName,
+    name,
     uri:
       profile.asset.type === 'Stock'
         ? `/money/symbol/${profile.asset.symbol}`
-        : `/money/ask/${profile.asset.canonicalName}`,
+        : `/money/ask/${createSlug(name)}`,
     image: image?.imageUrl,
     background: color?.background,
     foreground: color?.foreground,
