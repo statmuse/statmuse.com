@@ -342,11 +342,24 @@ export interface KanedamaChartsDetail extends DetailBase {
   charts: KanedamaChart[]
 }
 
+export interface ContentReference {
+  domainTags?: {
+    domain: string
+  }
+  questionTags?: {
+    assetIds: string[]
+  }
+  answerTags?: {
+    assetIds: string[]
+  }
+}
+
 export interface Visual {
   summary: Summary
   summaryTokens: KanedamaToken[]
   isSuperlative: boolean
   additionalQuestions?: AdditionalQuestion[]
+  contentReference?: ContentReference
   detail?: Detail[]
   disclaimers?: [string]
 }

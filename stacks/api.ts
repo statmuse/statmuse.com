@@ -10,8 +10,7 @@ export function API({ stack }: StackContext) {
   const { vpc, rdsCredentialsSecret, rdsProxySecurityGroup } = use(Imports)
 
   const isStaging = stack.stage.startsWith('staging')
-  const isProd =
-    stack.stage === 'production' || stack.stage === 'staging-trending'
+  const isProd = stack.stage === 'production'
   const isDev = !isStaging && !isProd
 
   const lambdaSecurityGroup = new SecurityGroup(stack, 'lambda-sg', { vpc })
@@ -19,7 +18,7 @@ export function API({ stack }: StackContext) {
   rdsProxySecurityGroup.addIngressRule(
     lambdaSecurityGroup,
     Port.tcp(5432),
-    'allow lambda connection to rds proxy'
+    'allow lambda connection to rds proxy',
   )
 
   const GAMERA_API_URL = isProd

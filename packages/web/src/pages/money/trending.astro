@@ -1,0 +1,8 @@
+---
+import TrendingComponent from '@components/trending.astro'
+import { Caching } from '@lib/caching'
+
+Caching.swr(Astro)
+---
+
+<TrendingComponent league={'MONEY'} selected={'money'} />

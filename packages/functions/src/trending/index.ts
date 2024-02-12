@@ -16,6 +16,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { PutCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 const gameraApiUrl = process.env.GAMERA_API_URL
 const gameraApiKey = Config.GAMERA_API_KEY
+const kanedamaApiUrl = process.env.KANEDAMA_API_URL
 const headers: Record<string, string> = {
   Accept: 'application/json',
   'x-origin': 'trending.bot',
@@ -104,6 +105,7 @@ const countries = [
 const contexts = await Context.list()
 
 type League = (typeof leagues)[number]
+type SportsLeague = Exclude<League, 'MONEY'>
 type Timeframe = (typeof timeframes)[number]
 type Location = 'GLOBAL' | (typeof countries)[number]
 
@@ -128,10 +130,21 @@ type Team = {
   foreground: string
 }
 
-const leaguePlayers: Record<League, Player[] | undefined> = {
+type Asset = {
+  id: string
+  name: string
+  uri: string
+  image: string
+  background: string
+  foreground: string
+  type: string
+  class: string
+  exchange: string
+}
+
+const leaguePlayers: Record<SportsLeague, Player[] | undefined> = {
   ALL: undefined,
   PGA: undefined,
-  MONEY: undefined,
   FC: undefined,
   NBA: undefined,
   NFL: undefined,
@@ -139,16 +152,17 @@ const leaguePlayers: Record<League, Player[] | undefined> = {
   NHL: undefined,
 }
 
-const leagueTeams: Record<League, Team[] | undefined> = {
+const leagueTeams: Record<SportsLeague, Team[] | undefined> = {
   ALL: undefined,
   PGA: undefined,
-  MONEY: undefined,
   FC: undefined,
   NBA: undefined,
   NFL: undefined,
   MLB: undefined,
   NHL: undefined,
 }
+
+const assetDetails: Asset[] = []
 
 async function populatePlayers() {
   for (const league of leagues) {
@@ -213,6 +227,29 @@ async function populateTeams() {
   }
 }
 
+async function getAsset(assetId: string) {
+  const existing = assetDetails.find((a) => a.id === assetId)
+  if (existing) return existing
+
+  const profile = await fetchAsset(assetId)
+  const [image] = profile.images || []
+  const [color] = image?.colors || []
+  const asset = {
+    id: profile.asset.assetId,
+    name: profile.asset.name,
+    uri: `/money/symbol/${profile.asset.symbol}`,
+    image: image?.imageUrl,
+    background: color?.background,
+    foreground: color?.foreground,
+    class: profile.asset.class,
+    type: profile.asset.type,
+    exchange: profile.asset.exchange,
+  }
+  assetDetails.push(asset)
+
+  return asset
+}
+
 function* chunk<T>(arr: T[], n: number): Generator<T[], void> {
   for (let i = 0; i < arr.length; i += n) {
     yield arr.slice(i, i + n)
@@ -271,8 +308,9 @@ async function update(
     image: string
     background: string
     foreground: string
-    players: Player[]
-    teams: Team[]
+    players?: Player[]
+    teams?: Team[]
+    assets?: Asset[]
   }[] = []
 
   const chunks = chunk(results, 10)
@@ -294,68 +332,113 @@ async function update(
         console.error(error)
       }
 
-      const context_id = contexts.find((c) =>
-        leagueName === 'fc' ? c.name === 'epl' : c.name === leagueName,
-      )?.id
-      const ask = await Ask.get({ context_id, query })
-      const response = ask?.answer
-      // const response = await ask({ league, query })
-      if (!response || response.type === 'error') return
+      if (league === 'MONEY') {
+        const ask = await Ask.getFinance({ query })
+        const response = ask?.answer
+        if (!response || response.type === 'error') return
 
-      const subject = response.visual?.summary?.subject
-      const contentReference = response.visual?.contentReference
+        const subject = response.visual?.summary?.subject
+        const contentReference = response.visual?.contentReference
+        console.log('contentReference', contentReference)
 
-      const players =
-        contentReference?.questionTags?.playerIds
-          .map((id) => {
-            const player = leaguePlayers[league].find((p) => p.id === id)
-            if (!player) {
-              console.log('no player found', id)
-              console.log('query', query)
-              console.log('contentReference', contentReference)
-              return undefined
-            }
+        const assets: Asset[] = []
+        for (const assetId of contentReference?.questionTags?.assetIds || []) {
+          const asset = await getAsset(assetId)
 
-            return player
-          })
-          .filter((p) => !!p) || []
-      const teams =
-        contentReference?.questionTags?.teamIds
-          .map((id) => {
-            const team = leagueTeams[league].find((t) => t.id === id)
-            if (!team) {
-              console.log('no team found', id)
-              console.log('query', query)
-              console.log('contentReference', contentReference)
-              return undefined
-            }
+          if (!asset) {
+            console.log('no asset found', assetId)
+            console.log('query', query)
+            console.log('contentReference', contentReference)
+            continue
+          }
 
-            return team
-          })
-          .filter((p) => !!p) || []
+          assets.push(asset)
+        }
 
-      const image = subject?.imageUrl
-      const background = subject?.colors?.background
-      const foreground = subject?.colors?.foreground
+        const image = subject?.imageUrl
+        const background = subject?.colors?.background
+        const foreground = subject?.colors?.foreground
 
-      queries.push({
-        uri,
-        league,
-        query,
-        count,
-        image,
-        background,
-        foreground,
-        players,
-        teams,
-      })
+        queries.push({
+          uri,
+          league,
+          query,
+          count,
+          image,
+          background,
+          foreground,
+          assets,
+        })
+      } else {
+        const context_id = contexts.find((c) =>
+          leagueName === 'fc' ? c.name === 'epl' : c.name === leagueName,
+        )?.id
+
+        const ask = await Ask.get({ context_id, query })
+        const response = ask?.answer
+        // const response = await ask({ league, query })
+        if (!response || response.type === 'error') return
+
+        const subject = response.visual?.summary?.subject
+        const contentReference = response.visual?.contentReference
+
+        const players =
+          contentReference?.questionTags?.playerIds
+            .map((id) => {
+              const player = leaguePlayers[league].find((p) => p.id === id)
+              if (!player) {
+                console.log('no player found', id)
+                console.log('query', query)
+                console.log('contentReference', contentReference)
+                return undefined
+              }
+
+              return player
+            })
+            .filter((p) => !!p) || []
+        const teams =
+          contentReference?.questionTags?.teamIds
+            .map((id) => {
+              const team = leagueTeams[league].find((t) => t.id === id)
+              if (!team) {
+                console.log('no team found', id)
+                console.log('query', query)
+                console.log('contentReference', contentReference)
+                return undefined
+              }
+
+              return team
+            })
+            .filter((p) => !!p) || []
+
+        const image = subject?.imageUrl
+        const background = subject?.colors?.background
+        const foreground = subject?.colors?.foreground
+
+        queries.push({
+          uri,
+          league,
+          query,
+          count,
+          image,
+          background,
+          foreground,
+          players,
+          teams,
+        })
+      }
     })
 
     await Promise.all(promises)
   }
 
   const uniquePlayers = Array.from(
-    new Set(queries.map((q) => q.players.map((p) => JSON.stringify(p))).flat()),
+    new Set(
+      queries
+        .filter((q) => q.players && q.players.length)
+        .map((q) => q.players.map((p) => JSON.stringify(p)))
+        .flat(),
+    ),
   ).map((s) => JSON.parse(s) as Player)
 
   const players = uniquePlayers
@@ -372,7 +455,12 @@ async function update(
       const id = player.id
       const queriesForPlayer = queries
         .filter((q) => q.players.map((p) => p.id).includes(id))
-        .map((q) => ({ ...q, players: undefined, teams: undefined }))
+        .map((q) => ({
+          ...q,
+          players: undefined,
+          teams: undefined,
+          assets: undefined,
+        }))
         .sort((a, b) => b.count - a.count)
         .slice(0, STORE)
 
@@ -380,7 +468,12 @@ async function update(
     })
 
   const uniqueTeams = Array.from(
-    new Set(queries.map((q) => q.teams.map((t) => JSON.stringify(t))).flat()),
+    new Set(
+      queries
+        .filter((q) => q.teams && q.teams.length)
+        .map((q) => q.teams.map((t) => JSON.stringify(t)))
+        .flat(),
+    ),
   ).map((s) => JSON.parse(s) as Team)
 
   const teams = uniqueTeams
@@ -397,12 +490,64 @@ async function update(
       const id = team.id
       const queriesForTeam = queries
         .filter((q) => q.teams.map((t) => t.id).includes(id))
-        .map((q) => ({ ...q, players: undefined, teams: undefined }))
+        .map((q) => ({
+          ...q,
+          players: undefined,
+          teams: undefined,
+          assets: undefined,
+        }))
         .sort((a, b) => b.count - a.count)
         .slice(0, STORE)
 
       return index === 0 ? { ...team, queries: queriesForTeam } : team
     })
+
+  const uniqueAssets = Array.from(
+    new Set(
+      queries
+        .filter((q) => q.assets && q.assets.length)
+        .map((q) => q.assets.map((p) => JSON.stringify(p)))
+        .flat(),
+    ),
+  ).map((s) => JSON.parse(s) as Asset)
+
+  const assets = uniqueAssets
+    .map((asset) => {
+      const id = asset.id
+      const queriesForAsset = queries
+        .filter((q) => q.assets.map((p) => p.id).includes(id))
+        .sort((a, b) => b.count - a.count)
+      const count = queriesForAsset.reduce((a, b) => a + b.count, 0)
+      return { ...asset, count }
+    })
+    .sort((a, b) => b.count - a.count)
+    .map((asset, index) => {
+      const id = asset.id
+      const queriesForAsset = queries
+        .filter((q) => q.assets.map((p) => p.id).includes(id))
+        .map((q) => ({
+          ...q,
+          players: undefined,
+          teams: undefined,
+          assets: undefined,
+        }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, STORE)
+
+      return index === 0 ? { ...asset, queries: queriesForAsset } : asset
+    })
+
+  const stocks = assets
+    .filter((a) => a.type === 'Stock')
+    .sort((a, b) => b.count - a.count)
+
+  const nyse = assets
+    .filter((a) => a.exchange === 'NYSE')
+    .sort((a, b) => b.count - a.count)
+
+  const nasdaq = assets
+    .filter((a) => a.exchange === 'NASDAQ')
+    .sort((a, b) => b.count - a.count)
 
   const item = {
     pk: `${league}#${timeframe}#${location}`,
@@ -413,11 +558,16 @@ async function update(
         ...q,
         players: undefined,
         teams: undefined,
+        assets: undefined,
       }))
       .sort((a, b) => b.count - a.count)
       .slice(0, STORE),
     players: players.slice(0, STORE),
     teams: teams.slice(0, STORE),
+    assets: assets.slice(0, STORE),
+    stocks: stocks.slice(0, STORE),
+    nyse: nyse.slice(0, STORE),
+    nasdaq: nasdaq.slice(0, STORE),
   }
 
   await db.send(
@@ -515,6 +665,20 @@ async function getPlayers(options: { league: League }) {
   return inner()
 }
 
+async function fetchAsset(assetId: string) {
+  const path = `/asset/${assetId}`
+  const requestUrl = `${kanedamaApiUrl}${path}`
+
+  try {
+    const response = await fetch(requestUrl, { headers })
+    const json: KanedamaAssetProfile = await response.json()
+    return json
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
+}
+
 async function getTeams(options: { league: League }) {
   const league = options.league
   if (league === 'ALL') throw new Error('Invalid league')
@@ -595,4 +759,48 @@ type GameraPlayers = {
     totalCount: number
     cursor: string
   }
+}
+
+type KanedamaAsset = {
+  assetId: string
+  name: string
+  symbol: string
+  exchange: string
+  class: string
+  type: string
+  shouldSyncPrice: boolean
+  isActive: boolean
+  dataCoverage: {
+    value: {
+      minDailyTimestamp: {
+        value: number
+      }
+      maxDailyTimestamp: {
+        value: number
+      }
+      minIntradayTimestamp: {
+        value: number
+      }
+      maxIntradayTimestamp: {
+        value: number
+      }
+    }
+  }
+}
+
+type KanedamaAssetProfile = {
+  asset: KanedamaAsset
+  images: [
+    {
+      imageId: string
+      imageUrl: string
+      colors: [
+        {
+          colorId: string
+          background: string
+          foreground: string
+        },
+      ]
+    },
+  ]
 }
