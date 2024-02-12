@@ -685,7 +685,7 @@ async function getPlayers(options: { league: League }) {
 }
 
 async function fetchAsset(assetId: string) {
-  const path = `/asset/${assetId}`
+  const path = `asset/${assetId}`
   const requestUrl = `${kanedamaApiUrl}${path}`
 
   try {
