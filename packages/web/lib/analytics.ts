@@ -24,6 +24,7 @@ export type AnalyticsPageviewProperties = {
     | 'musing'
     | 'player'
     | 'question'
+    | 'trending'
     | 'team'
     | 'unknown'
   query?: string

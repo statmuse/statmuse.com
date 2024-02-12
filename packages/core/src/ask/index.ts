@@ -35,6 +35,21 @@ export * from './ask.sql'
 export const ASK_LIMIT = 15
 const leagues = ['nba', 'nfl', 'nhl', 'mlb', 'pga']
 
+export const get = async (params: { context_id: string; query: string }) =>
+  db
+    .selectFrom('asks')
+    .select(['id', 'query', 'answer'])
+    .where('context_id', '=', params.context_id)
+    .where('query', '=', params.query)
+    .executeTakeFirst()
+
+export const getFinance = async (params: { query: string }) =>
+  db
+    .selectFrom('finance_asks')
+    .select(['id', 'query', 'answer'])
+    .where('query', '=', params.query)
+    .executeTakeFirst()
+
 export const upsert = async (params: {
   query: string
   response: GameraResponse
