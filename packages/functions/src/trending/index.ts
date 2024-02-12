@@ -241,8 +241,11 @@ async function getAsset(assetId: string) {
   const [color] = image?.colors || []
   const asset = {
     id: profile.asset.assetId,
-    name: profile.asset.name,
-    uri: `/money/symbol/${profile.asset.symbol}`,
+    name: profile.asset.canonicalName,
+    uri:
+      profile.asset.type === 'Stock'
+        ? `/money/symbol/${profile.asset.symbol}`
+        : `/money/ask/${profile.asset.canonicalName}`,
     image: image?.imageUrl,
     background: color?.background,
     foreground: color?.foreground,
@@ -782,7 +785,8 @@ type GameraPlayers = {
 
 type KanedamaAsset = {
   assetId: string
-  name: string
+  canonicalName: string
+  officialName: string
   symbol: string
   exchange: string
   class: string
