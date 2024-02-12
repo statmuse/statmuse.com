@@ -232,6 +232,11 @@ async function getAsset(assetId: string) {
   if (existing) return existing
 
   const profile = await fetchAsset(assetId)
+  if (!profile.asset) {
+    console.log('profile', profile)
+    return undefined
+  }
+
   const [image] = profile.images || []
   const [color] = image?.colors || []
   const asset = {
