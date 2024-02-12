@@ -344,7 +344,6 @@ async function update(
 
         const subject = response.visual?.summary?.subject
         const contentReference = response.visual?.contentReference
-        console.log('contentReference', contentReference)
 
         const assets: Asset[] = []
         for (const assetId of contentReference?.questionTags?.assetIds || []) {
@@ -450,7 +449,7 @@ async function update(
     .map((player) => {
       const id = player.id
       const queriesForPlayer = queries
-        .filter((q) => q.players.map((p) => p.id).includes(id))
+        .filter((q) => q.players?.map((p) => p.id).includes(id))
         .sort((a, b) => b.count - a.count)
       const count = queriesForPlayer.reduce((a, b) => a + b.count, 0)
       return { ...player, count }
@@ -459,7 +458,7 @@ async function update(
     .map((player, index) => {
       const id = player.id
       const queriesForPlayer = queries
-        .filter((q) => q.players.map((p) => p.id).includes(id))
+        .filter((q) => q.players?.map((p) => p.id).includes(id))
         .map((q) => ({
           ...q,
           players: undefined,
@@ -485,7 +484,7 @@ async function update(
     .map((team) => {
       const id = team.id
       const queriesForTeam = queries
-        .filter((q) => q.teams.map((p) => p.id).includes(id))
+        .filter((q) => q.teams?.map((p) => p.id).includes(id))
         .sort((a, b) => b.count - a.count)
       const count = queriesForTeam.reduce((a, b) => a + b.count, 0)
       return { ...team, count }
@@ -494,7 +493,7 @@ async function update(
     .map((team, index) => {
       const id = team.id
       const queriesForTeam = queries
-        .filter((q) => q.teams.map((t) => t.id).includes(id))
+        .filter((q) => q.teams?.map((t) => t.id).includes(id))
         .map((q) => ({
           ...q,
           players: undefined,
@@ -520,7 +519,7 @@ async function update(
     .map((asset) => {
       const id = asset.id
       const queriesForAsset = queries
-        .filter((q) => q.assets.map((p) => p.id).includes(id))
+        .filter((q) => q.assets?.map((p) => p.id).includes(id))
         .sort((a, b) => b.count - a.count)
       const count = queriesForAsset.reduce((a, b) => a + b.count, 0)
       return { ...asset, count }
@@ -529,7 +528,7 @@ async function update(
     .map((asset, index) => {
       const id = asset.id
       const queriesForAsset = queries
-        .filter((q) => q.assets.map((p) => p.id).includes(id))
+        .filter((q) => q.assets?.map((p) => p.id).includes(id))
         .map((q) => ({
           ...q,
           players: undefined,
@@ -544,6 +543,18 @@ async function update(
 
   const stocks = assets
     .filter((a) => a.type === 'Stock')
+    .sort((a, b) => b.count - a.count)
+
+  const indices = assets
+    .filter((a) => a.type === 'Index')
+    .sort((a, b) => b.count - a.count)
+
+  const etfs = assets
+    .filter((a) => a.type === 'ETF')
+    .sort((a, b) => b.count - a.count)
+
+  const currencies = assets
+    .filter((a) => a.type.includes('Currency'))
     .sort((a, b) => b.count - a.count)
 
   const nyse = assets
@@ -571,6 +582,9 @@ async function update(
     teams: teams.slice(0, STORE),
     assets: assets.slice(0, STORE),
     stocks: stocks.slice(0, STORE),
+    indices: indices.slice(0, STORE),
+    etfs: etfs.slice(0, STORE),
+    currencies: currencies.slice(0, STORE),
     nyse: nyse.slice(0, STORE),
     nasdaq: nasdaq.slice(0, STORE),
   }
