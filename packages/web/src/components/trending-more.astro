@@ -1,0 +1,41 @@
+---
+import TrendingListItem, {
+  type TrendingListItem as Item,
+} from '@components/trending-list-item.astro'
+
+interface Props {
+  items: Item[]
+  prominent?: boolean
+}
+
+const { items, prominent } = Astro.props
+---
+
+<div class="overflow-clip">
+  {
+    items?.length ? (
+      <>
+        <ol class="list-none text-gray-700 space-y-3 md:space-y-0 md:gap-3 md:flex md:flex-wrap md:justify-center">
+          {items.map((item, index) => (
+            <TrendingListItem
+              class="bg-gray-8 rounded-3xl overflow-clip border border-gray-6 md:max-w-[360px]"
+              numbered={false}
+              {item}
+              {index}
+              {prominent}
+            />
+          ))}
+        </ol>
+      </>
+    ) : (
+      <div class="h-96">
+        <div class="h-full w-full flex justify-center items-center text-center text-gray-400">
+          <div>
+            <p>Gathering data</p>
+            <p>Check back later</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+</div>

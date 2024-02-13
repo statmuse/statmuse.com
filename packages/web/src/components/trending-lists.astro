@@ -1,0 +1,77 @@
+---
+import TrendingList from '@components/trending-list.astro'
+import type { Item, Player, Team } from '@components/trending.astro'
+
+interface Props {
+  item: Item
+  player?: Player
+  team?: Team
+}
+
+const { item, player, team } = Astro.props
+---
+
+<div
+  class="space-y-3 sm:flex sm:flex-wrap sm:space-y-0 sm:gap-3 [&>*]:sm:w-[360px]"
+>
+  <TrendingList
+    items={item?.queries.map((q) => ({
+      ...q,
+      title: q.query,
+      images: [q.image],
+    }))}
+    title="Trending Searches"
+    moreUrl="/trending/searches"
+  />
+  <TrendingList
+    items={item?.players.map((p) => ({
+      ...p,
+      title: p.name,
+      images: [p.image],
+    }))}
+    title="Trending Players"
+    moreUrl="/trending/players"
+    prominent
+  />
+  <TrendingList
+    items={item?.teams.map((p) => ({
+      ...p,
+      title:
+        (p.name.market
+          ? `${p.name.market}<br>${p.name.nickname}`
+          : p.name.nickname ?? p.name.name) ?? p.name.abbreviation,
+      images: p.reps?.length ? p.reps.map((r) => r.image) : [p.image],
+    }))}
+    title="Trending Teams"
+    moreUrl="/trending/teams"
+    prominent
+  />
+  {
+    player && player.queries?.length ? (
+      <TrendingList
+        items={player.queries.map((p) => ({
+          ...p,
+          title: p.query,
+          images: [p.image],
+        }))}
+        title={`Trending ${player.name} Searches`}
+        moreUrl="/trending/player"
+      />
+    ) : null
+  }
+  {
+    team && team.queries?.length ? (
+      <TrendingList
+        items={team.queries.map((p) => ({
+          ...p,
+          title: p.query,
+          images: [p.image],
+        }))}
+        title={`Trending ${
+          team.name.nickname ?? team.name.name ?? team.name.abbreviation
+        } Searches`}
+        moreUrl="/trending/team"
+      />
+    ) : null
+  }
+</div>
