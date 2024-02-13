@@ -18,7 +18,6 @@ import { Caching } from '@lib/caching'
 import * as Enforcer from '@lib/enforcer'
 import * as Link from '@statmuse/core/link'
 import { NOT_FOUND_404 } from '@lib/response'
-import AnswerCards from '@components/answer-cards.astro'
 
 const canQuery = await Enforcer.canQuery(Astro.locals)
 
@@ -123,15 +122,5 @@ Caching.swr(Astro)
       />
     </Container>
 
-    <Container>
-      <AnswerCards
-        league="nfl"
-        teamId={contentReference.questionTags?.teamIds.length > 0
-          ? contentReference.questionTags?.teamIds[0]
-          : contentReference.answerTags?.teamIds.length > 0
-          ? contentReference.answerTags?.teamIds[0]
-          : undefined}
-      />
-    </Container>
   </Layout>
 </Error>

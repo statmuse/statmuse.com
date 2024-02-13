@@ -16,7 +16,6 @@ import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import TwitterShare from '@components/icons/twitter.astro'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
-import AnswerCards from '@components/answer-cards.astro'
 
 interface Props {
   bio: GameraPlayerBio
@@ -263,6 +262,5 @@ const twitter = {
     </div>
     <slot />
     <Explore {league} additionalQuestions={bio.additionalQuestions} />
-    <AnswerCards {league} teamId={bio.team.entity.id.split('/')[0]} />
   </Container>
 </Layout>
