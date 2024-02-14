@@ -1,2 +1,2 @@
 export const ANSWER_CARDS_ENABLED =
-  import.meta.env.PUBLIC_ANSWER_CARDS_ENABLED === 'true'
+  import.meta.env.ANSWER_CARDS_ENABLED === 'true'
