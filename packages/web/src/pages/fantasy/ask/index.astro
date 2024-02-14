@@ -15,6 +15,7 @@ import { Caching } from '@lib/caching'
 import * as Enforcer from '@lib/enforcer'
 import * as Link from '@statmuse/core/link'
 import { NOT_FOUND_404 } from '@lib/response'
+import AnswerCards from '@components/answer-cards.astro'
 
 let query: string | undefined
 let conversationToken: string | undefined
@@ -157,6 +158,23 @@ Caching.swr(Astro)
           />
         </Container>
       )
+    }
+    {
+      response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' &&
+        response.type !== 'error' && (
+          <Container>
+            <AnswerCards
+              league="nfl"
+              teamId={
+                contentReference.questionTags?.teamIds.length > 0
+                  ? contentReference.questionTags?.teamIds[0]
+                  : contentReference.answerTags?.teamIds.length > 0
+                  ? contentReference.answerTags?.teamIds[0]
+                  : undefined
+              }
+            />
+          </Container>
+        )
     }
   </Layout>
 </ErrorLayout>
