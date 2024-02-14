@@ -19,7 +19,7 @@ import { leagueToDomain, type LeagueParam } from '@lib/params'
 import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
 console.log('ANSWER_CARDS_ENABLED', ANSWER_CARDS_ENABLED)
-console.log('env.ANSWER_CARDS_ENABLED', import.meta.env.ANSWER_CARDS_ENABLED)
+console.log('env.ANSWER_CARDS_ENABLED', process.env.ANSWER_CARDS_ENABLED)
 
 interface Props {
   bio: GameraPlayerBio
