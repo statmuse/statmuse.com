@@ -32,8 +32,8 @@ export function API({ stack }: StackContext) {
       : 'mothra-staging.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com',
     GAMERA_API_URL,
     KANEDAMA_API_URL: isProd
-      ? 'https://kanedama-prod.public.statmuse.com'
-      : 'https://kanedama-staging.public.statmuse.com',
+      ? 'https://kanedama-prod.public.statmuse.com/'
+      : 'https://kanedama-staging.public.statmuse.com/',
     SHORT_LINK_URL: isProd ? 'https://statm.us/' : 'https://stage.statm.us/',
   }
 
