@@ -11,6 +11,7 @@ import { title, description } from '@lib/meta'
 import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import * as Link from '@statmuse/core/link'
+import AnswerCards from '@components/answer-cards.astro'
 import type { LeagueParam } from '@lib/params'
 
 interface Props {
@@ -105,4 +106,20 @@ const code = await Link.askShortCode(query, preferredDomain || '')
       additionalQuestions={answer.visual.additionalQuestions}
     />
   </Container>
+  {
+    preferredDomain && (
+      <Container>
+        <AnswerCards
+          league={domain === 'EPL' ? 'fc' : (preferredDomain as LeagueParam)}
+          teamId={
+            contentReference.questionTags?.teamIds.length > 0
+              ? contentReference.questionTags?.teamIds[0]
+              : contentReference.answerTags?.teamIds.length > 0
+              ? contentReference.answerTags?.teamIds[0]
+              : undefined
+          }
+        />
+      </Container>
+    )
+  }
 </Layout>

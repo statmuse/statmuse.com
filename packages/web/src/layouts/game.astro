@@ -13,6 +13,7 @@ import Hero from '@components/hero.astro'
 import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { NOT_FOUND_404 } from '@lib/response'
+import AnswerCards from '@components/answer-cards.astro'
 import type { LeagueParam } from '@lib/params'
 
 interface Props {
@@ -74,5 +75,6 @@ const meta = {
   <Container>
     <slot />
     <Explore {league} additionalQuestions={data.visual.additionalQuestions} />
+    <AnswerCards league={league as LeagueParam} {teamId} />
   </Container>
 </Layout>
