@@ -19,7 +19,7 @@ const query = Astro.props.query
 const symbol = Astro.props.symbol || Astro.params.symbol
 if (!symbol) return NOT_FOUND_404
 
-const profile = await getAssetProfile(symbol)
+const profile = await getAssetProfile(symbol, Astro)
 if (!profile) return NOT_FOUND_404
 
 const assetUrl = getUrlForEntity({

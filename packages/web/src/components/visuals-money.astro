@@ -102,6 +102,7 @@ const details =
             const responses = await Promise.all(
               assetPairs.map((p) =>
                 getAssetPriceData({
+                  context: Astro,
                   frequency: frequency.name as FrequencyKey,
                   ...p,
                   ...props,

@@ -10,7 +10,7 @@ dayjs.extend(relativeTime)
 const { symbol } = Astro.params
 if (!symbol) return NOT_FOUND_404
 
-const profile = await getAssetProfile(symbol)
+const profile = await getAssetProfile(symbol, Astro)
 if (!profile) return NOT_FOUND_404
 
 const news = profile.news

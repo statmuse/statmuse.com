@@ -122,26 +122,30 @@ export async function ask(
   }
 }
 
-export async function lookup(symbol: string) {
+export async function lookup(symbol: string, context: Context) {
   const requestUrl = `${kanedamaApiUrl}asset/symbol/${symbol}`
 
   try {
-    const response = await fetch(requestUrl)
+    const response = await fetch(requestUrl, {
+      headers: getGameraHeaders(context),
+    })
     return response.json() as Promise<AssetBySymbolResponse>
   } catch (error) {
     console.error(error)
   }
 }
 
-export async function getAssetProfile(symbol: string) {
-  const lookupResponse = await lookup(symbol)
+export async function getAssetProfile(symbol: string, context: Context) {
+  const lookupResponse = await lookup(symbol, context)
   if (!lookupResponse) return undefined
 
   const assetId = lookupResponse.assetId
   const requestUrl = `${kanedamaApiUrl}asset/${assetId}`
 
   try {
-    const response = await fetch(requestUrl)
+    const response = await fetch(requestUrl, {
+      headers: getGameraHeaders(context),
+    })
     const data = await response.json()
     if (data.error) {
       return undefined
@@ -159,6 +163,7 @@ export async function getAssetPriceData(options: {
   startTimestamp?: string
   endTimestamp?: string
   limit?: number
+  context: Context
 }) {
   const params: Record<string, string> = {
     limit: options.limit ? options.limit.toString() : '1000',
@@ -171,11 +176,12 @@ export async function getAssetPriceData(options: {
   const requestUrl = `${kanedamaApiUrl}asset/${
     options.baseAssetId
   }/price?${new URLSearchParams(params).toString()}`
+  const headers = getGameraHeaders(options.context)
 
   try {
     const responses = await Promise.all([
-      fetch(requestUrl),
-      fetch(`${kanedamaApiUrl}asset/${options.baseAssetId}`),
+      fetch(requestUrl, { headers }),
+      fetch(`${kanedamaApiUrl}asset/${options.baseAssetId}`, { headers }),
     ])
     const json = (await Promise.all(responses.map((r) => r.json()))) as [
       AssetPriceData,
