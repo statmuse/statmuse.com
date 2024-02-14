@@ -17,6 +17,7 @@ import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import TwitterShare from '@components/icons/twitter.astro'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import AnswerCards from '@components/answer-cards.astro'
+import { ANSWER_CARDS_ENABLED } from 'src/config'
 
 interface Props {
   bio: GameraPlayerBio
@@ -263,6 +264,10 @@ const twitter = {
     </div>
     <slot />
     <Explore {league} additionalQuestions={bio.additionalQuestions} />
-    <AnswerCards {league} teamId={bio.team.entity.id.split('/')[0]} />
+    {
+      ANSWER_CARDS_ENABLED && (
+        <AnswerCards {league} teamId={bio.team.entity.id.split('/')[0]} />
+      )
+    }
   </Container>
 </Layout>

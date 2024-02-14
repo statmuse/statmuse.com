@@ -16,6 +16,7 @@ import { getLeagueKeywords, type Metadata } from '@lib/meta'
 import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import AnswerCards from '@components/answer-cards.astro'
+import { ANSWER_CARDS_ENABLED } from 'src/config'
 
 interface Props {
   bio: GameraTeamSeasonBio
@@ -299,7 +300,11 @@ const twitter = {
       <slot />
     </div>
     <Explore league={domain === 'EPL' ? 'fc' : preferredDomain} />
-    <AnswerCards league={domain === 'EPL' ? 'fc' : preferredDomain} />
+    {
+      ANSWER_CARDS_ENABLED && (
+        <AnswerCards league={domain === 'EPL' ? 'fc' : preferredDomain} />
+      )
+    }
   </Container>
 </Layout>
 

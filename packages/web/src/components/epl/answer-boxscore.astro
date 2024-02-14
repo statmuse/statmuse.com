@@ -3,6 +3,7 @@ import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
 import AnswerCards from '@components/answer-cards.astro'
+import { ANSWER_CARDS_ENABLED } from 'src/config'
 import Explore from '@components/explore.astro'
 import EplBoxscore from '@components/epl/boxscore.astro'
 import { tokensToText, type GameraEplBoxScore } from '@statmuse/core/gamera'
@@ -96,14 +97,20 @@ const code = await Link.askShortCode(query, preferredDomain || '')
       additionalQuestions={data.visual.additionalQuestions}
     />
   </Container>
-  <Container>
-    <AnswerCards
-      league="fc"
-      teamId={contentReference.questionTags?.teamIds.length > 0
-        ? contentReference.questionTags?.teamIds[0]
-        : contentReference.answerTags?.teamIds.length > 0
-        ? contentReference.answerTags?.teamIds[0]
-        : undefined}
-    />
-  </Container>
+  {
+    ANSWER_CARDS_ENABLED && (
+      <Container>
+        <AnswerCards
+          league="fc"
+          teamId={
+            contentReference.questionTags?.teamIds.length > 0
+              ? contentReference.questionTags?.teamIds[0]
+              : contentReference.answerTags?.teamIds.length > 0
+              ? contentReference.answerTags?.teamIds[0]
+              : undefined
+          }
+        />
+      </Container>
+    )
+  }
 </Layout>

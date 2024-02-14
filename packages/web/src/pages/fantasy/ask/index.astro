@@ -16,6 +16,7 @@ import * as Enforcer from '@lib/enforcer'
 import * as Link from '@statmuse/core/link'
 import { NOT_FOUND_404 } from '@lib/response'
 import AnswerCards from '@components/answer-cards.astro'
+import { ANSWER_CARDS_ENABLED } from 'src/config'
 
 let query: string | undefined
 let conversationToken: string | undefined
@@ -161,7 +162,8 @@ Caching.swr(Astro)
     }
     {
       response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' &&
-        response.type !== 'error' && (
+        response.type !== 'error' &&
+        ANSWER_CARDS_ENABLED && (
           <Container>
             <AnswerCards
               league="nfl"

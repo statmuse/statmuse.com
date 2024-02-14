@@ -12,6 +12,7 @@ import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import * as Link from '@statmuse/core/link'
 import AnswerCards from '@components/answer-cards.astro'
+import { ANSWER_CARDS_ENABLED } from 'src/config'
 import type { LeagueParam } from '@lib/params'
 
 interface Props {
@@ -107,7 +108,7 @@ const code = await Link.askShortCode(query, preferredDomain || '')
     />
   </Container>
   {
-    preferredDomain && (
+    preferredDomain && ANSWER_CARDS_ENABLED && (
       <Container>
         <AnswerCards
           league={domain === 'EPL' ? 'fc' : (preferredDomain as LeagueParam)}
