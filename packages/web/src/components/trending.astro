@@ -55,90 +55,62 @@ const data = await db.send(
 const items = data.Items as Item[] | undefined
 const [item] = items ?? []
 
-export type Query = {
-  league: string
-  query: string
-  uri: string
-  image: string
-  background: string
-  foreground: string
-  count: number
-}
-
-export type Player = {
-  id: number
-  league: string
-  name: string
-  image: string
-  uri: string
-  background: string
-  foreground: string
-  count: number
-  queries?: Query[]
-}
-
-export type Team = {
-  id: number
-  league: string
-  name: {
-    abbreviation: string
-    nickname?: string
-    market?: string
-    name?: string
-  }
-  reps: { image: string; name: string }[]
-  image: string
-  uri: string
-  background: string
-  foreground: string
-  count: number
-  queries?: Query[]
-}
-
 export type Item = {
-  players: Player[]
-  queries: Query[]
-  teams: Team[]
+  datasets: [
+    {
+      name: string
+      key: string
+      prominent?: boolean
+      items: TrendingListItem[]
+    },
+  ]
   updated: string
 }
 
-const leagues = [
-  { text: 'ALL', param: 'all', href: '/trending' + Astro.url.search },
-  { text: 'FC', param: 'fc', href: '/fc/trending' + Astro.url.search },
-  { text: 'NBA', param: 'nba', href: '/nba/trending' + Astro.url.search },
-  { text: 'NFL', param: 'nfl', href: '/nfl/trending' + Astro.url.search },
-  { text: 'NHL', param: 'nhl', href: '/nhl/trending' + Astro.url.search },
-  { text: 'MLB', param: 'mlb', href: '/mlb/trending' + Astro.url.search },
-  { text: 'PGA', param: 'pga', href: '/pga/trending' + Astro.url.search },
-  { text: 'MONEY', param: 'money', href: '/money/trending' + Astro.url.search },
+const categoryPath = category ? `/${category}` : ''
+
+const leagues: { text: string; param: string; href?: string }[] = [
+  {
+    text: 'ALL',
+    param: 'all',
+    href: '/trending' + categoryPath + Astro.url.search,
+  },
+  { text: 'FC', param: 'fc' },
+  { text: 'NBA', param: 'nba' },
+  { text: 'NFL', param: 'nfl' },
+  { text: 'NHL', param: 'nhl' },
+  { text: 'MLB', param: 'mlb' },
+  { text: 'PGA', param: 'pga' },
+  { text: 'MONEY', param: 'money' },
 ]
 
-const player = item?.players?.[0]
-const team = item?.teams?.[0]
-
 let trendingListItems: TrendingListItem[] = []
-switch (category) {
-  case 'searches':
-    trendingListItems = item?.queries.map((q) => ({
-      ...q,
-      title: q.query,
-      images: [q.image],
-    }))
-    break
-  default:
-    break
-}
+const dataset = item?.datasets?.find((d) => d.key === category)
+if (dataset) trendingListItems = dataset.items
+
+const leagueTitle =
+  league.toLowerCase() === 'all'
+    ? ''
+    : league.toLowerCase() === 'money'
+    ? 'Money'
+    : league.toUpperCase()
+
+const title = category
+  ? `Trending ${leagueTitle} ${
+      category[0].toUpperCase() + category.substring(1)
+    }`
+  : 'Trending'
 ---
 
 <Layout
   analytics={{ page_type: 'trending' }}
-  meta={{ title: 'Trending' }}
+  meta={{ title }}
   colors={{ foreground: colors.gray['8'], background: colors.teal }}
 >
   <Header />
   <Container class="text-gray-8 bg-teal">
     <div class="pt-8 pb-8 md:pt-[90px] md:pb-16">
-      <h1 class="text-center font-semibold text-4xl md:text-6xl">Trending</h1>
+      <h1 class="text-center font-semibold text-4xl md:text-6xl">{title}</h1>
     </div>
   </Container>
   <div class="bg-gray-7 p-3 space-y-3">
@@ -155,7 +127,10 @@ switch (category) {
                 selected === league.param,
               'bg-gray-8 text-gray-2 border-gray-6': selected !== league.param,
             }}
-            href={league.href}
+            href={
+              league.href ??
+              `/${league.param}/trending${categoryPath}${Astro.url.search}`
+            }
             set:html={league.text}
           />
         ))
@@ -215,7 +190,7 @@ switch (category) {
       category ? (
         <TrendingMore items={trendingListItems} />
       ) : (
-        <TrendingLists {item} {player} {team} />
+        <TrendingLists {item} />
       )
     }
   </div>

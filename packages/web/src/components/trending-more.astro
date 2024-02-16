@@ -15,10 +15,10 @@ const { items, prominent } = Astro.props
   {
     items?.length ? (
       <>
-        <ol class="list-none text-gray-700 space-y-3 md:space-y-0 md:gap-3 md:flex md:flex-wrap md:justify-center">
+        <ol class="list-none text-gray-700 space-y-3 sm:space-y-0 sm:gap-3 sm:flex sm:flex-wrap sm:justify-center">
           {items.map((item, index) => (
             <TrendingListItem
-              class="bg-gray-8 rounded-3xl overflow-clip border border-gray-6 md:max-w-[360px]"
+              class="bg-gray-8 rounded-3xl overflow-clip border border-gray-6 sm:max-w-[360px]"
               numbered={false}
               {item}
               {index}
@@ -28,11 +28,13 @@ const { items, prominent } = Astro.props
         </ol>
       </>
     ) : (
-      <div class="h-96">
-        <div class="h-full w-full flex justify-center items-center text-center text-gray-400">
-          <div>
-            <p>Gathering data</p>
-            <p>Check back later</p>
+      <div class="bg-white rounded-3xl border border-gray-200 overflow-clip sm:w-[360px] m-auto">
+        <div class="h-96">
+          <div class="h-full w-full flex justify-center items-center text-center text-gray-400">
+            <div>
+              <p>Gathering data</p>
+              <p>Check back later</p>
+            </div>
           </div>
         </div>
       </div>

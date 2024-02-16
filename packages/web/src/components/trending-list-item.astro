@@ -3,20 +3,26 @@ import Image from '@components/image.astro'
 import type { HTMLAttributes } from 'astro/types'
 
 export interface TrendingListItem {
-  uri: string
   title: string
+  html?: string
+  uri: string
   images: string[]
+  background: string
+  foreground: string
+  count: number
 }
 
 interface Props extends HTMLAttributes<'li'> {
   item: TrendingListItem
   index: number
-  prominent?: boolean
   numbered?: boolean
+  prominent?: boolean
+  eager?: boolean
 }
 
 const { item, index, prominent } = Astro.props
 const numbered = Astro.props.numbered ?? true
+const eager = Astro.props.eager ?? false
 ---
 
 <li {...Astro.props}>
@@ -67,6 +73,7 @@ const numbered = Astro.props.numbered ?? true
             src={image}
             width={450}
             height={450}
+            loading={eager ? 'eager' : 'lazy'}
           />
         ))
       }

@@ -1,77 +1,40 @@
 ---
 import TrendingList from '@components/trending-list.astro'
-import type { Item, Player, Team } from '@components/trending.astro'
+import type { Item } from '@components/trending.astro'
 
 interface Props {
   item: Item
-  player?: Player
-  team?: Team
 }
 
-const { item, player, team } = Astro.props
+const { item } = Astro.props
 ---
 
 <div
-  class="space-y-3 sm:flex sm:flex-wrap sm:space-y-0 sm:gap-3 [&>*]:sm:w-[360px]"
+  class="space-y-3 sm:justify-center sm:flex sm:flex-wrap sm:space-y-0 sm:gap-3 [&>*]:sm:w-[360px]"
 >
-  <TrendingList
-    items={item?.queries.map((q) => ({
-      ...q,
-      title: q.query,
-      images: [q.image],
-    }))}
-    title="Trending Searches"
-    moreUrl="/trending/searches"
-  />
-  <TrendingList
-    items={item?.players.map((p) => ({
-      ...p,
-      title: p.name,
-      images: [p.image],
-    }))}
-    title="Trending Players"
-    moreUrl="/trending/players"
-    prominent
-  />
-  <TrendingList
-    items={item?.teams.map((p) => ({
-      ...p,
-      title:
-        (p.name.market
-          ? `${p.name.market}<br>${p.name.nickname}`
-          : p.name.nickname ?? p.name.name) ?? p.name.abbreviation,
-      images: p.reps?.length ? p.reps.map((r) => r.image) : [p.image],
-    }))}
-    title="Trending Teams"
-    moreUrl="/trending/teams"
-    prominent
-  />
   {
-    player && player.queries?.length ? (
+    item?.datasets?.map((dataset, index) => (
       <TrendingList
-        items={player.queries.map((p) => ({
-          ...p,
-          title: p.query,
-          images: [p.image],
-        }))}
-        title={`Trending ${player.name} Searches`}
-        moreUrl="/trending/player"
+        title={`Trending ${dataset.name}`}
+        items={dataset.items}
+        moreUrl={`/trending/${dataset.key}`}
+        prominent={dataset.prominent}
+        eager={index < 3}
       />
-    ) : null
+    ))
   }
   {
-    team && team.queries?.length ? (
-      <TrendingList
-        items={team.queries.map((p) => ({
-          ...p,
-          title: p.query,
-          images: [p.image],
-        }))}
-        title={`Trending ${
-          team.name.nickname ?? team.name.name ?? team.name.abbreviation
-        } Searches`}
-        moreUrl="/trending/team"
-      />
+    !item || !item.datasets?.length ? (
+      <div class="bg-white rounded-3xl border border-gray-200 overflow-clip">
+        <div class="h-96">
+          <div class="h-full w-full flex justify-center items-center text-center text-gray-400">
+            <div>
+              <p>Gathering data</p>
+              <p>Check back later</p>
+            </div>
+          </div>
+        </div>
+      </div>
     ) : null
   }
 </div>
