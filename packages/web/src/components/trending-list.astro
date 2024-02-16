@@ -1,0 +1,45 @@
+---
+import Chevron from '@components/icons/chevron.astro'
+import TrendingListItem, {
+  type TrendingListItem as Item,
+} from '@components/trending-list-item.astro'
+
+interface Props {
+  items: Item[]
+  title: string
+  moreUrl: string
+  eager?: boolean
+  prominent?: boolean
+}
+
+const { items, title, eager, moreUrl, prominent } = Astro.props
+---
+
+<div class="bg-white rounded-3xl border border-gray-200 overflow-clip">
+  <h3 class="font-semibold my-2 mx-4">{title}</h3>
+  {
+    items?.length ? (
+      <>
+        <ol class="list-none text-gray-700 divide-y divide-gray-200">
+          {items.slice(0, 5).map((item, index) => (
+            <TrendingListItem {item} {index} {prominent} {eager} />
+          ))}
+          <li class="py-3">
+            <a href={moreUrl} class="flex justify-center gap-2 text-gray-5">
+              See more <Chevron class="w-5 aspect-square" />
+            </a>
+          </li>
+        </ol>
+      </>
+    ) : (
+      <div class="h-96">
+        <div class="h-full w-full flex justify-center items-center text-center text-gray-400">
+          <div>
+            <p>Gathering data</p>
+            <p>Check back later</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+</div>
