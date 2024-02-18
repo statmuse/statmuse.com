@@ -123,12 +123,7 @@ type Player = {
 type Team = {
   id: number
   league: League
-  name: {
-    abbreviation: string
-    market?: string
-    nickname?: string
-    name?: string
-  }
+  name: { abbreviation: string; market: string; nickname: string }
   uri: string
   reps: { name: string; image: string }[]
   image: string
@@ -146,16 +141,6 @@ type Asset = {
   type: string
   class: string
   exchange: string
-}
-
-type Item = {
-  title: string
-  html?: string
-  uri: string
-  images: string[]
-  background: string
-  foreground: string
-  count: number
 }
 
 const leaguePlayers: Record<SportsLeague, Player[] | undefined> = {
@@ -475,8 +460,21 @@ async function update(
       return { ...player, count }
     })
     .sort((a, b) => b.count - a.count)
+    .map((player, index) => {
+      const id = player.id
+      const queriesForPlayer = queries
+        .filter((q) => q.players?.map((p) => p.id).includes(id))
+        .map((q) => ({
+          ...q,
+          players: undefined,
+          teams: undefined,
+          assets: undefined,
+        }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, STORE)
 
-  const [topPlayer] = players || []
+      return index === 0 ? { ...player, queries: queriesForPlayer } : player
+    })
 
   const uniqueTeams = Array.from(
     new Set(
@@ -497,8 +495,21 @@ async function update(
       return { ...team, count }
     })
     .sort((a, b) => b.count - a.count)
+    .map((team, index) => {
+      const id = team.id
+      const queriesForTeam = queries
+        .filter((q) => q.teams?.map((t) => t.id).includes(id))
+        .map((q) => ({
+          ...q,
+          players: undefined,
+          teams: undefined,
+          assets: undefined,
+        }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, STORE)
 
-  const [topTeam] = teams || []
+      return index === 0 ? { ...team, queries: queriesForTeam } : team
+    })
 
   const uniqueAssets = Array.from(
     new Set(
@@ -519,8 +530,21 @@ async function update(
       return { ...asset, count }
     })
     .sort((a, b) => b.count - a.count)
+    .map((asset, index) => {
+      const id = asset.id
+      const queriesForAsset = queries
+        .filter((q) => q.assets?.map((p) => p.id).includes(id))
+        .map((q) => ({
+          ...q,
+          players: undefined,
+          teams: undefined,
+          assets: undefined,
+        }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, STORE)
 
-  const [topAsset] = assets || []
+      return index === 0 ? { ...asset, queries: queriesForAsset } : asset
+    })
 
   const stocks = assets
     .filter((a) => a.type === 'Stock')
@@ -546,272 +570,28 @@ async function update(
     .filter((a) => a.exchange === 'NASDAQ')
     .sort((a, b) => b.count - a.count)
 
-  const datasets: {
-    name: string
-    key: string
-    prominent?: boolean
-    items: Item[]
-  }[] = [
-    {
-      name: 'Searches',
-      key: 'searches',
-      items: queries
-        .map((q) => ({
-          title: q.query,
-          uri: q.uri,
-          images: [q.image],
-          background: q.background,
-          foreground: q.foreground,
-          count: q.count,
-        }))
-        .sort((a, b) => b.count - a.count)
-        .slice(0, STORE),
-    },
-  ]
-
-  if (players?.length) {
-    datasets.push({
-      name: 'Players',
-      key: 'players',
-      prominent: true,
-      items: players
-        .map((p) => ({
-          title: p.name,
-          uri: p.uri,
-          images: [p.image],
-          background: p.background,
-          foreground: p.foreground,
-          count: p.count,
-        }))
-        .slice(0, STORE),
-    })
-  }
-
-  if (teams?.length) {
-    datasets.push({
-      name: 'Teams',
-      key: 'teams',
-      prominent: true,
-      items: teams
-        .map((t) => ({
-          title:
-            (t.name.market
-              ? `${t.name.market} ${t.name.nickname}`
-              : t.name.nickname ?? t.name.name) ?? t.name.abbreviation,
-          html:
-            (t.name.market
-              ? `${t.name.market}<br>${t.name.nickname}`
-              : t.name.nickname ?? t.name.name) ?? t.name.abbreviation,
-          images: t.reps?.length ? t.reps.map((r) => r.image) : [t.image],
-          uri: t.uri,
-          background: t.background,
-          foreground: t.foreground,
-          count: t.count,
-        }))
-        .slice(0, STORE),
-    })
-  }
-
-  if (assets?.length) {
-    datasets.push({
-      name: 'Assets',
-      key: 'assets',
-      prominent: true,
-      items: assets
-        .map((s) => ({
-          title: s.name,
-          uri: s.uri,
-          images: [s.image],
-          background: s.background,
-          foreground: s.foreground,
-          count: s.count,
-        }))
-        .slice(0, STORE),
-    })
-  }
-
-  if (topPlayer) {
-    const id = topPlayer.id
-    const queriesForPlayer = queries
-      .filter((q) => q.players?.map((p) => p.id).includes(id))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, STORE)
-
-    datasets.push({
-      name: topPlayer.name + ' Searches',
-      key: 'player',
-      items: queriesForPlayer
-        .map((q) => ({
-          title: q.query,
-          uri: q.uri,
-          images: [q.image],
-          background: q.background,
-          foreground: q.foreground,
-          count: q.count,
-        }))
-        .slice(0, STORE),
-    })
-  }
-
-  if (topTeam) {
-    const id = topTeam.id
-    const queriesForTeam = queries
-      .filter((q) => q.teams?.map((p) => p.id).includes(id))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, STORE)
-
-    datasets.push({
-      name: (topTeam.name.nickname || topTeam.name.name) + ' Searches',
-      key: 'team',
-      items: queriesForTeam
-        .map((q) => ({
-          title: q.query,
-          uri: q.uri,
-          images: [q.image],
-          background: q.background,
-          foreground: q.foreground,
-          count: q.count,
-        }))
-        .slice(0, STORE),
-    })
-  }
-
-  if (topAsset) {
-    const id = topAsset.id
-    const queriesForAsset = queries
-      .filter((q) => q.assets?.map((p) => p.id).includes(id))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, STORE)
-
-    datasets.push({
-      name: topAsset.name + ' Searches',
-      key: 'asset',
-      items: queriesForAsset
-        .map((q) => ({
-          title: q.query,
-          uri: q.uri,
-          images: [q.image],
-          background: q.background,
-          foreground: q.foreground,
-          count: q.count,
-        }))
-        .slice(0, STORE),
-    })
-  }
-
-  if (stocks?.length) {
-    datasets.push({
-      name: 'Stocks',
-      key: 'stocks',
-      prominent: true,
-      items: stocks
-        .map((s) => ({
-          title: s.name,
-          uri: s.uri,
-          images: [s.image],
-          background: s.background,
-          foreground: s.foreground,
-          count: s.count,
-        }))
-        .slice(0, STORE),
-    })
-  }
-
-  if (indices?.length) {
-    datasets.push({
-      name: 'Indices',
-      key: 'indices',
-      prominent: true,
-      items: indices
-        .map((s) => ({
-          title: s.name,
-          uri: s.uri,
-          images: [s.image],
-          background: s.background,
-          foreground: s.foreground,
-          count: s.count,
-        }))
-        .slice(0, STORE),
-    })
-  }
-
-  if (etfs?.length) {
-    datasets.push({
-      name: 'ETFs',
-      key: 'etfs',
-      prominent: true,
-      items: etfs
-        .map((s) => ({
-          title: s.name,
-          uri: s.uri,
-          images: [s.image],
-          background: s.background,
-          foreground: s.foreground,
-          count: s.count,
-        }))
-        .slice(0, STORE),
-    })
-  }
-
-  if (currencies?.length) {
-    datasets.push({
-      name: 'Currencies',
-      key: 'currencies',
-      prominent: true,
-      items: currencies
-        .map((s) => ({
-          title: s.name,
-          uri: s.uri,
-          images: [s.image],
-          background: s.background,
-          foreground: s.foreground,
-          count: s.count,
-        }))
-        .slice(0, STORE),
-    })
-  }
-
-  if (nyse?.length) {
-    datasets.push({
-      name: 'NYSE Stocks',
-      key: 'nyse',
-      prominent: true,
-      items: nyse
-        .map((s) => ({
-          title: s.name,
-          uri: s.uri,
-          images: [s.image],
-          background: s.background,
-          foreground: s.foreground,
-          count: s.count,
-        }))
-        .slice(0, STORE),
-    })
-  }
-
-  if (nasdaq?.length) {
-    datasets.push({
-      name: 'NASDAQ Stocks',
-      key: "nasdaq",
-      prominent: true,
-      items: nasdaq
-        .map((s) => ({
-          title: s.name,
-          uri: s.uri,
-          images: [s.image],
-          background: s.background,
-          foreground: s.foreground,
-          count: s.count,
-        }))
-        .slice(0, STORE),
-    })
-  }
-
   const item = {
     pk: `${league}#${timeframe}#${location}`,
     sk: new Date().toISOString().split('T')[0],
     updated: new Date().toISOString(),
-    datasets,
+    queries: queries
+      .map((q) => ({
+        ...q,
+        players: undefined,
+        teams: undefined,
+        assets: undefined,
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, STORE),
+    players: players.slice(0, STORE),
+    teams: teams.slice(0, STORE),
+    assets: assets.slice(0, STORE),
+    stocks: stocks.slice(0, STORE),
+    indices: indices.slice(0, STORE),
+    etfs: etfs.slice(0, STORE),
+    currencies: currencies.slice(0, STORE),
+    nyse: nyse.slice(0, STORE),
+    nasdaq: nasdaq.slice(0, STORE),
   }
 
   await db.send(
