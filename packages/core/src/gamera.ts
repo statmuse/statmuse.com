@@ -609,7 +609,7 @@ export interface GameraTeamSeasonOverview {
   bio: GameraTeamSeasonBio
   scoresAndSchedule: GameraGrid
   teamLeaders: GameraTeamLeader[]
-  standings?: GameraGrid
+  standings: GameraGrid
   stats: GameraGrid | GameraGrid[]
   playerGallery: GameraGalleryImage[]
 }
