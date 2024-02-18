@@ -10,17 +10,7 @@ import { Table } from 'sst/node/table'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { QueryCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import tailwindConfig from '../../tailwind.config.ts'
-
-const categories = [
-  'searches',
-  'players',
-  'teams',
-  'player',
-  'team',
-  'money',
-] as const
-
-type Category = (typeof categories)[number]
+import type { Category } from 'src/types'
 
 const colors = tailwindConfig.theme.extend.colors
 

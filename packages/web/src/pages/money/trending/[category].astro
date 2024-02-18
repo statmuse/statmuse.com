@@ -1,18 +1,8 @@
 ---
 import TrendingComponent from '@components/trending.astro'
 import { Caching } from '@lib/caching'
+import { categories, type Category } from "src/types"
 import { NOT_FOUND_404 } from '@lib/response'
-
-const categories = [
-  'searches',
-  'players',
-  'teams',
-  'player',
-  'team',
-  'money',
-] as const
-
-type Category = (typeof categories)[number]
 
 const category = Astro.params.category as Category 
 if (!categories.includes(category as Category)) {
