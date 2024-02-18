@@ -838,7 +838,7 @@ if (allowedDomains.includes(league) && teamId) {
               </div>
             </div>
           )}
-          {teamSeasonOverview && (
+          {teamSeasonOverview && teamSeasonOverview.standings && (
             <div>
               <div class="flex justify-between">
                 <p class="font-semibold">{teamSeasonOverview.standings.name}</p>
