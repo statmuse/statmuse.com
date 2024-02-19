@@ -784,7 +784,7 @@ if (allowedDomains.includes(league) && teamId) {
         domain: leagueToDomain(league),
         game: `game-${score.entity.id}`,
       })
-      teamLastGame = res?.visual.detail[0]
+      if (res?.visual?.detail?.length) teamLastGame = res?.visual.detail[0]
     }
   }
 }
