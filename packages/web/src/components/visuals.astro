@@ -18,6 +18,7 @@ import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
 import FreestarMedRec from '@components/freestar-med-rec.svelte'
 import FreestarRightRail from '@components/freestar-right-rail.svelte'
 import AditudeRightRail from '@components/aditude-right-rail.svelte'
+import AditudeMedRec from '@components/aditude-med-rec.svelte'
 
 interface Props {
   response: GameraResponse
@@ -169,7 +170,7 @@ const details =
                     )
                 })()}
                 <div>
-                  <FreestarMedRec client:only="svelte" />
+                  <AditudeMedRec client:only="svelte" />
                 </div>
                 {detail.grids.map((grid) => (
                   <div>
