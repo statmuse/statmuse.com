@@ -27,7 +27,8 @@ import GridCard from '@components/cards/grid.astro'
 import EntityLink from '@components/entity-link.astro'
 import Image from '@components/image.astro'
 import dayjs from 'dayjs'
-import FreestarCardMedRec from './freestar-card-med-rec.svelte'
+import FreestarCardMedRec from '@components/freestar-card-med-rec.svelte'
+import AditudeCardMedRec from '@components/aditude-card-med-rec.svelte'
 
 interface Props {
   league: LeagueParam
@@ -978,9 +979,9 @@ if (allowedDomains.includes(league) && teamId) {
   <div>
     {
       teamSpecificPlayerCards && (
-        <FreestarCardMedRec
+        <AditudeCardMedRec
           client:only="svelte"
-          slotId="statmuse_incontent_cards_1"
+          slotId="pb-slot-incontent-1"
         />
       )
     }
@@ -1031,9 +1032,9 @@ if (allowedDomains.includes(league) && teamId) {
   {
     playerCardsResp && playerLeaderCards.length > 0 && (
       <div>
-        <FreestarCardMedRec
+        <AditudeCardMedRec
           client:only="svelte"
-          slotId="statmuse_incontent_cards_2"
+          slotId="pb-slot-incontent-2"
         />
       </div>
     )
@@ -1084,9 +1085,9 @@ if (allowedDomains.includes(league) && teamId) {
   {
     teamCardsResp && teamRankingCards.length > 0 && (
       <div>
-        <FreestarCardMedRec
+        <AditudeCardMedRec
           client:only="svelte"
-          slotId="statmuse_incontent_cards_3"
+          slotId="pb-slot-incontent-3"
         />
       </div>
     )
@@ -1147,9 +1148,9 @@ if (allowedDomains.includes(league) && teamId) {
       playerCardsResp.seasonType !== 'postseason' &&
       fantasyCards.length > 0 && (
         <div>
-          <FreestarCardMedRec
+          <AditudeCardMedRec
             client:only="svelte"
-            slotId="statmuse_incontent_cards_4"
+            slotId="pb-slot-incontent-4"
           />
         </div>
       )
@@ -1238,9 +1239,9 @@ if (allowedDomains.includes(league) && teamId) {
   {
     standingsResp && standingsResp.teams && (
       <div>
-        <FreestarCardMedRec
+        <AditudeCardMedRec
           client:only="svelte"
-          slotId="statmuse_incontent_cards_5"
+          slotId="pb-slot-incontent-5"
         />
       </div>
     )
