@@ -366,6 +366,14 @@ const canonicalUrl = meta?.canonical
         // </Fragment>
       )
     }
+    {
+      import.meta.env.PROD && (
+        <Fragment>
+          <link rel="preload" as="script" href="https://www.googletagservices.com/tag/js/gpt.js" />
+          <script async src="https://dn0qt3r0xannq.cloudfront.net/statmuse-3HFSjUvCes/statmuse-longform/prebid-load.js"></script>
+        </Fragment>
+      )
+    }
   </head>
   <body class="text-black">
     <slot />
