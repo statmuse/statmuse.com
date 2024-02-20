@@ -17,6 +17,7 @@ import NbaShotChart from '@components/nba-shotchart'
 import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
 import FreestarMedRec from '@components/freestar-med-rec.svelte'
 import FreestarRightRail from '@components/freestar-right-rail.svelte'
+import AditudeRightRail from '@components/aditude-right-rail.svelte'
 
 interface Props {
   response: GameraResponse
@@ -184,7 +185,7 @@ const details =
                           limitRows
                         />
                       </div>
-                      <FreestarRightRail client:only="svelte" />
+                      <AditudeRightRail client:only="svelte" />
                     </div>
                   </div>
                 ))}
@@ -204,7 +205,7 @@ const details =
                     limitRows
                   />
                 </div>
-                <FreestarRightRail client:only="svelte" />
+                <AditudeRightRail client:only="svelte" />
               </div>
             ))
           case 'standings':
