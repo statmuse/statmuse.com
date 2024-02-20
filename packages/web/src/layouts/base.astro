@@ -6,6 +6,7 @@ import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import CookieConsent from '@components/cookie-consent.svelte'
 import { ViewTransitions } from 'astro:transitions'
 import FreestarAdBanner from '@components/freestar-ad-banner.svelte'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 interface Props {
   meta?: Metadata
@@ -378,8 +379,8 @@ const canonicalUrl = meta?.canonical
   <body class="text-black">
     <slot />
     <CookieConsent client:only="svelte" />
-    <FreestarAdBanner client:only="svelte" {enableFreestarAdBanner} />
-    <script>
+    <AditudeAdBanner client:only="svelte" />
+    <!-- <script>
       document.addEventListener('astro:after-swap', () => {
         const freestar = window.freestar
         if (freestar) {
@@ -391,7 +392,7 @@ const canonicalUrl = meta?.canonical
           })
         }
       })
-    </script>
+    </script> -->
     <script>
       import Honeybadger from '@honeybadger-io/js'
       import { segment, getOrigin } from '@lib/analytics'
