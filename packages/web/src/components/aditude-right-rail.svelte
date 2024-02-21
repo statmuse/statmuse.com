@@ -5,10 +5,7 @@
 
   let mobile = isMobileTest(navigator.userAgent)
 
-  let isNotSubscriber =
-    ($session?.type === 'user' &&
-      $session?.properties.subscriptionStatus !== 'active') ||
-    ($session?.type === 'visitor' && !$session?.properties.bot)
+  let isNotSubscriber = false
 
   onMount(() => {
     // window.tude = window.tude || { cmd: [] }
@@ -23,6 +20,11 @@
   })
 
   $: {
+    isNotSubscriber =
+      ($session?.type === 'user' &&
+        $session?.properties.subscriptionStatus !== 'active') ||
+      ($session?.type === 'visitor' && !$session?.properties.bot)
+
     if ($session && isNotSubscriber) {
       window.tude = window.tude || { cmd: [] }
       tude.cmd.push(function () {
