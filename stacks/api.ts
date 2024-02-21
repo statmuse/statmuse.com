@@ -77,7 +77,7 @@ export function API({ stack }: StackContext) {
           secrets.SENDGRID_TRANSACTIONAL_API_KEY,
           secrets.GAMERA_API_KEY,
         ],
-        // prefetchSecrets: true,
+        prefetchSecrets: true,
         vpc,
         vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_EGRESS },
         securityGroups: [lambdaSecurityGroup],
