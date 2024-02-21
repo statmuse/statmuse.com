@@ -5,12 +5,10 @@
 
   let mobile = isMobileTest(navigator.userAgent)
 
-  let isNotSubscriber = false
+  let renderAd = false
 
   afterUpdate(() => {
-    console.log('after update callback')
-    if (isNotSubscriber) {
-      console.log('render anchor ad: ', true)
+    if (isNotSubscriber && !renderAd) {
       window.tude = window.tude || { cmd: [] }
       tude.cmd.push(function () {
         tude.refreshAdsViaDivMappings([
@@ -20,20 +18,19 @@
           },
         ])
       })
+      renderAd = true
     }
   })
 
-  $: {
-    isNotSubscriber =
-      ($session?.type === 'user' &&
-        $session?.properties.subscriptionStatus !== 'active') ||
-      ($session?.type === 'visitor' && !$session?.properties.bot)
-  }
+  $: isNotSubscriber =
+    ($session?.type === 'user' &&
+      $session?.properties.subscriptionStatus !== 'active') ||
+    ($session?.type === 'visitor' && !$session?.properties.bot)
 </script>
 
 {#if import.meta.env.PROD && isNotSubscriber}
   <div
-    class="fixed bottom-0 right-0 w-screen z-50 flex justify-start"
+    class="fixed bottom-0 right-0 w-screen z-50 flex justify-center"
     style:min-height={mobile ? '50px' : '90px'}
     style:background="#f7f7f7e6"
   >
