@@ -1,31 +1,16 @@
 <script lang="ts">
   import { session } from '@lib/session-store'
   import { isMobileTest } from '@lib/useragent'
-  import { onMount } from 'svelte'
+  import { onMount, afterUpdate } from 'svelte'
 
   let mobile = isMobileTest(navigator.userAgent)
 
   let isNotSubscriber = false
 
-  onMount(() => {
-    // window.tude = window.tude || { cmd: [] }
-    // tude.cmd.push(function () {
-    //   tude.refreshAdsViaDivMappings([
-    //     {
-    //       divId: 'pb-slot-anchor',
-    //       baseDivId: 'pb-slot-anchor',
-    //     },
-    //   ])
-    // })
-  })
-
-  $: {
-    isNotSubscriber =
-      ($session?.type === 'user' &&
-        $session?.properties.subscriptionStatus !== 'active') ||
-      ($session?.type === 'visitor' && !$session?.properties.bot)
-
-    if ($session && isNotSubscriber) {
+  afterUpdate(() => {
+    console.log('after update callback')
+    if (isNotSubscriber) {
+      console.log('render anchor ad: ', true)
       window.tude = window.tude || { cmd: [] }
       tude.cmd.push(function () {
         tude.refreshAdsViaDivMappings([
@@ -36,6 +21,13 @@
         ])
       })
     }
+  })
+
+  $: {
+    isNotSubscriber =
+      ($session?.type === 'user' &&
+        $session?.properties.subscriptionStatus !== 'active') ||
+      ($session?.type === 'visitor' && !$session?.properties.bot)
   }
 </script>
 
