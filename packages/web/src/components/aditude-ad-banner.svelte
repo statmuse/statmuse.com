@@ -7,6 +7,14 @@
 
   let renderAd = false
 
+  onMount(() => {
+    return () => {
+      if (window.tude) {
+        tude.destroyAds(['pb-slot-anchor'])
+      }
+    }
+  })
+
   afterUpdate(() => {
     if (isNotSubscriber && !renderAd) {
       window.tude = window.tude || { cmd: [] }
