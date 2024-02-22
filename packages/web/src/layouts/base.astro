@@ -387,7 +387,7 @@ const canonicalUrl = meta?.canonical
   <body class="text-black">
     <slot />
     <CookieConsent client:only="svelte" />
-    <AditudeAdBanner client:only="svelte" />
+    <AditudeAdBanner client:only="svelte" transition:persist />
     <!-- <script>
       document.addEventListener('astro:after-swap', () => {
         const freestar = window.freestar
