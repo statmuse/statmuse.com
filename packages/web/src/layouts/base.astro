@@ -88,7 +88,7 @@ const canonicalUrl = meta?.canonical
     <meta charset="utf-8" />
     <meta name="color-scheme" content="light only" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="telephone=no" />
     <meta name="generator" content={Astro.generator} />
     <meta name="apple-itunes-app" content="app-id=1234654160" />
     <slot name="head">
@@ -202,7 +202,8 @@ const canonicalUrl = meta?.canonical
 
       @font-face {
         font-family: 'canada-type-gibson';
-        src: url('/fonts/Gibson-SemiBold.woff2') format('woff2'),
+        src:
+          url('/fonts/Gibson-SemiBold.woff2') format('woff2'),
           url('/fonts/Gibson-SemiBold.woff') format('woff'),
           url('/fonts/Gibson-SemiBold.otf') format('opentype');
         font-display: auto;
@@ -302,76 +303,83 @@ const canonicalUrl = meta?.canonical
       gtag('config', 'G-QRW302M4ZR')
     </script>
     {
-      import.meta.env.PROD && enableFreestarAdBanner && (
-        false
-        // <Fragment>
-        //   <link rel="preconnect" href="https://a.pub.network/" crossorigin />
-        //   <link rel="preconnect" href="https://b.pub.network/" crossorigin />
-        //   <link rel="preconnect" href="https://c.pub.network/" crossorigin />
-        //   <link rel="preconnect" href="https://d.pub.network/" crossorigin />
-        //   <link
-        //     rel="preconnect"
-        //     href="https://c.amazon-adsystem.com"
-        //     crossorigin
-        //   />
-        //   <link
-        //     rel="preconnect"
-        //     href="https://s.amazon-adsystem.com"
-        //     crossorigin
-        //   />
-        //   <link
-        //     rel="preconnect"
-        //     href="https://secure.quantserve.com/"
-        //     crossorigin
-        //   />
-        //   <link
-        //     rel="preconnect"
-        //     href="https://rules.quantcount.com/"
-        //     crossorigin
-        //   />
-        //   <link
-        //     rel="preconnect"
-        //     href="https://pixel.quantserve.com/"
-        //     crossorigin
-        //   />
-        //   <link
-        //     rel="preconnect"
-        //     href="https://cmp.quantcast.com/"
-        //     crossorigin
-        //   />
-        //   <link rel="preconnect" href="https://btloader.com/" crossorigin />
-        //   <link rel="preconnect" href="https://api.btloader.com/" crossorigin />
-        //   <link
-        //     rel="preconnect"
-        //     href="https://confiant-integrations.global.ssl.fastly.net"
-        //     crossorigin
-        //   />
-        //   <link
-        //     rel="stylesheet"
-        //     href="https://a.pub.network/statmuse-com/cls.css"
-        //   />
-        //   <script data-cfasync="false" type="text/javascript">
-        //     var freestar = freestar || {}
-        //     freestar.queue = freestar.queue || []
-        //     freestar.config = freestar.config || {}
-        //     freestar.config.enabled_slots = []
-        //     freestar.initCallback = function () {
-        //       if (freestar.config.enabled_slots.length === 0) {
-        //         freestar.initCallbackCalled = false
-        //       } else {
-        //         freestar.newAdSlots(freestar.config.enabled_slots)
-        //       }
-        //     }
-        //   </script>
-        //   <link rel="stylesheet" href="/styles/freestar.css" />
-        // </Fragment>
+      import.meta.env.PROD && enableFreestarAdBanner && false && (
+        <Fragment>
+          <link rel="preconnect" href="https://a.pub.network/" crossorigin />
+          <link rel="preconnect" href="https://b.pub.network/" crossorigin />
+          <link rel="preconnect" href="https://c.pub.network/" crossorigin />
+          <link rel="preconnect" href="https://d.pub.network/" crossorigin />
+          <link
+            rel="preconnect"
+            href="https://c.amazon-adsystem.com"
+            crossorigin
+          />
+          <link
+            rel="preconnect"
+            href="https://s.amazon-adsystem.com"
+            crossorigin
+          />
+          <link
+            rel="preconnect"
+            href="https://secure.quantserve.com/"
+            crossorigin
+          />
+          <link
+            rel="preconnect"
+            href="https://rules.quantcount.com/"
+            crossorigin
+          />
+          <link
+            rel="preconnect"
+            href="https://pixel.quantserve.com/"
+            crossorigin
+          />
+          <link
+            rel="preconnect"
+            href="https://cmp.quantcast.com/"
+            crossorigin
+          />
+          <link rel="preconnect" href="https://btloader.com/" crossorigin />
+          <link rel="preconnect" href="https://api.btloader.com/" crossorigin />
+          <link
+            rel="preconnect"
+            href="https://confiant-integrations.global.ssl.fastly.net"
+            crossorigin
+          />
+          <link
+            rel="stylesheet"
+            href="https://a.pub.network/statmuse-com/cls.css"
+          />
+          <script data-cfasync="false" type="text/javascript">
+            var freestar = freestar || {}
+            freestar.queue = freestar.queue || []
+            freestar.config = freestar.config || {}
+            freestar.config.enabled_slots = []
+            freestar.initCallback = function () {
+              if (freestar.config.enabled_slots.length === 0) {
+                freestar.initCallbackCalled = false
+              } else {
+                freestar.newAdSlots(freestar.config.enabled_slots)
+              }
+            }
+          </script>
+          <link rel="stylesheet" href="/styles/freestar.css" />
+        </Fragment> 
       )
     }
     {
       import.meta.env.PROD && (
         <Fragment>
-          <link rel="preload" as="script" href="https://www.googletagservices.com/tag/js/gpt.js" />
-          <script async src="https://dn0qt3r0xannq.cloudfront.net/statmuse-3HFSjUvCes/statmuse-longform/prebid-load.js"></script>
+          <script async src="/scripts/aditude-cmp.js" />
+          <link
+            rel="preload"
+            as="script"
+            href="https://www.googletagservices.com/tag/js/gpt.js"
+          />
+          <script 
+            async
+            src="https://dn0qt3r0xannq.cloudfront.net/statmuse-3HFSjUvCes/statmuse-longform/prebid-load.js"
+          />
         </Fragment>
       )
     }
@@ -401,12 +409,12 @@ const canonicalUrl = meta?.canonical
 
       // configure honeybadger
       Honeybadger.configure({
-          apiKey: document.querySelector<HTMLMetaElement>(
-            'meta[name="honeybadger"]',
-          )?.content,
-          environment: import.meta.env.PUBLIC_STAGE,
-          reportData: import.meta.env.PROD
-        })
+        apiKey: document.querySelector<HTMLMetaElement>(
+          'meta[name="honeybadger"]',
+        )?.content,
+        environment: import.meta.env.PUBLIC_STAGE,
+        reportData: import.meta.env.PROD,
+      })
 
       const flattenObj = (key: string, obj?: {}) => {
         return !obj
