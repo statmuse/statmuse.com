@@ -17,7 +17,9 @@
 
     return () => {
       if (window.tude) {
-        tude.destroyAds(['pb-slot-anchor'])
+        tude.cmd.push(() => {
+          tude.destroyAds(['pb-slot-anchor'])
+        })
       }
     }
   })
@@ -41,7 +43,9 @@
     isClosed = true
     renderAd = false
     if (window.tude) {
-      tude.destroyAds(['pb-slot-anchor'])
+      tude.cmd.push(() => {
+        tude.destroyAds(['pb-slot-anchor'])
+      })
     }
   }
 
@@ -51,7 +55,7 @@
     ($session?.type === 'visitor' && !$session?.properties.bot)
 </script>
 
-{#if true && isNotSubscriber}
+{#if import.meta.env.PROD && isNotSubscriber}
   <div
     class="fixed bottom-0 right-0 w-screen z-50 flex justify-center"
     style:min-height={mobile ? '50px' : '90px'}

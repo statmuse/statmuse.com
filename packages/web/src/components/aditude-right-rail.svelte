@@ -10,7 +10,9 @@
   onMount(() => {
     return () => {
       if (window.tude) {
-        tude.destroyAds(['pb-slot-right-2'])
+        tude.cmd.push(() => {
+          tude.destroyAds(['pb-slot-right-2'])
+        })
       }
     }
   })

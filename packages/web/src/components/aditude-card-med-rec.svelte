@@ -14,6 +14,11 @@
       if (observer) {
         observer.unobserve(container)
       }
+      if (window.tude) {
+        tude.cmd.push(() => {
+          tude.destroyAds([slotId])
+        })
+      }
     }
   })
 
