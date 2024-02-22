@@ -1,16 +1,7 @@
 ---
 import Image from '@components/image.astro'
 import type { HTMLAttributes } from 'astro/types'
-
-export interface TrendingListItem {
-  title: string
-  html?: string
-  uri: string
-  images: string[]
-  background: string
-  foreground: string
-  count: number
-}
+import { type TrendingListItem } from 'src/types'
 
 interface Props extends HTMLAttributes<'li'> {
   item: TrendingListItem

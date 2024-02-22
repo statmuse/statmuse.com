@@ -5,7 +5,7 @@ import Select from '@components/select.svelte'
 import Container from '@components/container.astro'
 import TrendingLists from '@components/trending-lists.astro'
 import TrendingMore from '@components/trending-more.astro'
-import type { TrendingListItem } from '@components/trending-list-item.astro'
+import type { TrendingListItem, TrendingItem } from 'src/types'
 import { Table } from 'sst/node/table'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { QueryCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
@@ -52,20 +52,8 @@ const data = await db.send(
   }),
 )
 
-const items = data.Items as Item[] | undefined
+const items = data.Items as TrendingItem[] | undefined
 const [item] = items ?? []
-
-export type Item = {
-  datasets: [
-    {
-      name: string
-      key: string
-      prominent?: boolean
-      items: TrendingListItem[]
-    },
-  ]
-  updated: string
-}
 
 const categoryPath = category ? `/${category}` : ''
 

@@ -1,9 +1,9 @@
 ---
 import TrendingList from '@components/trending-list.astro'
-import type { Item } from '@components/trending.astro'
+import type { TrendingItem } from 'src/types'
 
 interface Props {
-  item: Item
+  item: TrendingItem
 }
 
 const { item } = Astro.props

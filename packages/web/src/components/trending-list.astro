@@ -1,8 +1,7 @@
 ---
 import Chevron from '@components/icons/chevron.astro'
-import TrendingListItem, {
-  type TrendingListItem as Item,
-} from '@components/trending-list-item.astro'
+import TrendingListItem from '@components/trending-list-item.astro'
+import { type TrendingListItem as Item } from 'src/types'
 
 interface Props {
   items: Item[]
