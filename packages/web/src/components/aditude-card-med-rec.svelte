@@ -32,12 +32,12 @@
         entries.forEach((entry) => {
           window.tude = window.tude || { cmd: [] }
           if (entry.isIntersecting && container) {
-            tude.cmd.push(function() {
+            tude.cmd.push(function () {
               tude.refreshAdsViaDivMappings([
                 {
                   divId: slotId,
-                  baseDivId: 'pb-slot-incontent-1',
-                }
+                  baseDivId: 'pb-slot-incontent-2',
+                },
               ])
             })
             self.unobserve(entry.target)

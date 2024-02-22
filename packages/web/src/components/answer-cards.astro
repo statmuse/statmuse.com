@@ -979,10 +979,7 @@ if (allowedDomains.includes(league) && teamId) {
   <div>
     {
       teamSpecificPlayerCards && (
-        <AditudeCardMedRec
-          client:only="svelte"
-          slotId="pb-slot-incontent-1"
-        />
+        <AditudeCardMedRec client:only="svelte" slotId="pb-slot-1" />
       )
     }
   </div>
@@ -1032,10 +1029,7 @@ if (allowedDomains.includes(league) && teamId) {
   {
     playerCardsResp && playerLeaderCards.length > 0 && (
       <div>
-        <AditudeCardMedRec
-          client:only="svelte"
-          slotId="pb-slot-incontent-2"
-        />
+        <AditudeCardMedRec client:only="svelte" slotId="pb-slot-2" />
       </div>
     )
   }
@@ -1085,10 +1079,7 @@ if (allowedDomains.includes(league) && teamId) {
   {
     teamCardsResp && teamRankingCards.length > 0 && (
       <div>
-        <AditudeCardMedRec
-          client:only="svelte"
-          slotId="pb-slot-incontent-3"
-        />
+        <AditudeCardMedRec client:only="svelte" slotId="pb-slot-3" />
       </div>
     )
   }
@@ -1148,10 +1139,7 @@ if (allowedDomains.includes(league) && teamId) {
       playerCardsResp.seasonType !== 'postseason' &&
       fantasyCards.length > 0 && (
         <div>
-          <AditudeCardMedRec
-            client:only="svelte"
-            slotId="pb-slot-incontent-4"
-          />
+          <AditudeCardMedRec client:only="svelte" slotId="pb-slot-4" />
         </div>
       )
   }
@@ -1239,10 +1227,7 @@ if (allowedDomains.includes(league) && teamId) {
   {
     standingsResp && standingsResp.teams && (
       <div>
-        <AditudeCardMedRec
-          client:only="svelte"
-          slotId="pb-slot-incontent-5"
-        />
+        <AditudeCardMedRec client:only="svelte" slotId="pb-slot-5" />
       </div>
     )
   }

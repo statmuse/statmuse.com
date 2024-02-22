@@ -10,7 +10,7 @@
   onMount(() => {
     return () => {
       if (window.tude) {
-        tude.destroyAds(['pb-slot-square-1'])
+        tude.destroyAds(['pb-slot-incontent-1'])
       }
     }
   })
@@ -21,8 +21,8 @@
       tude.cmd.push(function () {
         tude.refreshAdsViaDivMappings([
           {
-            divId: 'pb-slot-square-1',
-            baseDivId: 'pb-slot-square-1',
+            divId: 'pb-slot-incontent-1',
+            baseDivId: 'pb-slot-incontent-1',
           },
         ])
       })
@@ -37,5 +37,5 @@
 </script>
 
 {#if import.meta.env.PROD && mobile && isNotSubscriber}
-  <div id="pb-slot-square-1"></div>
+  <div id="pb-slot-incontent-1"></div>
 {/if}
