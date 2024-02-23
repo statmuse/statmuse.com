@@ -521,6 +521,7 @@ async function update(
     .sort((a, b) => b.count - a.count)
 
   const [topAsset] = assets || []
+  const bitcoinAsset = assets.find((a) => a.name === 'Bitcoin')
 
   const stocks = assets
     .filter((a) => a.type === 'Stock')
@@ -612,7 +613,7 @@ async function update(
     })
   }
 
-  if (assets?.length) {
+  if (league === 'MONEY' && assets?.length) {
     datasets.push({
       name: 'Assets',
       key: 'assets',
@@ -676,7 +677,7 @@ async function update(
     })
   }
 
-  if (topAsset) {
+  if (league === 'MONEY' && topAsset) {
     const id = topAsset.id
     const queriesForAsset = queries
       .filter((q) => q.assets?.map((p) => p.id).includes(id))
@@ -699,7 +700,30 @@ async function update(
     })
   }
 
-  if (stocks?.length) {
+  if (league === 'MONEY' && bitcoinAsset && topAsset.name !== 'Bitcoin') {
+    const id = bitcoinAsset.id
+    const queriesForAsset = queries
+      .filter((q) => q.assets?.map((p) => p.id).includes(id))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, STORE)
+
+    datasets.push({
+      name: bitcoinAsset.name + ' Searches',
+      key: 'asset',
+      items: queriesForAsset
+        .map((q) => ({
+          title: q.query,
+          uri: q.uri,
+          images: [q.image],
+          background: q.background,
+          foreground: q.foreground,
+          count: q.count,
+        }))
+        .slice(0, STORE),
+    })
+  }
+
+  if (league === 'MONEY' && stocks?.length) {
     datasets.push({
       name: 'Stocks',
       key: 'stocks',
@@ -717,7 +741,7 @@ async function update(
     })
   }
 
-  if (indices?.length) {
+  if (league === 'MONEY' && indices?.length) {
     datasets.push({
       name: 'Indices',
       key: 'indices',
@@ -735,7 +759,7 @@ async function update(
     })
   }
 
-  if (etfs?.length) {
+  if (league === 'MONEY' && etfs?.length) {
     datasets.push({
       name: 'ETFs',
       key: 'etfs',
@@ -753,7 +777,7 @@ async function update(
     })
   }
 
-  if (currencies?.length) {
+  if (league === 'MONEY' && currencies?.length) {
     datasets.push({
       name: 'Currencies',
       key: 'currencies',
@@ -771,7 +795,7 @@ async function update(
     })
   }
 
-  if (nyse?.length) {
+  if (league === 'MONEY' && nyse?.length) {
     datasets.push({
       name: 'NYSE Stocks',
       key: 'nyse',
@@ -789,10 +813,10 @@ async function update(
     })
   }
 
-  if (nasdaq?.length) {
+  if (league === 'MONEY' && nasdaq?.length) {
     datasets.push({
       name: 'NASDAQ Stocks',
-      key: "nasdaq",
+      key: 'nasdaq',
       prominent: true,
       items: nasdaq
         .map((s) => ({
