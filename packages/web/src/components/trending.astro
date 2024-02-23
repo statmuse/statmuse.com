@@ -5,12 +5,14 @@ import Select from '@components/select.svelte'
 import Container from '@components/container.astro'
 import TrendingLists from '@components/trending-lists.astro'
 import TrendingMore from '@components/trending-more.astro'
+import LeagueNav from '@components/league-nav.astro'
 import type { TrendingListItem, TrendingItem } from 'src/types'
 import { Table } from 'sst/node/table'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { QueryCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import tailwindConfig from '../../tailwind.config.ts'
 import type { Category } from 'src/types'
+import type { AnalyticsPageviewProperties } from '@lib/analytics'
 
 const colors = tailwindConfig.theme.extend.colors
 
@@ -91,39 +93,28 @@ const title = category
 ---
 
 <Layout
-  analytics={{ page_type: 'trending' }}
+  analytics={{
+    page_type: 'trending',
+    page_domain:
+      selected === 'money'
+        ? 'finance'
+        : (selected?.toLowerCase() as AnalyticsPageviewProperties['page_domain']),
+  }}
   meta={{ title }}
   colors={{ foreground: colors.gray['8'], background: colors.teal }}
 >
-  <Header />
+  <Header money={selected === 'money'} preferredDomain={selected} />
   <Container class="text-gray-8 bg-teal">
     <div class="pt-8 pb-8 md:pt-[90px] md:pb-16">
       <h1 class="text-center font-semibold text-4xl md:text-6xl">{title}</h1>
     </div>
   </Container>
   <div class="bg-gray-7 p-3 space-y-3">
-    <nav
-      class="flex gap-3 overflow-x-scroll no-scrollbar -mx-3 px-3 md:justify-center"
-    >
-      {
-        leagues.map((league) => (
-          <a
-            class:list={{
-              'p-1.5 px-3 text-center whitespace-nowrap border rounded-full': true,
-              'hover:no-underline hover:text-gray-8 hover:bg-teal': true,
-              'bg-teal text-gray-8 border-teal font-semibold':
-                selected === league.param,
-              'bg-gray-8 text-gray-2 border-gray-6': selected !== league.param,
-            }}
-            href={
-              league.href ??
-              `/${league.param}/trending${categoryPath}${Astro.url.search}`
-            }
-            set:html={league.text}
-          />
-        ))
-      }
-    </nav>
+    <LeagueNav
+      {leagues}
+      {selected}
+      href={(l) => `/${l}/trending${categoryPath}${Astro.url.search}`}
+    />
     <div
       class="grid grid-cols-2 gap-3 md:grid-cols-none md:flex md:justify-center"
     >

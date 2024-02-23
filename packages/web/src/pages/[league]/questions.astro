@@ -25,22 +25,12 @@ const meta = {
 Caching.swr(Astro)
 ---
 
-<BaseLayout
-  {meta}
-  analytics={{
-    page_type: 'question',
-    page_domain:
-      domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
-  }}
->
-  <Header preferredDomain={domain.toLowerCase()} />
-  <AskIndex
-    selected={league}
-    headline={`Trending ${
-      domain === 'EPL' ? 'Premier League' : domain
-    } Searches`}
-    {asks}
-    {searchParams}
-  />
-  <Footer />
-</BaseLayout>
+<AskIndex
+  selected={league}
+  headline={`Realtime ${
+    domain === 'EPL' ? 'Premier League' : domain
+  } Searches`}
+  {asks}
+  {searchParams}
+/>
+

@@ -4,7 +4,18 @@ export const categories = [
   'teams',
   'player',
   'team',
-  'money',
+] as const
+
+export const moneyCategories = [
+  'searches',
+  'assets',
+  'asset',
+  'stocks',
+  'etfs',
+  'indices',
+  'currencies',
+  'nyse',
+  'nasdaq',
 ] as const
 
 export type Category = (typeof categories)[number]

@@ -28,6 +28,8 @@
   let clickedItem = false
   let inFocus = false
 
+  if (preferredDomain === 'fc') preferredDomain = 'epl'
+
   const action = money ? '/money/ask' : fantasy ? '/fantasy/ask' : '/ask'
   const placeholder = money
     ? 'Search stocks, FX or bitcoin'

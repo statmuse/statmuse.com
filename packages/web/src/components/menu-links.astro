@@ -7,7 +7,7 @@ const menuLinks = [
         icon: '/menu-icons/icon-home.svg',
         tealIcon: '/menu-icons/teal/icon-home.svg',
         url: '/',
-        currentUrl: new RegExp('^/(nba|nfl|nhl|mlb|pga|fantasy)?$'),
+        currentUrl: new RegExp('^/(nba|nfl|nhl|mlb|pga|fantasy|fc)?$'),
       },
       {
         text: 'Money Search',
@@ -17,12 +17,28 @@ const menuLinks = [
         currentUrl: new RegExp('^/money$'),
       },
       {
-        text: 'Trending',
+        text: 'Trending Sports',
         icon: '/menu-icons/icon-trending.svg',
         tealIcon: '/menu-icons/teal/icon-trending.svg',
+        url: '/trending',
+        currentUrl: new RegExp(
+          '^(/(nba|nfl|nhl|mlb|pga|fantasy|fc))?/trending$',
+        ),
+      },
+      {
+        text: 'Trending Money',
+        icon: '/menu-icons/icon-money.svg',
+        tealIcon: '/menu-icons/teal/icon-money.svg',
+        url: '/money/trending',
+        currentUrl: new RegExp('^/money/trending$'),
+      },
+      {
+        text: 'Realtime',
+        icon: '/menu-icons/icon-examples.svg',
+        tealIcon: '/menu-icons/teal/icon-examples.svg',
         url: '/questions',
         currentUrl: new RegExp(
-          '^(/(nba|nfl|nhl|mlb|pga|fantasy|money))?/questions$',
+          '^(/(nba|nfl|nhl|mlb|pga|fantasy|fc|money))?/questions$',
         ),
       },
       {
@@ -30,7 +46,7 @@ const menuLinks = [
         icon: '/menu-icons/icon-gallery.svg',
         tealIcon: '/menu-icons/teal/icon-gallery.svg',
         url: '/players',
-        currentUrl: new RegExp('^(/(nba|nfl|nhl|mlb|pga))?/players$'),
+        currentUrl: new RegExp('^(/(nba|nfl|nhl|mlb|pga|fc))?/players$'),
       },
       {
         text: 'Shop',
@@ -56,14 +72,16 @@ const menuLinks = [
         icon: '/menu-icons/icon-examples.svg',
         tealIcon: '/menu-icons/teal/icon-examples.svg',
         url: '/product/examples',
-        currentUrl: new RegExp('^/product/examples(/(nba|nfl|nhl|mlb|pga))?$'),
+        currentUrl: new RegExp(
+          '^/product/examples(/(nba|nfl|nhl|mlb|pga|fc))?$',
+        ),
       },
       {
         text: 'Data & Glossary',
         icon: '/menu-icons/icon-data-coverage.svg',
         tealIcon: '/menu-icons/teal/icon-data-coverage.svg',
         url: '/product/data',
-        currentUrl: new RegExp('^/product/data(/(nba|nfl|nhl|mlb|pga))?$'),
+        currentUrl: new RegExp('^/product/data(/(nba|nfl|nhl|mlb|pga|fc))?$'),
       },
       // {
       //   text: 'Authentic Voices',

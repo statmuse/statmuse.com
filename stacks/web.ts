@@ -30,6 +30,8 @@ import {
 } from 'aws-cdk-lib/aws-lambda'
 import { StreamMode } from 'aws-cdk-lib/aws-kinesis'
 import { Trending } from './trending'
+import { ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53'
+import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets'
 
 export function Web({ stack }: StackContext) {
   const dns = use(DNS)
@@ -115,6 +117,8 @@ export function Web({ stack }: StackContext) {
     samplingRate: 100,
   })
 
+  const domainName = isProd ? 'www.statmuse.com' : dns.domain
+
   const astroSite = new AstroSite(stack, 'astro-site', {
     path: 'packages/web',
     timeout: '12 seconds',
@@ -174,8 +178,16 @@ export function Web({ stack }: StackContext) {
     invalidation: { paths: 'none' },
     customDomain: {
       hostedZone: dns.zone,
-      domainName: isProd ? 'www.statmuse.com' : dns.domain,
+      domainName,
     },
+  })
+
+  new ARecord(stack, 'private-a-record', {
+    zone: dns.privateZone,
+    recordName: domainName,
+    target: RecordTarget.fromAlias(
+      new CloudFrontTarget(astroSite.cdk!.distribution),
+    ),
   })
 
   stack.addOutputs({ CdnUrl: astroSite.url, Url: astroSite.customDomainUrl })

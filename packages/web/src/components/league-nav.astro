@@ -1,0 +1,29 @@
+---
+interface Props {
+  leagues: { text: string; param: string; href?: string }[]
+  selected?: string
+  href: (league: string) => string
+}
+
+const { leagues, selected, href } = Astro.props
+---
+
+<nav
+  class="flex gap-3 overflow-x-scroll no-scrollbar -mx-3 px-3 md:justify-center"
+>
+  {
+    leagues.map((league) => (
+      <a
+        class:list={{
+          'p-1.5 px-3 text-center whitespace-nowrap border rounded-full': true,
+          'hover:no-underline hover:text-gray-8 hover:bg-teal': true,
+          'bg-teal text-gray-8 border-teal font-semibold':
+            selected === league.param,
+          'bg-gray-8 text-gray-2 border-gray-6': selected !== league.param,
+        }}
+        href={league.href ?? href(league.param)}
+        set:html={league.text}
+      />
+    ))
+  }
+</nav>

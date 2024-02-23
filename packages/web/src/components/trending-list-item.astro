@@ -11,16 +11,18 @@ interface Props extends HTMLAttributes<'li'> {
   eager?: boolean
 }
 
-const { item, index, prominent } = Astro.props
+const { item, index, prominent, ...rest } = Astro.props
 const numbered = Astro.props.numbered ?? true
 const eager = Astro.props.eager ?? false
 ---
 
-<li {...Astro.props}>
+<li {...rest}>
   <a
     href={item.uri}
     class:list={{
-      'grid grid-cols-3 text-gray-700': true,
+      flex: item.images.length === 0,
+      'grid grid-cols-3': item.images.length > 0,
+      'text-gray-700 items-center': true,
       'pt-3': numbered,
       'pt-1': !numbered,
     }}
@@ -47,8 +49,8 @@ const eager = Astro.props.eager ?? false
     </div>
     <div
       class:list={{
-        'relative flex h-24': true,
-        'ml-8 -mr-8': item.images.length > 1,
+        'relative flex h-24 items-end': true,
+        'ml-12 -mr-12': item.images.length > 1,
       }}
     >
       {
@@ -57,7 +59,8 @@ const eager = Astro.props.eager ?? false
             data-cy-illustration
             class:list={{
               'object-contain object-bottom': true,
-              'absolute bottom-0 left-0 h-24 translate-x-1/2 z-[1]':
+              'h-[84px]': item.images.length > 1 && index !== 1,
+              'absolute bottom-0 left-0 h-full translate-x-[38%] z-[1]':
                 index === 1,
             }}
             alt={item.title}

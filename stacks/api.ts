@@ -3,6 +3,8 @@ import { Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2'
 import { Imports } from './imports'
 import { Secrets } from './secrets'
 import { DNS } from './dns'
+import { ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53'
+import { ApiGatewayv2DomainProperties } from 'aws-cdk-lib/aws-route53-targets'
 
 export function API({ stack }: StackContext) {
   const secrets = use(Secrets)
@@ -89,6 +91,17 @@ export function API({ stack }: StackContext) {
       domainName: 'api.' + dns.domain,
       hostedZone: dns.hostedZone.zoneName,
     },
+  })
+
+  new ARecord(stack, 'private-api-record', {
+    zone: dns.privateZone,
+    recordName: 'api.' + dns.domain,
+    target: RecordTarget.fromAlias(
+      new ApiGatewayv2DomainProperties(
+        api.cdk.domainName!.regionalDomainName,
+        api.cdk.domainName!.regionalHostedZoneId,
+      ),
+    ),
   })
 
   rdsCredentialsSecret.grantRead(api.getFunction('GET /search/suggest')!)

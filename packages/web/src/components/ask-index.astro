@@ -1,20 +1,25 @@
 ---
+import Layout from '@layouts/main.astro'
+import Header from '@components/header.astro'
+import TrendingMore from '@components/trending-more.astro'
+import LeagueNav from '@components/league-nav.astro'
 import Container from '@components/container.astro'
-import Image from '@components/image.astro'
 import {
   ASK_LIMIT,
   type AskForIndex,
   type FinanceAskForIndex,
 } from '@statmuse/core/ask'
-import { formatDate } from '@statmuse/core/time'
 import {
   askPath,
   getBgColor,
   getImage,
-  getNlg,
   paginate,
   type SearchParams,
 } from '@lib/asks'
+import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import tailwindConfig from '../../tailwind.config.ts'
+
+const colors = tailwindConfig.theme.extend.colors
 
 interface Props {
   selected?: string
@@ -36,139 +41,130 @@ if (overflow && (searchParams.p || searchParams.page === 'last')) {
 
 const paginationOptions = paginate(asks, searchParams, overflow)
 
-const leagueBtns = [
-  { text: 'All', param: 'All', href: '/questions' },
-  { text: 'NBA', param: 'nba', href: '/nba/questions' },
-  { text: 'NFL', param: 'nfl', href: '/nfl/questions' },
-  { text: 'NHL', param: 'nhl', href: '/nhl/questions' },
-  { text: 'MLB', param: 'mlb', href: '/mlb/questions' },
-  { text: 'Premier League', param: 'fc', href: '/fc/questions' },
-  { text: 'PGA', param: 'pga', href: '/pga/questions' },
+const leagues: { text: string; param: string; href?: string }[] = [
+  {
+    text: 'ALL',
+    param: 'all',
+    href: '/questions' + Astro.url.search,
+  },
+  { text: 'FC', param: 'fc' },
+  { text: 'NBA', param: 'nba' },
+  { text: 'NFL', param: 'nfl' },
+  { text: 'NHL', param: 'nhl' },
+  { text: 'MLB', param: 'mlb' },
+  { text: 'PGA', param: 'pga' },
+  { text: 'MONEY', param: 'money' },
 ]
+
+const items = asks.map((ask) => ({
+  title: ask.query,
+  uri: askPath(ask),
+  images: [getImage(ask)!],
+  background: getBgColor(ask)!,
+  foreground: colors.gray['8'],
+  count: 1,
+}))
+
+const title = headline ?? 'Realtime Questions'
+const leagueTitle =
+  selected?.toLowerCase() === 'all'
+    ? 'Realtime'
+    : selected?.toLowerCase() === 'money'
+    ? 'Finance'
+    : selected?.toLowerCase() === 'fc'
+    ? 'Premier League'
+    : selected?.toUpperCase() ?? 'Realtime'
+
+const meta = {
+  title: `${leagueTitle} Searches`,
+  description: `Instant answers to your ${
+    selected === 'fc' ? 'Premier League' : selected?.toUpperCase() ?? 'sports'
+  } questions. Stats, scores, schedules, standings, recaps and more — just ask.`,
+  pageType: 'question',
+}
 ---
 
-<Container>
-  <nav style="margin-top: 15px;">
-    <div style="display: flex; gap: 10px;">
-      {
-        leagueBtns.map((btn) => (
-          <a
-            class={`flex items-center justify-center min-w-[80px] border border-primary rounded-md hover:no-underline hover:text-white hover:bg-primary p-[5px] ${
-              selected === btn.param ? 'bg-primary text-white' : 'text-primary'
-            }`}
-            href={btn.href}
-            set:html={btn.text}
-          />
-        ))
-      }
+<Layout
+  analytics={{
+    page_type: 'question',
+    page_domain:
+      selected === 'money'
+        ? 'finance'
+        : (selected?.toLowerCase() as AnalyticsPageviewProperties['page_domain']),
+  }}
+  {meta}
+  colors={{ foreground: colors.gray['8'], background: colors.teal }}
+>
+  <Header money={selected === 'money'} preferredDomain={selected} />
+  <Container class="text-gray-8 bg-teal">
+    <div class="pt-8 pb-8 md:pt-[90px] md:pb-16">
+      <h1 class="text-center font-semibold text-4xl md:text-6xl">{title}</h1>
     </div>
-    <div style="display: flex; gap: 10px; margin-top: 10px;">
-      <a
-        class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
-          'fantasy' === selected ? 'bg-secondary text-white' : 'text-secondary'
-        } %>`}
-        href="/fantasy/questions"
-        set:html="Fantasy Football"
-      />
-      <a
-        class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
-          'money' === selected ? 'bg-secondary text-white' : 'text-secondary'
-        } %>`}
-        href="/money/questions"
-        set:html="Money"
-      />
-    </div>
-  </nav>
-  <section>
-    <h2 class="text-2xl font-semibold my-5">{headline}</h2>
-    <div class="space-y-5">
-      {
-        asks.map((ask, i) => (
-          <article class="flex">
-            <div
-              class="hidden sm:block h-24 w-36 rounded-lg mr-2.5 overflow-hidden"
-              style={`background: ${getBgColor(ask)}`}
-            >
-              <a
-                class="h-full flex justify-center items-end overflow-visible"
-                href={askPath(ask)}
-              >
-                <Image
-                  class="h-[90%] object-cover object-bottom overflow-visible max-w-[100px]"
-                  src={getImage(ask)!}
-                  alt="player illustration"
-                  width={300}
-                  height={300}
-                  loading={i < 8 ? 'eager' : 'lazy'}
-                />
-              </a>
-            </div>
-            <div class="flex-1 flex flex-col">
-              <h3 class="text-lg font-semibold">
-                <a href={askPath(ask)}>{ask.query}</a>
-              </h3>
-              <div class="italic opacity-50">
-                Answered{' '}
-                {formatDate(ask.last_web_search_at as Date, 'MMMM Do, YYYY')}
-              </div>
-              <div
-                class="flex-1 flex items-center border-l-2 border-secondary pl-1.5"
-                set:html={getNlg(ask)}
-              />
-            </div>
-          </article>
-        ))
-      }
-    </div>
-  </section>
-  <ul class="text-center my-10 space-x-2">
-    <li class="inline-block">
-      <a
-        href={Astro.url.pathname}
-        class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
-          ['first', 'first-last'].includes(paginationOptions.current_page || '')
-            ? 'text-black pointer-events-none'
-            : ''
-        }`}
-      >
-        &laquo; First
-      </a>
-    </li>
-    <li class="inline-block">
-      <a
-        href={Astro.url.pathname +
-          '?' +
-          new URLSearchParams({ p: paginationOptions.p || '' })}
-        class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
-          paginationOptions.p ? '' : 'text-[#c5c9cc] pointer-events-none'
-        }`}
-      >
-        &lt; Previous
-      </a>
-    </li>
-    <li class="inline-block">
-      <a
-        href={Astro.url.pathname +
-          '?' +
-          new URLSearchParams({ n: paginationOptions.n || '' })}
-        class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
-          paginationOptions.n ? '' : 'text-[#c5c9cc] pointer-events-none'
-        }`}
-      >
-        Next &gt;
-      </a>
-    </li>
-    <li class="inline-block">
-      <a
-        href={Astro.url.pathname + '?' + new URLSearchParams({ page: 'last' })}
-        class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
-          ['last', 'first-last'].includes(paginationOptions.current_page || '')
-            ? 'text-black pointer-events-none'
-            : ''
-        }`}
-      >
-        Last &raquo;
-      </a>
-    </li>
-  </ul>
-</Container>
+  </Container>
+  <div class="bg-gray-7 p-3 space-y-3">
+    <LeagueNav
+      {leagues}
+      {selected}
+      href={(l) => `/${l}/questions${Astro.url.search}`}
+    />
+
+    <TrendingMore {items} />
+
+    <ul class="text-center my-10 space-x-2">
+      <li class="inline-block">
+        <a
+          href={Astro.url.pathname}
+          class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
+            ['first', 'first-last'].includes(
+              paginationOptions.current_page || '',
+            )
+              ? 'text-black pointer-events-none'
+              : ''
+          }`}
+        >
+          &laquo; First
+        </a>
+      </li>
+      <li class="inline-block">
+        <a
+          href={Astro.url.pathname +
+            '?' +
+            new URLSearchParams({ p: paginationOptions.p || '' })}
+          class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
+            paginationOptions.p ? '' : 'text-[#c5c9cc] pointer-events-none'
+          }`}
+        >
+          &lt; Previous
+        </a>
+      </li>
+      <li class="inline-block">
+        <a
+          href={Astro.url.pathname +
+            '?' +
+            new URLSearchParams({ n: paginationOptions.n || '' })}
+          class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
+            paginationOptions.n ? '' : 'text-[#c5c9cc] pointer-events-none'
+          }`}
+        >
+          Next &gt;
+        </a>
+      </li>
+      <li class="inline-block">
+        <a
+          href={Astro.url.pathname +
+            '?' +
+            new URLSearchParams({ page: 'last' })}
+          class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
+            ['last', 'first-last'].includes(
+              paginationOptions.current_page || '',
+            )
+              ? 'text-black pointer-events-none'
+              : ''
+          }`}
+        >
+          Last &raquo;
+        </a>
+      </li>
+    </ul>
+  </div>
+</Layout>

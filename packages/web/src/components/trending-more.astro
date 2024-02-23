@@ -17,7 +17,7 @@ const { items, prominent } = Astro.props
         <ol class="list-none text-gray-700 space-y-3 sm:space-y-0 sm:gap-3 sm:flex sm:flex-wrap sm:justify-center">
           {items.map((item, index) => (
             <TrendingListItem
-              class="bg-gray-8 rounded-3xl overflow-clip border border-gray-6 sm:max-w-[360px]"
+              class="bg-gray-8 rounded-3xl overflow-clip border border-gray-6 sm:w-[360px]"
               numbered={false}
               {item}
               {index}

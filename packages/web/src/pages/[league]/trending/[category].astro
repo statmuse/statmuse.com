@@ -14,7 +14,7 @@ const league = Astro.params.league as LeagueParam
 const category = Astro.params.category as Category 
 
 if (!categories.includes(category as Category)) {
-  return NOT_FOUND_404
+  return Astro.redirect(`/${league}/trending`)
 }
 
 Caching.swr(Astro)

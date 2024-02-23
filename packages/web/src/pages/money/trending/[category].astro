@@ -1,12 +1,11 @@
 ---
 import TrendingComponent from '@components/trending.astro'
 import { Caching } from '@lib/caching'
-import { categories, type Category } from "src/types"
-import { NOT_FOUND_404 } from '@lib/response'
+import { moneyCategories, type Category } from "src/types"
 
 const category = Astro.params.category as Category 
-if (!categories.includes(category as Category)) {
-  return NOT_FOUND_404
+if (!moneyCategories.includes(category)) {
+  return Astro.redirect("/money/trending")
 }
 
 Caching.swr(Astro)
