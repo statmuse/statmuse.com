@@ -34,8 +34,6 @@ export default defineConfig({
     ],
   },
   redirects: {
-    // Freestar hosting ads.txt
-    '/ads.txt': 'https://a.pub.network/statmuse-com/ads.txt',
     '/company': '/company/about',
     '/company/products': '/company/about',
     '/company/shoutouts': '/company/about',
