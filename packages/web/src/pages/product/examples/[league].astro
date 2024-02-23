@@ -1231,7 +1231,12 @@ const { exampleSets } = leagueSets.find(
 Caching.swr(Astro)
 ---
 
-<ProductLayout {meta} league={league || 'nfl'} prefixPath="/product/examples">
+<ProductLayout
+  {meta}
+  league={league || 'nfl'}
+  prefixPath="/product/examples"
+  enableAdBanner={false}
+>
   {
     exampleSets.map(({ title, examples }) => (
       <div class="border-b border-[#e4e4e4] mb-6 md:mb-12">
