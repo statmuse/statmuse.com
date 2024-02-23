@@ -519,8 +519,9 @@ const canonicalUrl = meta?.canonical
         }
 
         maybeRewriteUrl(window, document)
-
-        try {
+      })
+      
+      try {
           const session: Session = await fetch('/auth/session').then((r) =>
             r.json(),
           )
@@ -544,7 +545,6 @@ const canonicalUrl = meta?.canonical
             user_type: session.type,
           })
         } catch (e) {}
-      })
     </script>
   </body>
 </html>
