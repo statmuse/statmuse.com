@@ -6,7 +6,7 @@ export function DNS({ stack }: StackContext) {
   const hostedZone = HostedZone.fromLookup(stack, 'zone', {
     domainName: zone,
   })
-  const privateZone = HostedZone.fromLookup(stack, 'zone', {
+  const privateZone = HostedZone.fromLookup(stack, 'private-zone', {
     domainName: zone,
     privateZone: true,
   })
