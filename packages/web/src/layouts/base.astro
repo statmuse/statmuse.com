@@ -5,7 +5,6 @@ import { Config } from 'sst/node/config'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import CookieConsent from '@components/cookie-consent.svelte'
 import { ViewTransitions } from 'astro:transitions'
-import FreestarAdBanner from '@components/freestar-ad-banner.svelte'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 interface Props {
@@ -17,15 +16,9 @@ interface Props {
     backgroundColor?: string
   }
   analytics?: AnalyticsPageviewProperties
-  enableFreestarAdBanner?: boolean
 }
 
-const {
-  meta,
-  colors,
-  analytics = {},
-  enableFreestarAdBanner = true,
-} = Astro.props
+const { meta, colors, analytics = {} } = Astro.props
 const foreground = colors?.foreground || colors?.foregroundColor || '#fff'
 const background = colors?.background || colors?.backgroundColor || '#00c1d8'
 
@@ -303,71 +296,6 @@ const canonicalUrl = meta?.canonical
       gtag('config', 'G-QRW302M4ZR')
     </script>
     {
-      import.meta.env.PROD && enableFreestarAdBanner && false && (
-        <Fragment>
-          <link rel="preconnect" href="https://a.pub.network/" crossorigin />
-          <link rel="preconnect" href="https://b.pub.network/" crossorigin />
-          <link rel="preconnect" href="https://c.pub.network/" crossorigin />
-          <link rel="preconnect" href="https://d.pub.network/" crossorigin />
-          <link
-            rel="preconnect"
-            href="https://c.amazon-adsystem.com"
-            crossorigin
-          />
-          <link
-            rel="preconnect"
-            href="https://s.amazon-adsystem.com"
-            crossorigin
-          />
-          <link
-            rel="preconnect"
-            href="https://secure.quantserve.com/"
-            crossorigin
-          />
-          <link
-            rel="preconnect"
-            href="https://rules.quantcount.com/"
-            crossorigin
-          />
-          <link
-            rel="preconnect"
-            href="https://pixel.quantserve.com/"
-            crossorigin
-          />
-          <link
-            rel="preconnect"
-            href="https://cmp.quantcast.com/"
-            crossorigin
-          />
-          <link rel="preconnect" href="https://btloader.com/" crossorigin />
-          <link rel="preconnect" href="https://api.btloader.com/" crossorigin />
-          <link
-            rel="preconnect"
-            href="https://confiant-integrations.global.ssl.fastly.net"
-            crossorigin
-          />
-          <link
-            rel="stylesheet"
-            href="https://a.pub.network/statmuse-com/cls.css"
-          />
-          <script data-cfasync="false" type="text/javascript">
-            var freestar = freestar || {}
-            freestar.queue = freestar.queue || []
-            freestar.config = freestar.config || {}
-            freestar.config.enabled_slots = []
-            freestar.initCallback = function () {
-              if (freestar.config.enabled_slots.length === 0) {
-                freestar.initCallbackCalled = false
-              } else {
-                freestar.newAdSlots(freestar.config.enabled_slots)
-              }
-            }
-          </script>
-          <link rel="stylesheet" href="/styles/freestar.css" />
-        </Fragment> 
-      )
-    }
-    {
       import.meta.env.PROD && (
         <Fragment>
           <script async src="/scripts/aditude-cmp.js" />
@@ -376,7 +304,7 @@ const canonicalUrl = meta?.canonical
             as="script"
             href="https://www.googletagservices.com/tag/js/gpt.js"
           />
-          <script 
+          <script
             async
             src="https://dn0qt3r0xannq.cloudfront.net/statmuse-3HFSjUvCes/statmuse-longform/prebid-load.js"
           />
@@ -388,19 +316,6 @@ const canonicalUrl = meta?.canonical
     <slot />
     <CookieConsent client:only="svelte" />
     <AditudeAdBanner client:only="svelte" transition:persist />
-    <!-- <script>
-      document.addEventListener('astro:after-swap', () => {
-        const freestar = window.freestar
-        if (freestar) {
-          freestar.queue.push(function () {
-            freestar.deleteStickyFooter('statmuse_stickyfooter')
-          })
-          freestar.queue.push(function () {
-            freestar.newStickyFooter('statmuse_stickyfooter')
-          })
-        }
-      })
-    </script> -->
     <script>
       import Honeybadger from '@honeybadger-io/js'
       import { segment, getOrigin } from '@lib/analytics'
@@ -520,31 +435,31 @@ const canonicalUrl = meta?.canonical
 
         maybeRewriteUrl(window, document)
       })
-      
+
       try {
-          const session: Session = await fetch('/auth/session').then((r) =>
-            r.json(),
-          )
-          sessionStore.set(session)
+        const session: Session = await fetch('/auth/session').then((r) =>
+          r.json(),
+        )
+        sessionStore.set(session)
 
-          if (session.type === 'visitor') {
-            segment.identify(`v:${session.properties.id}`, {
-              origin: session.properties.origin,
-              origin_scope: 'browser',
-            })
-          }
-          if (session.type === 'user') {
-            segment.identify(`u:${session.properties.id}`, {
-              origin: session.properties.origin,
-              origin_scope: 'browser',
-            })
-          }
-
-          Honeybadger.setContext({
-            user_id: session.properties.id,
-            user_type: session.type,
+        if (session.type === 'visitor') {
+          segment.identify(`v:${session.properties.id}`, {
+            origin: session.properties.origin,
+            origin_scope: 'browser',
           })
-        } catch (e) {}
+        }
+        if (session.type === 'user') {
+          segment.identify(`u:${session.properties.id}`, {
+            origin: session.properties.origin,
+            origin_scope: 'browser',
+          })
+        }
+
+        Honeybadger.setContext({
+          user_id: session.properties.id,
+          user_type: session.type,
+        })
+      } catch (e) {}
     </script>
   </body>
 </html>
