@@ -316,11 +316,7 @@ const canonicalUrl = meta?.canonical
   <body class="text-black">
     <slot />
     <CookieConsent client:only="svelte" />
-    {
-      enableAdBanner && (
-        <AditudeAdBanner client:only="svelte" transition:persist />
-      )
-    }
+    {enableAdBanner && <AditudeAdBanner client:only="svelte" />}
     <script>
       import Honeybadger from '@honeybadger-io/js'
       import { segment, getOrigin } from '@lib/analytics'

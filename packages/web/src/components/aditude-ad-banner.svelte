@@ -4,16 +4,14 @@
   import { onMount, afterUpdate } from 'svelte'
 
   let mobile = isMobileTest(navigator.userAgent)
-
-  let renderAd = false
   let isClosed = false
 
   onMount(() => {
-    document.addEventListener('astro:page-load', () => {
-      if (isClosed) {
-        isClosed = false
-      }
-    })
+    // document.addEventListener('astro:page-load', () => {
+    //   if (isClosed) {
+    //     isClosed = false
+    //   }
+    // })
 
     return () => {
       if (window.tude) {
@@ -25,7 +23,7 @@
   })
 
   afterUpdate(() => {
-    if (isNotSubscriber && !renderAd && !isClosed) {
+    if (isNotSubscriber && !isClosed) {
       window.tude = window.tude || { cmd: [] }
       tude.cmd.push(function () {
         tude.refreshAdsViaDivMappings([
@@ -35,18 +33,16 @@
           },
         ])
       })
-      renderAd = true
     }
   })
 
   const onClickClose = () => {
-    isClosed = true
-    renderAd = false
     if (window.tude) {
       tude.cmd.push(() => {
         tude.destroyAds(['pb-slot-anchor'])
       })
     }
+    isClosed = true
   }
 
   $: isNotSubscriber =
@@ -62,7 +58,9 @@
     style:background="#f7f7f7e6"
     style:visibility={isClosed ? 'hidden' : 'visible'}
   >
-    <div id="pb-slot-anchor"></div>
+    {#if !isClosed}
+      <div id="pb-slot-anchor"></div>
+    {/if}
     <img
       src="/share-icons/x.svg"
       class="w-4 h-4 absolute top-0.5 right-0.5 sm:right-1 cursor-pointer"
