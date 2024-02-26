@@ -14,9 +14,9 @@
       if (observer) {
         observer.unobserve(container)
       }
-      if (window.freestar) {
-        window.freestar.queue.push(function () {
-          window.freestar.deleteAdSlots(slotId)
+      if (window.tude) {
+        tude.cmd.push(() => {
+          tude.destroyAds([slotId])
         })
       }
     }
@@ -35,17 +35,16 @@
         self: IntersectionObserver,
       ) => {
         entries.forEach((entry) => {
+          window.tude = window.tude || { cmd: [] }
           if (entry.isIntersecting && container) {
-            if (window.freestar) {
-              window.freestar.queue.push(function () {
-                window.freestar.newAdSlots([
-                  {
-                    placementName: 'statmuse_incontent_cards',
-                    slotId,
-                  },
-                ])
-              })
-            }
+            tude.cmd.push(function () {
+              tude.refreshAdsViaDivMappings([
+                {
+                  divId: slotId,
+                  baseDivId: 'pb-slot-incontent-2',
+                },
+              ])
+            })
             self.unobserve(entry.target)
           }
         })
@@ -59,11 +58,7 @@
 </script>
 
 {#if import.meta.env.PROD && mobile && (($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active') || ($session?.type === 'visitor' && !$session?.properties.bot))}
-  <div bind:this={container} class="min-h-[210px] p-4 bg-primary rounded-2xl">
-    <div
-      align="center"
-      data-freestar-ad="__300x250 __300x250"
-      id={slotId}
-    ></div>
+  <div bind:this={container} class="min-h-[210px] p-4 flex justify-center">
+    <div id={slotId}></div>
   </div>
 {/if}

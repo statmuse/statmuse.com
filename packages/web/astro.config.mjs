@@ -15,7 +15,7 @@ export default defineConfig({
     svelte({ preprocess: [vitePreprocess(), preprocessMeltUI()] }),
   ],
   output: 'server',
-  server: { port: 3000 },
+  server: { port: 3000, host: 'cosmos.dev.statmuse.com' },
   // devToolbar: { enabled: false },
   adapter: aws({
     responseMode: 'buffer',
@@ -34,8 +34,6 @@ export default defineConfig({
     ],
   },
   redirects: {
-    // Freestar hosting ads.txt
-    '/ads.txt': 'https://a.pub.network/statmuse-com/ads.txt',
     '/company': '/company/about',
     '/company/products': '/company/about',
     '/company/shoutouts': '/company/about',
