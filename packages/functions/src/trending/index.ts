@@ -139,6 +139,7 @@ type Team = {
 type Asset = {
   id: string
   name: string
+  symbol: string
   uri: string
   image: string
   background: string
@@ -179,6 +180,7 @@ const leagueTeams: Record<SportsLeague, Team[] | undefined> = {
 }
 
 const assetDetails: Asset[] = []
+const assetClasses: KanedamaAssetClass[] = []
 
 async function populatePlayers() {
   for (const league of leagues) {
@@ -243,6 +245,20 @@ async function populateTeams() {
   }
 }
 
+async function getFallbackImage(profile: KanedamaAssetProfile) {
+  const existing = assetClasses.find((a) => a.className === profile.asset.class)
+  if (existing) return existing.images[0]
+
+  const assetClass = await fetchAssetClass(profile.asset.class)
+  if (!assetClass || assetClass.images.length === 0) {
+    console.log('assetClass has no image', assetClass)
+    return undefined
+  }
+
+  assetClasses.push(assetClass)
+  return assetClass.images[0]
+}
+
 async function getAsset(assetId: string) {
   const existing = assetDetails.find((a) => a.id === assetId)
   if (existing) return existing
@@ -253,12 +269,14 @@ async function getAsset(assetId: string) {
     return undefined
   }
 
-  const [image] = profile.images || []
+  let [image] = profile.images || []
+  if (!image) image = await getFallbackImage(profile)
   const [color] = image?.colors || []
   const name = profile.asset.canonicalName || profile.asset.officialName
   const asset = {
     id: profile.asset.assetId,
     name,
+    symbol: profile.asset.symbol,
     uri:
       profile.asset.type === 'Stock'
         ? `/money/symbol/${profile.asset.symbol}`
@@ -487,11 +505,12 @@ async function update(
     ),
   ).map((s) => JSON.parse(s) as Team)
 
+  const uniqueTeamId = (team: Team) => `${team.league}.${team.id}`
   const teams = uniqueTeams
     .map((team) => {
-      const id = team.id
+      const id = uniqueTeamId(team)
       const queriesForTeam = queries
-        .filter((q) => q.teams?.map((p) => p.id).includes(id))
+        .filter((q) => q.teams?.map(uniqueTeamId).includes(id))
         .sort((a, b) => b.count - a.count)
       const count = queriesForTeam.reduce((a, b) => a + b.count, 0)
       return { ...team, count }
@@ -525,10 +544,6 @@ async function update(
 
   const stocks = assets
     .filter((a) => a.type === 'Stock')
-    .sort((a, b) => b.count - a.count)
-
-  const indices = assets
-    .filter((a) => a.type === 'Index')
     .sort((a, b) => b.count - a.count)
 
   const etfs = assets
@@ -617,7 +632,6 @@ async function update(
     datasets.push({
       name: 'Assets',
       key: 'assets',
-      prominent: true,
       items: assets
         .map((s) => ({
           title: s.name,
@@ -741,42 +755,6 @@ async function update(
     })
   }
 
-  if (league === 'MONEY' && indices?.length) {
-    datasets.push({
-      name: 'Indices',
-      key: 'indices',
-      prominent: true,
-      items: indices
-        .map((s) => ({
-          title: s.name,
-          uri: s.uri,
-          images: [s.image],
-          background: s.background,
-          foreground: s.foreground,
-          count: s.count,
-        }))
-        .slice(0, STORE),
-    })
-  }
-
-  if (league === 'MONEY' && etfs?.length) {
-    datasets.push({
-      name: 'ETFs',
-      key: 'etfs',
-      prominent: true,
-      items: etfs
-        .map((s) => ({
-          title: s.name,
-          uri: s.uri,
-          images: [s.image],
-          background: s.background,
-          foreground: s.foreground,
-          count: s.count,
-        }))
-        .slice(0, STORE),
-    })
-  }
-
   if (league === 'MONEY' && currencies?.length) {
     datasets.push({
       name: 'Currencies',
@@ -821,6 +799,24 @@ async function update(
       items: nasdaq
         .map((s) => ({
           title: s.name,
+          uri: s.uri,
+          images: [s.image],
+          background: s.background,
+          foreground: s.foreground,
+          count: s.count,
+        }))
+        .slice(0, STORE),
+    })
+  }
+
+  if (league === 'MONEY' && etfs?.length) {
+    datasets.push({
+      name: 'ETFs',
+      key: 'etfs',
+      prominent: true,
+      items: etfs
+        .map((s) => ({
+          title: s.symbol,
           uri: s.uri,
           images: [s.image],
           background: s.background,
@@ -947,6 +943,20 @@ async function fetchAsset(assetId: string) {
   }
 }
 
+async function fetchAssetClass(assetClass: AssetClass) {
+  const path = `asset/class/${assetClass}`
+  const requestUrl = `${kanedamaApiUrl}${path}`
+
+  try {
+    const response = await fetch(requestUrl, { headers })
+    const json: KanedamaAssetClass = await response.json()
+    return json
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
+}
+
 async function getTeams(options: { league: League }) {
   const league = options.league
   if (league === 'ALL') throw new Error('Invalid league')
@@ -1035,7 +1045,7 @@ type KanedamaAsset = {
   officialName: string
   symbol: string
   exchange: string
-  class: string
+  class: AssetClass
   type: string
   shouldSyncPrice: boolean
   isActive: boolean
@@ -1057,19 +1067,26 @@ type KanedamaAsset = {
   }
 }
 
-type KanedamaAssetProfile = {
-  asset: KanedamaAsset
-  images: [
+type KanedamaImage = {
+  imageId: string
+  imageUrl: string
+  colors: [
     {
-      imageId: string
-      imageUrl: string
-      colors: [
-        {
-          colorId: string
-          background: string
-          foreground: string
-        },
-      ]
+      colorId: string
+      background: string
+      foreground: string
     },
   ]
+}
+
+type AssetClass = 'money' | 'equity'
+
+type KanedamaAssetProfile = {
+  asset: KanedamaAsset
+  images: KanedamaImage[]
+}
+
+type KanedamaAssetClass = {
+  className: AssetClass
+  images: KanedamaImage[]
 }

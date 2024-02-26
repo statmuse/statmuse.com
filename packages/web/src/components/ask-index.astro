@@ -23,12 +23,11 @@ const colors = tailwindConfig.theme.extend.colors
 
 interface Props {
   selected?: string
-  headline: string
   asks: AskForIndex[] | FinanceAskForIndex[]
   searchParams: SearchParams
 }
 
-const { selected, headline, searchParams } = Astro.props
+const { selected, searchParams } = Astro.props
 let asks = Astro.props.asks
 
 const overflow = asks.length > ASK_LIMIT
@@ -65,18 +64,10 @@ const items = asks.map((ask) => ({
   count: 1,
 }))
 
-const title = headline ?? 'Realtime Questions'
-const leagueTitle =
-  selected?.toLowerCase() === 'all'
-    ? 'Realtime'
-    : selected?.toLowerCase() === 'money'
-    ? 'Finance'
-    : selected?.toLowerCase() === 'fc'
-    ? 'Premier League'
-    : selected?.toUpperCase() ?? 'Realtime'
+const title = 'Trending Real-time'
 
 const meta = {
-  title: `${leagueTitle} Searches`,
+  title,
   description: `Instant answers to your ${
     selected === 'fc' ? 'Premier League' : selected?.toUpperCase() ?? 'sports'
   } questions. Stats, scores, schedules, standings, recaps and more — just ask.`,

@@ -33,11 +33,6 @@ Caching.swr(Astro)
   }}
 >
   <Header fantasy />
-  <AskIndex
-    selected="fantasy"
-    headline="Trending Fantasy Football Searches"
-    {asks}
-    {searchParams}
-  />
+  <AskIndex selected="fantasy" {asks} {searchParams} />
   <Footer />
 </BaseLayout>

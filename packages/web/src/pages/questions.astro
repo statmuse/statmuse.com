@@ -9,4 +9,4 @@ const asks = await getAsksIndex(undefined, searchParams)
 Caching.swr(Astro)
 ---
 
-<AskIndex headline="Realtime Searches" selected="all" {asks} {searchParams} />
+<AskIndex selected="all" {asks} {searchParams} />

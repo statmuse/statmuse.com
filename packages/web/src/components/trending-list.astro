@@ -23,11 +23,15 @@ const { items, title, eager, moreUrl, prominent } = Astro.props
           {items.slice(0, 5).map((item, index) => (
             <TrendingListItem {item} {index} {prominent} {eager} />
           ))}
-          <li class="py-3">
-            <a href={moreUrl} class="flex justify-center gap-2 text-gray-5">
-              See more <Chevron class="w-5 aspect-square" />
-            </a>
-          </li>
+          {items.length > 5 ? (
+            <li class="py-3">
+              <a href={moreUrl} class="flex justify-center gap-2 text-gray-5">
+                See more <Chevron class="w-5 aspect-square" />
+              </a>
+            </li>
+          ) : (
+            <li class="py-3" />
+          )}
         </ol>
       </>
     ) : (

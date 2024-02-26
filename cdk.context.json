@@ -130,5 +130,9 @@
   "hosted-zone:account=723112830140:domainName=statmuse.com:region=us-east-1": {
     "Id": "/hostedzone/ZO5F0UFX54TRM",
     "Name": "statmuse.com."
+  },
+  "hosted-zone:account=723112830140:domainName=statmuse.com:privateZone=true:region=us-east-1": {
+    "Id": "/hostedzone/Z0883362DI2URK5023HY",
+    "Name": "statmuse.com."
   }
 }

@@ -1,10 +1,6 @@
 ---
-import BaseLayout from '@layouts/base.astro'
-import Header from '@components/header.astro'
-import Footer from '@components/footer.astro'
 import AskIndex from '@components/ask-index.astro'
 import { getAsksIndex } from '@statmuse/core/ask'
-import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { parseSearchParams } from '@lib/asks'
 import { Caching } from '@lib/caching'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
@@ -14,23 +10,7 @@ const domain = leagueToDomain(league)
 const searchParams = parseSearchParams(Astro.url.searchParams)
 const asks = await getAsksIndex([domain.toLowerCase()], searchParams)
 
-const meta = {
-  title: `${domain === 'EPL' ? 'Premier League' : domain} Stats`,
-  description: `Instant answers to your ${
-    domain === 'EPL' ? 'Premier League' : domain
-  } questions. Stats, scores, schedules, standings, recaps and more — just ask.`,
-  pageType: 'question',
-}
-
 Caching.swr(Astro)
 ---
 
-<AskIndex
-  selected={league}
-  headline={`Realtime ${
-    domain === 'EPL' ? 'Premier League' : domain
-  } Searches`}
-  {asks}
-  {searchParams}
-/>
-
+<AskIndex selected={league} {asks} {searchParams} />

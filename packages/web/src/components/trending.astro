@@ -13,6 +13,7 @@ import { QueryCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import tailwindConfig from '../../tailwind.config.ts'
 import type { Category } from 'src/types'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import Back from '@components/icons/back.astro'
 
 const colors = tailwindConfig.theme.extend.colors
 
@@ -27,7 +28,6 @@ interface Props {
 }
 
 const timeframes: Record<string, string> = {
-  // latest: 'LATEST',
   last24Hours: 'LAST_24_HOURS',
   last7Days: 'LAST_7_DAYS',
   last30Days: 'LAST_30_DAYS',
@@ -80,16 +80,19 @@ if (dataset) trendingListItems = dataset.items
 
 const leagueTitle =
   league.toLowerCase() === 'all'
-    ? ''
+    ? 'Sports'
     : league.toLowerCase() === 'money'
     ? 'Money'
-    : league.toUpperCase()
+    : 'Sports'
 
 const title = category
-  ? `Trending ${leagueTitle} ${
-      category[0].toUpperCase() + category.substring(1)
-    }`
-  : 'Trending'
+  ? `Trending ${category[0].toUpperCase() + category.substring(1)}`
+  : `Trending ${leagueTitle}`
+
+const backUrl =
+  selected && selected !== 'all'
+    ? `/${selected}/trending${Astro.url.search}`
+    : `/trending${Astro.url.search}`
 ---
 
 <Layout
@@ -105,8 +108,26 @@ const title = category
 >
   <Header money={selected === 'money'} preferredDomain={selected} />
   <Container class="text-gray-8 bg-teal">
-    <div class="pt-8 pb-8 md:pt-[90px] md:pb-16">
-      <h1 class="text-center font-semibold text-4xl md:text-6xl">{title}</h1>
+    <div class="relative py-8 md:py-16">
+      {
+        category ? (
+          <a
+            href={backUrl}
+            class="absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-8 cursor-pointer rounded-full md:p-3 hover:bg-gray-8 hover:text-teal"
+          >
+            <Back class="w-5 aspect-square" />
+          </a>
+        ) : null
+      }
+      <h1
+        class:list={{
+          'text-center font-semibold': true,
+          'text-4xl md:text-6xl': !category,
+          'text-2xl md:text-4xl': category,
+        }}
+      >
+        {title}
+      </h1>
     </div>
   </Container>
   <div class="bg-gray-7 p-3 space-y-3">

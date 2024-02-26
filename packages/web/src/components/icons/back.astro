@@ -1,0 +1,30 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+interface Props extends HTMLAttributes<'svg'> {}
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 29.5 29.5"
+  enable-background="new 0 0 29.5 29.5"
+  {...Astro.props}
+>
+  <g>
+    <line
+      class="fill-none stroke-current stroke-2"
+      style="stroke-linecap: round;stroke-linejoin: round;stroke-miterlimit: 10;"
+      x1="26.5"
+      y1="14.8"
+      x2="3"
+      y2="14.8"
+    >
+    </line>
+    <polyline
+      class="fill-none stroke-current stroke-2"
+      style="stroke-linecap: round;stroke-linejoin: round;stroke-miterlimit: 10;"
+      points="14.7,26.5 3,14.8 14.7,3"
+    >
+    </polyline>
+  </g>
+</svg>

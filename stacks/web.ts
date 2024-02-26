@@ -182,13 +182,15 @@ export function Web({ stack }: StackContext) {
     },
   })
 
-  new ARecord(stack, 'private-a-record', {
-    zone: dns.privateZone,
-    recordName: domainName,
-    target: RecordTarget.fromAlias(
-      new CloudFrontTarget(astroSite.cdk!.distribution),
-    ),
-  })
+  if (astroSite.cdk) {
+    new ARecord(stack, 'private-a-record', {
+      zone: dns.privateZone,
+      recordName: domainName,
+      target: RecordTarget.fromAlias(
+        new CloudFrontTarget(astroSite.cdk.distribution),
+      ),
+    })
+  }
 
   stack.addOutputs({ CdnUrl: astroSite.url, Url: astroSite.customDomainUrl })
 
