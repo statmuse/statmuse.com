@@ -1,6 +1,7 @@
 ---
 import TrendingList from '@components/trending-list.astro'
 import type { TrendingItem } from 'src/types'
+import AditudeAdTrending from '@components/aditude-ad-trending.svelte'
 
 interface Props {
   item: TrendingItem
@@ -14,13 +15,19 @@ const { item } = Astro.props
 >
   {
     item?.datasets?.map((dataset, index) => (
-      <TrendingList
-        title={`Trending ${dataset.name}`}
-        items={dataset.items}
-        moreUrl={`${Astro.url.pathname}/${dataset.key}${Astro.url.search}`}
-        prominent={dataset.prominent}
-        eager={index < 3}
-      />
+      <Fragment>
+        <TrendingList
+          title={`Trending ${dataset.name}`}
+          items={dataset.items}
+          moreUrl={`${Astro.url.pathname}/${dataset.key}${Astro.url.search}`}
+          prominent={dataset.prominent}
+          eager={index < 3}
+        />
+        <AditudeAdTrending
+          client:only="svelte"
+          slotId={`trending-slot-${index}`}
+        />
+      </Fragment>
     ))
   }
   {
