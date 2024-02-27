@@ -219,3 +219,96 @@ rubiconproject.com, 25198, RESELLER, 0bfd66d529a55807
 smartadserver.com, 4537, RESELLER, 060d053dcf45cbf3
 
 rubiconproject.com, 26348, DIRECT, 0bfd66d529a55807
+
+# Adagio
+adagio.io, 1414, DIRECT
+
+# Adagio - Magnite
+rubiconproject.com, 19116, RESELLER, 0bfd66d529a55807
+
+# Adagio - Pubmatic
+pubmatic.com, 159110, RESELLER, 5d62403b186f2ace
+
+# Adagio - Improve Digital
+improvedigital.com, 1790, RESELLER
+
+# Adagio - Onetag
+onetag.com, 6b859b96c564fbe, RESELLER
+appnexus.com, 13099, RESELLER
+pubmatic.com, 161593, RESELLER, 5d62403b186f2ace
+rubiconproject.com, 11006, RESELLER, 0bfd66d529a55807
+
+# Adagio - Equativ
+smartadserver.com, 3554, RESELLER
+pubmatic.com, 156439, RESELLER, 5d62403b186f2ace
+pubmatic.com, 154037, RESELLER, 5d62403b186f2ace
+rubiconproject.com, 16114, RESELLER, 0bfd66d529a55807
+openx.com, 537149888, RESELLER, 6a698e2ec38604c6
+appnexus.com, 3703, RESELLER, f5ab79cb980f11d1
+loopme.com, 5679, RESELLER, 6c8d5f95897a5a3b
+video.unrulymedia.com, 2564526802, RESELLER
+pubnative.net, 1006576, RESELLER, d641df8625486a7b
+admanmedia.com, 43, RESELLER
+sharethrough.com, OAW69Fon, RESELLER, d53b998a7bd4ecd2
+
+# Adagio - OpenX
+openx.com, 558899373, RESELLER, 6a698e2ec38604c6
+
+# Adagio - Triplelift
+triplelift.com, 13482, RESELLER, 6c33edb13117fd86
+
+# Adagio - E-Planning
+e-planning.net, 83c06e81531537f4, RESELLER, c1ba615865ed87b2
+pubmatic.com, 156631, RESELLER, 5d62403b186f2ace
+openx.com, 541031350, RESELLER, 6a698e2ec38604c6
+rubiconproject.com, 12186, RESELLER, 0bfd66d529a55807
+
+# Adagio - Nexxen
+video.unrulymedia.com, 5672421953199218469, RESELLER
+
+# Medianet
+Media.net, 8CUG3W69U, DIRECT
+pubmatic.com, 159463, RESELLER, 5d62403b186f2ace
+openx.com, 537100188, RESELLER, 6a698e2ec38604c6
+rubiconproject.com, 19396, Reseller, 0bfd66d529a55807
+onetag.com, 5d49f482552c9b6, Reseller
+rhythmone.com, 3611299104, RESELLER
+sharethrough.com, koRtppYA, RESELLER, d53b998a7bd4ecd2
+Contextweb.com,563079,RESELLER,89ff185a4c4e857c
+rubiconproject.com,26184, RESELLER, 0bfd66d529a55807
+loopme.com, 11498, RESELLER, 6c8d5f95897a5a3b
+sonobi.com, b43e9530e7, RESELLER, d1a215d9eb5aee9e
+
+#Insticator_Version_734
+insticator.com, 98806edd-f294-4cf4-983c-1ffe0283e9a0, DIRECT, b3511ffcafb23a32 
+oko.uk, 98806edd-f294-4cf4-983c-1ffe0283e9a0, DIRECT, b3511ffcafb23a32 #OKO_Version_442
+33across.com,0010b00001rrPUnAAM,DIRECT,bbea06d9c4d2853c
+rubiconproject.com,16414,RESELLER,0bfd66d529a55807
+pubmatic.com,156423,RESELLER,5d62403b186f2ace
+appnexus.com,10239,RESELLER,f5ab79cb980f11d1
+appnexus.com,3695,RESELLER,f5ab79cb980f11d1
+indexexchange.com,192379,RESELLER,50b1c356f2c5c8fc
+openx.com,558230700,RESELLER,6a698e2ec38604c6
+pubmatic.com,95054,DIRECT,5d62403b186f2ace
+video.unrulymedia.com,136898039,RESELLER
+rubiconproject.com,17062,RESELLER,0bfd66d529a55807
+sonobi.com,94e11c1d20,DIRECT,d1a215d9eb5aee9e
+lijit.com,257618,RESELLER,fafdf38b16bf6b2b
+amxrtb.com,105199388,DIRECT
+appnexus.com,12290,RESELLER,f5ab79cb980f11d1
+rubiconproject.com,23844,RESELLER
+sharethrough.com,Q9IzHdvp,DIRECT,d53b998a7bd4ecd2
+pubmatic.com,156557,RESELLER
+rubiconproject.com,18694,RESELLER,0bfd66d529a55807
+openx.com,540274407,RESELLER,6a698e2ec38604c6
+smaato.com,1100047713,RESELLER,07bcf65f187117b4
+risecodes.com,6124caed9c7adb0001c028d8,DIRECT
+rubiconproject.com,23876,RESELLER,0bfd66d529a55807
+openx.com,537140488,RESELLER,6a698e2ec38604c6
+indexexchange.com,194590,RESELLER,50b1c356f2c5c8fc
+onetag.com,69f48c2160c8113,RESELLER
+video.unrulymedia.com,335119963,RESELLER
+yieldmo.com,2754490424016969782,RESELLER
+
+# Pubmatic
+pubmatic.com, 164446, DIRECT, 5d62403b186f2ace
