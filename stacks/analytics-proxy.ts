@@ -15,7 +15,7 @@ import {
 import { DNS } from './dns'
 
 export function AnalyticsProxy({ stack }: StackContext) {
-  const { hostedZone, domain } = use(DNS)
+  const { hostedZone, domain, privateZone } = use(DNS)
 
   if (stack.stage === 'staging' || stack.stage === 'production') {
     const cdnDomain = `analytics.cdn.${domain}`
@@ -43,6 +43,12 @@ export function AnalyticsProxy({ stack }: StackContext) {
       recordName: cdnDomain,
     })
 
+    new ARecord(stack, 'analytics-cdn-proxy-private-arecord', {
+      zone: privateZone,
+      target: RecordTarget.fromAlias(new CloudFrontTarget(cdnDistribution)),
+      recordName: cdnDomain,
+    })
+
     const apiDomain = `analytics.api.${domain}`
 
     const apiCert = new Certificate(stack, 'analytics-api-proxy-cert', {
@@ -64,6 +70,12 @@ export function AnalyticsProxy({ stack }: StackContext) {
 
     const apiARecord = new ARecord(stack, 'analytics-api-proxy-arecord', {
       zone: hostedZone,
+      target: RecordTarget.fromAlias(new CloudFrontTarget(apiDistribution)),
+      recordName: apiDomain,
+    })
+
+    new ARecord(stack, 'analytics-api-proxy-private-arecord', {
+      zone: privateZone,
       target: RecordTarget.fromAlias(new CloudFrontTarget(apiDistribution)),
       recordName: apiDomain,
     })
