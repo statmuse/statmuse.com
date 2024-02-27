@@ -15,7 +15,7 @@ export default defineConfig({
     svelte({ preprocess: [vitePreprocess(), preprocessMeltUI()] }),
   ],
   output: 'server',
-  server: { port: 3000, host: 'cosmos.dev.statmuse.com' },
+  server: { port: 3000 },
   // devToolbar: { enabled: false },
   adapter: aws({
     responseMode: 'buffer',
