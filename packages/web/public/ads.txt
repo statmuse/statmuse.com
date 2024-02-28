@@ -435,3 +435,13 @@ visiblemeasures.com, 1041, DIRECT #yieldmo
 iqzone.com,IQ190,RESELLER
 krushmedia.com, AJxF6R537a9M6CaTvK, RESELLER
 consumable.com, 2001460, DIRECT, aefcd3d2f45b5070
+
+# adaptmx
+amxrtb.com, 105199765, DIRECT
+appnexus.com, 12290, RESELLER
+lijit.com, 260380, RESELLER
+pubmatic.com, 158355, RESELLER
+indexexchange.com, 191503, RESELLER
+rubiconproject.com, 23844, RESELLER
+rubiconproject.com, 17960, RESELLER
+openx.com, 559680764, RESELLER
