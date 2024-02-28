@@ -165,7 +165,7 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
   analytics={{
     page_domain:
       league === 'All'
-        ? 'unknown'
+        ? 'sports'
         : league === 'fantasy'
         ? 'nfl'
         : league === 'money'
@@ -173,6 +173,7 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
         : league === 'fc'
         ? 'epl'
         : (league as AnalyticsPageviewProperties['page_domain']),
+    page_type: 'home',
   }}
 >
   <main

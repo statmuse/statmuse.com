@@ -16,11 +16,13 @@ export type AnalyticsPageviewProperties = {
     | 'pga'
     | 'finance'
     | 'epl'
+    | 'sports'
     | 'unknown'
   page_type?:
     | 'ask'
     | 'asset'
     | 'game'
+    | 'home'
     | 'musing'
     | 'player'
     | 'question'

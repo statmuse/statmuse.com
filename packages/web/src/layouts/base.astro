@@ -360,9 +360,17 @@ const canonicalUrl = meta?.canonical
           ...flattenObj('tokenizationScore', tokenizationScore),
           origin: getOrigin(navigator.userAgent),
         })
+
+        var tude = window.tude || { cmd: [] }
+        tude.cmd.push(function () {
+          tude.setPageTargeting({
+            pagetype: props.page_domain + '-' + props.page_type,
+          })
+        })
       }
 
       // hack: 'astro:page-load' does not fire consistently
+      // TODO: move into astro:page-load callback
       document.addEventListener('astro:after-swap', async () => {
         // default page tracking
         segment.page()
@@ -380,6 +388,13 @@ const canonicalUrl = meta?.canonical
             ...flattenObj('disposition', disposition),
             ...flattenObj('tokenizationScore', tokenizationScore),
             origin: getOrigin(navigator.userAgent),
+          })
+
+          var tude = window.tude || { cmd: [] }
+          tude.cmd.push(function () {
+            tude.setPageTargeting({
+              pagetype: props.page_domain + '-' + props.page_type,
+            })
           })
         }
       })

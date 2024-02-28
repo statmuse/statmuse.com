@@ -77,10 +77,14 @@ const meta = {
 
 <Layout
   analytics={{
-    page_type: 'question',
+    page_type: 'trending',
     page_domain:
       selected === 'money'
         ? 'finance'
+        : selected === 'fc'
+        ? 'epl'
+        : selected === 'all'
+        ? 'sports'
         : (selected?.toLowerCase() as AnalyticsPageviewProperties['page_domain']),
   }}
   {meta}
