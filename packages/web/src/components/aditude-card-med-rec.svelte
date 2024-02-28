@@ -4,6 +4,7 @@
   import { onMount } from 'svelte'
 
   export let slotId = 'statmuse_incontent_cards'
+  export let baseDivId = 'pb-slot-incontent-1'
 
   let container: HTMLElement
   let observer: IntersectionObserver
@@ -41,7 +42,7 @@
               tude.refreshAdsViaDivMappings([
                 {
                   divId: slotId,
-                  baseDivId: 'pb-slot-incontent-2',
+                  baseDivId: baseDivId,
                 },
               ])
             })

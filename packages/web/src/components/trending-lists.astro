@@ -26,6 +26,7 @@ const { item } = Astro.props
         <AditudeAdTrending
           client:only="svelte"
           slotId={`trending-slot-${index}`}
+          baseDivId={`pb-slot-banner-${(index % 4) + 1}`}
         />
       </Fragment>
     ))

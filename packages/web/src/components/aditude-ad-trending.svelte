@@ -3,7 +3,8 @@
   import { isMobileTest } from '@lib/useragent'
   import { onMount } from 'svelte'
 
-  export let slotId = 'statmuse_incontent_cards'
+  export let slotId = 'slot_banner'
+  export let baseDivId = 'pb-slot-banner-1'
 
   let container: HTMLElement
   let observer: IntersectionObserver
@@ -41,7 +42,7 @@
               tude.refreshAdsViaDivMappings([
                 {
                   divId: slotId,
-                  baseDivId: 'pb-slot-anchor',
+                  baseDivId: baseDivId,
                 },
               ])
             })
