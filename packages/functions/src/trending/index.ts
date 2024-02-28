@@ -180,7 +180,6 @@ const leagueTeams: Record<SportsLeague, Team[] | undefined> = {
 }
 
 const assetDetails: Asset[] = []
-const assetClasses: KanedamaAssetClass[] = []
 
 async function populatePlayers() {
   for (const league of leagues) {
@@ -245,20 +244,6 @@ async function populateTeams() {
   }
 }
 
-async function getFallbackImage(profile: KanedamaAssetProfile) {
-  const existing = assetClasses.find((a) => a.className === profile.asset.class)
-  if (existing) return existing.images[0]
-
-  const assetClass = await fetchAssetClass(profile.asset.class)
-  if (!assetClass || assetClass.images.length === 0) {
-    console.log('assetClass has no image', assetClass)
-    return undefined
-  }
-
-  assetClasses.push(assetClass)
-  return assetClass.images[0]
-}
-
 async function getAsset(assetId: string) {
   const existing = assetDetails.find((a) => a.id === assetId)
   if (existing) return existing
@@ -269,9 +254,7 @@ async function getAsset(assetId: string) {
     return undefined
   }
 
-  let [image] = profile.images || []
-  if (!image) image = await getFallbackImage(profile)
-  const [color] = image?.colors || []
+  const image = profile.subjectImage
   const name = profile.asset.canonicalName || profile.asset.officialName
   const asset = {
     id: profile.asset.assetId,
@@ -282,8 +265,8 @@ async function getAsset(assetId: string) {
         ? `/money/symbol/${profile.asset.symbol}`
         : `/money/ask/${createSlug(name)}`,
     image: image?.imageUrl,
-    background: color?.background,
-    foreground: color?.foreground,
+    background: image.colors?.background,
+    foreground: image.colors?.foreground,
     class: profile.asset.class,
     type: profile.asset.type,
     exchange: profile.asset.exchange,
@@ -359,7 +342,7 @@ async function update(
   const chunks = chunk(results, 10)
   for (const batch of chunks) {
     const promises = batch.map(async (record) => {
-      const uri = record.uri
+      const uri = decodeURIComponent(record.uri)
       const count = Number(record.count)
 
       let [, leagueName, , query] = record.uri.split('/')
@@ -369,7 +352,7 @@ async function update(
 
       if (!query) query = record.uri.split('?q=')[1]?.replace(/\+/g, ' ')
       try {
-        query = decodeURIComponent(decodeURIComponent(query))
+        query = decodeURIComponent(query)
       } catch (error) {
         console.log('error decoding', query)
         console.error(error)
@@ -506,6 +489,7 @@ async function update(
   ).map((s) => JSON.parse(s) as Team)
 
   const uniqueTeamId = (team: Team) => `${team.league}.${team.id}`
+
   const teams = uniqueTeams
     .map((team) => {
       const id = uniqueTeamId(team)
@@ -669,9 +653,9 @@ async function update(
   }
 
   if (topTeam) {
-    const id = topTeam.id
+    const id = uniqueTeamId(topTeam)
     const queriesForTeam = queries
-      .filter((q) => q.teams?.map((p) => p.id).includes(id))
+      .filter((q) => q.teams?.map(uniqueTeamId).includes(id))
       .sort((a, b) => b.count - a.count)
       .slice(0, STORE)
 
@@ -840,6 +824,8 @@ async function update(
       Item: item,
     }),
   )
+
+  console.log('pk updated', item.pk)
 }
 
 async function handleHourlyUpdate() {
@@ -855,6 +841,8 @@ async function handleHourlyUpdate() {
 async function handleDailyUpdate() {
   for (const league of leagues) {
     for (const timeframe of timeframes) {
+      if (timeframe === 'LAST_24_HOURS') continue
+
       await update(timeframe, league, 'GLOBAL')
 
       for (const country of countries) {
@@ -864,7 +852,7 @@ async function handleDailyUpdate() {
   }
 }
 
-async function ask(options: {
+async function _ask(options: {
   league: League
   query: string
   conversationToken?: string
@@ -936,20 +924,6 @@ async function fetchAsset(assetId: string) {
   try {
     const response = await fetch(requestUrl, { headers })
     const json: KanedamaAssetProfile = await response.json()
-    return json
-  } catch (error) {
-    console.error(error)
-    return undefined
-  }
-}
-
-async function fetchAssetClass(assetClass: AssetClass) {
-  const path = `asset/class/${assetClass}`
-  const requestUrl = `${kanedamaApiUrl}${path}`
-
-  try {
-    const response = await fetch(requestUrl, { headers })
-    const json: KanedamaAssetClass = await response.json()
     return json
   } catch (error) {
     console.error(error)
@@ -1068,11 +1042,11 @@ type KanedamaAsset = {
 }
 
 type KanedamaImage = {
-  imageId: string
+  imageId?: string
   imageUrl: string
   colors: [
     {
-      colorId: string
+      colorId?: string
       background: string
       foreground: string
     },
@@ -1084,9 +1058,11 @@ type AssetClass = 'money' | 'equity'
 type KanedamaAssetProfile = {
   asset: KanedamaAsset
   images: KanedamaImage[]
-}
-
-type KanedamaAssetClass = {
-  className: AssetClass
-  images: KanedamaImage[]
+  subjectImage: {
+    imageUrl: string
+    colors: {
+      background: string
+      foreground: string
+    }
+  }
 }

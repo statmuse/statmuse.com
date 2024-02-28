@@ -18,7 +18,7 @@ export function Trending({ stack }: StackContext) {
     },
   })
 
-  if (isProd) {
+  if (isProd || stack.stage === 'adam') {
     const job = new Job(stack, 'trending', {
       architecture: 'arm_64',
       runtime: 'nodejs18.x',
