@@ -309,6 +309,12 @@ indexexchange.com,194590,RESELLER,50b1c356f2c5c8fc
 onetag.com,69f48c2160c8113,RESELLER
 video.unrulymedia.com,335119963,RESELLER
 yieldmo.com,2754490424016969782,RESELLER
+loopme.com,11530,RESELLER,6c8d5f95897a5a3b
+eskimi.com,2020000364,DIRECT
+video.unrulymedia.com,498216989,RESELLER
+pubmatic.com,162270,RESELLER,5d62403b186f2ace
+rubiconproject.com,26250,RESELLER,0bfd66d529a55807
+xandr.com,15670,RESELLER
 
 # Pubmatic
 pubmatic.com, 164446, DIRECT, 5d62403b186f2ace
