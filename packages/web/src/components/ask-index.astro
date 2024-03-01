@@ -42,7 +42,7 @@ const paginationOptions = paginate(asks, searchParams, overflow)
 
 const leagues: { text: string; param: string; href?: string }[] = [
   {
-    text: 'ALL',
+    text: 'All',
     param: 'all',
     href: '/questions',
   },
@@ -52,7 +52,7 @@ const leagues: { text: string; param: string; href?: string }[] = [
   { text: 'NHL', param: 'nhl' },
   { text: 'MLB', param: 'mlb' },
   { text: 'PGA', param: 'pga' },
-  { text: 'MONEY', param: 'money' },
+  { text: 'Money', param: 'money' },
 ]
 
 const items = asks.map((ask) => ({

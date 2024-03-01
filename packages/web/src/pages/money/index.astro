@@ -124,34 +124,36 @@ Caching.swr(Astro)
 ---
 
 <HomeLayout league="money">
-  <div class="divide-y divide-[#e4e4e4]">
+  <div class="gap-8 space-y-8 columns-2xs lg:min-w-[48rem]">
     {
       examples.map(([title, queries]) => (
-        <div class="py-4">
-          <h2 class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3">
+        <div class="break-inside-avoid-column">
+          <h2 class="text-[0.8rem] text-gray-5 uppercase tracking-[0.07rem]">
             {title}
           </h2>
-          <ul>
+          <ul class="flex flex-col gap-2">
             {queries.map(({ query, path }) => (
-              <li class="my-3">
-                <a href={path}>{query}</a>
+              <li class="max-w-xs">
+                <a href={path} class="text-pretty">
+                  {query}
+                </a>
               </li>
             ))}
           </ul>
         </div>
       ))
     }
-    <div class="py-6 md:py-8" style="margin-bottom: 24px;">
-      <h3
-        class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3"
-      >
-        DATA COVERAGE
-      </h3>
-      <ul class="list-disc list-inside">
-        {dataCoverage.map((data) => <li class="my-3" set:html={data} />)}
-      </ul>
-    </div>
   </div>
+
+  <div class="py-6 md:py-8" style="margin-bottom: 24px;">
+    <h3 class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3">
+      DATA COVERAGE
+    </h3>
+    <ul class="list-disc list-inside">
+      {dataCoverage.map((data) => <li class="my-3" set:html={data} />)}
+    </ul>
+  </div>
+
   <iframe
     class="w-full aspect-video mb-6 md:mb-8"
     src="https://player.vimeo.com/video/554757123"
