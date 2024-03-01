@@ -1,5 +1,6 @@
 ---
 import Icon from '@components/icon.svelte'
+import AuthLink from '@components/auth-link.svelte'
 import Panel from '@components/panel.astro'
 
 const menuLinks = [
@@ -148,7 +149,10 @@ const menuLinks = [
 }[][]
 ---
 
-<div class="flex flex-col gap-2 w-[220px] p-3">
+<div class="flex flex-col gap-2 w-[220px] p-3 md:mx-auto">
+  <Panel class="md:hidden">
+    <AuthLink />
+  </Panel>
   {
     menuLinks.map((links) => (
       <Panel>

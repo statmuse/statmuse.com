@@ -122,7 +122,7 @@
       ></script>
     {/if}
   {:else if !$session}
-    <div class="w-full h-full bg-gray-7 border border-gray-6 rounded-2xl" />
+    <div class="w-full h-full" />
   {:else}
     <slot />
   {/if}

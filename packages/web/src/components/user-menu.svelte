@@ -12,13 +12,13 @@
 
 <button
   type="button"
-  class="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-team-secondary-sm-default focus:ring-offset-2"
+  class="flex h-[36px] aspect-square items-center justify-center rounded-full bg-gray-8 text-sm focus:outline-none focus:ring-2 focus:ring-team-secondary-sm-default focus:ring-offset-2"
   use:melt={$trigger}
   aria-label="Open user menu"
 >
-  <span class="inline-block h-8 w-8 overflow-hidden rounded-full bg-gray-100">
+  <span class="inline-block h-8 w-8 overflow-hidden rounded-full bg-gray-6">
     <svg
-      class="h-full w-full text-gray-300"
+      class="h-full w-full text-gray-5"
       fill="currentColor"
       viewBox="0 0 24 24"
     >
@@ -32,7 +32,9 @@
 
 {#if $open}
   <div
-    class="flex max-h-[300px] min-w-[220px] flex-col shadow-md z-20 rounded-md bg-white py-1 lg:max-h-none ring-1 ring-black ring-opacity-5"
+    class="flex max-h-[300px] min-w-[220px] flex-col shadow-md z-20
+           rounded-md bg-white py-1 lg:max-h-none
+           ring-1 ring-gray-1 ring-opacity-5"
     use:melt={$menu}
     transition:fly={{ duration: 150, y: -10 }}
   >

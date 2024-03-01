@@ -80,12 +80,12 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
       />
     </div>
 
-    <div class="px-3 mt-1 bg-gray-7 max-w-3xl lg:max-w-5xl mx-auto">
-      <div class="flex flex-1 justify-end md:hidden">
+    <div class="px-3 bg-gray-7 max-w-3xl lg:max-w-5xl mx-auto">
+      <div class="flex flex-1 justify-end md:mt-3">
         <AuthMenu client:load />
       </div>
 
-      <div class="mt-10 md:mt-20 mb-1 md:mb-3">
+      <div class="mt-8 md:mt-14 mb-1 md:mb-3">
         <Logo />
       </div>
 
@@ -93,6 +93,7 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
         <div class="absolute inset-0 h-14 md:h-16 bg-gray-7"></div>
         <AskBar
           large
+          class="mx-auto"
           client:load
           money={league === 'money'}
           fantasy={league === 'fantasy'}
