@@ -42,7 +42,7 @@ export function Auth({ stack, app }: StackContext) {
       vpc,
       vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_EGRESS },
       securityGroups: [lambdaSecurityGroup],
-      // prefetchSecrets: true,
+      prefetchSecrets: true,
     },
     customDomain: {
       domainName: isProd ? 'auth.statmuse.com' : 'auth.' + dns.domain,
