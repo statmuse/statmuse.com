@@ -25,7 +25,7 @@ export default {
       insightsVersion: undefined,
       memorySize: '128 MB',
       timeout: '3 seconds',
-      prefetchSecrets: true,
+      // prefetchSecrets: true,
     })
 
     app
