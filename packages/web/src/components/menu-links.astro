@@ -1,194 +1,180 @@
 ---
+import Icon from './icon.svelte'
+
 const menuLinks = [
-  {
-    links: [
-      {
-        text: 'Home',
-        icon: '/menu-icons/icon-home.svg',
-        tealIcon: '/menu-icons/teal/icon-home.svg',
-        url: '/',
-        currentUrl: new RegExp('^/(nba|nfl|nhl|mlb|pga|fantasy|fc)?$'),
-      },
-      {
-        text: 'Money Search',
-        icon: '/menu-icons/icon-money.svg',
-        tealIcon: '/menu-icons/teal/icon-money.svg',
-        url: '/money',
-        currentUrl: new RegExp('^/money$'),
-      },
-      {
-        text: 'Trending Sports',
-        icon: '/menu-icons/icon-trending.svg',
-        tealIcon: '/menu-icons/teal/icon-trending.svg',
-        url: '/trending',
-        currentUrl: new RegExp(
-          '^(/(nba|nfl|nhl|mlb|pga|fantasy|fc))?/trending$',
-        ),
-      },
-      {
-        text: 'Trending Money',
-        icon: '/menu-icons/icon-trending.svg',
-        tealIcon: '/menu-icons/teal/icon-trending.svg',
-        url: '/money/trending',
-        currentUrl: new RegExp('^/money/trending$'),
-      },
-      {
-        text: 'Trending Real-time',
-        icon: '/menu-icons/icon-trending.svg',
-        tealIcon: '/menu-icons/teal/icon-trending.svg',
-        url: '/questions',
-        currentUrl: new RegExp(
-          '^(/(nba|nfl|nhl|mlb|pga|fantasy|fc|money))?/questions$',
-        ),
-      },
-      {
-        text: 'Gallery',
-        icon: '/menu-icons/icon-gallery.svg',
-        tealIcon: '/menu-icons/teal/icon-gallery.svg',
-        url: '/players',
-        currentUrl: new RegExp('^(/(nba|nfl|nhl|mlb|pga|fc))?/players$'),
-      },
-      {
-        text: 'Shop',
-        icon: '/menu-icons/icon-shop.svg',
-        tealIcon: '/menu-icons/teal/icon-shop.svg',
-        url: 'https://shop.statmuse.com',
-        external: true,
-      },
-      {
-        text: 'Blog',
-        icon: '/menu-icons/icon-blog.svg',
-        tealIcon: '/menu-icons/teal/icon-blog.svg',
-        url: 'https://blog.statmuse.com/',
-        external: true,
-      },
-    ],
-  },
-  {
-    header: 'Search',
-    links: [
-      {
-        text: 'Examples',
-        icon: '/menu-icons/icon-examples.svg',
-        tealIcon: '/menu-icons/teal/icon-examples.svg',
-        url: '/product/examples',
-        currentUrl: new RegExp(
-          '^/product/examples(/(nba|nfl|nhl|mlb|pga|fc))?$',
-        ),
-      },
-      {
-        text: 'Data & Glossary',
-        icon: '/menu-icons/icon-data-coverage.svg',
-        tealIcon: '/menu-icons/teal/icon-data-coverage.svg',
-        url: '/product/data',
-        currentUrl: new RegExp('^/product/data(/(nba|nfl|nhl|mlb|pga|fc))?$'),
-      },
-      // {
-      //   text: 'Authentic Voices',
-      //   icon: '/menu-icons/icon-voice.svg',
-      //   icon: '/menu-icons/teal/icon-voice.svg',
-      //   url: '/product/voices',
-      //   currentUrl: ['/product/voices'],
-      // },
-      // {
-      //   text: 'Tutorials',
-      //   icon: '/menu-icons/icon-glossary.svg',
-      //   icon: '/menu-icons/teal/icon-glossary.svg',
-      //   url: 'https://blog.statmuse.com/tagged/tutorial',
-      // },
-    ],
-  },
-  {
-    header: 'Play',
-    links: [
-      {
-        text: 'Elements of Bball',
-        icon: '/menu-icons/icon-elements-of-bball.svg',
-        tealIcon: '/menu-icons/teal/icon-elements-of-bball.svg',
-        url: 'https://elementsofbasketball.com/',
-        external: true,
-      },
-      {
-        text: 'Harden Maze',
-        icon: '/menu-icons/icon-harden-maze.svg',
-        tealIcon: '/menu-icons/teal/icon-harden-maze.svg',
-        url: 'https://hardenmaze.com/',
-        external: true,
-      },
-    ],
-  },
-  {
-    header: 'Company',
-    links: [
-      {
-        text: 'About',
-        icon: '/menu-icons/icon-about.svg',
-        tealIcon: '/menu-icons/teal/icon-about.svg',
-        url: '/company/about',
-        currentUrl: new RegExp('^/company/about$'),
-      },
-    ],
-  },
+  [
+    {
+      text: 'Profile',
+      icon: 'profile',
+      url: '/company/about',
+      currentUrl: new RegExp('^/company/about$'),
+    },
+  ],
+  [
+    {
+      text: 'All',
+      icon: 'all-home',
+      url: '/',
+      currentUrl: new RegExp('^/$'),
+    },
+    {
+      text: 'FC',
+      icon: 'fc',
+      url: '/fc',
+      currentUrl: new RegExp('^/fc$'),
+    },
+    {
+      text: 'NBA',
+      icon: 'nba',
+      url: '/nba',
+      currentUrl: new RegExp('^/nba$'),
+    },
+    {
+      text: 'NFL',
+      icon: 'nfl',
+      url: '/nfl',
+      currentUrl: new RegExp('^/nfl$'),
+    },
+    {
+      text: 'NHL',
+      icon: 'nhl',
+      url: '/nhl',
+      currentUrl: new RegExp('^/nhl$'),
+    },
+    {
+      text: 'MLB',
+      icon: 'mlb',
+      url: '/mlb',
+      currentUrl: new RegExp('^/mlb$'),
+    },
+    {
+      text: 'PGA',
+      icon: 'pga',
+      url: '/pga',
+      currentUrl: new RegExp('^/pga$'),
+    },
+    {
+      text: 'Money',
+      icon: 'money',
+      url: '/money',
+      color: 'text-orange',
+      currentUrl: new RegExp('^/money$'),
+    },
+  ],
+  [
+    {
+      text: 'Trending Sports',
+      icon: 'trending-sports',
+      url: '/trending',
+      currentUrl: new RegExp('^(/(nba|nfl|nhl|mlb|pga|fantasy|fc))?/trending$'),
+    },
+    {
+      text: 'Trending Money',
+      icon: 'trending-money',
+      url: '/money/trending',
+      currentUrl: new RegExp('^/money/trending$'),
+    },
+    {
+      text: 'Trending Real-time',
+      icon: 'trending-sports',
+      url: '/questions',
+      currentUrl: new RegExp(
+        '^(/(nba|nfl|nhl|mlb|pga|fantasy|fc|money))?/questions$',
+      ),
+    },
+    {
+      text: 'Gallery',
+      icon: 'gallery',
+      url: '/players',
+      currentUrl: new RegExp('^(/(nba|nfl|nhl|mlb|pga|fc))?/players$'),
+    },
+  ],
+  [
+    {
+      text: 'Examples',
+      icon: 'search',
+      url: '/product/examples',
+      currentUrl: new RegExp('^/product/examples(/(nba|nfl|nhl|mlb|pga|fc))?$'),
+    },
+    {
+      text: 'Data & Glossary',
+      icon: 'glossary',
+      url: '/product/data',
+      currentUrl: new RegExp('^/product/data(/(nba|nfl|nhl|mlb|pga|fc))?$'),
+    },
+  ],
+  [
+    {
+      text: 'Elements of Bball',
+      icon: 'elements-of-basketball',
+      url: 'https://elementsofbasketball.com/',
+      external: true,
+    },
+    {
+      text: 'Harden Maze',
+      icon: 'harden',
+      url: 'https://hardenmaze.com/',
+      external: true,
+    },
+  ],
+  [
+    {
+      text: 'About',
+      icon: 'about',
+      url: '/company/about',
+      currentUrl: new RegExp('^/company/about$'),
+    },
+    {
+      text: 'Blog',
+      icon: 'blog',
+      url: 'https://blog.statmuse.com/',
+      external: true,
+    },
+    {
+      text: 'Shop',
+      icon: 'shop',
+      url: 'https://shop.statmuse.com',
+      external: true,
+    },
+  ],
 ] as {
-  header?: string
-  links: {
-    text: string
-    icon: string
-    tealIcon: string
-    url: string
-    external?: boolean
-    currentUrl: RegExp
-  }[]
-}[]
+  text: string
+  icon: string
+  url: string
+  color?: string
+  external?: boolean
+  currentUrl?: RegExp
+}[][]
 ---
 
-{
-  menuLinks.map(({ header, links }) => (
-    <div class="mb-7">
-      {header && (
-        <h3 class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3 ml-3 md:ml-5">
-          {header}
-        </h3>
-      )}
-      <ul>
-        {links.map(({ icon, tealIcon, text, url, external, currentUrl }) => (
-          <li
-            class={`my-0.5 py-1.5 ${
-              currentUrl && currentUrl.test(Astro.url.pathname)
-                ? 'bg-white font-semibold'
-                : ''
-            }`}
-          >
-            <a
-              class="group flex items-center text-black hover:text-primary hover:no-underline ml-3 md:ml-5 flex-1 md:flex-initial"
-              href={url}
-              target={external ? '_blank' : null}
-            >
-              {currentUrl && currentUrl.test(Astro.url.pathname) ? (
-                <img
-                  src={tealIcon}
-                  class="block w-[29px] h-[29px] mr-2 object-cover"
-                  alt={text}
+<div class="flex flex-col gap-2 w-[220px] p-3">
+  {
+    menuLinks.map((links) => (
+      <div class="bg-gray-8 rounded-2xl border border-gray-6 p-2.5">
+        <ul class="space-y-2">
+          {links.map(({ icon, text, url, external, currentUrl, color }) => (
+            <li class=''>
+              <a
+                href={url}
+                target={external ? '_blank' : null}
+                class:list={{
+                  'flex flex-1 items-center gap-2': true,
+                  'md:flex-initial': true,
+                  'hover:text-teal hover:no-underline': true,
+                  'text-teal': currentUrl?.test(Astro.url.pathname),
+                  [color ?? 'text-gray-1']: true,
+                }}
+              >
+                <Icon
+                  name={icon}
+                  class='block w-5 h-5 object-cover',
                 />
-              ) : (
-                <>
-                  <img
-                    src={icon}
-                    class="block group-hover:hidden w-[29px] h-[29px] mr-2 object-cover"
-                    alt={text}
-                  />
-                  <img
-                    src={tealIcon}
-                    class="hidden group-hover:block w-[29px] h-[29px] mr-2 object-cover"
-                    alt={text}
-                  />
-                </>
-              )}
-              {text}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  ))
-}
+                {text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</div>

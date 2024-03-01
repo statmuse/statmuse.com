@@ -15,10 +15,9 @@ const { leagues, selected, href } = Astro.props
     leagues.map((league) => (
       <a
         class:list={{
-          'p-1.5 px-3 text-center whitespace-nowrap border rounded-full': true,
+          'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
           'hover:no-underline hover:text-gray-8 hover:bg-teal': true,
-          'bg-teal text-gray-8 border-teal font-semibold':
-            selected === league.param,
+          'bg-teal text-gray-8 border-teal': selected === league.param,
           'bg-gray-8 text-gray-2 border-gray-6': selected !== league.param,
         }}
         href={league.href ?? href(league.param)}

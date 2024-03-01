@@ -1,23 +1,13 @@
 ---
 import Logo from '@components/logo.astro'
 import AskBar from '@components/ask-bar.svelte'
-import AnswerShare from '@components/answer-share.astro'
 import DropdownMenu from '@components/dropdown-menu.astro'
-import AnswerAudio from './answer-audio.astro'
 import AuthMenu from '@components/auth-menu.svelte'
-import TwitterShare from './icons/twitter.astro'
 
 interface Props {
   query?: string
   conversationToken?: string
   preferredDomain?: string
-  share?: {
-    type?: 'ask' | 'musing' | 'profile'
-    shortCode?: string
-    url?: string
-    query?: string
-    domain?: string
-  }
   audioUrl?: string
   money?: boolean
   fantasy?: boolean
@@ -26,17 +16,13 @@ interface Props {
 const query = Astro.props.query ?? ''
 const conversationToken = Astro.props.conversationToken
 const preferredDomain = Astro.props.preferredDomain ?? ''
-const share = Astro.props.share
-const audioUrl = Astro.props.audioUrl
 ---
 
 <div
   class="grid grid-cols-[1fr_minmax(auto,_1250px)_1fr] items-center min-h-[62px] md:min-h-[70px] py-2 md:py-3 px-3 md:px-5 z-[5] bg-team-primary sticky top-0"
 >
   <div class="flex col-start-1 col-span-1">
-    <div>
-      <DropdownMenu showElephant />
-    </div>
+    <DropdownMenu showElephant />
     <a href={Astro.props.money ? '/money' : '/'} class="hidden md:block">
       <Logo class="w-[150px] mx-5" />
     </a>
@@ -52,25 +38,8 @@ const audioUrl = Astro.props.audioUrl
         fantasy={Astro.props.fantasy}
       />
     </div>
-    <div
-      class="w-0 md:w-fit overflow-hidden flex items-center md:ml-4 space-x-4"
-    >
-      {
-        share && (
-          <TwitterShare
-            shareUrl={
-              share.shortCode
-                ? `${process.env.SHORT_LINK_URL}e/${share.shortCode}`
-                : share.url ?? ''
-            }
-          />
-        )
-      }
-      {share && <AnswerShare {...share} />}
-      {audioUrl && <AnswerAudio src={audioUrl} />}
-    </div>
   </div>
-  <div class="ml-3 justify-end">
-    <AuthMenu client:load collapsible />
+  <div class="ml-3 justify-end hidden md:block">
+    <AuthMenu client:load />
   </div>
 </div>

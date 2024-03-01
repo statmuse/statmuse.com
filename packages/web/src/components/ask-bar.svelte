@@ -13,6 +13,7 @@
   export let preferredDomain: string = ''
   export let money: boolean
   export let fantasy: boolean
+  export let large: boolean
 
   let timestamp: string = new Date().toISOString()
   let sections: {
@@ -21,9 +22,8 @@
   }[] = []
   let sectionIdx: number | undefined
   let suggestionIdx: number | undefined
-  let input: HTMLTextAreaElement
-  let shadowInput: HTMLTextAreaElement
-  let spacer: HTMLElement
+  let input: HTMLInputElement
+  let shadowInput: HTMLInputElement
   let form: HTMLFormElement
   let clickedItem = false
   let inFocus = false
@@ -192,8 +192,6 @@
       input.focus()
     }
     shadowInput.value = query
-    spacer.style.height = shadowInput.scrollHeight + 2 + 'px'
-    input.style.height = shadowInput.scrollHeight + 2 + 'px'
   })
 
   $: open = sections.findIndex((s) => s.suggestions.length > 0) > -1
@@ -201,35 +199,40 @@
   $: {
     if (shadowInput && input) {
       shadowInput.value = query
-      input.style.height = shadowInput.scrollHeight + 2 + 'px'
-      spacer.style.height = shadowInput.scrollHeight + 2 + 'px'
     }
   }
 </script>
 
-<form bind:this={form} class="relative" {action} method="post">
-  <div bind:this={spacer} style="height: 46px !important;" />
+<form
+  bind:this={form}
+  class="relative max-w-2xl mx-auto"
+  {action}
+  method="post"
+>
+  <div class:h-[36px]={!large} class:h-[42px]={large} />
   <div
     role="combobox"
     aria-haspopup="listbox"
     aria-owns="ask-bar-suggestions"
     aria-expanded={open}
-    class="absolute top-0 w-full border border-black rounded-lg hover:shadow-md overflow-hidden"
+    class="absolute top-0 w-full border border-gray-6 rounded-3xl overflow-hidden"
     class:border-primary={inFocus}
+    class:border-opacity-100={inFocus}
+    class:border-opacity-50={!inFocus}
     class:ring-1={inFocus}
     class:ring-primary={inFocus}
   >
-    <div class="relative group">
-      <textarea
-        class="appearance-none outline-none resize-none block w-full border-y border-transparent p-2.5 peer"
-        class:pr-[70px]={query}
+    <div class="relative group flex bg-gray-8 items-center px-2">
+      <input
+        class="grow appearance-none outline-none resize-none block border-y border-transparent px-2 peer truncate"
+        class:py-2={large}
+        class:py-1={!large}
         autocomplete="off"
         aria-autocomplete="list"
         name="question[query]"
         {placeholder}
         required
         enterkeyhint="search"
-        style="height: 46px !important;"
         bind:this={input}
         bind:value={query}
         on:click={() => {
@@ -253,28 +256,30 @@
         }}
         on:focus={() => (inFocus = true)}
       />
-      <img
-        class="w-5 h-5 absolute right-[46px] bottom-3 object-contain cursor-pointer"
-        class:hidden={query.length === 0}
-        src="/icons/icon-x.svg"
-        alt="clear input"
-        on:click={() => {
-          query = ''
-          input.focus()
-        }}
-      />
-      <input
-        type="submit"
-        class="absolute bottom-3 right-2.5 block w-5 h-5 cursor-pointer bg-[url('/icons/icon-search.svg')] bg-contain bg-no-repeat bg-scroll bg-center group-hover:bg-[url('/icons/icon-search-blue.svg')] peer-focus:bg-[url('/icons/icon-search-blue.svg')]"
-        value=""
-        aria-label="Search"
-      />
+      {#if query.length > 0}
+        <img
+          src={inFocus ? '/icons/icon-x.svg' : '/icons/icon-search-blue.svg'}
+          alt="clear input"
+          class="w-5 h-5 object-contain cursor-pointer"
+          on:click={() => {
+            query = ''
+            input.focus()
+          }}
+        />
+      {:else}
+        <input
+          type="submit"
+          class="block w-5 h-5 cursor-pointer bg-[url('/icons/icon-search.svg')] bg-contain bg-no-repeat bg-scroll bg-center group-hover:bg-[url('/icons/icon-search-blue.svg')] peer-focus:bg-[url('/icons/icon-search-blue.svg')]"
+          value=""
+          aria-label="Search"
+        />
+      {/if}
     </div>
     <div
       id="ask-bar-suggestions"
       role="listbox"
       class:hidden={!open}
-      class="w-full px-2 bg-white"
+      class="w-full px-2 bg-gray-8"
     >
       {#each sections as section, i (section.type)}
         {#if section.suggestions.length > 0}
@@ -343,7 +348,7 @@
     type="hidden"
     value={conversationToken}
   />
-  <textarea
+  <input
     bind:this={shadowInput}
     class="appearance-none outline-none resize-none block w-full border-y p-2.5"
     class:pr-[70px]={query}
@@ -356,5 +361,7 @@
     style:z-index="-1000"
     tabindex="-1"
     aria-hidden="true"
-  ></textarea>
+  />
 </form>
+
+<!-- <Portal><div class="absolute w-full h-full inset-0 bg-gray-7 z-50" /></Portal> -->

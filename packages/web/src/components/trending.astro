@@ -61,7 +61,7 @@ const categoryPath = category ? `/${category}` : ''
 
 const leagues: { text: string; param: string; href?: string }[] = [
   {
-    text: 'ALL',
+    text: 'All',
     param: 'all',
     href: '/trending' + categoryPath + Astro.url.search,
   },
@@ -71,7 +71,7 @@ const leagues: { text: string; param: string; href?: string }[] = [
   { text: 'NHL', param: 'nhl' },
   { text: 'MLB', param: 'mlb' },
   { text: 'PGA', param: 'pga' },
-  { text: 'MONEY', param: 'money' },
+  { text: 'Money', param: 'money' },
 ]
 
 let trendingListItems: TrendingListItem[] = []

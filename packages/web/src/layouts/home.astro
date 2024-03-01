@@ -4,18 +4,16 @@ import MoneyBaseLayout from '@layouts/money-base.astro'
 import StandardLogo from '@components/logo.astro'
 import MoneyLogo from '@components/logo-money.astro'
 import AskBar from '@components/ask-bar.svelte'
-import Image from '@components/image.astro'
 import Footer from '@components/footer.astro'
 import DropdownMenu from '@components/dropdown-menu.astro'
 import MenuLinks from '@components/menu-links.astro'
-import type { GameraResponse } from '@statmuse/core/gamera'
 import type { Metadata } from '@lib/meta'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import NewsletterSignup from '@components/newsletter-signup.astro'
 import AuthMenu from '@components/auth-menu.svelte'
 import FreestarVideo from '@components/freestar-video.svelte'
 import type { LeagueParam } from '@lib/params'
-import { sample } from 'lodash-es'
+import LeagueNav from '@components/league-nav.astro'
 
 interface Props {
   league?: LeagueParam | 'All'
@@ -30,131 +28,20 @@ interface Props {
 
 const { league = 'All', ...rest } = Astro.props
 
-const leagueBtns = [
-  { text: 'NBA', param: 'nba', href: '/nba' },
-  { text: 'NFL', param: 'nfl', href: '/nfl' },
-  { text: 'NHL', param: 'nhl', href: '/nhl' },
-  { text: 'MLB', param: 'mlb', href: '/mlb' },
-  { text: 'Premier League', param: 'fc', href: '/fc' },
-  { text: 'PGA', param: 'pga', href: '/pga' },
+const leagues: { text: string; param: string; href?: string }[] = [
+  {
+    text: 'All',
+    param: 'all',
+    href: '/',
+  },
+  { text: 'FC', param: 'fc' },
+  { text: 'NBA', param: 'nba' },
+  { text: 'NFL', param: 'nfl' },
+  { text: 'NHL', param: 'nhl' },
+  { text: 'MLB', param: 'mlb' },
+  { text: 'PGA', param: 'pga' },
+  { text: 'Money', param: 'money' },
 ]
-
-const playerIllustrations = {
-  nba: [
-    {
-      src: 'https://cdn.statmuse.com/img/nba/players/golden-state-warriors-stephen-curry2021-min-1---hw2hav_b.png',
-      text: 'Steph c]Curry',
-    },
-    {
-      src: 'https://cdn.statmuse.com/img/nba/players/allen-iverson-philladelphia-76ers-min--07f2nx7k.png',
-      text: 'Allen Iverson',
-    },
-    {
-      src: 'https://cdn.statmuse.com/img/nba/players/milwaukee-bucks-giannis-antetokounmpo2021-min--neyqqrdy.png',
-      text: 'Giannis Antetokoumnpo',
-    },
-    {
-      src: 'https://cdn.statmuse.com/img/nba/players/los-angeles-lakers-lebron-james2021-min--i_ura2lt.png',
-      text: 'Lebron James',
-    },
-  ],
-  nfl: [
-    {
-      src: 'https://cdn.statmuse.com/img/nfl/players/tennessee-titans-derrick-henry-min--rop_mtxx.png',
-      text: 'Derrick Henry',
-    },
-    {
-      src: 'https://cdn.statmuse.com/img/nfl/players/tampa-bay-buccaneers-tom-brady2021-min--uuyzey5t.png',
-      text: 'Tom Brady',
-    },
-    {
-      src: 'https://cdn.statmuse.com/img/nfl/players/randy-moss-minnesota-vikings-alternate-min--wzmjzrs7.png',
-      text: 'Randy Moss',
-    },
-  ],
-  mlb: [
-    {
-      src: 'https://cdn.statmuse.com/img/mlb/players/be6933d9-3f70-4392-9f77-99e2a389674e.png',
-      text: 'Hank Aaron',
-    },
-    {
-      src: 'https://cdn.statmuse.com/img/mlb/players/san-francisco-giants-barry-bonds-new-compressor--tz1nvgaf.png',
-      text: 'Barry Bonds',
-    },
-  ],
-  nhl: [
-    {
-      src: 'https://cdn.statmuse.com/img/nhl/players/edmonton-oilers-wayne-gretzky-compressor--ps1jclsq.png',
-      text: 'Wayne Gretzky',
-    },
-    {
-      src: 'https://cdn.statmuse.com/img/nhl/players/-washington-capitals-alexander-ovechkin--wnfrbm3x.png',
-      text: 'Alex Ovechkin',
-    },
-  ],
-  pga: [
-    {
-      src: 'https://cdn.statmuse.com/img/pga/players/tiger-woods-pga-min--o5qnzsw6.png',
-      text: 'Tiger Woods',
-    },
-  ],
-  fc: [
-    {
-      src: 'https://cdn.statmuse.com/img/epl/players/cristiano-ronaldo-man-united-min--3gbipqds.png',
-      text: 'Cristiano Ronaldo',
-    },
-    {
-      src: 'https://cdn.statmuse.com/img/epl/players/arsenal-bukayo-saka-min--t5hmo2ay.png',
-      text: 'Bukayo Saka',
-    },
-    {
-      src: 'https://cdn.statmuse.com/img/epl/players/alan-shearer-newcastle-min--kjhnkvwi.png',
-      text: 'Alan Shearer',
-    },
-    {
-      src: 'https://cdn.statmuse.com/img/epl/players/man-city-erling-haaland-min--mcidciur.png',
-      text: 'Erling Haaland',
-    },
-    {
-      src: 'https://cdn.statmuse.com/img/epl/players/liverpool-mohamed-salah-min--8vtshmmg.png',
-      text: 'Mohamed Salah',
-    },
-  ],
-  money: [
-    {
-      src: 'https://cdn.statmuse.com/finance/asset_img/statmuse-finance-btc--jgfo5tnv.png',
-      text: 'Bitcoin Wizard',
-    },
-    {
-      src: 'https://cdn.statmuse.com/finance/asset_img/kanedama-cyborg-01-min--fc2wcyxt.png',
-      text: 'Finance Cyborg',
-    },
-  ],
-} as Record<LeagueParam, { src: string; text: string }[]>
-
-const getImage = (league: LeagueParam | 'All') => {
-  if (league === 'All') {
-    return sample(Object.values(playerIllustrations).flatMap((x) => x))
-  }
-  return sample(playerIllustrations[league])
-}
-
-const trendingLinkText = (param: string) => {
-  switch (param) {
-    case 'All':
-      return 'See trending searches'
-    case 'money':
-      return 'See trending Money searches'
-    case 'fantasy':
-      return 'See trending Fantasy Football searches'
-    case 'fc':
-      return 'See trending Premier League searches'
-    default:
-      return `See trending ${param.toUpperCase()} searches`
-  }
-}
-
-const img = getImage(league === 'fantasy' ? 'nfl' : league)
 
 const Layout = league === 'money' ? MoneyBaseLayout : BaseLayout
 const Logo = league === 'money' ? MoneyLogo : StandardLogo
@@ -175,161 +62,60 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
         : (league as AnalyticsPageviewProperties['page_domain']),
   }}
 >
-  <main
-    id="home"
-    class="home-layout [--header-height:55px] md:[--header-height:64px]"
-  >
-    <div class="sidebar hidden lg:block min-w-[75px] bg-[#f9f9f9]">
-      <div
-        class="sticky top-0 bg-[#f9f9f9] border-t border-transparent w-[237px]"
-      >
+  <main class="md:flex">
+    <div class="hidden md:block bg-gray-7">
+      <div class="sticky top-0">
         <MenuLinks />
       </div>
     </div>
 
     <div
-      class="main h-[var(--header-height)] px-3 lg:px-[21px] bg-white flex items-center sticky lg:relative top-0 z-20"
+      class="md:hidden h-14 px-3 bg-gray-7 flex items-center sticky top-0 z-20"
     >
-      <div class="lg:hidden">
-        <DropdownMenu />
-      </div>
-
-      <div class="flex flex-1 justify-end">
-        <AuthMenu client:load />
-      </div>
+      <DropdownMenu />
+      <LeagueNav
+        {leagues}
+        selected={league.toLowerCase()}
+        href={(league) => `/${league}`}
+      />
     </div>
 
-    <div class="main content-layout">
-      <div class="-mb-[5px]">
-        <div class="flex flex-col md:flex-row items-center mt-[55px] md:mt-0">
-          <div class="flex-1 mb-[34px] md:-mr-[20px] md:mb-0">
-            <Logo />
-          </div>
-          {
-            img && (
-              <Image
-                class="max-w-[70%] md:max-w-[260px] md:h-[205px] md:pr-[10px] object-contain object-bottom z-[5]"
-                src={img.src}
-                alt={img.text}
-                width={750}
-                height={750}
-                loading="eager"
-              />
-            )
-          }
-        </div>
+    <div class="px-3 mt-1 bg-gray-7 max-w-3xl lg:max-w-5xl mx-auto">
+      <div class="flex flex-1 justify-end md:hidden">
+        <AuthMenu client:load />
       </div>
-      <div
-        class="content-item-full sticky top-[var(--header-height)] md:top-0 pb-[5px] bg-white"
-      >
+
+      <div class="mt-10 md:mt-20 mb-1 md:mb-3">
+        <Logo />
       </div>
-      <div
-        class="content-item-full content-layout mb-5 md:mb-[30px] sticky top-[calc(var(--header-height)+5px)] md:top-[5px] pb-[5px] bg-white z-[5]"
-      >
-        <div>
-          <AskBar
-            client:load
-            money={league === 'money'}
-            fantasy={league === 'fantasy'}
-            preferredDomain={league === 'All'
-              ? undefined
-              : league === 'fc'
-              ? 'epl'
-              : league}
-          />
-        </div>
+
+      <div class="sticky top-12 md:top-0 z-[5] py-2 md:py-3">
+        <div class="absolute inset-0 h-14 md:h-16 bg-gray-7"></div>
+        <AskBar
+          large
+          client:load
+          money={league === 'money'}
+          fantasy={league === 'fantasy'}
+          preferredDomain={league === 'All'
+            ? undefined
+            : league === 'fc'
+            ? 'epl'
+            : league}
+        />
       </div>
-      <div>
-        <div class="flex flex-nowrap gap-[5px] mb-2.5">
-          <a
-            class:list={[
-              'flex items-center justify-center border rounded-md border-primary text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 text-center leading-[1.2]',
-              {
-                'bg-primary text-white': Astro.url.pathname === '/',
-              },
-            ]}
-            href="/"
-            set:text="All"
-          />
-          {
-            leagueBtns.map((btn) => (
-              <a
-                class:list={[
-                  'relative flex items-center justify-center border rounded-md border-primary text-primary hover:text-white hover:bg-primary hover:no-underline p-[5px] flex-1 text-center leading-[1.2]',
-                  {
-                    'bg-primary text-white': btn.param === league,
-                  },
-                ]}
-                href={btn.href}
-              >
-                {btn.text}
-                {btn.text === 'Premier League' && (
-                  <svg
-                    enable-background="new 0 0 448 472.7"
-                    viewBox="0 0 448 472.7"
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 absolute top-0 right-0 translate-x-1/4 -translate-y-1/2"
-                  >
-                    <path
-                      d="m223.6.9 54 69.6 84.7-24.5 2.7 88 83 29.9-49.6 72.9 49.6 72.9-83 29.9-2.7 88-84.7-24.5-54 69.6-54-69.6-84.6 24.5-2.8-88-82.9-29.9 49.5-72.9-49.5-72.9 82.9-29.9 2.8-88 84.6 24.5z"
-                      fill="#0086ff"
-                    />
-                  </svg>
-                )}
-              </a>
-            ))
-          }
-          <a
-            class={`hidden lg:flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 min-w-fit ${
-              league === 'fantasy' && 'bg-secondary text-white'
-            }`}
-            href="/fantasy"
-            set:text="Fantasy"
-          />
-          <a
-            class={`hidden lg:flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 min-w-fit ${
-              league === 'money' && 'bg-[#003ca8] text-white'
-            }`}
-            href="/money"
-            set:text="Money"
-          />
-        </div>
-        <div
-          class="flex flex-nowrap gap-[5px] mb-2.5 lg:hidden"
-          style={{ height: '50.375px' }}
-        >
-          <a
-            class={`flex items-center justify-center border border-secondary rounded-md text-secondary hover:text-white hover:bg-secondary hover:no-underline p-[5px] flex-1 max-w-fit ${
-              league === 'fantasy' && 'bg-secondary text-white'
-            }`}
-            href="/fantasy"
-            set:text="Fantasy"
-          />
-          <a
-            class={`flex items-center justify-center border border-[#003ca8] rounded-md text-[#003ca8] hover:text-white hover:bg-[#003ca8] hover:no-underline p-[5px] flex-1 max-w-fit ${
-              league === 'money' && 'bg-[#003ca8] text-white'
-            }`}
-            href="/money"
-            set:text="Money"
-          />
-        </div>
-      </div>
-      <div>
+
+      <div class="min-h-52 mb-[30px] mt-[32px]">
         <FreestarVideo
           client:only="svelte"
-          class="mb-[30px] mt-[32px] w-full lg:w-[425px]"
+          class="w-full md:w-[425px]"
           {league}
         />
       </div>
+
       <slot />
-      <h4 class="font-semibold text-right py-4">
-        <a href={league === 'All' ? '/questions' : `/${league}/questions`}>
-          {trendingLinkText(league)}
-        </a>
-      </h4>
+
       <NewsletterSignup />
-    </div>
-    <div class="main">
+
       <Footer />
     </div>
   </main>
