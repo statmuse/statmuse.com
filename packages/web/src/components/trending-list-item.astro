@@ -22,7 +22,7 @@ const eager = Astro.props.eager ?? false
     class:list={{
       flex: item.images.length === 0,
       'grid grid-cols-3': item.images.length > 0,
-      'text-gray-700 items-center': true,
+      'items-center': true,
       'pt-3': numbered,
       'pt-1': !numbered,
     }}

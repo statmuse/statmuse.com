@@ -1,15 +1,16 @@
 ---
-import Icon from './icon.svelte'
+import Icon from '@components/icon.svelte'
+import Panel from '@components/panel.astro'
 
 const menuLinks = [
-  [
-    {
-      text: 'Profile',
-      icon: 'profile',
-      url: '/company/about',
-      currentUrl: new RegExp('^/company/about$'),
-    },
-  ],
+  // [
+  //   {
+  //     text: 'Profile',
+  //     icon: 'profile',
+  //     url: '/company/about',
+  //     currentUrl: new RegExp('^/company/about$'),
+  //   },
+  // ],
   [
     {
       text: 'All',
@@ -57,7 +58,7 @@ const menuLinks = [
       text: 'Money',
       icon: 'money',
       url: '/money',
-      color: 'text-orange',
+      classes: 'text-orange',
       currentUrl: new RegExp('^/money$'),
     },
   ],
@@ -141,7 +142,7 @@ const menuLinks = [
   text: string
   icon: string
   url: string
-  color?: string
+  classes?: string
   external?: boolean
   currentUrl?: RegExp
 }[][]
@@ -150,10 +151,10 @@ const menuLinks = [
 <div class="flex flex-col gap-2 w-[220px] p-3">
   {
     menuLinks.map((links) => (
-      <div class="bg-gray-8 rounded-2xl border border-gray-6 p-2.5">
+      <Panel>
         <ul class="space-y-2">
-          {links.map(({ icon, text, url, external, currentUrl, color }) => (
-            <li class=''>
+          {links.map(({ icon, text, url, external, currentUrl, classes }) => (
+            <li>
               <a
                 href={url}
                 target={external ? '_blank' : null}
@@ -162,7 +163,7 @@ const menuLinks = [
                   'md:flex-initial': true,
                   'hover:text-teal hover:no-underline': true,
                   'text-teal': currentUrl?.test(Astro.url.pathname),
-                  [color ?? 'text-gray-1']: true,
+                  [classes ?? 'text-gray-1']: true,
                 }}
               >
                 <Icon
@@ -174,7 +175,7 @@ const menuLinks = [
             </li>
           ))}
         </ul>
-      </div>
+      </Panel>
     ))
   }
 </div>

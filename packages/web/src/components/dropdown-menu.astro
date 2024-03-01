@@ -1,6 +1,5 @@
 ---
 import ElephantIcon from '@components/icons/elephant.astro'
-import HamburgerIcon from '@components/icons/hamburger.astro'
 import Logo from '@components/logo.astro'
 import MenuLinks from '@components/menu-links.astro'
 import Icon from '@components/icon.svelte'
@@ -36,20 +35,22 @@ const { showElephant } = Astro.props
       <div class="absolute top-0 left-0 w-screen h-screen bg-gray-6/80 z-[5]">
       </div>
     </label>
-    <a
-      href="/"
-      class="absolute top-[15px] left-1/2 -translate-x-1/2 md:top-[22px] md:left-[65px] md:transform-none [--team-primary-color:initial] [--team-secondary-color:initial] z-50"
-    >
-      <Logo class="w-[150px] fill-black" />
-    </a>
     <div class="fixed inset-0 md:w-[240px] z-40 bg-gray-7 overflow-y-scroll">
-      <div class="flex items-center h-[55px] md:h-[70px] px-3 md:px-5">
+      <div
+        class="sticky top-0 bg-gray-7 flex items-center h-[55px] md:h-[70px] px-3 md:px-5"
+      >
         <label for="menu">
           <Icon
             name="x"
             class="block w-5 h-5 cursor-pointer relative ml-1 md:ml-0.5"
           />
         </label>
+        <a
+          href="/"
+          class="absolute top-[15px] left-1/2 -translate-x-1/2 md:top-[22px] md:left-[65px] md:transform-none [--team-primary-color:initial] [--team-secondary-color:initial] z-50"
+        >
+          <Logo class="w-[150px] fill-black" />
+        </a>
       </div>
       <MenuLinks />
     </div>

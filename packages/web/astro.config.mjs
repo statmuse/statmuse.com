@@ -8,15 +8,13 @@ import { defineConfig } from 'astro/config'
 // https://astro.build/config
 export default defineConfig({
   integrations: [
-    tailwind({
-      applyBaseStyles: false,
-    }),
+    tailwind({ applyBaseStyles: false }),
     react(),
     svelte({ preprocess: [vitePreprocess(), preprocessMeltUI()] }),
   ],
   output: 'server',
   server: { host: true, port: 3000 },
-  // devToolbar: { enabled: false },
+  devToolbar: { enabled: false },
   adapter: aws({
     responseMode: 'buffer',
     serverRoutes: ['ask', 'money/ask', 'fantasy/ask', 'auth/*', 'account/*'],

@@ -7,6 +7,7 @@
   import { session } from '@lib/session-store'
   import type { AskDocument } from '@statmuse/core/elastic'
   import { isMobileTest } from '@lib/useragent'
+  import Icon from '@components/icon.svelte'
 
   export let query: string = ''
   export let conversationToken: string = ''
@@ -257,22 +258,16 @@
         on:focus={() => (inFocus = true)}
       />
       {#if query.length > 0}
-        <img
-          src={inFocus ? '/icons/icon-x.svg' : '/icons/icon-search-blue.svg'}
-          alt="clear input"
-          class="w-5 h-5 object-contain cursor-pointer"
+        <button
           on:click={() => {
             query = ''
             input.focus()
           }}
-        />
+        >
+          <Icon name="x" class="w-4 h-4 mr-1" />
+        </button>
       {:else}
-        <input
-          type="submit"
-          class="block w-5 h-5 cursor-pointer bg-[url('/icons/icon-search.svg')] bg-contain bg-no-repeat bg-scroll bg-center group-hover:bg-[url('/icons/icon-search-blue.svg')] peer-focus:bg-[url('/icons/icon-search-blue.svg')]"
-          value=""
-          aria-label="Search"
-        />
+        <Icon name="search" class="w-5 h-5 text-teal mr-1" />
       {/if}
     </div>
     <div
