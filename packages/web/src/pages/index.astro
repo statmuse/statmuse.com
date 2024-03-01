@@ -39,7 +39,7 @@ Caching.swr(Astro)
                     class:list={{
                       'h-32 object-contain object-bottom': true,
                     }}
-                    style={`z-index: ${10 - index};transform: translateX(${
+                    style={`z-index: ${4 - index};transform: translateX(${
                       index === 0
                         ? 75
                         : index === 1
@@ -61,7 +61,6 @@ Caching.swr(Astro)
         ) : null
       }
     </FreestarVideo>
-
     {
       musings.map(async (musing, i) => (
         <div>
