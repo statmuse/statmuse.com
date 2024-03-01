@@ -43,11 +43,11 @@
   }
 </script>
 
-{#if (!import.meta.env.DEV && $session?.type === 'visitor' && !$session?.properties.bot) || ($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active')}
-  <div
-    bind:this={container}
-    class={`${$$props.class} overflow-hidden w-full aspect-video`}
-  >
+<div
+  bind:this={container}
+  class={`${$$props.class} overflow-hidden w-full aspect-video rounded-2xl`}
+>
+  {#if (!import.meta.env.DEV && $session?.type === 'visitor' && !$session?.properties.bot) || ($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active')}
     {#if league === 'nba'}
       <div
         bind:this={video}
@@ -121,9 +121,9 @@
         data-astro-exec
       ></script>
     {/if}
-  </div>
-{:else}
-  <div bind:this={container} class={`${$$props.class} w-full aspect-video`}>
+  {:else if !$session}
+    <div class="w-full h-full bg-gray-7 border border-gray-6 rounded-2xl" />
+  {:else}
     <slot />
-  </div>
-{/if}
+  {/if}
+</div>

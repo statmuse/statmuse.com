@@ -10,7 +10,7 @@ import { getTrendingData } from '@lib/trending'
 
 const musings = await listLatestMusings.execute()
 const trending = await getTrendingData()
-const players = trending.datasets
+const players = trending?.datasets
   .find((d) => d.key === 'players')
   ?.items?.slice(0, 4)
 const [first] = players ?? []

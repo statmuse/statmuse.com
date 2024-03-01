@@ -32,6 +32,5 @@ export const getTrendingData = async (props?: {
 
   const items = data.Items as TrendingItem[] | undefined
   const [item] = items ?? []
-
   return item
 }
