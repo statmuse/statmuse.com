@@ -11,7 +11,6 @@ import type { Metadata } from '@lib/meta'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import NewsletterSignup from '@components/newsletter-signup.astro'
 import AuthMenu from '@components/auth-menu.svelte'
-import FreestarVideo from '@components/freestar-video.svelte'
 import type { LeagueParam } from '@lib/params'
 import LeagueNav from '@components/league-nav.astro'
 
@@ -105,15 +104,9 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
         />
       </div>
 
-      <div class="min-h-52 mb-[30px] mt-[32px]">
-        <FreestarVideo
-          client:only="svelte"
-          class="w-full md:w-[425px]"
-          {league}
-        />
+      <div class="mt-10">
+        <slot />
       </div>
-
-      <slot />
 
       <NewsletterSignup />
 

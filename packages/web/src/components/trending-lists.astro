@@ -2,6 +2,7 @@
 import TrendingList from '@components/trending-list.astro'
 import type { TrendingItem } from 'src/types'
 import AditudeAdTrending from '@components/aditude-ad-trending.svelte'
+import Panel from '@components/panel.astro'
 
 interface Props {
   item: TrendingItem
@@ -33,16 +34,16 @@ const { item } = Astro.props
   }
   {
     !item || !item.datasets?.length ? (
-      <div class="bg-white rounded-3xl border border-gray-200 overflow-clip">
+      <Panel>
         <div class="h-96">
-          <div class="h-full w-full flex justify-center items-center text-center text-gray-400">
+          <div class="h-full w-full flex justify-center items-center text-center text-opacity-65">
             <div>
               <p>Gathering data</p>
               <p>Check back later</p>
             </div>
           </div>
         </div>
-      </div>
+      </Panel>
     ) : null
   }
 </div>

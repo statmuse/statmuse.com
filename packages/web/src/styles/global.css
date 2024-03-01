@@ -116,10 +116,6 @@ input {
   }
 }
 
-.sidebar-hamburger-icon {
-  background: url('/icons/icon-hamburger.svg') no-repeat center center;
-}
-
 .suggestion-nba-icon {
   background: url('/icons/icon-nba.svg') center / contain;
 }

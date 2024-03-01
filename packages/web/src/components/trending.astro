@@ -6,20 +6,14 @@ import Container from '@components/container.astro'
 import TrendingLists from '@components/trending-lists.astro'
 import TrendingMore from '@components/trending-more.astro'
 import LeagueNav from '@components/league-nav.astro'
-import type { TrendingListItem, TrendingItem } from 'src/types'
-import { Table } from 'sst/node/table'
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { QueryCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+import type { TrendingListItem } from 'src/types'
 import tailwindConfig from '../../tailwind.config.ts'
 import type { Category } from 'src/types'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import Back from '@components/icons/back.astro'
+import { getTrendingData } from '@lib/trending'
 
 const colors = tailwindConfig.theme.extend.colors
-
-const db = DynamoDBDocumentClient.from(new DynamoDBClient({}), {
-  marshallOptions: { removeUndefinedValues: true },
-})
 
 interface Props {
   league: string
@@ -40,25 +34,9 @@ const timeframeParam = Astro.url.searchParams.get('timeframe')
 const country = countryParam?.toUpperCase()
 const timeframe = timeframes[timeframeParam ?? 'last24Hours']
 
-const pk = `${league.toUpperCase()}#${timeframe ?? 'LAST_24_HOURS'}#${
-  country ?? 'GLOBAL'
-}`
-
-const data = await db.send(
-  new QueryCommand({
-    TableName: Table['trending-table'].tableName,
-    KeyConditionExpression: 'pk = :pk',
-    ExpressionAttributeValues: { ':pk': pk },
-    ScanIndexForward: false,
-    Limit: 1,
-  }),
-)
-
-const items = data.Items as TrendingItem[] | undefined
-const [item] = items ?? []
+const data = await getTrendingData({ league, timeframe, country })
 
 const categoryPath = category ? `/${category}` : ''
-
 const leagues: { text: string; param: string; href?: string }[] = [
   {
     text: 'All',
@@ -75,7 +53,7 @@ const leagues: { text: string; param: string; href?: string }[] = [
 ]
 
 let trendingListItems: TrendingListItem[] = []
-const dataset = item?.datasets?.find((d) => d.key === category)
+const dataset = data?.datasets?.find((d) => d.key === category)
 if (dataset) trendingListItems = dataset.items
 
 const leagueTitle =
@@ -194,7 +172,7 @@ const backUrl =
       category ? (
         <TrendingMore items={trendingListItems} />
       ) : (
-        <TrendingLists {item} />
+        <TrendingLists item={data} />
       )
     }
   </div>

@@ -1,52 +1,104 @@
 ---
 import HomeLayout from '@layouts/home.astro'
 import Image from '@components/image.astro'
-import { rgbToHex } from '@statmuse/core/color'
 import { listLatestMusings } from '@statmuse/core/musing'
 import { relativeTimeFromDates } from '@statmuse/core/time'
 import { Caching } from '@lib/caching'
+import Panel from '@components/panel.astro'
+import FreestarVideo from '@components/freestar-video.svelte'
+import { getTrendingData } from '@lib/trending'
 
 const musings = await listLatestMusings.execute()
+const trending = await getTrendingData()
+const players = trending.datasets
+  .find((d) => d.key === 'players')
+  ?.items?.slice(0, 4)
+const [first] = players ?? []
+const background = first?.background
+const foreground = first?.foreground
 
 Caching.swr(Astro)
 ---
 
 <HomeLayout>
   <div class="gap-3 space-y-3 columns-xs">
+    <FreestarVideo client:load class="w-full">
+      {
+        players?.length ? (
+          <a href="/trending" class="no-underline hover:no-underline">
+            <Panel class="h-full flex flex-col" {background} {foreground}>
+              <h3 class="font-light">Trending Now</h3>
+              <div
+                class:list={{
+                  'flex items-end justify-center grow -mb-2': true,
+                }}
+              >
+                {players.map((player, index) => (
+                  <Image
+                    data-cy-illustration
+                    class:list={{
+                      'h-32 object-contain object-bottom': true,
+                    }}
+                    style={`z-index: ${10 - index};transform: translateX(${
+                      index === 0
+                        ? 75
+                        : index === 1
+                        ? 25
+                        : index === 2
+                        ? -25
+                        : -75
+                    }%);`}
+                    alt={player.title}
+                    src={player.images[0]}
+                    width={450}
+                    height={450}
+                    loading="eager"
+                  />
+                ))}
+              </div>
+            </Panel>
+          </a>
+        ) : null
+      }
+    </FreestarVideo>
+
     {
       musings.map(async (musing, i) => (
-        <div class="break-inside-avoid-column">
+        <div>
           <a
             href={`/musings/${musing.friendly_id}`}
             class:list={{
-              // 'md:max-w-[33%]': true,
-              'no-underline hover:no-underline': true,
-              'grid grid-cols-2 py-2 px-3 rounded-2xl font-light shrink-0': true,
-              'cursor-pointer hover:-brightness-[110%] active:brightness-[80%]': true,
+              'group no-underline hover:no-underline': true,
             }}
-            style={`background-color: ${rgbToHex(
-              musing.background_rgba,
-            )};color: ${rgbToHex(musing.foreground_rgba)};`}
           >
-            <div
-              class="leading-snug whitespace-pre-wrap text-pretty"
-              set:text={musing.text_plain?.replaceAll(/^-   /gm, '')}
-            />
-            <div class="flex flex-col justify-between -mb-2">
-              <div class="text-right">
-                {relativeTimeFromDates(musing.publish_at)}
-              </div>
-              <Image
-                data-cy-illustration
-                class="h-36 max-w-full object-contain object-bottom"
-                style="visibility: unset;"
-                alt={musing.text_plain}
-                src={musing.image_url!}
-                width={400}
-                height={400}
-                loading={i < 4 ? 'eager' : 'lazy'}
+            <Panel
+              class:list={{
+                'break-inside-avoid-column grid grid-cols-2 font-light': true,
+                'cursor-pointer hover:brightness-[85%]': true,
+              }}
+              background={musing.background_rgba}
+              foreground={musing.foreground_rgba}
+            >
+              <div
+                class="leading-snug whitespace-pre-wrap text-pretty"
+                set:text={musing.text_plain?.replaceAll(/^-   /gm, '')}
               />
-            </div>
+              <div class="flex flex-col justify-between -mb-2">
+                <div class="text-right">
+                  {relativeTimeFromDates(musing.publish_at)}
+                </div>
+                <Image
+                  data-cy-illustration
+                  class="h-36 max-w-full object-contain object-bottom"
+                  style="visibility: unset;"
+                  alt={musing.text_plain}
+                  src={musing.image_url!}
+                  width={400}
+                  height={400}
+                  loading={i < 4 ? 'eager' : 'lazy'}
+                />
+              </div>
+            </Panel>
           </a>
         </div>
       ))
