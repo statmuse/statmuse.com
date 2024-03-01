@@ -79,7 +79,7 @@ export function Web({ stack }: StackContext) {
           timeout: '1 minute',
           memorySize: '256 MB',
           bind: [secrets.SEGMENT_WRITE_KEY],
-          // prefetchSecrets: true,
+          prefetchSecrets: true,
         },
         cdk: {
           eventSource: {
