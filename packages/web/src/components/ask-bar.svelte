@@ -206,7 +206,7 @@
 
 <form
   bind:this={form}
-  class="relative max-w-2xl mx-auto"
+  class={`${$$props.class} relative max-w-2xl`}
   {action}
   method="post"
 >
