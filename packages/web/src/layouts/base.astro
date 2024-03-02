@@ -313,7 +313,9 @@ const canonicalUrl = meta?.canonical
       )
     }
   </head>
-  <body class="text-black">
+  <body
+    class="text-gray-1 bg-gray-7 has-[#menu:checked]:overflow-hidden text-pretty"
+  >
     <slot />
     <CookieConsent client:only="svelte" />
     {enableAdBanner && <AditudeAdBanner client:only="svelte" />}

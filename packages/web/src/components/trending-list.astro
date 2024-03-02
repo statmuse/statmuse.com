@@ -1,6 +1,7 @@
 ---
 import Chevron from '@components/icons/chevron.astro'
 import TrendingListItem from '@components/trending-list-item.astro'
+import Panel from '@components/panel.astro'
 import { type TrendingListItem as Item } from 'src/types'
 
 interface Props {
@@ -14,29 +15,29 @@ interface Props {
 const { items, title, eager, moreUrl, prominent } = Astro.props
 ---
 
-<div class="bg-white rounded-3xl border border-gray-200 overflow-clip">
-  <h3 class="font-semibold my-2 mx-4">{title}</h3>
+<Panel>
+  <h3 class="font-semibold ml-1">{title}</h3>
   {
     items?.length ? (
       <>
-        <ol class="list-none text-gray-700 divide-y divide-gray-200">
+        <ol class="-mx-3 mt-1 list-none divide-y divide-gray-6">
           {items.slice(0, 5).map((item, index) => (
             <TrendingListItem {item} {index} {prominent} {eager} />
           ))}
           {items.length > 5 ? (
-            <li class="py-3">
+            <li class="pt-3 pb-1">
               <a href={moreUrl} class="flex justify-center gap-2 text-gray-5">
                 See more <Chevron class="w-5 aspect-square" />
               </a>
             </li>
           ) : (
-            <li class="py-3" />
+            <li class="pt-3 pb-1" />
           )}
         </ol>
       </>
     ) : (
       <div class="h-96">
-        <div class="h-full w-full flex justify-center items-center text-center text-gray-400">
+        <div class="h-full w-full flex justify-center items-center text-center text-opacity-65">
           <div>
             <p>Gathering data</p>
             <p>Check back later</p>
@@ -45,4 +46,4 @@ const { items, title, eager, moreUrl, prominent } = Astro.props
       </div>
     )
   }
-</div>
+</Panel>

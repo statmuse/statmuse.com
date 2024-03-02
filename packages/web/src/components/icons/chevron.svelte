@@ -14,7 +14,7 @@
 >
   <polyline
     class="fill-none stroke-2 stroke-current"
-    points="3,8.9 14.8,20.6 26.5,8.9 "
-    style="stroke-linecap: round;stroke-linejoin: round;stroke-miterlimit: 10;"
+    points="3,8.9 14.8,20.6 26.5,8.9"
+    style="stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;"
   ></polyline>
 </svg>

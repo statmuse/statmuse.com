@@ -12,13 +12,10 @@ export function Trending({ stack }: StackContext) {
 
   const table = new Table(stack, 'trending-table', {
     primaryIndex: { partitionKey: 'pk', sortKey: 'sk' },
-    fields: {
-      pk: 'string',
-      sk: 'string',
-    },
+    fields: { pk: 'string', sk: 'string' },
   })
 
-  if (isProd || stack.stage === 'adam') {
+  if (isProd) {
     const job = new Job(stack, 'trending', {
       architecture: 'arm_64',
       runtime: 'nodejs18.x',
