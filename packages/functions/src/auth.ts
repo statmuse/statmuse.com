@@ -37,6 +37,7 @@ export const handler = AuthHandler({
                 email: claims.email,
                 update: claims.update,
               }).toString(),
+            'Access-Control-Allow-Origin': '*',
           },
         }
       },
@@ -46,6 +47,7 @@ export const handler = AuthHandler({
           headers: {
             Location:
               process.env.AUTH_FRONTEND_URL + '/auth/code?error=invalid_code',
+            'Access-Control-Allow-Origin': '*',
           },
         }
       },
