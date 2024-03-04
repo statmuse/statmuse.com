@@ -1,6 +1,7 @@
 ---
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
+import Image from '@components/image.astro'
 import Container from '@components/container.astro'
 import { Caching } from '@lib/caching'
 const meta = {
@@ -57,12 +58,12 @@ Astro.response.headers.set('Access-Control-Allow-Origin', '*')
           </button>
         </form>
       </div>
-      <img
+      <Image
         class="absolute bottom-0 left-0 w-full"
         src="https://cdn.statmuse.com/app/images/signup-players.png"
         alt="StatMuse+"
-        width={450}
-        height={200}
+        width={900}
+        height={400}
       />
     </div>
   </Container>

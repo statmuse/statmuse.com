@@ -6,6 +6,7 @@ import type { HeroProps } from '@lib/props'
 import AnswerShare from './answer-share.astro'
 import AnswerAudio from './answer-audio.astro'
 import TwitterShare from '@components/icons/twitter.astro'
+import Panel from '@components/panel.astro'
 
 interface Props extends HeroProps {}
 
@@ -22,52 +23,62 @@ const content = markdown
   : Astro.props.content
 ---
 
-<Container class="mb-5 bg-team-primary text-team-secondary">
-  <div class="flex flex-col md:flex-row pt-4 md:pt-6 relative">
-    <div class="flex-1 flex flex-col justify-between text-center md:text-left">
-      {
-        answered ? (
-          <span class="italic opacity-50 saturate-0">Answered {answered}</span>
-        ) : null
-      }
-      <h1
-        data-cy-nlg
-        class:list={{
-          'font-semibold text-xl md:text-2xl md:leading-snug lg:text-[1.75rem] xl:text-3xl xl:leading-snug my-auto': true,
-          '[&>p]:my-[1em] [&>ul]:my-[1em] [&>p>a]:underline [&>p>a]:text-team-secondary':
-            markdown,
-        }}
-        set:html={markdown ? content : undefined}
+<Panel team class="rounded-none border-0 md:rounded-2xl md:border md:mx-5">
+  <Container class="">
+    <div class="flex flex-col md:flex-row relative">
+      <div
+        class="flex-1 flex flex-col justify-between text-center md:text-left"
       >
         {
-          !markdown ? (
-            <p
-              class="my-[1em] [&>a]:underline [&>a]:text-team-secondary"
-              set:html={content}
-            />
+          answered ? (
+            <span class="italic opacity-50 saturate-0">
+              Answered {answered}
+            </span>
           ) : null
         }
-      </h1>
+        <h1
+          data-cy-nlg
+          class:list={{
+            'font-semibold text-xl md:text-2xl md:leading-snug lg:text-[1.75rem] xl:text-3xl xl:leading-snug my-auto': true,
+            '[&>p]:my-[1em] [&>ul]:my-[1em] [&>p>a]:underline [&>p>a]:text-team-secondary':
+              markdown,
+          }}
+          set:html={markdown ? content : undefined}
+        >
+          {
+            !markdown ? (
+              <p
+                class="my-[1em] [&>a]:underline [&>a]:text-team-secondary"
+                set:html={content}
+              />
+            ) : null
+          }
+        </h1>
+      </div>
+      {
+        Astro.props.imageUrl ? (
+          <Image
+            class:list={{
+              'h-44 md:h-52 md:max-w-[350px]': true,
+              'mt-2 md:mt-0 md:pl-6 md:pr-1.5 -mb-2': true,
+              'self-center md:self-end select-none': true,
+              'object-contain object-bottom': true,
+            }}
+            alt={Astro.props.imageAlt ?? null}
+            src={Astro.props.imageUrl}
+            width={750}
+            height={750}
+            loading="eager"
+          />
+        ) : null
+      }
+      <div
+        class="md:hidden flex flex-col items-center absolute right-0 bottom-2.5 space-y-2.5"
+      >
+        {shareUrl && <TwitterShare {shareUrl} />}
+        {shareUrl && <AnswerShare onlyIcon url={shareUrl} />}
+        {Astro.props.audioUrl && <AnswerAudio src={Astro.props.audioUrl} />}
+      </div>
     </div>
-    {
-      Astro.props.imageUrl ? (
-        <Image
-          class="h-44 md:h-52 self-center md:self-end mt-2 md:mt-0 md:pl-6 md:pr-1.5 select-none object-contain object-bottom md:max-w-[350px]"
-          alt={Astro.props.imageAlt ?? null}
-          src={Astro.props.imageUrl}
-          width={750}
-          height={750}
-          loading="eager"
-        />
-      ) : null
-    }
-
-    <div
-      class="md:hidden flex flex-col items-center absolute right-0 bottom-2.5 space-y-2.5"
-    >
-      {shareUrl && <TwitterShare {shareUrl} />}
-      {shareUrl && <AnswerShare onlyIcon url={shareUrl} />}
-      {Astro.props.audioUrl && <AnswerAudio src={Astro.props.audioUrl} />}
-    </div>
-  </div>
-</Container>
+  </Container>
+</Panel>

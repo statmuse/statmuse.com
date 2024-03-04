@@ -81,14 +81,6 @@ const code = await Link.askShortCode(query, preferredDomain || '')
     {query}
     {conversationToken}
     {preferredDomain}
-    share={preferredDomain
-      ? {
-          type: 'ask',
-          shortCode: code?.short_code,
-          query,
-          domain: preferredDomain,
-        }
-      : undefined}
     audioUrl={answer.visual.summary.narrator?.answerWithIntroAudioUrl ||
       answer.visual.summary.narrator?.answerAudioUrl}
   />

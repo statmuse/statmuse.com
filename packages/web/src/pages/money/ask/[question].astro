@@ -112,11 +112,6 @@ Caching.swr(Astro)
       money
       {query}
       {conversationToken}
-      share={{
-        type: 'ask',
-        shortCode: code?.short_code,
-        url: Astro.url.origin + createAskPath({ domain: 'money', query }),
-      }}
     />
     {
       heroProps ? (

@@ -110,7 +110,6 @@ Caching.swr(Astro)
       fantasy
       {query}
       {conversationToken}
-      share={{ type: 'ask', shortCode: code?.short_code, url: Astro.url.href }}
       audioUrl={response.visual.summary.narrator?.answerWithIntroAudioUrl ||
         response.visual.summary.narrator?.answerAudioUrl}
     />

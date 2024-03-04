@@ -289,11 +289,15 @@ const canonicalUrl = meta?.canonical
       )
     }
     <script>
+      // @ts-expect-error
       window.dataLayer = window.dataLayer || []
       function gtag() {
-        dataLayer.push(arguments)
+        // @ts-expect-error
+        window.dataLayer.push(arguments)
       }
+      // @ts-expect-error
       gtag('js', new Date())
+      // @ts-expect-error
       gtag('config', 'G-QRW302M4ZR')
     </script>
     {
@@ -314,7 +318,7 @@ const canonicalUrl = meta?.canonical
     }
   </head>
   <body
-    class="text-gray-1 bg-gray-7 has-[#menu:checked]:overflow-hidden text-pretty"
+    class="text-gray-1 bg-gray-7 has-[#menu:checked]:overflow-scroll has-[#menu:checked]:fixed has-[#menu:checked]:w-full has-[#menu:checked]:h-full text-pretty"
   >
     <slot />
     <CookieConsent client:only="svelte" />
@@ -459,7 +463,8 @@ const canonicalUrl = meta?.canonical
         }
 
         Honeybadger.setContext({
-          user_id: session.properties.id,
+          user_id:
+            session.type !== 'public' ? session.properties.id : undefined,
           user_type: session.type,
         })
       } catch (e) {}
