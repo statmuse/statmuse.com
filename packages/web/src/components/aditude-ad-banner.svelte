@@ -53,7 +53,7 @@
 
 {#if import.meta.env.PROD && isNotSubscriber}
   <div
-    class="fixed bottom-0 right-0 w-screen z-50 flex justify-center"
+    class="fixed bottom-0 left-0 md:left-1/2 md:-translate-x-1/2 w-screen md:w-fit z-50 flex justify-center md:pr-5"
     style:min-height={mobile ? '50px' : '90px'}
     style:background="#f7f7f7e6"
     style:visibility={isClosed ? 'hidden' : 'visible'}
@@ -63,7 +63,7 @@
     {/if}
     <img
       src="/share-icons/x.svg"
-      class="w-4 h-4 absolute top-0.5 right-0.5 sm:right-1 cursor-pointer"
+      class="w-4 h-4 absolute top-0 right-0 cursor-pointer box-content p-0.5"
       alt="close"
       on:click={onClickClose}
     />
