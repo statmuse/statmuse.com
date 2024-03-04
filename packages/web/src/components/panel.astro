@@ -5,11 +5,12 @@ import { rgbToHex } from '@statmuse/core/color'
 type Color = string | { r: number; g: number; b: number; a: number }
 
 interface Props extends HTMLAttributes<'div'> {
+  team?: boolean
   background?: Color
   foreground?: Color
 }
 
-const { class: classes, background, foreground, ...props } = Astro.props
+const { class: classes, team, background, foreground, ...props } = Astro.props
 
 const backgroundHex = background
   ? typeof background === 'string'
@@ -29,6 +30,7 @@ const foregroundHex = foreground
     'bg-gray-8': !background,
     'text-gray-1': !foreground,
     'border border-gray-6': !background,
+    'bg-team-primary text-team-secondary': team,
     [classes ?? '']: !!classes,
   }}
   style={`${backgroundHex ? `background-color: ${backgroundHex};` : ''} ${

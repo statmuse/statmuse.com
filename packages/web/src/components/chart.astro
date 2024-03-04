@@ -4,15 +4,16 @@ import { isFinite, isNil, isUndefined, negate, some } from 'lodash-es'
 import { min as d3Min, max as d3Max } from 'd3-array'
 import { scaleLinear, scaleBand } from 'd3-scale'
 import Axis from '@components/axis.astro'
+import Panel from '@components/panel.astro'
 import type { HTMLAttributes } from 'astro/types'
 import type { GameraChart } from '@statmuse/core/gamera'
 
 interface Props extends HTMLAttributes<'svg'> {
   isSuperlative: boolean
   model: GameraChart
-  totalWidth: number
 }
 
+const isSuperlative = Astro.props.isSuperlative
 const isNotNil = negate(isNil)
 
 const isWhite = (hexColorString: string) => hexColorString === '#FFFFFF'
@@ -54,37 +55,31 @@ const tickFormat = (label: string | number) => {
   return labels.length === 1 ? labels[0] : labels[1]
 }
 
-const totalWidth = Astro.props.totalWidth
-const ratio = 1 / 2.5 // totalWidth < 500 ? 3 / 4 : 1 / 2
-const totalHeight = totalWidth * ratio
+const truncate = (str: string) => {
+  const max = 10
+  return str.length > max ? str.substr(0, max - 1) + '…' : str
+}
 
-const categoryCount = Astro.props.isSuperlative
-  ? Math.min(totalWidth / 55, Astro.props.model.categories.length)
-  : Astro.props.model.categories.length
-const categories = Astro.props.model.categories.slice(0, categoryCount)
-const categoryWidth = totalWidth / categoryCount
-const categoryMaxLength = Math.max.apply(
-  null,
-  categories.map((cat) =>
-    // @ts-expect-error
-    cat.nameLines ? cat.nameLines.join('<br>').length : cat.length,
-  ),
-)
+const totalHeight = 250 // totalWidth * ratio
+const categoryCount = Astro.props.model.categories.length
+const categories = Astro.props.model.categories
+  .map((cat) => ({
+    ...cat,
+    nameLines: cat.nameLines
+      .map(truncate)
+      .slice(isSuperlative ? 1 : 0, isSuperlative ? undefined : 1),
+  }))
+  .slice(0, categoryCount)
+const categoryWidth = 42 // totalWidth / categoryCount
+const totalWidth = categoryCount * categoryWidth
 
-const showXAxis = categoryWidth > 50
-const showBarLabel =
-  categoryWidth > 30 &&
-  (Astro.props.model.series.length === 1 ||
-    categoryWidth > Astro.props.model.series.length * 30)
-const showYAxis = !showBarLabel // width >= 600 && !minimal;
-const showLegend = Astro.props.model.series.length > 1 // && !minimal; // && (width > 600);
-const angleXAxisLabels = categoryMaxLength >= 8 && categoryWidth < 100
+const showLegend = Astro.props.model.series.length > 1
 
 const margin = {
   top: 0,
-  right: 0,
-  bottom: showXAxis ? (angleXAxisLabels ? 85 : 50) : 5,
-  left: showYAxis ? 40 : 0,
+  right: 4,
+  bottom: 50,
+  left: 4,
 }
 const chartWidth = totalWidth - margin.left - margin.right
 const chartHeight = totalHeight - margin.top - margin.bottom
@@ -98,7 +93,8 @@ const upperBoundDomain = max < 0 ? 0 : max
 
 const x0 = scaleBand()
   .rangeRound([0, chartWidth]) // margin between groups
-  .padding(0.2)
+  .paddingInner(0.15)
+  // .padding(0.15)
   .domain(
     categories.map((cat, index) =>
       cat.nameLines
@@ -166,103 +162,87 @@ categories.forEach((cat, i) => {
 })
 ---
 
-<div
-  class:list={{
-    'relative bg-white mb-2': true,
-    [Astro.props.class || '']: !!Astro.props.class,
-  }}
->
-  <div class="relative bg-white overflow-x-auto">
-    <svg
-      id="chart"
-      height={chartHeight}
-      style={{
-        paddingLeft: margin.left,
-        paddingTop: margin.top,
-        paddingRight: margin.right,
-        paddingBottom: margin.bottom,
-        margin: 'auto',
-        overflow: 'visible',
-      }}
-      viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-    >
-      <Axis
-        hide={!showXAxis}
-        orientation="bottom"
-        width={chartWidth}
-        height={Math.ceil(chartHeight)}
-        scaleBand={x0}
-        {tickFormat}
-        angle={angleXAxisLabels}
-      />
-      <Axis
-        hide={!showYAxis}
-        orientation="left"
-        scaleLinear={y}
+<Panel class={Astro.props.class}>
+  <div class="relative">
+    <div class="relative overflow-x-scroll no-scrollbar -mx-2">
+      <svg
+        id="chart"
         height={chartHeight}
-        width={chartWidth}
-        tickFormat={(x) =>
-          (x as number) % 1 !== 0 || (x === 1.0 && max < 5)
-            ? numeral(x).format('0.0a')
-            : numeral(x).format('0a')}
-      />
-      {
-        data.map((d, ix) => (
-          <g transform={`translate(${x0(d.categoryKey)} ,0)`}>
-            {d.values.map((v, i) => {
-              // console.log(v);
-              return isNotNil(v.y) ? (
-                <g>
-                  <rect
-                    width={x1.bandwidth()}
-                    x={x1(v.series!)}
-                    y={y(Math.max(0, v.y!))}
-                    height={Math.abs(y(v.y!) - y(0))}
-                    fill={fillColor(v.color!)}
-                  />
-                  <text
-                    class="fill-black"
-                    style={{
-                      display: showBarLabel ? 'block' : 'none',
-                      fontSize: 14,
-                    }}
-                    y={
-                      y(Math.max(0, v.y!)) +
-                      (v.y! < 0 ? Math.abs(y(v.y!) - y(0)) + 10 : -10)
-                    }
-                    x={(x1(v.series ?? '') || 0) + x1.bandwidth() / 2}
-                    dy=".35em"
-                    text-anchor="middle"
-                  >
-                    {formatValue(v)}
-                  </text>
-                </g>
-              ) : (
-                <rect />
-              )
-            })}
-          </g>
-        ))
-      }
-    </svg>
-  </div>
-  {
-    showLegend ? (
-      <div class="pt-2.5 pb-6 -mr-5">
-        <div class="text-center my-0 mx-auto">
-          {Astro.props.model.series.slice().map((series) => (
-            <div class="mr-5 inline-flex">
-              <div
-                class="w-[18px] h-[18px]"
-                style={{ background: fillColor(series.color) }}
-              />
-              <span class="ml-[5px]">{series.name}</span>
-            </div>
-          ))}
+        style={{
+          paddingLeft: margin.left,
+          paddingTop: margin.top,
+          paddingRight: margin.right,
+          paddingBottom: margin.bottom,
+          overflow: 'visible',
+        }}
+        viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+      >
+        <Axis
+          orientation="bottom"
+          width={chartWidth}
+          height={Math.ceil(chartHeight)}
+          scaleBand={x0}
+          {tickFormat}
+          angle={true}
+        />
+        {
+          data.map((d, ix) => (
+            <g transform={`translate(${x0(d.categoryKey)}, 0)`}>
+              {d.values.map((v, i) => {
+                // console.log(v);
+                return isNotNil(v.y) ? (
+                  <g>
+                    <rect
+                      width={x1.bandwidth()}
+                      x={x1(v.series!)}
+                      y={y(Math.max(0, v.y!))}
+                      height={Math.abs(y(v.y!) - y(0))}
+                      fill={fillColor(v.color!)}
+                    />
+                    <text
+                      class="fill-gray-1"
+                      style={{
+                        display: 'block',
+                        fontSize: 14,
+                      }}
+                      y={
+                        y(Math.max(0, v.y!)) +
+                        (v.y! < 0 ? Math.abs(y(v.y!) - y(0)) + 10 : -10)
+                      }
+                      x={(x1(v.series ?? '') || 0) + x1.bandwidth() / 2}
+                      dy=".35em"
+                      text-anchor="middle"
+                    >
+                      {formatValue(v)}
+                    </text>
+                  </g>
+                ) : (
+                  <rect />
+                )
+              })}
+            </g>
+          ))
+        }
+      </svg>
+    </div>
+    {
+      showLegend ? (
+        <div class="pt-2.5 pb-6 -mr-5">
+          <div class="text-center my-0 mx-auto">
+            {Astro.props.model.series.slice().map((series) => (
+              <div class="mr-5 inline-flex">
+                <div
+                  class="w-[18px] h-[18px]"
+                  style={{ background: fillColor(series.color) }}
+                />
+                <span class="ml-[5px]">{series.name}</span>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    ) : (
-      ''
-    )
-  }
-</div>
+      ) : (
+        ''
+      )
+    }
+  </div>
+</Panel>

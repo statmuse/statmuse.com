@@ -216,7 +216,7 @@
     aria-haspopup="listbox"
     aria-owns="ask-bar-suggestions"
     aria-expanded={open}
-    class="absolute top-0 w-full border border-gray-6 rounded-3xl overflow-hidden"
+    class="absolute top-0 w-full border border-gray-6 rounded-3xl overflow-hidden md:border-opacity-100"
     class:border-primary={inFocus}
     class:border-opacity-100={inFocus}
     class:border-opacity-50={!inFocus}

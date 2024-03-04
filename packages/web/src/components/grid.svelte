@@ -6,6 +6,8 @@
   import { session } from '@lib/session-store'
   import type { GameraGrid } from '@statmuse/core/gamera'
   import EntityLink from '@components/entity-link.svelte'
+  import Image from '@components/image.svelte'
+  import Panel from '@components/panel.svelte'
 
   const freeRowLimit = 25
 
@@ -113,12 +115,16 @@
   const imgClass = ({ imageUrl = '', entity }: RowItem) => {
     if (entity?.type.includes('player')) {
       return [
-        'w-6',
-        'h-6',
+        'w-10',
+        'h-8',
         'max-w-none',
         'object-cover',
-        'rounded-full',
-        'bg-white',
+        'object-bottom',
+        'bg-gray-8',
+        '-mb-[1px]',
+        'mt-2',
+        'mx-auto',
+        'overflow-visible',
         imageUrl.includes('silhouette') ? 'opacity-50' : '',
       ]
         .filter((x) => x)
@@ -186,24 +192,23 @@
   }
 </script>
 
-<div class="relative">
-  <div class="relative overflow-x-auto">
+<Panel class="relative">
+  <div class="relative overflow-x-auto no-scrollbar">
     <table class="text-[15px] whitespace-nowrap" class:w-full={fullWidth}>
       {#each grids as grid}
         {@const { columns, rows, aggregations } = grid}
         {#if head}
           <thead>
-            <tr
-              class="text-xs text-team-secondary uppercase tracking-[0.07rem]"
-            >
+            <tr class="text-xs uppercase tracking-[0.07rem]">
               {#each columns as col (col.rowItemKey)}
                 <th
-                  class={`first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5 ${applyStyles(
+                  class={`cursor-pointer font-normal p-1.5 text-gray-5 ${applyStyles(
                     col,
                   )}`}
                   class:pl-8={col.hasImage}
                   class:sticky={col.sticky}
                   class:left-0={col.sticky}
+                  class:bg-gray-8={col.sticky}
                   on:click={onClickSort(col.rowItemKey)}
                 >
                   {col.title}
@@ -214,7 +219,7 @@
         {/if}
         <tbody
           class={`divide-y ${
-            color ? 'divide-team-primary' : 'divide-[#c7c8ca]'
+            color ? 'divide-team-primary' : 'divide-gray-6'
           } leading-[22px]`}
         >
           {#each rows as row (row)}
@@ -223,6 +228,7 @@
               highlight,
             )}
             <tr>
+              <!-- <td class="w-2">{rows.indexOf(row) + 1}</td> -->
               {#each columns as col (row[col.rowItemKey])}
                 {#if row[col.rowItemKey]}
                   {@const { display, imageUrl, entity } = row[col.rowItemKey]}
@@ -233,7 +239,7 @@
                     class:py-1={!imageUrl}
                     class:sticky={col.sticky}
                     class:left-0={col.sticky}
-                    class:bg-white={col.sticky &&
+                    class:bg-gray-8={col.sticky &&
                       !(sortKey === col.rowItemKey) &&
                       !color &&
                       !rowHighlight}
@@ -247,8 +253,10 @@
                     >
                       {#if col.rowItemKey === 'IMAGE'}
                         {#if imageUrl}
-                          <img
+                          <Image
                             src={imageUrl}
+                            width={100}
+                            height={100}
                             alt={display}
                             class={imgClass(row[col.rowItemKey])}
                           />
@@ -256,8 +264,10 @@
                       {:else if col.hasImage}
                         <div class="flex items-center">
                           {#if imageUrl}
-                            <img
+                            <Image
                               src={imageUrl}
+                              width={100}
+                              height={100}
                               alt={display}
                               class={`${imgClass(row[col.rowItemKey])} mr-2.5`}
                             />
@@ -304,7 +314,7 @@
                         class={`${applyStyles(col)} ${padding} py-1`}
                         class:sticky={col.sticky}
                         class:left-0={col.sticky}
-                        class:bg-white={col.sticky}
+                        class:bg-gray-8={col.sticky}
                       >
                         {display}
                       </td>
@@ -326,7 +336,7 @@
                     class={`${textAlign(col)} ${padding} py-1`}
                     class:sticky={col.sticky}
                     class:left-0={col.sticky}
-                    class:bg-white={col.sticky}
+                    class:bg-gray-8={col.sticky}
                   >
                     {#if col.rowItemKey === 'IMAGE'}
                       <div class="flex items-center h-[22px]">
@@ -398,4 +408,4 @@
       </a>
     </div>
   {/if}
-</div>
+</Panel>

@@ -132,17 +132,7 @@ Caching.swr(Astro)
       query,
     }}
   >
-    <Header
-      fantasy
-      {query}
-      {conversationToken}
-      share={{
-        type: 'ask',
-        shortCode: code?.short_code,
-        query,
-        domain: 'fantasy',
-      }}
-    />
+    <Header fantasy {query} {conversationToken} />
     {
       heroProps ? (
         <Hero

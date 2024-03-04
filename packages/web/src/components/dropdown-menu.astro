@@ -24,7 +24,8 @@ const { showElephant } = Astro.props
     <Icon
       name="hamburger"
       class:list={{
-        'w-[25px] h-[25px] relative cursor-pointer text-team-secondary mr-3 md:mr-0': true,
+        'w-[25px] h-[25px] mr-3 md:mr-0': true,
+        'relative cursor-pointer text-team-secondary md:text-inherit': true,
         'hidden md:block': showElephant,
         block: !showElephant,
       }}

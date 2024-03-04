@@ -148,7 +148,6 @@ const details =
                             <Chart
                               class="hidden peer-checked:block"
                               model={chart}
-                              totalWidth={1495}
                               isSuperlative={response.visual.isSuperlative}
                             />
                           </div>
@@ -159,8 +158,8 @@ const details =
                   if (columnCharts.length === 1)
                     return (
                       <Chart
+                        class=""
                         model={columnCharts[0]}
-                        totalWidth={1495}
                         isSuperlative={response.visual.isSuperlative}
                       />
                     )
