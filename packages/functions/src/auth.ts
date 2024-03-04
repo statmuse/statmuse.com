@@ -1,12 +1,13 @@
+import { SESv2Client, SendEmailCommand } from '@aws-sdk/client-sesv2'
 import { AuthHandler, CodeAdapter } from 'sst/node/future/auth'
 import * as User from '@statmuse/core/user'
 import * as Visitor from '@statmuse/core/visitor'
-import sendgrid from '@sendgrid/mail'
 import contacts from '@sendgrid/client'
 import { Config } from 'sst/node/config'
 import { sessions } from './session'
 
-sendgrid.setApiKey(Config.SENDGRID_TRANSACTIONAL_API_KEY)
+const sesClient = new SESv2Client()
+
 contacts.setApiKey(Config.SENDGRID_API_KEY)
 
 export const handler = AuthHandler({
@@ -16,16 +17,20 @@ export const handler = AuthHandler({
       async onCodeRequest(code, claims) {
         console.log('sending email to', claims.email)
 
-        await sendgrid.send({
-          templateId: 'd-dcd901efab0544ed841ce254e900832a',
-          dynamicTemplateData: {
-            pin_code: code,
-            sign_in_token_expires_in_minutes: '30',
-          },
-          to: claims.email,
-          from: 'StatMuse <hello@statmuse.com>',
-          subject: 'Sign in to StatMuse',
-        })
+        await sesClient.send(
+          new SendEmailCommand({
+            FromEmailAddress: 'StatMuse<hello@auth.statmuse.com>',
+            Destination: {
+              ToAddresses: [claims.email],
+            },
+            Content: {
+              Template: {
+                TemplateName: 'auth',
+                TemplateData: JSON.stringify({ pin_code: code }),
+              },
+            },
+          }),
+        )
 
         return {
           statusCode: 302,
