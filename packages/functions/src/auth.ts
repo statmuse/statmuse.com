@@ -29,6 +29,12 @@ export const handler = AuthHandler({
                 TemplateData: JSON.stringify({ pin_code: code }),
               },
             },
+            EmailTags: [
+              {
+                Name: 'email_type',
+                Value: 'auth',
+              },
+            ],
           }),
         )
 
