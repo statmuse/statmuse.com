@@ -6,47 +6,47 @@ google.com, pub-9505823743978337, RESELLER, f08c47fec0942fa0
 aps.amazon.com, 6c3f03cd-6fa8-4477-ac05-2c0f4f8da092, RESELLER
 indexexchange.com, 187621, RESELLER, 50b1c356f2c5c8fc
 pubmatic.com, 159710, RESELLER, 5d62403b186f2ace
-rubiconproject.com, 18782, RESELLER, 0bfd66d529a55807
 sharethrough.com, 956615a1, RESELLER, d53b998a7bd4ecd2
-telaria.com, pi979-clt5j, RESELLER, 1a4e959a1b50034a
 triplelift.com, 11014, RESELLER, 6c33edb13117fd86
+undertone.com, 3590, RESELLER, d954590d0cb265b9
+video.unrulymedia.com, 3728224204249146186, RESELLER, 6f752381ad5ec0e5
 appnexus.com, 8354, RESELLER, f5ab79cb980f11d1
-openx.com, 540922801, RESELLER, 6a698e2ec38604c6
-pubmatic.com, 158926, RESELLER, 5d62403b186f2ace
-rhythmone.com, 1204009095, RESELLER, a670c89d4a324e47
-rubiconproject.com, 21840, RESELLER, 0bfd66d529a55807
-video.unrulymedia.com, 1204009095, RESELLER, 6f752381ad5ec0e5
-yahoo.com, 57560, RESELLER, e1a5b5b6e3255540
-google.com, pub-6245227841947028, RESELLER, f08c47fec0942fa0
 indexexchange.com, 187780, RESELLER, 50b1c356f2c5c8fc
 openx.com, 540021061, RESELLER, 6a698e2ec38604c6
 pubmatic.com, 161523, RESELLER, 5d62403b186f2ace
-pubmatic.com, 162912, RESELLER, 5d62403b186f2ace
+rubiconproject.com, 18782, RESELLER, 0bfd66d529a55807
 rubiconproject.com, 18784, RESELLER, 0bfd66d529a55807
-sharethrough.com, Ji3FhXek, RESELLER, d53b998a7bd4ecd2
-telaria.com, pi979-n0ct6, RESELLER, 1a4e959a1b50034a
-undertone.com, 3590, RESELLER, d954590d0cb265b9
-video.unrulymedia.com, 3728224204249146186, RESELLER, 6f752381ad5ec0e5
 google.com, pub-3844877863303739, RESELLER, f08c47fec0942fa0
 indexexchange.com, 184912, RESELLER, 50b1c356f2c5c8fc
 openx.com, 538995730, RESELLER, 6a698e2ec38604c6
 rubiconproject.com, 17814, RESELLER, 0bfd66d529a55807
 condenast.com, 22597733940, RESELLER, d6e8ec0b2b8564e0
-hcodemedia.com, 74, RESELLER, 4ad830b803b0c6b2
-telaria.com, gjth7-b76sj, RESELLER, 1a4e959a1b50034a
-tremorhub.com, gjth7-b76sj, RESELLER, 1a4e959a1b50034a
-telaria.com, i0unc-nzux7, RESELLER, 1a4e959a1b50034a
-tremorhub.com, i0unc-nzux7, RESELLER, 1a4e959a1b50034a
+google.com, pub-6245227841947028, RESELLER, f08c47fec0942fa0
 google.com, pub-7995104076770938, RESELLER, f08c47fec0942fa0
-pubmatic.com, 157752, RESELLER, 5d62403b186f2ace
-pubmatic.com, 157102, RESELLER, 5d62403b186f2ace
-rubiconproject.com, 13894, RESELLER, 0bfd66d529a55807
-rubiconproject.com, 18008, RESELLER, 0bfd66d529a55807
 google.com, pub-0978064532142215, RESELLER, f08c47fec0942fa0
 google.com, pub-8820362605711196, RESELLER, f08c47fec0942fa0
 openx.com, 539363661, RESELLER, 6a698e2ec38604c6
 openx.com, 540306979, RESELLER, 6a698e2ec38604c6
-tremorhub.com, pi979-clt5j, RESELLER, 1a4e959a1b50034a
+indexexchange.com, 192410, RESELLER, 50b1c356f2c5c8fc
+themediagrid.com, JTQKMP, RESELLER, 35d5010d7789b49d
+sharethrough.com, 7144eb80, RESELLER, d53b998a7bd4ecd2
+hcodemedia.com, 74, RESELLER, 4ad830b803b0c6b2
+criteo.com, B-060335, RESELLER, 9fac4a4a87c2a44f
+33across.com, 0010b00002e4MRRAA2, RESELLER, bbea06d9c4d2853c
+indexexchange.com, 194648, RESELLER, 50b1c356f2c5c8fc
+rubiconproject.com, 17888, RESELLER, 0bfd66d529a55807
+openx.com, 540225743, RESELLER, 6a698e2ec38604c6
+pubmatic.com, 157577, RESELLER, 5d62403b186f2ace
+appnexus.com, 9284, RESELLER, f5ab79cb980f11d1
+onetag.com, 765b4e6bb9c8438, RESELLER
+openx.com, 540780517, RESELLER, 6a698e2ec38604c6
+richaudience.com, 0u73Z72Qrc, RESELLER
+rubiconproject.com, 13510, RESELLER
+pubmatic.com, 81564, RESELLER, 5d62403b186f2ace
+pubmatic.com, 156538, RESELLER, 5d62403b186f2ace
+smartadserver.com, 1999, RESELLER, 060d053dcf45cbf3
+appnexus.com, 8233, RESELLER
+nextmillennium.io, 14904, RESELLER, 65bd090fa4a1e3d6
 rogerssportsandmedia.com, 22597733940, RESELLER
 google.com, pub-0942427266003794, RESELLER, f08c47fec0942fa0
 aps.amazon.com, 3719, RESELLER
@@ -57,24 +57,29 @@ openx.com, 540302365, RESELLER, 6a698e2ec38604c6
 openx.com, 539708628, RESELLER, 6a698e2ec38604c6
 openx.com, 539462051, RESELLER, 6a698e2ec38604c6
 telaria.com, tkz15-14wqj, RESELLER, 1a4e959a1b50034a
-tremorhub.com, tkz15-14wqj, RESELLER, 1a4e959a1b50034a
 appnexus.com, 1321, RESELLER, f5ab79cb980f11d1
 google.com, pub-5405132603504384, RESELLER, f08c47fec0942fa0
 districtm.io, 100962, RESELLER, 3fd707be9c4527c3
-indexexchange.com, 192410, RESELLER, 50b1c356f2c5c8fc
 lijit.com, 375328, RESELLER, fafdf38b16bf6b2b
-themediagrid.com, JTQKMP, RESELLER, 35d5010d7789b49d
 onetag.com, 770a440e65869c2, RESELLER
 openx.com, 540191398, RESELLER, 6a698e2ec38604c6
 pubmatic.com, 160006, RESELLER, 5d62403b186f2ace
 pubmatic.com, 160096, RESELLER, 5d62403b186f2ace
 rhythmone.com, 1654642120, RESELLER, a670c89d4a324e47
-sharethrough.com, 7144eb80, RESELLER
 smartadserver.com, 4125, RESELLER, 060d053dcf45cbf3
 sovrn.com, 375328, RESELLER, fafdf38b16bf6b2b
 appnexus.com, 1908, RESELLER, f5ab79cb980f11d1
 appnexus.com, 3663, RESELLER, f5ab79cb980f11d1
 yahoo.com, 55029, RESELLER, e1a5b5b6e3255540
+telaria.com, gjth7-b76sj, RESELLER, 1a4e959a1b50034a
+tremorhub.com, gjth7-b76sj, RESELLER, 1a4e959a1b50034a
+telaria.com, i0unc-nzux7, RESELLER, 1a4e959a1b50034a
+tremorhub.com, i0unc-nzux7, RESELLER, 1a4e959a1b50034a
+openx.com, 540922801, RESELLER, 6a698e2ec38604c6
+pubmatic.com, 158926, RESELLER, 5d62403b186f2ace
+rubiconproject.com, 21840, RESELLER, 0bfd66d529a55807
+video.unrulymedia.com, 1204009095, RESELLER, 6f752381ad5ec0e5
+yahoo.com, 57560, RESELLER, e1a5b5b6e3255540
 google.com, pub-1872236547113677, RESELLER, f08c47fec0942fa0
 onefootball.com, stn, RESELLER
 yahoo.com, 59271, RESELLER, e1a5b5b6e3255540
@@ -103,17 +108,15 @@ media.net, 8CU5MY34U, RESELLER
 onetag.com, 7659d380e89645e-OB, RESELLER
 openx.com, 542291481, RESELLER, 6a698e2ec38604c6
 openx.com, 540322758, RESELLER, 6a698e2ec38604c6
+pubmatic.com, 157752, RESELLER, 5d62403b186f2ace
+pubmatic.com, 157102, RESELLER, 5d62403b186f2ace
+rubiconproject.com, 13894, RESELLER, 0bfd66d529a55807
+rubiconproject.com, 18008, RESELLER, 0bfd66d529a55807
 sharethrough.com, dd2c91e6, RESELLER, d53b998a7bd4ecd2
 smartadserver.com, 4245, RESELLER
 triplelift.com, 4777-EB, RESELLER, 6c33edb13117fd86
 video.unrulymedia.com, 217819044, RESELLER
 appnexus.com, 8790, RESELLER, f5ab79cb980f11d1
-lkqd.net, 1100053808, RESELLER, 59c49fa9598a0117
-springserve.com, 1247, RESELLER, a24eb641fc82e93d
-telaria.com, 2auap-ich32, RESELLER, 1a4e959a1b50034a
-tremorhub.com, 2auap-ich32, RESELLER, 1a4e959a1b50034a
-telaria.com, 2auap-zihku, RESELLER, 1a4e959a1b50034a
-tremorhub.com, 2auap-zihku, RESELLER, 1a4e959a1b50034a
 rubiconproject.com, 12738, RESELLER, 0bfd66d529a55807
 contextweb.com, 561998, RESELLER, 89ff185a4c4e857c
 lijit.com, 411121, RESELLER, fafdf38b16bf6b2b
@@ -131,7 +134,6 @@ openx.com, 540274407, RESELLER, 6a698e2ec38604c6
 pubmatic.com, 156557, RESELLER
 smaato.com, 1100047713, RESELLER, 07bcf65f187117b4
 smartadserver.com, 4342, RESELLER
-tremorhub.com, pi979-n0ct6, RESELLER, 1a4e959a1b50034a
 indexexchange.com, 197137, RESELLER, 50b1c356f2c5c8fc
 openx.com, 537153564, RESELLER, 6a698e2ec38604c6
 pubmatic.com, 160318, RESELLER, 5d62403b186f2ace
