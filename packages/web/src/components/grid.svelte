@@ -203,7 +203,7 @@
   }
 </script>
 
-<Panel {title} {href} {entity} class={classes}>
+<Panel {title} {href} {entity} class={`${classes} pb-0`}>
   <div class="relative overflow-x-auto no-scrollbar -mx-3">
     <table class="text-[15px] whitespace-nowrap" class:w-full={fullWidth}>
       {#each grids as grid}

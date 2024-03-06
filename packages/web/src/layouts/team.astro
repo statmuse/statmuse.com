@@ -122,22 +122,13 @@ const twitter = {
     ...analytics,
   }}
 >
-  <Header
-    {query}
-    {preferredDomain}
-    share={{
-      type: 'profile',
-      url: meta?.canonical?.url
-        ? Astro.url.origin + meta.canonical.url
-        : Astro.url.href,
-    }}
-  />
+  <Header {query} {preferredDomain} />
   <Container class="mb-2.5 bg-team-primary text-team-secondary overflow-hidden">
     <div
       class="relative flex flex-col md:flex-row md:flex-wrap justify-center items-center md:items-stretch"
     >
       <div class="flex-1 mt-5 mb-7">
-        <h2 class="text-5xl font-semibold mb-2 text-center md:text-left">
+        <h1 class="text-5xl font-semibold mb-2 text-center md:text-left">
           <a
             class="text-current"
             href={teamFranchiseUrl}
@@ -146,7 +137,7 @@ const twitter = {
           >
             {bio.name}
           </a>
-        </h2>
+        </h1>
         <div class="flex flex-wrap flex-col md:flex-row items-center gap-3">
           <div class="cursor-pointer relative">
             <select
