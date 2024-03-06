@@ -1,5 +1,6 @@
 ---
 import HomeLayout from '@layouts/home.astro'
+import Panel from "@components/panel.astro"
 import { Caching } from '@lib/caching'
 import { createAskPath } from '@statmuse/core/path'
 import { NOT_FOUND_404 } from '@lib/response'
@@ -566,13 +567,10 @@ Caching.swr(Astro)
 ---
 
 <HomeLayout {meta} {league}>
-  <div class="gap-8 space-y-8 columns-2xs lg:min-w-[48rem]">
+  <div class="gap-3 space-y-3 columns-2xs lg:min-w-[48rem]">
     {
       examples[league || 'nba'].map(([title, queries]) => (
-        <div class="break-inside-avoid-column">
-          <h2 class="text-[0.8rem] text-gray-5 uppercase tracking-[0.07rem]">
-            {title}
-          </h2>
+        <Panel {title} class="break-inside-avoid-column">
           <ul class="flex flex-col gap-2">
             {queries.map(({ query, path }) => (
               <li class="max-w-xs">
@@ -580,7 +578,7 @@ Caching.swr(Astro)
               </li>
             ))}
           </ul>
-        </div>
+        </Panel>
       ))
     }
   </div>

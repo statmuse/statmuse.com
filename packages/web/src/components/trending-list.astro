@@ -1,7 +1,7 @@
 ---
-import Chevron from '@components/icons/chevron.astro'
 import TrendingListItem from '@components/trending-list-item.astro'
 import Panel from '@components/panel.astro'
+import Icon from '@components/icon.svelte'
 import { type TrendingListItem as Item } from 'src/types'
 
 interface Props {
@@ -25,8 +25,11 @@ const { items, title, eager, moreUrl, prominent } = Astro.props
           ))}
           {items.length > 5 ? (
             <li class="pt-3 pb-1">
-              <a href={moreUrl} class="flex justify-center gap-2 text-gray-5">
-                See more <Chevron class="w-5 aspect-square" />
+              <a
+                href={moreUrl}
+                class="flex items-center justify-center gap-2 text-gray-5"
+              >
+                See more <Icon name="dropdown" class="w-5 h-5" />
               </a>
             </li>
           ) : (

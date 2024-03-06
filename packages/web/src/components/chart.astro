@@ -67,7 +67,10 @@ const categories = Astro.props.model.categories
     ...cat,
     nameLines: cat.nameLines
       .map(truncate)
-      .slice(isSuperlative ? 1 : 0, isSuperlative ? undefined : 1),
+      .slice(
+        cat.nameLines.length > 1 && isSuperlative ? 1 : 0,
+        isSuperlative ? undefined : 1,
+      ),
   }))
   .slice(0, categoryCount)
 const categoryWidth = 42 // totalWidth / categoryCount

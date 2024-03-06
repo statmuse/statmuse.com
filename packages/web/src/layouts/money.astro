@@ -78,24 +78,15 @@ const twitter = {
     page_type: 'asset',
   }}
 >
-  <Header
-    money
-    {query}
-    share={{
-      type: 'profile',
-      url: meta?.canonical?.url
-        ? Astro.url.origin + meta.canonical.url
-        : Astro.url.href,
-    }}
-  />
+  <Header money {query} />
   <Container class="mb-5 bg-team-primary text-team-secondary">
     <div
       class="relative flex flex-col md:flex-row md:flex-wrap justify-center items-center md:items-stretch"
     >
       <div class="flex-1 mt-5 mb-7">
-        <h2 class="text-5xl font-semibold mb-2 text-center md:text-left">
+        <h1 class="text-5xl font-semibold mb-2 text-center md:text-left">
           {profile.asset.canonicalName}
-        </h2>
+        </h1>
         <div class="whitespace-nowrap text-center md:text-left">
           <span>{profile.asset.symbol}</span>
           <span class="last:hidden" set:text=" • " />

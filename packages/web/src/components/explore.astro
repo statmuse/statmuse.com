@@ -1,6 +1,7 @@
 ---
 import { createAskPath } from '@statmuse/core/path'
 import FreestarVideo from '@components/freestar-video.svelte'
+import Panel from '@components/panel.astro'
 interface Props {
   league?: string
   additionalQuestions?: { domain?: string; text: string }[]
@@ -12,37 +13,41 @@ const { league, additionalQuestions } = Astro.props
 <div class="mt-6 mb-4">
   {
     additionalQuestions?.length ? (
-      <h3 class="text-xl font-semibold mb-5">Explore</h3>
+      <h3 class="text-xl font-semibold mb-1.5">Explore</h3>
     ) : null
   }
   <div
     class="grid md:grid-cols-[repeat(auto-fit,_minmax(425px,_1fr))] gap-4 items-start"
   >
-    <FreestarVideo client:only="svelte" {league} />
+    <FreestarVideo client:load class="w-full" {league}>
+      <Panel class="w-full h-full" />
+    </FreestarVideo>
     {
       additionalQuestions ? (
-        <ul class="space-y-3" data-cy-related-questions>
-          {additionalQuestions.slice(0, 3).map((question) => (
-            <li class="flex-1 min-w-[210px] flex gap-1.5 leading-snug">
-              <i class="w-5 h-5 shrink-0 explore-search-icon" />
-              <a
-                href={createAskPath({
-                  domain: question.domain?.toLowerCase() || league || '',
-                  query: question.text,
-                })}
-                data-track-click="Click Try-Also Query"
-              >
-                {question.text}
+        <Panel title="Related Searches">
+          <ul class="space-y-3" data-cy-related-questions>
+            {additionalQuestions.slice(0, 3).map((question) => (
+              <li class="flex-1 min-w-[210px] flex gap-1.5 leading-snug">
+                <i class="w-5 h-5 shrink-0 explore-search-icon" />
+                <a
+                  href={createAskPath({
+                    domain: question.domain?.toLowerCase() || league || '',
+                    query: question.text,
+                  })}
+                  data-track-click="Click Try-Also Query"
+                >
+                  {question.text}
+                </a>
+              </li>
+            ))}
+            <li class="flex-1 min-w-[210px] my-1.5 sm:my-2.5 flex gap-1.5 leading-snug">
+              <i class="w-5 h-5 shrink-0 explore-flame-icon" />
+              <a href={league ? `/${league}/trending` : '/trending'}>
+                See trending
               </a>
             </li>
-          ))}
-          <li class="flex-1 min-w-[210px] my-1.5 sm:my-2.5 flex gap-1.5 leading-snug">
-            <i class="w-5 h-5 shrink-0 explore-flame-icon" />
-            <a href={league ? `/${league}/questions` : '/questions'}>
-              See trending
-            </a>
-          </li>
-        </ul>
+          </ul>
+        </Panel>
       ) : undefined
     }
     <div></div>
