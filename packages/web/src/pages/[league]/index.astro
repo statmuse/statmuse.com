@@ -170,9 +170,10 @@ const nflExamples = [
   ],
   [
     'Odds',
-    ['NFL odds', 'Who are the favorites this week?', 'Chiefs spread'].map((q) =>
-      createAskPath({ domain: 'nfl', query: q }),
-    ),
+    ['NFL odds', 'Who are the favorites this week?', 'Chiefs spread'].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'nfl', query: q }),
+    })),
   ],
   [
     'Beyond the Box Score',
