@@ -101,19 +101,20 @@ const meta = {
       <div
         class="w-full max-w-md bg-white rounded-lg border border-[#e4e4e4] mx-auto mb-5 pt-8 px-8 pb-44 relative text-center overflow-hidden"
       >
-        <h1 class="font-medium text-lg md:text-xl">Sign up for StatMuse+</h1>
-        <p class="my-5 text-left">
-          Members enjoy these benefits across NBA, NFL, NHL, MLB, PGA, Fantasy
-          and Money:
-        </p>
-        <ul class='m-5 list-["🏆"] text-left [&>li]:pl-3'>
-          <li>Unlimited prompts</li>
-          <li>2x data in results (unlimited in Money)</li>
-          <li>Zero ads</li>
-          <li>Personalized search history</li>
-          <li>Early access to features &amp; datasets</li>
-        </ul>
-        <div>
+        <div id="captcha-container" class="mb-5" style="display: none"></div>
+        <div id="signup" style="display:none">
+          <h1 class="font-medium text-lg md:text-xl">Sign up for StatMuse+</h1>
+          <p class="my-5 text-left">
+            Members enjoy these benefits across NBA, NFL, NHL, MLB, PGA, Fantasy
+            and Money:
+          </p>
+          <ul class='m-5 list-["🏆"] text-left [&>li]:pl-3'>
+            <li>Unlimited prompts</li>
+            <li>2x data in results (unlimited in Money)</li>
+            <li>Zero ads</li>
+            <li>Personalized search history</li>
+            <li>Early access to features &amp; datasets</li>
+          </ul>
           <form id="signup-form" method="post">
             <input
               class="w-full px-3 py-2.5 text-lg text-[#55595c] rounded bg-white border mb-7 outline-none"
@@ -138,17 +139,17 @@ const meta = {
               Join for $20/mo
             </button>
           </form>
-          <div>
-            <p class="text-black/60">
-              Already have an account? <a href="/auth/signin">Sign in</a>
-            </p>
-          </div>
-          <p class="text-xs text-[#777] mt-[23px] mb-[15px]">
-            By using StatMuse, you agree to our <a href="/terms">
-              terms of service
-            </a><br />and <a href="/privacy">privacy policy</a>.
+        </div>
+        <div>
+          <p class="text-black/60">
+            Already have an account? <a href="/auth/signin">Sign in</a>
           </p>
         </div>
+        <p class="text-xs text-[#777] mt-[23px] mb-[15px]">
+          By using StatMuse, you agree to our <a href="/terms">
+            terms of service
+          </a><br />and <a href="/privacy">privacy policy</a>.
+        </p>
         <Image
           class="absolute bottom-0 left-0 w-full"
           src="https://cdn.statmuse.com/app/images/signup-players.png"
@@ -160,3 +161,35 @@ const meta = {
     </div>
   </Container>
 </Layout>
+<script
+  type="text/javascript"
+  src="https://b9f2244c88b3.edge.captcha-sdk.awswaf.com/b9f2244c88b3/jsapi.js"
+  defer
+></script>
+
+<script>
+  document.addEventListener('astro:page-load', async () => {
+    const result = await AwsWafIntegration.fetch('/aws/verify-token')
+    const form = document.querySelector<HTMLElement>('#signup')
+
+    if (result.status === 405) {
+      const container =
+        document.querySelector<HTMLElement>('#captcha-container')
+
+      container.style.display = 'block'
+
+      AwsWafCaptcha.renderCaptcha(container, {
+        apiKey:
+          'uaY13CxN/ArG+Fb5sI7h1Kxnv5phEPzuVl7xS9kuLmcYoDcJFsLo4trrdTh5IDU06yFcBPcv4fBD6fOxlzCMwTJSbmkQ4UNbGeq7jazkqI/R5n2y2H96eY6mj61Qa36HpG0f2MyOckB9QvbJpGgGHRuAK2hrBMVchKfhrGCEFzL4Rfm123E0weuaHiAOyA+o7yZ0bYy9qN5Vvn+/yInTVkZTB3u2ib4Dr0VaPcqd5aEgqFYsXe2dluphLHAL1poDmxjU9JNySJsdKJ7ddLyFOV7SQRrt3V9ern0SVrF8frIQiHHqvU3SEjm4CYDCxWISMiP4VbSXJ18keDFCFpJberC0AJi51mhQ/UCpE5LE9uDchVoyqE0VRemQvV439/FyO/iPVdfC2TN+lBI3px4/NTKfgYwA9w6+frHs6tl94kw5XaMYAM59tyJ8Y/yeeOvMg5XFwcu9KcZYMqm3yFePLSwyCXT88PKjTlQs9ozw7Q31fdsErOGDU0Wkdx0Szl6kSJo5p1WgfZXgfF5xWniOvClBqRdwfgcr7oP/doLI4tymHdjVqiaJRD5xyidoqDZVzYXzZv+n0TfcprpcwapieoO8f3gU2Ss6vXQZ4lLHJIcgI6hAhGJvMxmJxpGpoaVyEviNvEEYHXuVyCdTgIxYkvOvtABI8Dor5YG5U23V6gI=_1_1',
+        onSuccess: () => {
+          container.style.display = 'none'
+          form.style.display = 'block'
+        },
+      })
+
+      return
+    }
+
+    form.style.display = 'block'
+  })
+</script>
