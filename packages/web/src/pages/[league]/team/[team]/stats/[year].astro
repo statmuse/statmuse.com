@@ -64,35 +64,25 @@ Caching.swr(Astro)
 ---
 
 <TeamLayout {bio} {meta} page="stats">
-  <div>
     {
       stats.grids.map((grid, i) => (
         <Fragment>
-          <div class="mb-5">
-            <div class="flex justify-between mb-0.5">
-              <h3 class="font-semibold text-team-primary">{grid.name}</h3>
-              {stats.parameters && (
-                <GridDropdown parameters={stats.parameters} />
-              )}
-            </div>
-            <Grid client:load data={grid} />
-          </div>
+            {stats.parameters && (
+              <GridDropdown parameters={stats.parameters} />
+            )}
+            <Grid client:load title={grid.name} data={grid} />
           {playerStats.grids[i] && (
-            <div class="mb-5">
-              <div class="flex justify-between mb-0.5">
-                <h3 class="font-semibold text-team-primary">
-                  {playerStats.grids[i].name}
-                </h3>
-                {playerStats.parameters && (
-                  <GridDropdown parameters={playerStats.parameters} />
-                )}
-              </div>
+            <Fragment>
+              {playerStats.parameters && (
+                <GridDropdown parameters={playerStats.parameters} />
+              )}
               <Grid
                 client:load
+                title={playerStats.grids[i].name}
                 data={playerStats.grids[i]}
                 stickyColumns={['PLAYER']}
               />
-            </div>
+            </Fragment>
           )}
         </Fragment>
       ))
@@ -112,5 +102,4 @@ Caching.swr(Astro)
           ))
         : null
     }
-  </div>
 </TeamLayout>

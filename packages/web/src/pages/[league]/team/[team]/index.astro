@@ -16,7 +16,6 @@ const team = Astro.props.team || Astro.params.team
 
 if (!team || !leagueParam) return NOT_FOUND_404
 const domain = leagueToDomain(leagueParam)
-
 const teamId = parseTeamId(team)
 
 const latestSeason = await getTeamFranchiseLatestSeason({

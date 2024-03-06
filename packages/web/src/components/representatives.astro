@@ -24,10 +24,10 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
     'Jalen Ramsey',
   ]
   if (specialPlayers.includes(image.entity?.display ?? '')) {
-    return 205
+    return 158
   }
 
-  return 175
+  return 128
 }
 ---
 
@@ -35,16 +35,19 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
   {
     representatives.length === 0 && (
       <div
-        class="h-40 sm:h-48 w-40 sm:w-48 mb-5 flex items-center justify-center rounded-full bg-[#eff4f8] shrink-0 self-center"
-        style="border: 4px solid var(--team-secondary-color)"
+        class:list={{
+          '!h-32 w-52 flex items-center justify-center': true,
+          '!my-3 md:!my-0 md:!-mb-3': true,
+          [Astro.props.class ?? '']: !!Astro.props.class,
+        }}
       >
         <Image
           data-cy-illustration
-          class="max-w-[75%] max-h-[75%] object-contain object-bottom"
+          class="md:h-[150%] md:w-[150%] object-cover object-bottom md:object-right"
           alt={alt}
           src={fallback}
-          width={500}
-          height={500}
+          width={750}
+          height={750}
           loading="eager"
         />
       </div>
@@ -52,36 +55,41 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
   }
   {
     representatives.length === 3 && (
-      <div class="flex items-end justify-center w-[480px]">
+      <div
+        class:list={{
+          'flex items-end justify-center w-[300px]': true,
+          [Astro.props.class ?? '']: !!Astro.props.class,
+        }}
+      >
         <div class="relative">
           <Image
             data-cy-illustration
-            class="max-w-[250px] absolute bottom-0 left-0 -translate-x-1/2 object-contain object-bottom"
+            class="max-w-[200px] absolute bottom-0 left-0 -translate-x-[80px] object-contain object-bottom"
             alt={representatives[0].entity?.display ?? ''}
             src={representatives[0].url}
             style={`height: ${getIllustrationHeight(representatives[0])}px;`}
-            width={500}
-            height={500}
+            width={600}
+            height={600}
             loading="eager"
           />
           <Image
             data-cy-illustration
-            class="max-w-[250px] relative z-[1] object-contain object-bottom"
+            class="max-w-[200px] relative z-[1] object-contain object-bottom"
             alt={representatives[1].entity?.display ?? ''}
             src={representatives[1].url}
             style={`height: ${getIllustrationHeight(representatives[1])}px;`}
-            width={500}
-            height={500}
+            width={600}
+            height={600}
             loading="eager"
           />
           <Image
             data-cy-illustration
-            class="max-w-[250px] absolute bottom-0 right-0 translate-x-1/2 object-contain object-bottom"
+            class="max-w-[200px] absolute bottom-0 right-0 translate-x-[80px] object-contain object-bottom"
             alt={representatives[2].entity?.display ?? ''}
             src={representatives[2].url}
             style={`height: ${getIllustrationHeight(representatives[2])}px;`}
-            width={500}
-            height={500}
+            width={600}
+            height={600}
             loading="eager"
           />
         </div>
@@ -90,15 +98,20 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
   }
   {
     representatives.length === 2 && (
-      <div class="flex items-end justify-center w-[360px]">
+      <div
+        class:list={{
+          'flex items-end justify-center w-[240px]': true,
+          [Astro.props.class ?? '']: !!Astro.props.class,
+        }}
+      >
         <Image
           data-cy-illustration
           class="translate-x-1/4 object-contain object-bottom"
           alt={representatives[0].entity?.display ?? ''}
           src={representatives[0].url}
           style={`height: ${getIllustrationHeight(representatives[0])}px;`}
-          width={500}
-          height={500}
+          width={600}
+          height={600}
           loading="eager"
         />
         <Image
@@ -107,8 +120,8 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
           alt={representatives[1].entity?.display ?? ''}
           src={representatives[1].url}
           style={`height: ${getIllustrationHeight(representatives[1])}px;`}
-          width={500}
-          height={500}
+          width={600}
+          height={600}
           loading="eager"
         />
       </div>
