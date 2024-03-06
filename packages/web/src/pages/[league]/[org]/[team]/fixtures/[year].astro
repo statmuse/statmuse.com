@@ -15,7 +15,9 @@ import { leagueToDomain, type LeagueParam } from '@lib/params'
 const league = Astro.params.league as LeagueParam
 const team = Astro.params.team
 const year = Astro.params.year
+const org = Astro.params.org
 if (!team || !league || !year) return NOT_FOUND_404
+if (org !== "club") return NOT_FOUND_404
 
 const domain = leagueToDomain(league)
 const bio = await getTeamSeasonBio({ context: Astro, domain, team, year })
@@ -54,40 +56,34 @@ Caching.swr(Astro)
 ---
 
 <TeamLayout {bio} {meta} page="fixtures">
-  <div class="space-y-5 mb-5">
     {
       schedule?.grid && schedule.grid.columns.length > 0 && (
-        <div class="mb-5">
-          <h3 class="font-semibold text-team-primary mb-0.5">
-            {schedule.grid.name}
-          </h3>
-          <Grid
-            data={schedule.grid}
-            fullWidth={false}
-            columnStyles={{
-              DATE: 'text-left w-20',
-              default: 'w-20',
-            }}
-          />
-        </div>
+        <Grid
+          client:load
+          title={schedule.grid.name}
+          data={schedule.grid}
+          fullWidth={false}
+          columnStyles={{
+            DATE: 'text-left w-20',
+            default: 'w-20',
+          }}
+        />
       )
     }
     {
       gameResults?.grids &&
         gameResults.grids.map((data) => (
-          <div class="mb-5">
-            <h3 class="font-semibold text-team-primary mb-0.5">{data.name}</h3>
-            <Grid
-              {data}
-              fullWidth={false}
-              columnStyles={{
-                DATE: 'text-left w-20',
-                SCORE: 'text-left w-20',
-                default: 'w-20',
-              }}
-            />
-          </div>
+          <Grid
+            client:load
+            title={data.name}
+            {data}
+            fullWidth={false}
+            columnStyles={{
+              DATE: 'text-left w-20',
+              SCORE: 'text-left w-20',
+              default: 'w-20',
+            }}
+          />
         ))
     }
-  </div>
 </TeamLayout>

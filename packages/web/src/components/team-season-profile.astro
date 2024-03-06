@@ -33,6 +33,8 @@ let overview = Astro.props.overview
 
 if (!team || !leagueParam || !year) return NOT_FOUND_404
 
+const schedule = leagueParam === 'fc' ? 'fixtures' : 'schedule'
+
 const domain = leagueToDomain(leagueParam)
 if (!overview) {
   overview = await getTeamSeasonOverview({
@@ -66,13 +68,22 @@ const { bio, scoresAndSchedule, teamLeaders, standings, stats, playerGallery } =
 
 const summary = bio.summaryNlg ? tokensToHtml(bio.summaryNlg) : undefined
 
-const title = `${bio.name} ${year} Scores, Stats, Schedule, Standings`
+const isFc = leagueParam === 'fc'
+const titleDetail = isFc
+  ? 'Stats, Fixtures, Table'
+  : 'Scores, Stats, Schedule, Standings'
+const descriptionDetail = isFc
+  ? 'scores, stats, fixtures, table and more for the premier league season`'
+  : `scores, stats, schedule, standings and more for the ${domain} regular season and playoffs`
+
+const title = `${bio.name} ${year} ${titleDetail}`
 const description = bio.summaryNlg
   ? tokensToText(bio.summaryNlg)
-  : `The ${year} ${bio.name} scores, stats, schedule, standings and more for the ${domain} regular season and playoffs`
-const keywords = `${getLeagueKeywords(domain)} ${year} ${
-  bio.name
-} team player stats statistics`
+  : `The ${year} ${bio.name} ${descriptionDetail}`
+const keywords = `${getLeagueKeywords(domain)} ${year} ${bio.name} ${
+  Astro.params.org
+} player stats statistics`
+
 const canonical = {
   url: `${getUrlForEntity({
     type: 'teamSeason',
@@ -97,7 +108,7 @@ const meta = { title, description, keywords, canonical }
             <h3 class="font-semibold text-team-primary">
               {scoresAndSchedule.name}
             </h3>
-            <a href={`schedule/${year}`}>See schedule</a>
+            <a href={`${schedule}/${year}`}>See schedule</a>
           </div>
           <Grid
             client:load
@@ -109,7 +120,10 @@ const meta = { title, description, keywords, canonical }
     }
     {
       teamLeaders && (
-        <TeamLeaders leaders={teamLeaders}>
+        <TeamLeaders
+          leaders={teamLeaders}
+          title={leagueParam === 'fc' ? 'Club Leaders' : 'Team Leaders'}
+        >
           <a href={`roster/${year}`}>See roster</a>
         </TeamLeaders>
       )

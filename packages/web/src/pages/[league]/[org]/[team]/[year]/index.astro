@@ -8,6 +8,9 @@ import { NOT_FOUND_404 } from '@lib/response'
 const league = (Astro.props.league || Astro.params.league) as LeagueParam
 const team = Astro.params.team as string
 const year = Astro.params.year as string
+const org = Astro.params.org as string
+
+if (org !== "team" && org !== "club") return NOT_FOUND-404
 
 const domain = leagueToDomain(league)
 let overview = await getTeamSeasonOverview({
@@ -21,8 +24,9 @@ if (!overview) return NOT_FOUND_404
 
 const { bio } = overview
 
+const schedule = league === "fc" ? "fixtures" : "schedule"
 if (!bio.hasStats) {
-  return Astro.redirect(`/${league}/team/${team}/schedule/${year}`)
+  return Astro.redirect(`/${league}/${org}/${team}/${schedule}/${year}`)
 }
 
 Caching.swr(Astro)

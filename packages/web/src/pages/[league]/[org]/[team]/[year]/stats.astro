@@ -12,6 +12,8 @@
 const league = Astro.params.league
 const team = Astro.params.team
 const year = Astro.params.year
+const org = Astro.params.org
+if (org !== "team" && org !== "club") return NOT_FOUND_404
 
-return Astro.redirect(`/${league}/team/${team}/stats/${year}`)
+return Astro.redirect(`/${league}/${org}/${team}/stats/${year}`)
 ---

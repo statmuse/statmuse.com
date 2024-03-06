@@ -14,9 +14,11 @@ import { NOT_FOUND_404 } from '@lib/response'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 
 const league = Astro.params.league as LeagueParam
+const org = Astro.params.org
 const team = Astro.params.team
 const year = Astro.params.year
-if (!team || !league || !year) return NOT_FOUND_404
+if (!team || !league || !year || !org) return NOT_FOUND_404
+if (org !== "team" && org !== "club") return NOT_FOUND_404
 
 const params = Astro.url.searchParams
 const domain = leagueToDomain(league)
@@ -37,8 +39,9 @@ const playerStats = await getTeamSeasonPlayerStats({
 })
 if (!bio || !stats || !playerStats) return NOT_FOUND_404
 
+const schedule = league === "fc" ? "fixtures" : "schedule"
 if (!bio.hasStats) {
-  return Astro.redirect(`/${league}/team/${team}/schedule/${year}`)
+  return Astro.redirect(`/${league}/${org}/${team}/${schedule}/${year}`)
 }
 
 const title = `${bio.name} ${year} Team & Player Stats`
