@@ -5,12 +5,12 @@ import Select from '@components/select.svelte'
 import Container from '@components/container.astro'
 import TrendingLists from '@components/trending-lists.astro'
 import TrendingMore from '@components/trending-more.astro'
-import LeagueNav from '@components/league-nav.astro'
-import type { TrendingListItem } from 'src/types'
+import Nav from '@components/nav.astro'
+import Back from '@components/icons/back.astro'
+import type { NavLink, TrendingListItem } from 'src/types'
 import tailwindConfig from '../../tailwind.config.ts'
 import type { Category } from 'src/types'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
-import Back from '@components/icons/back.astro'
 import { getTrendingData } from '@lib/trending'
 
 const colors = tailwindConfig.theme.extend.colors
@@ -37,7 +37,7 @@ const timeframe = timeframes[timeframeParam ?? 'last24Hours']
 const data = await getTrendingData({ league, timeframe, country })
 
 const categoryPath = category ? `/${category}` : ''
-const leagues: { text: string; param: string; href?: string }[] = [
+const links: NavLink[] = [
   {
     text: 'All',
     param: 'all',
@@ -113,8 +113,8 @@ const backUrl =
     </div>
   </Container>
   <div class="bg-gray-7 p-3 space-y-3">
-    <LeagueNav
-      {leagues}
+    <Nav
+      {links}
       {selected}
       href={(l) => `/${l}/trending${categoryPath}${Astro.url.search}`}
     />
@@ -129,7 +129,6 @@ const backUrl =
         param="timeframe"
         initial={Astro.url.searchParams.get('timeframe')}
         options={[
-          // { label: 'Latest', value: 'latest' },
           { label: 'Last 24 Hours', value: 'last24Hours' },
           { label: 'Last 7 Days', value: 'last7Days' },
           { label: 'Last 30 Days', value: 'last30Days' },

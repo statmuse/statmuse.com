@@ -1,4 +1,8 @@
-import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
+import {
+  type GameraResponse,
+  tokensToHtml,
+  type GameraChart,
+} from '@statmuse/core/gamera'
 import { relativeTimeFromDates } from '@statmuse/core/time'
 import type { Musing } from '@statmuse/core/musing'
 import type { HeroProps } from './props'
@@ -57,26 +61,6 @@ export async function ask(
   )
 }
 
-export async function fantasyAsk(
-  options: {
-    query: string
-    conversationToken?: string
-  },
-  context: Context,
-) {
-  const query = options.query
-
-  const params: Record<string, string> = {
-    input: query,
-  }
-
-  if (options.conversationToken) {
-    params['conversationToken'] = options.conversationToken
-  }
-
-  return request<GameraResponse>(context, 'nfl/fantasy/answer', params)
-}
-
 export const getGameraHeaders = (context: Context) => {
   const visitor = context.locals.visitor
 
@@ -118,7 +102,7 @@ export function getHeroProps(props: {
   imageAlt: string
 }): HeroProps | undefined {
   const answer = props.response ?? props.musing?.answer
-  if (!answer) throw new Error('Must provide either data or musing')
+  if (!answer) throw new Error('Must provide either response or musing')
 
   const musing = props.musing
 
@@ -149,4 +133,18 @@ export function getHeroProps(props: {
     answered,
     audioUrl,
   }
+}
+
+export const getColumnCharts = (answer: GameraResponse) => {
+  if (answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional')
+    return undefined
+  return answer.visual.detail?.reduce((out: GameraChart[] | undefined, d) => {
+    if (out !== undefined) return out
+    return d.type === 'stats' ? d.columnCharts : undefined
+  }, undefined)
+}
+
+export const getIsSuperlative = (answer: GameraResponse) => {
+  if (answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional') return false
+  return answer.visual.isSuperlative
 }

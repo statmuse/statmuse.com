@@ -526,9 +526,11 @@ export interface GameraPlayerProfileResponse {
   stats: {
     grid: GameraGrid
   }
-  recentGames: {
-    grid: GameraGrid
-  }
+  recentGames:
+    | {
+        grid: GameraGrid
+      }
+    | GameraGrid
   fantasy?: {
     grid: GameraGrid
   }
@@ -1389,6 +1391,7 @@ export type Detail =
 
 export interface PlayerInfo {
   entity: GameraEntity
+  stat?: string
   imageUrl: string
   colors: {
     backgroundColor: string
@@ -1507,8 +1510,8 @@ export interface StandingsMlb extends StandingsBase {
 
 export interface StandingsNba extends StandingsBase {
   rank: {
-    conference: string
-    division: string
+    conference: number
+    division: number
   }
   stats: {
     gamesBehind: {

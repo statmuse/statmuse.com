@@ -96,14 +96,6 @@
         data-type="s2nScript"
         data-astro-exec
       ></script>
-    {:else if league === 'fantasy'}
-      <div bind:this={video} class="s2nPlayer k-ipKWbzce" data-type="float" />
-      <script
-        type="text/javascript"
-        src="//embed.sendtonews.com/player3/embedcode.js?fk=ipKWbzce&cid=15048&offsetx=0&offsety=0&floatwidth=400&floatposition=bottom-right"
-        data-type="s2nScript"
-        data-astro-exec
-      ></script>
     {:else if league === 'money'}
       <div bind:this={video} class="s2nPlayer k-sDqs3wE9" data-type="float" />
       <script

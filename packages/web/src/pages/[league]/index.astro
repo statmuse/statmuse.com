@@ -5,7 +5,7 @@ import { createAskPath } from '@statmuse/core/path'
 import { NOT_FOUND_404 } from '@lib/response'
 import { type LeagueParam } from '@lib/params'
 
-const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fantasy', 'fc']
+const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
   return NOT_FOUND_404
 
@@ -444,63 +444,6 @@ const pgaExamples = [
   ],
 ]
 
-const fantasyExamples = [
-  [
-    'Player Outlooks & Projections',
-    [
-      'What is your projection for Justin Jefferson?',
-      'What is your outlook for Christian McCaffrey this week?',
-      'Where do you rank Joe Burrow?',
-      'Tell me about Russell Wilson.',
-      'Should I start Jonathan Taylor?',
-      'Should I sit Mike Williams?',
-      "What's the deal with Mark Andrews?",
-      'Who is the top-ranked quarterback?',
-      'Who will be the best fantasy wide receiver this week?',
-      'How will the Rams defense do this week?',
-    ].map((q) => ({
-      query: q,
-      path: createAskPath({ domain: 'fantasy', query: q }),
-    })),
-  ],
-  [
-    'Player Comparisons',
-    [
-      'Alvin Kamara or Nick Chubb?',
-      "Ja'Marr Chase, Cooper Kupp or Tyreek Hill?",
-      'Who had more fantasy points last season? Chubb or Saquon?',
-      'Should I go with the Ravens defense or the Colts defense?',
-      'Justin Herbert or Joe Burrow?',
-      'How about Josh Allen or Jalen Hurts?',
-      'Christian McCaffrey, Austin Ekeler fantasy points last 3 seasons.',
-      'Who has more fantasy points per game in their career? Stefon Diggs or AJ Brown?',
-      'Waddle or Tyreek?',
-      'Kittle or Waller?',
-    ].map((q) => ({
-      query: q,
-      path: createAskPath({ domain: 'fantasy', query: q }),
-    })),
-  ],
-  [
-    'Player & Team Fantasy Recaps',
-    [
-      'Patrick Mahomes vs Chargers.',
-      'Who scored the most fantasy points last season?',
-      'Which running back averaged the most fantasy points per game last season?',
-      'Which QB had the most DraftKings points last year?',
-      'Who has the most fantasy points per game in a season?',
-      "How many fantasy points per game is Ja'Marr Chase averaging this season?",
-      'Which team defense has scored the fewest fantasy points last year?',
-      'How did Tyreek Hill do?',
-      'Which rookie has the most fantasy points per game this season?',
-      'Which TE is leading in PPR this season?',
-    ].map((q) => ({
-      query: q,
-      path: createAskPath({ domain: 'fantasy', query: q }),
-    })),
-  ],
-]
-
 const eplExamples = [
   [
     'Scores',
@@ -590,39 +533,30 @@ const examples = {
   nhl: nhlExamples as ExampleSet[],
   pga: pgaExamples as ExampleSet[],
   fc: eplExamples as ExampleSet[],
-  fantasy: fantasyExamples as ExampleSet[],
   money: eplExamples as ExampleSet[],
 }
 
 const meta = {
   title: `${
-    league === 'fantasy'
-      ? 'Fantasy Football'
-      : league === 'fc'
+     league === 'fc'
       ? 'Premier League'
       : league.toUpperCase()
   } Stats`,
   description:
-    league === 'fantasy'
-      ? 'Instant answers to your fantasy football questions. Stats, projections, comparisons, outlooks, recaps and more — just ask.'
-      : league === 'fc' || league === 'pga'
+     league === 'fc' || league === 'pga'
       ? `Instant answers to your ${
           league === 'pga' ? league.toUpperCase() : 'Premier League'
         } questions. Stats, scores, bios, records and more — just ask.`
       : `Instant answers to your ${league.toUpperCase()} questions. Stats, scores, bios, records, odds and more — just ask.`,
   facebook: {
     imageUrl:
-      league === 'fantasy'
-        ? `${Astro.url.origin}/images/sm-fantasy-meta-banner.jpg`
-        : league === 'fc'
+       league === 'fc'
         ? `${Astro.url.origin}/images/sm-fc-meta-banner.jpg`
         : undefined,
   },
   twitter: {
     imageUrl:
-      league === 'fantasy'
-        ? `${Astro.url.origin}/images/sm-fantasy-meta-banner.jpg`
-        : league === 'fc'
+      league === 'fc'
         ? `${Astro.url.origin}/images/sm-fc-meta-banner.jpg`
         : undefined,
   },

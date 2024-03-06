@@ -13,7 +13,6 @@
   export let conversationToken: string = ''
   export let preferredDomain: string = ''
   export let money: boolean
-  export let fantasy: boolean
   export let large: boolean
 
   let timestamp: string = new Date().toISOString()
@@ -31,11 +30,9 @@
 
   if (preferredDomain === 'fc') preferredDomain = 'epl'
 
-  const action = money ? '/money/ask' : fantasy ? '/fantasy/ask' : '/ask'
+  const action = money ? '/money/ask' : '/ask'
   const placeholder = money
     ? 'Search stocks, FX or bitcoin'
-    : fantasy
-    ? 'Search fantasy projections or points'
     : preferredDomain === 'epl'
     ? 'Search players, clubs or stats'
     : 'Search players, stats or odds'
@@ -216,7 +213,7 @@
     aria-haspopup="listbox"
     aria-owns="ask-bar-suggestions"
     aria-expanded={open}
-    class="absolute top-0 w-full border border-gray-6 rounded-3xl overflow-hidden md:border-opacity-100"
+    class="absolute top-0 w-full border border-gray-6 rounded-2xl overflow-hidden md:border-opacity-100"
     class:border-primary={inFocus}
     class:border-opacity-100={inFocus}
     class:border-opacity-50={!inFocus}

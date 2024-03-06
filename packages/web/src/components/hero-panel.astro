@@ -1,0 +1,21 @@
+---
+import Panel from '@components/panel.astro'
+
+interface Props {
+  team?: boolean
+  class?: string | null
+}
+
+const team = Astro.props.team ?? true
+---
+
+<Panel
+  {team}
+  class:list={{
+    'rounded-none border-0 md:rounded-2xl md:border': true,
+    '-mx-3 py-2 px-3 md:py-3 md:px-5 md:mx-0': true,
+    [Astro.props.class ?? '']: !!Astro.props.class,
+  }}
+>
+  <slot />
+</Panel>

@@ -78,14 +78,7 @@ const meta =
     ...analytics,
   }}
 >
-  <Header
-    money
-    {query}
-    {conversationToken}
-    share={Astro.request.method === 'POST'
-      ? { type: 'ask', shortCode: code?.short_code, domain: 'money', query }
-      : { type: 'ask', shortCode: code?.short_code, url: Astro.url.href }}
-  />
+  <Header money {query} {conversationToken} />
   {
     heroProps ? (
       <Hero

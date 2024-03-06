@@ -2,25 +2,27 @@
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Image from '@components/image.astro'
-import Container from '@components/container.astro'
 import AnswerShare from '@components/answer-share.astro'
 import Explore from '@components/explore.astro'
+import TwitterShare from '@components/icons/twitter.astro'
+import AnswerCards from '@components/answer-cards.astro'
+import HeroPanel from '@components/hero-panel.astro'
+import Nav from '@components/nav.astro'
+import GridDropdown from '@components/grid-dropdown.astro'
 import {
   getUrlForEntity,
   getDefaultBustImageUrl,
   tokensToText,
   type GameraPlayerBio,
+  type GameraParameter,
 } from '@statmuse/core/gamera'
 import { type Metadata, getLeagueKeywords } from '@lib/meta'
 import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
-import TwitterShare from '@components/icons/twitter.astro'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
-import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
-console.log('ANSWER_CARDS_ENABLED', ANSWER_CARDS_ENABLED)
-console.log('env.ANSWER_CARDS_ENABLED', process.env.ANSWER_CARDS_ENABLED)
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import type { NavLink } from 'src/types'
 
 interface Props {
   bio: GameraPlayerBio
@@ -29,9 +31,18 @@ interface Props {
   league: LeagueParam
   query?: string
   analytics?: AnalyticsPageviewProperties
+  parameters?: Record<string, GameraParameter>
 }
 
-const { bio, meta, query, league, analytics = {}, page: pageType } = Astro.props
+const {
+  bio,
+  meta,
+  query,
+  league,
+  page,
+  parameters,
+  analytics = {},
+} = Astro.props
 
 const domain = leagueToDomain(league)
 const teamUrl = bio.team ? getUrlForEntity(bio.team.entity) : ''
@@ -48,14 +59,14 @@ const playerPath = getUrlForEntity({
   display: bio.usedName,
 })
 
-const links = [
-  { text: 'Overview', href: playerPath, page: 'overview' },
-  { text: 'Stats', href: `${playerPath}/career-stats`, page: 'stats' },
+const links: NavLink[] = [
+  { text: 'Overview', href: playerPath, param: 'overview' },
+  { text: 'Stats', href: `${playerPath}/career-stats`, param: 'stats' },
   league === 'fc'
-    ? { text: 'Matches', href: `${playerPath}/matches`, page: 'matches' }
-    : { text: 'Game Log', href: `${playerPath}/game-log`, page: 'game-log' },
-  { text: 'Splits', href: `${playerPath}/splits`, page: 'splits' },
-  { text: 'Bio', href: `${playerPath}/bio`, page: 'bio' },
+    ? { text: 'Matches', param: 'matches' }
+    : { text: 'Game Log', param: 'game-log' },
+  { text: 'Splits', param: 'splits' },
+  { text: 'Bio', param: 'bio' },
 ]
 
 const title = `${bio.usedName} - ${bio.team?.name || bio.domain} ${
@@ -80,9 +91,15 @@ const twitter = {
     type: 'twitter',
   }),
 }
+
+const preferredDomain = domain.toLowerCase()
+const shareUrl = meta?.canonical?.url
+  ? Astro.url.origin + meta.canonical.url
+  : Astro.url.href
 ---
 
 <Layout
+  class="flex flex-col gap-3"
   colors={bio.team?.colors || { background: '#00c1d8', foreground: '#fff' }}
   meta={{
     title,
@@ -97,185 +114,100 @@ const twitter = {
   analytics={{
     query,
     is_search: true,
-    page_domain:
-      domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
+    page_domain: preferredDomain as AnalyticsPageviewProperties['page_domain'],
     page_type: 'player',
     disposition: bio.disposition,
     ...analytics,
   }}
 >
-  <Header
-    preferredDomain={domain.toLowerCase()}
-    {query}
-    share={{
-      type: 'profile',
-      url: meta?.canonical?.url
-        ? Astro.url.origin + meta.canonical.url
-        : Astro.url.href,
-    }}
-  />
-  <Container class="mb-2.5 bg-team-primary text-team-secondary">
-    <div class="flex flex-col md:flex-row relative">
-      <div class="flex-1 mt-5 mb-7">
-        <div
-          class="flex flex-col md:flex-row md:flex-wrap items-center gap-x-3 mb-2"
+  <Header {preferredDomain} {query} />
+  <HeroPanel class="-mt-3 flex flex-col-reverse gap-3 md:flex-row">
+    <Image
+      class:list={{
+        'h-32 md:max-w-[200px]': true,
+        'mt-2 -mb-2 md:mt-0 md:-mb-3 md:-ml-2': true,
+        'self-center md:self-end select-none': true,
+        'object-contain object-bottom': true,
+      }}
+      alt={bustImageAlt}
+      src={bustImageUrl}
+      width={600}
+      height={600}
+      loading="eager"
+    />
+    <div class="flex flex-col justify-between items-start -mb-3 md:mt-5">
+      <div class="mx-auto md:mx-0 md:flex md:gap-3 md:items-center">
+        <h1
+          class="text-[2rem] leading-tight font-semibold text-center md:text-left"
         >
-          <h2 class="text-5xl font-semibold text-center md:text-left">
-            {bio.usedName}
-          </h2>
-        </div>
-        <div class="whitespace-nowrap text-center md:text-left">
+          {bio.usedName}
+        </h1>
+        <div
+          class:list={{
+            'flex flex-1 items-center text-center': true,
+            'py-0.5 px-2.5 absolute left-3 bottom-3': true,
+            'md:relative md:left-auto md:bottom-auto': true,
+            'bg-team-secondary text-team-primary rounded-2xl': true,
+          }}
+        >
           {
-            league !== 'fc' ? (
-              <Fragment>
-                {bio.heightFeetInches && (
-                  <>
-                    <span>
-                      {bio.heightFeetInches}, {bio.weightLbs} lbs
-                    </span>
-                    <span class="last:hidden" set:text=" • " />
-                  </>
-                )}
-                {teamUrl ? (
-                  <a
-                    class="text-inherit underline"
-                    href={teamUrl}
-                    set:text={bio.team?.nickname || bio.team?.name}
-                  />
-                ) : (
-                  <>{bio.team?.nickname || bio.team?.name}</>
-                )}
-                <span class="last:hidden" set:text=" • " />
-                {bio.position && (
-                  <>
-                    <span>
-                      {`${bio.jerseyNumber ? '#' + bio.jerseyNumber : ''} ${
-                        bio.position
-                      }`}
-                    </span>
-                    <span class="last:hidden" set:text=" • " />
-                  </>
-                )}
-              </Fragment>
+            teamUrl ? (
+              <a
+                class="text-inherit no-underline hover:no-underline"
+                href={teamUrl}
+                set:text={bio.team?.nickname || bio.team?.name}
+              />
             ) : (
-              <Fragment>
-                {bio.position && (
-                  <>
-                    <span>{`${bio.position} ${
-                      bio.jerseyNumber ? '#' + bio.jerseyNumber : ''
-                    } `}</span>
-                    <span class="last:hidden" set:text=" • " />
-                  </>
-                )}
-                {teamUrl ? (
-                  <a
-                    class="text-inherit underline"
-                    href={teamUrl}
-                    set:text={bio.team?.nickname || bio.team?.name}
-                  />
-                ) : (
-                  <>{bio.team?.nickname || bio.team?.name}</>
-                )}
-                <span class="last:hidden" set:text=" • " />
-                {bio.nationality && (
-                  <>
-                    <span>{bio.nationality}</span>
-                    <span class="last:hidden" set:text=" • " />
-                  </>
-                )}
-                {bio.age && (
-                  <>
-                    <span>{bio.age} years</span>
-                    <span class="last:hidden" set:text=" • " />
-                  </>
-                )}
-              </Fragment>
+              <>{bio.team?.nickname || bio.team?.name}</>
             )
           }
         </div>
-        <div class="hidden md:block mt-6">
-          <div class="text-center w-fit">
-            <div class="flex gap-5 mb-1 justify-center">
-              {
-                bio.statsSummary?.stats?.map((stat) => (
-                  <div>
-                    <p class="uppercase">{stat.label}</p>
-                    <p class="text-3xl">{stat.value}</p>
-                  </div>
-                ))
-              }
-            </div>
-            <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-              {bio.statsSummary?.statsScope}
-            </p>
-          </div>
-        </div>
       </div>
-      <Image
-        bio-cy-illustration
-        class="object-contain object-bottom self-center md:self-end h-44 md:h-52 md:max-w-[300px]"
-        src={bustImageUrl}
-        alt={bustImageAlt}
-        width={750}
-        height={750}
-        loading="eager"
+      <Nav
+        class="hidden md:flex"
+        hero
+        {links}
+        selected={page}
+        href={(p) => `${playerPath}/${p}`}
       />
-      <div
-        class="md:hidden flex flex-col items-center absolute right-0 bottom-2.5 space-y-2.5"
-      >
-        <TwitterShare shareUrl={Astro.url.href} />
-        <AnswerShare
-          onlyIcon
-          url={meta?.canonical?.url
-            ? Astro.url.origin + meta.canonical.url
-            : Astro.url.href}
-        />
-      </div>
     </div>
-  </Container>
+    <div
+      class:list={{
+        'flex flex-row gap-2.5 items-center': true,
+        'absolute right-3 bottom-3 md:top-3 md:bottom-auto px-2 py-1': true,
+        'rounded-2xl bg-team-secondary text-team-primary': true,
+      }}
+    >
+      <TwitterShare shareUrl={Astro.url.href} />
+      <AnswerShare onlyIcon url={shareUrl} />
+    </div>
+    {
+      parameters && (
+        <GridDropdown
+          class="hidden lg:flex absolute right-3 bottom-3"
+          {parameters}
+        />
+      )
+    }
+  </HeroPanel>
+
   <div class="h-[50px] md:h-[90px] mb-1.5 flex justify-center items-center">
     <AditudeAdBanner client:only="svelte" />
   </div>
-  <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
-    <div class="text-center w-fit">
-      <div class="flex gap-5 mb-1 justify-center">
-        {
-          bio.statsSummary?.stats?.map((stat) => (
-            <div>
-              <p class="uppercase">{stat.label}</p>
-              <p class="text-3xl">{stat.value}</p>
-            </div>
-          ))
-        }
-      </div><p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-        {bio.statsSummary?.statsScope}
-      </p>
-    </div>
-  </div>
-  <Container>
-    <div class="flex flex-nowrap overflow-auto mb-5 space-x-5">
-      {
-        links.map(({ href, text, page }) => (
-          <a
-            aria-current={page === pageType ? 'page' : undefined}
-            class:list={{
-              'text-3xl font-semibold shrink-0': true,
-              'text-team-primary active': page === pageType,
-              'text-black': page !== pageType,
-            }}
-            {href}
-          >
-            {text}
-          </a>
-        ))
-      }
-    </div>
-    <slot />
-    <Explore {league} additionalQuestions={bio.additionalQuestions} />
-    {
-      ANSWER_CARDS_ENABLED && (
-        <AnswerCards {league} teamId={bio.team?.entity.id.split('/')[0]} />
-      )
-    }
-  </Container>
+
+  <Nav
+    class="md:hidden"
+    teamColors
+    {links}
+    selected={page}
+    href={(p) => `${playerPath}/${p}`}
+  />
+  {parameters && <GridDropdown class="flex lg:hidden" {parameters} />}
+  <slot />
+  <Explore {league} additionalQuestions={bio.additionalQuestions} />
+  {
+    ANSWER_CARDS_ENABLED && (
+      <AnswerCards {league} teamId={bio.team?.entity.id.split('/')[0]} />
+    )
+  }
 </Layout>

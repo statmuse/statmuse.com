@@ -97,7 +97,7 @@ export const askPath = (ask: AskForIndex | FinanceAskForIndex) => {
     return createAskPath({ domain: 'money', query: ask.query })
   }
   if (isAsk(ask) && ask.is_fantasy_query) {
-    return createAskPath({ domain: 'fantasy', query: ask.query })
+    return createAskPath({ domain: 'nfl', query: ask.query })
   }
   if (isAsk(ask)) {
     return createAskPath({ domain: ask.league_name, query: ask.query })

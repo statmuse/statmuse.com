@@ -11,8 +11,9 @@ import type { Metadata } from '@lib/meta'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import NewsletterSignup from '@components/newsletter-signup.astro'
 import AuthMenu from '@components/auth-menu.svelte'
+import Nav from '@components/nav.astro'
 import type { LeagueParam } from '@lib/params'
-import LeagueNav from '@components/league-nav.astro'
+import type { NavLink } from 'src/types'
 
 interface Props {
   league?: LeagueParam | 'All'
@@ -27,12 +28,8 @@ interface Props {
 
 const { league = 'All', ...rest } = Astro.props
 
-const leagues: { text: string; param: string; href?: string }[] = [
-  {
-    text: 'All',
-    param: 'all',
-    href: '/',
-  },
+const links: NavLink[] = [
+  { text: 'All', param: 'all', href: '/' },
   { text: 'FC', param: 'fc' },
   { text: 'NBA', param: 'nba' },
   { text: 'NFL', param: 'nfl' },
@@ -52,8 +49,6 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
     page_domain:
       league === 'All'
         ? 'sports'
-        : league === 'fantasy'
-        ? 'nfl'
         : league === 'money'
         ? 'finance'
         : league === 'fc'
@@ -73,8 +68,8 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
       class="md:hidden h-14 px-3 bg-gray-7 flex items-center sticky top-0 z-20"
     >
       <DropdownMenu />
-      <LeagueNav
-        {leagues}
+      <Nav
+        {links}
         selected={league.toLowerCase()}
         href={(league) => `/${league}`}
       />
@@ -85,7 +80,7 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
         <AuthMenu client:load />
       </div>
 
-      <div class="mt-8 md:mt-14 mb-1 md:mb-3">
+      <div class="mt-8 mb-1 md:mb-3">
         <Logo />
       </div>
 
@@ -96,7 +91,6 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
           class="mx-auto"
           client:load
           money={league === 'money'}
-          fantasy={league === 'fantasy'}
           preferredDomain={league === 'All'
             ? undefined
             : league === 'fc'
