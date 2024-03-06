@@ -1,6 +1,7 @@
 ---
 import TeamLayout from '@layouts/team.astro'
 import Grid from '@components/grid.svelte'
+
 import { getUrlForEntity } from '@statmuse/core/gamera'
 import { getTeamSeasonBio, getTeamSeasonRoster } from '@lib/team'
 import { getLeagueKeywords } from '@lib/meta'
@@ -11,7 +12,10 @@ import { leagueToDomain, type LeagueParam } from '@lib/params'
 const league = Astro.params.league as LeagueParam
 const team = Astro.params.team
 const year = Astro.params.year
-if (!team || !league || !year) return NOT_FOUND_404
+const org = Astro.params.org
+if (!team || !league || !year || !org) return NOT_FOUND_404
+if (org !== "team" && org !== "club") return NOT_FOUND_404
+const schedule = league === "fc" ? "fixtures" : "schedule"
 
 const domain = leagueToDomain(league)
 const bio = await getTeamSeasonBio({ context: Astro, domain, team, year })
@@ -19,14 +23,14 @@ const roster = await getTeamSeasonRoster({ context: Astro, domain, team, year })
 if (!bio || !roster) return NOT_FOUND_404
 
 if (!bio.hasRoster) {
-  return Astro.redirect(`/${league}/club/${team}/fixtures/${year}`)
+  return Astro.redirect(`/${league}/${org}/${team}/${schedule}/${year}`)
 }
 
 const title = `${bio.name} ${year} Roster`
-const description = `The ${year} ${bio.name} roster for the premier league season`
+const description = `The ${year} ${bio.name} roster for the ${domain} regular season and playoffs`
 const keywords = `${getLeagueKeywords(domain)} ${year} ${
   bio.name
-} club roster stats statistics`
+} team roster stats statistics`
 const canonical = {
   url: `${getUrlForEntity({
     type: 'teamSeason',
@@ -42,22 +46,16 @@ Caching.swr(Astro)
 ---
 
 <TeamLayout {bio} {meta} page="roster">
-  <div class="mb-5">
-    {
-      roster?.grid && (
-        <div class="mb-5">
-          <h3 class="font-semibold text-team-primary mb-0.5">
-            {roster.grid.name}
-          </h3>
-          <Grid
-            client:load
-            data={roster?.grid}
-            columnStyles={{ 'NO.': 'w-2', IMAGE: 'w-2', default: 'w-20' }}
-            stickyColumns={['NAME']}
-            fullWidth={false}
-          />
-        </div>
-      )
-    }
-  </div>
+  {
+    roster?.grid && (
+      <Grid
+        client:load
+        title={roster.grid.name}
+        data={roster?.grid}
+        columnStyles={{ 'NO.': 'w-2', IMAGE: 'w-2', default: 'w-20' }}
+        stickyColumns={['NAME']}
+        fullWidth={false}
+      />
+    )
+  }
 </TeamLayout>

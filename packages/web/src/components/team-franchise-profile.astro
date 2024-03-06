@@ -75,7 +75,7 @@ const meta = { title, description, keywords, canonical }
       franchiseLeaders && (
         <TeamLeaders
           leaders={franchiseLeaders}
-          title="Franchise Leaders"
+          title={leagueParam === 'fc' ? 'Club Leaders' : 'Franchise Leaders'}
           class="mb-5"
         />
       )
