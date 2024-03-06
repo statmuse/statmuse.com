@@ -9,6 +9,7 @@ import {
   createCheckoutSession,
 } from '@statmuse/core/stripe'
 import { Config } from 'sst/node/config'
+import Panel from '@components/panel.astro'
 
 if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData()
@@ -99,9 +100,19 @@ const meta = {
           </div>
         )
       }
-      <div
-        class="w-full max-w-md bg-white rounded-lg border border-[#e4e4e4] mx-auto mb-5 pt-8 px-8 pb-44 relative text-center overflow-hidden"
-      >
+      <Panel class="w-full max-w-md mx-auto mb-5 pt-8 px-8 pb-44 text-center">
+        <h1 class="font-medium text-lg md:text-xl">Sign up for StatMuse+</h1>
+        <p class="my-5 text-left">
+          Members enjoy these benefits across NBA, NFL, NHL, MLB, PGA, Fantasy
+          and Money:
+        </p>
+        <ul class='m-5 list-["🏆"] text-left [&>li]:pl-3'>
+          <li>Unlimited prompts</li>
+          <li>2x data in results (unlimited in Money)</li>
+          <li>Zero ads</li>
+          <li>Personalized search history</li>
+          <li>Early access to features &amp; datasets</li>
+        </ul>
         <div>
           <h1 class="font-medium text-lg md:text-xl">Sign up for StatMuse+</h1>
           <p class="my-5 text-left">
@@ -117,7 +128,7 @@ const meta = {
           </ul>
           <form id="signup-form" method="post">
             <input
-              class="w-full px-3 py-2.5 text-lg text-[#55595c] rounded bg-white border mb-7 outline-none"
+              class="w-full px-3 py-2.5 text-lg text-[#55595c] rounded-2xl bg-white border mb-3 outline-none"
               name="email"
               type="email"
               placeholder="Email"
@@ -139,7 +150,7 @@ const meta = {
             />
             <button
               disabled={false}
-              class="w-full text-lg mb-7 p-3 border-0 rounded text-white bg-[#42a5f5] hover:bg-[#1976d2] disabled:bg-[#cfd8dc]"
+              class="w-full text-lg mb-7 p-3 border-0 rounded-2xl text-white bg-[#42a5f5] hover:bg-[#1976d2] disabled:bg-[#cfd8dc]"
               type="submit"
             >
               Join for $20/mo
@@ -163,7 +174,7 @@ const meta = {
           width={900}
           height={400}
         />
-      </div>
+      </Panel>
     </div>
   </Container>
 </Layout>
