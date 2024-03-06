@@ -1,26 +1,54 @@
 ---
+import type { ComponentProps } from 'astro/types'
 import Grid from '@components/grid.svelte'
+import type Panel from '@components/panel.astro'
 import type {
-  StandingsTeam,
   StandingsNba,
   GameraGrid,
   StandingsNfl,
   StandingsNhl,
   StandingsMlb,
   StandingsEpl,
+  StandingsTeam,
 } from '@statmuse/core/gamera'
 import { groupBy } from 'lodash-es'
 
-interface Props {
+type PanelProps = ComponentProps<typeof Panel>
+
+export type Props = {
   teams: StandingsTeam[]
-  domain: string
-  group?: 'division' | 'conference' | 'league'
   limit?: number
-}
+} & PanelProps &
+  (
+    | {
+        domain: 'nba'
+        group?: keyof StandingsNba['rank']
+      }
+    | {
+        domain: 'mlb'
+        group?: keyof StandingsMlb['rank']
+      }
+    | {
+        domain: 'nfl'
+        group?: keyof StandingsNfl['rank']
+      }
+    | {
+        domain: 'nhl'
+        group?: keyof StandingsNhl['rank']
+      }
+    | {
+        domain: 'epl'
+        group?: keyof StandingsEpl['rank']
+      }
+  )
 
-const { teams, domain, group, limit } = Astro.props
+export type StandingsDomain = Props['domain']
+export type StandingsGroup = Props['group']
 
-const getColumns = (domain: string, name?: string) => {
+const { limit } = Astro.props
+const props = Astro.props
+
+const getColumns = (name?: string) => {
   let columns = [
     {
       rowItemKey: 'rank',
@@ -44,7 +72,7 @@ const getColumns = (domain: string, name?: string) => {
     },
   ]
 
-  if (domain === 'nba' || domain === 'mlb') {
+  if (props.domain === 'nba' || props.domain === 'mlb') {
     columns = [
       ...columns,
       {
@@ -60,7 +88,7 @@ const getColumns = (domain: string, name?: string) => {
     ]
   }
 
-  if (domain === 'nfl') {
+  if (props.domain === 'nfl') {
     columns = [
       ...columns,
       {
@@ -76,7 +104,7 @@ const getColumns = (domain: string, name?: string) => {
     ]
   }
 
-  if (domain === 'nhl') {
+  if (props.domain === 'nhl') {
     columns = [
       ...columns,
       {
@@ -97,7 +125,7 @@ const getColumns = (domain: string, name?: string) => {
     ]
   }
 
-  if (domain === 'epl') {
+  if (props.domain === 'epl') {
     const [first, second, third, ...rest] = columns
     columns = [
       first,
@@ -125,13 +153,17 @@ const getColumns = (domain: string, name?: string) => {
   return columns
 }
 
-const getRow = (domain: string, team: StandingsTeam) => {
-  if (domain === 'nba') {
+const getRow = (
+  team: (typeof props)['teams'][number],
+): GameraGrid['rows'][number] & {
+  rank: { display: string; value: number }
+} => {
+  if (props.domain === 'nba') {
     const nbaTeam = team as StandingsNba
     return {
       rank: {
-        display: nbaTeam.rank[group ?? 'conference'] + '',
-        value: nbaTeam.rank[group ?? 'conference'],
+        display: nbaTeam.rank[props.group ?? 'conference'] + '',
+        value: nbaTeam.rank[props.group ?? 'conference'],
       },
       name: {
         display: nbaTeam.team.nickname,
@@ -142,16 +174,16 @@ const getRow = (domain: string, team: StandingsTeam) => {
       wins: nbaTeam.stats.wins,
       losses: nbaTeam.stats.losses,
       winPercent: nbaTeam.stats.winPercent,
-      gamesBehind: nbaTeam.stats.gamesBehind[group ?? 'conference'],
+      gamesBehind: nbaTeam.stats.gamesBehind[props.group ?? 'conference'],
     }
   }
 
-  if (domain === 'mlb') {
+  if (props.domain === 'mlb') {
     const mlbTeam = team as StandingsMlb
     return {
       rank: {
-        display: mlbTeam.rank[group ?? 'league'] + '',
-        value: mlbTeam.rank[group ?? 'league'],
+        display: mlbTeam.rank[props.group ?? 'league'] + '',
+        value: mlbTeam.rank[props.group ?? 'league'],
       },
       name: {
         display: mlbTeam.team.nickname,
@@ -162,16 +194,16 @@ const getRow = (domain: string, team: StandingsTeam) => {
       wins: mlbTeam.stats.wins,
       losses: mlbTeam.stats.losses,
       winPercent: mlbTeam.stats.winPercent,
-      gamesBehind: mlbTeam.stats.gamesBehind[group ?? 'league'],
+      gamesBehind: mlbTeam.stats.gamesBehind[props.group ?? 'league'],
     }
   }
 
-  if (domain === 'nfl') {
+  if (props.domain === 'nfl') {
     const nflTeam = team as StandingsNfl
     return {
       rank: {
-        display: nflTeam.rank[group ?? 'conference'] + '',
-        value: nflTeam.rank[group ?? 'conference'],
+        display: nflTeam.rank[props.group ?? 'conference'] + '',
+        value: nflTeam.rank[props.group ?? 'conference'],
       },
       name: {
         display: nflTeam.team.nickname,
@@ -186,12 +218,12 @@ const getRow = (domain: string, team: StandingsTeam) => {
     }
   }
 
-  if (domain === 'nhl') {
+  if (props.domain === 'nhl') {
     const nhlTeam = team as StandingsNhl
     return {
       rank: {
-        display: nhlTeam.rank[group ?? 'conference'] + '',
-        value: nhlTeam.rank[group ?? 'conference'],
+        display: nhlTeam.rank[props.group ?? 'conference'] + '',
+        value: nhlTeam.rank[props.group ?? 'conference'],
       },
       name: {
         display: nhlTeam.team.nickname,
@@ -207,7 +239,7 @@ const getRow = (domain: string, team: StandingsTeam) => {
     }
   }
 
-  if (domain === 'epl') {
+  if (props.domain === 'epl') {
     const eplTeam = team as StandingsEpl
     return {
       rank: {
@@ -227,40 +259,28 @@ const getRow = (domain: string, team: StandingsTeam) => {
       goalDifferential: eplTeam.stats.goalDifferential,
     }
   }
+
+  throw new Error('Invalid domain')
 }
 
-const mapToGrid = (
-  teams: StandingsTeam[],
-  domain: string,
-  conference?: string,
-): GameraGrid => {
-  const columns = getColumns(domain, conference)
+const mapToGrid = (teams: Props['teams'], conference?: string): GameraGrid => {
+  const columns = getColumns(conference)
 
   const rows = teams
-    .map((team) => getRow(domain, team))
-    .sort((a, b) => a?.rank.value - b?.rank.value)
+    .map((team) => getRow(team))
+    .sort((a, b) => a.rank.value - b.rank.value)
     .slice(0, limit)
 
   return { columns, rows }
 }
 
-const firstTeam = teams[0]
+const firstTeam = props.teams[0]
 
-const grids = group
-  ? Object.entries(groupBy(teams, `${group}.name`)).map(([name, teams]) =>
-      mapToGrid(teams, domain, name),
+const grids = props.group
+  ? Object.entries(groupBy(props.teams, `${props.group}.name`)).map(
+      ([name, teams]) => mapToGrid(teams as Props['teams'], name),
     )
-  : [mapToGrid(teams, domain, firstTeam.conference?.name)]
+  : [mapToGrid(props.teams, firstTeam.conference?.name)]
 ---
 
-<div
-  class="p-4 rounded-lg"
-  style={{
-    '--team-primary-color': firstTeam.team.colors.foregroundColor,
-    '--team-secondary-color': firstTeam.team.colors.backgroundColor,
-    background: firstTeam.team.colors.backgroundColor,
-    color: firstTeam.team.colors.foregroundColor,
-  }}
->
-  <Grid data={grids} color columnStyles={{ rank: 'w-2' }} />
-</div>
+<Grid {...props} data={grids} columnStyles={{ rank: 'w-2' }} />

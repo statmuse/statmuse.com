@@ -43,10 +43,10 @@ export function relativeTimeFromElapsed(elapsed: number): string {
   return ''
 }
 
-export function formatDateString(date: string, format = 'LL') {
-  return formatDate(new Date(date), format)
+export function formatDate(date: Date | string, format = 'LL') {
+  return dayjs(date).format(format)
 }
 
-export function formatDate(date: Date, format = 'LL') {
-  return dayjs(date).format(format)
+export function age(birthdate: Date | string) {
+  return dayjs(new Date()).diff(birthdate, 'year')
 }

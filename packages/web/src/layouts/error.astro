@@ -17,7 +17,6 @@ interface Props {
   analytics?: AnalyticsPageviewProperties
   enableAdBanner?: boolean
   money?: boolean
-  fantasy?: boolean
 }
 
 const images = [
@@ -41,7 +40,6 @@ const {
   query,
   status,
   money,
-  fantasy,
   image = sample(images),
   enableAdBanner,
 } = Astro.props
@@ -58,7 +56,7 @@ if (render) {
       colors={{ foreground: '#fff', background: '#0086ff' }}
       {enableAdBanner}
     >
-      <Header {query} {money} {fantasy} />
+      <Header {query} {money} />
       <Hero content={message} imageUrl={image?.url} imageAlt={image?.alt} />
     </MainLayout>
   ) : (

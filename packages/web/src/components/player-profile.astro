@@ -1,7 +1,7 @@
 ---
 import PlayerLayout from '@layouts/player.astro'
 import Grid from '@components/grid.svelte'
-import PlayerGallery from '@components/gallery.astro'
+import Panel from '@components/panel.astro'
 import {
   tokensToText,
   tokensToHtml,
@@ -11,6 +11,7 @@ import { getPlayerProfile, getPositionName } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
 import { NOT_FOUND_404 } from '@lib/response'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
+import { age, formatDate } from '@statmuse/core/time'
 
 interface Props {
   league: LeagueParam
@@ -28,7 +29,12 @@ const domain = leagueToDomain(leagueParam)
 const profile = await getPlayerProfile(Astro, domain, player)
 if (!profile) return NOT_FOUND_404
 
-const { bio, stats, recentGames, nextGame, fantasy } = profile
+const { bio, stats, nextGame, fantasy } = profile
+const recentGames = profile.recentGames
+  ? 'grid' in profile.recentGames
+    ? profile.recentGames
+    : { grid: profile.recentGames }
+  : undefined
 
 const isNextGameHome =
   profile.bio.team?.abbreviation === nextGame?.homeTeam.abbreviation
@@ -51,110 +57,68 @@ const keywords = `${getLeagueKeywords(domain)} ${
 } career stats statistics`
 const canonical = { url: playerPath, rewrite: true }
 const meta = { title, description, keywords, canonical }
+const league = domain.toLowerCase() === 'epl' ? 'fc' : leagueParam
+
+const facts = [
+  { label: 'Position', value: bio.position },
+  { label: 'Number', value: '#' + bio.jerseyNumber },
+  {
+    label: formatDate(bio.birthdate, 'MMM D, YYYY'),
+    value: age(bio.birthdate) + ' years',
+  },
+  { label: 'Height', value: bio.heightFeetInches },
+  { label: 'Weight', value: bio.weightLbs + ' lbs' },
+  { label: 'Experience', value: bio.experience },
+]
+
+const nextGameTitle = `Next Game ${isNextGameHome ? 'vs' : '@'} ${
+  isNextGameHome
+    ? nextGame.awayTeam.abbreviation
+    : nextGame.homeTeam.abbreviation
+}`
 ---
 
-<PlayerLayout
-  {bio}
-  {meta}
-  league={domain.toLowerCase() === 'epl' ? 'fc' : leagueParam}
-  {query}
-  page="overview"
->
-  <div>
-    <div class="mb-5 leading-snug">
+<PlayerLayout {bio} {meta} {league} {query} page="overview">
+  <Panel
+    team
+    class:list={{
+      'grid grid-cols-3 gap-3 py-3 leading-snug': true,
+      'md:flex md:flex-wrap md:justify-around': true,
+    }}
+  >
+    {
+      facts.map(({ label, value }) => (
+        <div class="flex flex-col items-center">
+          <div>{value}</div>
+          <div class="font-light text-sm opacity-70">{label}</div>
+        </div>
+      ))
+    }
+  </Panel>
+  {
+    nextGame?.grid && (
+      <Grid title={nextGameTitle} client:load data={nextGame.grid} />
+    )
+  }
+  {stats?.grid && <Grid title="Stats" client:load data={stats.grid} />}
+  {
+    recentGames?.grid && (
+      <Grid
+        title={recentGames.grid.name}
+        client:load
+        data={recentGames.grid}
+        columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+      />
+    )
+  }
+  {
+    fantasy?.grid && (
+      <Grid title={fantasy.grid.name} client:load data={stats.grid} />
+    )
+  }
+  <Panel title="Summary">
+    <div class="leading-snug">
       <p set:html={summary} />
     </div>
-    <div class="mb-5">
-      {
-        nextGame?.grid && (
-          <div class="mb-5">
-            <h3 class="font-semibold text-team-primary mb-0.5">{`Next Game ${
-              isNextGameHome ? 'vs' : '@'
-            } ${
-              isNextGameHome
-                ? nextGame.awayTeam.abbreviation
-                : nextGame.homeTeam.abbreviation
-            }`}</h3>
-            <Grid client:load data={nextGame.grid} />
-          </div>
-        )
-      }
-      {
-        stats?.grid && (
-          <div class="mb-5">
-            <div class="flex justify-between mb-0.5">
-              <h3 class="font-semibold text-team-primary">{stats.grid.name}</h3>
-              <a href={`${playerPath}/career-stats`}>See all</a>
-            </div>
-            <Grid client:load data={stats.grid} />
-          </div>
-        )
-      }
-      {
-        recentGames?.grid && (
-          <div class="mb-5">
-            <div class="flex justify-between mb-0.5">
-              <h3 class="font-semibold text-team-primary">
-                {recentGames.grid.name}
-              </h3>
-              <a
-                href={
-                  domain.toLowerCase() === 'epl'
-                    ? `${playerPath}/matches`
-                    : `${playerPath}/game-log`
-                }
-              >
-                See all
-              </a>
-            </div>
-            <Grid
-              client:load
-              data={recentGames.grid}
-              columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
-            />
-          </div>
-        )
-      }
-      {
-        recentGames?.columns && recentGames?.rows && (
-          <div class="mb-5">
-            <div class="flex justify-between mb-0.5">
-              <h3 class="font-semibold text-team-primary">
-                {recentGames.name}
-              </h3>
-              <a
-                href={
-                  domain.toLowerCase() === 'epl'
-                    ? `${playerPath}/matches`
-                    : `${playerPath}/game-log`
-                }
-              >
-                See all
-              </a>
-            </div>
-            <Grid
-              client:load
-              data={recentGames}
-              columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
-            />
-          </div>
-        )
-      }
-      {
-        fantasy?.grid && (
-          <div class="mb-5">
-            <h3 class="font-semibold text-team-primary mb-0.5">
-              {fantasy.grid.name}
-            </h3>
-            <Grid client:load data={fantasy.grid} />
-          </div>
-        )
-      }
-      {
-        bio.bustImageUrlGallery.length ? (
-          <PlayerGallery images={bio.bustImageUrlGallery} class="mb-5" />
-        ) : null
-      }
-    </div>
-  </div>
+  </Panel>
 </PlayerLayout>

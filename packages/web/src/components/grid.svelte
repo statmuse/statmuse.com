@@ -2,20 +2,22 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-invalid-attribute -->
 <script lang="ts">
+  import type { ComponentProps } from 'svelte'
   import { orderBy, some } from 'lodash-es'
   import { session } from '@lib/session-store'
   import type { GameraGrid } from '@statmuse/core/gamera'
   import EntityLink from '@components/entity-link.svelte'
   import Image from '@components/image.svelte'
   import Panel from '@components/panel.svelte'
+  type PanelProps = ComponentProps<Panel>
 
   const freeRowLimit = 25
 
-  type Column = GameraGrid['columns'][0] & {
+  type Column = GameraGrid['columns'][number] & {
     hasImage?: boolean
     sticky?: boolean
   }
-  type RowItem = GameraGrid['rows'][0][string]
+  type RowItem = GameraGrid['rows'][number][string]
 
   export let data: GameraGrid | GameraGrid[]
   export let stickyColumns: string[] = []
@@ -27,6 +29,11 @@
   export let color = false
   export let rankingRange = [10, 20]
   export let highlight: string | undefined = undefined
+  export let title: PanelProps['title'] = undefined
+  export let href: PanelProps['href'] = undefined
+  export let entity: PanelProps['entity'] = undefined
+  export let classes: string | undefined = undefined
+  export { classes as class }
 
   const styles = Object.assign(
     { ALIGNMENT: 'w-2', SEASON: 'text-center' },
@@ -105,7 +112,11 @@
   }
 
   const applyStyles = (col: Column) => {
-    const style = styles[col.rowItemKey] || styles['default']
+    const style =
+      styles[col.rowItemKey] ||
+      styles[col.rowItemKey.toUpperCase()] ||
+      styles[col.rowItemKey.toLowerCase()] ||
+      styles['default']
     if (/text\-(left|center|right)/.test(style)) {
       return style
     }
@@ -192,20 +203,22 @@
   }
 </script>
 
-<Panel class="relative">
-  <div class="relative overflow-x-auto no-scrollbar">
+<Panel {title} {href} {entity} class={classes}>
+  <div class="relative overflow-x-auto no-scrollbar -mx-3">
     <table class="text-[15px] whitespace-nowrap" class:w-full={fullWidth}>
       {#each grids as grid}
         {@const { columns, rows, aggregations } = grid}
         {#if head}
           <thead>
             <tr class="text-xs uppercase tracking-[0.07rem]">
-              {#each columns as col (col.rowItemKey)}
+              {#each columns as col, index (col.rowItemKey)}
                 <th
                   class={`cursor-pointer font-normal p-1.5 text-gray-5 ${applyStyles(
                     col,
                   )}`}
                   class:pl-8={col.hasImage}
+                  class:pl-3={index === 0}
+                  class:pr-3={index === columns.length - 1}
                   class:sticky={col.sticky}
                   class:left-0={col.sticky}
                   class:bg-gray-8={col.sticky}
@@ -218,9 +231,9 @@
           </thead>
         {/if}
         <tbody
-          class={`divide-y ${
-            color ? 'divide-team-primary' : 'divide-gray-6'
-          } leading-[22px]`}
+          class="divide-y leading-[22px]"
+          class:divide-team-primary={color}
+          class:divide-gray-6={!color}
         >
           {#each rows as row (row)}
             {@const rowHighlight = shouldApplyRowHighlight(
@@ -228,8 +241,7 @@
               highlight,
             )}
             <tr>
-              <!-- <td class="w-2">{rows.indexOf(row) + 1}</td> -->
-              {#each columns as col (row[col.rowItemKey])}
+              {#each columns as col, index (row[col.rowItemKey])}
                 {#if row[col.rowItemKey]}
                   {@const { display, imageUrl, entity } = row[col.rowItemKey]}
                   <td
@@ -237,6 +249,8 @@
                       imageUrl ? 'w-2' : ''
                     } ${rankingColor(row[columns[0].rowItemKey], display)}`}
                     class:py-1={!imageUrl}
+                    class:pl-3={index === 0}
+                    class:pr-3={index === columns.length - 1}
                     class:sticky={col.sticky}
                     class:left-0={col.sticky}
                     class:bg-gray-8={col.sticky &&
@@ -307,13 +321,15 @@
             {#if aggregations}
               {#each aggregations as row (row)}
                 <tr class="text-sm font-semibold">
-                  {#each columns as col (row[col.rowItemKey])}
+                  {#each columns as col, index (row[col.rowItemKey])}
                     {#if row[col.rowItemKey]}
                       {@const { display } = row[col.rowItemKey]}
                       <td
                         class={`${applyStyles(col)} ${padding} py-1`}
                         class:sticky={col.sticky}
                         class:left-0={col.sticky}
+                        class:pl-3={index === 0}
+                        class:pr-3={index === columns.length - 1}
                         class:bg-gray-8={col.sticky}
                       >
                         {display}
@@ -331,10 +347,12 @@
           <tbody>
             {#each Array(3) as _row}
               <tr class="border-t border-[#c7c8ca]/30">
-                {#each columns as col}
+                {#each columns as col, index}
                   <td
                     class={`${textAlign(col)} ${padding} py-1`}
                     class:sticky={col.sticky}
+                    class:pl-3={index === 0}
+                    class:pr-3={index === columns.length - 1}
                     class:left-0={col.sticky}
                     class:bg-gray-8={col.sticky}
                   >
@@ -365,7 +383,7 @@
     <div class="absolute bottom-5 left-1/2 -translate-x-1/2">
       <a
         href="/auth/signup"
-        class="flex gap-2 items-center w-fit py-3 px-4 bg-primary text-white text-lg rounded-md hover:no-underline"
+        class="flex gap-2 items-center w-fit py-3 px-4 bg-primary text-white text-lg rounded-2xl hover:no-underline"
       >
         <span class="shrink-0 mt-[1px]">Unlock 2x data</span>
         <svg

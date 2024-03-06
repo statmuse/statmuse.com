@@ -15,8 +15,7 @@ interface Props {
 const { items, title, eager, moreUrl, prominent } = Astro.props
 ---
 
-<Panel>
-  <h3 class="font-semibold ml-1">{title}</h3>
+<Panel {title}>
   {
     items?.length ? (
       <>

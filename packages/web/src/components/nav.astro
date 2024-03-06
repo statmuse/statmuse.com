@@ -1,0 +1,61 @@
+---
+import type { NavLink } from 'src/types'
+
+interface Props {
+  links: NavLink[]
+  selected?: string
+  href: (param: string) => string
+  teamColors?: boolean
+  hero?: boolean
+  class?: string | null
+}
+
+const { links, selected, href, teamColors, hero: pillBelow } = Astro.props
+---
+
+<nav
+  class:list={{
+    'flex gap-4 overflow-x-scroll no-scrollbar': true,
+    '-mx-3 px-3 md:justify-center': true,
+    [Astro.props.class ?? '']: !!Astro.props.class,
+  }}
+>
+  {
+    links.map((link) =>
+      pillBelow ? (
+        <div class="group flex flex-col gap-1.5 overflow-clip">
+          <a
+            class:list={{
+              'whitespace-nowrap': true,
+              'text-team-secondary hover:no-underline': true,
+            }}
+            href={link.href ?? href(link.param)}
+            set:html={link.text}
+          />
+          <div
+            class:list={{
+              'w-full h-5 -mb-2.5 bg-team-secondary rounded-2xl': true,
+              'hidden group-hover:block': selected !== link.param,
+            }}
+          />
+        </div>
+      ) : (
+        <a
+          class:list={{
+            'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
+            'hover:no-underline hover:text-gray-8 hover:bg-teal': !teamColors,
+            'hover:no-underline hover:text-team-secondary hover:bg-team-primary':
+              teamColors,
+            'bg-teal text-gray-8 border-teal':
+              !teamColors && selected === link.param,
+            'bg-team-primary text-team-secondary border-team-primary':
+              teamColors && selected === link.param,
+            'bg-gray-8 text-gray-2 border-gray-6': selected !== link.param,
+          }}
+          href={link.href ?? href(link.param)}
+          set:html={link.text}
+        />
+      ),
+    )
+  }
+</nav>

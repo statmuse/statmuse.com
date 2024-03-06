@@ -5,7 +5,7 @@
     type CreateSelectProps,
     type SelectOption,
   } from '@melt-ui/svelte'
-  import Chevron from '@components/icons/chevron.svelte'
+  import Icon from '@components/icon.svelte'
 
   export let options: SelectOption<string>[]
   export let label: string
@@ -45,27 +45,30 @@
   })
 </script>
 
-<div class={`${$$props.class ?? ''} flex flex-col gap-1`}>
+<div class={`${$$props.class ?? ''} flex flex-col gap-1 text-gray-1 h-8`}>
   <!-- svelte-ignore a11y-label-has-associated-control - $label contains the 'for' attribute -->
   <label class="block" class:hidden={hideLabel} use:melt={$labelElement}>
     {label}
   </label>
   <button
-    class={`flex h-10 items-center justify-between 
-           font-semibold border border-gray-6
-           p-1.5 px-3 rounded-3xl
-           ${$open ? 'bg-gray-6' : 'bg-gray-8'}`}
+    class={`flex h-8 items-center justify-between 
+           font-semibold border border-gray-6 
+           px-3 rounded-3xl whitespace-nowrap truncate`}
+    class:bg-gray-6={$open}
+    class:bg-gray-8={!$open}
     use:melt={$trigger}
     aria-label={label}
   >
     {$selectedLabel || 'Select an option'}
-    <Chevron
-      class={`text-gray-0 w-5 aspect-square ${$open ? 'rotate-180' : ''}`}
-    />
+    {#if $open}
+      <Icon name="dropdown-up" class="w-5 h-5" />
+    {:else}
+      <Icon name="dropdown" class="w-5 h-5" />
+    {/if}
   </button>
   {#if $open}
-    <div class="relative -mt-[18px]">
-      <div class="absolute inset-0 top-[10px] h-3 bottom-0 bg-gray-6" />
+    <div class="relative -mt-[10px]">
+      <div class="absolute inset-0 top-0.5 h-3 bottom-0 bg-gray-6" />
       <div class="absolute left-0 w-2 h-5 -top-[10px] bg-gray-6" />
       <div class="absolute right-0 w-2 h-5 -top-[10px] bg-gray-6" />
     </div>
@@ -77,12 +80,9 @@
     >
       {#each options as item}
         <div
-          class="relative cursor-pointer text-neutral-800 p-1.5 px-3
-                 hover:bg-magnum-100 focus:z-10
-                 focus:text-magnum-700
-                 data-[highlighted]:bg-magnum-200
-                 data-[highlighted]:text-magnum-900
-                 data-[disabled]:opacity-50"
+          class="relative cursor-pointer p-1.5 px-3
+                 focus:z-10 data-[disabled]:opacity-50
+                 whitespace-nowrap overflow-x-hidden"
           use:melt={$option(item)}
         >
           <div class="check {$isSelected(item.value) ? 'block' : 'hidden'}">

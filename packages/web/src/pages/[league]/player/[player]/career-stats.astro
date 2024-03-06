@@ -50,23 +50,16 @@ const meta = { title, description, keywords }
 Caching.swr(Astro)
 ---
 
-<PlayerLayout {league} {bio} {meta} page="stats">
-  <div>
+<PlayerLayout {league} {bio} {meta} page="stats" {parameters}>
     {
       grids &&
         grids.map((grid) => (
-          <div class="mb-5">
-            <div class="flex justify-between mb-0.5">
-              <h3 class="font-semibold text-team-primary">{grid.name}</h3>
-              {parameters && <GridDropdown {parameters} />}
-            </div>
-            <Grid
-              client:load
-              data={grid}
-              columnStyles={{ SEASON: 'text-left' }}
-            />
-          </div>
+          <Grid
+            title={grid.name}
+            client:load
+            data={grid}
+            columnStyles={{ SEASON: 'text-left' }}
+          />
         ))
     }
-  </div>
 </PlayerLayout>

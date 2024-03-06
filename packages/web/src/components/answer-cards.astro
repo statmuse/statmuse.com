@@ -13,21 +13,25 @@ import type {
   GameraTeamSeasonOverview,
   Team,
 } from '@statmuse/core/gamera'
-import StandingsCard from '@components/standings-card.astro'
+import StandingsCard, {
+  type StandingsDomain,
+  type StandingsGroup,
+} from '@components/standings-card.astro'
+import Panel from '@components/panel.astro'
+import ScheduleCard from '@components/schedule-card.astro'
+import ScoresCard from '@components/scores-card.astro'
+import PlayerCardComponent from '@components/cards/player.astro'
+import TeamCardComponent from '@components/cards/team.astro'
+import Grid from '@components/grid.svelte'
+import EntityLink from '@components/entity-link.astro'
+import Image from '@components/image.astro'
+import AditudeCardMedRec from '@components/aditude-card-med-rec.svelte'
 import { getStandings } from '@lib/standings'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import { createAskPath } from '@statmuse/core/path'
 import { getGame, getGames, getSchedule } from '@lib/game'
-import ScheduleCard from '@components/schedule-card.astro'
-import ScoresCard from '@components/scores-card.astro'
 import { getTeamSeasonBio, getTeamSeasonOverview } from '@lib/team'
-import PlayerCardComponent from '@components/cards/player.astro'
-import TeamCardComponent from '@components/cards/team.astro'
-import GridCard from '@components/cards/grid.astro'
-import EntityLink from '@components/entity-link.astro'
-import Image from '@components/image.astro'
 import dayjs from 'dayjs'
-import AditudeCardMedRec from '@components/aditude-card-med-rec.svelte'
 
 interface Props {
   league: LeagueParam
@@ -36,8 +40,46 @@ interface Props {
 
 const { league, teamId } = Astro.props
 const domain = leagueToDomain(league).toLowerCase()
+const domainDisplay = `${league === 'fc' ? 'PL' : domain.toUpperCase()}`
+const standingsDisplay = `${
+  league === 'nba' ? 'Conference' : league === 'fc' ? '' : 'Division'
+} ${league === 'fc' ? 'Table' : 'Standings'}`
+const standingsDomain = domain as StandingsDomain
+const standingsGroup: StandingsGroup =
+  league !== 'nba' && league !== 'fc' ? 'division' : undefined
+const standingsLimit =
+  league === 'nba'
+    ? 6
+    : league === 'fc'
+    ? 6
+    : league === 'nfl'
+    ? 2
+    : league === 'nhl'
+    ? 3
+    : league === 'mlb'
+    ? 2
+    : undefined
+const fantasyDisplay = `Fantasy ${
+  league === 'nba' ? 'Basketball' : league === 'nfl' ? 'Football' : ''
+}`
+const postseasonDisplay = (
+  season: string | { seasonType: string } | undefined,
+  display: string = 'Playoff ',
+) => {
+  if (!season) return ''
+  if (typeof season !== 'string') season = season.seasonType
+  if (season === 'postseason') return display
 
-const playerCardTitle = (stat: string) => {
+  return ''
+}
+
+const teamCardTitle = (card: TeamCard) =>
+  `${postseasonDisplay(teamCardsResp)}${teamCardStatTitle(card.stat)}`
+
+const playerCardTitle = (card: PlayerCard) =>
+  `${postseasonDisplay(playerCardsResp)}${playerCardStatTitle(card.stat)}`
+
+const playerCardStatTitle = (stat: string) => {
   switch (stat) {
     // NBA Player
     case 'mostPointsPerGame':
@@ -122,7 +164,7 @@ const playerCardTitle = (stat: string) => {
   }
 }
 
-const teamCardTitle = (stat: string) => {
+const teamCardStatTitle = (stat: string) => {
   switch (stat) {
     // ALL
     case 'bestRecordAgainstTheSpread':
@@ -178,56 +220,43 @@ const playerAskLink = (
   season: string,
   year: string,
 ) => {
+  const postseason = postseasonDisplay(season, ' postseason')
   switch (stat) {
     // NBA Player
     case 'mostPointsPerGame':
       return createAskPath({
         domain: league,
-        query: `ppg leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `ppg leaders ${year}${postseason}`,
       })
     case 'mostReboundsPerGame':
       return createAskPath({
         domain: league,
-        query: `rpg leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `rpg leaders ${year}${postseason}`,
       })
     case 'mostAssistsPerGame':
       return createAskPath({
         domain: league,
-        query: `apg leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `apg leaders ${year}${postseason}`,
       })
     case 'mostStealsPerGame':
       return createAskPath({
         domain: league,
-        query: `spg leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `spg leaders ${year}${postseason}`,
       })
     case 'mostBlocksPerGame':
       return createAskPath({
         domain: league,
-        query: `bpg leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `bpg leaders ${year}${postseason}`,
       })
     case 'mostThreePointersMadePerGame':
       return createAskPath({
         domain: league,
-        query: `3pm leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `3pm leaders ${year}${postseason}`,
       })
     case 'bestTrueShootingPercentage':
       return createAskPath({
         domain: league,
-        query: `ts% leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `ts% leaders ${year}${postseason}`,
       })
     case 'mostFanDuelPoints':
       return createAskPath({
@@ -257,58 +286,42 @@ const playerAskLink = (
     case 'mostPassingYards':
       return createAskPath({
         domain: league,
-        query: `pass yards leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `pass yards leaders ${year}${postseason}`,
       })
     case 'mostRushingYards':
       return createAskPath({
         domain: league,
-        query: `rush yards leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `rush yards leaders ${year}${postseason}`,
       })
     case 'mostReceivingYards':
       return createAskPath({
         domain: league,
-        query: `rec yards leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `rec yards leaders ${year}${postseason}`,
       })
     case 'mostPassingTouchdowns':
       return createAskPath({
         domain: league,
-        query: `pass td leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `pass td leaders ${year}${postseason}`,
       })
     case 'mostRushingTouchdowns':
       return createAskPath({
         domain: league,
-        query: `rush td leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `rush td leaders ${year}${postseason}`,
       })
     case 'mostReceivingTouchdowns':
       return createAskPath({
         domain: league,
-        query: `rec td leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `rec td leaders ${year}${postseason}`,
       })
     case 'bestQuarterbackRating':
       return createAskPath({
         domain: league,
-        query: `qb rating leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `qb rating leaders ${year}${postseason}`,
       })
     case 'mostDefensiveSacks':
       return createAskPath({
         domain: league,
-        query: `sack leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `sack leaders ${year}${postseason}`,
       })
     case 'mostQuarterbackFantasyPoints':
       return createAskPath({
@@ -339,80 +352,58 @@ const playerAskLink = (
     case 'mostGoals':
       return createAskPath({
         domain: league,
-        query: `goal leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `goal leaders ${year}${postseason}`,
       })
     case 'mostAssists':
       return createAskPath({
         domain: league,
-        query: `assist leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `assist leaders ${year}${postseason}`,
       })
     case 'mostPoints':
       return createAskPath({
         domain: league,
-        query: `points leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `points leaders ${year}${postseason}`,
       })
     case 'bestPlusMinus':
       return createAskPath({
         domain: league,
-        query: `+/- leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `+/- leaders ${year}${postseason}`,
       })
     case 'bestGoalsAgainstAverage':
       return createAskPath({
         domain: league,
-        query: `gaa leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `gaa leaders ${year}${postseason}`,
       })
     // EPL Player
     case 'mostGoals':
       return createAskPath({
         domain: league,
-        query: `goal leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `goal leaders ${year}${postseason}`,
       })
     case 'mostAssists':
       return createAskPath({
         domain: league,
-        query: `assist leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `assist leaders ${year}${postseason}`,
       })
     case 'mostShotsOnTarget':
       return createAskPath({
         domain: league,
-        query: `shots on target leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `shots on target leaders ${year}${postseason}`,
       })
     case 'mostPasses':
       return createAskPath({
         domain: league,
-        query: `passes leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `passes leaders ${year}${postseason}`,
       })
     case 'mostTackles':
       return createAskPath({
         domain: league,
-        query: `tackles leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `tackles leaders ${year}${postseason}`,
       })
     case 'mostCleanSheets':
       return createAskPath({
         domain: league,
-        query: `clean sheet leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `clean sheet leaders ${year}${postseason}`,
       })
     default:
       return stat
@@ -425,6 +416,8 @@ const teamAskLink = (
   season: string,
   year: string,
 ) => {
+  const postseason = postseasonDisplay(season, ' postseason')
+
   switch (stat) {
     // ALL
     case 'bestRecordAgainstTheSpread':
@@ -438,124 +431,90 @@ const teamAskLink = (
     case 'bestOffensiveRating':
       return createAskPath({
         domain: league,
-        query: `team ortg rankings ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `team ortg rankings ${year}${postseason}`,
       })
     case 'bestDefensiveRating':
       return createAskPath({
         domain: league,
-        query: `team drtg rankings ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `team drtg rankings ${year}${postseason}`,
       })
     case 'bestNetRating':
       return createAskPath({
         domain: league,
-        query: `team net rating rankings ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `team net rating rankings ${year}${postseason}`,
       })
     case 'worstRecord':
       return createAskPath({
         domain: league,
-        query: `worst record ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `worst record ${year}${postseason}`,
       })
     // NFL Team
     case 'mostPointsPerGame':
       return createAskPath({
         domain: league,
-        query: `team ppg rankings ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `team ppg rankings ${year}${postseason}`,
       })
     case 'leastPointsAllowedPerGame':
       return createAskPath({
         domain: league,
-        query: `fewest points allowed per game by a team ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `fewest points allowed per game by a team ${year}${postseason}`,
       })
     case 'mostTotalYardsPerGame':
       return createAskPath({
         domain: league,
-        query: `team total yards per game rankings ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `team total yards per game rankings ${year}${postseason}`,
       })
     case 'mostRushingYardsPerGame':
       return createAskPath({
         domain: league,
-        query: `team rush yards per game rankings ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `team rush yards per game rankings ${year}${postseason}`,
       })
     case 'mostPassingYardsPerGame':
       return createAskPath({
         domain: league,
-        query: `team pass yards per game rankings ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `team pass yards per game rankings ${year}${postseason}`,
       })
     case 'mostDefensiveSacks':
       return createAskPath({
         domain: league,
-        query: `team sack rankings ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `team sack rankings ${year}${postseason}`,
       })
     // NHL Team
     case 'mostGoalsPerGame':
       return createAskPath({
         domain: league,
-        query: `most goals per game by a team ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `most goals per game by a team ${year}${postseason}`,
       })
     case 'leastGoalsAllowedPerGame':
       return createAskPath({
         domain: league,
-        query: `fewest goals against per game by a team ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `fewest goals against per game by a team ${year}${postseason}`,
       })
     case 'bestPowerPlayPercentage':
       return createAskPath({
         domain: league,
-        query: `most pp% ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `most pp% ${year}${postseason}`,
       })
     case 'bestPenaltyKillPercentage':
       return createAskPath({
         domain: league,
-        query: `best pk% by a team ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `best pk% by a team ${year}${postseason}`,
       })
     // EPL Team
     case 'mostGoals':
       return createAskPath({
         domain: league,
-        query: `most goals by a team ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `most goals by a team ${year}${postseason}`,
       })
     case 'leastGoalsAgainst':
       return createAskPath({
         domain: league,
-        query: `fewest goals against by a team ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `fewest goals against by a team ${year}${postseason}`,
       })
     case 'bestGoalDifferential':
       return createAskPath({
         domain: league,
-        query: `highest goal difference by a team ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `highest goal difference by a team ${year}${postseason}`,
       })
     default:
       return stat
@@ -794,121 +753,91 @@ if (allowedDomains.includes(league) && teamId) {
   {
     teamSpecificPlayerCards && teamSpecificPlayerCards.team && (
       <div>
-        <h3 class="text-3xl font-semibold mb-1.5">{`More ${teamSpecificPlayerCards.team.nickname} Stats`}</h3>
+        <h3 class="text-xl font-semibold mb-1.5">{`More ${teamSpecificPlayerCards.team.nickname} Stats`}</h3>
         <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
           {teamLeaders && teamLeaders.players.length > 0 && (
-            <div>
-              <div class="flex justify-between">
-                <p class="font-semibold">Team Leaders</p>
-                <EntityLink entity={teamSpecificPlayerCards.team.entity}>
-                  See more
-                </EntityLink>
-              </div>
-              <PlayerCardComponent card={teamLeaders} />
-            </div>
+            <PlayerCardComponent
+              title="Team Leaders"
+              entity={teamSpecificPlayerCards.team.entity}
+              card={teamLeaders}
+            />
           )}
           {teamSeasonBio && teamSeasonBio.statsSummary && (
-            <div class="flex flex-col">
-              <div class="flex justify-between">
-                <p class="font-semibold">Team Rankings</p>
-                <EntityLink entity={teamSpecificPlayerCards.team.entity}>
-                  See more
-                </EntityLink>
+            <Panel
+              class="flex flex-col"
+              title="Team Rankings"
+              entity={teamSpecificPlayerCards.team.entity}
+              background={
+                teamLeaders?.players[0].colors?.backgroundColor ?? '#FFF'
+              }
+              foreground={
+                teamLeaders?.players[0].colors?.foregroundColor ?? '#000'
+              }
+            >
+              <div class="-mt-3 py-5 md:py-0 flex flex-grow items-center gap-5 text-center mx-auto">
+                {teamSeasonBio.statsSummary.stats.map((stat) => (
+                  <div>
+                    <p class="uppercase whitespace-nowrap">{stat.label}</p>
+                    <p class="text-2xl">{stat.value}</p>
+                    <p class="text-xs uppercase tracking-[0.07rem]">
+                      {stat.label !== 'FORM' ? stat.rank : 'last 5'}
+                    </p>
+                  </div>
+                ))}
               </div>
-              <div
-                class="flex-1 rounded-2xl overflow-hidden py-10 px-2.5 flex items-center"
-                style={{
-                  backgroundColor:
-                    teamLeaders?.players[0].colors?.backgroundColor ?? '#FFF',
-                  color:
-                    teamLeaders?.players[0].colors?.foregroundColor ?? '#000',
-                }}
-              >
-                <div class="flex gap-5 text-center mx-auto">
-                  {teamSeasonBio.statsSummary.stats.map((stat) => (
-                    <div>
-                      <p class="uppercase whitespace-nowrap">{stat.label}</p>
-                      <p class="text-3xl">{stat.value}</p>
-                      <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-                        {stat.label !== 'FORM' ? stat.rank : 'last 5'}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            </Panel>
           )}
           {teamSeasonOverview && teamSeasonOverview.standings && (
-            <div>
-              <div class="flex justify-between">
-                <p class="font-semibold">{teamSeasonOverview.standings.name}</p>
-                <a
-                  href={createAskPath({
-                    domain,
-                    query: `${teamSpecificPlayerCards.team?.nickname} standings`,
-                  })}
-                >
-                  See more
-                </a>
-              </div>
-              <GridCard
-                grid={teamSeasonOverview.standings}
-                colors={{
-                  backgroundColor:
-                    teamLeaders?.players[0].colors?.backgroundColor ?? '#FFF',
-                  foregroundColor:
-                    teamLeaders?.players[0].colors?.foregroundColor ?? '#000',
-                }}
-              />
-            </div>
+            <Grid
+              class="flex flex-col justify-between"
+              title={teamSeasonOverview.standings.name}
+              href={createAskPath({
+                domain,
+                query: `${teamSpecificPlayerCards.team?.nickname} standings`,
+              })}
+              data={teamSeasonOverview.standings}
+              columnStyles={{ rank: 'w-2' }}
+              colors={{
+                backgroundColor:
+                  teamLeaders?.players[0].colors?.backgroundColor ?? '#FFF',
+                foregroundColor:
+                  teamLeaders?.players[0].colors?.foregroundColor ?? '#000',
+              }}
+            />
           )}
           {teamScheduleResponse && teamScheduleResponse.games.length > 0 && (
-            <div>
-              <div class="flex justify-between">
-                <p class="font-semibold">Schedule</p>
-                <a
-                  href={createAskPath({
-                    domain,
-                    query: `${teamSpecificPlayerCards.team?.nickname} schedule`,
-                  })}
-                >
-                  See more
-                </a>
-              </div>
-              <ScheduleCard
-                data={teamScheduleResponse}
-                colors={{
-                  backgroundColor:
-                    teamLeaders?.players[0].colors?.backgroundColor ?? '#FFF',
-                  foregroundColor:
-                    teamLeaders?.players[0].colors?.foregroundColor ?? '#000',
-                }}
-              />
-            </div>
+            <ScheduleCard
+              title="Schedule"
+              href={createAskPath({
+                domain,
+                query: `${teamSpecificPlayerCards.team?.nickname} schedule`,
+              })}
+              data={teamScheduleResponse}
+              colors={{
+                backgroundColor:
+                  teamLeaders?.players[0].colors?.backgroundColor ?? '#FFF',
+                foregroundColor:
+                  teamLeaders?.players[0].colors?.foregroundColor ?? '#000',
+              }}
+            />
           )}
           {teamLastGame && (
-            <div class="flex flex-col">
-              <div class="flex justify-between">
-                <p class="font-semibold">Last Game</p>
-                <a
-                  href={createAskPath({
-                    domain,
-                    query: `${teamSpecificPlayerCards.team?.nickname} last game`,
-                  })}
-                >
-                  See more
-                </a>
-              </div>
-              <div
-                class="flex gap-4 flex-1 rounded-2xl overflow-hidden py-10 px-2.5 hover:no-underline relative"
-                style={{
-                  backgroundColor:
-                    teamLeaders?.players[0].colors?.backgroundColor ?? '#FFF',
-                  color:
-                    teamLeaders?.players[0].colors?.foregroundColor ?? '#000',
-                }}
-              >
-                <div class="flex-1 flex flex-col items-end justify-center">
+            <Panel
+              class="flex flex-col"
+              title="Last Game"
+              href={createAskPath({
+                domain,
+                query: `${teamSpecificPlayerCards.team?.nickname} last game`,
+              })}
+              background={
+                teamLeaders?.players[0].colors?.backgroundColor ?? '#FFF'
+              }
+              foreground={
+                teamLeaders?.players[0].colors?.foregroundColor ?? '#000'
+              }
+            >
+              <div class="py-10 md:py-0 md:-mt-5 flex flex-1 gap-2 rounded-2xl overflow-hidden hover:no-underline relative">
+                <div class="flex-1 flex flex-col items-center justify-center flex-shrink">
                   <EntityLink entity={teamLastGame.homeTeam.entity}>
                     <Image
                       class="w-11 h-11 object-contain"
@@ -921,7 +850,7 @@ if (allowedDomains.includes(league) && teamId) {
                   </EntityLink>
                   <EntityLink
                     entity={teamLastGame.homeTeam.entity}
-                    class="font-semibold text-current"
+                    class="font-semibold text-current whitespace-nowrap"
                   >
                     {teamLastGame.homeTeam.shortName ||
                       teamLastGame.homeTeam.name}
@@ -930,7 +859,7 @@ if (allowedDomains.includes(league) && teamId) {
                     {teamLastGame.homeTeam.record}
                   </p>
                 </div>
-                <div class="flex items-center gap-4 -mt-[38px]">
+                <div class="flex items-center gap-4 -mt-[38px] flex-shrink-0">
                   <p class="text-2xl font-semibold">
                     {teamLastGame.homeTeam.score}
                   </p>
@@ -941,7 +870,7 @@ if (allowedDomains.includes(league) && teamId) {
                     {teamLastGame.awayTeam.score}
                   </p>
                 </div>
-                <div class="flex-1 flex flex-col justify-center">
+                <div class="flex-1 flex flex-col justify-center items-center flex-shrink">
                   <EntityLink entity={teamLastGame.awayTeam.entity}>
                     <Image
                       class="w-11 h-11 object-contain"
@@ -954,7 +883,7 @@ if (allowedDomains.includes(league) && teamId) {
                   </EntityLink>
                   <EntityLink
                     entity={teamLastGame.awayTeam.entity}
-                    class="font-semibold text-current"
+                    class="font-semibold text-current whitespace-nowrap"
                   >
                     {teamLastGame.awayTeam.shortName ||
                       teamLastGame.awayTeam.name}
@@ -969,7 +898,7 @@ if (allowedDomains.includes(league) && teamId) {
                   </p>
                 ) : null}
               </div>
-            </div>
+            </Panel>
           )}
         </div>
       </div>
@@ -985,41 +914,21 @@ if (allowedDomains.includes(league) && teamId) {
   {
     playerCardsResp && playerLeaderCards.length > 0 && (
       <div>
-        <h3 class="text-3xl font-semibold mb-1.5">
-          {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
-            playerCardsResp.seasonYearDisplay
-          } Leaders`}
+        <h3 class="text-xl font-semibold mb-1.5">
+          {`${domainDisplay} ${playerCardsResp.seasonYearDisplay} Leaders`}
         </h3>
         <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
           {playerLeaderCards.map((card) => (
-            <div>
-              <div class="flex justify-between">
-                <p class="font-semibold">{`${
-                  playerCardsResp!.seasonType === 'postseason' ? 'Playoff ' : ''
-                }${playerCardTitle(card.stat)}`}</p>
-                <a
-                  href={playerAskLink(
-                    card.stat,
-                    league,
-                    playerCardsResp!.seasonType,
-                    playerCardsResp!.seasonYearDisplay,
-                  )}
-                >
-                  See more
-                </a>
-              </div>
-              <a
-                href={playerAskLink(
-                  card.stat,
-                  league,
-                  playerCardsResp!.seasonType,
-                  playerCardsResp!.seasonYearDisplay,
-                )}
-                class="hover:no-underline"
-              >
-                <PlayerCardComponent card={card} />
-              </a>
-            </div>
+            <PlayerCardComponent
+              card={card}
+              title={playerCardTitle(card)}
+              href={playerAskLink(
+                card.stat,
+                league,
+                playerCardsResp!.seasonType,
+                playerCardsResp!.seasonYearDisplay,
+              )}
+            />
           ))}
         </div>
       </div>
@@ -1035,41 +944,21 @@ if (allowedDomains.includes(league) && teamId) {
   {
     teamCardsResp && teamRankingCards.length > 0 && (
       <div>
-        <h3 class="text-3xl font-semibold mb-1.5">
-          {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
-            teamCardsResp.seasonYearDisplay
-          } Rankings`}
+        <h3 class="text-xl font-semibold mb-1.5">
+          {`${domainDisplay} ${teamCardsResp.seasonYearDisplay} Rankings`}
         </h3>
         <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
           {teamRankingCards.map((card) => (
-            <div>
-              <div class="flex justify-between">
-                <p class="font-semibold">{`${
-                  teamCardsResp?.seasonType === 'postseason' ? 'Playoff ' : ''
-                }${teamCardTitle(card.stat)}`}</p>
-                <a
-                  href={teamAskLink(
-                    card.stat,
-                    league,
-                    teamCardsResp!.seasonType,
-                    teamCardsResp!.seasonYearDisplay,
-                  )}
-                >
-                  See more
-                </a>
-              </div>
-              <a
-                href={teamAskLink(
-                  card.stat,
-                  league,
-                  teamCardsResp!.seasonType,
-                  teamCardsResp!.seasonYearDisplay,
-                )}
-                class="hover:no-underline"
-              >
-                <TeamCardComponent card={card} />
-              </a>
-            </div>
+            <TeamCardComponent
+              card={card}
+              title={teamCardTitle(card)}
+              href={teamAskLink(
+                card.stat,
+                league,
+                teamCardsResp!.seasonType,
+                teamCardsResp!.seasonYearDisplay,
+              )}
+            />
           ))}
         </div>
       </div>
@@ -1087,47 +976,23 @@ if (allowedDomains.includes(league) && teamId) {
       playerCardsResp.seasonType !== 'postseason' &&
       fantasyCards.length > 0 && (
         <div>
-          <h3 class="text-3xl font-semibold mb-1.5">
-            {`Fantasy ${
-              league === 'nba'
-                ? 'Basketball'
-                : league === 'nfl'
-                ? 'Football'
-                : ''
-            } ${playerCardsResp.seasonYearDisplay}`}
+          <h3 class="text-xl font-semibold mb-1.5">
+            {`${fantasyDisplay} ${playerCardsResp.seasonYearDisplay}`}
           </h3>
           <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
             {fantasyCards.map((card) => (
-              <div>
-                <div class="flex justify-between">
-                  <p class="font-semibold">{`${
-                    playerCardsResp?.seasonType === 'postseason'
-                      ? 'Playoff '
-                      : ''
-                  }${playerCardTitle(card.stat)}`}</p>
-                  <a
-                    href={playerAskLink(
-                      card.stat,
-                      league,
-                      playerCardsResp!.seasonType,
-                      playerCardsResp!.seasonYearDisplay,
-                    )}
-                  >
-                    See more
-                  </a>
-                </div>
-                <a
-                  href={playerAskLink(
-                    card.stat,
-                    league,
-                    playerCardsResp!.seasonType,
-                    playerCardsResp!.seasonYearDisplay,
-                  )}
-                  class="hover:no-underline"
-                >
-                  <PlayerCardComponent card={card} />
-                </a>
-              </div>
+              <PlayerCardComponent
+                title={`${postseasonDisplay(
+                  playerCardsResp,
+                )}${playerCardStatTitle(card.stat)}`}
+                href={playerAskLink(
+                  card.stat,
+                  league,
+                  playerCardsResp!.seasonType,
+                  playerCardsResp!.seasonYearDisplay,
+                )}
+                card={card}
+              />
             ))}
           </div>
         </div>
@@ -1145,77 +1010,43 @@ if (allowedDomains.includes(league) && teamId) {
   {
     teamCardsResp && bettingCards.length > 0 && (
       <div>
-        <h3 class="text-3xl font-semibold mb-1.5">
+        <h3 class="text-xl font-semibold mb-1.5">
           {`${league === 'fc' ? 'Premier League' : domain.toUpperCase()} ${
             teamCardsResp.seasonYearDisplay
           } Betting`}
         </h3>
         <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
           {bettingCards.map((card) => (
-            <div>
-              <div class="flex justify-between">
-                <p class="font-semibold">{teamCardTitle(card.stat)}</p>
-                <a
-                  href={teamAskLink(
-                    card.stat,
-                    league,
-                    teamCardsResp!.seasonType,
-                    teamCardsResp!.seasonYearDisplay,
-                  )}
-                >
-                  See more
-                </a>
-              </div>
-              <a
-                href={teamAskLink(
-                  card.stat,
-                  league,
-                  teamCardsResp!.seasonType,
-                  teamCardsResp!.seasonYearDisplay,
-                )}
-                class="hover:no-underline"
-              >
-                <TeamCardComponent card={card} />
-              </a>
-            </div>
+            <TeamCardComponent
+              title={teamCardStatTitle(card.stat)}
+              href={teamAskLink(
+                card.stat,
+                league,
+                teamCardsResp!.seasonType,
+                teamCardsResp!.seasonYearDisplay,
+              )}
+              card={card}
+            />
           ))}
         </div>
       </div>
     )
   }
-
   {
     standingsResp && standingsResp.teams && (
       <div>
-        <h3 class="text-3xl font-semibold mb-1.5">
-          {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
-            standingsResp.seasonYearDisplay
-          } ${
-            league === 'nba' ? 'Conference' : league === 'fc' ? '' : 'Division'
-          } ${league === 'fc' ? 'Table' : 'Standings'}`}
+        <h3 class="text-xl font-semibold mb-1.5">
+          {`${domainDisplay} ${standingsResp.seasonYearDisplay} ${standingsDisplay}`}
         </h3>
         <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
           {Object.entries(groupBy(standingsResp.teams, 'conference.name')).map(
             ([_, teams]) => (
+              // @ts-expect-error
               <StandingsCard
                 {teams}
-                {domain}
-                group={
-                  league !== 'nba' && league !== 'fc' ? 'division' : undefined
-                }
-                limit={
-                  league === 'nba'
-                    ? 6
-                    : league === 'fc'
-                    ? 6
-                    : league === 'nfl'
-                    ? 2
-                    : league === 'nhl'
-                    ? 3
-                    : league === 'mlb'
-                    ? 2
-                    : undefined
-                }
+                domain={standingsDomain}
+                group={standingsGroup}
+                limit={standingsLimit}
               />
             ),
           )}
@@ -1236,21 +1067,12 @@ if (allowedDomains.includes(league) && teamId) {
       scoresResp &&
       scoresResp.games.length > 0 && (
         <div>
-          <h3 class="text-3xl font-semibold mb-1.5">
-            {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
-              scoresResp.seasonYearDisplay
-            }`}
-            Scores & Schedule
+          <h3 class="text-xl font-semibold mb-1.5">
+            {`${domainDisplay} ${scoresResp.seasonYearDisplay} Scores & Schedule`}
           </h3>
           <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
-            <div>
-              <p class="font-semibold">Scores</p>
-              <ScoresCard data={scoresResp} />
-            </div>
-            <div>
-              <p class="font-semibold">Schedule</p>
-              <ScheduleCard data={scheduleResp} />
-            </div>
+            <ScoresCard title="Scores" data={scoresResp} />
+            <ScheduleCard title="Schedule" data={scheduleResp} />
           </div>
         </div>
       )

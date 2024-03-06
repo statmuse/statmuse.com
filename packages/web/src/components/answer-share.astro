@@ -1,5 +1,6 @@
 ---
 import { createAskPath } from '@statmuse/core/path'
+import Icon from '@components/icon.svelte'
 
 interface Props {
   type?: 'ask' | 'musing' | 'profile'
@@ -8,6 +9,7 @@ interface Props {
   query?: string
   domain?: string
   onlyIcon?: boolean
+  class?: string | null
 }
 
 const {
@@ -50,20 +52,7 @@ const socialButtons = [
       class="cursor-pointer"
       data-mobile-share-url={shareUrl}
     >
-      <svg
-        width="25"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 22.7 22.7"
-        xml:space="preserve"
-      >
-        <g style="fill: none; stroke: var(--team-secondary-color, #c5c9cc); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10;">
-          <line x1="11.4" y1="4" x2="11.4" y2="13.1" />
-          <>
-            <polyline points="6.5,8.9 11.4,4 16.2,8.8" />
-            <polyline points="3.2,13.2 3.2,18.7 19.5,18.7 19.5,13.2" />
-          </>
-        </g>
-      </svg>
+      <Icon name="share" class="w-5 h-5" />
     </label>
   ) : (
     <div>

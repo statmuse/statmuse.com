@@ -17,6 +17,7 @@ interface Props {
   }
   analytics?: AnalyticsPageviewProperties
   enableAdBanner?: boolean
+  class?: string | null
 }
 
 const { meta, colors, analytics = {}, enableAdBanner = true } = Astro.props
@@ -318,9 +319,20 @@ const canonicalUrl = meta?.canonical
     }
   </head>
   <body
-    class="text-gray-1 bg-gray-7 has-[#menu:checked]:overflow-scroll has-[#menu:checked]:fixed has-[#menu:checked]:w-full has-[#menu:checked]:h-full text-pretty"
+    class:list={{
+      'text-gray-1 bg-gray-7 text-pretty': true,
+      'has-[#menu:checked]:overflow-scroll has-[#menu:checked]:fixed': true,
+      'has-[#menu:checked]:w-full has-[#menu:checked]:h-full': true,
+    }}
   >
-    <slot />
+    <div
+      class:list={{
+        'max-w-7xl mx-auto px-3 md:px-5': true,
+        [Astro.props.class ?? '']: !!Astro.props.class,
+      }}
+    >
+      <slot />
+    </div>
     <CookieConsent client:only="svelte" />
     {enableAdBanner && <AditudeAdBanner client:only="svelte" />}
     <script>

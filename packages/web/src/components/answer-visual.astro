@@ -1,17 +1,18 @@
 ---
-import { getHeroProps } from '@lib/gamera'
+import { getColumnCharts, getHeroProps, getIsSuperlative } from '@lib/gamera'
 import Layout from '@layouts/main.astro'
 import Header from '@components/header.astro'
 import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals.astro'
 import Explore from '@components/explore.astro'
 import Container from '@components/container.astro'
+import AnswerCards from '@components/answer-cards.astro'
+import Chart from '@components/chart.astro'
 import { type GameraDefaultResponse, tokensToText } from '@statmuse/core/gamera'
 import { title, description } from '@lib/meta'
 import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import * as Link from '@statmuse/core/link'
-import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
 import type { LeagueParam } from '@lib/params'
 
@@ -30,7 +31,7 @@ const preferredDomain = answer.visual.domain?.toLowerCase()
 const domain = answer.visual.domain
 const subject = answer.visual.summary.subject
 const contentReference = answer.visual.contentReference
-const heroProps = getHeroProps({ imageAlt: query, response: answer })
+const heroProps = getHeroProps({ imageAlt: query, response: answer })!
 const meta = {
   title: title(query),
   description: description(answer),
@@ -63,9 +64,19 @@ const meta = {
 }
 
 const code = await Link.askShortCode(query, preferredDomain || '')
+const shareUrl = `${process.env.SHORT_LINK_URL}e/${code?.short_code}`
+const league = domain === 'EPL' ? 'fc' : (preferredDomain as LeagueParam)
+
+const [questionTeamId] = contentReference?.questionTags?.teamIds ?? []
+const [answerTeamId] = contentReference?.answerTags?.teamIds ?? []
+const teamId = questionTeamId ?? answerTeamId
+
+const [columnChart] = getColumnCharts(answer) ?? []
+const isSuperlative = getIsSuperlative(answer)
 ---
 
 <Layout
+  class="flex flex-col gap-3"
   colors={subject?.colors}
   {meta}
   analytics={{
@@ -77,42 +88,21 @@ const code = await Link.askShortCode(query, preferredDomain || '')
     query,
   }}
 >
-  <Header
-    {query}
-    {conversationToken}
-    {preferredDomain}
-    audioUrl={answer.visual.summary.narrator?.answerWithIntroAudioUrl ||
-      answer.visual.summary.narrator?.answerAudioUrl}
-  />
-  {
-    heroProps ? (
-      <Hero
-        {...heroProps}
-        shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`}
-      />
-    ) : null
-  }
-  <Visuals response={answer} {conversationToken} />
-  <Container>
-    <Explore
-      league={domain === 'EPL' ? 'fc' : preferredDomain}
-      additionalQuestions={answer.visual.additionalQuestions}
-    />
-  </Container>
-  {
-    preferredDomain && ANSWER_CARDS_ENABLED && (
-      <Container>
-        <AnswerCards
-          league={domain === 'EPL' ? 'fc' : (preferredDomain as LeagueParam)}
-          teamId={
-            contentReference.questionTags?.teamIds.length > 0
-              ? contentReference.questionTags?.teamIds[0]
-              : contentReference.answerTags?.teamIds.length > 0
-              ? contentReference.answerTags?.teamIds[0]
-              : undefined
-          }
-        />
-      </Container>
-    )
-  }
+  <Header {query} {conversationToken} {preferredDomain} />
+  <div
+    class:list={{
+      '-mt-3': true,
+      'grid grid-cols-1 gap-3 lg:grid-cols-3 items-start': !!columnChart,
+    }}
+  >
+    <Hero class="lg:col-span-2 h-full" {...heroProps} {shareUrl} />
+    {
+      columnChart ? (
+        <Chart class="hidden lg:block" model={columnChart} {isSuperlative} />
+      ) : null
+    }
+  </div>
+  <Visuals class="" response={answer} {conversationToken} />
+  <Explore {league} additionalQuestions={answer.visual.additionalQuestions} />
+  {preferredDomain && ANSWER_CARDS_ENABLED && <AnswerCards {league} {teamId} />}
 </Layout>

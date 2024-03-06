@@ -3,13 +3,21 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import Grid from '@components/grid.svelte'
-import type { ScheduleResponse, GameraGrid } from '@statmuse/core/gamera'
+import type {
+  ScheduleResponse,
+  GameraGrid,
+  GameraEntity,
+} from '@statmuse/core/gamera'
+import type { KanedamaEntity } from '@statmuse/core/kanedama'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
 interface Props {
+  title: string
   data: ScheduleResponse
+  href?: string
+  entity?: GameraEntity | KanedamaEntity
   colors?: {
     foregroundColor: string
     backgroundColor: string
@@ -17,6 +25,10 @@ interface Props {
 }
 
 const data = Astro.props.data
+const title = Astro.props.title
+const href = Astro.props.href
+const entity = Astro.props.entity
+
 let colors = Astro.props.colors
 
 const teams = data.teams.reduce(
@@ -75,20 +87,10 @@ const grid: GameraGrid = {
 colors = colors || teams[games[0].homeTeamId].colors
 ---
 
-<div
-  class="p-4 rounded-lg"
-  style={{
-    '--team-primary-color': colors.foregroundColor,
-    '--team-secondary-color': colors.backgroundColor,
-    background: colors.backgroundColor,
-    color: colors.foregroundColor,
-  }}
->
-  <Grid
-    data={grid}
-    columnStyles={{
-      DATE: 'text-left',
-    }}
-    color
-  />
-</div>
+<Grid
+  {title}
+  {href}
+  {entity}
+  data={grid}
+  columnStyles={{ DATE: 'text-left' }}
+/>
