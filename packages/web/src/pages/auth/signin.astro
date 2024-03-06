@@ -57,6 +57,7 @@ const meta = {
           />
           <input type="hidden" name="response_type" value="code" />
           <input type="hidden" name="provider" value="email" />
+          <div id="my-captcha-container"></div>
           <button
             class="w-full text-lg mb-7 p-3 border-0 rounded text-white bg-[#42a5f5] hover:bg-[#1976d2] disabled:bg-[#cfd8dc]"
             type="submit"
@@ -89,3 +90,15 @@ const meta = {
   </Container>
 </Layout>
 <script type="text/javascript" src="https://b9f2244c88b3.edge.captcha-sdk.awswaf.com/b9f2244c88b3/jsapi.js" defer></script>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const container = document.querySelector("#my-captcha-container");
+        
+    AwsWafCaptcha.renderCaptcha(container, {
+        apiKey: "uaY13CxN/ArG+Fb5sI7h1Kxnv5phEPzuVl7xS9kuLmcYoDcJFsLo4trrdTh5IDU06yFcBPcv4fBD6fOxlzCMwTJSbmkQ4UNbGeq7jazkqI/R5n2y2H96eY6mj61Qa36HpG0f2MyOckB9QvbJpGgGHRuAK2hrBMVchKfhrGCEFzL4Rfm123E0weuaHiAOyA+o7yZ0bYy9qN5Vvn+/yInTVkZTB3u2ib4Dr0VaPcqd5aEgqFYsXe2dluphLHAL1poDmxjU9JNySJsdKJ7ddLyFOV7SQRrt3V9ern0SVrF8frIQiHHqvU3SEjm4CYDCxWISMiP4VbSXJ18keDFCFpJberC0AJi51mhQ/UCpE5LE9uDchVoyqE0VRemQvV439/FyO/iPVdfC2TN+lBI3px4/NTKfgYwA9w6+frHs6tl94kw5XaMYAM59tyJ8Y/yeeOvMg5XFwcu9KcZYMqm3yFePLSwyCXT88PKjTlQs9ozw7Q31fdsErOGDU0Wkdx0Szl6kSJo5p1WgfZXgfF5xWniOvClBqRdwfgcr7oP/doLI4tymHdjVqiaJRD5xyidoqDZVzYXzZv+n0TfcprpcwapieoO8f3gU2Ss6vXQZ4lLHJIcgI6hAhGJvMxmJxpGpoaVyEviNvEEYHXuVyCdTgIxYkvOvtABI8Dor5YG5U23V6gI=_1_1",
+        onSuccess: (token) => console.log('Success: ', token),
+        onError: (e) => console.log('Error: ', e),
+    })
+  })
+</script>
