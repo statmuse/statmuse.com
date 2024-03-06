@@ -83,74 +83,70 @@ const meta = { title, description, keywords, canonical }
 ---
 
 <TeamLayout {bio} {meta} {query} page="overview">
-  <div>
-    <div class="mb-5 leading-snug">
-      <p set:html={summary} />
-    </div>
-    <div
-      class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 mb-5"
-    >
-      {
-        scoresAndSchedule && (
-          <div>
-            <div class="flex justify-between mb-0.5">
-              <h3 class="font-semibold text-team-primary">
-                {scoresAndSchedule.name}
-              </h3>
-              <a href={`schedule/${year}`}>See schedule</a>
-            </div>
-            <Grid
-              client:load
-              data={scoresAndSchedule}
-              columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
-            />
-          </div>
-        )
-      }
-      {
-        teamLeaders && (
-          <TeamLeaders leaders={teamLeaders}>
-            <a href={`roster/${year}`}>See roster</a>
-          </TeamLeaders>
-        )
-      }
-      {
-        standings && (
-          <div>
-            <h3 class="font-semibold text-team-primary mb-0.5">
-              {standings.name}
-            </h3>
-            <Grid client:load data={standings} />
-          </div>
-        )
-      }
-    </div>
+  <div class="mb-5 leading-snug">
+    <p set:html={summary} />
+  </div>
+  <div class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 mb-5">
     {
-      stats &&
-        (Array.isArray(stats) ? (
-          stats.map((data) => (
-            <div class="mb-5">
-              <div class="flex justify-between mb-0.5">
-                <h3 class="font-semibold text-team-primary">{data.name}</h3>
-                <a href={`stats/${year}`}>See stats</a>
-              </div>
-              <Grid client:load data={data} />
-            </div>
-          ))
-        ) : (
-          <div class="mb-5">
-            <div class="flex justify-between mb-0.5">
-              <h3 class="font-semibold text-team-primary">{stats.name}</h3>
-              <a href={`stats/${year}`}>See stats</a>
-            </div>
-            <Grid client:load data={stats} />
+      scoresAndSchedule && (
+        <div>
+          <div class="flex justify-between mb-0.5">
+            <h3 class="font-semibold text-team-primary">
+              {scoresAndSchedule.name}
+            </h3>
+            <a href={`schedule/${year}`}>See schedule</a>
           </div>
-        ))
+          <Grid
+            client:load
+            data={scoresAndSchedule}
+            columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+          />
+        </div>
+      )
     }
     {
-      playerGallery && playerGallery.length > 0 && (
-        <PlayerGallery images={playerGallery} class="mb-5" />
+      teamLeaders && (
+        <TeamLeaders leaders={teamLeaders}>
+          <a href={`roster/${year}`}>See roster</a>
+        </TeamLeaders>
+      )
+    }
+    {
+      standings && (
+        <div>
+          <h3 class="font-semibold text-team-primary mb-0.5">
+            {standings.name}
+          </h3>
+          <Grid client:load data={standings} />
+        </div>
       )
     }
   </div>
+  {
+    stats &&
+      (Array.isArray(stats) ? (
+        stats.map((data) => (
+          <div class="mb-5">
+            <div class="flex justify-between mb-0.5">
+              <h3 class="font-semibold text-team-primary">{data.name}</h3>
+              <a href={`stats/${year}`}>See stats</a>
+            </div>
+            <Grid client:load data={data} />
+          </div>
+        ))
+      ) : (
+        <div class="mb-5">
+          <div class="flex justify-between mb-0.5">
+            <h3 class="font-semibold text-team-primary">{stats.name}</h3>
+            <a href={`stats/${year}`}>See stats</a>
+          </div>
+          <Grid client:load data={stats} />
+        </div>
+      ))
+  }
+  {
+    playerGallery && playerGallery.length > 0 && (
+      <PlayerGallery images={playerGallery} class="mb-5" />
+    )
+  }
 </TeamLayout>

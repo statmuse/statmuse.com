@@ -59,22 +59,34 @@ const canonical = { url: playerPath, rewrite: true }
 const meta = { title, description, keywords, canonical }
 const league = domain.toLowerCase() === 'epl' ? 'fc' : leagueParam
 
-const facts = [
-  { label: 'Position', value: bio.position },
-  { label: 'Number', value: '#' + bio.jerseyNumber },
-  {
+const facts: { label: string; value: string }[] = []
+
+if (bio.position) facts.push({ label: 'Position', value: bio.position })
+if (bio.jerseyNumber)
+  facts.push({ label: 'Number', value: '#' + bio.jerseyNumber })
+if (bio.birthdate)
+  facts.push({
     label: formatDate(bio.birthdate, 'MMM D, YYYY'),
     value: age(bio.birthdate) + ' years',
-  },
-  { label: 'Height', value: bio.heightFeetInches },
-  { label: 'Weight', value: bio.weightLbs + ' lbs' },
-  { label: 'Experience', value: bio.experience },
-]
+  })
+if (league === 'fc') {
+  if (bio.heightCentimeters)
+    facts.push({ label: 'Height', value: bio.heightCentimeters })
+  if (bio.preferredFoot)
+    facts.push({ label: 'Preferred foot', value: bio.preferredFoot })
+  if (bio.nationality) facts.push({ label: 'Country', value: bio.nationality })
+} else {
+  if (bio.heightFeetInches)
+    facts.push({ label: 'Height', value: bio.heightFeetInches })
+  if (bio.weightLbs)
+    facts.push({ label: 'Weight', value: bio.weightLbs + ' lbs' })
+  if (bio.experience) facts.push({ label: 'Experience', value: bio.experience })
+}
 
 const nextGameTitle = `Next Game ${isNextGameHome ? 'vs' : '@'} ${
   isNextGameHome
-    ? nextGame.awayTeam.abbreviation
-    : nextGame.homeTeam.abbreviation
+    ? nextGame?.awayTeam.abbreviation
+    : nextGame?.homeTeam.abbreviation
 }`
 ---
 
@@ -90,7 +102,7 @@ const nextGameTitle = `Next Game ${isNextGameHome ? 'vs' : '@'} ${
       facts.map(({ label, value }) => (
         <div class="flex flex-col items-center">
           <div>{value}</div>
-          <div class="font-light text-sm opacity-70">{label}</div>
+          <div class="font-light text-sm opacity-80">{label}</div>
         </div>
       ))
     }

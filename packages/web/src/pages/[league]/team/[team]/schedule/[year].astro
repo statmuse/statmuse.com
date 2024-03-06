@@ -54,14 +54,10 @@ Caching.swr(Astro)
 ---
 
 <TeamLayout {bio} {meta} page="schedule">
-  <div class="space-y-5 mb-5">
     {
       schedule?.grid && schedule.grid.columns.length > 0 && (
-        <div class="mb-5">
-          <h3 class="font-semibold text-team-primary mb-0.5">
-            {schedule.grid.name}
-          </h3>
           <Grid
+            title={schedule.grid.name}
             data={schedule.grid}
             fullWidth={false}
             columnStyles={{
@@ -69,15 +65,13 @@ Caching.swr(Astro)
               default: 'w-20',
             }}
           />
-        </div>
       )
     }
     {
       gameResults?.grids &&
         gameResults.grids.map((data) => (
-          <div class="mb-5">
-            <h3 class="font-semibold text-team-primary mb-0.5">{data.name}</h3>
             <Grid
+              title={data.name}
               {data}
               fullWidth={false}
               columnStyles={{
@@ -86,8 +80,6 @@ Caching.swr(Astro)
                 default: 'w-20',
               }}
             />
-          </div>
         ))
     }
-  </div>
 </TeamLayout>

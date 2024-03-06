@@ -203,7 +203,12 @@
   }
 </script>
 
-<Panel {title} {href} {entity} class={`${classes} pb-0`}>
+<Panel
+  {title}
+  {href}
+  {entity}
+  class={`${classes} pb-0 ${!fullWidth ? 'md:w-fit' : ''}`}
+>
   <div class="relative overflow-x-auto no-scrollbar -mx-3">
     <table class="text-[15px] whitespace-nowrap" class:w-full={fullWidth}>
       {#each grids as grid}

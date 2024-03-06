@@ -59,7 +59,7 @@ Caching.swr(Astro)
     page_type: 'game',
   }}
 >
-  <Header {preferredDomain} share={{ url: Astro.url.href }} />
+  <Header {preferredDomain} />
   <EplBoxscore {data} />
   { ANSWER_CARDS_ENABLED && <Container>
     <AnswerCards league="fc" {teamId} />

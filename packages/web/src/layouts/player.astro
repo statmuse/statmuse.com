@@ -22,6 +22,7 @@ import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
 import type { NavLink } from 'src/types'
+import type { ComponentProps } from 'astro/types'
 
 interface Props {
   bio: GameraPlayerBio
@@ -86,6 +87,13 @@ const preferredDomain = domain.toLowerCase()
 const shareUrl = meta?.canonical?.url
   ? Astro.url.origin + meta.canonical.url
   : Astro.url.href
+
+const navProps: ComponentProps<typeof Nav> = {
+  teamColors: true,
+  links: links,
+  selected: page,
+  href: (p) => `${playerPath}/${p}`,
+}
 ---
 
 <Layout
@@ -152,13 +160,7 @@ const shareUrl = meta?.canonical?.url
           }
         </div>
       </div>
-      <Nav
-        class="hidden md:flex"
-        hero
-        {links}
-        selected={page}
-        href={(p) => `${playerPath}/${p}`}
-      />
+      <Nav class="hidden md:flex" hero {...navProps} />
     </div>
     <div
       class:list={{
@@ -173,19 +175,13 @@ const shareUrl = meta?.canonical?.url
     {
       parameters && (
         <GridDropdown
-          class="hidden lg:flex absolute right-3 bottom-3"
+          class="hidden lg:flex w-52 absolute right-3 bottom-3"
           {parameters}
         />
       )
     }
   </HeroPanel>
-  <Nav
-    class="md:hidden"
-    teamColors
-    {links}
-    selected={page}
-    href={(p) => `${playerPath}/${p}`}
-  />
+  <Nav class="md:hidden" {...navProps} />
   {parameters && <GridDropdown class="flex lg:hidden" {parameters} />}
   <slot />
   <Explore {league} additionalQuestions={bio.additionalQuestions} />

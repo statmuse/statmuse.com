@@ -50,25 +50,16 @@ const meta = { title, description, keywords, canonical }
 Caching.swr(Astro)
 ---
 
-<TeamLayout {bio} {meta} page="splits">
-  <div class="space-y-5 mb-5">
-    {
-      splits?.grids &&
-        splits.grids.map((data) => (
-          <div>
-            <div class="flex justify-between mb-0.5">
-              <h3 class="font-semibold text-team-primary">{data.name}</h3>
-              {splits.parameters && (
-                <GridDropdown parameters={splits.parameters} />
-              )}
-            </div>
-            <Grid
-              client:load
-              {data}
-              columnStyles={{ SPLIT: 'w-24 min-w-[96px] text-left' }}
-            />
-          </div>
-        ))
-    }
-  </div>
+<TeamLayout {bio} {meta} page="splits" parameters={splits?.parameters}>
+  {
+    splits?.grids &&
+      splits.grids.map((data) => (
+        <Grid
+          client:load
+          title={data.name}
+          {data}
+          columnStyles={{ SPLIT: 'w-24 min-w-[96px] text-left' }}
+        />
+      ))
+  }
 </TeamLayout>

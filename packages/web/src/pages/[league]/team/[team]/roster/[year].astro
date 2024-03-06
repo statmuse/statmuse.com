@@ -43,22 +43,16 @@ Caching.swr(Astro)
 ---
 
 <TeamLayout {bio} {meta} page="roster">
-  <div class="mb-5">
-    {
-      roster?.grid && (
-        <div class="mb-5">
-          <h3 class="font-semibold text-team-primary mb-0.5">
-            {roster.grid.name}
-          </h3>
-          <Grid
-            client:load
-            data={roster?.grid}
-            columnStyles={{ 'NO.': 'w-2', IMAGE: 'w-2', default: 'w-20' }}
-            stickyColumns={['NAME']}
-            fullWidth={false}
-          />
-        </div>
-      )
-    }
-  </div>
+  {
+    roster?.grid && (
+      <Grid
+        client:load
+        title={roster.grid.name}
+        data={roster?.grid}
+        columnStyles={{ 'NO.': 'w-2', IMAGE: 'w-2', default: 'w-20' }}
+        stickyColumns={['NAME']}
+        fullWidth={false}
+      />
+    )
+  }
 </TeamLayout>

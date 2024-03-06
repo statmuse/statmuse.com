@@ -7,11 +7,13 @@
   } from '@melt-ui/svelte'
   import Icon from '@components/icon.svelte'
 
-  export let options: SelectOption<string>[]
+  type Option = SelectOption<string> & { url?: string }
+
+  export let options: Option[]
   export let label: string
   export let hideLabel: boolean = false
   export let initial: string | undefined
-  export let param: string
+  export let param: string | undefined
 
   const handleSelectedChange: CreateSelectProps<string>['onSelectedChange'] = ({
     curr,
@@ -19,9 +21,13 @@
   }) => {
     if (curr?.value === next?.value) return curr
 
-    const url = new URL(window.location.href)
-    if (next?.value === options[0].value) url.searchParams.delete(param)
-    else if (next?.value) url.searchParams.set(param, next?.value)
+    const option = options.find((o) => o.value === next?.value)
+
+    const url = new URL(option?.url ? option?.url : window.location.href)
+    if (param) {
+      if (next?.value === options[0].value) url.searchParams.delete(param)
+      else if (next?.value) url.searchParams.set(param, next?.value)
+    }
 
     window.location.href = url.toString()
     return next
@@ -73,7 +79,7 @@
       <div class="absolute right-0 w-2 h-5 -top-[10px] bg-gray-6" />
     </div>
     <div
-      class="z-10 relative -mt-[5px] pb-2 flex flex-col
+      class="z-10 relative -mt-[5px] pb-2 !max-h-64 flex flex-col
              overflow-y-auto rounded-b-3xl bg-gray-6
              border border-t-0 border-gray-6 focus:!ring-0"
       use:melt={$menu}
@@ -82,7 +88,7 @@
         <div
           class="relative cursor-pointer p-1.5 px-3
                  focus:z-10 data-[disabled]:opacity-50
-                 whitespace-nowrap overflow-x-hidden"
+                 whitespace-nowrap"
           use:melt={$option(item)}
         >
           <div class="check {$isSelected(item.value) ? 'block' : 'hidden'}">
