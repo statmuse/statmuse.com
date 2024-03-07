@@ -8,6 +8,8 @@ import type { Musing } from '@statmuse/core/musing'
 import type { HeroProps } from './props'
 import type { Context } from './session'
 import { Config } from 'sst/node/config'
+import { clarify } from '@lib/bedrock'
+import { createAskPath } from '@statmuse/core/path'
 export const gameraApiUrl = import.meta.env.GAMERA_API_URL
 export const gameraApiKey = Config.GAMERA_API_KEY
 
@@ -37,10 +39,11 @@ export async function ask(
     query: string
     conversationToken?: string
     preferredDomain?: string
+    corrected?: boolean
   },
   context: Context,
 ) {
-  const league = options.league
+  const league = options.league?.toLowerCase()
   const query = options.query
 
   const params: Record<string, string> = {
@@ -54,11 +57,42 @@ export async function ask(
     params['preferredDomain'] = options.preferredDomain
   }
 
-  return request<GameraResponse>(
+  let response = await request<GameraResponse>(
     context,
     `${league ? league + '/' : ''}answer`,
     params,
   )
+
+  if (
+    !options.corrected && // Don't correct if it's already been corrected
+    response?.type === 'error' &&
+    response?.disposition.responseType === 'not-understood'
+  ) {
+    try {
+      // TODO: cache bedrock responses in dynamodb
+      // TODO: handle junk input (mraid.js, etc.)
+      const correction = await clarify(query)
+      if (correction.domain === 'money') {
+        const url = createAskPath(correction)
+        return { redirect: url }
+      }
+
+      return ask(
+        {
+          query: correction.query,
+          league:
+            correction.domain === 'unknown' ? undefined : correction.domain,
+          corrected: true,
+        },
+        context,
+      )
+    } catch (error) {
+      console.error('Error using Bedrock to cleanup input', error)
+      return { response }
+    }
+  }
+
+  return { response }
 }
 
 export const getGameraHeaders = (context: Context) => {

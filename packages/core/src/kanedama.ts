@@ -389,8 +389,8 @@ export interface TokenizationScore {
 
 export interface KanedamaResponseBase {
   conversation: Conversation
-  disposition: Disposition
-  tokenizationScore: TokenizationScore
+  disposition?: Disposition
+  tokenizationScore?: TokenizationScore
 }
 
 export interface KanedamaDefaultResponse extends KanedamaResponseBase {
@@ -400,12 +400,6 @@ export interface KanedamaDefaultResponse extends KanedamaResponseBase {
     | 'error'
   visual: Visual
   nlg: Nlg
-}
-
-export interface KanedamaChoicesResponse extends KanedamaResponseBase {
-  type: 'nlgPromptForMoreInfoVisualChoicesOptional'
-  visual: ChoicesVisual
-  nlg: ChoicesNlg
 }
 
 export interface ChoicesVisual
@@ -436,4 +430,4 @@ export interface ChoicesNlg {
   }
 }
 
-export type KanedamaResponse = KanedamaDefaultResponse | KanedamaChoicesResponse
+export type KanedamaResponse = KanedamaDefaultResponse

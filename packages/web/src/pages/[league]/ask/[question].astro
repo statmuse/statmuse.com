@@ -1,9 +1,6 @@
 ---
 import Answer from '@components/answer.astro'
-import {
-  type GameraDefaultResponse,
-  handleResponse,
-} from '@statmuse/core/gamera'
+import { handleResponse } from '@statmuse/core/gamera'
 import { ask } from '@lib/gamera'
 import { Caching } from '@lib/caching'
 import * as Enforcer from '@lib/enforcer'
@@ -21,9 +18,8 @@ const question = Astro.params.question
 if (!question) return Astro.redirect('/questions')
 let query = question.replaceAll('-', ' ')
 
-const response = (await ask({ league: domain, query }, Astro)) as
-  | GameraDefaultResponse
-  | undefined
+const {response, redirect} = await ask({ league: domain, query }, Astro)
+if (redirect) return Astro.redirect(redirect)
 if (!response) return NOT_FOUND_404
 
 const { redirectUrl } = handleResponse(response)
