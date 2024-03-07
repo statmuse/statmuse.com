@@ -3,6 +3,8 @@ import { type StackContext, Config } from 'sst/constructs'
 export function Secrets({ stack }: StackContext) {
   const secrets = Config.Secret.create(
     stack,
+    'BOTPOISON_PUBLIC_KEY',
+    'BOTPOISON_SECRET_KEY',
     'STRIPE_SECRET',
     'STRIPE_WEBHOOK_SECRET',
     'STRIPE_PRICE_ID',

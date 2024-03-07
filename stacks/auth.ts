@@ -31,6 +31,7 @@ export function Auth({ stack, app }: StackContext) {
           : 'mothra-staging.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com',
       },
       bind: [
+        secrets.BOTPOISON_SECRET_KEY,
         secrets.STRIPE_SECRET,
         secrets.STRIPE_WEBHOOK_SECRET,
         secrets.STRIPE_PRICE_ID,
