@@ -72,18 +72,18 @@ Caching.swr(Astro)
           >
             <Panel
               class:list={{
-                'break-inside-avoid-column grid grid-cols-2 font-light': true,
+                'break-inside-avoid-column font-light min-h-44': true,
                 'cursor-pointer hover:brightness-[85%]': true,
               }}
               background={musing.background_rgba}
               foreground={musing.foreground_rgba}
             >
               <div
-                class="leading-snug whitespace-pre-wrap text-pretty"
+                class="leading-snug whitespace-pre-wrap text-pretty w-1/2"
                 set:text={musing.text_plain?.replaceAll(/^-   /gm, '')}
               />
-              <div class="flex flex-col justify-between -mb-2">
-                <div class="text-right">
+              <div class="flex flex-col justify-between -mb-2 w-1/2 absolute right-3 top-0 bottom-2">
+                <div class="text-right mt-1.5">
                   {relativeTimeFromDates(musing.publish_at)}
                 </div>
                 <Image
