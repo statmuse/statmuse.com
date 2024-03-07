@@ -15,10 +15,11 @@ StatMuse is a website that answers sports and finance questions.
 We (StatMuse) received the following search and were unable to understand it.
 Search: ${query}
 
-First, correct any typos or grammar mistakes. It's important that you don't try to add clarification or modify the search in substanative ways. You should only correct typos and grammar.
+First, translate the search to English if it's not already an English question.
+Next, correct any typos or grammar mistakes. It's important that you don't try to add clarification or modify the search in substanative ways. You should only correct typos and grammar.
 Next, determine which of the following classifications apply: NFL, NBA, MLB, NHL, PGA, Premier League (EPL), or Finance (Money).
-Finally, return a JSON response with the corrected query (all lowercase) and classification ("domain") in the following format:
-{ "query": "corrected query", "domain": "corrected classification" }
+Finally, return a JSON response with the corrected query (all lowercase) and classification ("domain") as well as the original language as an ISO 639-1 two-digit language code in the following format:
+{ "query": "corrected query", "domain": "corrected classification", "language": "detected language code" }
 
 It is critical that your response always contains only the formatted json specified above.
 
@@ -50,6 +51,8 @@ Note: "domain" should be one of "nfl", "nba", "mlb", "nhl", "pga", "epl", "money
   const correction = JSON.parse(completions.content[0].text) as {
     query: string
     domain: GameraDomain | 'money' | 'unknown'
+    language: string
   }
+  console.log('correction', correction)
   return correction
 }
