@@ -4,7 +4,6 @@ import { AthenaClient } from '@aws-sdk/client-athena'
 import { S3Client } from '@aws-sdk/client-s3'
 import { AthenaExpress } from 'athena-express-plus'
 import {
-  type GameraResponse,
   getUrlForEntity,
   type GameraEntity,
   type GameraTeamSeasonBio,
@@ -401,7 +400,6 @@ async function update(
 
         const ask = await Ask.get({ context_id, query })
         const response = ask?.answer
-        // const response = await ask({ league, query })
         if (!response || response.type === 'error') return
 
         const subject = response.visual?.summary?.subject
@@ -849,40 +847,6 @@ async function handleDailyUpdate() {
         await update(timeframe, league, country)
       }
     }
-  }
-}
-
-async function _ask(options: {
-  league: League
-  query: string
-  conversationToken?: string
-  preferredDomain?: string
-}) {
-  const league = options.league === 'FC' ? 'epl' : options.league
-  const query = options.query
-
-  const params: Record<string, string> = {
-    input: query,
-  }
-
-  if (options.conversationToken) {
-    params['conversationToken'] = options.conversationToken
-  }
-  if (options.preferredDomain) {
-    params['preferredDomain'] = options.preferredDomain
-  }
-
-  const path = `${league ? league.toLowerCase() + '/' : ''}answer`
-  const requestUrl = `${gameraApiUrl}${path}?${new URLSearchParams(
-    params as Record<string, string>,
-  ).toString()}`
-
-  try {
-    const response = await fetch(requestUrl, { headers })
-    return response.json() as Promise<GameraResponse>
-  } catch (error) {
-    console.error(error)
-    return undefined
   }
 }
 

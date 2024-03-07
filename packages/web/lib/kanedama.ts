@@ -25,6 +25,8 @@ import update from 'lodash/fp/update'
 import type { SeriesOptionsType, SeriesTooltipOptionsObject } from 'highcharts'
 import { getGameraHeaders } from './gamera'
 import type { Context } from './session'
+import { clarify } from '@lib/bedrock'
+import { createAskPath } from '@statmuse/core/path'
 
 export const kanedamaApiUrl = import.meta.env.KANEDAMA_API_URL
 
@@ -91,10 +93,31 @@ export type RenderTarget = {
   supportsCandlestick: boolean
 }
 
+export async function request<T>(
+  context: Context,
+  path: string,
+  params?: Record<string, string | number> | URLSearchParams,
+): Promise<T | undefined> {
+  const requestUrl = `${kanedamaApiUrl}${path}?${new URLSearchParams(
+    params as Record<string, string>,
+  ).toString()}`
+
+  try {
+    const response = await fetch(requestUrl, {
+      headers: getGameraHeaders(context),
+    })
+    return response.json() as Promise<T>
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
+}
+
 export async function ask(
   options: {
     query: string
     conversationToken?: string
+    corrected?: boolean
   },
   context: Context,
 ) {
@@ -108,18 +131,37 @@ export async function ask(
     params['conversationToken'] = options.conversationToken
   }
 
-  const requestUrl = `${kanedamaApiUrl}answer?${new URLSearchParams(
-    params,
-  ).toString()}`
+  let response = await request<KanedamaResponse>(context, 'answer', params)
 
-  try {
-    const response = await fetch(requestUrl, {
-      headers: getGameraHeaders(context),
-    })
-    return response.json() as Promise<KanedamaResponse>
-  } catch (error) {
-    console.error(error)
+  if (
+    !options.corrected && // Don't correct if it's already been corrected
+    response?.type === 'error' &&
+    response?.nlg?.text?.answer[0].text === "I didn't understand your question."
+  ) {
+    try {
+      // TODO: cache bedrock responses in dynamodb
+      // TODO: handle junk input (mraid.js, etc.)
+      const correction = await clarify(query)
+      if (correction.domain === 'unknown') return { response }
+      if (correction.domain !== 'money') {
+        const url = createAskPath(correction)
+        return { redirect: url }
+      }
+
+      return ask(
+        {
+          query: correction.query,
+          corrected: true,
+        },
+        context,
+      )
+    } catch (error) {
+      console.error('Error using Bedrock to cleanup input', error)
+      return { response }
+    }
   }
+
+  return { response }
 }
 
 export async function lookup(symbol: string, context: Context) {

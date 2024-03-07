@@ -7,11 +7,7 @@ import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals-money.astro'
 import Container from '@components/container.astro'
 import Explore from '@components/explore.astro'
-import {
-  type KanedamaDefaultResponse,
-  handleResponse,
-  tokensToText,
-} from '@statmuse/core/kanedama'
+import { handleResponse, tokensToText } from '@statmuse/core/kanedama'
 import { ask, getHeroProps } from '@lib/kanedama'
 import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import { title } from '@lib/meta'
@@ -21,7 +17,6 @@ import * as Link from '@statmuse/core/link'
 import { NOT_FOUND_404 } from '@lib/response'
 
 const canQuery = await Enforcer.canQueryFinance(Astro.locals)
-
 if (!canQuery) {
   return Astro.redirect('/auth/signup?limit')
 }
@@ -39,9 +34,8 @@ let query = isLegacyParam(question)
   ? parseLegacyParam(Astro.url.pathname)
   : question.replaceAll('-', ' ')
 
-const response = (await ask({ query }, Astro)) as
-  | KanedamaDefaultResponse
-  | undefined
+const { response, redirect } = await ask({ query }, Astro)
+if (redirect) return Astro.redirect(redirect)
 if (!response) return NOT_FOUND_404
 
 const { subject, redirectUrl, conversationToken } = handleResponse(response)
@@ -54,7 +48,6 @@ query = clean(
 )
 
 const heroProps = getHeroProps({ imageAlt: query, response })
-
 const code = await Link.financeAskShortCode(query)
 
 const meta =
