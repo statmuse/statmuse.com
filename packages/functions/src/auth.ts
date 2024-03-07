@@ -5,6 +5,11 @@ import sendgrid from '@sendgrid/mail'
 import contacts from '@sendgrid/client'
 import { Config } from 'sst/node/config'
 import { sessions } from './session'
+import Botpoison from '@botpoison/node'
+
+const botpoison = new Botpoison({
+  secretKey: Config.BOTPOISON_SECRET_KEY,
+})
 
 sendgrid.setApiKey(Config.SENDGRID_TRANSACTIONAL_API_KEY)
 contacts.setApiKey(Config.SENDGRID_API_KEY)
@@ -14,6 +19,22 @@ export const handler = AuthHandler({
   providers: {
     email: CodeAdapter({
       async onCodeRequest(code, claims) {
+        if (!claims.challenge) {
+          return {
+            statusCode: 401,
+            body: JSON.stringify({ messsage: 'Unauthorized' }),
+          }
+        }
+
+        const { ok } = await botpoison.verify(claims.challenge)
+
+        if (!ok) {
+          return {
+            statusCode: 401,
+            body: JSON.stringify({ messsage: 'Unauthorized' }),
+          }
+        }
+
         console.log('sending email to', claims.email)
 
         await sendgrid.send({
