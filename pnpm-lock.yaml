@@ -99,6 +99,9 @@ importers:
       '@aws-sdk/lib-dynamodb':
         specifier: ^3.499.0
         version: 3.499.0(@aws-sdk/client-dynamodb@3.499.0)
+      '@botpoison/node':
+        specifier: ^0.1.10
+        version: 0.1.10
       '@elastic/elasticsearch':
         specifier: ^8.9.0
         version: 8.9.0
@@ -172,6 +175,9 @@ importers:
       '@aws-sdk/lib-dynamodb':
         specifier: ^3.499.0
         version: 3.499.0(@aws-sdk/client-dynamodb@3.499.0)
+      '@botpoison/node':
+        specifier: ^0.1.10
+        version: 0.1.10
       '@honeybadger-io/js':
         specifier: ^6.5.2
         version: 6.5.2
@@ -331,7 +337,7 @@ importers:
         version: 3.0.3(prettier@3.2.5)(svelte@4.2.0)
       svelte-check:
         specifier: ^3.5.2
-        version: 3.5.2(@babel/core@7.23.5)(postcss@8.4.32)(svelte@4.2.0)
+        version: 3.5.2(@babel/core@7.23.5)(postcss@8.4.27)(svelte@4.2.0)
       svelte-sequential-preprocessor:
         specifier: ^2.0.1
         version: 2.0.1
@@ -3396,6 +3402,11 @@ packages:
       '@babel/helper-string-parser': 7.23.4
       '@babel/helper-validator-identifier': 7.22.20
       to-fast-properties: 2.0.0
+
+  /@botpoison/node@0.1.10:
+    resolution: {integrity: sha512-sKkiQyfACvGYLvN6KUVwFTDru4tlutxYPoihsDMs6Pklso9ADfb78jShGfhvBYVXn6Vhf5z19yalaUmzU2yjfA==}
+    engines: {node: '>=10'}
+    dev: false
 
   /@cdklabs/tskb@0.0.3:
     resolution: {integrity: sha512-JR+MuD4awAXvutu7HArephXfZm09GPTaSAQUqNcJB5+ZENRm4kV+L6vJL6Tn1xHjCcHksO+HAqj3gYtm5K94vA==}
@@ -12099,7 +12110,6 @@ packages:
       nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.0.2
-    dev: false
 
   /postcss@8.4.32:
     resolution: {integrity: sha512-D/kj5JNu6oo2EIy+XL/26JEDTlIbB8hw85G8StOE6L74RQAVVP5rej6wxCNqyMbR4RkPfqvezVbPw81Ngd6Kcw==}
@@ -13280,7 +13290,7 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  /svelte-check@3.5.2(@babel/core@7.23.5)(postcss@8.4.32)(svelte@4.2.0):
+  /svelte-check@3.5.2(@babel/core@7.23.5)(postcss@8.4.27)(svelte@4.2.0):
     resolution: {integrity: sha512-5a/YWbiH4c+AqAUP+0VneiV5bP8YOk9JL3jwvN+k2PEPLgpu85bjQc5eE67+eIZBBwUEJzmO3I92OqKcqbp3fw==}
     hasBin: true
     peerDependencies:
@@ -13293,7 +13303,7 @@ packages:
       picocolors: 1.0.0
       sade: 1.8.1
       svelte: 4.2.0
-      svelte-preprocess: 5.0.4(@babel/core@7.23.5)(postcss@8.4.32)(svelte@4.2.0)(typescript@5.2.2)
+      svelte-preprocess: 5.0.4(@babel/core@7.23.5)(postcss@8.4.27)(svelte@4.2.0)(typescript@5.2.2)
       typescript: 5.2.2
     transitivePeerDependencies:
       - '@babel/core'
@@ -13316,7 +13326,7 @@ packages:
       svelte: 4.2.0
     dev: false
 
-  /svelte-preprocess@5.0.4(@babel/core@7.23.5)(postcss@8.4.32)(svelte@4.2.0)(typescript@5.2.2):
+  /svelte-preprocess@5.0.4(@babel/core@7.23.5)(postcss@8.4.27)(svelte@4.2.0)(typescript@5.2.2):
     resolution: {integrity: sha512-ABia2QegosxOGsVlsSBJvoWeXy1wUKSfF7SWJdTjLAbx/Y3SrVevvvbFNQqrSJw89+lNSsM58SipmZJ5SRi5iw==}
     engines: {node: '>= 14.10.0'}
     requiresBuild: true
@@ -13358,7 +13368,7 @@ packages:
       '@types/pug': 2.0.7
       detect-indent: 6.1.0
       magic-string: 0.27.0
-      postcss: 8.4.32
+      postcss: 8.4.27
       sorcery: 0.11.0
       strip-indent: 3.0.0
       svelte: 4.2.0
