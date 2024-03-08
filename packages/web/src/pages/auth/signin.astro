@@ -42,8 +42,7 @@ const meta = {
       class="w-full max-w-md bg-white rounded-lg border border-[#e4e4e4] mx-auto mb-5 pt-8 px-8 pb-44 relative text-center overflow-hidden"
     >
       <div>
-        <div id="captcha-container" class="mb-5" style="display: none"></div>
-        <form id="signin-form" method="post" style="display: none;">
+        <form method="post">
           <input
             class="w-full px-3 py-2.5 text-lg text-[#55595c] rounded bg-white border mb-7 outline-none"
             name="email"
@@ -100,7 +99,6 @@ const meta = {
   import Botpoison from '@botpoison/browser'
 
   document.addEventListener('astro:page-load', async () => {
-    const form = document.querySelector<HTMLElement>('#signin-form')
     const input = document.querySelector<HTMLInputElement>(
       'input[name="challenge"]',
     )
@@ -112,27 +110,5 @@ const meta = {
     const { solution } = await botpoison.challenge()
 
     input.value = solution
-
-    const result = await AwsWafIntegration.fetch('/aws/verify-token')
-
-    if (result.status === 405) {
-      const container =
-        document.querySelector<HTMLElement>('#captcha-container')
-
-      container.style.display = 'block'
-
-      AwsWafCaptcha.renderCaptcha(container, {
-        apiKey:
-          'uaY13CxN/ArG+Fb5sI7h1Kxnv5phEPzuVl7xS9kuLmcYoDcJFsLo4trrdTh5IDU06yFcBPcv4fBD6fOxlzCMwTJSbmkQ4UNbGeq7jazkqI/R5n2y2H96eY6mj61Qa36HpG0f2MyOckB9QvbJpGgGHRuAK2hrBMVchKfhrGCEFzL4Rfm123E0weuaHiAOyA+o7yZ0bYy9qN5Vvn+/yInTVkZTB3u2ib4Dr0VaPcqd5aEgqFYsXe2dluphLHAL1poDmxjU9JNySJsdKJ7ddLyFOV7SQRrt3V9ern0SVrF8frIQiHHqvU3SEjm4CYDCxWISMiP4VbSXJ18keDFCFpJberC0AJi51mhQ/UCpE5LE9uDchVoyqE0VRemQvV439/FyO/iPVdfC2TN+lBI3px4/NTKfgYwA9w6+frHs6tl94kw5XaMYAM59tyJ8Y/yeeOvMg5XFwcu9KcZYMqm3yFePLSwyCXT88PKjTlQs9ozw7Q31fdsErOGDU0Wkdx0Szl6kSJo5p1WgfZXgfF5xWniOvClBqRdwfgcr7oP/doLI4tymHdjVqiaJRD5xyidoqDZVzYXzZv+n0TfcprpcwapieoO8f3gU2Ss6vXQZ4lLHJIcgI6hAhGJvMxmJxpGpoaVyEviNvEEYHXuVyCdTgIxYkvOvtABI8Dor5YG5U23V6gI=_1_1',
-        onSuccess: () => {
-          container.style.display = 'none'
-          form.style.display = 'block'
-        },
-      })
-
-      return
-    }
-
-    form.style.display = 'block'
   })
 </script>
