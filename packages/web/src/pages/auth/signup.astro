@@ -8,6 +8,7 @@ import {
   createBillingSession,
   createCheckoutSession,
 } from '@statmuse/core/stripe'
+import { Config } from 'sst/node/config'
 
 if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData()
@@ -131,6 +132,12 @@ const meta = {
             />
             <input type="hidden" name="response_type" value="code" />
             <input type="hidden" name="provider" value="email" />
+            <input
+              type="hidden"
+              name="challenge"
+              data-botpoison-public-key={Config.BOTPOISON_PUBLIC_KEY}
+              value=""
+            />
             <button
               disabled={false}
               class="w-full text-lg mb-7 p-3 border-0 rounded text-white bg-[#42a5f5] hover:bg-[#1976d2] disabled:bg-[#cfd8dc]"
@@ -162,9 +169,23 @@ const meta = {
   </Container>
 </Layout>
 <script>
+  import Botpoison from '@botpoison/browser'
+
   document.addEventListener('astro:page-load', async () => {
-    const result = await AwsWafIntegration.fetch('/aws/verify-token')
     const form = document.querySelector<HTMLElement>('#signup')
+    const input = document.querySelector<HTMLInputElement>(
+      'input[name="challenge"]',
+    )
+
+    const botpoison = new Botpoison({
+      publicKey: input?.dataset.botpoisonPublicKey,
+    })
+
+    const { solution } = await botpoison.challenge()
+
+    input.value = solution
+
+    const result = await AwsWafIntegration.fetch('/aws/verify-token')
 
     if (result.status === 405) {
       const container =

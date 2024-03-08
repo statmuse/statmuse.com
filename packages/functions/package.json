@@ -20,6 +20,7 @@
     "@aws-sdk/client-secrets-manager": "^3.354.0",
     "@aws-sdk/client-sesv2": "^3.391.0",
     "@aws-sdk/lib-dynamodb": "^3.499.0",
+    "@botpoison/node": "^0.1.10",
     "@elastic/elasticsearch": "^8.9.0",
     "@segment/analytics-node": "^1.1.1",
     "@sendgrid/client": "^7.7.0",
