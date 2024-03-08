@@ -34,8 +34,9 @@ let query = isLegacyParam(question)
   ? parseLegacyParam(Astro.url.pathname)
   : question.replaceAll('-', ' ')
 
-const { response, redirect } = await ask({ query }, Astro)
-if (redirect) return Astro.redirect(redirect)
+const askResponse = await ask({ query }, Astro)
+if ('redirect' in askResponse) return Astro.redirect(askResponse.redirect)
+const response = askResponse.response
 if (!response) return NOT_FOUND_404
 
 const { subject, redirectUrl, conversationToken } = handleResponse(response)

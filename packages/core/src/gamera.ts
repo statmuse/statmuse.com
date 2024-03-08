@@ -1197,7 +1197,6 @@ export interface Visual {
   contentReference?: ContentReference
   detail?: Detail[]
   disclaimers?: [string]
-  contentReference: ContentReference
 }
 
 export interface NbaVisual extends Visual {

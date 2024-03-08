@@ -9,6 +9,7 @@ import type { HeroProps } from './props'
 import type { Context } from './session'
 import { Config } from 'sst/node/config'
 import { clarify } from '@lib/bedrock'
+import { translate, translateObject } from '@lib/translate'
 import { createAskPath } from '@statmuse/core/path'
 export const gameraApiUrl = import.meta.env.GAMERA_API_URL
 export const gameraApiKey = Config.GAMERA_API_KEY
@@ -33,16 +34,22 @@ export async function request<T>(
   }
 }
 
+type AskOptions = {
+  league?: string
+  query: string
+  conversationToken?: string
+  preferredDomain?: string
+  corrected?: boolean
+}
+
+type AskResponse =
+  | { response?: GameraResponse; lang?: string; dir?: string }
+  | { redirect: string }
+
 export async function ask(
-  options: {
-    league?: string
-    query: string
-    conversationToken?: string
-    preferredDomain?: string
-    corrected?: boolean
-  },
+  options: AskOptions,
   context: Context,
-) {
+): Promise<AskResponse> {
   const league = options.league?.toLowerCase()
   const query = options.query
 
@@ -72,9 +79,91 @@ export async function ask(
       // TODO: cache bedrock responses in dynamodb
       // TODO: handle junk input (mraid.js, etc.)
       const correction = await clarify(query)
+
       if (correction.domain === 'money') {
         const url = createAskPath(correction)
         return { redirect: url }
+      }
+
+      if (correction.lang !== 'en') {
+        const englishQuery = await translate({
+          text: query,
+          from: correction.lang,
+          to: 'en',
+        })
+
+        if (!englishQuery.text) return { response }
+
+        const englishResponse = await ask(
+          {
+            query: englishQuery.text,
+            league:
+              correction.domain === 'unknown' ? undefined : correction.domain,
+            corrected: true,
+          },
+          context,
+        )
+        if ('redirect' in englishResponse) return englishResponse
+
+        const gameraResponse = englishResponse.response
+        if (!gameraResponse) return { response }
+
+        if (
+          gameraResponse.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
+        ) {
+          gameraResponse.visual = await translateObject(
+            gameraResponse.visual,
+            'en',
+            correction.lang,
+            [
+              'summaryTokens.*.text',
+              'summary.answer.*.text',
+              'additionalQuestions.*.text',
+              'detail.*.columnCharts.*.categories.*.nameLines.*',
+              {
+                key: 'detail.*.grids.*.columns.*.title',
+                excluded: [
+                  // 'NAME',
+                  // 'SEASON',
+                  'TM',
+                  'GP',
+                  'PTS',
+                  'MPG',
+                  'PPG',
+                  'RPG',
+                  'APG',
+                  'SPG',
+                  'BPG',
+                  'TPG',
+                  'FGM',
+                  'FGA',
+                  'FG%',
+                  '3PM',
+                  '3PA',
+                  '3P%',
+                  'FTM',
+                  'FTA',
+                  'FT%',
+                  'MIN',
+                  'REB',
+                  'AST',
+                  'STL',
+                  'BLK',
+                  'TOV',
+                  'PF',
+                  '+/-',
+                ],
+              },
+              'detail.*.grids.*.rows.*.NAME.display',
+              'detail.*.grids.*.rows.*.NAME.entity.display',
+            ],
+          )
+        }
+        return {
+          response: gameraResponse,
+          lang: correction.lang,
+          dir: correction.dir,
+        }
       }
 
       return ask(
