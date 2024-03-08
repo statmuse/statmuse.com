@@ -4,6 +4,7 @@ const freeAskLimit = 35
 export const freeRowLimit = 25
 
 export const canQuery = async (locals: App.Locals) => {
+  if (import.meta.env.DEV) return true
   if (locals.subscribed) return locals.subscribed
 
   const result = locals.user
@@ -15,6 +16,7 @@ export const canQuery = async (locals: App.Locals) => {
 }
 
 export const canQueryFinance = async (locals: App.Locals) => {
+  if (import.meta.env.DEV) return true
   if (locals.subscribed) return locals.subscribed
 
   const result = locals.user

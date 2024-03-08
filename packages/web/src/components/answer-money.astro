@@ -67,6 +67,7 @@ const meta =
 
 <MoneyBaseLayout
   {meta}
+  class="flex flex-col gap-3"
   colors={subject?.colors}
   analytics={{
     is_search: true,
@@ -87,12 +88,10 @@ const meta =
   <Visuals response={answer} {conversationToken} />
   {
     answer.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
-      <Container>
-        <Explore
-          league="money"
-          additionalQuestions={answer.visual.additionalQuestions}
-        />
-      </Container>
+      <Explore
+        league="money"
+        additionalQuestions={answer.visual.additionalQuestions}
+      />
     )
   }
   <Footer />

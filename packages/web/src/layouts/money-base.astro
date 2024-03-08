@@ -14,6 +14,7 @@ interface Props {
   }
   tradingview?: boolean
   analytics?: AnalyticsPageviewProperties
+  class?: string | null
 }
 
 const { meta } = Astro.props
@@ -58,9 +59,11 @@ const metaTags = [
     content: meta?.twitter?.imageUrl || defaultImageUrl,
   },
 ] as HTMLAttributes<'meta'>[]
+
+const { class: _, ...props } = Astro.props
 ---
 
-<BaseLayout {...Astro.props}>
+<BaseLayout {...props}>
   <title slot="head">{title}</title>
   {metaTags.map((meta) => <meta slot="head" {...meta} />)}
   {
@@ -75,5 +78,7 @@ const metaTags = [
       </Fragment>
     ) : null
   }
-  <slot />
+  <div class={Astro.props.class}>
+    <slot />
+  </div>
 </BaseLayout>
