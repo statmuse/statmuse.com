@@ -1,5 +1,6 @@
 ---
 import type { AssetPriceDataDetail, Timeframe } from '@statmuse/core/kanedama'
+import Panel from '@components/panel.astro'
 import type {
   RenderTarget,
   Asset,
@@ -328,14 +329,13 @@ const options = mapChartOptions(
 )
 ---
 
-<div
+<Panel
   id="chart"
   class="h-[400px] overflow-hidden"
   data-options={JSON.stringify(options)}
   data-price-format-string={priceFormatString}
   data-render-target={renderTargetName}
->
-</div>
+/>
 
 <script>
   import numeral from 'numeral'

@@ -5,7 +5,6 @@ import Header from '@components/header.astro'
 import Footer from '@components/footer.astro'
 import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals-money.astro'
-import Container from '@components/container.astro'
 import Explore from '@components/explore.astro'
 import { handleResponse, tokensToText } from '@statmuse/core/kanedama'
 import { ask, getHeroProps } from '@lib/kanedama'
@@ -94,6 +93,7 @@ Caching.swr(Astro)
 >
   <MoneyBaseLayout
     {meta}
+    class="flex flex-col gap-3"
     colors={subject?.colors}
     analytics={{
       is_search: true,
@@ -113,17 +113,16 @@ Caching.swr(Astro)
       heroProps ? (
         <Hero
           {...heroProps}
+          class="-mt-3"
           shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`}
         />
       ) : null
     }
     <Visuals {response} {conversationToken} />
-    <Container>
-      <Explore
-        league="money"
-        additionalQuestions={response.visual.additionalQuestions}
-      />
-    </Container>
+    <Explore
+      league="money"
+      additionalQuestions={response.visual.additionalQuestions}
+    />
     <Footer />
   </MoneyBaseLayout>
 </Error>

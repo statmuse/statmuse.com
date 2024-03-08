@@ -64,6 +64,7 @@ Caching.swr(Astro)
 
 <Layout
   {meta}
+  class="flex flex-col gap-3"
   colors={{ foreground, background }}
   analytics={{
     page_type: 'musing',
@@ -72,11 +73,7 @@ Caching.swr(Astro)
     query,
   }}
 >
-  <Header
-    {query}
-    {conversationToken}
-    {preferredDomain}
-  />
+  <Header {query} {conversationToken} {preferredDomain} />
   {
     heroProps ? (
       <Hero
@@ -86,13 +83,11 @@ Caching.swr(Astro)
     ) : null
   }
   <Visuals response={musing.answer} />
-  <Container>
-    <Explore
-      league={musing.domain === 'EPL' ? 'fc' : preferredDomain}
-      additionalQuestions={musing.answer.visual.additionalQuestions}
-    />
-  </Container>
-  { ANSWER_CARDS_ENABLED ? <Container>
+  <Explore
+    league={musing.domain === 'EPL' ? 'fc' : preferredDomain}
+    additionalQuestions={musing.answer.visual.additionalQuestions}
+  />
+  { ANSWER_CARDS_ENABLED ? 
     <AnswerCards
       league={musing.domain === 'EPL' ? 'fc' : (preferredDomain as LeagueParam)}
       teamId={contentReference?.questionTags?.teamIds.length > 0
@@ -101,5 +96,5 @@ Caching.swr(Astro)
         ? contentReference?.answerTags?.teamIds[0]
         : undefined}
     />
-  </Container> : null}
+  : null }
 </Layout>
