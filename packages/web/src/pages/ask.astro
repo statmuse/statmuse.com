@@ -25,11 +25,12 @@ if (Astro.request.method === 'POST') {
 if (!query) return Astro.redirect('/')
 
 console.log('query input: ', query)
-const { response, redirect } = await ask(
+const askResponse = await ask(
   { query, preferredDomain, conversationToken, ...(league ? { league } : {}) },
   Astro,
 )
-if (redirect) return Astro.redirect(redirect)
+if ('redirect' in askResponse) return Astro.redirect(askResponse.redirect)
+const response = askResponse.response
 if (!response) return NOT_FOUND_404
 
 if (Astro.request.method === 'POST') {

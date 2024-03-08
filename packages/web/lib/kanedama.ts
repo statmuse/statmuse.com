@@ -27,6 +27,7 @@ import { getGameraHeaders } from './gamera'
 import type { Context } from './session'
 import { clarify } from '@lib/bedrock'
 import { createAskPath } from '@statmuse/core/path'
+import { translate, translateObject } from '@lib/translate'
 
 export const kanedamaApiUrl = import.meta.env.KANEDAMA_API_URL
 
@@ -113,6 +114,8 @@ export async function request<T>(
   }
 }
 
+type AskResponse = { response?: KanedamaResponse } | { redirect: string }
+
 export async function ask(
   options: {
     query: string
@@ -120,7 +123,7 @@ export async function ask(
     corrected?: boolean
   },
   context: Context,
-) {
+): Promise<AskResponse> {
   const query = options.query
 
   const params: Record<string, string> = {
@@ -142,10 +145,46 @@ export async function ask(
       // TODO: cache bedrock responses in dynamodb
       // TODO: handle junk input (mraid.js, etc.)
       const correction = await clarify(query)
+      console.log('correction', correction)
+
       if (correction.domain === 'unknown') return { response }
       if (correction.domain !== 'money') {
         const url = createAskPath(correction)
         return { redirect: url }
+      }
+
+      if (correction.lang !== 'en') {
+        const englishQuery = await translate({
+          text: query,
+          from: correction.lang,
+          to: 'en',
+        })
+
+        if (!englishQuery.text) return { response }
+
+        const englishResponse = await ask(
+          {
+            query: englishQuery.text,
+            corrected: true,
+          },
+          context,
+        )
+        if ('redirect' in englishResponse) return englishResponse
+
+        let kanedamaResponse = englishResponse.response
+        if (!kanedamaResponse) return { response }
+
+        kanedamaResponse = await translateObject(
+          kanedamaResponse,
+          'en',
+          correction.lang,
+          [
+            'visual.summaryTokens.*.text',
+            'nlg.text.answer.*.text',
+            'visual.additionalQuestions.*.text',
+          ],
+        )
+        return { response: kanedamaResponse }
       }
 
       return ask(

@@ -174,7 +174,12 @@ export function Web({ stack }: StackContext) {
         },
       },
     },
-    permissions: [[api.rdsCredentialsSecret, 'grantRead'], 'bedrock'],
+    permissions: [
+      [api.rdsCredentialsSecret, 'grantRead'],
+      'bedrock',
+      'translate',
+      'comprehend',
+    ],
     invalidation: { paths: 'none' },
     customDomain: {
       hostedZone: dns.zone,
