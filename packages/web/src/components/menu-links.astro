@@ -2,6 +2,7 @@
 import Icon from '@components/icon.svelte'
 import AuthLink from '@components/auth-link.svelte'
 import Panel from '@components/panel.astro'
+import ThemeSwitch from '@components/theme-switch.svelte'
 
 const menuLinks = [
   [
@@ -51,7 +52,7 @@ const menuLinks = [
       text: 'Money',
       icon: 'money',
       url: '/money',
-      classes: 'text-orange',
+      classes: '!text-orange',
       currentUrl: new RegExp('^/money$'),
     },
   ],
@@ -72,9 +73,7 @@ const menuLinks = [
       text: 'Trending Real-time',
       icon: 'trending-sports',
       url: '/questions',
-      currentUrl: new RegExp(
-        '^(/(nba|nfl|nhl|mlb|pga|fc|money))?/questions$',
-      ),
+      currentUrl: new RegExp('^(/(nba|nfl|nhl|mlb|pga|fc|money))?/questions$'),
     },
     {
       text: 'Gallery',
@@ -155,17 +154,14 @@ const menuLinks = [
                 href={url}
                 target={external ? '_blank' : null}
                 class:list={{
-                  'flex flex-1 items-center gap-2': true,
+                  'flex flex-1 items-center gap-2 text-inherit': true,
                   'md:flex-initial': true,
                   'hover:text-teal hover:no-underline': true,
-                  'text-teal': currentUrl?.test(Astro.url.pathname),
-                  [classes ?? 'text-gray-1']: true,
+                  '!text-teal': currentUrl?.test(Astro.url.pathname),
+                  [classes ?? '']: !!classes,
                 }}
               >
-                <Icon
-                  name={icon}
-                  class='block w-5 h-5 object-cover',
-                />
+                <Icon name={icon} class="block w-5 h-5 object-cover" />
                 {text}
               </a>
             </li>
@@ -174,4 +170,5 @@ const menuLinks = [
       </Panel>
     ))
   }
+  <ThemeSwitch client:load />
 </div>

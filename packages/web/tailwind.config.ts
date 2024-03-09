@@ -3,6 +3,7 @@ import defaultTheme from 'tailwindcss/defaultTheme'
 
 export default {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+  darkMode: 'selector',
   theme: {
     screens: {
       sm: '480px',
@@ -17,6 +18,7 @@ export default {
         black: '#333333',
         'team-primary': 'var(--team-primary-color, #fff)',
         'team-secondary': 'var(--team-secondary-color, #333)',
+        'team-secondary-dark': 'var(--team-secondary-color, #fff)',
         'team-secondary-sm-default': 'var(--team-secondary-color, #00c1d8)',
         gray: {
           1: '#333333',

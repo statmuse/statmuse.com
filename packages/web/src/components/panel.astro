@@ -42,10 +42,10 @@ const foregroundHex = foreground
 <div
   class:list={{
     'relative rounded-2xl px-3 py-2 overflow-clip': true,
-    'bg-gray-8': !background,
-    'text-gray-1': !foreground,
-    'border border-gray-6': !background,
-    'bg-team-primary text-team-secondary': team,
+    'bg-gray-8 dark:bg-gray-3': !background,
+    'text-inherit': !foreground,
+    'border border-gray-6 dark:border-gray-4': !background,
+    '!bg-team-primary !text-team-secondary': team,
     [classes ?? '']: !!classes,
   }}
   style={`${backgroundHex ? `background-color: ${backgroundHex};` : ''} ${

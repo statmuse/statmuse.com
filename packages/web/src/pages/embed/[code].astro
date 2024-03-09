@@ -52,14 +52,7 @@ const isSuperlative: boolean =
   >
     <Logo class="w-[120px]" />
   </a>
-  {
-    charts && (
-      <Chart
-        model={charts[0]}
-        {isSuperlative}
-      />
-    )
-  }
+  {charts && <Chart model={charts[0]} {isSuperlative} />}
   {
     shotcharts && (
       <NbaShotchart client:load model={shotcharts[0]} widthAvailable={800} />

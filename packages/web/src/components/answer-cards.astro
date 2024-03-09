@@ -51,14 +51,14 @@ const standingsLimit =
   league === 'nba'
     ? 6
     : league === 'fc'
-    ? 6
-    : league === 'nfl'
-    ? 2
-    : league === 'nhl'
-    ? 3
-    : league === 'mlb'
-    ? 2
-    : undefined
+      ? 6
+      : league === 'nfl'
+        ? 2
+        : league === 'nhl'
+          ? 3
+          : league === 'mlb'
+            ? 2
+            : undefined
 const fantasyDisplay = `Fantasy ${
   league === 'nba' ? 'Basketball' : league === 'nfl' ? 'Football' : ''
 }`

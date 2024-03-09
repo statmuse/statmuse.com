@@ -60,8 +60,8 @@ export const set = (context: Context, token: string) => {
     domain: isLocal
       ? undefined
       : isStaging
-      ? context.url.hostname
-      : 'statmuse.com',
+        ? context.url.hostname
+        : 'statmuse.com',
     expires,
     maxAge: 31536000,
     secure: true,

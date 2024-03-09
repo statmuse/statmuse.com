@@ -106,8 +106,8 @@ const code = await Link.askShortCode(query, preferredDomain || '')
             contentReference.questionTags?.teamIds.length > 0
               ? contentReference.questionTags?.teamIds[0]
               : contentReference.answerTags?.teamIds.length > 0
-              ? contentReference.answerTags?.teamIds[0]
-              : undefined
+                ? contentReference.answerTags?.teamIds[0]
+                : undefined
           }
         />
       </Container>

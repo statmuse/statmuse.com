@@ -61,7 +61,11 @@ Caching.swr(Astro)
 >
   <Header {preferredDomain} />
   <EplBoxscore {data} />
-  { ANSWER_CARDS_ENABLED && <Container>
-    <AnswerCards league="fc" {teamId} />
-  </Container> }
+  {
+    ANSWER_CARDS_ENABLED && (
+      <Container>
+        <AnswerCards league="fc" {teamId} />
+      </Container>
+    )
+  }
 </Layout>
