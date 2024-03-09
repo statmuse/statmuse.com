@@ -34,15 +34,15 @@ Caching.swr(Astro)
 ---
 
 <PlayerLayout {league} {bio} {meta} page="splits" {parameters}>
-    {
-      grids &&
-        grids.map((grid) => (
-          <Grid
-            title={grid.name}
-            client:load
-            data={grid}
-            columnStyles={{ SPLIT: 'text-left w-24 min-w-[96px]' }}
-          />
-        ))
-    }
+  {
+    grids &&
+      grids.map((grid) => (
+        <Grid
+          title={grid.name}
+          client:load
+          data={grid}
+          columnStyles={{ SPLIT: 'text-left w-24 min-w-[96px]' }}
+        />
+      ))
+  }
 </PlayerLayout>

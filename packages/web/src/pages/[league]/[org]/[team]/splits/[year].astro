@@ -13,8 +13,8 @@ const team = Astro.params.team
 const year = Astro.params.year
 const org = Astro.params.org
 if (!team || !league || !year || !org) return NOT_FOUND_404
-if (org !== "team" && org !== "club") return NOT_FOUND_404
-const schedule = league === "fc" ? "fixtures" : "schedule"
+if (org !== 'team' && org !== 'club') return NOT_FOUND_404
+const schedule = league === 'fc' ? 'fixtures' : 'schedule'
 
 const params = Astro.url.searchParams
 const domain = leagueToDomain(league)

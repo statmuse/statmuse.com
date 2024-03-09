@@ -14,4 +14,4 @@ const league = Astro.params.league as LeagueParam
 Caching.swr(Astro)
 ---
 
-<TrendingComponent league={league} selected={league} />
+<TrendingComponent {league} selected={league} />

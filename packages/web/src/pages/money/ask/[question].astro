@@ -104,11 +104,7 @@ Caching.swr(Astro)
       subject: response.visual.summary.subject,
     }}
   >
-    <Header
-      money
-      {query}
-      {conversationToken}
-    />
+    <Header money {query} {conversationToken} />
     {
       heroProps ? (
         <Hero

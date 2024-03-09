@@ -58,14 +58,14 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
   }}
 >
   <main class="md:flex">
-    <div class="hidden md:block bg-gray-7">
+    <div class="hidden md:block bg-gray-7 dark:bg-gray-2">
       <div class="sticky top-0">
         <MenuLinks />
       </div>
     </div>
 
     <div
-      class="md:hidden h-14 px-3 bg-gray-7 flex items-center sticky top-0 z-20"
+      class="md:hidden h-14 px-3 bg-gray-7 dark:bg-gray-2 flex items-center sticky top-0 z-20"
     >
       <DropdownMenu />
       <Nav
@@ -75,7 +75,7 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
       />
     </div>
 
-    <div class="px-3 bg-gray-7 max-w-3xl lg:max-w-5xl mx-auto">
+    <div class="px-3 bg-gray-7 dark:bg-gray-2 w-full">
       <div class="flex flex-1 justify-end md:mt-3">
         <AuthMenu client:load />
       </div>
@@ -85,7 +85,8 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
       </div>
 
       <div class="sticky top-12 md:top-0 z-[5] pt-2 md:pt-3">
-        <div class="absolute inset-0 h-14 md:h-16 bg-gray-7"></div>
+        <div class="absolute inset-0 h-14 md:h-16 bg-gray-7 dark:bg-gray-2">
+        </div>
         <AskBar
           large
           class="mx-auto"
@@ -99,7 +100,7 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
         />
       </div>
 
-      <div class="mt-3">
+      <div class="mt-3 w-full">
         <slot />
       </div>
 

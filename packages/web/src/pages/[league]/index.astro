@@ -1,6 +1,6 @@
 ---
 import HomeLayout from '@layouts/home.astro'
-import Panel from "@components/panel.astro"
+import Panel from '@components/panel.astro'
 import { Caching } from '@lib/caching'
 import { createAskPath } from '@statmuse/core/path'
 import { NOT_FOUND_404 } from '@lib/response'
@@ -170,10 +170,12 @@ const nflExamples = [
   ],
   [
     'Odds',
-    ['NFL odds', 'Who are the favorites this week?', 'Chiefs spread'].map((q) => ({
-      query: q,
-      path: createAskPath({ domain: 'nfl', query: q }),
-    })),
+    ['NFL odds', 'Who are the favorites this week?', 'Chiefs spread'].map(
+      (q) => ({
+        query: q,
+        path: createAskPath({ domain: 'nfl', query: q }),
+      }),
+    ),
   ],
   [
     'Beyond the Box Score',
@@ -539,20 +541,16 @@ const examples = {
 }
 
 const meta = {
-  title: `${
-     league === 'fc'
-      ? 'Premier League'
-      : league.toUpperCase()
-  } Stats`,
+  title: `${league === 'fc' ? 'Premier League' : league.toUpperCase()} Stats`,
   description:
-     league === 'fc' || league === 'pga'
+    league === 'fc' || league === 'pga'
       ? `Instant answers to your ${
           league === 'pga' ? league.toUpperCase() : 'Premier League'
         } questions. Stats, scores, bios, records and more — just ask.`
       : `Instant answers to your ${league.toUpperCase()} questions. Stats, scores, bios, records, odds and more — just ask.`,
   facebook: {
     imageUrl:
-       league === 'fc'
+      league === 'fc'
         ? `${Astro.url.origin}/images/sm-fc-meta-banner.jpg`
         : undefined,
   },
@@ -575,7 +573,9 @@ Caching.swr(Astro)
           <ul class="flex flex-col gap-2">
             {queries.map(({ query, path }) => (
               <li class="max-w-xs">
-                <a href={path} class="text-pretty">{query}</a>
+                <a href={path} class="text-pretty">
+                  {query}
+                </a>
               </li>
             ))}
           </ul>

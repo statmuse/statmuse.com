@@ -17,9 +17,9 @@ const team = Astro.params.team
 const year = Astro.params.year
 const org = Astro.params.org
 if (!team || !league || !year || !org) return NOT_FOUND_404
-if (org !== "team" && org !== "club") return NOT_FOUND_404
-const schedule = league === "fc" ? "fixtures" : "schedule"
-const scheduleDisplay = league === "fc" ? "Fixtures" : "Schedule & Results"
+if (org !== 'team' && org !== 'club') return NOT_FOUND_404
+const schedule = league === 'fc' ? 'fixtures' : 'schedule'
+const scheduleDisplay = league === 'fc' ? 'Fixtures' : 'Schedule & Results'
 
 const domain = leagueToDomain(league)
 const bio = await getTeamSeasonBio({ context: Astro, domain, team, year })
@@ -58,32 +58,32 @@ Caching.swr(Astro)
 ---
 
 <TeamLayout {bio} {meta} page="schedule">
-    {
-      seasonSchedule?.grid && seasonSchedule.grid.columns.length > 0 && (
-          <Grid
-            title={seasonSchedule.grid.name}
-            data={seasonSchedule.grid}
-            fullWidth={false}
-            columnStyles={{
-              DATE: 'text-left w-20',
-              default: 'w-20',
-            }}
-          />
-      )
-    }
-    {
-      gameResults?.grids &&
-        gameResults.grids.map((data) => (
-            <Grid
-              title={data.name}
-              {data}
-              fullWidth={false}
-              columnStyles={{
-                DATE: 'text-left w-20',
-                SCORE: 'text-left w-20',
-                default: 'w-20',
-              }}
-            />
-        ))
-    }
+  {
+    seasonSchedule?.grid && seasonSchedule.grid.columns.length > 0 && (
+      <Grid
+        title={seasonSchedule.grid.name}
+        data={seasonSchedule.grid}
+        fullWidth={false}
+        columnStyles={{
+          DATE: 'text-left w-20',
+          default: 'w-20',
+        }}
+      />
+    )
+  }
+  {
+    gameResults?.grids &&
+      gameResults.grids.map((data) => (
+        <Grid
+          title={data.name}
+          {data}
+          fullWidth={false}
+          columnStyles={{
+            DATE: 'text-left w-20',
+            SCORE: 'text-left w-20',
+            default: 'w-20',
+          }}
+        />
+      ))
+  }
 </TeamLayout>

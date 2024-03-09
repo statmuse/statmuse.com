@@ -18,7 +18,7 @@ const org = Astro.params.org
 const team = Astro.params.team
 const year = Astro.params.year
 if (!team || !league || !year || !org) return NOT_FOUND_404
-if (org !== "team" && org !== "club") return NOT_FOUND_404
+if (org !== 'team' && org !== 'club') return NOT_FOUND_404
 
 const params = Astro.url.searchParams
 const domain = leagueToDomain(league)
@@ -39,7 +39,7 @@ const playerStats = await getTeamSeasonPlayerStats({
 })
 if (!bio || !stats || !playerStats) return NOT_FOUND_404
 
-const schedule = league === "fc" ? "fixtures" : "schedule"
+const schedule = league === 'fc' ? 'fixtures' : 'schedule'
 if (!bio.hasStats) {
   return Astro.redirect(`/${league}/${org}/${team}/${schedule}/${year}`)
 }
@@ -67,42 +67,40 @@ Caching.swr(Astro)
 ---
 
 <TeamLayout {bio} {meta} page="stats">
-    {
-      stats.grids.map((grid, i) => (
-        <Fragment>
-            {stats.parameters && (
-              <GridDropdown parameters={stats.parameters} />
+  {
+    stats.grids.map((grid, i) => (
+      <Fragment>
+        {stats.parameters && <GridDropdown parameters={stats.parameters} />}
+        <Grid client:load title={grid.name} data={grid} />
+        {playerStats.grids[i] && (
+          <Fragment>
+            {playerStats.parameters && (
+              <GridDropdown parameters={playerStats.parameters} />
             )}
-            <Grid client:load title={grid.name} data={grid} />
-          {playerStats.grids[i] && (
-            <Fragment>
+            <Grid
+              client:load
+              title={playerStats.grids[i].name}
+              data={playerStats.grids[i]}
+              stickyColumns={['PLAYER']}
+            />
+          </Fragment>
+        )}
+      </Fragment>
+    ))
+  }
+  {
+    playerStats.grids.length > stats.grids.length
+      ? playerStats.grids.slice(stats.grids.length).map((grid) => (
+          <div class="mb-5">
+            <div class="flex justify-between mb-0.5">
+              <h3 class="font-semibold text-team-primary">{grid.name}</h3>
               {playerStats.parameters && (
                 <GridDropdown parameters={playerStats.parameters} />
               )}
-              <Grid
-                client:load
-                title={playerStats.grids[i].name}
-                data={playerStats.grids[i]}
-                stickyColumns={['PLAYER']}
-              />
-            </Fragment>
-          )}
-        </Fragment>
-      ))
-    }
-    {
-      playerStats.grids.length > stats.grids.length
-        ? playerStats.grids.slice(stats.grids.length).map((grid) => (
-            <div class="mb-5">
-              <div class="flex justify-between mb-0.5">
-                <h3 class="font-semibold text-team-primary">{grid.name}</h3>
-                {playerStats.parameters && (
-                  <GridDropdown parameters={playerStats.parameters} />
-                )}
-              </div>
-              <Grid client:load data={grid} stickyColumns={['PLAYER']} />
             </div>
-          ))
-        : null
-    }
+            <Grid client:load data={grid} stickyColumns={['PLAYER']} />
+          </div>
+        ))
+      : null
+  }
 </TeamLayout>

@@ -39,15 +39,15 @@ Caching.swr(Astro)
 ---
 
 <PlayerLayout {league} {bio} {meta} page="game-log" {parameters}>
-    {
-      grids &&
-        grids.map((grid) => (
-          <Grid
-            title={grid.name}
-            client:load
-            data={grid}
-            columnStyles={{ DATE: 'text-left w-20', SCORE: 'text-left' }}
-          />
-        ))
-    }
+  {
+    grids &&
+      grids.map((grid) => (
+        <Grid
+          title={grid.name}
+          client:load
+          data={grid}
+          columnStyles={{ DATE: 'text-left w-20', SCORE: 'text-left' }}
+        />
+      ))
+  }
 </PlayerLayout>

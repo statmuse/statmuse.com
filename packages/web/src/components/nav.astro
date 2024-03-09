@@ -50,7 +50,8 @@ const { links, selected, href, teamColors, hero: pillBelow } = Astro.props
               !teamColors && selected === link.param,
             'bg-team-primary text-team-secondary border-team-primary':
               teamColors && selected === link.param,
-            'bg-gray-8 text-gray-2 border-gray-6': selected !== link.param,
+            'bg-gray-8 dark:bg-gray-3 text-inherit border-gray-6 dark:border-gray-4':
+              selected !== link.param,
           }}
           href={link.href ?? href(link.param)}
           set:html={link.text}

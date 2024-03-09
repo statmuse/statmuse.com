@@ -43,8 +43,8 @@ const tabs = Astro.props.titles.map((tab) => ({
               Astro.props.selected
                 ? tab.label === Astro.props.selected
                 : i === 0
-                ? 'checked'
-                : undefined
+                  ? 'checked'
+                  : undefined
             }
           />
           <label

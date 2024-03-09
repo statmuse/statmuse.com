@@ -19,7 +19,7 @@ if (!question) return Astro.redirect('/questions')
 let query = question.replaceAll('-', ' ')
 
 const askResponse = await ask({ league: domain, query }, Astro)
-if ("redirect" in askResponse) return Astro.redirect(askResponse.redirect)
+if ('redirect' in askResponse) return Astro.redirect(askResponse.redirect)
 const response = askResponse.response
 if (!response) return NOT_FOUND_404
 

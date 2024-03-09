@@ -80,6 +80,27 @@ const canonicalUrl = meta?.canonical
 
 <html lang="en">
   <head>
+    <script is:inline>
+      function setTheme(document) {
+        if (
+          localStorage.theme === 'dark' ||
+          (!('theme' in localStorage) &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ) {
+          document.documentElement.classList.add('dark')
+        } else {
+          document.documentElement.classList.remove('dark')
+        }
+      }
+
+      setTheme(document)
+
+      document.addEventListener('astro:before-swap', (ev) => {
+        // Pass the incoming document to set the theme on it
+        setTheme(ev.newDocument)
+      })
+    </script>
+
     <meta charset="utf-8" />
     <meta name="color-scheme" content="light only" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -299,8 +320,8 @@ const canonicalUrl = meta?.canonical
   </head>
   <body
     class:list={{
-      'text-gray-1 bg-gray-7 text-pretty': true,
-      'has-[#menu:checked]:overflow-scroll has-[#menu:checked]:fixed': true,
+      'text-gray-2 dark:text-gray-7 bg-gray-7 dark:bg-gray-2 text-pretty': true,
+      'has-[#menu:checked]:overflow-y-scroll has-[#menu:checked]:fixed': true,
       'has-[#menu:checked]:w-full has-[#menu:checked]:h-full': true,
     }}
   >

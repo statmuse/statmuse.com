@@ -43,10 +43,10 @@ Caching.swr(Astro)
                       index === 0
                         ? 75
                         : index === 1
-                        ? 25
-                        : index === 2
-                        ? -25
-                        : -75
+                          ? 25
+                          : index === 2
+                            ? -25
+                            : -75
                     }%);`}
                     alt={player.title}
                     src={player.images[0]}

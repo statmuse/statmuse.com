@@ -27,11 +27,13 @@
 <div
   class={`${$$props.class ?? ''} relative rounded-2xl px-3 py-2 overflow-clip`}
   class:bg-gray-8={!background}
-  class:text-gray-1={!foreground}
+  class:dark:bg-gray-3={!background}
+  class:text-inherit={!foreground}
   class:border={!background}
   class:border-gray-6={!background}
-  class:bg-team-primary={team}
-  class:text-team-secondary={team}
+  class:dark:border-gray-4={!background}
+  class:!bg-team-primary={team}
+  class:!text-team-secondary={team}
   style={`${backgroundHex ? `background-color: ${backgroundHex};` : ''} ${
     foregroundHex ? `color: ${foregroundHex};` : ''
   }`}

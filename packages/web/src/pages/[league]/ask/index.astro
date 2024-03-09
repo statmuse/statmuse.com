@@ -18,7 +18,7 @@ const question = Astro.url.searchParams.get('q')
 if (!question) return Astro.redirect('/questions')
 
 const askResponse = await ask({ league: domain, query: question }, Astro)
-if ("redirect" in askResponse) return Astro.redirect(askResponse.redirect)
+if ('redirect' in askResponse) return Astro.redirect(askResponse.redirect)
 const response = askResponse.response
 if (!response) return NOT_FOUND_404
 

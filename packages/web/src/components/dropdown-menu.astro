@@ -25,7 +25,7 @@ const { showElephant } = Astro.props
       name="hamburger"
       class:list={{
         'w-[25px] h-[25px] mr-3 md:mr-0': true,
-        'relative cursor-pointer text-team-secondary md:text-inherit': true,
+        'relative cursor-pointer text-team-secondary dark:text-team-secondary-dark md:text-inherit dark:md:text-inherit': true,
         'hidden md:block': showElephant,
         block: !showElephant,
       }}
@@ -33,12 +33,16 @@ const { showElephant } = Astro.props
   </label>
   <div class="hidden peer-checked:block">
     <label for="menu">
-      <div class="absolute top-0 left-0 w-screen h-screen bg-gray-6/80 z-[5]">
+      <div
+        class="absolute top-0 left-0 w-screen h-screen bg-gray-6/80 dark:bg-gray-4/80 z-[5]"
+      >
       </div>
     </label>
-    <div class="fixed inset-0 md:w-[240px] z-40 bg-gray-7 overflow-y-auto">
+    <div
+      class="fixed inset-0 md:w-[240px] z-40 bg-gray-7 dark:bg-gray-3 overflow-y-auto"
+    >
       <div
-        class="sticky top-0 bg-gray-7 flex items-center h-[55px] md:h-[70px] px-3 md:px-5 z-50"
+        class="sticky top-0 bg-gray-7 dark:bg-gray-3 flex items-center h-[55px] md:h-[70px] px-3 md:px-5 z-50"
       >
         <label for="menu">
           <Icon

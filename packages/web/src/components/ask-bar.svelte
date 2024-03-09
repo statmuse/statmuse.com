@@ -34,8 +34,8 @@
   const placeholder = money
     ? 'Search stocks, FX or bitcoin'
     : preferredDomain === 'epl'
-    ? 'Search players, clubs or stats'
-    : 'Search players, stats or odds'
+      ? 'Search players, clubs or stats'
+      : 'Search players, stats or odds'
   const apiUrl = `${import.meta.env.PUBLIC_API_URL}${
     money ? '/money/search/suggest' : '/search/suggest'
   }`
@@ -213,16 +213,16 @@
     aria-haspopup="listbox"
     aria-owns="ask-bar-suggestions"
     aria-expanded={open}
-    class="absolute top-0 w-full border border-gray-6 rounded-2xl overflow-hidden md:border-opacity-100"
+    class="absolute top-0 w-full border border-gray-6 dark:border-gray-4 rounded-2xl overflow-hidden md:border-opacity-100"
     class:border-primary={inFocus}
     class:border-opacity-100={inFocus}
     class:border-opacity-50={!inFocus}
     class:ring-1={inFocus}
     class:ring-primary={inFocus}
   >
-    <div class="relative group flex bg-gray-8 items-center px-2">
+    <div class="relative group flex bg-gray-8 dark:bg-gray-3 items-center px-2">
       <input
-        class="grow appearance-none outline-none resize-none block border-y border-transparent px-2 peer truncate"
+        class="dark:bg-gray-3 grow appearance-none outline-none resize-none block border-y border-transparent px-2 peer truncate"
         class:py-2={large}
         class:py-1={!large}
         autocomplete="off"
@@ -271,7 +271,7 @@
       id="ask-bar-suggestions"
       role="listbox"
       class:hidden={!open}
-      class="w-full px-2 bg-gray-8"
+      class="w-full px-2 bg-gray-8 dark:bg-gray-3"
     >
       {#each sections as section, i (section.type)}
         {#if section.suggestions.length > 0}
@@ -279,7 +279,8 @@
             {#each section.suggestions as suggestion, j (suggestion)}
               <li
                 class="py-1.5 px-1 cursor-pointer flex items-center"
-                class:bg-[#eee]={i === sectionIdx && j === suggestionIdx}
+                class:bg-gray-7={i === sectionIdx && j === suggestionIdx}
+                class:dark:bg-gray-2={i === sectionIdx && j === suggestionIdx}
                 role="option"
                 aria-selected={i === sectionIdx && j === suggestionIdx}
                 on:click={() => {

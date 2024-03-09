@@ -28,8 +28,8 @@ export const session = defineMiddleware(async (context, next) => {
       session.type === 'visitor'
         ? session.properties.id
         : session.type === 'user'
-        ? session.properties.visitorId
-        : undefined
+          ? session.properties.visitorId
+          : undefined
 
     const visitor = await Visitor.get(visitorId!)
     if (!visitor) throw new Error('No visitor found')

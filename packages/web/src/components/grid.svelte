@@ -131,7 +131,7 @@
         'max-w-none',
         'object-cover',
         'object-bottom',
-        'bg-gray-8',
+        'bg-gray-8 dark:bg-gray-3',
         '-mb-[1px]',
         'mt-2',
         'mx-auto',
@@ -227,6 +227,7 @@
                   class:sticky={col.sticky}
                   class:left-0={col.sticky}
                   class:bg-gray-8={col.sticky}
+                  class:dark:bg-gray-3={col.sticky}
                   on:click={onClickSort(col.rowItemKey)}
                 >
                   {col.title}
@@ -259,6 +260,10 @@
                     class:sticky={col.sticky}
                     class:left-0={col.sticky}
                     class:bg-gray-8={col.sticky &&
+                      !(sortKey === col.rowItemKey) &&
+                      !color &&
+                      !rowHighlight}
+                    class:dark:bg-gray-3={col.sticky &&
                       !(sortKey === col.rowItemKey) &&
                       !color &&
                       !rowHighlight}
@@ -336,6 +341,7 @@
                         class:pl-3={index === 0}
                         class:pr-3={index === columns.length - 1}
                         class:bg-gray-8={col.sticky}
+                        class:dark:bg-gray-3={col.sticky}
                       >
                         {display}
                       </td>
@@ -360,6 +366,7 @@
                     class:pr-3={index === columns.length - 1}
                     class:left-0={col.sticky}
                     class:bg-gray-8={col.sticky}
+                    class:dark:bg-gray-3={col.sticky}
                   >
                     {#if col.rowItemKey === 'IMAGE'}
                       <div class="flex items-center h-[22px]">

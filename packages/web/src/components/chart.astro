@@ -167,7 +167,7 @@ categories.forEach((cat, i) => {
 
 <Panel class={Astro.props.class}>
   <div class="relative">
-    <div class="relative overflow-x-scroll no-scrollbar -mx-2">
+    <div class="relative overflow-x-scroll no-scrollbar -mx-2 text-inherit">
       <svg
         id="chart"
         height={chartHeight}
@@ -190,7 +190,7 @@ categories.forEach((cat, i) => {
         />
         {
           data.map((d, ix) => (
-            <g transform={`translate(${x0(d.categoryKey)}, 0)`}>
+            <g transform={`translate(${x0(d.categoryKey)}, -1)`}>
               {d.values.map((v, i) => {
                 // console.log(v);
                 return isNotNil(v.y) ? (
@@ -203,7 +203,7 @@ categories.forEach((cat, i) => {
                       fill={fillColor(v.color!)}
                     />
                     <text
-                      class="fill-gray-1"
+                      class="fill-current"
                       style={{
                         display: 'block',
                         fontSize: 14,

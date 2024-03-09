@@ -13,8 +13,8 @@ const league = Astro.params.league
 const team = Astro.params.team
 const year = Astro.params.year
 const org = Astro.params.org
-const schedule = league === "fc" ? "fixtures" : "schedule"
-if (org !== "team" && org !== "club") return NOT_FOUND_404
+const schedule = league === 'fc' ? 'fixtures' : 'schedule'
+if (org !== 'team' && org !== 'club') return NOT_FOUND_404
 
 return Astro.redirect(`/${league}/${org}/${team}/${schedule}/${year}`)
 ---

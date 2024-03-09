@@ -29,57 +29,57 @@ Caching.swr(Astro)
 ---
 
 <PlayerLayout {league} {bio} {meta} page="bio">
-    <Panel title="Summary">
-      <div class="leading-snug">
-        <p set:html={summary} />
-      </div>
-    </Panel>
-    {
-      bio && league !== 'fc' && (
-        <Panel title="Facts">
-          <table class="border-collapse leading-tight">
-            <tbody>
-              {bio.birthdate && (
-                <tr>
-                  <td>Born:</td>
-                  <td class="pl-4">
-                    {birthdate}
-                    {bio.age && ` (age ${bio.age})`}
-                  </td>
-                </tr>
-              )}
-              {bio.birthplace && (
-                <tr>
-                  <td>Birth Place:</td>
-                  <td class="pl-4">{bio.birthplace}</td>
-                </tr>
-              )}
-              {bio.drafted && (
-                <tr>
-                  <td>Drafted:</td>
-                  <td class="pl-4">{bio.drafted}</td>
-                </tr>
-              )}
-              {bio.college && (
-                <tr>
-                  <td>College:</td>
-                  <td class="pl-4">{bio.college}</td>
-                </tr>
-              )}
-              {bio.experience && (
-                <tr>
-                  <td>Experience:</td>
-                  <td class="pl-4">{bio.experience}</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </Panel>
-      )
-    }
-    {
-      bio && league === 'fc' && (
-        <Panel title="Facts">
+  <Panel title="Summary">
+    <div class="leading-snug">
+      <p set:html={summary} />
+    </div>
+  </Panel>
+  {
+    bio && league !== 'fc' && (
+      <Panel title="Facts">
+        <table class="border-collapse leading-tight">
+          <tbody>
+            {bio.birthdate && (
+              <tr>
+                <td>Born:</td>
+                <td class="pl-4">
+                  {birthdate}
+                  {bio.age && ` (age ${bio.age})`}
+                </td>
+              </tr>
+            )}
+            {bio.birthplace && (
+              <tr>
+                <td>Birth Place:</td>
+                <td class="pl-4">{bio.birthplace}</td>
+              </tr>
+            )}
+            {bio.drafted && (
+              <tr>
+                <td>Drafted:</td>
+                <td class="pl-4">{bio.drafted}</td>
+              </tr>
+            )}
+            {bio.college && (
+              <tr>
+                <td>College:</td>
+                <td class="pl-4">{bio.college}</td>
+              </tr>
+            )}
+            {bio.experience && (
+              <tr>
+                <td>Experience:</td>
+                <td class="pl-4">{bio.experience}</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </Panel>
+    )
+  }
+  {
+    bio && league === 'fc' && (
+      <Panel title="Facts">
         <table class="border-collapse leading-tight">
           <tbody>
             {bio.position && (
@@ -123,22 +123,22 @@ Caching.swr(Astro)
             )}
           </tbody>
         </table>
-        </Panel>
-      )
-    }
-    {
-      bio && bio.awards && bio.awards.length > 0 && (
-        <Panel title="Awards" class="leading-tight">
-          <ul class="list-disc list-inside">
-            {bio.awards.map((award) => (
-              <li>
-                {award.years.length > 1 ? `${award.years.length}x ` : ''}
-                {award.name}
-                {` (${award.years.join(', ')})`}
-              </li>
-            ))}
-          </ul>
-        </Panel>
-      )
-    }
+      </Panel>
+    )
+  }
+  {
+    bio && bio.awards && bio.awards.length > 0 && (
+      <Panel title="Awards" class="leading-tight">
+        <ul class="list-disc list-inside">
+          {bio.awards.map((award) => (
+            <li>
+              {award.years.length > 1 ? `${award.years.length}x ` : ''}
+              {award.name}
+              {` (${award.years.join(', ')})`}
+            </li>
+          ))}
+        </ul>
+      </Panel>
+    )
+  }
 </PlayerLayout>
