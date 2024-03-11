@@ -1,10 +1,10 @@
 import type { InferResult } from 'kysely'
-import { db } from '../db'
+import { dbReader } from '../db'
 import { isUUID } from '../question'
 export * from './musing.sql'
 
 export const getMusingByIdOrFriendlyId = (id: string) => {
-  let query = db
+  let query = dbReader
     .selectFrom('musings')
     .innerJoin('questions', 'questions.id', 'musings.question_id')
     .innerJoin('leagues', 'leagues.id', 'musings.league_id')
@@ -26,7 +26,7 @@ export const getMusingByIdOrFriendlyId = (id: string) => {
 }
 
 export const getMusingByShortcode = (code: string) =>
-  db
+  dbReader
     .selectFrom('musings')
     .innerJoin('links', 'links.musing_id', 'musings.id')
     .innerJoin('leagues', 'leagues.id', 'musings.league_id')
@@ -41,7 +41,7 @@ export type Musing = InferResult<
   ReturnType<typeof getMusingByIdOrFriendlyId>
 >[number]
 
-export const listLatestMusings = db
+export const listLatestMusings = dbReader
   .selectFrom('musings')
   .innerJoin('links', 'links.musing_id', 'musings.id')
   .where('musings.content_type', '=', 'latest-stats')

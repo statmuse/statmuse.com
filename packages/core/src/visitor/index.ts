@@ -1,9 +1,9 @@
-import { db } from '../db'
+import { db, dbReader } from '../db'
 import type { NewVisitor, Visitor, VisitorUpdate } from './visitor.sql'
 export * from './visitor.sql'
 
 export const get = async (id: string) =>
-  db
+  dbReader
     .selectFrom('visitors')
     .where('visitors.id', '=', id)
     .selectAll()
@@ -13,7 +13,7 @@ export const getByOrigin = async (
   originId: string,
   originName: Visitor['origin_name'],
 ) =>
-  db
+  dbReader
     .selectFrom('visitors')
     .where('visitors.origin_id', '=', originId)
     .where('visitors.origin_name', '=', originName)

@@ -10,7 +10,7 @@ export function Auth({ stack, app }: StackContext) {
   const dns = use(DNS)
   const secrets = use(Secrets)
   const { vpc } = use(Imports)
-  const { lambdaSecurityGroup } = use(API)
+  const { lambdaSecurityGroup, environment } = use(API)
   const { rdsCredentialsSecret } = use(Imports)
 
   const isProd = stack.stage === 'production'
@@ -26,9 +26,8 @@ export function Auth({ stack, app }: StackContext) {
             ? 'https://www.statmuse.com'
             : 'https://' + dns.domain,
         POSTGRES_SECRET_ARN: rdsCredentialsSecret.secretArn,
-        POSTGRES_HOST: isProd
-          ? 'mothra-prod.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com'
-          : 'mothra-staging.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com',
+        POSTGRES_HOST: environment.POSTGRES_HOST,
+        POSTGRES_READER_HOST: environment.POSTGRES_READER_HOST,
       },
       bind: [
         secrets.BOTPOISON_SECRET_KEY,

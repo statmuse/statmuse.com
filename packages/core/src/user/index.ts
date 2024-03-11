@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import { db } from '../db'
+import { db, dbReader } from '../db'
 export * from './user.sql'
 export * from './indentity.sql'
 export * from './session.sql'
@@ -45,14 +45,14 @@ export const create = async (email: string, visitorId: string) => {
 }
 
 export const get = async (id: string) =>
-  db
+  dbReader
     .selectFrom('users')
     .where('users.id', '=', id)
     .selectAll()
     .executeTakeFirst()
 
 export const fromEmail = async (email: string) =>
-  db
+  dbReader
     .selectFrom('users')
     .where('users.email', '=', email)
     .selectAll()

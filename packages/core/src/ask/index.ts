@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import { db, executeQueryWithTimeout } from '../db'
+import { db, dbReader, executeQueryWithTimeout } from '../db'
 import { sql } from 'kysely'
 import {
   type GameraResponse,
@@ -36,7 +36,7 @@ export const ASK_LIMIT = 15
 const leagues = ['nba', 'nfl', 'nhl', 'mlb', 'pga']
 
 export const get = async (params: { context_id: string; query: string }) =>
-  db
+  dbReader
     .selectFrom('asks')
     .select(['id', 'query', 'answer'])
     .where('context_id', '=', params.context_id)
@@ -44,7 +44,7 @@ export const get = async (params: { context_id: string; query: string }) =>
     .executeTakeFirst()
 
 export const getFinance = async (params: { query: string }) =>
-  db
+  dbReader
     .selectFrom('finance_asks')
     .select(['id', 'query', 'answer'])
     .where('query', '=', params.query)
@@ -529,14 +529,17 @@ const getPrompt = (response: GameraResponse) => {
 }
 
 export const getListContextIds = (names: string[]) =>
-  db.selectFrom('contexts').where('contexts.name', 'in', names).select('id')
+  dbReader
+    .selectFrom('contexts')
+    .where('contexts.name', 'in', names)
+    .select('id')
 
 export const getAsksIndex = async (
   names = leagues,
   params: { n?: Date; p?: Date; page?: string },
   isFantasy = false,
 ) => {
-  let query = db
+  let query = dbReader
     .selectFrom('asks')
     .selectAll('asks')
     .innerJoin('contexts', 'contexts.id', 'asks.context_id')
@@ -583,7 +586,7 @@ export const getFinanceAsksIndex = async (params: {
   p?: Date
   page?: string
 }) => {
-  let query = db
+  let query = dbReader
     .selectFrom('finance_asks')
     .selectAll('finance_asks')
     .where('is_in_index', '=', true)
@@ -624,7 +627,7 @@ export const getUserAsks = async (
   userId: string,
   params: { n?: Date; p?: Date; page?: string },
 ) => {
-  let query = db
+  let query = dbReader
     .selectFrom('asks_users')
     .innerJoin('asks', 'asks.id', 'asks_users.ask_id')
     .innerJoin('contexts', 'contexts.id', 'asks.context_id')
@@ -664,7 +667,7 @@ export const getFinanceUserAsks = async (
   userId: string,
   params: { n?: Date; p?: Date; page?: string },
 ) => {
-  let query = db
+  let query = dbReader
     .selectFrom('finance_asks_users')
     .innerJoin(
       'finance_asks',
@@ -703,7 +706,7 @@ export const getFinanceUserAsks = async (
 }
 
 export const getUserAskSuggestions = (userId: string) =>
-  db
+  dbReader
     .selectFrom('asks_users')
     .innerJoin('asks', 'asks.id', 'asks_users.ask_id')
     .where('asks.is_in_index', '=', true)
@@ -714,7 +717,7 @@ export const getUserAskSuggestions = (userId: string) =>
     .execute()
 
 export const getUserFinanceAskSuggestions = (userId: string) =>
-  db
+  dbReader
     .selectFrom('finance_asks_users')
     .innerJoin(
       'finance_asks',
@@ -732,7 +735,7 @@ export const getUserFinanceAskSuggestions = (userId: string) =>
     .execute()
 
 export const countByUser = (userId: string) =>
-  db
+  dbReader
     .selectFrom('ask_events')
     .where('user_id', '=', userId)
     .where(sql`DATE(inserted_at) = current_date`)
@@ -740,7 +743,7 @@ export const countByUser = (userId: string) =>
     .executeTakeFirst()
 
 export const countByVisitor = (visitorId: string) =>
-  db
+  dbReader
     .selectFrom('ask_events')
     .where('visitor_id', '=', visitorId)
     .where(sql`DATE(inserted_at) = current_date`)
@@ -748,7 +751,7 @@ export const countByVisitor = (visitorId: string) =>
     .executeTakeFirst()
 
 export const financeCountByUser = (userId: string) =>
-  db
+  dbReader
     .selectFrom('finance_ask_events')
     .where('user_id', '=', userId)
     .where(sql`DATE(inserted_at) = current_date`)
@@ -756,7 +759,7 @@ export const financeCountByUser = (userId: string) =>
     .executeTakeFirst()
 
 export const financeCountByVisitor = (visitorId: string) =>
-  db
+  dbReader
     .selectFrom('finance_ask_events')
     .where('visitor_id', '=', visitorId)
     .where(sql`DATE(inserted_at) = current_date`)

@@ -39,7 +39,7 @@ const secretsManager = new SecretsManagerClient({
 
 const { SecretString: secret } = await secretsManager.send(
   new GetSecretValueCommand({
-    SecretId: process.env.POSTGRES_SECRET_ARN,
+    SecretId: process.env.POSTGRES_SECRET_ARN as string,
   }),
   { requestTimeout: 5000 },
 )
@@ -168,6 +168,20 @@ export const db = new Kysely<Database>({
   dialect: new PostgresDialect({
     pool: new Pool({
       host: process.env.POSTGRES_HOST,
+      port: Number.parseInt(process.env.POSTGRES_PORT || '5432'),
+      database: credentials.dbname || process.env.POSTGRES_DATABASE,
+      user: credentials.username || process.env.POSTGRES_USER,
+      password: credentials.password || process.env.POSTGRES_PASSWORD,
+      ssl: true,
+      connectionTimeoutMillis: 3000,
+    }),
+  }),
+})
+
+export const dbReader = new Kysely<Database>({
+  dialect: new PostgresDialect({
+    pool: new Pool({
+      host: process.env.POSTGRES_READER_HOST,
       port: Number.parseInt(process.env.POSTGRES_PORT || '5432'),
       database: credentials.dbname || process.env.POSTGRES_DATABASE,
       user: credentials.username || process.env.POSTGRES_USER,

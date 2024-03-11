@@ -1,17 +1,17 @@
-import { db } from './db'
+import { dbReader } from './db'
 import type { Ask, FinanceAsk } from './ask/ask.sql'
 import type { Musing } from './musing'
 import type { Question } from './question'
 
 export const getLink = async (code: string): Promise<Linkable | undefined> => {
-  const link = await db
+  const link = await dbReader
     .selectFrom('links')
     .where('links.short_code', '=', code)
     .selectAll()
     .executeTakeFirst()
 
   if (link && link.ask_id) {
-    const ask = await db
+    const ask = await dbReader
       .selectFrom('asks')
       .innerJoin('contexts', 'contexts.id', 'asks.context_id')
       .where('asks.id', '=', link.ask_id)
@@ -25,7 +25,7 @@ export const getLink = async (code: string): Promise<Linkable | undefined> => {
   }
 
   if (link && link.finance_ask_id) {
-    const financeAsk = await db
+    const financeAsk = await dbReader
       .selectFrom('finance_asks')
       .where('id', '=', link.finance_ask_id)
       .selectAll()
@@ -37,7 +37,7 @@ export const getLink = async (code: string): Promise<Linkable | undefined> => {
   }
 
   if (link && link.musing_id) {
-    const musing = await db
+    const musing = await dbReader
       .selectFrom('musings')
       .where('id', '=', link.musing_id)
       .selectAll()
@@ -49,7 +49,7 @@ export const getLink = async (code: string): Promise<Linkable | undefined> => {
   }
 
   if (link && link.question_id) {
-    const question = await db
+    const question = await dbReader
       .selectFrom('questions')
       .where('id', '=', link.question_id)
       .selectAll()

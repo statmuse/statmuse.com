@@ -1,9 +1,13 @@
 import type { InferResult } from 'kysely'
-import { db } from '../db'
+import { dbReader } from '../db'
 export * from './question.sql'
 
 export const getQuestion = (id: string) =>
-  db.selectFrom('questions').where('questions.id', '=', id).selectAll().limit(1)
+  dbReader
+    .selectFrom('questions')
+    .where('questions.id', '=', id)
+    .selectAll()
+    .limit(1)
 
 export const isUUID = (s: string) =>
   new RegExp(
@@ -11,7 +15,7 @@ export const isUUID = (s: string) =>
   ).test(s)
 
 export const getQuestionByIdOrFriendlyId = (id: string) => {
-  let query = db
+  let query = dbReader
     .selectFrom('questions')
     .innerJoin('contexts', 'contexts.id', 'questions.context_id')
 

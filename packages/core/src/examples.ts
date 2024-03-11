@@ -1,4 +1,4 @@
-import { type Database, db } from './db'
+import { type Database, dbReader } from './db'
 import { type OperandValueExpressionOrList, sql } from 'kysely'
 
 export const listLatestIdsPerLeague = async (
@@ -6,7 +6,7 @@ export const listLatestIdsPerLeague = async (
   league?: string,
   n = 1,
 ) => {
-  const records = await db
+  const records = await dbReader
     .selectFrom((eb) => {
       let query = eb
         .selectFrom('examples')
@@ -33,7 +33,7 @@ export const listLatestIdsPerLeague = async (
 }
 
 export const listOnboarding = async (league?: string, n: number = 2) =>
-  db
+  dbReader
     .selectFrom('examples')
     .innerJoin('questions', 'questions.id', 'examples.question_id')
     .innerJoin('leagues', 'leagues.id', 'examples.league_id')

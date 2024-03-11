@@ -8,7 +8,7 @@ import type {
 } from '@statmuse/core/gamera'
 import { parsePlayerId } from './parse'
 import { request } from '@lib/gamera'
-import { db } from '@statmuse/core/db'
+import { dbReader } from '@statmuse/core/db'
 import type { Context } from '@lib/session'
 
 export const getPositionName = (bio: GameraPlayerBio) => {
@@ -194,7 +194,7 @@ export const getPlayerSplits = async (props: {
 }
 
 export const getPlayerGalleryList = async (league?: string) => {
-  let query = db
+  let query = dbReader
     .selectFrom('players')
     .innerJoin('leagues', 'leagues.id', 'players.league_id')
     .where('players.bust_image_url', 'is not', null)

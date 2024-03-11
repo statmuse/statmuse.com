@@ -23,7 +23,7 @@ export async function handleEvent(untypedEvent: Stripe.Event) {
 }
 
 async function handleCheckoutSessionCompleted(
-  event: Stripe.DiscriminatedEvent.CheckoutSessionEvent
+  event: Stripe.DiscriminatedEvent.CheckoutSessionEvent,
 ) {
   const session = event.data.object
 
@@ -38,7 +38,7 @@ async function handleCheckoutSessionCompleted(
 }
 
 async function handleSubscriptionCreatedOrUpdated(
-  event: Stripe.DiscriminatedEvent.CustomerSubscriptionEvent
+  event: Stripe.DiscriminatedEvent.CustomerSubscriptionEvent,
 ) {
   const subscription = event.data.object
   if (subscription.status === 'incomplete') return
@@ -46,7 +46,7 @@ async function handleSubscriptionCreatedOrUpdated(
   if (subscription.status !== 'active') {
     // console.log(JSON.stringify(subscription))
     console.log(
-      `${subscription.customer} has non-active status ${subscription.status}`
+      `${subscription.customer} has non-active status ${subscription.status}`,
     )
   }
 
