@@ -23,7 +23,7 @@ export const swr = (
       options?.maxage ?? DEFAULT_MAX_AGE
     }, stale-while-revalidate=${
       options?.revalidate ?? DEFAULT_REVALIDATE_PERIOD
-    }`,
+    }, stale-while-error=${options?.revalidate ?? DEFAULT_REVALIDATE_PERIOD}`,
   )
 }
 
