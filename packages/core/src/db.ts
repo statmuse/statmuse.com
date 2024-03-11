@@ -165,7 +165,7 @@ export const executeQueryWithTimeout = async <T>(
 }
 
 const host = process.env.POSTGRES_HOST as string
-const readerHost = `${host.split('.')[0]}-reader.${host
+const readerHost = `${host.split('.')[0]}-reader.endpoint.${host
   .split('.')
   .slice(1)
   .join('.')}`
