@@ -27,7 +27,6 @@ export function Auth({ stack, app }: StackContext) {
             : 'https://' + dns.domain,
         POSTGRES_SECRET_ARN: rdsCredentialsSecret.secretArn,
         POSTGRES_HOST: environment.POSTGRES_HOST,
-        POSTGRES_READER_HOST: environment.POSTGRES_READER_HOST,
       },
       bind: [
         secrets.BOTPOISON_SECRET_KEY,

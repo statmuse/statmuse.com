@@ -164,10 +164,16 @@ export const executeQueryWithTimeout = async <T>(
   }
 }
 
+const host = process.env.POSTGRES_HOST as string
+const readerHost = `${host.split('.')[0]}-reader.${host
+  .split('.')
+  .slice(1)
+  .join('.')}`
+
 export const db = new Kysely<Database>({
   dialect: new PostgresDialect({
     pool: new Pool({
-      host: process.env.POSTGRES_HOST,
+      host,
       port: Number.parseInt(process.env.POSTGRES_PORT || '5432'),
       database: credentials.dbname || process.env.POSTGRES_DATABASE,
       user: credentials.username || process.env.POSTGRES_USER,
@@ -181,7 +187,7 @@ export const db = new Kysely<Database>({
 export const dbReader = new Kysely<Database>({
   dialect: new PostgresDialect({
     pool: new Pool({
-      host: process.env.POSTGRES_READER_HOST,
+      host: readerHost,
       port: Number.parseInt(process.env.POSTGRES_PORT || '5432'),
       database: credentials.dbname || process.env.POSTGRES_DATABASE,
       user: credentials.username || process.env.POSTGRES_USER,

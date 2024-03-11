@@ -32,9 +32,6 @@ export function API({ stack }: StackContext) {
     POSTGRES_HOST: isProd
       ? 'mothra-prod.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com'
       : 'mothra-staging.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com',
-    POSTGRES_READER_HOST: isProd
-      ? 'mothra-prod-reader.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com'
-      : 'mothra-staging-reader.proxy-czmqfqtpf0dx.us-east-1.rds.amazonaws.com',
     GAMERA_API_URL,
     KANEDAMA_API_URL: isProd
       ? 'https://kanedama-prod.public.statmuse.com/'
