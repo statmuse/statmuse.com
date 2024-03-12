@@ -40,6 +40,8 @@ const plays = orderBy(
   'minuteRaw',
 )
 
+console.log(plays)
+
 type Play = (typeof plays)[0]
 
 const playsByPeriod = groupBy(plays, 'period')
@@ -67,6 +69,9 @@ const awayReds = plays.filter(
     (p.eventType === 'red_card' || p.eventType === 'yellow_red_card') &&
     p.team === awayTeam.name,
 )
+
+console.log(homeReds)
+console.log(awayReds)
 
 const homeTeamGoals = plays
   .filter(
@@ -304,7 +309,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
             ))}
           </div>
           <div class="w-5 h-5 shrink-0 mx-4 md:mx-24">
-            <span class="block w-4 h-5 mx-auto bg-red-600" />
+            <span class="block w-4 h-5 mx-auto bg-[#DC2626]" />
           </div>
           <div class="flex-1 mx-0.5">
             {awayReds.map((play) => (
@@ -418,11 +423,11 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                     </div>
                   ) : play.eventType === 'red_card' ? (
                     <div class="w-5 h-4 mx-2">
-                      <span class="block h-4 w-3 bg-red-600 mx-auto" />
+                      <span class="block h-4 w-3 bg-[#DC2626] mx-auto" />
                     </div>
                   ) : play.eventType === 'yellow_red_card' ? (
                     <div class="inline-block h-4 w-5 bg-yellow-300 mx-2 relative">
-                      <span class="absolute right-0 h-4 w-3 bg-red-600" />
+                      <span class="absolute right-0 h-4 w-3 bg-[#DC2626]" />
                     </div>
                   ) : play.eventType === 'goal' ||
                     play.eventType === 'penalty_goal' ||
@@ -600,14 +605,14 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                       <SubArrow class="w-4 h-4 shrink-0" color="#00a14b" />
                       {(() => {
                         if (homeTeamReds.includes(player.entity.display)) {
-                          return <div class="w-3 h-4 bg-red-600 ml-0.5" />
+                          return <div class="w-3 h-4 bg-[#DC2626] ml-0.5" />
                         }
                         if (
                           homeTeamYellowReds.includes(player.entity.display)
                         ) {
                           return (
                             <div class="w-4 h-4 bg-yellow-300 relative ml-0.5">
-                              <div class="w-3 h-4 bg-red-600 absolute right-0" />
+                              <div class="w-3 h-4 bg-[#DC2626] absolute right-0" />
                             </div>
                           )
                         }
@@ -651,14 +656,14 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                       <SubArrow class="w-4 h-4 shrink-0" color="#00a14b" />
                       {(() => {
                         if (awayTeamReds.includes(player.entity.display)) {
-                          return <div class="w-3 h-4 bg-red-600 mr-0.5" />
+                          return <div class="w-3 h-4 bg-[#DC2626] mr-0.5" />
                         }
                         if (
                           awayTeamYellowReds.includes(player.entity.display)
                         ) {
                           return (
                             <div class="w-4 h-4 bg-yellow-300 relative mr-0.5">
-                              <div class="w-3 h-3 bg-red-600 absolute right-0" />
+                              <div class="w-3 h-3 bg-[#DC2626] absolute right-0" />
                             </div>
                           )
                         }
@@ -744,14 +749,14 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                         )}
                         {(() => {
                           if (homeTeamReds.includes(player.entity.display)) {
-                            return <div class="w-3 h-4 bg-red-600 ml-0.5" />
+                            return <div class="w-3 h-4 bg-[#DC2626] ml-0.5" />
                           }
                           if (
                             homeTeamYellowReds.includes(player.entity.display)
                           ) {
                             return (
                               <div class="w-4 h-4 bg-yellow-300 relative ml-0.5">
-                                <div class="w-3 h-4 bg-red-600 absolute right-0" />
+                                <div class="w-3 h-4 bg-[#DC2626] absolute right-0" />
                               </div>
                             )
                           }
@@ -789,14 +794,14 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                         )}
                         {(() => {
                           if (awayTeamReds.includes(player.entity.display)) {
-                            return <div class="w-3 h-4 bg-red-600 mr-0.5" />
+                            return <div class="w-3 h-4 bg-[#DC2626] mr-0.5" />
                           }
                           if (
                             awayTeamYellowReds.includes(player.entity.display)
                           ) {
                             return (
                               <div class="w-4 h-4 bg-yellow-300 relative mr-0.5">
-                                <div class="w-3 h-3 bg-red-600 absolute right-0" />
+                                <div class="w-3 h-3 bg-[#DC2626] absolute right-0" />
                               </div>
                             )
                           }
@@ -831,14 +836,14 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                       <SubArrow class="w-4 h-4 shrink-0" color="#00a14b" />
                       {(() => {
                         if (homeTeamReds.includes(player.entity.display)) {
-                          return <div class="w-3 h-4 bg-red-600 ml-0.5" />
+                          return <div class="w-3 h-4 bg-[#DC2626] ml-0.5" />
                         }
                         if (
                           homeTeamYellowReds.includes(player.entity.display)
                         ) {
                           return (
                             <div class="w-4 h-4 bg-yellow-300 relative ml-0.5">
-                              <div class="w-3 h-4 bg-red-600 absolute right-0" />
+                              <div class="w-3 h-4 bg-[#DC2626] absolute right-0" />
                             </div>
                           )
                         }
@@ -882,14 +887,14 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                       <SubArrow class="w-4 h-4 shrink-0" color="#00a14b" />
                       {(() => {
                         if (awayTeamReds.includes(player.entity.display)) {
-                          return <div class="w-3 h-4 bg-red-600 mr-0.5" />
+                          return <div class="w-3 h-4 bg-[#DC2626] mr-0.5" />
                         }
                         if (
                           awayTeamYellowReds.includes(player.entity.display)
                         ) {
                           return (
                             <div class="w-4 h-4 bg-yellow-300 relative mr-0.5">
-                              <div class="w-3 h-3 bg-red-600 absolute right-0" />
+                              <div class="w-3 h-3 bg-[#DC2626] absolute right-0" />
                             </div>
                           )
                         }
