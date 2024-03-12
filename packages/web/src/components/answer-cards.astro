@@ -111,10 +111,10 @@ const playerCardTitle = (stat: string) => {
       return 'Assists Leaders'
     case 'mostShotsOnTarget':
       return 'Shots on Target Leaders'
-    case 'mostPasses':
-      return 'Passes Leaders'
-    case 'mostTackles':
-      return 'Tackles Leaders'
+    case 'mostBigChancesCreated':
+      return 'Big Chances Created Leaders'
+    case 'mostTacklesWon':
+      return 'Tackles Won Leaders'
     case 'mostCleanSheets':
       return 'Clean Sheets Leaders'
     default:
@@ -393,17 +393,17 @@ const playerAskLink = (
           season === 'postseason' ? ' postseason' : ''
         }`,
       })
-    case 'mostPasses':
+    case 'mostBigChancesCreated':
       return createAskPath({
         domain: league,
-        query: `passes leaders ${year}${
+        query: `big chances created leaders ${year}${
           season === 'postseason' ? ' postseason' : ''
         }`,
       })
-    case 'mostTackles':
+    case 'mostTacklesWon':
       return createAskPath({
         domain: league,
-        query: `tackles leaders ${year}${
+        query: `tackles won leaders ${year}${
           season === 'postseason' ? ' postseason' : ''
         }`,
       })
@@ -591,8 +591,8 @@ const filterPlayerCards = (card: PlayerCard) =>
     'mostGoals',
     'mostAssists',
     'mostShotsOnTarget',
-    'mostPasses',
-    'mostTackles',
+    'mostBigChancesCreated',
+    'mostTacklesWon',
     'mostCleanSheets',
   ].includes(card.stat)
 
@@ -676,7 +676,7 @@ const filterTeamLeaders = (cards: PlayerCard[], domain: string) => {
     case 'epl':
       return cards
         .filter((c) =>
-          ['mostGoals', 'mostAssists', 'mostCleanSheets'].includes(c.stat),
+          ['mostGoals', 'mostAssists', 'mostMinutesPlayed'].includes(c.stat),
         )
         .map((c) => ({ ...c.players[0], stat: c.stat }))
     default:
