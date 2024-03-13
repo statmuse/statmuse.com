@@ -341,11 +341,18 @@ const awayLineup = lineupFormation(
                         <Goal class="w-4 h-4" color="#ed1c24" />
                       </div>
                     )}
-                    {homeTeam.goals.includes(player.entity.display) && (
-                      <div class="absolute top-0 left-0 -translate-x-1/2 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
-                        <Goal class="w-4 h-4" color="#000" />
-                      </div>
-                    )}
+                    {homeTeam.goals
+                      .filter((p) => p === player.entity.display)
+                      .map((_, i) => (
+                        <div
+                          class="absolute top-0 left-0 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center"
+                          style={`transform: translate(calc(-50% - ${
+                            6 * i
+                          }px))`}
+                        >
+                          <Goal class="w-4 h-4" color="#000" />
+                        </div>
+                      ))}
                     {homeTeam.yellows.includes(player.entity.display) && (
                       <div class="absolute top-0 right-0 translate-x-1/2 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
                         <div class="w-2 h-3 bg-yellow-300" />
@@ -421,11 +428,18 @@ const awayLineup = lineupFormation(
                         <Goal class="w-4 h-4" color="#ed1c24" />
                       </div>
                     )}
-                    {awayTeam.goals.includes(player.entity.display) && (
-                      <div class="absolute top-0 left-0 -translate-x-1/2 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
-                        <Goal class="w-4 h-4" color="#000" />
-                      </div>
-                    )}
+                    {awayTeam.goals
+                      .filter((p) => p === player.entity.display)
+                      .map((_, i) => (
+                        <div
+                          class="absolute top-0 left-0 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center"
+                          style={`transform: translate(calc(-50% - ${
+                            6 * i
+                          }px))`}
+                        >
+                          <Goal class="w-4 h-4" color="#000" />
+                        </div>
+                      ))}
                     {awayTeam.yellows.includes(player.entity.display) && (
                       <div class="absolute top-0 right-0 translate-x-1/2 w-[18px] h-[18px] bg-white rounded-full flex items-center justify-center">
                         <div class="w-2 h-3 bg-yellow-300" />

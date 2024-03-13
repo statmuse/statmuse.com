@@ -621,7 +621,23 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                         }
                       })()}
                       {homeTeamGoals.includes(player.entity.display) && (
-                        <Goal class="w-4 h-4 ml-0.5 shrink-0" color="#000" />
+                        <div class="relative">
+                          {homeTeamGoals
+                            .filter((p) => p === player.entity.display)
+                            .map((_, i) => (
+                              <Goal
+                                class="w-4 h-4 ml-0.5 shrink-0 rounded-full bg-white"
+                                style={
+                                  i > 0
+                                    ? `position: absolute; top: 0; left: ${
+                                        4 * i
+                                      }px`
+                                    : ''
+                                }
+                                color="#000"
+                              />
+                            ))}
+                        </div>
                       )}
                     </>
                   </div>
@@ -672,7 +688,23 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                         }
                       })()}
                       {awayTeamGoals.includes(player.entity.display) && (
-                        <Goal class="w-4 h-4 mr-0.5 shrink-0" color="#000" />
+                        <div class="relative">
+                          {awayTeamGoals
+                            .filter((p) => p === player.entity.display)
+                            .map((_, i) => (
+                              <Goal
+                                class="w-4 h-4 ml-0.5 shrink-0 rounded-full bg-white"
+                                style={
+                                  i > 0
+                                    ? `position: absolute; top: 0; right: ${
+                                        4 * i
+                                      }px`
+                                    : ''
+                                }
+                                color="#000"
+                              />
+                            ))}
+                        </div>
                       )}
                     </>
                   </div>
