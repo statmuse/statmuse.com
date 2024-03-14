@@ -338,7 +338,7 @@ export interface GameraPlayerBio {
   usedName: string
   bustImageUrl: string
   bustImageUrlGallery: GameraGalleryImage[]
-  team: {
+  team?: {
     name: string
     nickname: string
     abbreviation: string

@@ -268,7 +268,7 @@ const twitter = {
     <Explore {league} additionalQuestions={bio.additionalQuestions} />
     {
       ANSWER_CARDS_ENABLED && (
-        <AnswerCards {league} teamId={bio.team.entity.id.split('/')[0]} />
+        <AnswerCards {league} teamId={bio.team?.entity.id.split('/')[0]} />
       )
     }
   </Container>
