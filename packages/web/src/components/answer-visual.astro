@@ -75,6 +75,8 @@ const code = await Link.askShortCode(query, preferredDomain || '')
     disposition: answer.disposition,
     tokenizationScore: answer.tokenizationScore,
     query,
+    contentReference: answer.visual.contentReference,
+    subject: answer.visual.summary.subject,
   }}
 >
   <Header

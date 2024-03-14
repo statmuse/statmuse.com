@@ -19,7 +19,7 @@ import * as Enforcer from '@lib/enforcer'
 import * as Link from '@statmuse/core/link'
 import { NOT_FOUND_404 } from '@lib/response'
 import AnswerCards from '@components/answer-cards.astro'
-import { ANSWER_CARDS_ENABLED } from "src/config"
+import { ANSWER_CARDS_ENABLED } from 'src/config'
 
 const canQuery = await Enforcer.canQuery(Astro.locals)
 
@@ -71,11 +71,14 @@ const meta =
       }
     : {}
 
-const teamId = contentReference?.questionTags?.teamIds?.length && contentReference.questionTags.teamIds.length > 0
-  ? contentReference?.questionTags?.teamIds[0]
-  : contentReference?.answerTags?.teamIds?.length && contentReference.answerTags.teamIds.length > 0
-  ? contentReference?.answerTags?.teamIds[0]
-  : undefined
+const teamId =
+  contentReference?.questionTags?.teamIds?.length &&
+  contentReference.questionTags.teamIds.length > 0
+    ? contentReference?.questionTags?.teamIds[0]
+    : contentReference?.answerTags?.teamIds?.length &&
+      contentReference.answerTags.teamIds.length > 0
+    ? contentReference?.answerTags?.teamIds[0]
+    : undefined
 
 Caching.swr(Astro)
 ---
@@ -103,6 +106,8 @@ Caching.swr(Astro)
       page_domain: 'nfl',
       disposition: response.disposition,
       tokenizationScore: response.tokenizationScore,
+      contentReference: response.visual.contentReference,
+      subject: response.visual.summary.subject,
       query,
     }}
   >

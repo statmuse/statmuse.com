@@ -27,9 +27,10 @@ interface Props {
   meta?: Metadata
   league: LeagueParam
   query?: string
+  analytics?: AnalyticsPageviewProperties
 }
 
-const { bio, meta, query, league, page: pageType } = Astro.props
+const { bio, meta, query, league, analytics = {}, page: pageType } = Astro.props
 
 const domain = leagueToDomain(league)
 const teamUrl = bio.team ? getUrlForEntity(bio.team.entity) : ''
@@ -99,6 +100,7 @@ const twitter = {
       domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
     page_type: 'player',
     disposition: bio.disposition,
+    ...analytics,
   }}
 >
   <Header

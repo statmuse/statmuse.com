@@ -49,12 +49,20 @@ const query = clean(
       <AnswerPrompt answer={data} />
     ) : handled.type === 'player' ? (
       <PlayerProfile
+        analytics={{
+          contentReference: data.visual.contentReference,
+          subject: data.visual.summary.subject,
+        }}
         query={handled.query}
         player={handled.player}
         league={handled.league.toLowerCase() as LeagueParam}
       />
     ) : handled.type === 'teamSeason' ? (
       <TeamSeasonProfile
+        analytics={{
+          contentReference: data.visual.contentReference,
+          subject: data.visual.summary.subject,
+        }}
         query={handled.query}
         team={handled.team}
         league={handled.league.toLowerCase() as LeagueParam}
@@ -62,12 +70,22 @@ const query = clean(
       />
     ) : handled.type === 'teamFranchise' ? (
       <TeamFranchiseProfile
+        analytics={{
+          contentReference: data.visual.contentReference,
+          subject: data.visual.summary.subject,
+        }}
         query={handled.query}
         team={handled.team}
         league={handled.league.toLowerCase() as LeagueParam}
       />
     ) : handled.type === 'eplHistoricalBoxScore' ? (
-      <AnswerEplBoxscore data={handled.data} />
+      <AnswerEplBoxscore
+        analytics={{
+          contentReference: data.visual.contentReference,
+          subject: data.visual.summary.subject,
+        }}
+        data={handled.data}
+      />
     ) : data.type === 'nlgAnswerNotPossibleVisualsRequired' ? (
       <AnswerVisual answer={data} />
     ) : undefined
