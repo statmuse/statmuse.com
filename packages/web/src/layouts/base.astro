@@ -322,6 +322,7 @@ const canonicalUrl = meta?.canonical
       import { segment, getOrigin } from '@lib/analytics'
       import type { Session } from '@lib/session'
       import { session as sessionStore } from '@lib/session-store'
+      import type { ContentReference, Subject } from '@statmuse/core/gamera'
 
       // configure honeybadger
       Honeybadger.configure({
@@ -343,6 +344,38 @@ const canonicalUrl = meta?.canonical
             }, {})
       }
 
+      const getTeamsAndPlayers = (contentReference?: ContentReference) => {
+        if (!contentReference) return {}
+        const { questionTags, answerTags } = contentReference
+        return {
+          players: JSON.stringify(
+            Array.from(
+              new Set([
+                ...(questionTags?.playerIds ? questionTags.playerIds : []),
+                ...(answerTags?.playerIds ? answerTags.playerIds : []),
+              ]),
+            ),
+          ),
+          teams: JSON.stringify(
+            Array.from(
+              new Set([
+                ...(questionTags?.teamIds ? questionTags.teamIds : []),
+                ...(answerTags?.teamIds ? answerTags.teamIds : []),
+              ]),
+            ),
+          ),
+        }
+      }
+
+      const getSubjectItems = (subject?: Subject) => {
+        if (!subject) return {}
+        return {
+          subject_image: subject.imageUrl,
+          subject_background_color: subject.colors.background,
+          subject_foreground_color: subject.colors.foreground,
+        }
+      }
+
       // default page tracking
       segment.page()
 
@@ -352,12 +385,19 @@ const canonicalUrl = meta?.canonical
       )?.content
 
       if (eventProps) {
-        const { disposition, tokenizationScore, ...props } =
-          JSON.parse(eventProps)
+        const {
+          disposition,
+          tokenizationScore,
+          contentReference,
+          subject,
+          ...props
+        } = JSON.parse(eventProps)
         segment.track('Pageview', {
           ...props,
           ...flattenObj('disposition', disposition),
           ...flattenObj('tokenizationScore', tokenizationScore),
+          ...getTeamsAndPlayers(contentReference),
+          ...getSubjectItems(subject),
           origin: getOrigin(navigator.userAgent),
         })
 
