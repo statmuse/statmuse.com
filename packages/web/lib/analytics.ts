@@ -1,5 +1,10 @@
 import { AnalyticsBrowser } from '@segment/analytics-next'
-import type { Disposition, TokenizationScore } from '@statmuse/core/gamera'
+import type {
+  ContentReference,
+  Disposition,
+  Subject,
+  TokenizationScore,
+} from '@statmuse/core/gamera'
 import { isBotTest } from '@lib/useragent'
 
 export type AnalyticsPageviewProperties = {
@@ -34,6 +39,8 @@ export type AnalyticsPageviewProperties = {
   visitor_id?: string
   disposition?: Disposition
   tokenizationScore?: TokenizationScore
+  contentReference?: ContentReference
+  subject?: Subject
 }
 
 declare global {
