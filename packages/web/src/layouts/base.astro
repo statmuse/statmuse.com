@@ -323,6 +323,7 @@ const canonicalUrl = meta?.canonical
       import type { Session } from '@lib/session'
       import { session as sessionStore } from '@lib/session-store'
       import type { ContentReference, Subject } from '@statmuse/core/gamera'
+      import type { ContentReference as KanedamaContentReference } from '@statmuse/core/kanedama'
 
       // configure honeybadger
       Honeybadger.configure({
@@ -344,26 +345,49 @@ const canonicalUrl = meta?.canonical
             }, {})
       }
 
-      const getTeamsAndPlayers = (contentReference?: ContentReference) => {
+      const getReferenceIds = (
+        contentReference?: ContentReference | KanedamaContentReference,
+      ) => {
         if (!contentReference) return {}
         const { questionTags, answerTags } = contentReference
-        return {
-          players: JSON.stringify(
-            Array.from(
-              new Set([
-                ...(questionTags?.playerIds ? questionTags.playerIds : []),
-                ...(answerTags?.playerIds ? answerTags.playerIds : []),
-              ]),
+
+        if (
+          questionTags?.playerIds ||
+          questionTags?.teamIds ||
+          answerTags?.playerIds ||
+          answerTags?.teamIds
+        ) {
+          return {
+            players: JSON.stringify(
+              Array.from(
+                new Set([
+                  ...(questionTags?.playerIds ? questionTags.playerIds : []),
+                  ...(answerTags?.playerIds ? answerTags.playerIds : []),
+                ]),
+              ),
             ),
-          ),
-          teams: JSON.stringify(
-            Array.from(
-              new Set([
-                ...(questionTags?.teamIds ? questionTags.teamIds : []),
-                ...(answerTags?.teamIds ? answerTags.teamIds : []),
-              ]),
+            teams: JSON.stringify(
+              Array.from(
+                new Set([
+                  ...(questionTags?.teamIds ? questionTags.teamIds : []),
+                  ...(answerTags?.teamIds ? answerTags.teamIds : []),
+                ]),
+              ),
             ),
-          ),
+          }
+        }
+
+        if (questionTags?.assetIds || answerTags?.assetIds) {
+          return {
+            assets: JSON.stringify(
+              Array.from(
+                new Set([
+                  ...(questionTags?.assetIds ? questionTags.assetIds : []),
+                  ...(answerTags?.assetIds ? answerTags.assetIds : []),
+                ]),
+              ),
+            ),
+          }
         }
       }
 
@@ -396,7 +420,7 @@ const canonicalUrl = meta?.canonical
           ...props,
           ...flattenObj('disposition', disposition),
           ...flattenObj('tokenizationScore', tokenizationScore),
-          ...getTeamsAndPlayers(contentReference),
+          ...getReferenceIds(contentReference),
           ...getSubjectItems(subject),
           origin: getOrigin(navigator.userAgent),
         })

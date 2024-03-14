@@ -11,14 +11,16 @@ import type { Metadata } from '@lib/meta'
 import { getUrlForEntity, type AssetProfile } from '@statmuse/core/kanedama'
 import { imageForgeUrl } from '@statmuse/core/path'
 import { cdnBaseUrl } from '@statmuse/core/gamera'
+import type { AnalyticsPageviewProperties } from '@lib/analytics'
 
 interface Props {
   profile: AssetProfile
   meta?: Metadata
   query?: string
+  analytics?: AnalyticsPageviewProperties
 }
 
-const { profile, meta, query } = Astro.props
+const { profile, meta, query, analytics = {} } = Astro.props
 
 const assetPath = getUrlForEntity({
   type: 'assetProfile',
@@ -76,6 +78,7 @@ const twitter = {
     is_search: true,
     page_domain: 'finance',
     page_type: 'asset',
+    ...analytics,
   }}
 >
   <Header
