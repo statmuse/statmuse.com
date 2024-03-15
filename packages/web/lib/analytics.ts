@@ -1,5 +1,14 @@
 import { AnalyticsBrowser } from '@segment/analytics-next'
-import type { Disposition, TokenizationScore } from '@statmuse/core/gamera'
+import type {
+  ContentReference as GameraContentReference,
+  Disposition,
+  Subject as GameraSubject,
+  TokenizationScore,
+} from '@statmuse/core/gamera'
+import type {
+  ContentReference as KanedamaContentReference,
+  Subject as KanedamaSubject,
+} from '@statmuse/core/kanedama'
 import { isBotTest } from '@lib/useragent'
 
 export type AnalyticsPageviewProperties = {
@@ -34,6 +43,8 @@ export type AnalyticsPageviewProperties = {
   visitor_id?: string
   disposition?: Disposition
   tokenizationScore?: TokenizationScore
+  contentReference?: GameraContentReference | KanedamaContentReference
+  subject?: GameraSubject | KanedamaSubject
 }
 
 declare global {

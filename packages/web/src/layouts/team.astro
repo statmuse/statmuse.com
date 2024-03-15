@@ -30,9 +30,10 @@ interface Props {
     | 'history'
   meta?: Metadata
   query?: string
+  analytics?: AnalyticsPageviewProperties
 }
 
-const { bio, meta, query, page: pageType } = Astro.props
+const { bio, meta, query, analytics = {}, page: pageType } = Astro.props
 
 const domain = bio.domain.toUpperCase() as GameraDomain
 const preferredDomain = domain.toLowerCase()
@@ -117,6 +118,7 @@ const twitter = {
       domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
     page_type: 'team',
     disposition: bio.disposition,
+    ...analytics,
   }}
 >
   <Header

@@ -23,9 +23,10 @@ interface Props {
   page: 'overview' | 'stats' | 'schedule' | 'roster' | 'splits' | 'history'
   meta?: Metadata
   query?: string
+  analytics?: AnalyticsPageviewProperties
 }
 
-const { overview, meta, query, page: pageType } = Astro.props
+const { overview, meta, query, analytics = {}, page: pageType } = Astro.props
 const { bio } = overview
 
 const domain = overview.domain.toUpperCase() as GameraDomain
@@ -115,6 +116,7 @@ const twitter = {
       domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
     page_type: 'team',
     disposition: overview.disposition,
+    ...analytics,
   }}
 >
   <Header

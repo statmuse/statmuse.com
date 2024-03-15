@@ -14,9 +14,10 @@ import * as Link from '@statmuse/core/link'
 
 interface Props {
   data: GameraEplBoxScore
+  analytics: AnalyticsPageviewProperties
 }
 
-const { data } = Astro.props
+const { analytics, data } = Astro.props
 
 const subject = data.visual.summary.subject
 const domain = data.visual.domain
@@ -73,6 +74,7 @@ const code = await Link.askShortCode(query, preferredDomain || '')
     disposition: data.disposition,
     tokenizationScore: data.tokenizationScore,
     query,
+    ...analytics,
   }}
 >
   <Header

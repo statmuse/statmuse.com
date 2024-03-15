@@ -11,13 +11,16 @@ import { getPlayerProfile, getPositionName } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
 import { NOT_FOUND_404 } from '@lib/response'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
+import type { AnalyticsPageviewProperties } from '@lib/analytics'
 
 interface Props {
   league: LeagueParam
   player: string
   query?: string
+  analytics?: AnalyticsPageviewProperties
 }
 
+const analytics = Astro.props.analytics
 const query = Astro.props.query
 const player = Astro.props.player
 const leagueParam = Astro.props.league
@@ -58,6 +61,7 @@ const meta = { title, description, keywords, canonical }
   {meta}
   league={domain.toLowerCase() === 'epl' ? 'fc' : leagueParam}
   {query}
+  {analytics}
   page="overview"
 >
   <div>

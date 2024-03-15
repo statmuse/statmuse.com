@@ -67,10 +67,23 @@ Caching.swr(Astro)
 >
   {
     handled.type === 'assetEntityData' ? (
-      <AssetProfile query={handled.query} symbol={handled.symbol} />
+      <AssetProfile
+        query={handled.query}
+        symbol={handled.symbol}
+        analytics={{
+          contentReference: response.visual.contentReference,
+          subject: response.visual.summary.subject,
+        }}
+      />
     ) : response.type === 'nlgAnswerNotPossibleVisualsRequired' ||
       response.type === 'nlgPromptForMoreInfoVisualChoicesOptional' ? (
-      <AnswerMoney answer={response} />
+      <AnswerMoney
+        answer={response}
+        analytics={{
+          contentReference: response.visual.contentReference,
+          subject: response.visual.summary.subject,
+        }}
+      />
     ) : undefined
   }
 </ErrorLayout>

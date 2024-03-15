@@ -12,12 +12,14 @@ import { tokensToText } from '@statmuse/core/kanedama'
 import { title } from '@lib/meta'
 import type { KanedamaResponse } from '@statmuse/core/kanedama'
 import * as Link from '@statmuse/core/link'
+import type { AnalyticsPageviewProperties } from '@lib/analytics'
 
 interface Props {
   answer: KanedamaResponse
+  analytics: AnalyticsPageviewProperties
 }
 
-const { answer } = Astro.props
+const { answer, analytics } = Astro.props
 const conversationToken = answer.conversation.token
 const subject = answer.visual.summary.subject
 
@@ -73,6 +75,7 @@ const meta =
     page_type: 'ask',
     page_domain: 'finance',
     query,
+    ...analytics,
   }}
 >
   <Header
