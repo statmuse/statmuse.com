@@ -1,6 +1,5 @@
 ---
-import Layout from '@layouts/main.astro'
-import Header from '@components/header.astro'
+import Layout from '@layouts/base.astro'
 import { Caching } from '@lib/caching'
 import { getGame } from '@lib/game'
 import { NOT_FOUND_404 } from '@lib/response'
@@ -9,7 +8,6 @@ import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { imageForgeUrl } from '@statmuse/core/path'
 import { tokensToText } from '@statmuse/core/gamera'
 import EplBoxscore from '@components/epl/boxscore.astro'
-import Container from '@components/container.astro'
 import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
 
@@ -58,14 +56,10 @@ Caching.swr(Astro)
     page_domain: preferredDomain as AnalyticsPageviewProperties['page_domain'],
     page_type: 'game',
   }}
+  {preferredDomain}
 >
-  <Header {preferredDomain} />
   <EplBoxscore {data} />
   {
-    ANSWER_CARDS_ENABLED && (
-      <Container>
-        <AnswerCards league="fc" {teamId} />
-      </Container>
-    )
+    ANSWER_CARDS_ENABLED && (<AnswerCards league="fc" {teamId} />)
   }
 </Layout>

@@ -1,10 +1,7 @@
 ---
-import Header from '@components/header.astro'
 import TeamRepresentatives from '@components/representatives.astro'
-import AnswerShare from '@components/answer-share.astro'
-import TwitterShare from '@components/icons/twitter.astro'
 import Explore from '@components/explore.astro'
-import Layout from '@layouts/main.astro'
+import Layout from '@layouts/base.astro'
 import {
   type GameraDomain,
   type GameraTeamSeasonBio,
@@ -19,7 +16,6 @@ import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
-import HeroPanel from '@components/hero-panel.astro'
 import Nav from '@components/nav.astro'
 import GridDropdown from '@components/grid-dropdown.astro'
 import type { LeagueParam } from '@lib/params'
@@ -217,9 +213,19 @@ const navProps: ComponentProps<typeof Nav> = {
     page_type: 'team',
     disposition: isTeam ? bio.disposition : Astro.props.bio.disposition,
   }}
+  hero={{
+    content: bio.name,
+    url: teamFranchiseUrl
+      ? {
+          href: teamFranchiseUrl,
+        }
+      : undefined,
+    shareUrl,
+  }}
+  {navProps}
+  {parameters}
 >
-  <Header {preferredDomain} {query} />
-  <HeroPanel class="-mt-3 flex flex-col-reverse gap-3 md:flex-row">
+  <Fragment slot="hero">
     <TeamRepresentatives
       class:list={{
         'h-32': true,
@@ -233,33 +239,6 @@ const navProps: ComponentProps<typeof Nav> = {
       fallback={bio.logoImageUrl || getDefaultTeamLogoUrl(domain)}
       alt={`Logo for the${isTeam ? ' ' + bio.season.name : ''} ${bio.name}`}
     />
-    <div class="flex flex-col justify-between items-start -mb-3 md:mt-5">
-      <div class="mx-auto md:mx-0 md:items-center">
-        <h1
-          class="text-[2rem] leading-tight font-semibold text-center md:text-left"
-        >
-          <a
-            class="text-current"
-            href={teamFranchiseUrl}
-            title={`${bio.name} Franchise`}
-            data-cy-team-name-link
-          >
-            {bio.name}
-          </a>
-        </h1>
-      </div>
-      <Nav class="hidden md:flex" hero {...navProps} />
-    </div>
-    <div
-      class:list={{
-        'flex flex-row gap-2.5 items-center': true,
-        'absolute right-3 bottom-3 md:top-3 md:bottom-auto px-2 py-1': true,
-        'rounded-2xl bg-team-secondary text-team-primary': true,
-      }}
-    >
-      <TwitterShare shareUrl={Astro.url.href} />
-      <AnswerShare onlyIcon url={shareUrl} />
-    </div>
     {
       isTeam ? (
         <Select
@@ -269,8 +248,7 @@ const navProps: ComponentProps<typeof Nav> = {
         />
       ) : null
     }
-  </HeroPanel>
-  <Nav class="md:hidden" {...navProps} />
+  </Fragment>
   {
     isTeam ? (
       <Select

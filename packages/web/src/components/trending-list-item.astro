@@ -1,7 +1,7 @@
 ---
-import Image from '@components/image.astro'
 import type { HTMLAttributes } from 'astro/types'
 import { type TrendingListItem } from 'src/types'
+import Representatives from '@components/representatives.astro'
 
 interface Props extends HTMLAttributes<'li'> {
   item: TrendingListItem
@@ -14,6 +14,7 @@ interface Props extends HTMLAttributes<'li'> {
 const { item, index, prominent, ...rest } = Astro.props
 const numbered = Astro.props.numbered ?? true
 const eager = Astro.props.eager ?? false
+const representatives = item.images.map((i) => ({ url: i }))
 ---
 
 <li {...rest}>
@@ -22,7 +23,7 @@ const eager = Astro.props.eager ?? false
     class:list={{
       flex: item.images.length === 0,
       'grid grid-cols-3': item.images.length > 0,
-      'items-center text-gray-1': true,
+      'items-center text-inherit overflow-clip': true,
       'pt-3': numbered,
       'pt-1': !numbered,
     }}
@@ -49,28 +50,34 @@ const eager = Astro.props.eager ?? false
     </div>
     <div
       class:list={{
-        'relative flex h-24 items-end': true,
-        'ml-12 -mr-12': item.images.length > 1,
+        'relative flex items-end h-24': true,
+        '-ml-12': item.images.length === 1,
+        'ml-16 -mr-28': item.images.length === 2,
+        'ml-12 -mr-12': item.images.length === 3,
       }}
     >
-      {
-        item.images.map((image, index) => (
-          <Image
-            data-cy-illustration
-            class:list={{
-              'object-contain object-bottom': true,
-              'h-[84px]': item.images.length > 1 && index !== 1,
-              'absolute bottom-0 left-0 h-full translate-x-[38%] z-[1]':
-                index === 1,
-            }}
-            alt={item.title}
-            src={image}
-            width={450}
-            height={450}
-            loading={eager ? 'eager' : 'lazy'}
-          />
-        ))
-      }
+      <Representatives
+        {representatives}
+        class:list={{ 'scale-75 origin-bottom': true }}
+      />
+      <!-- { -->
+      <!--   item.images.map((image, index) => ( -->
+      <!--     <Image -->
+      <!--       data-cy-illustration -->
+      <!--       class:list={{ -->
+      <!--         'object-contain object-bottom h-24': true, -->
+      <!--         // 'h-[84px]': item.images.length > 1 && index !== 1, -->
+      <!--         'absolute bottom-0 left-0 h-full translate-x-[35%] z-[1]': -->
+      <!--           index === 1, -->
+      <!--       }} -->
+      <!--       alt={item.title} -->
+      <!--       src={image} -->
+      <!--       width={450} -->
+      <!--       height={450} -->
+      <!--       loading={eager ? 'eager' : 'lazy'} -->
+      <!--     /> -->
+      <!--   )) -->
+      <!-- } -->
     </div>
   </a>
 </li>

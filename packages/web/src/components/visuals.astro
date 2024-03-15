@@ -172,7 +172,7 @@ const details =
                 <AditudeMedRec client:only="svelte" />
                 {detail.grids.map((grid) => (
                   <div>
-                    <div class="flex gap-4">
+                    <div class="flex gap-3">
                       <div class="flex-1 overflow-x-auto">
                         <Grid
                           client:load
@@ -192,7 +192,7 @@ const details =
             )
           case 'genericGrids':
             return detail.grids.map((grid) => (
-              <div class="flex gap-4">
+              <div class="flex gap-3">
                 <div class="flex-1 overflow-x-auto">
                   <Grid
                     client:load

@@ -1,9 +1,7 @@
 ---
-import MainLayout from '@layouts/main.astro'
-import Header from '@components/header.astro'
+import Layout from '@layouts/base.astro'
 import sample from 'lodash/sample'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
-import Hero from '@components/hero.astro'
 
 interface Props {
   status?: number
@@ -51,14 +49,18 @@ if (render) {
 
 {
   render ? (
-    <MainLayout
+    <Layout
       {...Astro.props}
       colors={{ foreground: '#fff', background: '#0086ff' }}
       {enableAdBanner}
-    >
-      <Header {query} {money} />
-      <Hero content={message} imageUrl={image?.url} imageAlt={image?.alt} />
-    </MainLayout>
+      {money}
+      {query}
+      hero={{
+        content: message,
+        imageUrl: image?.url,
+        imageAlt: image?.alt,
+      }}
+    />
   ) : (
     <slot />
   )

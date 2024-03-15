@@ -51,14 +51,14 @@ const standingsLimit =
   league === 'nba'
     ? 6
     : league === 'fc'
-      ? 6
-      : league === 'nfl'
-        ? 2
-        : league === 'nhl'
-          ? 3
-          : league === 'mlb'
-            ? 2
-            : undefined
+    ? 6
+    : league === 'nfl'
+    ? 2
+    : league === 'nhl'
+    ? 3
+    : league === 'mlb'
+    ? 2
+    : undefined
 const fantasyDisplay = `Fantasy ${
   league === 'nba' ? 'Basketball' : league === 'nfl' ? 'Football' : ''
 }`
@@ -754,7 +754,7 @@ if (allowedDomains.includes(league) && teamId) {
     teamSpecificPlayerCards && teamSpecificPlayerCards.team && (
       <div>
         <h3 class="text-xl font-semibold mb-1.5">{`More ${teamSpecificPlayerCards.team.nickname} Stats`}</h3>
-        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
           {teamLeaders && teamLeaders.players.length > 0 && (
             <PlayerCardComponent
               title="Team Leaders"
@@ -859,7 +859,7 @@ if (allowedDomains.includes(league) && teamId) {
                     {teamLastGame.homeTeam.record}
                   </p>
                 </div>
-                <div class="flex items-center gap-4 -mt-[38px] flex-shrink-0">
+                <div class="flex items-center gap-3 -mt-[38px] flex-shrink-0">
                   <p class="text-2xl font-semibold">
                     {teamLastGame.homeTeam.score}
                   </p>
@@ -917,7 +917,7 @@ if (allowedDomains.includes(league) && teamId) {
         <h3 class="text-xl font-semibold mb-1.5">
           {`${domainDisplay} ${playerCardsResp.seasonYearDisplay} Leaders`}
         </h3>
-        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
           {playerLeaderCards.map((card) => (
             <PlayerCardComponent
               card={card}
@@ -947,7 +947,7 @@ if (allowedDomains.includes(league) && teamId) {
         <h3 class="text-xl font-semibold mb-1.5">
           {`${domainDisplay} ${teamCardsResp.seasonYearDisplay} Rankings`}
         </h3>
-        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
           {teamRankingCards.map((card) => (
             <TeamCardComponent
               card={card}
@@ -979,7 +979,7 @@ if (allowedDomains.includes(league) && teamId) {
           <h3 class="text-xl font-semibold mb-1.5">
             {`${fantasyDisplay} ${playerCardsResp.seasonYearDisplay}`}
           </h3>
-          <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+          <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
             {fantasyCards.map((card) => (
               <PlayerCardComponent
                 title={`${postseasonDisplay(
@@ -1015,7 +1015,7 @@ if (allowedDomains.includes(league) && teamId) {
             teamCardsResp.seasonYearDisplay
           } Betting`}
         </h3>
-        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
           {bettingCards.map((card) => (
             <TeamCardComponent
               title={teamCardStatTitle(card.stat)}
@@ -1038,7 +1038,7 @@ if (allowedDomains.includes(league) && teamId) {
         <h3 class="text-xl font-semibold mb-1.5">
           {`${domainDisplay} ${standingsResp.seasonYearDisplay} ${standingsDisplay}`}
         </h3>
-        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
           {Object.entries(groupBy(standingsResp.teams, 'conference.name')).map(
             ([_, teams]) => (
               // @ts-expect-error
@@ -1070,7 +1070,7 @@ if (allowedDomains.includes(league) && teamId) {
           <h3 class="text-xl font-semibold mb-1.5">
             {`${domainDisplay} ${scoresResp.seasonYearDisplay} Scores & Schedule`}
           </h3>
-          <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+          <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
             <ScoresCard title="Scores" data={scoresResp} />
             <ScheduleCard title="Schedule" data={scheduleResp} />
           </div>

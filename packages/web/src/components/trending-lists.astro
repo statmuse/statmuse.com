@@ -11,9 +11,7 @@ interface Props {
 const { item } = Astro.props
 ---
 
-<div
-  class="space-y-3 sm:justify-center sm:flex sm:flex-wrap sm:space-y-0 sm:gap-3 [&>*]:sm:w-[360px]"
->
+<div class="space-y-3 gap-3 justify-center sm:gap-3 md:columns-2 lg:columns-3">
   {
     item?.datasets?.map((dataset, index) => (
       <Fragment>
@@ -23,6 +21,10 @@ const { item } = Astro.props
           moreUrl={`${Astro.url.pathname}/${dataset.key}${Astro.url.search}`}
           prominent={dataset.prominent}
           eager={index < 3}
+          class:list={{
+            '!mt-0': index === 0,
+            'break-inside-avoid-column': true,
+          }}
         />
         <AditudeAdTrending
           client:only="svelte"

@@ -18,19 +18,21 @@ const preferredDomain = Astro.props.preferredDomain ?? ''
 
 <div
   class:list={{
-    'grid grid-cols-[1fr_minmax(auto,_1250px)_1fr] items-center': true,
-    'min-h-[62px] md:min-h-[70px] z-[5]': true,
-    'md:bg-gray-7 dark:md:bg-gray-2 bg-team-primary sticky top-0': true,
-    '-mx-3 py-2 px-3 md:py-3 md:px-0 md:mx-0': true,
+    'flex gap-3 items-center': true,
+    'min-h-[62px] z-[5]': true,
+    'md:bg-gray-7 dark:md:bg-gray-2 bg-team-primary dark:bg-team-primary-dark-bg sticky top-0': true,
+    '-mx-3 px-3 md:px-0 md:mx-0': true,
   }}
 >
-  <div class="flex col-start-1 col-span-1">
-    <DropdownMenu showElephant />
+  <div
+    class="flex col-start-1 col-span-1 xl:w-[190px] xl:justify-center shrink-0"
+  >
+    <DropdownMenu showElephant class="xl:hidden" />
     <a href={Astro.props.money ? '/money' : '/'} class="hidden md:block">
       <Logo class="w-[150px] mx-5" />
     </a>
   </div>
-  <div class="col-start-2 col-span-1 max-w-[780px] flex">
+  <div class="col-start-2 col-span-1 max-w-[780px] flex grow">
     <div class="flex-1 justify-start">
       <AskBar
         client:load
@@ -41,7 +43,7 @@ const preferredDomain = Astro.props.preferredDomain ?? ''
       />
     </div>
   </div>
-  <div class="ml-3 justify-end hidden md:block">
+  <div class="ml-3 justify-end hidden md:block shrink-0">
     <AuthMenu client:load />
   </div>
 </div>
