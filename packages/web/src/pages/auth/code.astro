@@ -1,8 +1,6 @@
 ---
-import Layout from '@layouts/main.astro'
-import Header from '@components/header.astro'
+import Layout from '@layouts/base.astro'
 import Image from '@components/image.astro'
-import Container from '@components/container.astro'
 import { Caching } from '@lib/caching'
 const meta = {
   title: 'Sign Up For StatMuse+',
@@ -18,55 +16,52 @@ Astro.response.headers.set('Access-Control-Allow-Origin', '*')
 ---
 
 <Layout {meta} enableAdBanner={false}>
-  <Header />
-  <Container class="px-[30px] py-[5px]">
-    <div
-      class="w-full max-w-md bg-white rounded-lg border border-[#e4e4e4] mx-auto mb-5 pt-8 px-8 pb-44 relative text-center overflow-hidden"
-    >
-      <h1 class="font-medium text-lg md:text-xl mb-5">
-        Enter the code we emailed you
-      </h1>
-      <div>
-        <form
-          id="signup-form"
-          method="get"
-          action={import.meta.env.PUBLIC_AUTH_URL + '/callback'}
+  <div
+    class="w-full max-w-md bg-white rounded-lg border border-[#e4e4e4] mx-auto mb-5 pt-8 px-8 pb-44 relative text-center overflow-hidden"
+  >
+    <h1 class="font-medium text-lg md:text-xl mb-5">
+      Enter the code we emailed you
+    </h1>
+    <div>
+      <form
+        id="signup-form"
+        method="get"
+        action={import.meta.env.PUBLIC_AUTH_URL + '/callback'}
+      >
+        <input
+          class="w-full px-3 py-2.5 text-lg text-[#55595c] rounded bg-white border mb-7 outline-none"
+          name="code"
+          type="text"
+          placeholder="Code"
+          required
+          aria-invalid={!!error}
+          aria-describedby={error ? 'code-error' : undefined}
+          value={code}
+        />
+        {
+          error ? (
+            <p class="mb-3 text-sm text-red-600" id="code-error">
+              {messages[error]}
+            </p>
+          ) : null
+        }
+        <button
+          disabled={false}
+          class="w-full text-lg mb-7 p-3 border-0 rounded text-white bg-[#42a5f5] hover:bg-[#1976d2] disabled:bg-[#cfd8dc]"
+          type="submit"
         >
-          <input
-            class="w-full px-3 py-2.5 text-lg text-[#55595c] rounded bg-white border mb-7 outline-none"
-            name="code"
-            type="text"
-            placeholder="Code"
-            required
-            aria-invalid={!!error}
-            aria-describedby={error ? 'code-error' : undefined}
-            value={code}
-          />
-          {
-            error ? (
-              <p class="mb-3 text-sm text-red-600" id="code-error">
-                {messages[error]}
-              </p>
-            ) : null
-          }
-          <button
-            disabled={false}
-            class="w-full text-lg mb-7 p-3 border-0 rounded text-white bg-[#42a5f5] hover:bg-[#1976d2] disabled:bg-[#cfd8dc]"
-            type="submit"
-          >
-            Confirm code
-          </button>
-        </form>
-      </div>
-      <Image
-        class="absolute bottom-0 left-0 w-full"
-        src="https://cdn.statmuse.com/app/images/signup-players.png"
-        alt="StatMuse+"
-        width={900}
-        height={400}
-      />
+          Confirm code
+        </button>
+      </form>
     </div>
-  </Container>
+    <Image
+      class="absolute bottom-0 left-0 w-full"
+      src="https://cdn.statmuse.com/app/images/signup-players.png"
+      alt="StatMuse+"
+      width={900}
+      height={400}
+    />
+  </div>
 </Layout>
 
 <script>

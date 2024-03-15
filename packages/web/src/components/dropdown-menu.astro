@@ -6,12 +6,13 @@ import Icon from '@components/icon.svelte'
 
 interface Props {
   showElephant?: boolean
+  class?: string | null
 }
 
 const { showElephant } = Astro.props
 ---
 
-<div>
+<div class:list={{ [Astro.props.class ?? '']: !!Astro.props.class }}>
   <input id="menu" type="checkbox" class="hidden peer" />
   {
     showElephant && (
@@ -57,7 +58,7 @@ const { showElephant } = Astro.props
           <Logo class="w-[150px] fill-black" />
         </a>
       </div>
-      <MenuLinks />
+      <MenuLinks class="p-3 w-[220px]" />
     </div>
   </div>
 </div>

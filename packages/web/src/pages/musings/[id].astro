@@ -1,7 +1,5 @@
 ---
-import Layout from '@layouts/main.astro'
-import Header from '@components/header.astro'
-import Hero from '@components/hero.astro'
+import Layout from '@layouts/base.astro'
 import Visuals from '@components/visuals.astro'
 import { getMusingByIdOrFriendlyId } from '@statmuse/core/musing'
 import { rgbToHex } from '@statmuse/core/color'
@@ -11,7 +9,6 @@ import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { Caching } from '@lib/caching'
 import { NOT_FOUND_404 } from '@lib/response'
-import Container from '@components/container.astro'
 import Explore from '@components/explore.astro'
 import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
@@ -33,6 +30,7 @@ const background = musing.background_rgba
   : undefined
 
 const heroProps = getHeroProps({ imageAlt: query, musing })
+console.log("heroProps", heroProps)
 
 const meta = {
   title: title(query),
@@ -72,16 +70,19 @@ Caching.swr(Astro)
       musing.domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
     query,
   }}
+  {query}
+  {conversationToken}
+  {preferredDomain}
+  hero={heroProps}
 >
-  <Header {query} {conversationToken} {preferredDomain} />
-  {
-    heroProps ? (
-      <Hero
-        {...heroProps}
-        shareUrl={`${process.env.SHORT_LINK_URL}e/${musing.short_code}`}
-      />
-    ) : null
-  }
+  <!-- { -->
+  <!--   heroProps ? ( -->
+  <!--     <Hero -->
+  <!--       {...heroProps} -->
+  <!--       shareUrl={`${process.env.SHORT_LINK_URL}e/${musing.short_code}`} -->
+  <!--     /> -->
+  <!--   ) : null -->
+  <!-- } -->
   <Visuals response={musing.answer} />
   <Explore
     league={musing.domain === 'EPL' ? 'fc' : preferredDomain}

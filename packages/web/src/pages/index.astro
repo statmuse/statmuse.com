@@ -21,7 +21,7 @@ Caching.swr(Astro)
 ---
 
 <HomeLayout>
-  <div class="gap-3 space-y-3 columns-xs">
+  <div class="gap-3 space-y-3 columns-xs w-full">
     <FreestarVideo client:load class="w-full">
       {
         players?.length ? (
@@ -43,10 +43,10 @@ Caching.swr(Astro)
                       index === 0
                         ? 75
                         : index === 1
-                          ? 25
-                          : index === 2
-                            ? -25
-                            : -75
+                        ? 25
+                        : index === 2
+                        ? -25
+                        : -75
                     }%);`}
                     alt={player.title}
                     src={player.images[0]}

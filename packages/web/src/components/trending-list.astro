@@ -10,12 +10,13 @@ interface Props {
   moreUrl: string
   eager?: boolean
   prominent?: boolean
+  class?: string | null
 }
 
 const { items, title, eager, moreUrl, prominent } = Astro.props
 ---
 
-<Panel {title}>
+<Panel {title} class:list={{ [Astro.props.class ?? '']: !!Astro.props.class }}>
   {
     items?.length ? (
       <>

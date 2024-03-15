@@ -1,7 +1,5 @@
 ---
-import Layout from '@layouts/main.astro'
-import Header from '@components/header.astro'
-import Container from '@components/container.astro'
+import Layout from '@layouts/base.astro'
 import Image from '@components/image.astro'
 import type { PlayerGalleryItem } from '@lib/player'
 import { type GameraDomain, getUrlForEntity } from '@statmuse/core/gamera'
@@ -69,78 +67,105 @@ const meta = {
     page_type: 'player',
   }}
 >
-  <Header />
-  <Container class="text-white bg-primary">
-    <div class="pt-[54px] pb-10 md:pt-[90px] md:pb-16 text-center">
-      <h1 class="font-semibold text-xl md:text-3xl">
-        Gallery <span style="font-weight: 100;">|</span> Players
-      </h1>
-    </div>
-  </Container>
-  <Container class="bg-primary">
-    <ul class="flex items-center justify-center">
-      {
-        leagues.map((x) => (
-          <li class="mx-3 md:mx-6">
-            <a
-              class={`text-sm md:text-base flex items-center h-11 md:h-[50px] text-white hover:no-underline hover:opacity-100 ${
-                x.domain === domain ? 'opacity-100 font-semibold' : 'opacity-80'
-              }`}
-              href={x.href}
-            >
-              {x.text}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </Container>
-  <Container>
-    <div>
-      <FreestarVideo
-        client:only="svelte"
-        class="w-full md:w-[425px] mx-auto mt-4"
-        domain={domain?.toLowerCase()}
-      />
-    </div>
-    <div
-      class="flex justify-start md:justify-center py-4 overflow-auto bg-white"
-    >
-      {
-        alphabet.map((letter) => (
+  <div class="pt-[54px] pb-10 md:pt-[90px] md:pb-16 text-center">
+    <h1 class="font-semibold text-xl md:text-3xl">
+      Gallery <span style="font-weight: 100;">|</span> Players
+    </h1>
+  </div>
+  <ul class="flex items-center justify-center">
+    {
+      leagues.map((x) => (
+        <li class="mx-3 md:mx-6">
           <a
-            class="text-[#333] mx-0.5 rounded-md uppercase w-6 h-6 shrink-0 flex justify-center items-center"
-            href={`#${letter}`}
-            data-click-nav
+            class={`text-sm md:text-base flex items-center h-11 md:h-[50px] text-white hover:no-underline hover:opacity-100 ${
+              x.domain === domain ? 'opacity-100 font-semibold' : 'opacity-80'
+            }`}
+            href={x.href}
           >
-            {letter}
+            {x.text}
           </a>
-        ))
-      }
-    </div>
-    <div class="flex flex-wrap justify-center">
-      {
-        Object.entries(groupedByFirstLetterLastName).map(
-          ([letter, [firstPlayer, ...players]], i) => {
-            return (
-              <>
+        </li>
+      ))
+    }
+  </ul>
+  <div>
+    <FreestarVideo
+      client:only="svelte"
+      class="w-full md:w-[425px] mx-auto mt-4"
+      domain={domain?.toLowerCase()}
+    />
+  </div>
+  <div class="flex justify-start md:justify-center py-4 overflow-auto bg-white">
+    {
+      alphabet.map((letter) => (
+        <a
+          class="text-[#333] mx-0.5 rounded-md uppercase w-6 h-6 shrink-0 flex justify-center items-center"
+          href={`#${letter}`}
+          data-click-nav
+        >
+          {letter}
+        </a>
+      ))
+    }
+  </div>
+  <div class="flex flex-wrap justify-center">
+    {
+      Object.entries(groupedByFirstLetterLastName).map(
+        ([letter, [firstPlayer, ...players]], i) => {
+          return (
+            <>
+              <a
+                href={getUrlForEntity({
+                  id: firstPlayer.resource_id,
+                  type: 'player',
+                  display: firstPlayer.used_name,
+                  domain: firstPlayer.domain as GameraDomain,
+                })}
+              >
+                <div
+                  class="h-28 w-28 md:h-44 md:w-44 m-0.5 md:m-1.5 rounded-2xl flex justify-center overflow-hidden relative"
+                  style={`background: ${firstPlayer.background_color_hex};`}
+                >
+                  <Image
+                    data-cy-illustration
+                    class="h-full mt-1.5 md:mt-2.5 object-cover"
+                    alt={firstPlayer.used_name}
+                    src={firstPlayer.bust_image_url!}
+                    width={500}
+                    height={500}
+                    loading={i < 20 ? 'eager' : 'lazy'}
+                  />
+                  <div
+                    class="absolute w-full h-full"
+                    style="background: linear-gradient(to top, black 0%, transparent 25%);"
+                  />
+                  <h3 class="text-xs md:text-sm font-semibold text-center text-white absolute bottom-1">
+                    {firstPlayer.used_name}
+                  </h3>
+                </div>
+              </a>
+              <div
+                id={`${letter}`}
+                class="relative -top-[62px] md:-top-[70px]"
+              />
+              {players.map((player, i) => (
                 <a
                   href={getUrlForEntity({
-                    id: firstPlayer.resource_id,
+                    id: player.resource_id,
                     type: 'player',
-                    display: firstPlayer.used_name,
-                    domain: firstPlayer.domain as GameraDomain,
+                    display: player.used_name,
+                    domain: player.domain as GameraDomain,
                   })}
                 >
                   <div
-                    class="h-28 w-28 md:h-44 md:w-44 m-0.5 md:m-1.5 rounded-lg flex justify-center overflow-hidden relative"
-                    style={`background: ${firstPlayer.background_color_hex};`}
+                    class="h-28 w-28 md:h-44 md:w-44 m-0.5 md:m-1.5 rounded-2xl flex justify-center overflow-hidden relative"
+                    style={`background: ${player.background_color_hex};`}
                   >
                     <Image
                       data-cy-illustration
                       class="h-full mt-1.5 md:mt-2.5 object-cover"
-                      alt={firstPlayer.used_name}
-                      src={firstPlayer.bust_image_url!}
+                      alt={player.used_name}
+                      src={player.bust_image_url!}
                       width={500}
                       height={500}
                       loading={i < 20 ? 'eager' : 'lazy'}
@@ -150,62 +175,26 @@ const meta = {
                       style="background: linear-gradient(to top, black 0%, transparent 25%);"
                     />
                     <h3 class="text-xs md:text-sm font-semibold text-center text-white absolute bottom-1">
-                      {firstPlayer.used_name}
+                      {player.used_name}
                     </h3>
                   </div>
                 </a>
-                <div
-                  id={`${letter}`}
-                  class="relative -top-[62px] md:-top-[70px]"
-                />
-                {players.map((player, i) => (
-                  <a
-                    href={getUrlForEntity({
-                      id: player.resource_id,
-                      type: 'player',
-                      display: player.used_name,
-                      domain: player.domain as GameraDomain,
-                    })}
-                  >
-                    <div
-                      class="h-28 w-28 md:h-44 md:w-44 m-0.5 md:m-1.5 rounded-lg flex justify-center overflow-hidden relative"
-                      style={`background: ${player.background_color_hex};`}
-                    >
-                      <Image
-                        data-cy-illustration
-                        class="h-full mt-1.5 md:mt-2.5 object-cover"
-                        alt={player.used_name}
-                        src={player.bust_image_url!}
-                        width={500}
-                        height={500}
-                        loading={i < 20 ? 'eager' : 'lazy'}
-                      />
-                      <div
-                        class="absolute w-full h-full"
-                        style="background: linear-gradient(to top, black 0%, transparent 25%);"
-                      />
-                      <h3 class="text-xs md:text-sm font-semibold text-center text-white absolute bottom-1">
-                        {player.used_name}
-                      </h3>
-                    </div>
-                  </a>
-                ))}
-              </>
-            )
-          },
-        )
-      }
-    </div>
-    <p
-      class="my-4"
-      style="color: #969ca1; text-align: right; font-style: italic;"
-    >
-      All illustrations and content on this site &copy; 2016-{
-        new Date().getFullYear()
-      } StatMuse, Inc.<br />
-       Unauthorized duplication or usage prohibited.
-    </p>
-  </Container>
+              ))}
+            </>
+          )
+        },
+      )
+    }
+  </div>
+  <p
+    class="my-4"
+    style="color: #969ca1; text-align: right; font-style: italic;"
+  >
+    All illustrations and content on this site &copy; 2016-{
+      new Date().getFullYear()
+    } StatMuse, Inc.<br />
+     Unauthorized duplication or usage prohibited.
+  </p>
 </Layout>
 <script>
   document.addEventListener('astro:page-load', () => {

@@ -1,5 +1,5 @@
 ---
-import Layout from '@layouts/main.astro'
+import Layout from '@layouts/base.astro'
 import Header from '@components/header.astro'
 import Select from '@components/select.svelte'
 import Container from '@components/container.astro'
@@ -60,8 +60,8 @@ const leagueTitle =
   league.toLowerCase() === 'all'
     ? 'Sports'
     : league.toLowerCase() === 'money'
-      ? 'Money'
-      : 'Sports'
+    ? 'Money'
+    : 'Sports'
 
 const title = category
   ? `Trending ${category[0].toUpperCase() + category.substring(1)}`
@@ -87,92 +87,83 @@ const backUrl =
   }}
   meta={{ title }}
   colors={{ foreground: colors.gray['8'], background: colors.teal }}
+  navProps={{
+    links,
+    selected,
+    href: (l) => `/${l}/trending${categoryPath}${Astro.url.search}`,
+  }}
+  money={selected === 'money'}
+  preferredDomain={selected}
+  hero={{
+    content: title,
+  }}
 >
-  <Header money={selected === 'money'} preferredDomain={selected} />
-  <Container class="text-gray-8 bg-teal">
-    <div class="relative py-8 md:py-16">
-      {
-        category ? (
-          <a
-            href={backUrl}
-            class="absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-8 cursor-pointer rounded-full md:p-3 hover:bg-gray-8 hover:text-teal"
-          >
-            <Back class="w-5 aspect-square" />
-          </a>
-        ) : null
-      }
-      <h1
-        class:list={{
-          'text-center font-semibold': true,
-          'text-4xl md:text-6xl': !category,
-          'text-2xl md:text-4xl': category,
-        }}
-      >
-        {title}
-      </h1>
-    </div>
-  </Container>
-  <div class="bg-gray-7 p-3 space-y-3">
-    <Nav
-      {links}
-      {selected}
-      href={(l) => `/${l}/trending${categoryPath}${Astro.url.search}`}
-    />
-    <div
-      class="grid grid-cols-2 gap-3 md:grid-cols-none md:flex md:justify-center"
-    >
-      <Select
-        client:load
-        class="md:w-[200px]"
-        hideLabel
-        label="Timeframe"
-        param="timeframe"
-        initial={Astro.url.searchParams.get('timeframe')}
-        options={[
-          { label: 'Last 24 Hours', value: 'last24Hours' },
-          { label: 'Last 7 Days', value: 'last7Days' },
-          { label: 'Last 30 Days', value: 'last30Days' },
-          { label: 'This Year', value: 'thisYear' },
-        ]}
-      />
-      <Select
-        client:load
-        class="md:w-[200px]"
-        hideLabel
-        label="Location"
-        param="country"
-        initial={Astro.url.searchParams.get('country')}
-        options={[
-          { label: 'Global', value: 'global' },
-          { label: 'United States', value: 'US' },
-          { label: 'France', value: 'FR' },
-          { label: 'Finland', value: 'FI' },
-          { label: 'Canada', value: 'CA' },
-          { label: 'Netherlands', value: 'NL' },
-          { label: 'Philippines', value: 'PH' },
-          { label: 'Australia', value: 'AU' },
-          { label: 'Ireland', value: 'IE' },
-          { label: 'United Kingdom', value: 'GB' },
-          { label: 'Germany', value: 'DE' },
-          { label: 'Brazil', value: 'BR' },
-          { label: 'Mexico', value: 'MX' },
-          { label: 'India', value: 'IN' },
-          { label: 'Italy', value: 'IT' },
-          { label: 'Singapore', value: 'SG' },
-          { label: 'Japan', value: 'JP' },
-          { label: 'New Zealand', value: 'NZ' },
-          { label: 'Poland', value: 'PL' },
-          { label: 'Spain', value: 'ES' },
-          { label: 'Sweden', value: 'SE' },
-        ]}
-      />
-    </div>
+  <Fragment slot="hero">
     {
       category ? (
-        <TrendingMore items={trendingListItems} />
-      ) : (
-        <TrendingLists item={data} />
-      )
+        <a
+          href={backUrl}
+          class="absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-8 cursor-pointer rounded-full md:p-3 hover:bg-gray-8 hover:text-teal"
+        >
+          <Back class="w-5 aspect-square" />
+        </a>
+      ) : null
     }
+  </Fragment>
+  <div
+    class="grid grid-cols-2 gap-3 md:grid-cols-none md:flex md:justify-center"
+  >
+    <Select
+      client:load
+      class="md:w-[200px]"
+      hideLabel
+      label="Timeframe"
+      param="timeframe"
+      initial={Astro.url.searchParams.get('timeframe')}
+      options={[
+        { label: 'Last 24 Hours', value: 'last24Hours' },
+        { label: 'Last 7 Days', value: 'last7Days' },
+        { label: 'Last 30 Days', value: 'last30Days' },
+        { label: 'This Year', value: 'thisYear' },
+      ]}
+    />
+    <Select
+      client:load
+      class="md:w-[200px]"
+      hideLabel
+      label="Location"
+      param="country"
+      initial={Astro.url.searchParams.get('country')}
+      options={[
+        { label: 'Global', value: 'global' },
+        { label: 'United States', value: 'US' },
+        { label: 'France', value: 'FR' },
+        { label: 'Finland', value: 'FI' },
+        { label: 'Canada', value: 'CA' },
+        { label: 'Netherlands', value: 'NL' },
+        { label: 'Philippines', value: 'PH' },
+        { label: 'Australia', value: 'AU' },
+        { label: 'Ireland', value: 'IE' },
+        { label: 'United Kingdom', value: 'GB' },
+        { label: 'Germany', value: 'DE' },
+        { label: 'Brazil', value: 'BR' },
+        { label: 'Mexico', value: 'MX' },
+        { label: 'India', value: 'IN' },
+        { label: 'Italy', value: 'IT' },
+        { label: 'Singapore', value: 'SG' },
+        { label: 'Japan', value: 'JP' },
+        { label: 'New Zealand', value: 'NZ' },
+        { label: 'Poland', value: 'PL' },
+        { label: 'Spain', value: 'ES' },
+        { label: 'Sweden', value: 'SE' },
+      ]}
+    />
   </div>
+  {
+    category ? (
+      <TrendingMore items={trendingListItems} />
+    ) : (
+      <TrendingLists item={data} />
+    )
+  }
 </Layout>

@@ -3,7 +3,6 @@ import MoneyBaseLayout from '@layouts/money-base.astro'
 import Header from '@components/header.astro'
 import Footer from '@components/footer.astro'
 import Image from '@components/image.astro'
-import Container from '@components/container.astro'
 import TradingviewTicker from '@components/tradingview-ticker.astro'
 import AnswerShare from '@components/answer-share.astro'
 import Explore from '@components/explore.astro'
@@ -82,7 +81,7 @@ const twitter = {
   }}
 >
   <Header money {query} />
-  <Container class="mb-5 bg-team-primary text-team-secondary">
+  <div class="mb-5 bg-team-primary text-team-secondary">
     <div
       class="relative flex flex-col md:flex-row md:flex-wrap justify-center items-center md:items-stretch"
     >
@@ -127,11 +126,11 @@ const twitter = {
         />
       </div>
     </div>
-  </Container>
+  </div>
   <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
     <TradingviewTicker {profile} />
   </div>
-  <Container>
+  <div>
     <div class="flex flex-nowrap overflow-auto mb-5 space-x-5">
       {
         links.map(({ href, text }) => (
@@ -151,6 +150,6 @@ const twitter = {
     </div>
     <slot />
     <Explore league="money" />
-  </Container>
+  </div>
   <Footer />
 </MoneyBaseLayout>

@@ -1,14 +1,8 @@
 ---
-import Layout from '@layouts/main.astro'
-import Header from '@components/header.astro'
-import Image from '@components/image.astro'
-import AnswerShare from '@components/answer-share.astro'
+import Layout from '@layouts/base.astro'
 import Explore from '@components/explore.astro'
-import TwitterShare from '@components/icons/twitter.astro'
 import AnswerCards from '@components/answer-cards.astro'
-import HeroPanel from '@components/hero-panel.astro'
 import Nav from '@components/nav.astro'
-import GridDropdown from '@components/grid-dropdown.astro'
 import {
   getUrlForEntity,
   getDefaultBustImageUrl,
@@ -107,7 +101,6 @@ const navProps: ComponentProps<typeof Nav> = {
 ---
 
 <Layout
-  class="flex flex-col gap-3"
   colors={bio.team?.colors || { background: '#00c1d8', foreground: '#fff' }}
   meta={{
     title,
@@ -127,76 +120,22 @@ const navProps: ComponentProps<typeof Nav> = {
     disposition: bio.disposition,
     ...analytics,
   }}
+  {preferredDomain}
+  {query}
+  {navProps}
+  {parameters}
+  hero={{
+    content: bio.usedName,
+    imageUrl: bustImageUrl,
+    imageAlt: bustImageAlt,
+    affiliation: bio.team?.nickname || bio.team?.name,
+    affiliationUrl: teamUrl,
+    shareUrl,
+  }}
 >
-  <Header {preferredDomain} {query} />
-  <HeroPanel class="-mt-3 flex flex-col-reverse gap-3 md:flex-row">
-    <Image
-      class:list={{
-        'h-32 md:max-w-[200px]': true,
-        'mt-2 -mb-2 md:mt-0 md:-mb-3 md:-ml-2': true,
-        'self-center md:self-end select-none': true,
-        'object-contain object-bottom': true,
-      }}
-      alt={bustImageAlt}
-      src={bustImageUrl}
-      width={600}
-      height={600}
-      loading="eager"
-    />
-    <div class="flex flex-col justify-between items-start -mb-3 md:mt-5">
-      <div class="mx-auto md:mx-0 md:flex md:gap-3 md:items-center">
-        <h1
-          class="text-[2rem] leading-tight font-semibold text-center md:text-left"
-        >
-          {bio.usedName}
-        </h1>
-        <div
-          class:list={{
-            'flex flex-1 items-center text-center': true,
-            'py-0.5 px-2.5 absolute left-3 bottom-3': true,
-            'md:relative md:left-auto md:bottom-auto': true,
-            'bg-team-secondary text-team-primary rounded-2xl': true,
-          }}
-        >
-          {
-            teamUrl ? (
-              <a
-                class="text-inherit no-underline hover:no-underline"
-                href={teamUrl}
-                set:text={bio.team?.nickname || bio.team?.name}
-              />
-            ) : (
-              <>{bio.team?.nickname || bio.team?.name}</>
-            )
-          }
-        </div>
-      </div>
-      <Nav class="hidden md:flex" hero {...navProps} />
-    </div>
-    <div
-      class:list={{
-        'flex flex-row gap-2.5 items-center': true,
-        'absolute right-3 bottom-3 md:top-3 md:bottom-auto px-2 py-1': true,
-        'rounded-2xl bg-team-secondary text-team-primary': true,
-      }}
-    >
-      <TwitterShare shareUrl={Astro.url.href} />
-      <AnswerShare onlyIcon url={shareUrl} />
-    </div>
-    {
-      parameters && (
-        <GridDropdown
-          class="hidden lg:flex w-52 absolute right-3 bottom-3"
-          {parameters}
-        />
-      )
-    }
-  </HeroPanel>
   <div class="h-[50px] md:h-[90px] mb-1.5 flex justify-center items-center">
     <AditudeAdBanner client:only="svelte" />
   </div>
-  <Nav class="md:hidden" {...navProps} />
-  {parameters && <GridDropdown class="flex lg:hidden" {parameters} />}
   <slot />
   <Explore {league} additionalQuestions={bio.additionalQuestions} />
   {

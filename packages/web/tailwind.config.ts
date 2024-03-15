@@ -17,6 +17,7 @@ export default {
         secondary: '#0086ff',
         black: '#333333',
         'team-primary': 'var(--team-primary-color, #fff)',
+        'team-primary-dark-bg': 'var(--team-primary-color, #151516)',
         'team-secondary': 'var(--team-secondary-color, #333)',
         'team-secondary-dark': 'var(--team-secondary-color, #fff)',
         'team-secondary-sm-default': 'var(--team-secondary-color, #00c1d8)',

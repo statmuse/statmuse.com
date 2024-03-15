@@ -1,6 +1,5 @@
 ---
 import { orderBy, groupBy } from 'lodash-es'
-import Container from '@components/container.astro'
 import Image from '@components/image.astro'
 import {
   type EplHistoricalBoxScore,
@@ -15,6 +14,7 @@ import SubArrow from '@components/icons/sub-arrow.astro'
 import EntityLink from '@components/entity-link.astro'
 import dayjs from 'dayjs'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import Panel from '@components/panel.astro'
 
 interface Props {
   data: GameraEplBoxScore
@@ -207,7 +207,7 @@ const playerEntityMap = [
 const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
 ---
 
-<Container class="mb-2.5 bg-team-primary text-team-secondary py-5 space-y-5">
+<Panel team class="">
   <div class="flex gap-2 md:gap-8 md:items-center justify-center">
     <div
       class="flex-1 flex flex-col-reverse md:flex-row gap-1 md:gap-4 items-center justify-end"
@@ -279,8 +279,8 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                 play.eventType === 'own_goal'
                   ? ' (OG)'
                   : play.eventType === 'penalty_goal'
-                    ? ' (PK)'
-                    : ''
+                  ? ' (PK)'
+                  : ''
               }`}</p>
             ))}
           </div>
@@ -291,8 +291,8 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                 play.eventType === 'own_goal'
                   ? ' (OG)'
                   : play.eventType === 'penalty_goal'
-                    ? ' (PK)'
-                    : ''
+                  ? ' (PK)'
+                  : ''
               }`}</p>
             ))}
           </div>
@@ -326,11 +326,11 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
   <p class="text-center text-[0.8rem] uppercase tracking-[0.07rem]">
     {dayjs(boxscoreData.gameDate).format('ddd D MMM YYYY')}
   </p>
-</Container>
+</Panel>
 <div class="h-[50px] md:h-[90px] mb-1.5 flex justify-center items-center">
   <AditudeAdBanner client:only="svelte" />
 </div>
-<Container>
+<div>
   <div
     class="flex flex-nowrap overflow-auto mb-5 space-x-5 md:hidden"
     data-hash-links
@@ -481,8 +481,8 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                         {play.eventType === 'own_goal'
                           ? ' (OG)'
                           : play.eventType === 'penalty_goal'
-                            ? ' (PK)'
-                            : ''}
+                          ? ' (PK)'
+                          : ''}
                       </p>
                       {play.relatedPlayerName && (
                         <p class="text-[#969ca1]">
@@ -507,8 +507,8 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                       {play.eventType === 'own_goal'
                         ? ' (OG)'
                         : play.eventType === 'penalty_goal'
-                          ? ' (PK)'
-                          : ''}
+                        ? ' (PK)'
+                        : ''}
                     </p>
                   )}
                 </div>
@@ -587,7 +587,6 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                   width={50}
                   height={50}
                   loading="eager"
-                  q
                 />
                 <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
                   {awayTeam.abbrev}
@@ -1188,7 +1187,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       <p>{summary}</p>
     </div>
   </div>
-</Container>
+</div>
 
 <script>
   document.addEventListener('astro:page-load', () => {

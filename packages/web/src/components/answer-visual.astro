@@ -1,8 +1,6 @@
 ---
 import { getColumnCharts, getHeroProps, getIsSuperlative } from '@lib/gamera'
-import Layout from '@layouts/main.astro'
-import Header from '@components/header.astro'
-import Hero from '@components/hero.astro'
+import Layout from '@layouts/base.astro'
 import Visuals from '@components/visuals.astro'
 import Explore from '@components/explore.astro'
 import {
@@ -92,6 +90,7 @@ const teamId = questionTeamId ?? answerTeamId
 
 const [columnChart] = getColumnCharts(answer) ?? []
 const isSuperlative = getIsSuperlative(answer)
+const hasSupplement = !!columnChart
 ---
 
 <Layout
@@ -108,24 +107,24 @@ const isSuperlative = getIsSuperlative(answer)
     contentReference: answer.visual.contentReference,
     subject: answer.visual.summary.subject,
   }}
+  {query}
+  {conversationToken}
+  {preferredDomain}
+  hero={{ ...heroProps, hasSupplement, shareUrl }}
 >
-  <Header {query} {conversationToken} {preferredDomain} />
-  <div
-    class:list={{
-      '-mt-3': true,
-      'grid grid-cols-1 gap-3 lg:grid-cols-3 items-start': !!columnChart,
-    }}
-  >
-    <Hero class="lg:col-span-2 h-full" {...heroProps} {shareUrl} />
-    {
-      columnChart ? (
-        <Chart class="hidden lg:block" model={columnChart} {isSuperlative} />
-      ) : null
-    }
-  </div>
   <div class="h-[50px] md:h-[90px] mb-1.5 flex justify-center items-center">
     <AditudeAdBanner client:only="svelte" />
   </div>
+  {
+    columnChart ? (
+      <Chart
+        slot="hero-supplement"
+        class="hidden lg:block"
+        model={columnChart}
+        {isSuperlative}
+      />
+    ) : null
+  }
   <Visuals class="" response={answer} {conversationToken} />
   <Explore {league} additionalQuestions={answer.visual.additionalQuestions} />
   {preferredDomain && ANSWER_CARDS_ENABLED && <AnswerCards {league} {teamId} />}

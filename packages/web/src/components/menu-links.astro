@@ -3,6 +3,9 @@ import Icon from '@components/icon.svelte'
 import AuthLink from '@components/auth-link.svelte'
 import Panel from '@components/panel.astro'
 import ThemeSwitch from '@components/theme-switch.svelte'
+import type { HTMLAttributes } from 'astro/types'
+
+interface Props extends HTMLAttributes<'div'> {}
 
 const menuLinks = [
   [
@@ -140,7 +143,12 @@ const menuLinks = [
 }[][]
 ---
 
-<div class="flex flex-col gap-2 w-[220px] p-3 md:mx-auto">
+<div
+  class:list={{
+    'flex flex-col gap-3 w-[190px] md:mx-auto': true,
+    [Astro.props.class ?? '']: !!Astro.props.class,
+  }}
+>
   <Panel class="md:hidden">
     <AuthLink />
   </Panel>
@@ -154,7 +162,7 @@ const menuLinks = [
                 href={url}
                 target={external ? '_blank' : null}
                 class:list={{
-                  'flex flex-1 items-center gap-2 text-inherit': true,
+                  'flex flex-1 items-center gap-3 text-inherit': true,
                   'md:flex-initial': true,
                   'hover:text-teal hover:no-underline': true,
                   '!text-teal': currentUrl?.test(Astro.url.pathname),

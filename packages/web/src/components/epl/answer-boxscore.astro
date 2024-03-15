@@ -1,5 +1,5 @@
 ---
-import Layout from '@layouts/main.astro'
+import Layout from '@layouts/base.astro'
 import Header from '@components/header.astro'
 import Container from '@components/container.astro'
 import AnswerCards from '@components/answer-cards.astro'
@@ -76,43 +76,26 @@ const code = await Link.askShortCode(query, preferredDomain || '')
     query,
     ...analytics,
   }}
+  {query}
+  {conversationToken}
+  {preferredDomain}
+  audioUrl={data.visual.summary.narrator?.answerWithIntroAudioUrl ||
+    data.visual.summary.narrator?.answerAudioUrl}
 >
-  <Header
-    {query}
-    {conversationToken}
-    {preferredDomain}
-    share={preferredDomain
-      ? {
-          type: 'ask',
-          shortCode: code?.short_code,
-          query,
-          domain: preferredDomain,
-        }
-      : undefined}
-    audioUrl={data.visual.summary.narrator?.answerWithIntroAudioUrl ||
-      data.visual.summary.narrator?.answerAudioUrl}
-  />
   <EplBoxscore {data} />
-  <Container>
-    <Explore
-      league="fc"
-      additionalQuestions={data.visual.additionalQuestions}
-    />
-  </Container>
+  <Explore league="fc" additionalQuestions={data.visual.additionalQuestions} />
   {
     ANSWER_CARDS_ENABLED && (
-      <Container>
-        <AnswerCards
-          league="fc"
-          teamId={
-            contentReference.questionTags?.teamIds.length > 0
-              ? contentReference.questionTags?.teamIds[0]
-              : contentReference.answerTags?.teamIds.length > 0
-                ? contentReference.answerTags?.teamIds[0]
-                : undefined
-          }
-        />
-      </Container>
+      <AnswerCards
+        league="fc"
+        teamId={
+          contentReference.questionTags?.teamIds.length > 0
+            ? contentReference.questionTags?.teamIds[0]
+            : contentReference.answerTags?.teamIds.length > 0
+            ? contentReference.answerTags?.teamIds[0]
+            : undefined
+        }
+      />
     )
   }
 </Layout>
