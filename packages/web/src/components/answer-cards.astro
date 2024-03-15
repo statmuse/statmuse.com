@@ -104,6 +104,37 @@ const playerCardTitle = (stat: string) => {
       return '+/- Leaders'
     case 'bestGoalsAgainstAverage':
       return 'Goals Against Leaders'
+    // MLB Team
+    case 'mostBattingHomeRuns':
+      return 'HR Leaders'
+    case 'mostBattingRunsBattedIn':
+      return 'RBI Leaders'
+    case 'bestBattingAverage':
+      return 'Batting Average Leaders'
+    case 'mostBattingHits':
+      return 'Hit Leaders'
+    case 'mostBattingRuns':
+      return 'Run Leaders'
+    case 'bestBattingOnBasePercentage':
+      return 'OBP Leaders'
+    case 'bestBattingSluggingPercentage':
+      return 'SLG Leaders'
+    case 'mostBattingStolenBases':
+      return 'SB Leaders'
+    case 'mostPitchingWins':
+      return 'Win Leaders'
+    case 'mostPitchingStrikeouts':
+      return 'Strikeout Leaders'
+    case 'bestPitchingEarnedRunAverage':
+      return 'ERA Leaders'
+    case 'bestPitchingWalksPlusHitsPerInning':
+      return 'WHIP Leaders'
+    case 'mostPitchingStrikeoutsPer9Innings':
+      return 'K/9 Leaders'
+    case 'bestPitchingStrikeoutToWalkRatio':
+      return 'K/BB Leaders'
+    case 'leastPitchingWalksAllowed':
+      return 'Walk Leaders'
     // EPL Player
     case 'mostGoals':
       return 'Goals Leaders'
@@ -158,6 +189,7 @@ const teamCardTitle = (stat: string) => {
       return 'Power Play Rankings'
     case 'bestPenaltyKillPercentage':
       return 'Penalty Kill Rankings'
+    // MLB Team
     // EPL Team
     case 'mostGoals':
       return 'Goals For Rankings'
@@ -366,6 +398,112 @@ const playerAskLink = (
       return createAskPath({
         domain: league,
         query: `gaa leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    // MLB Player
+    case 'mostBattingHomeRuns':
+      return createAskPath({
+        domain: league,
+        query: `hr leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'mostBattingRunsBattedIn':
+      return createAskPath({
+        domain: league,
+        query: `rbi leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'bestBattingAverage':
+      return createAskPath({
+        domain: league,
+        query: `batting average leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'mostBattingHits':
+      return createAskPath({
+        domain: league,
+        query: `hit leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'mostBattingRuns':
+      return createAskPath({
+        domain: league,
+        query: `runs scored leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'bestBattingOnBasePercentage':
+      return createAskPath({
+        domain: league,
+        query: `obp leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'bestBattingSluggingPercentage':
+      return createAskPath({
+        domain: league,
+        query: `slg leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'mostBattingStolenBases':
+      return createAskPath({
+        domain: league,
+        query: `stolen base leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'mostPitchingWins':
+      return createAskPath({
+        domain: league,
+        query: `pitching wins leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'mostPitchingStrikeouts':
+      return createAskPath({
+        domain: league,
+        query: `pitching strikeout leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'bestPitchingEarnedRunAverage':
+      return createAskPath({
+        domain: league,
+        query: `era leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'bestPitchingWalksPlusHitsPerInning':
+      return createAskPath({
+        domain: league,
+        query: `whip leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'mostPitchingStrikeoutsPer9Innings':
+      return createAskPath({
+        domain: league,
+        query: `strikeouts per 9 leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'bestPitchingStrikeoutToWalkRatio':
+      return createAskPath({
+        domain: league,
+        query: `K/BB leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'leastPitchingWalksAllowed':
+      return createAskPath({
+        domain: league,
+        query: `least walks allowed ${year}${
           season === 'postseason' ? ' postseason' : ''
         }`,
       })
@@ -578,12 +716,32 @@ const filterPlayerCards = (card: PlayerCard) =>
     'mostPoints',
     'bestPlusMinus',
     'bestGoalsAgainstAverage',
+    // MLB Player
+    'mostBattingHomeRuns',
+    'mostBattingRunsBattedIn',
+    'bestBattingAverage',
+    'mostBattingHits',
+    'mostBattingRuns',
+    'bestBattingOnBasePercentage',
+    'bestBattingSluggingPercentage',
+    'mostBattingStolenBases',
     // EPL Player
     'mostGoals',
     'mostAssists',
     'mostShotsOnTarget',
     'mostBigChancesCreated',
     'mostCleanSheets',
+  ].includes(card.stat)
+
+const filterMlbPitchingCards = (card: PlayerCard) =>
+  [
+    'mostPitchingWins',
+    'mostPitchingStrikeouts',
+    'bestPitchingEarnedRunAverage',
+    'bestPitchingWalksPlusHitsPerInning',
+    'mostPitchingStrikeoutsPer9Innings',
+    'bestPitchingStrikeoutToWalkRatio',
+    'leastPitchingWalksAllowed',
   ].includes(card.stat)
 
 const filterTeamCards = (card: TeamCard) =>
@@ -626,6 +784,9 @@ const filterFantasyCards = (card: PlayerCard) =>
     'mostWideReceiverFantasyPoints',
     'mostTightEndFantasyPoints',
     'mostKickerFantasyPoints',
+    // MLB
+    'mostFanDuelPoints',
+    'mostDraftKingsPoints',
   ].includes(card.stat)
 
 const filterBettingCards = (card: TeamCard) =>
@@ -663,6 +824,16 @@ const filterTeamLeaders = (cards: PlayerCard[], domain: string) => {
           ['mostGoals', 'mostAssists', 'bestPlusMinus'].includes(c.stat),
         )
         .map((c) => ({ ...c.players[0], stat: c.stat }))
+    case 'mlb':
+      return cards
+        .filter((c) =>
+          [
+            'mostBattingHomeRuns',
+            'mostBattingRunsBattedIn',
+            'bestBattingAverage',
+          ].includes(c.stat),
+        )
+        .map((c) => ({ ...c.players[0], stat: c.stat }))
     case 'epl':
       return cards
         .filter((c) =>
@@ -674,13 +845,35 @@ const filterTeamLeaders = (cards: PlayerCard[], domain: string) => {
   }
 }
 
+const filterMlbTeamLeaders = (
+  cards: PlayerCard[],
+  type: 'batting' | 'pitching',
+) => {
+  return cards
+    .filter((c) =>
+      (type === 'batting'
+        ? [
+            'mostBattingHomeRuns',
+            'mostBattingRunsBattedIn',
+            'bestBattingAverage',
+          ]
+        : [
+            'mostPitchingWins',
+            'mostPitchingStrikeouts',
+            'bestPitchingEarnedRunAverage',
+          ]
+      ).includes(c.stat),
+    )
+    .map((c) => ({ ...c.players[0], stat: c.stat }))
+}
+
 let playerCardsResp: PlayerCardResponse | undefined
 let teamCardsResp: TeamCardResponse | undefined
 let standingsResp: StandingsResponse | undefined
 let scheduleResp: ScheduleResponse | undefined
 let scoresResp: ScoresResponse | undefined
 
-const allowedDomains = ['nba', 'nfl', 'nhl', 'fc']
+const allowedDomains = ['nba', 'nfl', 'nhl', 'fc', 'mlb']
 
 if (allowedDomains.includes(league)) {
   ;[playerCardsResp, teamCardsResp, standingsResp, scheduleResp, scoresResp] =
@@ -698,6 +891,11 @@ if (playerCardsResp) {
   playerLeaderCards = playerCardsResp.cards.filter(filterPlayerCards)
 }
 
+let pitchingLeaderCards: PlayerCard[] = []
+if (playerCardsResp) {
+  pitchingLeaderCards = playerCardsResp.cards.filter(filterMlbPitchingCards)
+}
+
 let teamRankingCards: TeamCard[] = []
 if (teamCardsResp) {
   teamRankingCards = teamCardsResp.cards.filter(filterTeamCards)
@@ -708,6 +906,8 @@ if (playerCardsResp) {
   fantasyCards = playerCardsResp.cards.filter(filterFantasyCards)
 }
 
+// console.log(teamCardsResp)
+
 let bettingCards: TeamCard[] = []
 if (teamCardsResp) {
   bettingCards = teamCardsResp.cards.filter(filterBettingCards)
@@ -715,6 +915,7 @@ if (teamCardsResp) {
 
 let teamSpecificPlayerCards: PlayerCardResponse | undefined
 let teamLeaders: PlayerCard | undefined
+let teamPitchingLeaders: PlayerCard | undefined
 let teamSeasonBio: GameraTeamSeasonBio | undefined
 let teamSeasonOverview: GameraTeamSeasonOverview | undefined
 let teamScheduleResponse: ScheduleResponse | undefined
@@ -741,10 +942,29 @@ if (allowedDomains.includes(league) && teamId) {
     }),
   ])
 
-  teamLeaders = {
-    stat: '',
-    type: 'stats',
-    players: filterTeamLeaders(teamSpecificPlayerCards?.cards ?? [], domain),
+  if (domain === 'mlb') {
+    teamLeaders = {
+      stat: '',
+      type: 'stats',
+      players: filterMlbTeamLeaders(
+        teamSpecificPlayerCards?.cards ?? [],
+        'batting',
+      ),
+    }
+    teamPitchingLeaders = {
+      stat: '',
+      type: 'stats',
+      players: filterMlbTeamLeaders(
+        teamSpecificPlayerCards?.cards ?? [],
+        'pitching',
+      ),
+    }
+  } else {
+    teamLeaders = {
+      stat: '',
+      type: 'stats',
+      players: filterTeamLeaders(teamSpecificPlayerCards?.cards ?? [], domain),
+    }
   }
 
   if (teamSpecificPlayerCards && teamSpecificPlayerCards.team?.seasonYear) {
@@ -789,12 +1009,25 @@ if (allowedDomains.includes(league) && teamId) {
           {teamLeaders && teamLeaders.players.length > 0 && (
             <div>
               <div class="flex justify-between">
-                <p class="font-semibold">Team Leaders</p>
+                <p class="font-semibold">{`Team ${
+                  domain === 'mlb' ? 'Batting ' : ''
+                }Leaders`}</p>
                 <EntityLink entity={teamSpecificPlayerCards.team.entity}>
                   See more
                 </EntityLink>
               </div>
               <PlayerCardComponent card={teamLeaders} />
+            </div>
+          )}
+          {teamPitchingLeaders && teamPitchingLeaders.players.length > 0 && (
+            <div>
+              <div class="flex justify-between">
+                <p class="font-semibold">Team Pitching Leaders</p>
+                <EntityLink entity={teamSpecificPlayerCards.team.entity}>
+                  See more
+                </EntityLink>
+              </div>
+              <PlayerCardComponent card={teamPitchingLeaders} />
             </div>
           )}
           {teamSeasonBio && teamSeasonBio.statsSummary && (
@@ -982,7 +1215,7 @@ if (allowedDomains.includes(league) && teamId) {
         <h3 class="text-3xl font-semibold mb-1.5">
           {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
             playerCardsResp.seasonYearDisplay
-          } Leaders`}
+          } ${domain === 'mlb' ? 'Batting ' : ''}Leaders`}
         </h3>
         <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
           {playerLeaderCards.map((card) => (
@@ -1029,6 +1262,66 @@ if (allowedDomains.includes(league) && teamId) {
         />
       </div>
     )
+  }
+  {
+    playerCardsResp &&
+      playerLeaderCards.length > 0 &&
+      pitchingLeaderCards.length > 0 && (
+        <div>
+          <h3 class="text-3xl font-semibold mb-1.5">
+            {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
+              playerCardsResp.seasonYearDisplay
+            } Pitching Leaders`}
+          </h3>
+          <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+            {pitchingLeaderCards.map((card) => (
+              <div>
+                <div class="flex justify-between">
+                  <p class="font-semibold">{`${
+                    playerCardsResp!.seasonType === 'postseason'
+                      ? 'Playoff '
+                      : ''
+                  }${playerCardTitle(card.stat)}`}</p>
+                  <a
+                    href={playerAskLink(
+                      card.stat,
+                      league,
+                      playerCardsResp!.seasonType,
+                      playerCardsResp!.seasonYearDisplay,
+                    )}
+                  >
+                    See more
+                  </a>
+                </div>
+                <a
+                  href={playerAskLink(
+                    card.stat,
+                    league,
+                    playerCardsResp!.seasonType,
+                    playerCardsResp!.seasonYearDisplay,
+                  )}
+                  class="hover:no-underline"
+                >
+                  <PlayerCardComponent card={card} />
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      )
+  }
+  {
+    playerCardsResp &&
+      playerLeaderCards.length > 0 &&
+      pitchingLeaderCards.length > 0 && (
+        <div>
+          <AditudeCardMedRec
+            client:only="svelte"
+            slotId="pb-slot-2"
+            baseDivId="pb-slot-incontent-2"
+          />
+        </div>
+      )
   }
   {
     teamCardsResp && teamRankingCards.length > 0 && (
