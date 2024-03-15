@@ -113,8 +113,6 @@ const playerCardTitle = (stat: string) => {
       return 'Shots on Target Leaders'
     case 'mostBigChancesCreated':
       return 'Big Chances Created Leaders'
-    case 'mostTacklesWon':
-      return 'Tackles Won Leaders'
     case 'mostCleanSheets':
       return 'Clean Sheets Leaders'
     default:
@@ -400,13 +398,6 @@ const playerAskLink = (
           season === 'postseason' ? ' postseason' : ''
         }`,
       })
-    case 'mostTacklesWon':
-      return createAskPath({
-        domain: league,
-        query: `tackles won leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
-      })
     case 'mostCleanSheets':
       return createAskPath({
         domain: league,
@@ -592,7 +583,6 @@ const filterPlayerCards = (card: PlayerCard) =>
     'mostAssists',
     'mostShotsOnTarget',
     'mostBigChancesCreated',
-    'mostTacklesWon',
     'mostCleanSheets',
   ].includes(card.stat)
 
