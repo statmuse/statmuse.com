@@ -16,16 +16,8 @@ interface Props extends HTMLAttributes<'div'> {
   foreground?: Color
 }
 
-const {
-  class: classes,
-  team,
-  background,
-  foreground,
-  title,
-  href,
-  entity,
-  ...props
-} = Astro.props
+const { team, background, foreground, title, href, entity, ...props } =
+  Astro.props
 
 const backgroundHex = background
   ? typeof background === 'string'
@@ -46,7 +38,7 @@ const foregroundHex = foreground
     'text-inherit': !foreground,
     'border border-gray-6 dark:border-gray-4': !background,
     '!bg-team-primary !text-team-secondary': team,
-    [classes ?? '']: !!classes,
+    [Astro.props.class ?? '']: !!Astro.props.class,
   }}
   style={`${backgroundHex ? `background-color: ${backgroundHex};` : ''} ${
     foregroundHex ? `color: ${foregroundHex};` : ''

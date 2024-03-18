@@ -27,6 +27,7 @@ interface Props {
   query?: string
   analytics?: AnalyticsPageviewProperties
   parameters?: Record<string, GameraParameter>
+  class?: string | null
 }
 
 const {
@@ -132,6 +133,7 @@ const navProps: ComponentProps<typeof Nav> = {
     affiliationUrl: teamUrl,
     shareUrl,
   }}
+  class={Astro.props.class}
 >
   <div class="h-[50px] md:h-[90px] mb-1.5 flex justify-center items-center">
     <AditudeAdBanner client:only="svelte" />
