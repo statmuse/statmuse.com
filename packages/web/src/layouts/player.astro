@@ -25,6 +25,7 @@ interface Props {
   league: LeagueParam
   query?: string
   parameters?: Record<string, GameraParameter>
+  class?: string | null
 }
 
 const { bio, meta, query, league, page, parameters } = Astro.props
@@ -121,6 +122,7 @@ const navProps: ComponentProps<typeof Nav> = {
     affiliationUrl: teamUrl,
     shareUrl,
   }}
+  class={Astro.props.class}
 >
   <slot />
   <Explore {league} additionalQuestions={bio.additionalQuestions} />
