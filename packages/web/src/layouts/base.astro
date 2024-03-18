@@ -434,12 +434,19 @@ const canonicalUrl = meta?.canonical
         )?.content
 
         if (eventProps) {
-          const { disposition, tokenizationScore, ...props } =
-            JSON.parse(eventProps)
+          const {
+            disposition,
+            tokenizationScore,
+            contentReference,
+            subject,
+            ...props
+          } = JSON.parse(eventProps)
           segment.track('Pageview', {
             ...props,
             ...flattenObj('disposition', disposition),
             ...flattenObj('tokenizationScore', tokenizationScore),
+            ...getReferenceIds(contentReference),
+            ...getSubjectItems(subject),
             origin: getOrigin(navigator.userAgent),
           })
 
