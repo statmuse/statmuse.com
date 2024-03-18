@@ -274,7 +274,6 @@ const canonicalUrl = meta?.canonical
 
     <slot name="tradingview" />
 
-    <meta name="honeybadger" content={Config.HONEYBADGER_API_KEY} />
     <meta name="analytics" content={Config.SEGMENT_WRITE_KEY} />
     <meta
       name="analytics:event:properties"
@@ -318,21 +317,11 @@ const canonicalUrl = meta?.canonical
     <CookieConsent client:only="svelte" />
     {enableAdBanner && <AditudeAdBanner client:only="svelte" />}
     <script>
-      import Honeybadger from '@honeybadger-io/js'
       import { segment, getOrigin } from '@lib/analytics'
       import type { Session } from '@lib/session'
       import { session as sessionStore } from '@lib/session-store'
       import type { ContentReference, Subject } from '@statmuse/core/gamera'
       import type { ContentReference as KanedamaContentReference } from '@statmuse/core/kanedama'
-
-      // configure honeybadger
-      Honeybadger.configure({
-        apiKey: document.querySelector<HTMLMetaElement>(
-          'meta[name="honeybadger"]',
-        )?.content,
-        environment: import.meta.env.PUBLIC_STAGE,
-        reportData: import.meta.env.PROD,
-      })
 
       const flattenObj = (key: string, obj?: {}) => {
         return !obj
@@ -537,11 +526,6 @@ const canonicalUrl = meta?.canonical
                 origin_scope: 'browser',
               })
             }
-
-            Honeybadger.setContext({
-              user_id: session.properties.id,
-              user_type: session.type,
-            })
           } catch (e) {}
         },
         { once: true },

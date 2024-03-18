@@ -12,7 +12,6 @@ export function Secrets({ stack }: StackContext) {
     'SEGMENT_WRITE_KEY',
     'SENDGRID_API_KEY',
     'SENDGRID_TRANSACTIONAL_API_KEY',
-    'HONEYBADGER_API_KEY',
     'GAMERA_API_KEY',
   )
 

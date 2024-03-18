@@ -134,7 +134,6 @@ export function Web({ stack }: StackContext) {
       secrets.SENDGRID_API_KEY,
       secrets.SENDGRID_TRANSACTIONAL_API_KEY,
       secrets.SEGMENT_WRITE_KEY,
-      secrets.HONEYBADGER_API_KEY,
       secrets.GAMERA_API_KEY,
       trending.table,
     ],
