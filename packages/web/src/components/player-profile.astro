@@ -107,7 +107,7 @@ const statColumns = [
   'FT%',
   'TS%',
 ]
-const t = statPanels.map((title, index) => ({
+const panels = statPanels.map((title, index) => ({
   title,
   stats: statColumns.map((col) => ({
     key: col,
@@ -143,7 +143,7 @@ const t = statPanels.map((title, index) => ({
     }
   </Panel>
   {
-    t.map((panel, index) => (
+    panels.map((panel, index) => (
       <Panel
         team={index === 0}
         class:list={{
