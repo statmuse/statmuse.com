@@ -4,25 +4,15 @@ import svelte, { vitePreprocess } from '@astrojs/svelte'
 import { preprocessMeltUI } from '@melt-ui/pp'
 import aws from 'astro-sst'
 import { defineConfig } from 'astro/config'
-import partytown from '@astrojs/partytown'
 
 // https://astro.build/config
 export default defineConfig({
   integrations: [
-    tailwind({ applyBaseStyles: false }),
+    tailwind({
+      applyBaseStyles: false,
+    }),
     react(),
     svelte({ preprocess: [vitePreprocess(), preprocessMeltUI()] }),
-    partytown({
-      forward: [
-        'dataLayer.push',
-        'analytics.track',
-        'analytics.identify',
-        'analytics.group',
-        'analytics.reset',
-        'analytics.user',
-        'analytics.alias',
-      ],
-    }),
   ],
   output: 'server',
   server: { port: 3000 },
@@ -33,9 +23,7 @@ export default defineConfig({
   }),
   vite: {
     optimizeDeps: ['sst'],
-    build: {
-      sourcemap: process.env.NODE_ENV === 'production',
-    },
+    build: { sourcemap: process.env.NODE_ENV === 'production' },
   },
   image: {
     remotePatterns: [

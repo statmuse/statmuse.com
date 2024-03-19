@@ -275,187 +275,39 @@ const canonicalUrl = meta?.canonical
     <slot name="tradingview" />
 
     <meta name="analytics" content={Config.SEGMENT_WRITE_KEY} />
-    <meta name="cdn-proxy-url" content={import.meta.env.PUBLIC_ANALYTICS_CDN_PROXY_URL} />
-    <meta name="api-proxy-url" content={import.meta.env.PUBLIC_ANALYTICS_API_PROXY_URL} />
     <meta
       name="analytics:event:properties"
       content={JSON.stringify(analyticsProperties)}
     />
     {
       import.meta.env.PROD && (
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-QRW302M4ZR"
+        />
+      )
+    }
+    <script>
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        dataLayer.push(arguments)
+      }
+      gtag('js', new Date())
+      gtag('config', 'G-QRW302M4ZR')
+    </script>
+    {
+      import.meta.env.PROD && (
         <Fragment>
-          <script is:inline async type="text/partytown" src="/scripts/aditude-cmp.js" />
-          <script is:inline async type="text/partytown" src="/scripts/prebid-load.js" />
-          <script is:inline async type="text/partytown">
-            const writeKey = document.querySelector('meta[name="analytics"]').content
-            const cdnProxyUrl = document.querySelector('meta[name="cdn-proxy-url"]').content
-            const apiProxyUrl = document.querySelector('meta[name="api-proxy-url"]').content
-
-            !function(){
-              // prettier-ignore
-              var i="analytics",analytics=window[i]=window[i]||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","debug","page","screen","once","off","on","addSourceMiddleware","addIntegrationMiddleware","setAnonymousId","addDestinationMiddleware","register"];analytics.factory=function(e){return function(){if(window[i].initialized)return window[i][e].apply(window[i],arguments);var n=Array.prototype.slice.call(arguments);if(["track","screen","alias","group","page","identify"].indexOf(e)>-1){var c=document.querySelector("link[rel='canonical']");n.push({__t:"bpc",c:c&&c.getAttribute("href")||void 0,p:location.pathname,u:location.href,s:location.search,t:document.title,r:document.referrer})}n.unshift(e);analytics.push(n);return analytics}};for(var n=0;n<analytics.methods.length;n++){var key=analytics.methods[n];analytics[key]=analytics.factory(key)}analytics.load=function(key,n){var t=document.createElement("script");t.type="text/javascript";t.async=!0;t.setAttribute("data-global-segment-analytics-key",i);t.src="https://" + cdnProxyUrl + "/analytics.js/v1/" + key + "/analytics.min.js";var r=document.getElementsByTagName("script")[0];r.parentNode.insertBefore(t,r);analytics._loadOptions=n};analytics._writeKey=writeKey;;analytics.SNIPPET_VERSION="5.2.0";
-              analytics.load(writeKey, { integrations: { "Segment.io": { apiHost: apiProxyUrl + "/v1" }}});
-              analytics.page();
-
-              const botRegex = /(Googlebot\/|Googlebot-Mobile|Googlebot-Image|Googlebot-News|Googlebot-Video|AdsBot-Google([^-]|$)|AdsBot-Google-Mobile|Feedfetcher-Google|Mediapartners-Google|Mediapartners \(Googlebot\)|APIs-Google|Google-InspectionTool|Storebot-Google|GoogleOther|bingbot|Slurp|[wW]get|LinkedInBot|Python-urllib|python-requests|aiohttp|httpx|libwww-perl|httpunit|nutch|Go-http-client|phpcrawl|msnbot|jyxobot|FAST-WebCrawler|FAST Enterprise Crawler|BIGLOTRON|Teoma|convera|seekbot|Gigabot|Gigablast|exabot|ia_archiver|GingerCrawler|webmon |HTTrack|grub.org|UsineNouvelleCrawler|antibot|netresearchserver|speedy|fluffy|findlink|msrbot|panscient|yacybot|AISearchBot|ips-agent|tagoobot|MJ12bot|woriobot|yanga|buzzbot|mlbot|yandex\.com\/bots|purebot|Linguee Bot|CyberPatrol|voilabot|Baiduspider|citeseerxbot|spbot|twengabot|postrank|Turnitin|scribdbot|page2rss|sitebot|linkdex|Adidxbot|ezooms|dotbot|Mail.RU_Bot|discobot|heritrix|findthatfile|europarchive.org|NerdByNature.Bot|sistrix crawler|Ahrefs(Bot|SiteAudit)|fuelbot|CrunchBot|IndeedBot|mappydata|woobot|ZoominfoBot|PrivacyAwareBot|Multiviewbot|SWIMGBot|Grobbot|eright|Apercite|semanticbot|Aboundex|domaincrawler|wbsearchbot|summify|CCBot|edisterbot|seznambot|ec2linkfinder|gslfbot|aiHitBot|intelium_bot|facebookexternalhit|Yeti|RetrevoPageAnalyzer|lb-spider|Sogou|lssbot|careerbot|wotbox|wocbot|ichiro|DuckDuckBot|lssrocketcrawler|drupact|webcompanycrawler|acoonbot|openindexspider|gnam gnam spider|web-archive-net.com.bot|backlinkcrawler|coccoc|integromedb|content crawler spider|toplistbot|it2media-domain-crawler|ip-web-crawler.com|siteexplorer.info|elisabot|proximic|changedetection|arabot|WeSEE:Search|niki-bot|CrystalSemanticsBot|rogerbot|360Spider|psbot|InterfaxScanBot|CC Metadata Scaper|g00g1e.net|GrapeshotCrawler|urlappendbot|brainobot|fr-crawler|binlar|SimpleCrawler|Twitterbot|cXensebot|smtbot|bnf.fr_bot|A6-Indexer|ADmantX|Facebot|OrangeBot\/|memorybot|AdvBot|MegaIndex|SemanticScholarBot|ltx71|nerdybot|xovibot|BUbiNG|Qwantify|archive.org_bot|Applebot|TweetmemeBot|crawler4j|findxbot|S[eE][mM]rushBot|yoozBot|lipperhey|Y!J|Domain Re-Animator Bot|AddThis|Screaming Frog SEO Spider|MetaURI|Scrapy|Livelap[bB]ot|OpenHoseBot|CapsuleChecker|collection@infegy.com|IstellaBot|DeuSu\/|betaBot|Cliqzbot\/|MojeekBot\/|netEstate NE Crawler|SafeSearch microdata crawler|Gluten Free Crawler\/|Sonic|Sysomos|Trove|deadlinkchecker|Slack-ImgProxy|Embedly|RankActiveLinkBot|iskanie|SafeDNSBot|SkypeUriPreview|Veoozbot|Slackbot|redditbot|datagnionbot|Google-Adwords-Instant|adbeat_bot|WhatsApp|contxbot|pinterest.com.bot|electricmonk|GarlikCrawler|BingPreview\/|vebidoobot|FemtosearchBot|Yahoo Link Preview|MetaJobBot|DomainStatsBot|mindUpBot|Daum\/|Jugendschutzprogramm-Crawler|Xenu Link Sleuth|Pcore-HTTP|moatbot|KosmioBot|[pP]ingdom|AppInsights|PhantomJS|Gowikibot|PiplBot|Discordbot|TelegramBot|Jetslide|newsharecounts|James BOT|Bark[rR]owler|TinEye|SocialRankIOBot|trendictionbot|Ocarinabot|epicbot|Primalbot|DuckDuckGo-Favicons-Bot|GnowitNewsbot|Leikibot|LinkArchiver|YaK\/|PaperLiBot|Digg Deeper|dcrawl|Snacktory|AndersPinkBot|Fyrebot|EveryoneSocialBot|Mediatoolkitbot|Luminator-robots|ExtLinksBot|SurveyBot|NING\/|okhttp|Nuzzel|omgili|PocketParser|YisouSpider|um-LN|ToutiaoSpider|MuckRack|Jamie's Spider|AHC\/|NetcraftSurveyAgent|Laserlikebot|^Apache-HttpClient|AppEngine-Google|Jetty|Upflow|Thinklab|Traackr.com|Twurly|Mastodon|http_get|DnyzBot|botify|007ac9 Crawler|BehloolBot|BrandVerity|check_http|BDCbot|ZumBot|EZID|ICC-Crawler|ArchiveBot|^LCC |filterdb.iss.net\/crawler|BLP_bbot|BomboraBot|Buck\/|Companybook-Crawler|Genieo|magpie-crawler|MeltwaterNews|Moreover|newspaper\/|ScoutJet|(^| )sentry\/|StorygizeBot|UptimeRobot|OutclicksBot|seoscanners|Hatena|Google Web Preview|MauiBot|AlphaBot|SBL-BOT|IAS crawler|adscanner|Netvibes|acapbot|Baidu-YunGuanCe|bitlybot|blogmuraBot|Bot.AraTurka.com|bot-pge.chlooe.com|BoxcarBot|BTWebClient|ContextAd Bot|Digincore bot|Disqus|Feedly|Fetch\/|Fever|Flamingo_SearchEngine|FlipboardProxy|g2reader-bot|G2 Web Services|imrbot|K7MLWCBot|Kemvibot|Landau-Media-Spider|linkapediabot|vkShare|Siteimprove.com|BLEXBot\/|DareBoost|ZuperlistBot\/|Miniflux\/|Feedspot|Diffbot\/|SEOkicks|tracemyfile|Nimbostratus-Bot|zgrab|PR-CY.RU|AdsTxtCrawler|Datafeedwatch|Zabbix|TangibleeBot|google-xrawler|axios|Amazon CloudFront|Pulsepoint|CloudFlare-AlwaysOnline|Google-Structured-Data-Testing-Tool|WordupInfoSearch|WebDataStats|HttpUrlConnection|Seekport Crawler|ZoomBot|VelenPublicWebCrawler|MoodleBot|jpg-newsbot|outbrain|W3C_Validator|Validator\.nu|W3C-checklink|W3C-mobileOK|W3C_I18n-Checker|FeedValidator|W3C_CSS_Validator|W3C_Unicorn|Google-PhysicalWeb|Blackboard|ICBot\/|BazQux|Twingly|Rivva|Experibot|awesomecrawler|Dataprovider.com|GroupHigh\/|theoldreader.com|AnyEvent|Uptimebot\.org|Nmap Scripting Engine|2ip.ru|Clickagy|Caliperbot|MBCrawler|online-webceo-bot|B2B Bot|AddSearchBot|Google Favicon|HubSpot|Chrome-Lighthouse|HeadlessChrome|CheckMarkNetwork\/|www\.uptime\.com|Streamline3Bot\/|serpstatbot\/|MixnodeCache\/|^curl|SimpleScraper|RSSingBot|Jooblebot|fedoraplanet|Friendica|NextCloud|Tiny Tiny RSS|RegionStuttgartBot|Bytespider|Datanyze|Google-Site-Verification|TrendsmapResolver|tweetedtimes|NTENTbot|Gwene|SimplePie|SearchAtlas|Superfeedr|feedbot|UT-Dorkbot|Amazonbot|SerendeputyBot|Eyeotabot|officestorebot|Neticle Crawler|SurdotlyBot|LinkisBot|AwarioSmartBot|AwarioRssBot|RyteBot|FreeWebMonitoring SiteChecker|AspiegelBot|NAVER Blog Rssbot|zenback bot|SentiBot|Domains Project\/|Pandalytics|VKRobot|bidswitchbot|tigerbot|NIXStatsbot|Atom Feed Robot|[Cc]urebot|PagePeeker\/|Vigil\/|rssbot\/|startmebot\/|JobboerseBot|seewithkids|NINJA bot|Cutbot|BublupBot|BrandONbot|RidderBot|Taboolabot|Dubbotbot|FindITAnswersbot|infoobot|Refindbot|BlogTraffic\/\d\.\d+ Feed-Fetcher|SeobilityBot|Cincraw|Dragonbot|VoluumDSP-content-bot|FreshRSS|BitBot|^PHP-Curl-Class|Google-Certificates-Bridge|centurybot|Viber|e\.ventures Investment Crawler|evc-batch|PetalBot|virustotal|(^| )PTST\/|minicrawler|Cookiebot|trovitBot|seostar\.co|IonCrawl|Uptime-Kuma|SeekportBot|FreshpingBot|Feedbin|CriteoBot|Snap URL Preview Service|Better Uptime Bot|RuxitSynthetic|Google-Read-Aloud|Valve\/Steam|OdklBot\/|GPTBot|YandexRenderResourcesBot\/|LightspeedSystemsCrawler|ev-crawler\/|BitSightBot\/|woorankreview\/|Google-Safety|AwarioBot|DataForSeoBot|Linespider|WellKnownBot|A Patent Crawler|StractBot|search\.marginalia\.nu|YouBot|Nicecrawler|Neevabot|BrightEdge Crawler|SiteCheckerBotCrawler|TombaPublicWebCrawler|CrawlyProjectCrawler|KomodiaBot|KStandBot|CISPA Webcrawler|MTRobot|hyscore.io|AlexandriaOrgBot|2ip bot|Yellowbrandprotectionbot|SEOlizer|vuhuvBot|INETDEX-BOT|Synapse|t3versionsBot|deepnoc|Cocolyzebot|hypestat|ReverseEngineeringBot|sempi.tech|Iframely|MetaInspector|node-fetch|lkxscan|python-opengraph|OpenGraphCheck|developers.google.com\/\+\/web\/snippet|SenutoBot|MaCoCu|NewsBlur|inoreader|NetSystemsResearch|PageThing|Statbot\/)/
-              const isBotTest = (useragent) => botRegex.test(useragent)
-
-              const getOrigin = (userAgent) => {
-                const isBot = isBotTest(userAgent)
-                if (isBot && userAgent.includes('Google')) return 'web.googlebot'
-                if (isBot) return 'web.bot'
-                return 'web'
-              }
-
-              const flattenObj = (key, obj) => {
-                return !obj
-                  ? {}
-                  : Object.entries(obj).reduce((x, [k, v]) => {
-                      return {
-                        ...x,
-                        [`${key}.${k}`]: v,
-                      }
-                    }, {})
-              }
-
-              const getReferenceIds = (contentReference) => {
-                if (!contentReference) return {}
-                const { questionTags, answerTags } = contentReference
-
-                if (
-                  questionTags?.playerIds ||
-                  questionTags?.teamIds ||
-                  answerTags?.playerIds ||
-                  answerTags?.teamIds
-                ) {
-                  return {
-                    players: JSON.stringify(
-                      Array.from(
-                        new Set([
-                          ...(questionTags?.playerIds ? questionTags.playerIds : []),
-                          ...(answerTags?.playerIds ? answerTags.playerIds : []),
-                        ]),
-                      ),
-                    ),
-                    teams: JSON.stringify(
-                      Array.from(
-                          new Set([
-                            ...(questionTags?.teamIds ? questionTags.teamIds : []),
-                          ...(answerTags?.teamIds ? answerTags.teamIds : []),
-                        ]),
-                      ),
-                    ),
-                  }
-                }
-
-                if (questionTags?.assetIds || answerTags?.assetIds) {
-                  return {
-                    assets: JSON.stringify(
-                        Array.from(
-                          new Set([
-                            ...(questionTags?.assetIds ? questionTags.assetIds : []),
-                            ...(answerTags?.assetIds ? answerTags.assetIds : []),
-                          ]),
-                        ),
-                      ),
-                    }
-                  }
-              }
-
-              const getSubjectItems = (subject) => {
-                if (!subject) return {}
-                return {
-                  subject_image: subject.imageUrl,
-                  subject_background_color: subject.colors.background,
-                  subject_foreground_color: subject.colors.foreground,
-                }
-              }
-
-              // custom Pageview event
-              const eventProps = document.querySelector('meta[name="analytics:event:properties"]').content
-
-              if (eventProps) {
-                const {
-                  disposition,
-                  tokenizationScore,
-                  contentReference,
-                  subject,
-                  ...props
-                } = JSON.parse(eventProps)
-                analytics.track('Pageview', {
-                  ...props,
-                  ...flattenObj('disposition', disposition),
-                  ...flattenObj('tokenizationScore', tokenizationScore),
-                  ...getReferenceIds(contentReference),
-                  ...getSubjectItems(subject),
-                  origin: getOrigin(navigator.userAgent),
-                })
-
-                var tude = window.tude || { cmd: [] }
-                tude.cmd.push(function () {
-                  tude.setPageTargeting({
-                    pagetype: props.page_domain + '-' + props.page_type,
-                  })
-                })
-              }
-
-              // hack: 'astro:page-load' does not fire consistently
-              // TODO: move into astro:page-load callback
-              document.addEventListener('astro:after-swap', async () => {
-                // default page tracking
-                analytics.page()
-
-                // custom Pageview event
-                const eventProps = document.querySelector('meta[name="analytics:event:properties"]').content
-
-                if (eventProps) {
-                  const {
-                    disposition,
-                    tokenizationScore,
-                    contentReference,
-                    subject,
-                    ...props
-                  } = JSON.parse(eventProps)
-                  analytics.track('Pageview', {
-                    ...props,
-                    ...flattenObj('disposition', disposition),
-                    ...flattenObj('tokenizationScore', tokenizationScore),
-                    ...getReferenceIds(contentReference),
-                    ...getSubjectItems(subject),
-                    origin: getOrigin(navigator.userAgent),
-                  })
-
-                  var tude = window.tude || { cmd: [] }
-                  tude.cmd.push(function () {
-                    tude.setPageTargeting({
-                      pagetype: props.page_domain + '-' + props.page_type,
-                    })
-                  })
-                }
-              })
-
-              document.addEventListener('astro:page-load', async () => {
-                  try {
-                    const session = await fetch('/auth/session').then((r) => r.json())
-
-                    if (session.type === 'visitor') {
-                      analytics.identify(`v:${session.properties.id}`, {
-                        origin: session.properties.origin,
-                        origin_scope: 'browser',
-                      })
-                    }
-                    if (session.type === 'user') {
-                      analytics.identify(`u:${session.properties.id}`, {
-                        origin: session.properties.origin,
-                        origin_scope: 'browser',
-                      })
-                    }
-                  } catch (e) {}
-                },
-                { once: true },
-              )
-            }}();
-          </script>
+          <script async src="/scripts/aditude-cmp.js" />
+          <link
+            rel="preload"
+            as="script"
+            href="https://www.googletagservices.com/tag/js/gpt.js"
+          />
+          <script
+            async
+            src="https://dn0qt3r0xannq.cloudfront.net/statmuse-3HFSjUvCes/statmuse-longform/prebid-load.js"
+          />
         </Fragment>
       )
     }
@@ -465,8 +317,147 @@ const canonicalUrl = meta?.canonical
     <CookieConsent client:only="svelte" />
     {enableAdBanner && <AditudeAdBanner client:only="svelte" />}
     <script>
-      import { session as sessionStore } from '@lib/session-store'
+      import { segment, getOrigin } from '@lib/analytics'
       import type { Session } from '@lib/session'
+      import { session as sessionStore } from '@lib/session-store'
+      import type { ContentReference, Subject } from '@statmuse/core/gamera'
+      import type { ContentReference as KanedamaContentReference } from '@statmuse/core/kanedama'
+
+      const flattenObj = (key: string, obj?: {}) => {
+        return !obj
+          ? {}
+          : Object.entries(obj).reduce((x, [k, v]) => {
+              return {
+                ...x,
+                [`${key}.${k}`]: v,
+              }
+            }, {})
+      }
+
+      const getReferenceIds = (
+        contentReference?: ContentReference | KanedamaContentReference,
+      ) => {
+        if (!contentReference) return {}
+        const { questionTags, answerTags } = contentReference
+
+        if (
+          questionTags?.playerIds ||
+          questionTags?.teamIds ||
+          answerTags?.playerIds ||
+          answerTags?.teamIds
+        ) {
+          return {
+            players: JSON.stringify(
+              Array.from(
+                new Set([
+                  ...(questionTags?.playerIds ? questionTags.playerIds : []),
+                  ...(answerTags?.playerIds ? answerTags.playerIds : []),
+                ]),
+              ),
+            ),
+            teams: JSON.stringify(
+              Array.from(
+                new Set([
+                  ...(questionTags?.teamIds ? questionTags.teamIds : []),
+                  ...(answerTags?.teamIds ? answerTags.teamIds : []),
+                ]),
+              ),
+            ),
+          }
+        }
+
+        if (questionTags?.assetIds || answerTags?.assetIds) {
+          return {
+            assets: JSON.stringify(
+              Array.from(
+                new Set([
+                  ...(questionTags?.assetIds ? questionTags.assetIds : []),
+                  ...(answerTags?.assetIds ? answerTags.assetIds : []),
+                ]),
+              ),
+            ),
+          }
+        }
+      }
+
+      const getSubjectItems = (subject?: Subject) => {
+        if (!subject) return {}
+        return {
+          subject_image: subject.imageUrl,
+          subject_background_color: subject.colors.background,
+          subject_foreground_color: subject.colors.foreground,
+        }
+      }
+
+      // default page tracking
+      segment.page()
+
+      // custom Pageview event
+      const eventProps = document.querySelector<HTMLMetaElement>(
+        'meta[name="analytics:event:properties"]',
+      )?.content
+
+      if (eventProps) {
+        const {
+          disposition,
+          tokenizationScore,
+          contentReference,
+          subject,
+          ...props
+        } = JSON.parse(eventProps)
+        segment.track('Pageview', {
+          ...props,
+          ...flattenObj('disposition', disposition),
+          ...flattenObj('tokenizationScore', tokenizationScore),
+          ...getReferenceIds(contentReference),
+          ...getSubjectItems(subject),
+          origin: getOrigin(navigator.userAgent),
+        })
+
+        var tude = window.tude || { cmd: [] }
+        tude.cmd.push(function () {
+          tude.setPageTargeting({
+            pagetype: props.page_domain + '-' + props.page_type,
+          })
+        })
+      }
+
+      // hack: 'astro:page-load' does not fire consistently
+      // TODO: move into astro:page-load callback
+      document.addEventListener('astro:after-swap', async () => {
+        // default page tracking
+        segment.page()
+
+        // custom Pageview event
+        const eventProps = document.querySelector<HTMLMetaElement>(
+          'meta[name="analytics:event:properties"]',
+        )?.content
+
+        if (eventProps) {
+          const {
+            disposition,
+            tokenizationScore,
+            contentReference,
+            subject,
+            ...props
+          } = JSON.parse(eventProps)
+          segment.track('Pageview', {
+            ...props,
+            ...flattenObj('disposition', disposition),
+            ...flattenObj('tokenizationScore', tokenizationScore),
+            ...getReferenceIds(contentReference),
+            ...getSubjectItems(subject),
+            origin: getOrigin(navigator.userAgent),
+          })
+
+          var tude = window.tude || { cmd: [] }
+          tude.cmd.push(function () {
+            tude.setPageTargeting({
+              pagetype: props.page_domain + '-' + props.page_type,
+            })
+          })
+        }
+      })
 
       document.addEventListener('astro:page-load', async () => {
         /**
@@ -529,6 +520,19 @@ const canonicalUrl = meta?.canonical
               r.json(),
             )
             sessionStore.set(session)
+
+            if (session.type === 'visitor') {
+              segment.identify(`v:${session.properties.id}`, {
+                origin: session.properties.origin,
+                origin_scope: 'browser',
+              })
+            }
+            if (session.type === 'user') {
+              segment.identify(`u:${session.properties.id}`, {
+                origin: session.properties.origin,
+                origin_scope: 'browser',
+              })
+            }
           } catch (e) {}
         },
         { once: true },
