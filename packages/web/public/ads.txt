@@ -320,6 +320,7 @@ xandr.com,15670,RESELLER
 
 # Pubmatic
 pubmatic.com, 164446, DIRECT, 5d62403b186f2ace
+pubmatic.com, 162657, DIRECT, 5d62403b186f2ace
 
 # Aditude
 aditude.io, 198, DIRECT
@@ -475,3 +476,6 @@ sharethrough.com, 23830661, DIRECT, d53b998a7bd4ecd2
 sharethrough.com, AgltJqgT, RESELLER, d53b998a7bd4ecd2
 smartadserver.com, 4872, RESELLER, 060d053dcf45cbf3
 onetag.com, 753930a353d6990, DIRECT
+
+# Index Exchange
+indexexchange.com, 208425, DIRECT, 50b1c356f2c5c8fc
