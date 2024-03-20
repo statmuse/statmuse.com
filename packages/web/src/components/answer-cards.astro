@@ -850,19 +850,20 @@ const filterMlbTeamLeaders = (
   type: 'batting' | 'pitching',
 ) => {
   return cards
-    .filter((c) =>
-      (type === 'batting'
-        ? [
-            'mostBattingHomeRuns',
-            'mostBattingRunsBattedIn',
-            'bestBattingAverage',
-          ]
-        : [
-            'mostPitchingWins',
-            'mostPitchingStrikeouts',
-            'bestPitchingEarnedRunAverage',
-          ]
-      ).includes(c.stat),
+    .filter(
+      (c) =>
+        (type === 'batting'
+          ? [
+              'mostBattingHomeRuns',
+              'mostBattingRunsBattedIn',
+              'bestBattingAverage',
+            ]
+          : [
+              'mostPitchingWins',
+              'mostPitchingStrikeouts',
+              'bestPitchingEarnedRunAverage',
+            ]
+        ).includes(c.stat) && c.players.length > 0,
     )
     .map((c) => ({ ...c.players[0], stat: c.stat }))
 }
@@ -905,8 +906,6 @@ let fantasyCards: PlayerCard[] = []
 if (playerCardsResp) {
   fantasyCards = playerCardsResp.cards.filter(filterFantasyCards)
 }
-
-// console.log(teamCardsResp)
 
 let bettingCards: TeamCard[] = []
 if (teamCardsResp) {
@@ -1042,9 +1041,9 @@ if (allowedDomains.includes(league) && teamId) {
                 class="flex-1 rounded-2xl overflow-hidden py-10 px-2.5 flex items-center"
                 style={{
                   backgroundColor:
-                    teamLeaders?.players[0].colors?.backgroundColor ?? '#FFF',
+                    teamLeaders?.players[0]?.colors?.backgroundColor ?? '#FFF',
                   color:
-                    teamLeaders?.players[0].colors?.foregroundColor ?? '#000',
+                    teamLeaders?.players[0]?.colors?.foregroundColor ?? '#000',
                 }}
               >
                 <div class="flex gap-5 text-center mx-auto">
@@ -1078,9 +1077,9 @@ if (allowedDomains.includes(league) && teamId) {
                 grid={teamSeasonOverview.standings}
                 colors={{
                   backgroundColor:
-                    teamLeaders?.players[0].colors?.backgroundColor ?? '#FFF',
+                    teamLeaders?.players[0]?.colors?.backgroundColor ?? '#FFF',
                   foregroundColor:
-                    teamLeaders?.players[0].colors?.foregroundColor ?? '#000',
+                    teamLeaders?.players[0]?.colors?.foregroundColor ?? '#000',
                 }}
               />
             </div>
@@ -1102,9 +1101,9 @@ if (allowedDomains.includes(league) && teamId) {
                 data={teamScheduleResponse}
                 colors={{
                   backgroundColor:
-                    teamLeaders?.players[0].colors?.backgroundColor ?? '#FFF',
+                    teamLeaders?.players[0]?.colors?.backgroundColor ?? '#FFF',
                   foregroundColor:
-                    teamLeaders?.players[0].colors?.foregroundColor ?? '#000',
+                    teamLeaders?.players[0]?.colors?.foregroundColor ?? '#000',
                 }}
               />
             </div>
@@ -1218,63 +1217,9 @@ if (allowedDomains.includes(league) && teamId) {
           } ${domain === 'mlb' ? 'Batting ' : ''}Leaders`}
         </h3>
         <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
-          {playerLeaderCards.map((card) => (
-            <div>
-              <div class="flex justify-between">
-                <p class="font-semibold">{`${
-                  playerCardsResp!.seasonType === 'postseason' ? 'Playoff ' : ''
-                }${playerCardTitle(card.stat)}`}</p>
-                <a
-                  href={playerAskLink(
-                    card.stat,
-                    league,
-                    playerCardsResp!.seasonType,
-                    playerCardsResp!.seasonYearDisplay,
-                  )}
-                >
-                  See more
-                </a>
-              </div>
-              <a
-                href={playerAskLink(
-                  card.stat,
-                  league,
-                  playerCardsResp!.seasonType,
-                  playerCardsResp!.seasonYearDisplay,
-                )}
-                class="hover:no-underline"
-              >
-                <PlayerCardComponent card={card} />
-              </a>
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
-  {
-    playerCardsResp && playerLeaderCards.length > 0 && (
-      <div>
-        <AditudeCardMedRec
-          client:only="svelte"
-          slotId="pb-slot-2"
-          baseDivId="pb-slot-incontent-2"
-        />
-      </div>
-    )
-  }
-  {
-    playerCardsResp &&
-      playerLeaderCards.length > 0 &&
-      pitchingLeaderCards.length > 0 && (
-        <div>
-          <h3 class="text-3xl font-semibold mb-1.5">
-            {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
-              playerCardsResp.seasonYearDisplay
-            } Pitching Leaders`}
-          </h3>
-          <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
-            {pitchingLeaderCards.map((card) => (
+          {playerLeaderCards
+            .filter((c) => c.players.length > 0)
+            .map((card) => (
               <div>
                 <div class="flex justify-between">
                   <p class="font-semibold">{`${
@@ -1306,6 +1251,66 @@ if (allowedDomains.includes(league) && teamId) {
                 </a>
               </div>
             ))}
+        </div>
+      </div>
+    )
+  }
+  {
+    playerCardsResp && playerLeaderCards.length > 0 && (
+      <div>
+        <AditudeCardMedRec
+          client:only="svelte"
+          slotId="pb-slot-2"
+          baseDivId="pb-slot-incontent-2"
+        />
+      </div>
+    )
+  }
+  {
+    playerCardsResp &&
+      playerLeaderCards.length > 0 &&
+      pitchingLeaderCards.length > 0 && (
+        <div>
+          <h3 class="text-3xl font-semibold mb-1.5">
+            {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
+              playerCardsResp.seasonYearDisplay
+            } Pitching Leaders`}
+          </h3>
+          <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+            {pitchingLeaderCards
+              .filter((c) => c.players.length > 0)
+              .map((card) => (
+                <div>
+                  <div class="flex justify-between">
+                    <p class="font-semibold">{`${
+                      playerCardsResp!.seasonType === 'postseason'
+                        ? 'Playoff '
+                        : ''
+                    }${playerCardTitle(card.stat)}`}</p>
+                    <a
+                      href={playerAskLink(
+                        card.stat,
+                        league,
+                        playerCardsResp!.seasonType,
+                        playerCardsResp!.seasonYearDisplay,
+                      )}
+                    >
+                      See more
+                    </a>
+                  </div>
+                  <a
+                    href={playerAskLink(
+                      card.stat,
+                      league,
+                      playerCardsResp!.seasonType,
+                      playerCardsResp!.seasonYearDisplay,
+                    )}
+                    class="hover:no-underline"
+                  >
+                    <PlayerCardComponent card={card} />
+                  </a>
+                </div>
+              ))}
           </div>
         </div>
       )

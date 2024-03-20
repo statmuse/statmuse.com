@@ -66,8 +66,8 @@ const { card } = Astro.props
 <div
   class="flex rounded-2xl overflow-hidden px-2.5"
   style={{
-    backgroundColor: card.players[0].colors?.backgroundColor ?? '#FFF',
-    color: card.players[0].colors?.foregroundColor ?? '#000',
+    backgroundColor: card.players[0]?.colors?.backgroundColor ?? '#FFF',
+    color: card.players[0]?.colors?.foregroundColor ?? '#000',
   }}
 >
   {
