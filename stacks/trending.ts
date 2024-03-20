@@ -36,11 +36,11 @@ export function Trending({ stack }: StackContext) {
     })
 
     const hourly = new Cron(stack, 'hourly', {
-      schedule: 'rate(1 hour)',
+      schedule: 'rate(3 hours)',
       job: 'packages/functions/src/trending/trigger.hourly',
     })
     const daily = new Cron(stack, 'daily', {
-      schedule: 'rate(1 day)',
+      schedule: 'rate(3 days)',
       job: 'packages/functions/src/trending/trigger.daily',
     })
 
