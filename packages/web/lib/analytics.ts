@@ -1,4 +1,4 @@
-import { AnalyticsBrowser } from '@segment/analytics-next'
+import { type AnalyticsSnippet } from '@segment/analytics-next'
 import type {
   ContentReference as GameraContentReference,
   Disposition,
@@ -49,17 +49,12 @@ export type AnalyticsPageviewProperties = {
 
 declare global {
   interface Window {
-    segment: AnalyticsBrowser
-    freestar: {
-      queue: any[]
-      config: {
-        enabled_slots: any[]
-      }
-      initCallback: () => void
-      newAdSlots: (x: any) => void
-      deleteAdSlots: (x: string) => void
-      newStickyFooter: (x?: string) => void
-      deleteStickyFooter: (x?: string) => void
+    analytics: AnalyticsSnippet
+    tude: {
+      cmd: any[]
+      destroyAds: (...args: any[]) => void
+      refreshAdsViaDivMappings: (...args: any[]) => void
+      setPageTargeting: (...args: any[]) => void
     }
   }
 }

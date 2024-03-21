@@ -26,6 +26,7 @@ export default defineConfig({
           'tude.cmd.push',
           'tude.destroyAds',
           'tude.refreshAdsViaDivMappings',
+          'tude.setPageTargeting',
         ],
       },
     }),
