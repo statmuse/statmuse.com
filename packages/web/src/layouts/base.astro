@@ -309,13 +309,9 @@ const canonicalUrl = meta?.canonical
         </Fragment>
       )
     }
-    <script
-      type="text/partytown"
-      async
-      src={import.meta.env.PROD
-        ? '/scripts/analytics.js'
-        : '/scripts/analytics-test.js'}
-    ></script>
+    <script type="text/partytown" async src="/scripts/analytics-test.js">
+    </script>
+
     <script>
       window.dataLayer = window.dataLayer || []
       function gtag() {
