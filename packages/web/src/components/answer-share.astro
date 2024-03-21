@@ -197,7 +197,7 @@ const socialButtons = [
         try {
           await navigator.clipboard.writeText(input.value)
           inputLabel.innerText = 'COPIED'
-          window.segment.track('Copy Musing Share Link', {
+          window.analytics.track('Copy Musing Share Link', {
             href: input.value,
           })
         } catch (err) {}
@@ -252,7 +252,7 @@ const socialButtons = [
       )
       .forEach((el) => {
         el.addEventListener('click', () => {
-          window.segment.track(el.dataset.trackClick as string, {
+          window.analytics.track(el.dataset.trackClick as string, {
             href: el.href,
           })
         })

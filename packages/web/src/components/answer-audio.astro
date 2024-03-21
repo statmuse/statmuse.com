@@ -71,7 +71,7 @@ interface Props {
           el.querySelector('[data-play]')?.classList.remove('hidden')
           el.querySelector('[data-pause]')?.classList.add('hidden')
         }
-        window.segment.track('Toggle Musing Audio Playback', {
+        window.analytics.track('Toggle Musing Audio Playback', {
           playing: state.playing,
         })
       })
@@ -80,7 +80,7 @@ interface Props {
         state.playing = !state.playing
         el.querySelector('[data-play]')?.classList.remove('hidden')
         el.querySelector('[data-pause]')?.classList.add('hidden')
-        window.segment.track('Musing Audio Finished')
+        window.analytics.track('Musing Audio Finished')
       })
 
       audio.addEventListener('timeupdate', () => {

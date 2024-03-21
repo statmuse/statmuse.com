@@ -126,12 +126,12 @@ const meta = {
   </div>
 </BaseLayout>
 <script define:vars={{ id: musing.id, query: musing.question_text }}>
-  window.segment.track('Musing - Web View', { id, text: query })
+  window.analytics.track('Musing - Web View', { id, text: query })
 
   const el = document.querySelector(
     '[data-track-click="Musing - Click App Store link"]',
   )
   el.addEventListener('click', () => {
-    window.segment.track(el.dataset.trackClick, { id, text: query })
+    window.analytics.track(el.dataset.trackClick, { id, text: query })
   })
 </script>

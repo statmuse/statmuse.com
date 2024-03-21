@@ -64,36 +64,6 @@ declare global {
   }
 }
 
-const writeKey = document.querySelector<HTMLMetaElement>(
-  'meta[name="analytics"]',
-)?.content
-
-export const segment = (window.segment =
-  import.meta.env.PROD && writeKey
-    ? AnalyticsBrowser.load(
-        {
-          writeKey,
-          cdnURL: import.meta.env.PUBLIC_ANALYTICS_CDN_PROXY_URL,
-        },
-        {
-          integrations: {
-            'Segment.io': {
-              apiHost:
-                new URL(import.meta.env.PUBLIC_ANALYTICS_API_PROXY_URL).host +
-                '/v1',
-            },
-          },
-        },
-      )
-    : (['identify', 'page', 'track'].reduce(
-        (stub, key) => ({
-          ...stub,
-          [key]: (...args: [string]) =>
-            console.debug(`analytics.${key}`, ...args),
-        }),
-        {},
-      ) as AnalyticsBrowser))
-
 export const getOrigin = (userAgent: string) => {
   const isBot = isBotTest(userAgent)
   if (isBot && userAgent.includes('Google')) return 'web.googlebot'

@@ -56,7 +56,7 @@ const { league, additionalQuestions } = Astro.props
       )
       .forEach((el) => {
         el.addEventListener('click', () => {
-          window.segment.track(el.dataset.trackClick as string, {
+          window.analytics.track(el.dataset.trackClick as string, {
             query: el.innerText,
             referrer: window.location.href,
           })

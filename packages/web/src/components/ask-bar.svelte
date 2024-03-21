@@ -77,7 +77,7 @@
       sections[sectionIdx].suggestions[suggestionIdx].display === query
     ) {
       const section = sections[sectionIdx]
-      window.segment.track('Autosuggest Search', {
+      window.analytics.track('Autosuggest Search', {
         query,
         section: section.type,
       })

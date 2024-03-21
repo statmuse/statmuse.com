@@ -28,7 +28,7 @@
       ) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && container) {
-            window.segment.track('View Video')
+            window.analytics.track('View Video')
             self.unobserve(entry.target)
           }
         })
