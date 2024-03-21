@@ -71,12 +71,7 @@ const apiProxyUrl = document.querySelector('meta[name="api-proxy-url"]').content
         t.type = 'text/javascript'
         t.async = !0
         t.setAttribute('data-global-segment-analytics-key', i)
-        t.src =
-          'https://' +
-          cdnProxyUrl +
-          '/analytics.js/v1/' +
-          key +
-          '/analytics.min.js'
+        t.src = cdnProxyUrl + '/analytics.js/v1/' + key + '/analytics.min.js'
         var r = document.getElementsByTagName('script')[0]
         r.parentNode.insertBefore(t, r)
         analytics._loadOptions = n
@@ -84,7 +79,9 @@ const apiProxyUrl = document.querySelector('meta[name="api-proxy-url"]').content
       analytics._writeKey = writeKey
       analytics.SNIPPET_VERSION = '5.2.0'
       analytics.load(writeKey, {
-        integrations: { 'Segment.io': { apiHost: apiProxyUrl + '/v1' } },
+        integrations: {
+          'Segment.io': { apiHost: new URL(apiProxyUrl).host + '/v1' },
+        },
       })
     }
 })()
