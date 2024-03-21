@@ -276,17 +276,46 @@ const canonicalUrl = meta?.canonical
 
     <meta name="analytics" content={Config.SEGMENT_WRITE_KEY} />
     <meta
+      name="cdn-proxy-url"
+      content={import.meta.env.PUBLIC_ANALYTICS_CDN_PROXY_URL}
+    />
+    <meta
+      name="api-proxy-url"
+      content={import.meta.env.PUBLIC_ANALYTICS_API_PROXY_URL}
+    />
+    <meta
       name="analytics:event:properties"
       content={JSON.stringify(analyticsProperties)}
     />
     {
       import.meta.env.PROD && (
-        <script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-QRW302M4ZR"
-        />
+        <Fragment>
+          <script
+            type="text/partytown"
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-QRW302M4ZR"
+          />
+          <script
+            type="text/partytown"
+            async
+            src="https://www.googletagservices.com/tag/js/gpt.js"
+          />
+          <script async type="text/partytown" src="/scripts/aditude-cmp.js" />
+          <script
+            type="text/partytown"
+            async
+            src="https://dn0qt3r0xannq.cloudfront.net/statmuse-3HFSjUvCes/statmuse-longform/prebid-load.js"
+          />
+        </Fragment>
       )
     }
+    <script
+      type="text/partytown"
+      async
+      src={import.meta.env.PROD
+        ? '/scripts/analytics.js'
+        : '/scripts/analytics-test.js'}
+    ></script>
     <script>
       window.dataLayer = window.dataLayer || []
       function gtag() {
@@ -295,22 +324,6 @@ const canonicalUrl = meta?.canonical
       gtag('js', new Date())
       gtag('config', 'G-QRW302M4ZR')
     </script>
-    {
-      import.meta.env.PROD && (
-        <Fragment>
-          <script async src="/scripts/aditude-cmp.js" />
-          <link
-            rel="preload"
-            as="script"
-            href="https://www.googletagservices.com/tag/js/gpt.js"
-          />
-          <script
-            async
-            src="https://dn0qt3r0xannq.cloudfront.net/statmuse-3HFSjUvCes/statmuse-longform/prebid-load.js"
-          />
-        </Fragment>
-      )
-    }
   </head>
   <body class="text-black">
     <slot />
