@@ -1,4 +1,4 @@
-import { type AnalyticsSnippet } from '@segment/analytics-next'
+import type { AnalyticsSnippet } from '@segment/analytics-next'
 import type {
   ContentReference as GameraContentReference,
   Disposition,

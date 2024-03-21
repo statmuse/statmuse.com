@@ -86,5 +86,5 @@ const apiProxyUrl = document.querySelector('meta[name="api-proxy-url"]').content
       analytics.load(writeKey, {
         integrations: { 'Segment.io': { apiHost: apiProxyUrl + '/v1' } },
       })
-      
+    }
 })()
