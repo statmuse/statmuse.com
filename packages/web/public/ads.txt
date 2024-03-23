@@ -319,8 +319,7 @@ rubiconproject.com,26250,RESELLER,0bfd66d529a55807
 xandr.com,15670,RESELLER
 
 # Pubmatic
-pubmatic.com, 164446, DIRECT, 5d62403b186f2ace
-pubmatic.com, 162657, DIRECT, 5d62403b186f2ace
+pubmatic.com, 164521, DIRECT, 5d62403b186f2ace
 
 # Aditude
 aditude.io, 198, DIRECT
