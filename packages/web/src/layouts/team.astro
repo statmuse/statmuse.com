@@ -17,6 +17,7 @@ import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 interface Props {
   bio: GameraTeamSeasonBio
@@ -263,6 +264,9 @@ const twitter = {
       </div>
     </div>
   </Container>
+  <div class="h-[100px]">
+    <AditudeAdBanner client:only="svelte" />
+  </div>
   {
     bio.statsSummary ? (
       <div class="md:hidden w-fit mx-auto my-5 text-team-primary">

@@ -16,6 +16,7 @@ import { NOT_FOUND_404 } from '@lib/response'
 import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_DISABLED } from 'src/config'
 import type { LeagueParam } from '@lib/params'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 interface Props {
   data: GameraBoxScore
@@ -73,6 +74,9 @@ const meta = {
       : `${preferredDomain} image`}
     shareUrl={Astro.url.href}
   />
+  <div class="h-[100px]">
+    <AditudeAdBanner client:only="svelte" />
+  </div>
   <Container>
     <slot />
     <Explore {league} additionalQuestions={data.visual.additionalQuestions} />

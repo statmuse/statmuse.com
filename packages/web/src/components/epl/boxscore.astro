@@ -14,6 +14,7 @@ import SoccerLineup from '@components/soccer-lineup.astro'
 import SubArrow from '@components/icons/sub-arrow.astro'
 import EntityLink from '@components/entity-link.astro'
 import dayjs from 'dayjs'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 interface Props {
   data: GameraEplBoxScore
@@ -326,6 +327,9 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
     {dayjs(boxscoreData.gameDate).format('ddd D MMM YYYY')}
   </p>
 </Container>
+<div class="h-[100px]">
+  <AditudeAdBanner client:only="svelte" />
+</div>
 <Container>
   <div
     class="flex flex-nowrap overflow-auto mb-5 space-x-5 md:hidden"

@@ -20,6 +20,7 @@ import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
 console.log('ANSWER_CARDS_ENABLED', ANSWER_CARDS_ENABLED)
 console.log('env.ANSWER_CARDS_ENABLED', process.env.ANSWER_CARDS_ENABLED)
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 interface Props {
   bio: GameraPlayerBio
@@ -232,6 +233,9 @@ const twitter = {
       </div>
     </div>
   </Container>
+  <div class="h-[100px]">
+    <AditudeAdBanner client:only="svelte" />
+  </div>
   <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
     <div class="text-center w-fit">
       <div class="flex gap-5 mb-1 justify-center">
