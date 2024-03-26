@@ -59,7 +59,7 @@
 </script>
 
 {#if import.meta.env.PROD && mobile && (($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active') || ($session?.type === 'visitor' && !$session?.properties.bot))}
-  <div bind:this={container} class="min-h-[210px] p-4 flex justify-center">
+  <div bind:this={container} class="p-4 flex justify-center">
     <div id={slotId}></div>
   </div>
 {/if}
