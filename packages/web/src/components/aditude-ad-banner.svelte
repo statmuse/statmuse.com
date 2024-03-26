@@ -1,9 +1,6 @@
 <script lang="ts">
   import { session } from '@lib/session-store'
-  import { isMobileTest } from '@lib/useragent'
   import { afterUpdate, onMount } from 'svelte'
-
-  let mobile = isMobileTest(navigator.userAgent)
 
   let renderAd = false
 
@@ -38,6 +35,6 @@
     ($session?.type === 'visitor' && !$session?.properties.bot)
 </script>
 
-{#if import.meta.env.PROD && mobile && isNotSubscriber}
+{#if import.meta.env.PROD && isNotSubscriber}
   <div id="pb-slot-banner"></div>
 {/if}
