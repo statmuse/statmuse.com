@@ -281,22 +281,6 @@ const canonicalUrl = meta?.canonical
     />
     {
       import.meta.env.PROD && (
-        <script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-QRW302M4ZR"
-        />
-      )
-    }
-    <script>
-      window.dataLayer = window.dataLayer || []
-      function gtag() {
-        dataLayer.push(arguments)
-      }
-      gtag('js', new Date())
-      gtag('config', 'G-QRW302M4ZR')
-    </script>
-    {
-      import.meta.env.PROD && (
         <Fragment>
           <script async src="/scripts/aditude-cmp.js" />
           <link
