@@ -207,7 +207,7 @@ const playerEntityMap = [
 const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
 ---
 
-<Container class="mb-5 bg-team-primary text-team-secondary py-5 space-y-5">
+<Container class="mb-2.5 bg-team-primary text-team-secondary py-5 space-y-5">
   <div class="flex gap-2 md:gap-8 md:items-center justify-center">
     <div
       class="flex-1 flex flex-col-reverse md:flex-row gap-1 md:gap-4 items-center justify-end"
@@ -327,7 +327,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
     {dayjs(boxscoreData.gameDate).format('ddd D MMM YYYY')}
   </p>
 </Container>
-<div class="h-[100px]">
+<div class="h-[100px] flex justify-center items-center">
   <AditudeAdBanner client:only="svelte" />
 </div>
 <Container>

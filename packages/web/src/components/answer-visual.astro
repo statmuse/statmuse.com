@@ -103,7 +103,7 @@ const code = await Link.askShortCode(query, preferredDomain || '')
       />
     ) : null
   }
-  <div class="h-[100px]">
+  <div class="h-[100px] flex justify-center items-center">
     <AditudeAdBanner client:only="svelte" />
   </div>
   <Visuals response={answer} {conversationToken} />
