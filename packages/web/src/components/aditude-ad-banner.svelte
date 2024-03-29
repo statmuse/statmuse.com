@@ -8,7 +8,7 @@
     return () => {
       if (window.tude) {
         tude.cmd.push(() => {
-          tude.destroyAds(['pb-slot-banner'])
+          tude.destroyAds(['pb-slot-anchor'])
         })
       }
     }
@@ -20,8 +20,8 @@
       tude.cmd.push(function () {
         tude.refreshAdsViaDivMappings([
           {
-            divId: 'pb-slot-banner',
-            baseDivId: 'pb-slot-banner',
+            divId: 'pb-slot-anchor',
+            baseDivId: 'pb-slot-anchor',
           },
         ])
       })
@@ -36,5 +36,5 @@
 </script>
 
 {#if import.meta.env.PROD && isNotSubscriber}
-  <div id="pb-slot-banner"></div>
+  <div id="pb-slot-anchor"></div>
 {/if}

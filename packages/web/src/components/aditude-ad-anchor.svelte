@@ -16,7 +16,7 @@
     return () => {
       if (window.tude) {
         tude.cmd.push(() => {
-          tude.destroyAds(['pb-slot-anchor'])
+          tude.destroyAds(['pb-slot-banner'])
         })
       }
     }
@@ -28,8 +28,8 @@
       tude.cmd.push(function () {
         tude.refreshAdsViaDivMappings([
           {
-            divId: 'pb-slot-anchor',
-            baseDivId: 'pb-slot-anchor',
+            divId: 'pb-slot-banner',
+            baseDivId: 'pb-slot-banner',
           },
         ])
       })
@@ -39,7 +39,7 @@
   const onClickClose = () => {
     if (window.tude) {
       tude.cmd.push(() => {
-        tude.destroyAds(['pb-slot-anchor'])
+        tude.destroyAds(['pb-slot-banner'])
       })
     }
     isClosed = true
@@ -59,7 +59,7 @@
     style:visibility={isClosed ? 'hidden' : 'visible'}
   >
     {#if !isClosed}
-      <div id="pb-slot-anchor"></div>
+      <div id="pb-slot-banner"></div>
     {/if}
     <img
       src="/share-icons/x.svg"
