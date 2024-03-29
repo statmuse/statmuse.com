@@ -6,7 +6,11 @@ import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals.astro'
 import Explore from '@components/explore.astro'
 import Container from '@components/container.astro'
-import { type GameraDefaultResponse, tokensToText } from '@statmuse/core/gamera'
+import {
+  type GameraDefaultResponse,
+  tokensToText,
+  type GameraResponse,
+} from '@statmuse/core/gamera'
 import { title, description } from '@lib/meta'
 import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
@@ -64,6 +68,20 @@ const meta = {
 }
 
 const code = await Link.askShortCode(query, preferredDomain || '')
+
+const pageType = (
+  answer: GameraResponse,
+): AnalyticsPageviewProperties['page_type'] => {
+  if (answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional')
+    return 'prompt'
+  if (answer.visual.detail?.find((d) => d.type === 'standings'))
+    return 'standings'
+  if (answer.visual.detail?.find((d) => d.type === 'schedule'))
+    return 'schedule'
+  if (answer.visual.detail?.find((d) => d.type.includes('BoxScore')))
+    return 'game'
+  return 'ask'
+}
 ---
 
 <Layout
@@ -71,7 +89,7 @@ const code = await Link.askShortCode(query, preferredDomain || '')
   {meta}
   analytics={{
     is_search: true,
-    page_type: 'ask',
+    page_type: pageType(answer),
     page_domain: preferredDomain as AnalyticsPageviewProperties['page_domain'],
     disposition: answer.disposition,
     tokenizationScore: answer.tokenizationScore,

@@ -39,5 +39,5 @@
 </script>
 
 {#if import.meta.env.PROD && mobile && isNotSubscriber}
-  <div id="pb-slot-incontent-1"></div>
+  <div id="pb-slot-incontent-1" class="mb-2"></div>
 {/if}
