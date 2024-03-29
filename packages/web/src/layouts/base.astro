@@ -5,7 +5,7 @@ import { Config } from 'sst/node/config'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import CookieConsent from '@components/cookie-consent.svelte'
 import { ViewTransitions } from 'astro:transitions'
-import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import AditudeAdAnchor from '@components/aditude-ad-anchor.svelte'
 
 interface Props {
   meta?: Metadata
@@ -299,7 +299,7 @@ const canonicalUrl = meta?.canonical
   <body class="text-black">
     <slot />
     <CookieConsent client:only="svelte" />
-    {enableAdBanner && <AditudeAdBanner client:only="svelte" />}
+    {enableAdBanner && <AditudeAdAnchor client:only="svelte" />}
     <script>
       import { segment, getOrigin } from '@lib/analytics'
       import type { Session } from '@lib/session'

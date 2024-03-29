@@ -18,6 +18,7 @@ import * as Link from '@statmuse/core/link'
 import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
 import type { LeagueParam } from '@lib/params'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 interface Props {
   answer: GameraDefaultResponse
@@ -120,6 +121,9 @@ const pageType = (
       />
     ) : null
   }
+  <div class="h-[100px] flex justify-center items-center">
+    <AditudeAdBanner client:only="svelte" />
+  </div>
   <Visuals response={answer} {conversationToken} />
   <Container>
     <Explore

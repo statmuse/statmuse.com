@@ -13,7 +13,6 @@ import type { Metadata } from '@lib/meta'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import NewsletterSignup from '@components/newsletter-signup.astro'
 import AuthMenu from '@components/auth-menu.svelte'
-import FreestarVideo from '@components/freestar-video.svelte'
 import type { LeagueParam } from '@lib/params'
 import { sample } from 'lodash-es'
 
@@ -314,13 +313,6 @@ const Logo = league === 'money' ? MoneyLogo : StandardLogo
             set:text="Money"
           />
         </div>
-      </div>
-      <div>
-        <FreestarVideo
-          client:only="svelte"
-          class="mb-[30px] mt-[32px] w-full lg:w-[425px]"
-          {league}
-        />
       </div>
       <slot />
       <h4 class="font-semibold text-right py-4">

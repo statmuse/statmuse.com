@@ -15,8 +15,6 @@ import EplBoxscore from '@components/epl-boxscore.astro'
 import Schedule from '@components/schedule.astro'
 import NbaShotChart from '@components/nba-shotchart'
 import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
-import AditudeRightRail from '@components/aditude-right-rail.svelte'
-import AditudeMedRec from '@components/aditude-med-rec.svelte'
 
 interface Props {
   response: GameraResponse
@@ -167,44 +165,33 @@ const details =
                       />
                     )
                 })()}
-                <div class="flex justify-center">
-                  <AditudeMedRec client:only="svelte" />
-                </div>
                 {detail.grids.map((grid) => (
-                  <div>
-                    <div class="flex gap-4">
-                      <div class="flex-1 overflow-x-auto">
-                        <Grid
-                          client:load
-                          data={grid}
-                          columnStyles={{
-                            RESULT: 'text-left',
-                          }}
-                          stickyColumns={['NAME', 'TEAM', 'PLAYER']}
-                          limitRows
-                        />
-                      </div>
-                      <AditudeRightRail client:only="svelte" />
-                    </div>
+                  <div class="flex-1 overflow-x-auto">
+                    <Grid
+                      client:load
+                      data={grid}
+                      columnStyles={{
+                        RESULT: 'text-left',
+                      }}
+                      stickyColumns={['NAME', 'TEAM', 'PLAYER']}
+                      limitRows
+                    />
                   </div>
                 ))}
               </Fragment>
             )
           case 'genericGrids':
             return detail.grids.map((grid) => (
-              <div class="flex gap-4">
-                <div class="flex-1 overflow-x-auto">
-                  <Grid
-                    client:load
-                    data={grid}
-                    columnStyles={{
-                      RESULT: 'text-left',
-                    }}
-                    stickyColumns={['NAME', 'TEAM', 'PLAYER']}
-                    limitRows
-                  />
-                </div>
-                <AditudeRightRail client:only="svelte" />
+              <div class="flex-1 overflow-x-auto">
+                <Grid
+                  client:load
+                  data={grid}
+                  columnStyles={{
+                    RESULT: 'text-left',
+                  }}
+                  stickyColumns={['NAME', 'TEAM', 'PLAYER']}
+                  limitRows
+                />
               </div>
             ))
           case 'standings':
