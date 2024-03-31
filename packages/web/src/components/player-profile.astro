@@ -1,11 +1,13 @@
 ---
 import PlayerLayout from '@layouts/player.astro'
-import Grid from '@components/grid.svelte'
 import Panel from '@components/panel.astro'
+import Image from '@components/image.astro'
 import {
   tokensToText,
   tokensToHtml,
   getUrlForEntity,
+  getDefaultBustImageUrl,
+  type GameraGrid,
 } from '@statmuse/core/gamera'
 import { getPlayerProfile, getPositionName } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
@@ -50,6 +52,11 @@ const playerPath = getUrlForEntity({
   display: bio.usedName,
 })
 
+const bustImageUrl = bio.bustImageUrl || getDefaultBustImageUrl(domain)
+const bustImageAlt = bio.bustImageUrl?.includes('silhouette')
+  ? `Illustrated silhouette of a player wearing the ${bio.team?.name} uniform`
+  : `Illustration of ${bio.usedName} wearing the ${bio.team?.name} uniform`
+
 const position = getPositionName(bio)
 const title = `${bio.usedName} - ${bio.team?.name || bio.domain} ${
   position || 'Player'
@@ -85,34 +92,317 @@ if (league === 'fc') {
     facts.push({ label: 'Weight', value: bio.weightLbs + ' lbs' })
   if (bio.experience) facts.push({ label: 'Experience', value: bio.experience })
 }
+if (bio.awards) {
+  const champ = bio.awards.find((a) => a.name === `${domain} Champion`)
+  if (champ?.years.length)
+    facts.push({ label: `${domain} Champ`, value: `${champ.years.length}x` })
+  const mvp = bio.awards.find((a) => a.name === 'MVP')
+  if (mvp?.years.length)
+    facts.push({ label: 'MVP', value: `${mvp.years.length}x` })
+  const dpoy = bio.awards.find((a) => a.name === 'Defensive Player Of The Year')
+  if (dpoy?.years.length)
+    facts.push({ label: 'DPOY', value: `${dpoy.years.length}x` })
+  const proBowl = bio.awards.find((a) => a.name === 'Pro Bowl')
+  if (proBowl?.years.length)
+    facts.push({ label: 'Pro Bowl', value: `${proBowl.years.length}x` })
+}
 
-const nextGameTitle = `Next Game ${isNextGameHome ? 'vs' : '@'} ${
-  isNextGameHome
-    ? nextGame?.awayTeam.abbreviation
-    : nextGame?.homeTeam.abbreviation
-}`
+const nextGameOpponnent = isNextGameHome
+  ? nextGame?.awayTeam
+  : nextGame?.homeTeam
 
-const statPanels = stats?.grid.rows.map(
-  (r) => r[stats?.grid.columns[0].rowItemKey].display,
-)
-const statColumns = [
-  'PPG',
-  'RPG',
-  'APG',
-  'SPG',
-  'BPG',
-  'MPG',
-  'FG%',
-  '3P%',
-  'FT%',
-  'TS%',
-]
-const panels = statPanels.map((title, index) => ({
+type Row = GameraGrid['rows'][number]
+type Stat = string | string[] | { label: string; value: (v: Row) => string }
+
+const formatNumber = (value: unknown) =>
+  (typeof value === 'number'
+    ? value.toFixed(1).replace('.0', '')
+    : (value as string)) ?? '-'
+const formatPercentage = (value: number) => `${formatNumber(value)}%`
+const statPanels = stats?.grid.rows
+  .slice(0, 2)
+  .map((r) => r[stats?.grid.columns[0].rowItemKey].display)
+
+const calculateStat = (stat: Stat, row: Row) => ({
+  key:
+    typeof stat === 'string'
+      ? stat
+      : Array.isArray(stat)
+      ? stat[0]
+      : stat.label,
+  value: formatNumber(
+    typeof stat === 'string'
+      ? (row[stat]?.value as number)
+      : Array.isArray(stat)
+      ? row[stat[1]]?.value
+      : stat.value(row),
+  ),
+})
+
+const normalizeNflPosition = (position: string) => {
+  switch (position) {
+    case 'QB':
+    case 'RB':
+    case 'WR':
+    case 'K':
+    case 'P':
+    case 'OL':
+      return position
+    case 'TE':
+      return 'WR'
+    default:
+      return 'DEF'
+  }
+}
+
+const normalizedPosition =
+  league === 'nfl' ? normalizeNflPosition(bio.position) : bio.position
+
+const seasonStatColumns: Record<LeagueParam, Stat[] | Record<string, Stat[]>> =
+  {
+    nba: ['PPG', 'RPG', 'APG', 'SPG', 'BPG', 'MPG', 'FG%', '3P%', 'FT%', 'TS%'],
+    nfl: {
+      QB: [
+        {
+          label: 'Comp Pct',
+          value: (v) => formatPercentage((v.CMP.value / v.ATT.value) * 100),
+        },
+        ['Pass Yds', 'YDS'],
+        ['Pass TD', 'TD'],
+        {
+          label: 'Yds/Pass',
+          value: (v) => formatNumber(v.YDS.value / v.ATT.value),
+        },
+        ['Rating', 'RATE'],
+        ['Games', 'GP'],
+        ['Rush Yds', 'RUSHYDS'],
+        ['Rush TD', 'RUSHTD'],
+        ['Int', 'INT'],
+        ['Sacked', 'SCK'],
+      ],
+      RB: [
+        ['Att', 'ATT-ATT'],
+        ['Rush Yds', 'RUSHYDS'],
+        ['Rush TD', 'RUSHTD'],
+        ['Yds/Rush', 'YPC-YPC'],
+        ['Games', 'GP'],
+        ['Tot Yds', 'YDS-TOT YDS'],
+        ['Total TD', 'TD-TOT TD'],
+        ['FUM (L)', 'LOST'],
+      ],
+      WR: [
+        ['Rec', 'REC-REC'],
+        ['Rec Yds', 'RECYDS'],
+        ['Rec TD', 'RECTD'],
+        ['Games', 'GP'],
+        ['Yds/Rec', 'RECAVG'],
+        ['Targets', 'TRG-TRG'],
+      ],
+      DEF: [
+        ['Sacks', 'SCK'],
+        ['TFL', 'TFL'],
+        ['Int', 'INT'],
+        ['FF', ''],
+        ['Games', 'GP'],
+        ['Tackles', 'TKL'],
+        ['Pass Def', 'PDEF'],
+        ['TD', ''],
+      ],
+      OL: [
+        ['Games', 'GP'],
+        ['Starts', 'GS'],
+      ],
+    },
+  }
+
+//   {
+//   TIMEFRAME: { display: '2023 Regular Season' },
+//   GP: { value: 17, display: '17' },
+//   TKL: { value: 20, display: '20' },
+//   AST: { value: 10, display: '10' },
+//   COMB: { value: 30, display: '30' },
+//   TFL: { value: 13, display: '13' },
+//   SCK: { value: 10.5, display: '10.5' },
+//   PDEF: { value: 4, display: '4' },
+//   INT: { value: 0, display: '0' },
+//   'INT YDS-YDS': { value: 0, display: '0' },
+//   'INT AVG-AVG': { display: '' },
+//   'INT TD-TD': { value: 0, display: '0' },
+//   'INT LNG-LNG': { display: '' }
+// }
+
+const seasonLeagueColumns = seasonStatColumns[league]
+const seasonLeagueStats = Array.isArray(seasonLeagueColumns)
+  ? seasonLeagueColumns
+  : seasonLeagueColumns[normalizedPosition]
+const seasonPanels = statPanels.map((title, index) => ({
   title,
-  stats: statColumns.map((col) => ({
-    key: col,
-    value: stats?.grid.rows[index][col]?.value,
-  })),
+  stats: seasonLeagueStats?.map((stat) =>
+    calculateStat(stat, stats?.grid.rows[index]),
+  ),
+}))
+console.log(stats?.grid.rows[0])
+
+const lastGameStatColumns: Record<
+  LeagueParam,
+  Stat[] | Record<string, Stat[]>
+> = {
+  nba: [
+    'MIN',
+    'PTS',
+    {
+      label: 'REB (O)',
+      value: (v) => `${v?.DREB?.value + v?.OREB?.value} (${v?.OREB?.value})`,
+    },
+    'AST',
+    'STL',
+    'BLK',
+    '+/-',
+    'TOV',
+    'PF',
+    { label: 'FG', value: (v) => `${v?.FGM?.value}/${v?.FGA?.value}` },
+    { label: '3P', value: (v) => `${v['3PM']?.value}/${v['3PA']?.value}` },
+    { label: 'FT', value: (v) => `${v?.FTM?.value}/${v?.FTA?.value}` },
+    'TS%',
+  ],
+  nfl: {
+    QB: [
+      ['Comp', 'CMP'],
+      ['Att', 'ATT'],
+      {
+        label: 'Pct',
+        value: (v) => formatPercentage((v.CMP.value / v.ATT.value) * 100),
+      },
+      ['Yds', 'YDS'],
+      ['Avg', 'AVG'],
+      'TD',
+      ['Int', 'INT'],
+      ['Sacked', 'SCK'],
+      ['Long', 'LNG'],
+      ['Rating', 'RATE'],
+      ['Tot Yds', 'TOTALYDS-TOT YDS'],
+      ['Tot TD', 'TOTALTD-TOT TD'],
+      ['Fum (L)', 'LOST'],
+    ],
+    RB: [
+      ['Att', 'ATT-ATT'],
+      ['Rush Yds', 'RUSHYDS'],
+      ['Avg', 'YPC-YPC'],
+      ['TD', 'RUSHTD'],
+      ['Long', 'RUSHLNG'],
+      ['Rec', 'REC-REC'],
+      ['Rec Yds', 'RECYDS'],
+      ['Rec TD', 'RECTD'],
+      ['Tot Yds', 'YDS-TOT YDS'],
+      ['Tot TD', 'TD-TOT TD'],
+      ['Fum (L)', 'LOST'],
+    ],
+    WR: [
+      ['Rec', 'REC-REC'],
+      ['Trg', 'TRG-TRG'],
+      ['Yds', 'RECYDS'],
+      ['Avg', 'RECAVG'],
+      ['TD', 'RECTD'],
+      ['Long', 'RECLNG'],
+      ['Tot Yds', 'YDS-TOT YDS'],
+      ['Tot TD', 'TD-TOT TD'],
+      ['Fum (L)', 'LOST'],
+    ],
+    DEF: [
+      ['Comb Tkl', 'COMB'],
+      ['Solo Tkl', 'TKL'],
+      ['Ast Tkl', 'AST'],
+      ['TFL', 'TFL'],
+      ['Sacks', 'SCK'],
+      ['FF', 'FF'],
+      ['Int', 'INT'],
+      ['Pass Def', 'PDEF'],
+      ['TD', 'TD'],
+    ],
+  },
+}
+
+const lastGameLeagueColumns = lastGameStatColumns[league]
+const lastGameStats = Array.isArray(lastGameLeagueColumns)
+  ? lastGameLeagueColumns
+  : lastGameLeagueColumns[normalizedPosition]
+const lastGame = recentGames?.grid.rows[0]
+const lastGameStats_ = lastGame
+  ? lastGameStats?.map((stat) =>
+      calculateStat(stat, recentGames.grid.rows[0]),
+    ) ?? []
+  : []
+
+const nextGameStatColumns: Record<
+  LeagueParam,
+  Stat[] | Record<string, Stat[]>
+> = {
+  nba: ['PPG', 'RPG', 'APG', 'TS%'],
+  nfl: {
+    QB: [['GMS', 'GP'], 'YDS', 'TD', 'INT'],
+    RB: [
+      ['GMS', 'GP'],
+      ['ATT', 'ATT-ATT'],
+      ['YDS', 'RUSHYDS'],
+      ['TD', 'RUSHTD'],
+    ],
+    WR: [
+      ['GMS', 'GP'],
+      ['REC', 'REC-REC'],
+      ['YDS', 'RECYDS'],
+      ['TD', 'RECTD'],
+    ],
+    DEF: [
+      ['GMS', 'GP'],
+      ['SCK', 'SCK'],
+      ['TFL', 'TFL'],
+      ['INT', 'INT'],
+    ],
+  },
+}
+
+const nextGameLeagueColumns = nextGameStatColumns[league]
+const nextGameStats = Array.isArray(nextGameLeagueColumns)
+  ? nextGameLeagueColumns
+  : nextGameLeagueColumns[normalizedPosition]
+const nextGameData = {
+  stats: nextGame?.grid
+    ? nextGameStats?.map((stat) =>
+        calculateStat(stat, nextGame?.grid.rows[-1]),
+      ) ?? []
+    : [],
+}
+
+const gamesStatColumns: Record<LeagueParam, Stat[] | Record<string, Stat[]>> = {
+  nba: ['PTS', 'REB', 'AST', '3PM'],
+  nfl: {
+    QB: ['YDS', 'TD', 'INT', 'RATE'],
+    RB: [
+      ['ATT', 'ATT-ATT'],
+      ['YDS', 'RUSHYDS'],
+      ['TD', 'RUSHTD'],
+      ['TOT TD', 'TD-TOT TD'],
+    ],
+    WR: [
+      ['REC', 'REC-REC'],
+      ['TRG', 'TRG-TRG'],
+      ['YDS', 'RECYDS'],
+      ['TD', 'RECTD'],
+    ],
+    DEF: ['SCK', 'TFL', 'INT', 'FF'],
+  },
+}
+
+const gamesLeagueColumns = gamesStatColumns[league]
+const gamesStats = Array.isArray(gamesLeagueColumns)
+  ? gamesLeagueColumns
+  : gamesLeagueColumns[normalizedPosition]
+const games = recentGames?.grid.rows.map((r, index) => ({
+  game: r,
+  stats:
+    gamesStats?.map((stat) =>
+      calculateStat(stat, recentGames.grid.rows[index]),
+    ) ?? [],
 }))
 ---
 
@@ -123,74 +413,215 @@ const panels = statPanels.map((title, index) => ({
   {query}
   {analytics}
   page="overview"
-  class="md:grid grid-cols-3"
+  class=""
 >
-  <Panel
-    team
-    class:list={{
-      'col-span-2': true,
-      'grid grid-cols-3 gap-3 py-3 leading-snug items-center': true,
-      'md:flex md:flex-wrap md:justify-around': true,
-    }}
-  >
+  <div class="space-y-3 gap-3 justify-center md:columns-2 lg:columns-3">
+    <Panel
+      team
+      class:list={{
+        'grid grid-cols-3 gap-3 py-3 leading-snug items-center': true,
+      }}
+    >
+      {
+        facts.map(({ label, value }) => (
+          <div class="flex flex-col items-center">
+            <div class="whitespace-nowrap">{value}</div>
+            <div class="font-light text-sm opacity-80 whitespace-nowrap">
+              {label}
+            </div>
+          </div>
+        ))
+      }
+    </Panel>
     {
-      facts.map(({ label, value }) => (
-        <div class="flex flex-col items-center">
-          <div>{value}</div>
-          <div class="font-light text-sm opacity-80">{label}</div>
-        </div>
+      seasonPanels.map((panel, index) => (
+        <Panel team={index === 0} title={panel.title}>
+          <div
+            class:list={{
+              'grid grid-cols-2 gap-3 py-3 leading-snug items-center': true,
+              'grid-cols-5': panel.stats?.length === 10,
+              'grid-cols-4': panel.stats?.length === 8,
+              'grid-cols-3': panel.stats?.length === 6,
+            }}
+          >
+            {panel.stats?.map(({ key, value }) => (
+              <div class="flex flex-col items-center">
+                <div class="whitespace-nowrap">{formatNumber(value)}</div>
+                <div class="font-light text-sm opacity-80 whitespace-nowrap">
+                  {key}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Panel>
       ))
     }
-  </Panel>
-  {
-    panels.map((panel, index) => (
-      <Panel
-        team={index === 0}
-        class:list={{
-          'col-span-2': true,
-        }}
-        title={panel.title}
-      >
-        <div
-          class:list={{
-            'grid grid-cols-5 gap-3 py-3 leading-snug items-center': true,
-            'md:flex md:flex-wrap md:justify-around': true,
-          }}
-        >
-          {panel.stats.map(({ key, value }) => (
-            <div class="flex flex-col items-center">
-              <div>{value?.toFixed(1) ?? 'N/A'}</div>
-              <div class="font-light text-sm opacity-80">{key}</div>
+    {
+      lastGame ? (
+        <Panel title="Latest Performance">
+          <div class="flex items-center justify-stretch gap-1 border-b border-gray-6 dark:border-gray-4 -mx-3 px-3">
+            <Image
+              class:list={{
+                'h-16 max-w-20': true,
+                'select-none': true,
+                'object-contain object-bottom': true,
+              }}
+              alt={bustImageAlt}
+              src={bustImageUrl}
+              width={400}
+              height={400}
+              loading="eager"
+            />
+            <div class="">
+              <p class="whitespace-nowrap">{bio.usedName}</p>
+              <div class="flex items-center justify-between gap-2 text-xs text-gray-5">
+                <p class="whitespace-nowrap">
+                  {formatDate(lastGame.DATE.value, 'MMM DD')}
+                </p>
+                <div class="flex gap-1 items-center">
+                  <p class="whitespace-nowrap">
+                    {lastGame?.ALIGNMENT.display.replace('@', 'at')}
+                  </p>
+                  <Image
+                    class:list={{
+                      'h-4 max-w-4': true,
+                      'select-none': true,
+                      'object-contain object-center': true,
+                    }}
+                    alt={lastGame?.OPP.display}
+                    src={lastGame?.OPP.imageUrl}
+                    width={100}
+                    height={100}
+                    loading="eager"
+                  />
+                  <p class="whitespace-nowrap">{lastGame?.OPP.display}</p>
+                </div>
+                <p class="whitespace-nowrap">{lastGame?.SCORE.display}</p>
+              </div>
             </div>
-          ))}
-        </div>
-      </Panel>
-    ))
-  }
-  {
-    nextGame?.grid && (
-      <Grid title={nextGameTitle} client:load data={nextGame.grid} />
-    )
-  }
-  {stats?.grid && <Grid title="Stats" client:load data={stats.grid} />}
-  {
-    recentGames?.grid && (
-      <Grid
-        title={recentGames.grid.name}
-        client:load
-        data={recentGames.grid}
-        columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
-      />
-    )
-  }
-  {
-    fantasy?.grid && (
-      <Grid title={fantasy.grid.name} client:load data={stats.grid} />
-    )
-  }
-  <Panel title="Summary">
-    <div class="leading-snug">
-      <p set:html={summary} />
-    </div>
-  </Panel>
+          </div>
+          <div
+            class:list={{
+              'grid grid-cols-5 @xs:grid-cols-7 gap-3 py-3 leading-snug items-center': true,
+            }}
+          >
+            {lastGameStats_?.map(({ key, value }) => (
+              <div class="flex flex-col items-center">
+                <div class="whitespace-nowrap">{formatNumber(value)}</div>
+                <div class="font-light text-sm opacity-80 whitespace-nowrap">
+                  {key}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      ) : null
+    }
+    <Panel title="Summary">
+      <div class="leading-snug">
+        <p set:html={summary} />
+      </div>
+    </Panel>
+    {
+      games ? (
+        <Panel title="Games">
+          <ol class="flex flex-col gap-2">
+            {nextGame ? (
+              <li class="-mx-3 px-3 border-b border-gray-6 dark:border-gray-4">
+                <div class="grid grid-cols-4 gap-2 justify-stretch items-end pb-2.5">
+                  <div>
+                    <p class="text-xs text-gray-5">Next</p>
+                    <div class="flex gap-1 items-center -mt-0.5">
+                      <p class="whitespace-nowrap">
+                        {isNextGameHome ? 'vs' : 'at'}
+                      </p>
+                      <Image
+                        class:list={{
+                          'h-4 max-w-4': true,
+                          'select-none': true,
+                          'object-contain object-center': true,
+                        }}
+                        alt={nextGameOpponnent?.name}
+                        src={nextGameOpponnent?.logoImageUrl}
+                        width={100}
+                        height={100}
+                        loading="eager"
+                      />
+                      <p class="whitespace-nowrap">
+                        {nextGameOpponnent.abbreviation}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-span-3 grid grid-cols-5 gap-1">
+                    <div class="whitespace-nowrap text-gray-5">
+                      <p class="text-xs">CAREER</p>
+                      <p>{`${isNextGameHome ? 'vs' : 'at'} ${
+                        nextGameOpponnent.abbreviation
+                      }`}</p>
+                    </div>
+                    {nextGameData.stats?.map((stat) => (
+                      <div class="text-gray-5 text-center">
+                        <p class="text-xs">{stat.key}</p>
+                        <p class="">{stat.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </li>
+            ) : null}
+            {games.map(({ game, stats }, index) => (
+              <li
+                class:list={{
+                  '-mx-3 px-3 border-gray-6 dark:border-gray-4': true,
+                  'border-b': index !== games.length - 1,
+                }}
+              >
+                <div
+                  class:list={{
+                    'grid grid-cols-4 gap-2 justify-stretch items-end py-2.5': true,
+                    'pt-0': index === 0,
+                  }}
+                >
+                  <div>
+                    <p class="text-xs text-gray-5 whitespace-nowrap">
+                      {formatDate(game.DATE.display, 'ddd, MMM DD')}
+                    </p>
+                    <div class="flex gap-1 items-center -mt-0.5">
+                      <p class="whitespace-nowrap">
+                        {game?.ALIGNMENT.display.replace('@', 'at')}
+                      </p>
+                      <Image
+                        class:list={{
+                          'h-4 max-w-4': true,
+                          'select-none': true,
+                          'object-contain object-center': true,
+                        }}
+                        alt={game?.OPP.display}
+                        src={game?.OPP.imageUrl}
+                        width={100}
+                        height={100}
+                        loading="eager"
+                      />
+                      <p class="whitespace-nowrap">{game?.OPP.display}</p>
+                    </div>
+                  </div>
+                  <div class="whitespace-nowrap">{game.SCORE.display}</div>
+                  <div class="col-span-2 grid grid-cols-4 gap-1 text-center">
+                    {stats?.map((stat) => (
+                      <div>
+                        <p class="text-xs text-gray-5 whitespace-nowrap">
+                          {stat.key}
+                        </p>
+                        <p class="">{stat.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </Panel>
+      ) : null
+    }
+  </div>
 </PlayerLayout>

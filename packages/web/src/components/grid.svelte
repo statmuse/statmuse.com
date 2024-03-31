@@ -1,4 +1,4 @@
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a12y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-invalid-attribute -->
 <script lang="ts">
