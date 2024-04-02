@@ -109,7 +109,7 @@ const nextGameOpponnent = isNextGameHome
   : nextGame?.homeTeam
 
 type Row = GameraGrid['rows'][number]
-type Stat = string | string[] | { label: string; value: (v: Row) => string }
+type Stat = string | string[] | { label: string; value: (v: Row) => string } | undefined
 
 const formatNumber = (value: unknown) =>
   (typeof value === 'number'
@@ -209,24 +209,26 @@ const seasonStatColumns: Record<LeagueParam, Stat[] | Record<string, Stat[]>> =
         ['Games', 'GP'],
         ['Starts', 'GS'],
       ],
+      K: [
+        'FGM',
+        'FGA',
+        "FG%",
+        ["Long", ''],
+        'XPM',
+        'XPA',
+        'XP%',
+        ['Games', 'GP']
+      ],
+      P: [
+        ['Punts', 'PUNT'],
+        ['Yards', 'YDS'],
+        ['Avg', 'AVG'],
+        ['Games', 'GP'],
+        ['Long', "LNG"],
+        ['Blocked', 'BLK']
+      ]
     },
   }
-
-//   {
-//   TIMEFRAME: { display: '2023 Regular Season' },
-//   GP: { value: 17, display: '17' },
-//   TKL: { value: 20, display: '20' },
-//   AST: { value: 10, display: '10' },
-//   COMB: { value: 30, display: '30' },
-//   TFL: { value: 13, display: '13' },
-//   SCK: { value: 10.5, display: '10.5' },
-//   PDEF: { value: 4, display: '4' },
-//   INT: { value: 0, display: '0' },
-//   'INT YDS-YDS': { value: 0, display: '0' },
-//   'INT AVG-AVG': { display: '' },
-//   'INT TD-TD': { value: 0, display: '0' },
-//   'INT LNG-LNG': { display: '' }
-// }
 
 const seasonLeagueColumns = seasonStatColumns[league]
 const seasonLeagueStats = Array.isArray(seasonLeagueColumns)
@@ -316,6 +318,25 @@ const lastGameStatColumns: Record<
       ['Pass Def', 'PDEF'],
       ['TD', 'TD'],
     ],
+    OL: undefined,
+    K: [
+      'FGM',
+      'FGA',
+      'FG 1-19',
+      'FG 20-29',
+      'FG 30-39',
+      'FG 40-49',
+      'FG 50+',
+      'XPM',
+      'XPA'
+    ],
+    P: [
+      ['Punts', 'PUNT'],
+      ['Yds', 'YDS'],
+      ['Avg', "AVG"],
+      ["Long", 'LNG'],
+      ['Blocked', 'BLK']
+    ]
   },
 }
 
@@ -355,6 +376,20 @@ const nextGameStatColumns: Record<
       ['TFL', 'TFL'],
       ['INT', 'INT'],
     ],
+    OL: [
+      ['Record', ''], // TODO: find this
+    ],
+    K: [
+      ['GMS', 'GP'],
+      'FGM',
+      [ 'Long', '' ] // TODO: find this
+    ],
+    P: [
+      ['GMS', 'GP'],
+      ['Punts', 'PUNT'],
+      ['Avg', "AVG"],
+      ['Long', "LNG"]
+    ]
   },
 }
 
@@ -369,6 +404,7 @@ const nextGameData = {
       ) ?? []
     : [],
 }
+// console.log("nextGame", JSON.stringify(nextGame, undefined, 2))
 
 const gamesStatColumns: Record<LeagueParam, Stat[] | Record<string, Stat[]>> = {
   nba: ['PTS', 'REB', 'AST', '3PM'],
@@ -387,6 +423,17 @@ const gamesStatColumns: Record<LeagueParam, Stat[] | Record<string, Stat[]>> = {
       ['TD', 'RECTD'],
     ],
     DEF: ['SCK', 'TFL', 'INT', 'FF'],
+    OL: [['Starts', 'GS']],
+    K: [
+      { label: 'FG', value: (v) => `${v.FGM.value}-${v.FGA.value}` },
+      { label: 'XP', value: (v) => `${v.XPM.value}-${v.XPA.value}` },
+      ['Long', ''] // TODO: find this
+    ],
+    P: [
+      ['Punts', 'PUNT'],
+      ['Avg', "AVG"],
+      ['Long', "LNG"]
+    ]
   },
 }
 
@@ -401,6 +448,7 @@ const games = recentGames?.grid.rows.map((r, index) => ({
       calculateStat(stat, recentGames.grid.rows[index]),
     ) ?? [],
 }))
+// console.log("recentGames", JSON.stringify(recentGames, undefined, 2))
 ---
 
 <PlayerLayout {bio} {meta} {league} {query} page="overview" class="">
@@ -446,7 +494,7 @@ const games = recentGames?.grid.rows.map((r, index) => ({
       ))
     }
     {
-      lastGame ? (
+      lastGame && lastGameStats_?.length ? (
         <Panel title="Latest Performance">
           <div class="flex items-center justify-stretch gap-1 border-b border-gray-6 dark:border-gray-4 -mx-3 px-3">
             <Image
