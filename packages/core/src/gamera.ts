@@ -879,6 +879,7 @@ export interface Team {
 export interface NbaHistoricalBoxScore extends DetailBase {
   type: 'nbaHistoricalBoxScore'
   gameId: number
+  gameDate: string
   completedGameStatus: 'Final'
   homeTeam: Team
   awayTeam: Team
@@ -936,6 +937,7 @@ export interface NflTeamGameStats {
 export interface NflHistoricalBoxScore extends DetailBase {
   type: 'nflHistoricalBoxScore'
   gameId: number
+  gameDate: string
   completedGameStatus: 'Final'
   homeTeam: Team
   awayTeam: Team
@@ -966,6 +968,7 @@ export interface NflHistoricalBoxScore extends DetailBase {
 export interface MlbHistoricalBoxScore extends DetailBase {
   type: 'mlbHistoricalBoxScore'
   gameId: number
+  gameDate: string
   completedGameStatus: 'Final'
   homeTeam: Team
   awayTeam: Team
@@ -1006,6 +1009,7 @@ export interface NhlTeamGameStats {
 export interface NhlHistoricalBoxScore extends DetailBase {
   type: 'nhlHistoricalBoxScore'
   gameId: number
+  gameDate: string
   completedGameStatus: 'Final'
   homeTeam: Team
   awayTeam: Team
@@ -1196,7 +1200,6 @@ export interface Visual {
   contentReference?: ContentReference
   detail?: Detail[]
   disclaimers?: [string]
-  contentReference: ContentReference
 }
 
 export interface NbaVisual extends Visual {

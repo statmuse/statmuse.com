@@ -17,6 +17,7 @@ import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_DISABLED } from 'src/config'
 import type { LeagueParam } from '@lib/params'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import { formatDate } from '@statmuse/core/time'
 
 interface Props {
   data: GameraBoxScore
@@ -35,8 +36,17 @@ const answer = tokensToHtml(data.nlg.text.answer)
 const subject = data.visual.summary.subject
 const teamId = data.visual.detail[0].homeTeam.entity?.id.split('/')[0]
 
+// Suns 124-111 Pelicans (Apr 1, 2024) Box Score
+
+const [ detail ] = data.visual.detail
+const winner = detail.homeTeam.score < detail.awayTeam.score ? detail.awayTeam : detail.homeTeam
+const loser = detail.homeTeam.score < detail.awayTeam.score ? detail.homeTeam : detail.awayTeam
+const formattedDate = formatDate(new Date(detail.gameDate), "MMM DD, YYYY")
+const title = `${winner.shortName ?? winner.name} ${winner.score}-${loser.score} ${loser.shortName ?? loser.name} (${formattedDate}) Box Score`
+
 const meta = {
-  title: tokensToText(data.nlg.text.answer),
+  title,
+  description: tokensToText(data.nlg.text.answer),
   pageType: 'game',
   facebook: {
     imageUrl: imageForgeUrl({

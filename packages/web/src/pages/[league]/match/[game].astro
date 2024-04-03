@@ -12,6 +12,7 @@ import EplBoxscore from '@components/epl/boxscore.astro'
 import Container from '@components/container.astro'
 import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
+import { formatDate } from '@statmuse/core/time'
 
 const league = Astro.params.league as LeagueParam
 const game = Astro.params.game
@@ -26,8 +27,15 @@ if (data.type === 'error') return NOT_FOUND_404
 const subject = data.visual.summary.subject
 const preferredDomain = domain.toLowerCase()
 
+const [ detail ] = data.visual.detail
+const winner = detail.homeTeam.score < detail.awayTeam.score ? detail.awayTeam : detail.homeTeam
+const loser = detail.homeTeam.score < detail.awayTeam.score ? detail.homeTeam : detail.awayTeam
+const formattedDate = formatDate(new Date(detail.gameDate), "MMM DD, YYYY")
+const title = `${winner.shortName ?? winner.name} ${winner.score}-${loser.score} ${loser.shortName ?? loser.name} (${formattedDate}) Box Score`
+
 const meta = {
-  title: tokensToText(data.nlg.text.answer),
+  title,
+  description: tokensToText(data.nlg.text.answer),
   pageType: 'game',
   facebook: {
     imageUrl: imageForgeUrl({
