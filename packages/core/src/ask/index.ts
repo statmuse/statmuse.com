@@ -539,6 +539,15 @@ export const getAsksIndex = async (
   params: { n?: Date; p?: Date; page?: string },
   isFantasy = false,
 ) => {
+  if (
+    names.length === 1 &&
+    names[0] === 'epl' &&
+    ((params.n && params.n.getFullYear() < 2024) ||
+      (params.p && params.p.getFullYear() < 2024))
+  ) {
+    return undefined
+  }
+
   let query = dbReader
     .selectFrom('asks')
     .selectAll('asks')
