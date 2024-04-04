@@ -109,13 +109,18 @@ const nextGameOpponnent = isNextGameHome
   : nextGame?.homeTeam
 
 type Row = GameraGrid['rows'][number]
-type Stat = string | string[] | { label: string; value: (v: Row) => string } | undefined
+type Stat =
+  | string
+  | string[]
+  | { label: string; value: (v: Row) => string }
+  | undefined
 
 const formatNumber = (value: unknown) =>
   (typeof value === 'number'
     ? value.toFixed(1).replace('.0', '')
     : (value as string)) ?? '-'
-const formatPercentage = (value: number) => `${formatNumber(value)}%`
+const formatPercentage = (value: number) =>
+  isNaN(value) ? '0%' : `${formatNumber(value)}%`
 const statPanels = stats?.grid.rows
   .slice(0, 2)
   .map((r) => r[stats?.grid.columns[0].rowItemKey].display)
@@ -126,14 +131,13 @@ const calculateStat = (stat: Stat, row: Row) => ({
       ? stat
       : Array.isArray(stat)
       ? stat[0]
-      : stat.label,
-  value: formatNumber(
+      : stat?.label,
+  value:
     typeof stat === 'string'
-      ? (row[stat]?.value as number)
+      ? row[stat]?.display
       : Array.isArray(stat)
-      ? row[stat[1]]?.value
-      : stat.value(row),
-  ),
+      ? row[stat[1]]?.display
+      : formatNumber(stat?.value(row)),
 })
 
 const normalizeNflPosition = (position: string) => {
@@ -155,26 +159,6 @@ const normalizeNflPosition = (position: string) => {
 const normalizedPosition =
   league === 'nfl' ? normalizeNflPosition(bio.position) : bio.position
 
-//   {
-//   TIMEFRAME: { display: '2023-24' },
-//   M: { value: 24, display: '24' },
-//   START: { value: 23, display: '23' },
-//   G: { value: 18, display: '18' },
-//   A: { value: 5, display: '5' },
-//   'G+A': { value: 23, display: '23' },
-//   PK: { value: 3, display: '3' },
-//   FK: { value: 0, display: '0' },
-//   SH: { value: 95, display: '95' },
-//   ST: { value: 44, display: '44' },
-//   PASS: { value: 218, display: '218' },
-//   CRS: { value: 5, display: '5' },
-//   FOUL: { value: 15, display: '15' },
-//   OFF: { value: 2, display: '2' },
-//   YC: { value: 1, display: '1' },
-//   RC: { value: 0, display: '0' }
-// }
-
-
 const seasonStatColumns: Record<LeagueParam, Stat[] | Record<string, Stat[]>> =
   {
     fc: {
@@ -186,8 +170,36 @@ const seasonStatColumns: Record<LeagueParam, Stat[] | Record<string, Stat[]>> =
         ['Matches', 'M'],
         ['Starts', 'START'],
         ['Shots', 'SH'],
-        ['On Target', 'ST']
-      ]
+        ['On Target', 'ST'],
+      ],
+      MF: [
+        ['Goals', 'G'],
+        ['Assists', 'A'],
+        ['xG', ''],
+        ['xA', ''],
+        ['Matches', 'M'],
+        ['Starts', 'START'],
+        ['Big Chance Crtd', ''],
+        ['Pass %', ''],
+      ],
+      DF: [
+        ['Goals', 'G'],
+        ['Assists', 'A'],
+        ['Duel W-L', ''],
+        ['Aerial W-L', ''],
+        ['Matches', 'M'],
+        ['Starts', 'START'],
+        ['Tackles Made', 'TKL'],
+        ['Clearances', 'CLR'],
+      ],
+      GK: [
+        ['Clean Sheets', 'CS'],
+        ['Goals Conceded', 'GC'],
+        ['Saves', 'SV'],
+        ['Matches', 'M'],
+        ['Recoveries', ''],
+        ['Penalty Saves', 'SV-PK'],
+      ],
     },
     nba: ['PPG', 'RPG', 'APG', 'SPG', 'BPG', 'MPG', 'FG%', '3P%', 'FT%', 'TS%'],
     nfl: {
@@ -244,28 +256,84 @@ const seasonStatColumns: Record<LeagueParam, Stat[] | Record<string, Stat[]>> =
       K: [
         'FGM',
         'FGA',
-        "FG%",
-        ["Long", ''],
+        'FG%',
+        ['Long', ''],
         'XPM',
         'XPA',
         'XP%',
-        ['Games', 'GP']
+        ['Games', 'GP'],
       ],
       P: [
         ['Punts', 'PUNT'],
         ['Yards', 'YDS'],
         ['Avg', 'AVG'],
         ['Games', 'GP'],
-        ['Long', "LNG"],
-        ['Blocked', 'BLK']
-      ]
+        ['Long', 'LNG'],
+        ['Blocked', 'BLK'],
+      ],
+    },
+    mlb: {
+      DEFAULT: ['HR', 'RBI', 'AVG', 'OBP', 'SLG', 'AB', 'R', 'H', 'BB', 'SB'],
+      P: [
+        { label: 'Record', value: (v) => `${v.W.value}-${v.L.value}` },
+        'ERA',
+        'SO',
+        'BB',
+        'WHIP',
+        'IP',
+        'G',
+        'GS',
+        'SV',
+        {
+          label: 'K/9',
+          value: (v) => formatNumber((v.SO.value / v.IP.value) * 9),
+        },
+      ],
+    },
+    nhl: {
+      DEFAULT: [
+        ['Goals', 'G'],
+        ['Assists', 'A'],
+        ['Points', 'P'],
+        '+/-',
+        ['Shot %', 'S%'],
+        ['Games', 'GP'],
+        'PPG',
+        'PPA',
+        'PIM',
+        ['SOG', 'SHG'],
+      ],
+      D: [
+        ['Goals', 'G'],
+        ['Assists', 'A'],
+        ['Points', 'P'],
+        '+/-',
+        ['Shot %', 'S%'],
+        ['Games', 'GP'],
+        'HIT',
+        'BLK',
+        'TKA',
+        'PIM',
+      ],
+      G: [
+        'GP',
+        'GS',
+        ['Wins', 'W'],
+        ['Losses', 'L'],
+        'OTL',
+        'SHO',
+        'GAA',
+        ['Save %', 'Sv%'],
+        ['Saves', 'Sv'],
+        ['Minutes', 'MIN'],
+      ],
     },
   }
 
 const seasonLeagueColumns = seasonStatColumns[league]
 const seasonLeagueStats = Array.isArray(seasonLeagueColumns)
   ? seasonLeagueColumns
-  : seasonLeagueColumns[normalizedPosition]
+  : seasonLeagueColumns[normalizedPosition] ?? seasonLeagueColumns['DEFAULT']
 const seasonPanels = statPanels.map((title, index) => ({
   title,
   stats: seasonLeagueStats?.map((stat) =>
@@ -285,8 +353,14 @@ const lastGameStatColumns: Record<
       'A',
       ['xG', ''],
       ['xA', ''],
-      {label: 'Shot %', value: (v) => `${v.ST.value}/${v.SH.value} (${formatPercentage(v.ST.value / v.SH.value)})` },
-      {label: 'Pass %', value: (v) => `${v.ST.value}/${v.SH.value} (${formatPercentage(v.ST.value / v.SH.value)})` },
+      {
+        label: 'Shot %',
+        value: (v) =>
+          `${v.ST.value}/${v.SH.value} (${formatPercentage(
+            v.ST.value / v.SH.value,
+          )})`,
+      },
+      ['Pass %', ''],
       ['Big Chance Crtd', ''],
       ['Key Pass', ''],
       ['Touches (Opp Box)', ''],
@@ -298,8 +372,20 @@ const lastGameStatColumns: Record<
       ['Fouled', ''],
       ['Offside', ''],
       'YC',
-      'RC'
-    ]
+      'RC',
+    ],
+    GK: [
+      'MIN',
+      'GC',
+      'SV',
+      ['PK SV', 'SV-PK'],
+      ['REC', ''],
+      ['Error Led To Shot', 'ERR-SH'],
+      ['Error Led To Goal', 'ERR-G'],
+      ['Long Pass', ''],
+      'YC',
+      'RC',
+    ],
   },
   nba: [
     'MIN',
@@ -383,35 +469,131 @@ const lastGameStatColumns: Record<
       'FG 40-49',
       'FG 50+',
       'XPM',
-      'XPA'
+      'XPA',
     ],
     P: [
       ['Punts', 'PUNT'],
       ['Yds', 'YDS'],
-      ['Avg', "AVG"],
-      ["Long", 'LNG'],
-      ['Blocked', 'BLK']
-    ]
+      ['Avg', 'AVG'],
+      ['Long', 'LNG'],
+      ['Blocked', 'BLK'],
+    ],
+  },
+  mlb: {
+    DEFAULT: [
+      'AB',
+      'R',
+      'H',
+      '2B',
+      '3B',
+      'HR',
+      'RBI',
+      'AVG',
+      'OBP',
+      'SLG',
+      'OPS',
+      'BB',
+      'HBP',
+      'SO',
+      'SB',
+      'CS',
+    ],
+    P: [
+      {
+        label: 'W/L',
+        value: (v) => (v.W.value === 1 ? 'W' : v.L.value === 1 ? 'L' : 'ND'),
+      },
+      'ERA',
+      'SO',
+      'GS',
+      'CG',
+      'SHO',
+      'SV',
+      'IP',
+      'H',
+      'ER',
+      'R',
+      'HR',
+      'BB',
+      'HBP',
+      ['Game Score', 'GSc'],
+    ],
+  },
+  nhl: {
+    DEFAULT: [
+      'G',
+      'A',
+      'P',
+      '+/-',
+      'PIM',
+      'PPG',
+      'PPA',
+      'SHG',
+      'SHA',
+      'S',
+      'S%',
+      'FOW',
+      'FO',
+      'FOW%',
+      'HIT',
+      'BLK',
+      'TKA',
+      'GVA',
+      'TOI',
+    ],
+    D: [
+      'G',
+      'A',
+      'P',
+      '+/-',
+      'PIM',
+      'PPG',
+      'PPA',
+      'SHG',
+      'SHA',
+      'HIT',
+      'BLK',
+      'TKA',
+      'GVA',
+      'S',
+      'S%',
+      'TOI',
+    ],
+    G: [
+      'W',
+      'L',
+      'OTL',
+      'SA',
+      ['SV', 'Sv'],
+      ['SV%', 'Sv%'],
+      'GA',
+      'GAA',
+      'SHO',
+      'MIN',
+    ],
   },
 }
 
 const lastGameLeagueColumns = lastGameStatColumns[league]
 const lastGameStats = Array.isArray(lastGameLeagueColumns)
   ? lastGameLeagueColumns
-  : lastGameLeagueColumns[normalizedPosition] ?? lastGameLeagueColumns["DEFAULT"]
+  : lastGameLeagueColumns[normalizedPosition] ??
+    lastGameLeagueColumns['DEFAULT']
 const lastGame = recentGames?.grid.rows[0]
 const lastGameStats_ = lastGame
   ? lastGameStats?.map((stat) =>
       calculateStat(stat, recentGames.grid.rows[0]),
     ) ?? []
   : []
+console.log(lastGame)
 
 const nextGameStatColumns: Record<
   LeagueParam,
   Stat[] | Record<string, Stat[]>
 > = {
   fc: {
-    FW: []
+    DEFAULT: ['M', 'START', 'G', 'A'],
+    GK: ['M', 'START', 'CS', 'GC'],
   },
   nba: ['PPG', 'RPG', 'APG', 'TS%'],
   nfl: {
@@ -440,33 +622,56 @@ const nextGameStatColumns: Record<
     K: [
       ['GMS', 'GP'],
       'FGM',
-      [ 'Long', '' ] // TODO: find this
+      ['Long', ''], // TODO: find this
     ],
     P: [
       ['GMS', 'GP'],
       ['Punts', 'PUNT'],
-      ['Avg', "AVG"],
-      ['Long', "LNG"]
-    ]
+      ['Avg', 'AVG'],
+      ['Long', 'LNG'],
+    ],
+  },
+  mlb: {
+    DEFAULT: [['GMS', 'G'], 'HR', 'RBI', 'AVG'],
+    P: [
+      { label: 'Record', value: (v) => `${v.W.value}-${v.L.value}` },
+      'ERA',
+      'SO',
+      'BB',
+    ],
+  },
+  nhl: {
+    DEFAULT: ['GP', 'G', 'A', '+/-'],
+    G: [
+      'GP',
+      {
+        label: 'W-L-OTL',
+        value: (v) => `${v.W.value}-${v.L.value}-${v.OTL.value}`,
+      },
+      'GAA',
+      ['SV%', 'Sv%'],
+    ],
   },
 }
 
 const nextGameLeagueColumns = nextGameStatColumns[league]
 const nextGameStats = Array.isArray(nextGameLeagueColumns)
   ? nextGameLeagueColumns
-  : nextGameLeagueColumns[normalizedPosition]
+  : nextGameLeagueColumns[normalizedPosition] ??
+    nextGameLeagueColumns['DEFAULT']
 const nextGameData = {
   stats: nextGame?.grid
-    ? nextGameStats?.map((stat) =>
-        calculateStat(stat, nextGame?.grid.rows[-1]),
-      ) ?? []
+    ? nextGameStats?.map((stat) => {
+        return calculateStat(stat, nextGame?.grid.rows.at(-1))
+      }) ?? []
     : [],
 }
 // console.log("nextGame", JSON.stringify(nextGame, undefined, 2))
 
 const gamesStatColumns: Record<LeagueParam, Stat[] | Record<string, Stat[]>> = {
   fc: {
-    FW: []
+    DEFAULT: ['MIN', 'G', 'A', 'YC'],
+    GK: ['MIN', 'GC', 'SV', 'YC'],
   },
   nba: ['PTS', 'REB', 'AST', '3PM'],
   nfl: {
@@ -488,20 +693,36 @@ const gamesStatColumns: Record<LeagueParam, Stat[] | Record<string, Stat[]>> = {
     K: [
       { label: 'FG', value: (v) => `${v.FGM.value}-${v.FGA.value}` },
       { label: 'XP', value: (v) => `${v.XPM.value}-${v.XPA.value}` },
-      ['Long', ''] // TODO: find this
+      ['Long', ''], // TODO: find this
     ],
     P: [
       ['Punts', 'PUNT'],
-      ['Avg', "AVG"],
-      ['Long', "LNG"]
-    ]
+      ['Avg', 'AVG'],
+      ['Long', 'LNG'],
+    ],
+  },
+  mlb: {
+    DEFAULT: ['AB', 'H', 'HR', 'RBI'],
+    P: ['IP', 'ERA', 'SO', 'BB'],
+  },
+  nhl: {
+    DEFAULT: ['G', 'A', 'P', '+/-'],
+    G: [
+      '',
+      {
+        label: 'W-L-OTL',
+        value: (v) => `${v.W.value}-${v.L.value}-${v.OTL.value}`,
+      },
+      'GAA',
+      ['SV%', 'Sv%'],
+    ],
   },
 }
 
 const gamesLeagueColumns = gamesStatColumns[league]
 const gamesStats = Array.isArray(gamesLeagueColumns)
   ? gamesLeagueColumns
-  : gamesLeagueColumns[normalizedPosition]
+  : gamesLeagueColumns[normalizedPosition] ?? gamesLeagueColumns['DEFAULT']
 const games = recentGames?.grid.rows.map((r, index) => ({
   game: r,
   stats:
@@ -509,7 +730,7 @@ const games = recentGames?.grid.rows.map((r, index) => ({
       calculateStat(stat, recentGames.grid.rows[index]),
     ) ?? [],
 }))
-// console.log("recentGames", JSON.stringify(recentGames, undefined, 2))
+// console.log('recentGames', JSON.stringify(recentGames, undefined, 2))
 ---
 
 <PlayerLayout {bio} {meta} {league} {query} page="overview" class="">
@@ -601,8 +822,8 @@ const games = recentGames?.grid.rows.map((r, index) => ({
           <div
             class:list={{
               'grid gap-3 py-3 leading-snug items-center': true,
-              'grid-cols-5 @xs:grid-cols-7': league !== "fc",
-              'grid-cols-2 @xs:grid-cols-4': league === "fc",
+              'grid-cols-5 @xs:grid-cols-7': league !== 'fc',
+              'grid-cols-2 @xs:grid-cols-4': league === 'fc',
             }}
           >
             {lastGameStats_?.map(({ key, value }) => (
@@ -705,7 +926,9 @@ const games = recentGames?.grid.rows.map((r, index) => ({
                       <p class="whitespace-nowrap">{game?.OPP.display}</p>
                     </div>
                   </div>
-                  <div class="whitespace-nowrap">{game.SCORE.display}</div>
+                  <div class="whitespace-nowrap text-right">
+                    {game.SCORE.display}
+                  </div>
                   <div class="col-span-2 grid grid-cols-4 gap-1 text-center">
                     {stats?.map((stat) => (
                       <div>
