@@ -158,8 +158,40 @@ const normalizeNflPosition = (position: string) => {
 const normalizedPosition =
   league === 'nfl' ? normalizeNflPosition(bio.position) : bio.position
 
+//   {
+//   TIMEFRAME: { display: '2023-24' },
+//   M: { value: 24, display: '24' },
+//   START: { value: 23, display: '23' },
+//   G: { value: 18, display: '18' },
+//   A: { value: 5, display: '5' },
+//   'G+A': { value: 23, display: '23' },
+//   PK: { value: 3, display: '3' },
+//   FK: { value: 0, display: '0' },
+//   SH: { value: 95, display: '95' },
+//   ST: { value: 44, display: '44' },
+//   PASS: { value: 218, display: '218' },
+//   CRS: { value: 5, display: '5' },
+//   FOUL: { value: 15, display: '15' },
+//   OFF: { value: 2, display: '2' },
+//   YC: { value: 1, display: '1' },
+//   RC: { value: 0, display: '0' }
+// }
+
+
 const seasonStatColumns: Record<LeagueParam, Stat[] | Record<string, Stat[]>> =
   {
+    fc: {
+      FW: [
+        ['Goals', 'G'],
+        ['Assists', 'A'],
+        ['xG', ''],
+        ['xA', ''],
+        ['Matches', 'M'],
+        ['Starts', 'START'],
+        ['Shots', 'SH'],
+        ['On Target', 'ST']
+      ]
+    },
     nba: ['PPG', 'RPG', 'APG', 'SPG', 'BPG', 'MPG', 'FG%', '3P%', 'FT%', 'TS%'],
     nfl: {
       QB: [
@@ -249,6 +281,29 @@ const lastGameStatColumns: Record<
   LeagueParam,
   Stat[] | Record<string, Stat[]>
 > = {
+  fc: {
+    DEFAULT: [
+      'MIN',
+      'G',
+      'A',
+      ['xG', ''],
+      ['xA', ''],
+      {label: 'Shot %', value: (v) => `${v.ST.value}/${v.SH.value} (${formatPercentage(v.ST.value / v.SH.value)})` },
+      {label: 'Pass %', value: (v) => `${v.ST.value}/${v.SH.value} (${formatPercentage(v.ST.value / v.SH.value)})` },
+      ['Big Chance Crtd', ''],
+      ['Key Pass', ''],
+      ['Touches (Opp Box)', ''],
+      ['Duel W-L', ''],
+      ['Aerial W-L', ''],
+      ['Tackle Made', ''],
+      ['Clearance', ''],
+      ['Foul', 'FOUL'],
+      ['Fouled', ''],
+      ['Offside', ''],
+      'YC',
+      'RC'
+    ]
+  },
   nba: [
     'MIN',
     'PTS',
@@ -346,7 +401,7 @@ const lastGameStatColumns: Record<
 const lastGameLeagueColumns = lastGameStatColumns[league]
 const lastGameStats = Array.isArray(lastGameLeagueColumns)
   ? lastGameLeagueColumns
-  : lastGameLeagueColumns[normalizedPosition]
+  : lastGameLeagueColumns[normalizedPosition] ?? lastGameLeagueColumns["DEFAULT"]
 const lastGame = recentGames?.grid.rows[0]
 const lastGameStats_ = lastGame
   ? lastGameStats?.map((stat) =>
@@ -358,6 +413,9 @@ const nextGameStatColumns: Record<
   LeagueParam,
   Stat[] | Record<string, Stat[]>
 > = {
+  fc: {
+    FW: []
+  },
   nba: ['PPG', 'RPG', 'APG', 'TS%'],
   nfl: {
     QB: [['GMS', 'GP'], 'YDS', 'TD', 'INT'],
@@ -410,6 +468,9 @@ const nextGameData = {
 // console.log("nextGame", JSON.stringify(nextGame, undefined, 2))
 
 const gamesStatColumns: Record<LeagueParam, Stat[] | Record<string, Stat[]>> = {
+  fc: {
+    FW: []
+  },
   nba: ['PTS', 'REB', 'AST', '3PM'],
   nfl: {
     QB: ['YDS', 'TD', 'INT', 'RATE'],
@@ -550,7 +611,9 @@ const games = recentGames?.grid.rows.map((r, index) => ({
           </div>
           <div
             class:list={{
-              'grid grid-cols-5 @xs:grid-cols-7 gap-3 py-3 leading-snug items-center': true,
+              'grid gap-3 py-3 leading-snug items-center': true,
+              'grid-cols-5 @xs:grid-cols-7': league !== "fc",
+              'grid-cols-2 @xs:grid-cols-4': league === "fc",
             }}
           >
             {lastGameStats_?.map(({ key, value }) => (
