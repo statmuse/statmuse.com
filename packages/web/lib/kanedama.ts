@@ -387,5 +387,7 @@ export function getHeroProps(props: {
     content,
     imageUrl,
     imageAlt,
+    markdown: false,
+    html: true,
   }
 }

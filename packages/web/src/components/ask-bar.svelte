@@ -236,7 +236,7 @@
 >
   {#if !expand}
     <div
-      class="relative group flex bg-gray-8 dark:bg-gray-3 items-center px-2 border border-gray-6 dark:border-gray-4 rounded-2xl overflow-hidden"
+      class="relative group flex bg-gray-8 dark:bg-gray-3 items-center px-2 border border-gray-6 dark:border-transparent rounded-2xl overflow-hidden"
     >
       <input
         class="dark:bg-gray-3 grow appearance-none outline-none resize-none block border-y border-transparent px-2 py-1 peer truncate"
@@ -278,7 +278,7 @@
       class="absolute top-0 left-0 w-screen h-screen bg-white dark:bg-gray-3 md:w-full md:h-auto md:border md:rounded-2xl overflow-hidden"
       class:border-primary={inFocus}
       class:border-gray-6={!inFocus}
-      class:dark:border-gray-4={!inFocus}
+      class:dark:border-transparent={!inFocus}
       class:ring-1={inFocus}
       class:ring-primary={inFocus}
     >

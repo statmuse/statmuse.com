@@ -1,20 +1,10 @@
 ---
 import BaseLayout from '@layouts/base.astro'
-import type { Metadata } from '@lib/meta'
-import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import type { HTMLAttributes } from 'astro/types'
+import type { ComponentProps } from 'astro/types'
 
-interface Props {
-  meta?: Metadata
-  colors?: {
-    foreground?: string
-    background?: string
-    foregroundColor?: string
-    backgroundColor?: string
-  }
+interface Props extends ComponentProps<typeof BaseLayout> {
   tradingview?: boolean
-  analytics?: AnalyticsPageviewProperties
-  class?: string | null
 }
 
 const { meta } = Astro.props
@@ -63,7 +53,7 @@ const metaTags = [
 const { class: _, ...props } = Astro.props
 ---
 
-<BaseLayout {...props}>
+<BaseLayout {...props} money>
   <title slot="head">{title}</title>
   {metaTags.map((meta) => <meta slot="head" {...meta} />)}
   {

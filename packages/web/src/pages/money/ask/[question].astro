@@ -101,17 +101,19 @@ Caching.swr(Astro)
       page_domain: 'finance',
       query,
     }}
+    {query}
+    {conversationToken}
+    hero={heroProps}
   >
-    <Header money {query} {conversationToken} />
-    {
-      heroProps ? (
-        <Hero
-          {...heroProps}
-          class="-mt-3"
-          shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`}
-        />
-      ) : null
-    }
+    <!-- { -->
+    <!--   heroProps ? ( -->
+    <!--     <Hero -->
+    <!--       {...heroProps} -->
+    <!--       class="-mt-3" -->
+    <!--       shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`} -->
+    <!--     /> -->
+    <!--   ) : null -->
+    <!-- } -->
     <Visuals {response} {conversationToken} />
     <Explore
       league="money"

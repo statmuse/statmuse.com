@@ -1,11 +1,8 @@
 ---
 import MoneyBaseLayout from '@layouts/money-base.astro'
-import Header from '@components/header.astro'
 import Footer from '@components/footer.astro'
-import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals-money.astro'
 import Explore from '@components/explore.astro'
-import Container from '@components/container.astro'
 import { getHeroProps } from '@lib/kanedama'
 import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import { tokensToText } from '@statmuse/core/kanedama'
@@ -75,16 +72,18 @@ const meta =
     page_domain: 'finance',
     query,
   }}
+  {query}
+  {conversationToken}
+  hero={heroProps}
 >
-  <Header money {query} {conversationToken} />
-  {
-    heroProps ? (
-      <Hero
-        {...heroProps}
-        shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`}
-      />
-    ) : null
-  }
+  <!-- { -->
+  <!--   heroProps ? ( -->
+  <!--     <Hero -->
+  <!--       {...heroProps} -->
+  <!--       shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`} -->
+  <!--     /> -->
+  <!--   ) : null -->
+  <!-- } -->
   <Visuals response={answer} {conversationToken} />
   {
     answer.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
