@@ -93,18 +93,84 @@ if (league === 'fc') {
   if (bio.experience) facts.push({ label: 'Experience', value: bio.experience })
 }
 if (bio.awards) {
-  const champ = bio.awards.find((a) => a.name === `${domain} Champion`)
-  if (champ?.years.length)
-    facts.push({ label: `${domain} Champ`, value: `${champ.years.length}x` })
-  const mvp = bio.awards.find((a) => a.name === 'MVP')
-  if (mvp?.years.length)
-    facts.push({ label: 'MVP', value: `${mvp.years.length}x` })
-  const dpoy = bio.awards.find((a) => a.name === 'Defensive Player Of The Year')
-  if (dpoy?.years.length)
-    facts.push({ label: 'DPOY', value: `${dpoy.years.length}x` })
-  const proBowl = bio.awards.find((a) => a.name === 'Pro Bowl')
-  if (proBowl?.years.length)
-    facts.push({ label: 'Pro Bowl', value: `${proBowl.years.length}x` })
+  const awards: { label: string; years: number }[] = []
+
+  const getAward = (name: string, label?: string) => {
+    const award = bio.awards.find((a) => a.name === name)
+    if (award?.years.length) {
+      const existing = awards.find((a) => a.label === (label ?? name))
+      if (existing) existing.years += award.years.length
+      else awards.push({ label: label ?? name, years: award.years.length })
+    }
+  }
+
+  switch (league) {
+    case 'nba':
+      getAward('NBA Champion', 'NBA Champ')
+      getAward('MVP')
+      getAward('Finals MVP')
+      getAward('Defensive Player Of The Year', 'DPOY')
+      getAward('Rookie Of The Year', 'ROY')
+      getAward('Sixth Man Of The Year', '6MOY')
+      getAward('Most Improved Player', 'MIP')
+      getAward('All-Star')
+      getAward('All-NBA 1st Team', 'All-NBA')
+      getAward('All-NBA 2nd Team', 'All-NBA')
+      getAward('All-NBA 3rd Team', 'All-NBA')
+      getAward('All-Defense 1st Team', 'All-Defense')
+      getAward('All-Defense 2nd Team', 'All-Defense')
+      getAward('All-Rookie 1st Team', 'All-Rookie')
+      getAward('All-Rookie 2nd Team', 'All-Rookie')
+    case 'nfl':
+      getAward('NFL Champion', 'NFL Champ')
+      getAward('MVP')
+      getAward('Super Bowl MVP', 'SB MVP')
+      getAward('Offensive Player Of The Year', 'OPOY')
+      getAward('Defensive Player Of The Year', 'DPOY')
+      getAward('Offensive Rookie Of The Year', 'OROY')
+      getAward('Defensive Rookie Of The Year', 'DROY')
+      getAward('Comeback Player Of The Year', 'CPOY')
+      getAward('Man Of The Year')
+      getAward('Pro Bowl')
+      getAward('All-Pro 1st Team', 'All-Pro')
+      getAward('All-Pro 2nd Team', 'All-Pro')
+      getAward('All-Rookie 1st Team', 'All-Rookie')
+      getAward('All-Rookie 2nd Team', 'All-Rookie')
+    case 'mlb':
+      getAward('World Series Champion', 'WS Champ')
+      getAward('AL MVP')
+      getAward('NL MVP')
+      getAward('ALCS MVP')
+      getAward('NLCS MVP')
+      getAward('WS MVP')
+      getAward('AL Cy Young Award', 'AL CY')
+      getAward('NL Cy Young Award', 'NL CY')
+      getAward('AL Rookie Of The Year', 'AL ROY')
+      getAward('NL Rookie Of The Year', 'NL ROY')
+      getAward('AL Comeback Player Of The Year', 'AL CPOY')
+      getAward('NL Comeback Player Of The Year', 'NL CPOY')
+      getAward('AL Gold Glove')
+      getAward('NL Gold Glove')
+      getAward('AL Silver Slugger')
+      getAward('NL Silver Slugger')
+    case 'nhl':
+      getAward('Stanley Cup', 'SC Champ')
+      getAward('Hart Trophy', 'Hart')
+      getAward('Conn Smythe Trophy', 'Conn Smythe')
+      getAward('Calder Trophy', 'Calder')
+      getAward('Norris Trophy', 'Norris')
+      getAward('Vezina Trophy', 'Vezina')
+      getAward('Selke Trophy', 'Selke')
+      getAward('Lady Byng Trophy', 'Lady Byng')
+  }
+
+  if (awards.length > 1) {
+    facts.push(
+      ...awards
+        .slice(0, 3)
+        .map((a) => ({ label: a.label, value: `${a.years}x` })),
+    )
+  }
 }
 
 const nextGameOpponnent = isNextGameHome
