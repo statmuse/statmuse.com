@@ -34,7 +34,7 @@ const domain = leagueToDomain(leagueParam)
 const profile = await getPlayerProfile(Astro, domain, player)
 if (!profile) return NOT_FOUND_404
 
-const { bio, stats, nextGame, fantasy } = profile
+const { bio, stats, nextGame } = profile
 const recentGames = profile.recentGames
   ? 'grid' in profile.recentGames
     ? profile.recentGames
@@ -121,6 +121,7 @@ if (bio.awards) {
       getAward('All-Defense 2nd Team', 'All-Defense')
       getAward('All-Rookie 1st Team', 'All-Rookie')
       getAward('All-Rookie 2nd Team', 'All-Rookie')
+      break
     case 'nfl':
       getAward('NFL Champion', 'NFL Champ')
       getAward('MVP')
@@ -136,6 +137,7 @@ if (bio.awards) {
       getAward('All-Pro 2nd Team', 'All-Pro')
       getAward('All-Rookie 1st Team', 'All-Rookie')
       getAward('All-Rookie 2nd Team', 'All-Rookie')
+      break
     case 'mlb':
       getAward('World Series Champion', 'WS Champ')
       getAward('AL MVP')
@@ -153,6 +155,7 @@ if (bio.awards) {
       getAward('NL Gold Glove')
       getAward('AL Silver Slugger')
       getAward('NL Silver Slugger')
+      break
     case 'nhl':
       getAward('Stanley Cup', 'SC Champ')
       getAward('Hart Trophy', 'Hart')
@@ -162,6 +165,7 @@ if (bio.awards) {
       getAward('Vezina Trophy', 'Vezina')
       getAward('Selke Trophy', 'Selke')
       getAward('Lady Byng Trophy', 'Lady Byng')
+      break
   }
 
   if (awards.length > 1) {
@@ -190,11 +194,8 @@ const formatNumber = (value: unknown) =>
     : (value as string)) ?? '-'
 const formatPercentage = (value: number) =>
   isNaN(value) ? '0%' : `${formatNumber(value)}%`
-const statPanels = stats?.grid.rows
-  .slice(0, 2)
-  .map((r) => r[stats?.grid.columns[0].rowItemKey].display)
 
-const calculateStat = (stat: Stat, row: Row) => ({
+const calculateStat = (stat: Stat, row: Row | undefined) => ({
   key:
     typeof stat === 'string'
       ? stat
@@ -202,7 +203,9 @@ const calculateStat = (stat: Stat, row: Row) => ({
       ? stat[0]
       : stat?.label,
   value:
-    typeof stat === 'string'
+    row === undefined
+      ? undefined
+      : typeof stat === 'string'
       ? row[stat]?.display
       : Array.isArray(stat)
       ? row[stat[1]]?.display
@@ -228,178 +231,188 @@ const normalizeNflPosition = (position: string) => {
 const normalizedPosition =
   league === 'nfl' ? normalizeNflPosition(bio.position) : bio.position
 
-const seasonStatColumns: Record<LeagueParam, Stat[] | Record<string, Stat[]>> =
-  {
-    fc: {
-      FW: [
-        ['Goals', 'G'],
-        ['Assists', 'A'],
-        ['xG', ''],
-        ['xA', ''],
-        ['Matches', 'M'],
-        ['Starts', 'START'],
-        ['Shots', 'SH'],
-        ['On Target', 'ST'],
-      ],
-      MF: [
-        ['Goals', 'G'],
-        ['Assists', 'A'],
-        ['xG', ''],
-        ['xA', ''],
-        ['Matches', 'M'],
-        ['Starts', 'START'],
-        ['Big Chance Crtd', ''],
-        ['Pass %', ''],
-      ],
-      DF: [
-        ['Goals', 'G'],
-        ['Assists', 'A'],
-        ['Duel W-L', ''],
-        ['Aerial W-L', ''],
-        ['Matches', 'M'],
-        ['Starts', 'START'],
-        ['Tackles Made', 'TKL'],
-        ['Clearances', 'CLR'],
-      ],
-      GK: [
-        ['Clean Sheets', 'CS'],
-        ['Goals Conceded', 'GC'],
-        ['Saves', 'SV'],
-        ['Matches', 'M'],
-        ['Recoveries', ''],
-        ['Penalty Saves', 'SV-PK'],
-      ],
-    },
-    nba: ['PPG', 'RPG', 'APG', 'SPG', 'BPG', 'MPG', 'FG%', '3P%', 'FT%', 'TS%'],
-    nfl: {
-      QB: [
-        {
-          label: 'Comp Pct',
-          value: (v) => formatPercentage((v.CMP.value / v.ATT.value) * 100),
-        },
-        ['Pass Yds', 'YDS'],
-        ['Pass TD', 'TD'],
-        {
-          label: 'Yds/Pass',
-          value: (v) => formatNumber(v.YDS.value / v.ATT.value),
-        },
-        ['Rating', 'RATE'],
-        ['Games', 'GP'],
-        ['Rush Yds', 'RUSHYDS'],
-        ['Rush TD', 'RUSHTD'],
-        ['Int', 'INT'],
-        ['Sacked', 'SCK'],
-      ],
-      RB: [
-        ['Att', 'ATT-ATT'],
-        ['Rush Yds', 'RUSHYDS'],
-        ['Rush TD', 'RUSHTD'],
-        ['Yds/Rush', 'YPC-YPC'],
-        ['Games', 'GP'],
-        ['Tot Yds', 'YDS-TOT YDS'],
-        ['Total TD', 'TD-TOT TD'],
-        ['FUM (L)', 'LOST'],
-      ],
-      WR: [
-        ['Rec', 'REC-REC'],
-        ['Rec Yds', 'RECYDS'],
-        ['Rec TD', 'RECTD'],
-        ['Games', 'GP'],
-        ['Yds/Rec', 'RECAVG'],
-        ['Targets', 'TRG-TRG'],
-      ],
-      DEF: [
-        ['Sacks', 'SCK'],
-        ['TFL', 'TFL'],
-        ['Int', 'INT'],
-        ['FF', ''],
-        ['Games', 'GP'],
-        ['Tackles', 'TKL'],
-        ['Pass Def', 'PDEF'],
-        ['TD', ''],
-      ],
-      OL: [
-        ['Games', 'GP'],
-        ['Starts', 'GS'],
-      ],
-      K: [
-        'FGM',
-        'FGA',
-        'FG%',
-        ['Long', ''],
-        'XPM',
-        'XPA',
-        'XP%',
-        ['Games', 'GP'],
-      ],
-      P: [
-        ['Punts', 'PUNT'],
-        ['Yards', 'YDS'],
-        ['Avg', 'AVG'],
-        ['Games', 'GP'],
-        ['Long', 'LNG'],
-        ['Blocked', 'BLK'],
-      ],
-    },
-    mlb: {
-      DEFAULT: ['HR', 'RBI', 'AVG', 'OBP', 'SLG', 'AB', 'R', 'H', 'BB', 'SB'],
-      P: [
-        { label: 'Record', value: (v) => `${v.W.value}-${v.L.value}` },
-        'ERA',
-        'SO',
-        'BB',
-        'WHIP',
-        'IP',
-        'G',
-        'GS',
-        'SV',
-        {
-          label: 'K/9',
-          value: (v) => formatNumber((v.SO.value / v.IP.value) * 9),
-        },
-      ],
-    },
-    nhl: {
-      DEFAULT: [
-        ['Goals', 'G'],
-        ['Assists', 'A'],
-        ['Points', 'P'],
-        '+/-',
-        ['Shot %', 'S%'],
-        ['Games', 'GP'],
-        'PPG',
-        'PPA',
-        'PIM',
-        ['SOG', 'SHG'],
-      ],
-      D: [
-        ['Goals', 'G'],
-        ['Assists', 'A'],
-        ['Points', 'P'],
-        '+/-',
-        ['Shot %', 'S%'],
-        ['Games', 'GP'],
-        'HIT',
-        'BLK',
-        'TKA',
-        'PIM',
-      ],
-      G: [
-        'GP',
-        'GS',
-        ['Wins', 'W'],
-        ['Losses', 'L'],
-        'OTL',
-        'SHO',
-        'GAA',
-        ['Save %', 'Sv%'],
-        ['Saves', 'Sv'],
-        ['Minutes', 'MIN'],
-      ],
-    },
-  }
+type League = Exclude<LeagueParam, 'money' | 'pga'>
 
-const seasonLeagueColumns = seasonStatColumns[league]
+const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
+  fc: {
+    FW: [
+      ['Goals', 'G'],
+      ['Assists', 'A'],
+      ['xG', ''],
+      ['xA', ''],
+      ['Matches', 'M'],
+      ['Starts', 'START'],
+      ['Shots', 'SH'],
+      ['On Target', 'ST'],
+    ],
+    MF: [
+      ['Goals', 'G'],
+      ['Assists', 'A'],
+      ['xG', ''],
+      ['xA', ''],
+      ['Matches', 'M'],
+      ['Starts', 'START'],
+      ['Big Chance Crtd', ''],
+      ['Pass %', ''],
+    ],
+    DF: [
+      ['Goals', 'G'],
+      ['Assists', 'A'],
+      ['Duel W-L', ''],
+      ['Aerial W-L', ''],
+      ['Matches', 'M'],
+      ['Starts', 'START'],
+      ['Tackles Made', 'TKL'],
+      ['Clearances', 'CLR'],
+    ],
+    GK: [
+      ['Clean Sheets', 'CS'],
+      ['Goals Conceded', 'GC'],
+      ['Saves', 'SV'],
+      ['Matches', 'M'],
+      ['Recoveries', ''],
+      ['Penalty Saves', 'SV-PK'],
+    ],
+  },
+  nba: ['PPG', 'RPG', 'APG', 'SPG', 'BPG', 'MPG', 'FG%', '3P%', 'FT%', 'TS%'],
+  nfl: {
+    QB: [
+      {
+        label: 'Comp Pct',
+        value: (v) =>
+          formatPercentage(
+            ((v.CMP.value as number) / (v.ATT.value as number)) * 100,
+          ),
+      },
+      ['Pass Yds', 'YDS'],
+      ['Pass TD', 'TD'],
+      {
+        label: 'Yds/Pass',
+        value: (v) =>
+          formatNumber((v.YDS.value as number) / (v.ATT.value as number)),
+      },
+      ['Rating', 'RATE'],
+      ['Games', 'GP'],
+      ['Rush Yds', 'RUSHYDS'],
+      ['Rush TD', 'RUSHTD'],
+      ['Int', 'INT'],
+      ['Sacked', 'SCK'],
+    ],
+    RB: [
+      ['Att', 'ATT-ATT'],
+      ['Rush Yds', 'RUSHYDS'],
+      ['Rush TD', 'RUSHTD'],
+      ['Yds/Rush', 'YPC-YPC'],
+      ['Games', 'GP'],
+      ['Tot Yds', 'YDS-TOT YDS'],
+      ['Total TD', 'TD-TOT TD'],
+      ['FUM (L)', 'LOST'],
+    ],
+    WR: [
+      ['Rec', 'REC-REC'],
+      ['Rec Yds', 'RECYDS'],
+      ['Rec TD', 'RECTD'],
+      ['Games', 'GP'],
+      ['Yds/Rec', 'RECAVG'],
+      ['Targets', 'TRG-TRG'],
+    ],
+    DEF: [
+      ['Sacks', 'SCK'],
+      ['TFL', 'TFL'],
+      ['Int', 'INT'],
+      ['FF', ''],
+      ['Games', 'GP'],
+      ['Tackles', 'TKL'],
+      ['Pass Def', 'PDEF'],
+      ['TD', ''],
+    ],
+    OL: [
+      ['Games', 'GP'],
+      ['Starts', 'GS'],
+    ],
+    K: [
+      'FGM',
+      'FGA',
+      'FG%',
+      ['Long', ''],
+      'XPM',
+      'XPA',
+      'XP%',
+      ['Games', 'GP'],
+    ],
+    P: [
+      ['Punts', 'PUNT'],
+      ['Yards', 'YDS'],
+      ['Avg', 'AVG'],
+      ['Games', 'GP'],
+      ['Long', 'LNG'],
+      ['Blocked', 'BLK'],
+    ],
+  },
+  mlb: {
+    DEFAULT: ['HR', 'RBI', 'AVG', 'OBP', 'SLG', 'AB', 'R', 'H', 'BB', 'SB'],
+    P: [
+      { label: 'Record', value: (v) => `${v.W.value}-${v.L.value}` },
+      'ERA',
+      'SO',
+      'BB',
+      'WHIP',
+      'IP',
+      'G',
+      'GS',
+      'SV',
+      {
+        label: 'K/9',
+        value: (v) =>
+          formatNumber(((v.SO.value as number) / (v.IP.value as number)) * 9),
+      },
+    ],
+  },
+  nhl: {
+    DEFAULT: [
+      ['Goals', 'G'],
+      ['Assists', 'A'],
+      ['Points', 'P'],
+      '+/-',
+      ['Shot %', 'S%'],
+      ['Games', 'GP'],
+      'PPG',
+      'PPA',
+      'PIM',
+      ['SOG', 'SHG'],
+    ],
+    D: [
+      ['Goals', 'G'],
+      ['Assists', 'A'],
+      ['Points', 'P'],
+      '+/-',
+      ['Shot %', 'S%'],
+      ['Games', 'GP'],
+      'HIT',
+      'BLK',
+      'TKA',
+      'PIM',
+    ],
+    G: [
+      'GP',
+      'GS',
+      ['Wins', 'W'],
+      ['Losses', 'L'],
+      'OTL',
+      'SHO',
+      'GAA',
+      ['Save %', 'Sv%'],
+      ['Saves', 'Sv'],
+      ['Minutes', 'MIN'],
+    ],
+  },
+}
+
+const statPanels = stats?.grid.rows
+  .slice(0, 2)
+  .map((r) => r[stats?.grid.columns[0].rowItemKey].display)
+const seasonLeagueColumns =
+  league === 'pga' || league === 'money' ? [] : seasonStatColumns[league]
 const seasonLeagueStats = Array.isArray(seasonLeagueColumns)
   ? seasonLeagueColumns
   : seasonLeagueColumns[normalizedPosition] ?? seasonLeagueColumns['DEFAULT']
@@ -409,12 +422,8 @@ const seasonPanels = statPanels.map((title, index) => ({
     calculateStat(stat, stats?.grid.rows[index]),
   ),
 }))
-console.log(stats?.grid.rows[0])
 
-const lastGameStatColumns: Record<
-  LeagueParam,
-  Stat[] | Record<string, Stat[]>
-> = {
+const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   fc: {
     DEFAULT: [
       'MIN',
@@ -426,7 +435,7 @@ const lastGameStatColumns: Record<
         label: 'Shot %',
         value: (v) =>
           `${v.ST.value}/${v.SH.value} (${formatPercentage(
-            v.ST.value / v.SH.value,
+            (v.ST.value as number) / (v.SH.value as number),
           )})`,
       },
       ['Pass %', ''],
@@ -461,7 +470,10 @@ const lastGameStatColumns: Record<
     'PTS',
     {
       label: 'REB (O)',
-      value: (v) => `${v?.DREB?.value + v?.OREB?.value} (${v?.OREB?.value})`,
+      value: (v) =>
+        `${(v?.DREB?.value as number) + (v?.OREB?.value as number)} (${
+          v?.OREB?.value
+        })`,
     },
     'AST',
     'STL',
@@ -480,7 +492,10 @@ const lastGameStatColumns: Record<
       ['Att', 'ATT'],
       {
         label: 'Pct',
-        value: (v) => formatPercentage((v.CMP.value / v.ATT.value) * 100),
+        value: (v) =>
+          formatPercentage(
+            ((v.CMP.value as number) / (v.ATT.value as number)) * 100,
+          ),
       },
       ['Yds', 'YDS'],
       ['Avg', 'AVG'],
@@ -528,7 +543,7 @@ const lastGameStatColumns: Record<
       ['Pass Def', 'PDEF'],
       ['TD', 'TD'],
     ],
-    OL: undefined,
+    OL: [],
     K: [
       'FGM',
       'FGA',
@@ -643,7 +658,8 @@ const lastGameStatColumns: Record<
   },
 }
 
-const lastGameLeagueColumns = lastGameStatColumns[league]
+const lastGameLeagueColumns =
+  league === 'pga' || league === 'money' ? [] : lastGameStatColumns[league]
 const lastGameStats = Array.isArray(lastGameLeagueColumns)
   ? lastGameLeagueColumns
   : lastGameLeagueColumns[normalizedPosition] ??
@@ -654,12 +670,8 @@ const lastGameStats_ = lastGame
       calculateStat(stat, recentGames.grid.rows[0]),
     ) ?? []
   : []
-console.log(lastGame)
 
-const nextGameStatColumns: Record<
-  LeagueParam,
-  Stat[] | Record<string, Stat[]>
-> = {
+const nextGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   fc: {
     DEFAULT: ['M', 'START', 'G', 'A'],
     GK: ['M', 'START', 'CS', 'GC'],
@@ -723,7 +735,8 @@ const nextGameStatColumns: Record<
   },
 }
 
-const nextGameLeagueColumns = nextGameStatColumns[league]
+const nextGameLeagueColumns =
+  league === 'pga' || league === 'money' ? [] : nextGameStatColumns[league]
 const nextGameStats = Array.isArray(nextGameLeagueColumns)
   ? nextGameLeagueColumns
   : nextGameLeagueColumns[normalizedPosition] ??
@@ -737,7 +750,7 @@ const nextGameData = {
 }
 // console.log("nextGame", JSON.stringify(nextGame, undefined, 2))
 
-const gamesStatColumns: Record<LeagueParam, Stat[] | Record<string, Stat[]>> = {
+const gamesStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   fc: {
     DEFAULT: ['MIN', 'G', 'A', 'YC'],
     GK: ['MIN', 'GC', 'SV', 'YC'],
@@ -788,7 +801,8 @@ const gamesStatColumns: Record<LeagueParam, Stat[] | Record<string, Stat[]>> = {
   },
 }
 
-const gamesLeagueColumns = gamesStatColumns[league]
+const gamesLeagueColumns =
+  league === 'pga' || league === 'money' ? [] : gamesStatColumns[league]
 const gamesStats = Array.isArray(gamesLeagueColumns)
   ? gamesLeagueColumns
   : gamesLeagueColumns[normalizedPosition] ?? gamesLeagueColumns['DEFAULT']
@@ -872,27 +886,29 @@ const games = recentGames?.grid.rows.map((r, index) => ({
               <p class="whitespace-nowrap">{bio.usedName}</p>
               <div class="flex items-center justify-between gap-2 text-xs text-gray-5">
                 <p class="whitespace-nowrap">
-                  {formatDate(lastGame.DATE.value, 'MMM DD')}
+                  {formatDate(lastGame.DATE.value as string, 'MMM DD')}
                 </p>
                 <div class="flex gap-1 items-center">
                   <p class="whitespace-nowrap">
-                    {lastGame?.ALIGNMENT.display.replace('@', 'at')}
+                    {lastGame.ALIGNMENT.display.replace('@', 'at')}
                   </p>
-                  <Image
-                    class:list={{
-                      'h-4 max-w-4': true,
-                      'select-none': true,
-                      'object-contain object-center': true,
-                    }}
-                    alt={lastGame?.OPP.display}
-                    src={lastGame?.OPP.imageUrl}
-                    width={100}
-                    height={100}
-                    loading="eager"
-                  />
-                  <p class="whitespace-nowrap">{lastGame?.OPP.display}</p>
+                  {lastGame.OPP.imageUrl ? (
+                    <Image
+                      class:list={{
+                        'h-4 max-w-4': true,
+                        'select-none': true,
+                        'object-contain object-center': true,
+                      }}
+                      alt={lastGame.OPP.display}
+                      src={lastGame.OPP.imageUrl}
+                      width={100}
+                      height={100}
+                      loading="eager"
+                    />
+                  ) : null}
+                  <p class="whitespace-nowrap">{lastGame.OPP.display}</p>
                 </div>
-                <p class="whitespace-nowrap">{lastGame?.SCORE.display}</p>
+                <p class="whitespace-nowrap">{lastGame.SCORE.display}</p>
               </div>
             </div>
           </div>
@@ -986,21 +1002,23 @@ const games = recentGames?.grid.rows.map((r, index) => ({
                     </p>
                     <div class="flex gap-1 items-center -mt-0.5">
                       <p class="whitespace-nowrap">
-                        {game?.ALIGNMENT.display.replace('@', 'at')}
+                        {game.ALIGNMENT.display.replace('@', 'at')}
                       </p>
-                      <Image
-                        class:list={{
-                          'h-4 max-w-4': true,
-                          'select-none': true,
-                          'object-contain object-center': true,
-                        }}
-                        alt={game?.OPP.display}
-                        src={game?.OPP.imageUrl}
-                        width={100}
-                        height={100}
-                        loading="eager"
-                      />
-                      <p class="whitespace-nowrap">{game?.OPP.display}</p>
+                      {game.OPP.imageUrl ? (
+                        <Image
+                          class:list={{
+                            'h-4 max-w-4': true,
+                            'select-none': true,
+                            'object-contain object-center': true,
+                          }}
+                          alt={game.OPP.display}
+                          src={game.OPP.imageUrl}
+                          width={100}
+                          height={100}
+                          loading="eager"
+                        />
+                      ) : null}
+                      <p class="whitespace-nowrap">{game.OPP.display}</p>
                     </div>
                   </div>
                   <div class="whitespace-nowrap text-right">
