@@ -207,16 +207,13 @@
   }
 
   onMount(() => {
-    if (!isMobileTest(navigator.userAgent)) {
-      input.focus()
-    }
     shadowInput.value = query
   })
 
   $: open = sections.findIndex((s) => s.suggestions.length > 0) > -1
   $: userId = $session?.type === 'user' ? $session.properties.id : undefined
   $: {
-    if (expand) {
+    if (expand && input) {
       input.focus()
     }
   }
@@ -239,38 +236,28 @@
 >
   {#if !expand}
     <div
-      role="combobox"
-      aria-haspopup="listbox"
-      aria-owns="ask-bar-suggestions"
-      aria-expanded={open}
-      class="w-full"
-      class:border-primary={inFocus}
+      class="relative group flex bg-gray-8 dark:bg-gray-3 items-center px-2 border border-gray-6 dark:border-gray-4 rounded-2xl overflow-hidden"
     >
-      <div
-        class="relative group flex bg-gray-8 dark:bg-gray-3 items-center px-2 border border-gray-6 dark:border-gray-4 rounded-2xl overflow-hidden"
-      >
-        <input
-          class="dark:bg-gray-3 grow appearance-none outline-none resize-none block border-y border-transparent px-2 py-1 peer truncate"
-          autocomplete="off"
-          aria-autocomplete="list"
-          name="question[query]"
-          {placeholder}
-          required
-          enterkeyhint="search"
-          bind:this={input}
-          bind:value={query}
-          on:click={() => {
-            loadSuggestions(input.value)
-            disableScroll()
-            expand = true
-          }}
-        />
-        {#if query.length > 0}
-          <Icon name="x" class="w-4 h-4 mr-1" />
-        {:else}
-          <Icon name="search" class="w-5 h-5 text-teal mr-1" />
-        {/if}
-      </div>
+      <input
+        class="dark:bg-gray-3 grow appearance-none outline-none resize-none block border-y border-transparent px-2 py-1 peer truncate"
+        autocomplete="off"
+        aria-autocomplete="list"
+        name="question[query]"
+        {placeholder}
+        required
+        enterkeyhint="search"
+        bind:value={query}
+        on:click={() => {
+          expand = true
+          loadSuggestions('')
+          disableScroll()
+        }}
+      />
+      {#if query.length > 0}
+        <Icon name="x" class="w-4 h-4 mr-1" />
+      {:else}
+        <Icon name="search" class="w-5 h-5 text-teal mr-1" />
+      {/if}
     </div>
   {/if}
   {#if expand}
@@ -298,7 +285,7 @@
           <Icon name="back" class="w-4 h-4 mr-1" />
         </button>
         <textarea
-          class="dark:bg-gray-3 grow appearance-none outline-none resize-none block border-y border-transparent px-2 py-1 peer"
+          class="dark:bg-gray-3 grow appearance-none outline-none resize-none block border-y border-transparent px-2 py-2.5 md:py-1 peer"
           autocomplete="off"
           aria-autocomplete="list"
           name="question[query]"
@@ -418,7 +405,7 @@
   />
   <textarea
     bind:this={shadowInput}
-    class="appearance-none outline-none resize-none block w-full border-y px-2 py-1"
+    class="appearance-none outline-none resize-none block w-full border-y px-2 py-2.5 md:py-1"
     class:pr-[70px]={query}
     style:height="0px"
     style:min-height="0px"
