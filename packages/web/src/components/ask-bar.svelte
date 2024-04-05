@@ -247,9 +247,9 @@
         required
         enterkeyhint="search"
         bind:value={query}
-        on:click={() => {
+        on:focus={(e) => {
           expand = true
-          loadSuggestions('')
+          loadSuggestions(e.target.value)
           disableScroll()
         }}
       />
