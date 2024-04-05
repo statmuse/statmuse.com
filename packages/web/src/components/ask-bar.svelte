@@ -254,7 +254,15 @@
         }}
       />
       {#if query.length > 0}
-        <Icon name="x" class="w-4 h-4 mr-1" />
+        <button
+          on:click={() => {
+            expand = true
+            query = ''
+            disableScroll()
+          }}
+        >
+          <Icon name="x" class="w-4 h-4 mr-1" />
+        </button>
       {:else}
         <Icon name="search" class="w-5 h-5 text-teal mr-1" />
       {/if}
