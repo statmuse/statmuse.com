@@ -275,8 +275,10 @@
       aria-haspopup="listbox"
       aria-owns="ask-bar-suggestions"
       aria-expanded={open}
-      class="absolute top-0 left-0 w-screen h-screen bg-white dark:bg-gray-3 md:w-full md:h-auto md:border md:border-gray-6 md:dark:border-gray-4 md:rounded-2xl overflow-hidden"
+      class="absolute top-0 left-0 w-screen h-screen bg-white dark:bg-gray-3 md:w-full md:h-auto md:border md:rounded-2xl overflow-hidden"
       class:border-primary={inFocus}
+      class:border-gray-6={!inFocus}
+      class:dark:border-gray-4={!inFocus}
       class:ring-1={inFocus}
       class:ring-primary={inFocus}
     >
