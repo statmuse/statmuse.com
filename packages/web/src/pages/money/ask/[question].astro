@@ -103,17 +103,19 @@ Caching.swr(Astro)
       contentReference: response.visual.contentReference,
       subject: response.visual.summary.subject,
     }}
+    {query}
+    {conversationToken}
+    hero={heroProps}
   >
-    <Header money {query} {conversationToken} />
-    {
-      heroProps ? (
-        <Hero
-          {...heroProps}
-          class="-mt-3"
-          shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`}
-        />
-      ) : null
-    }
+    <!-- { -->
+    <!--   heroProps ? ( -->
+    <!--     <Hero -->
+    <!--       {...heroProps} -->
+    <!--       class="-mt-3" -->
+    <!--       shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`} -->
+    <!--     /> -->
+    <!--   ) : null -->
+    <!-- } -->
     <Visuals {response} {conversationToken} />
     <Explore
       league="money"
