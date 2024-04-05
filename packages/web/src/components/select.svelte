@@ -58,7 +58,7 @@
   </label>
   <button
     class={`flex h-8 items-center justify-between 
-           font-semibold border border-gray-6 dark:border-gray-4 dark:bg-gray-3
+           font-semibold border border-gray-6 dark:border-none dark:bg-gray-3
            px-3 rounded-3xl whitespace-nowrap truncate`}
     class:bg-gray-6={$open}
     class:bg-gray-8={!$open}
@@ -78,16 +78,16 @@
         class="absolute inset-0 top-0.5 h-3 bottom-0 bg-gray-6 dark:bg-gray-3"
       />
       <div
-        class="absolute left-0 w-2 h-5 -top-[10px] bg-gray-6 dark:bg-gray-3 border-l border-gray-6 dark:border-gray-4"
+        class="absolute left-0 w-2 h-5 -top-[10px] bg-gray-6 dark:bg-gray-3 border-l border-gray-6 dark:border-none"
       />
       <div
-        class="absolute right-0 w-2 h-5 -top-[10px] bg-gray-6 dark:bg-gray-3 border-r border-gray-6 dark:border-gray-4"
+        class="absolute right-0 w-2 h-5 -top-[10px] bg-gray-6 dark:bg-gray-3 border-r border-gray-6 dark:border-none"
       />
     </div>
     <div
       class="z-10 relative -mt-[5px] pb-2 !max-h-64 flex flex-col
              overflow-y-auto rounded-b-3xl bg-gray-6 dark:bg-gray-3
-             border border-t-0 border-gray-6 dark:border-gray-4 focus:!ring-0"
+             border border-t-0 border-gray-6 dark:border-none focus:!ring-0"
       use:melt={$menu}
     >
       {#each options as item}

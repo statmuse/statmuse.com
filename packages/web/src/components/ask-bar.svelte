@@ -34,8 +34,8 @@
   const placeholder = money
     ? 'Search stocks, FX or bitcoin'
     : preferredDomain === 'epl'
-      ? 'Search players, clubs or stats'
-      : 'Search players, stats or odds'
+    ? 'Search players, clubs or stats'
+    : 'Search players, stats or odds'
   const apiUrl = `${import.meta.env.PUBLIC_API_URL}${
     money ? '/money/search/suggest' : '/search/suggest'
   }`
@@ -213,7 +213,7 @@
     aria-haspopup="listbox"
     aria-owns="ask-bar-suggestions"
     aria-expanded={open}
-    class="absolute top-0 w-full border border-gray-6 dark:border-gray-4 rounded-2xl overflow-hidden md:border-opacity-100"
+    class="absolute top-0 w-full border border-gray-6 dark:border-none rounded-2xl overflow-hidden md:border-opacity-100"
     class:border-primary={inFocus}
     class:border-opacity-100={inFocus}
     class:border-opacity-50={!inFocus}

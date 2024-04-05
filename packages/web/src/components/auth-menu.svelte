@@ -9,7 +9,7 @@
     <a
       href="/auth/signup"
       class="h-[36px] py-1 px-4 flex items-center justify-center text-inherit gap-2
-             bg-gray-8 dark:bg-gray-3 border border-gray-6 dark:border-gray-4
+             bg-gray-8 dark:bg-gray-3 border border-gray-6 dark:border-none
              rounded-2xl whitespace-nowrap
              hover:text-teal hover:border-teal hover:border hover:no-underline"
       class:invisible={!$session}
