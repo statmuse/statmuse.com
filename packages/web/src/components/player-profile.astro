@@ -913,9 +913,9 @@ const games = recentGames?.grid.rows.map((r, index) => ({
           </div>
           <div
             class:list={{
-              'grid gap-3 py-3 leading-snug items-center': true,
-              'grid-cols-5 @xs:grid-cols-7': league !== 'fc',
-              'grid-cols-2 @xs:grid-cols-4': league === 'fc',
+              'flex flex-wrap gap-3 py-3 leading-snug items-center': true,
+              // 'grid-cols-5 @xs:grid-cols-7': league !== 'fc',
+              // 'grid-cols-2 @xs:grid-cols-4': league === 'fc',
             }}
           >
             {lastGameStats_?.map(({ key, value }) => (

@@ -22,7 +22,7 @@ const meta = {
 Caching.swr(Astro)
 ---
 
-<MoneyLayout {meta} {profile}>
+<MoneyLayout {meta} {profile} page="news">
   <div class="divide-y divide-[#c7c8ca]">
     {
       news.map((newsItem) => (
