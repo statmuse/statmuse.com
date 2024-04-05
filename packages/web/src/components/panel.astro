@@ -36,7 +36,7 @@ const foregroundHex = foreground
     '@container relative rounded-2xl px-3 py-2 overflow-clip': true,
     'bg-gray-8 dark:bg-gray-3': !background,
     'text-inherit': !foreground,
-    'border border-gray-6 dark:border-gray-4': !background,
+    'border border-gray-6 dark:border-none': !background,
     '!bg-team-primary !text-team-secondary': team,
     'break-inside-avoid-column': true,
     [Astro.props.class ?? '']: !!Astro.props.class,
