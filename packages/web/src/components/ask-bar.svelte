@@ -220,6 +220,7 @@
   $: {
     if (shadowInput && input) {
       shadowInput.value = query
+      shadowInput.style.width = getComputedStyle(input).width
       input.style.height = shadowInput.scrollHeight + 2 + 'px'
     }
     if (spacer) {
@@ -419,14 +420,14 @@
   />
   <textarea
     bind:this={shadowInput}
-    class="appearance-none outline-none resize-none block w-full border-y px-2 py-2.5 md:py-1"
-    class:pr-[70px]={query}
+    class="appearance-none outline-none resize-none block border-y px-2 py-2.5 md:py-1"
     style:height="0px"
     style:min-height="0px"
     style:max-height="none"
     style:visibility="hidden"
     style:overflow="hidden"
     style:position="absolute"
+    style:left="0"
     style:z-index="-1000"
     tabindex="-1"
     aria-hidden="true"
