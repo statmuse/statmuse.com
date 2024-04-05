@@ -363,8 +363,11 @@
                     />
                     <span>{suggestion.display}</span>
                   {:else if section.type === 'example' && suggestion.league}
-                    <span
-                      class={`suggestion-${suggestion.league.toLowerCase()}-icon w-6 h-6 mr-2.5 shrink-0`}
+                    <Icon
+                      name={suggestion.league.toLowerCase() === 'epl'
+                        ? 'fc'
+                        : suggestion.league.toLowerCase()}
+                      class="w-6 h-6 mr-2.5 shrink-0 text-[#a7a9ac] dark:text-white block object-cover"
                     />
                     <span>{suggestion.display}</span>
                   {:else if suggestion.type === 'player'}
@@ -380,8 +383,9 @@
                     />
                     <span>{suggestion.display}</span>
                   {:else}
-                    <span
-                      class="suggestion-example-icon w-6 h-6 mr-2.5 shrink-0"
+                    <Icon
+                      name="search"
+                      class="w-6 h-6 mr-2.5 shrink-0 text-[#a7a9ac] dark:text-white block object-cover"
                     />
                     <span>{suggestion.display}</span>
                   {/if}
