@@ -394,7 +394,7 @@ const hasSupplement = hero?.hasSupplement
       }}
     >
       <Header {preferredDomain} {query} {conversationToken} {money} />
-      <div class="flex flex-1 gap-3 -mt-3">
+      <div class="flex flex-1 gap-3 -mt-3.5 md:mt-0">
         <MenuLinks class="shrink-0 hidden xl:flex sticky top-0" />
         <div class="min-w-0 w-full">
           {
@@ -411,7 +411,7 @@ const hasSupplement = hero?.hasSupplement
                   class:list={{
                     'xl:col-span-2 h-full': hasSupplement,
                     'rounded-none border-0 md:rounded-2xl md:border': true,
-                    '-mx-3 py-2 px-3 md:py-3 md:px-5 md:mx-0 whitespace-nowrap': true,
+                    '-mx-3 pb-2 pt-4 px-3 md:py-3 md:px-5 md:mx-0 whitespace-nowrap': true,
                     'flex flex-col-reverse gap-3 md:flex-row': !markdownOrHtml,
                     'flex flex-col-reverse gap-3 md:flex-row-reverse justify-between':
                       markdownOrHtml,
@@ -442,15 +442,15 @@ const hasSupplement = hero?.hasSupplement
                       >
                         <h1
                           class:list={{
-                            'font-semibold text-xl leading-snug my-auto text-pretty': true,
+                            'font-semibold text-xl leading-snug my-auto whitespace-pre-wrap text-pretty': true,
                             // 'md:text-xl lg:text-[1.33rem] xl:text-2xl': true,
                             '[&>p]:my-[1em] [&>ul]:my-[1em] [&>p>a]:underline [&>p>a]:text-team-secondary': true,
                           }}
                           set:html={markdown ? content : undefined}
                         >
                           {html ? (
-                            <p
-                              class="my-[1em] [&>a]:underline [&>a]:text-team-secondary"
+                            <span
+                              class="my-[1em] [&>a]:underline [&>a]:text-team-secondary text-pretty"
                               set:html={content}
                             />
                           ) : null}
