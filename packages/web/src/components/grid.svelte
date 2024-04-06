@@ -279,8 +279,8 @@
                         {#if imageUrl}
                           <Image
                             src={imageUrl}
-                            width={16}
-                            height={16}
+                            width={40}
+                            height={40}
                             alt={display}
                             class={imgClass(row[col.rowItemKey])}
                           />
