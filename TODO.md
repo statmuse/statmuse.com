@@ -7,3 +7,4 @@
 - [ ] cookie banner shows up repeatedly, use local storage
 - [ ] team profile redesign
 - [ ] trending dropdowns in hero
+- [ ] new homepage layout
