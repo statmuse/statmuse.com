@@ -32,15 +32,17 @@
   }
 
   const imageUrl = getImageUrl(source)
+  const encoded = imageUrl ? encodeURIComponent(imageUrl) : undefined
   const src = imageUrl
-    ? `/_image?href=${encodeURIComponent(
-        imageUrl,
-      )}&f=webp&w=${width}&h=${height}`
+    ? `/_image?href=${encoded}&f=webp&w=${width}&h=${height}`
     : undefined
+  const srcset = `/_image?href=${encoded}&w=${width}&h=${height}&f=webp 1x, /_image?href=${encoded}&w=${
+    width * 2
+  }&f=webp 2x, /_image?href=${encoded}&w=${width * 3}&f=webp 3x`
 </script>
 
 {#if source}
-  <img {src} {alt} {width} {height} {...$$restProps} />
+  <img {src} {srcset} {alt} {width} {height} {...$$restProps} />
 {:else}
   <div />
 {/if}

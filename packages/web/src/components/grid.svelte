@@ -279,8 +279,8 @@
                         {#if imageUrl}
                           <Image
                             src={imageUrl}
-                            width={100}
-                            height={100}
+                            width={16}
+                            height={16}
                             alt={display}
                             class={imgClass(row[col.rowItemKey])}
                           />
@@ -290,8 +290,8 @@
                           {#if imageUrl}
                             <Image
                               src={imageUrl}
-                              width={100}
-                              height={100}
+                              width={16}
+                              height={16}
                               alt={display}
                               class={`${imgClass(row[col.rowItemKey])} mr-2.5`}
                             />

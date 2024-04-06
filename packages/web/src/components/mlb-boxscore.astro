@@ -43,8 +43,8 @@ const innings = Object.entries(groupBy(plays, (p) => p.inning))
           src={awayTeam.logoUrl}
           alt={awayTeam.abbrev}
           class="w-24 h-24 object-contain"
-          width={200}
-          height={200}
+          width={100}
+          height={100}
           loading="eager"
         />
       </a>
@@ -70,8 +70,8 @@ const innings = Object.entries(groupBy(plays, (p) => p.inning))
           class="w-24 h-24 object-contain"
           src={homeTeam.logoUrl}
           alt={homeTeam.abbrev}
-          width={200}
-          height={200}
+          width={100}
+          height={100}
           loading="eager"
         />
       </a>
@@ -147,8 +147,8 @@ const innings = Object.entries(groupBy(plays, (p) => p.inning))
                       }
                       alt={play.team}
                       class="w-7 h-7 mt-2 object-contain"
-                      width={60}
-                      height={60}
+                      width={28}
+                      height={28}
                     />
                     <p class="flex-1 py-2 px-4">{play.description}</p>
                     <>

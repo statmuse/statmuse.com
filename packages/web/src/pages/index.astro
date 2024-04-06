@@ -50,8 +50,8 @@ Caching.swr(Astro)
                     }%);`}
                     alt={player.title}
                     src={player.images[0]}
-                    width={450}
-                    height={450}
+                    width={175}
+                    height={175}
                     loading="eager"
                   />
                 ))}
@@ -82,7 +82,7 @@ Caching.swr(Astro)
                 class="leading-snug whitespace-pre-wrap text-pretty w-1/2"
                 set:text={musing.text_plain?.replaceAll(/^-   /gm, '')}
               />
-              <div class="flex flex-col justify-between -mb-2 w-1/2 absolute right-3 top-0 bottom-2">
+              <div class="flex flex-col justify-between items-end -mb-2 w-1/2 absolute right-3 top-0 bottom-2">
                 <div class="text-right mt-1.5">
                   {relativeTimeFromDates(musing.publish_at)}
                 </div>
@@ -92,8 +92,8 @@ Caching.swr(Astro)
                   style="visibility: unset;"
                   alt={musing.text_plain}
                   src={musing.image_url!}
-                  width={400}
-                  height={400}
+                  width={175}
+                  height={175}
                   loading={i < 4 ? 'eager' : 'lazy'}
                 />
               </div>

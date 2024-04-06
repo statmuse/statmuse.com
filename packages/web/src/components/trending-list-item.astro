@@ -60,24 +60,6 @@ const representatives = item.images.map((i) => ({ url: i }))
         {representatives}
         class:list={{ 'scale-75 origin-bottom': true }}
       />
-      <!-- { -->
-      <!--   item.images.map((image, index) => ( -->
-      <!--     <Image -->
-      <!--       data-cy-illustration -->
-      <!--       class:list={{ -->
-      <!--         'object-contain object-bottom h-24': true, -->
-      <!--         // 'h-[84px]': item.images.length > 1 && index !== 1, -->
-      <!--         'absolute bottom-0 left-0 h-full translate-x-[35%] z-[1]': -->
-      <!--           index === 1, -->
-      <!--       }} -->
-      <!--       alt={item.title} -->
-      <!--       src={image} -->
-      <!--       width={450} -->
-      <!--       height={450} -->
-      <!--       loading={eager ? 'eager' : 'lazy'} -->
-      <!--     /> -->
-      <!--   )) -->
-      <!-- } -->
     </div>
   </a>
 </li>
