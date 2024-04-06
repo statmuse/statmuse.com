@@ -14,9 +14,10 @@ if (!canQuery) {
   return Astro.redirect('/auth/signup?limit')
 }
 
-const question = Astro.params.question
+const replaceHyphens = !!Astro.params.question
+const question = Astro.params.question ?? Astro.url.searchParams.get('q')
 if (!question) return Astro.redirect('/questions')
-let query = question.replaceAll('-', ' ')
+const query = replaceHyphens ? question.replaceAll('-', ' ') : question
 
 const askResponse = await ask({ league: domain, query }, Astro)
 if ('redirect' in askResponse) return Astro.redirect(askResponse.redirect)
