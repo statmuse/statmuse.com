@@ -38,11 +38,7 @@ export default {
         red: '#dd3636',
       },
       fontFamily: {
-        sans: [
-          'canada-type-gibson',
-          'canada-type-gibson-fallback',
-          ...defaultTheme.fontFamily.sans,
-        ],
+        sans: ['calibre', 'calibre-fallback', ...defaultTheme.fontFamily.sans],
         mono: ['"Courier New"', ...defaultTheme.fontFamily.mono],
       },
     },

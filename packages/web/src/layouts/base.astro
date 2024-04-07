@@ -207,130 +207,44 @@ const hasSupplement = hero?.hasSupplement
     <!-- Font face definitions -->
     <style is:inline>
       @font-face {
-        font-family: 'canada-type-gibson';
+        font-family: 'calibre';
         src:
-          url('/fonts/Gibson-Light.woff2') format('woff2'),
-          url('/fonts/Gibson-Light.woff') format('woff'),
-          url('/fonts/Gibson-Light.otf') format('opentype');
-        font-display: auto;
-        ascent-override: 85%;
+          url('/fonts/calibre.woff2') format('woff2-variations'),
+          url('/fonts/calibre.woff') format('woff-variations'),
+          url('/fonts/calibre.otf') format('opentype-variations');
+        font-display: swap;
         font-style: normal;
-        font-weight: 200;
-        font-stretch: normal;
+        font-weight: 100 900;
       }
 
       @font-face {
-        font-family: 'canada-type-gibson';
-        src:
-          url('/fonts/Gibson-Light-Italic.woff2') format('woff2'),
-          url('/fonts/Gibson-Light-Italic.woff') format('woff'),
-          url('/fonts/Gibson-Light-Italic.otf') format('opentype');
-        font-display: auto;
-        ascent-override: 85%;
-        font-style: italic;
-        font-weight: 200;
-        font-stretch: normal;
-      }
-
-      @font-face {
-        font-family: 'canada-type-gibson';
-        src:
-          url('/fonts/Gibson.woff2') format('woff2'),
-          url('/fonts/Gibson.woff') format('woff'),
-          url('/fonts/Gibson.otf') format('opentype');
-        font-display: auto;
-        ascent-override: 85%;
-        font-style: normal;
-        font-weight: 400;
-        font-stretch: normal;
-      }
-
-      @font-face {
-        font-family: 'canada-type-gibson';
-        src:
-          url('/fonts/Gibson-Italic.woff2') format('woff2'),
-          url('/fonts/Gibson-Italic.woff') format('woff'),
-          url('/fonts/Gibson-Italic.otf') format('opentype');
-        font-display: auto;
-        ascent-override: 85%;
-        font-style: italic;
-        font-weight: 400;
-        font-stretch: normal;
-      }
-
-      @font-face {
-        font-family: 'canada-type-gibson';
-        src:
-          url('/fonts/Gibson-SemiBold.woff2') format('woff2'),
-          url('/fonts/Gibson-SemiBold.woff') format('woff'),
-          url('/fonts/Gibson-SemiBold.otf') format('opentype');
-        font-display: auto;
-        ascent-override: 85%;
-        font-style: normal;
-        font-weight: 600;
-        font-stretch: normal;
-      }
-
-      @font-face {
-        font-family: 'canada-type-gibson';
-        src:
-          url('/fonts/Gibson-SemiBold-Italic.woff2') format('woff2'),
-          url('/fonts/Gibson-SemiBold-Italic.woff') format('woff'),
-          url('/fonts/Gibson-SemiBold-Italic.otf') format('opentype');
-        font-display: auto;
-        ascent-override: 85%;
-        font-style: italic;
-        font-weight: 600;
-        font-stretch: normal;
-      }
-
-      @font-face {
-        font-family: 'canada-type-gibson';
-        src:
-          url('/fonts/Gibson-Bold.woff2') format('woff2'),
-          url('/fonts/Gibson-Bold.woff') format('woff'),
-          url('/fonts/Gibson-Bold.otf') format('opentype');
-        font-display: auto;
-        ascent-override: 85%;
-        font-style: normal;
-        font-weight: 800;
-        font-stretch: normal;
-      }
-
-      @font-face {
-        font-family: 'canada-type-gibson';
-        src:
-          url('/fonts/Gibson-Bold-Italic.woff2') format('woff2'),
-          url('/fonts/Gibson-Bold-Italic.woff') format('woff'),
-          url('/fonts/Gibson-Bold-Italic.otf') format('opentype');
-        font-display: auto;
-        ascent-override: 85%;
-        font-style: italic;
-        font-weight: 800;
-        font-stretch: normal;
-      }
-
-      @font-face {
-        font-family: 'canada-type-gibson-fallback';
+        font-family: 'calibre-fallback';
         src: local('Arial');
-        ascent-override: 89.13%;
-        descent-override: 22.28%;
+        size-adjust: 88%;
+        ascent-override: 114%;
+        descent-override: 34%;
         line-gap-override: 0%;
-        size-adjust: 89.76%;
       }
     </style>
 
     <!-- Preload custom fonts -->
     <link
       rel="preload"
-      href="/fonts/Gibson.woff2"
+      href="/fonts/calibre.woff2"
       as="font"
       type="font/woff2"
       crossorigin="anonymous"
     />
     <link
       rel="preload"
-      href="/fonts/Gibson-SemiBold.woff2"
+      href="/fonts/calibre.woff"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="/fonts/calibre.otf"
       as="font"
       type="font/woff2"
       crossorigin="anonymous"
