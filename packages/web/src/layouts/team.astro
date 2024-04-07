@@ -17,7 +17,6 @@ import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
-import HeroPanel from '@components/hero-panel.astro'
 import Nav from '@components/nav.astro'
 import GridDropdown from '@components/grid-dropdown.astro'
 import type { LeagueParam } from '@lib/params'
@@ -42,7 +41,7 @@ interface Props {
   parameters?: Record<string, GameraParameter>
 }
 
-const { bio, meta, query, page, parameters, analytics = {} } = Astro.props
+const { meta, query, page, parameters, analytics = {} } = Astro.props
 const bio = 'bio' in Astro.props.bio ? Astro.props.bio.bio : Astro.props.bio
 const isTeam = 'franchise' in bio
 const isFranchise = !isTeam
