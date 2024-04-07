@@ -5,6 +5,7 @@
 - [ ] fix links to team seasons that get rewritten
 - [ ] share links broken
 - [ ] cookie banner shows up repeatedly, use local storage
-- [ ] team profile redesign
 - [ ] trending dropdowns in hero
 - [ ] new homepage layout
+- [ ] bedrock cache
+- [ ] team profile redesign
