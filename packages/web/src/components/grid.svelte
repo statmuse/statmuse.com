@@ -215,7 +215,7 @@
         {@const { columns, rows, aggregations } = grid}
         {#if head}
           <thead>
-            <tr class="text-xs uppercase tracking-[0.07rem]">
+            <tr class="text-sm uppercase tracking-[0.07rem]">
               {#each columns as col, index (col.rowItemKey)}
                 <th
                   class={`cursor-pointer font-normal p-1.5 text-gray-5 ${applyStyles(
@@ -283,6 +283,7 @@
                             height={40}
                             alt={display}
                             class={imgClass(row[col.rowItemKey])}
+                            loading="lazy"
                           />
                         {/if}
                       {:else if col.hasImage}
@@ -294,6 +295,7 @@
                               height={16}
                               alt={display}
                               class={`${imgClass(row[col.rowItemKey])} mr-2.5`}
+                              loading="lazy"
                             />
                           {:else}
                             <div class="w-4 h-4 mr-2.5" />

@@ -13,6 +13,12 @@ export default {
       xl: '1280px',
     },
     extend: {
+      fontSize: {
+        sm: '0.77rem',
+        base: '1rem',
+        xl: '1.23rem',
+        '2xl': '2rem',
+      },
       colors: {
         primary: '#00c1d8',
         secondary: '#0086ff',
