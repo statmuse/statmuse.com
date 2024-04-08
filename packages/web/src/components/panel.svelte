@@ -39,15 +39,15 @@
   }`}
 >
   {#if entity}
-    <EntityLink {entity} class="font-semibold mb-2 text-inherit">
+    <EntityLink {entity} class="font-bold mb-2 text-inherit">
       {title}
     </EntityLink>
   {:else if href}
-    <a {href} class="font-semibold mb-2 text-inherit no-underline">
+    <a {href} class="font-bold mb-2 text-inherit no-underline">
       {title}
     </a>
   {:else if title}
-    <h3 class="font-semibold mb-2">{title}</h3>
+    <h3 class="font-bold mb-2">{title}</h3>
   {/if}
   <slot />
 </div>

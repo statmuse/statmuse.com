@@ -214,7 +214,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
     >
       <div class="text-center md:text-right">
         <EntityLink class="text-current" entity={homeTeam.entity}>
-          <h1 class="font-semibold md:text-3xl">
+          <h1 class="font-bold md:text-3xl">
             {homeTeam.name}
           </h1>
         </EntityLink>
@@ -234,13 +234,13 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       </EntityLink>
     </div>
     <div class="h-fit flex items-center gap-4 md:gap-8 mt-5 md:mt-0">
-      <p class="text-4xl font-semibold">
+      <p class="text-4xl font-bold">
         {homeTeam.score}
       </p>
       <p class="text-[0.8rem] uppercase tracking-[0.07rem] mx-4">
         {boxscoreData.completedGameStatus}
       </p>
-      <p class="text-4xl font-semibold">
+      <p class="text-4xl font-bold">
         {awayTeam.score}
       </p>
     </div>
@@ -249,7 +249,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
     >
       <div class="text-center md:text-left">
         <EntityLink class="text-current" entity={awayTeam.entity}>
-          <h1 class="font-semibold md:text-3xl">
+          <h1 class="font-bold md:text-3xl">
             {awayTeam.name}
           </h1>
         </EntityLink>
@@ -342,7 +342,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
         { text: 'Stats', href: '#stats' },
       ].map(({ href, text }, index) => (
         <a
-          class={`text-black text-3xl font-semibold shrink-0 hover:text-team-primary ${
+          class={`text-black text-3xl font-bold shrink-0 hover:text-team-primary ${
             index === 0 ? 'text-team-primary' : ''
           }`}
           {href}
@@ -355,7 +355,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
   <div class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 mb-5">
     <div>
       <div id="timeline" class="relative -top-[65px]"></div>
-      <p class="font-semibold text-[#b8b8b8]">Timeline</p>
+      <p class="font-bold text-[#b8b8b8]">Timeline</p>
       <div
         class="flex justify-between bg-team-primary text-team-secondary rounded py-1"
       >
@@ -532,7 +532,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
     </div>
     <div>
       <div id="lineups" class="relative -top-[65px]"></div>
-      <p class="font-semibold text-[#b8b8b8]">Lineups</p>
+      <p class="font-bold text-[#b8b8b8]">Lineups</p>
       {
         homeTeamStats.formation && awayTeamStats.formation && (
           <>
@@ -966,7 +966,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
     </div>
     <div>
       <div id="stats" class="relative -top-[65px]"></div>
-      <p class="font-semibold text-[#b8b8b8]">Stats</p>
+      <p class="font-bold text-[#b8b8b8]">Stats</p>
       <div
         class="flex justify-between bg-team-primary text-team-secondary rounded py-1"
       >
@@ -1183,7 +1183,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
           </div>
         )
       }
-      <p class="font-semibold text-[#b8b8b8] mt-5">Summary</p>
+      <p class="font-bold text-[#b8b8b8] mt-5">Summary</p>
       <p>{summary}</p>
     </div>
   </div>

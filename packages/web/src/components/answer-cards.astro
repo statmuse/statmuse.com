@@ -966,7 +966,7 @@ if (allowedDomains.includes(league) && teamId) {
   {
     teamSpecificPlayerCards && teamSpecificPlayerCards.team && (
       <div>
-        <h3 class="text-2xl font-semibold mb-1.5">{`More ${teamSpecificPlayerCards.team.nickname} Stats`}</h3>
+        <h2 class="text-xl font-bold mb-1.5">{`More ${teamSpecificPlayerCards.team.nickname} Stats`}</h2>
         <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
           {teamLeaders && teamLeaders.players.length > 0 && (
             <PlayerCardComponent
@@ -1070,7 +1070,7 @@ if (allowedDomains.includes(league) && teamId) {
                   </EntityLink>
                   <EntityLink
                     entity={teamLastGame.homeTeam.entity}
-                    class="font-semibold text-current whitespace-nowrap"
+                    class="font-bold text-current whitespace-nowrap"
                   >
                     {teamLastGame.homeTeam.shortName ||
                       teamLastGame.homeTeam.name}
@@ -1080,13 +1080,13 @@ if (allowedDomains.includes(league) && teamId) {
                   </p>
                 </div>
                 <div class="flex items-center gap-3 -mt-[38px] flex-shrink-0">
-                  <p class="text-2xl font-semibold">
+                  <p class="text-2xl font-bold">
                     {teamLastGame.homeTeam.score}
                   </p>
                   <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
                     {teamLastGame.completedGameStatus}
                   </p>
-                  <p class="text-2xl font-semibold">
+                  <p class="text-2xl font-bold">
                     {teamLastGame.awayTeam.score}
                   </p>
                 </div>
@@ -1103,7 +1103,7 @@ if (allowedDomains.includes(league) && teamId) {
                   </EntityLink>
                   <EntityLink
                     entity={teamLastGame.awayTeam.entity}
-                    class="font-semibold text-current whitespace-nowrap"
+                    class="font-bold text-current whitespace-nowrap"
                   >
                     {teamLastGame.awayTeam.shortName ||
                       teamLastGame.awayTeam.name}
@@ -1138,11 +1138,11 @@ if (allowedDomains.includes(league) && teamId) {
   {
     playerCardsResp && playerLeaderCards.length > 0 && (
       <div>
-        <h3 class="text-2xl font-semibold mb-1.5">
+        <h2 class="text-xl font-bold mb-1.5">
           {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
             playerCardsResp.seasonYearDisplay
           } ${domain === 'mlb' ? 'Batting ' : ''}Leaders`}
-        </h3>
+        </h2>
         <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
           {playerLeaderCards
             .filter((c) => c.players.length > 0)
@@ -1178,18 +1178,18 @@ if (allowedDomains.includes(league) && teamId) {
       playerLeaderCards.length > 0 &&
       pitchingLeaderCards.length > 0 && (
         <div>
-          <h3 class="text-3xl font-semibold mb-1.5">
+          <h2 class="text-xl font-bold mb-1.5">
             {`${league === 'fc' ? 'PL' : domain.toUpperCase()} ${
               playerCardsResp.seasonYearDisplay
             } Pitching Leaders`}
-          </h3>
+          </h2>
           <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
             {pitchingLeaderCards
               .filter((c) => c.players.length > 0)
               .map((card) => (
                 <div>
                   <div class="flex justify-between">
-                    <p class="font-semibold">{`${
+                    <p class="font-bold">{`${
                       playerCardsResp!.seasonType === 'postseason'
                         ? 'Playoff '
                         : ''
@@ -1238,9 +1238,9 @@ if (allowedDomains.includes(league) && teamId) {
   {
     teamCardsResp && teamRankingCards.length > 0 && (
       <div>
-        <h3 class="text-2xl font-semibold mb-1.5">
+        <h2 class="text-xl font-bold mb-1.5">
           {`${domainDisplay} ${teamCardsResp.seasonYearDisplay} Rankings`}
-        </h3>
+        </h2>
         <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
           {teamRankingCards.map((card) => (
             <TeamCardComponent
@@ -1274,9 +1274,9 @@ if (allowedDomains.includes(league) && teamId) {
       playerCardsResp.seasonType !== 'postseason' &&
       fantasyCards.length > 0 && (
         <div>
-          <h3 class="text-2xl font-semibold mb-1.5">
+          <h2 class="text-xl font-bold mb-1.5">
             {`${fantasyDisplay} ${playerCardsResp.seasonYearDisplay}`}
-          </h3>
+          </h2>
           <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
             {fantasyCards.map((card) => (
               <PlayerCardComponent
@@ -1312,11 +1312,11 @@ if (allowedDomains.includes(league) && teamId) {
   {
     teamCardsResp && bettingCards.length > 0 && (
       <div>
-        <h3 class="text-2xl font-semibold mb-1.5">
+        <h2 class="text-xl font-bold mb-1.5">
           {`${league === 'fc' ? 'Premier League' : domain.toUpperCase()} ${
             teamCardsResp.seasonYearDisplay
           } Betting`}
-        </h3>
+        </h2>
         <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
           {bettingCards.map((card) => (
             <TeamCardComponent
@@ -1337,9 +1337,9 @@ if (allowedDomains.includes(league) && teamId) {
   {
     standingsResp && standingsResp.teams && (
       <div>
-        <h3 class="text-2xl font-semibold mb-1.5">
+        <h2 class="text-xl font-bold mb-1.5">
           {`${domainDisplay} ${standingsResp.seasonYearDisplay} ${standingsDisplay}`}
-        </h3>
+        </h2>
         <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
           {Object.entries(groupBy(standingsResp.teams, 'conference.name')).map(
             ([_, teams]) => (
@@ -1373,9 +1373,9 @@ if (allowedDomains.includes(league) && teamId) {
       scoresResp &&
       scoresResp.games.length > 0 && (
         <div>
-          <h3 class="text-2xl font-semibold mb-1.5">
+          <h2 class="text-xl font-bold mb-1.5">
             {`${domainDisplay} ${scoresResp.seasonYearDisplay} Scores & Schedule`}
-          </h3>
+          </h2>
           <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
             <ScoresCard title="Scores" data={scoresResp} />
             <ScheduleCard title="Schedule" data={scheduleResp} />

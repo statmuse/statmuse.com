@@ -16,7 +16,7 @@ const Wrapper = firstLeader?.galleryImage.entity ? 'a' : 'div'
 <div class={Astro.props.class}>
   <div class="max-w-fit mx-0 my-auto">
     <div class="flex justify-between mb-0.5">
-      <h3 class="font-semibold text-team-primary">{title || 'Team Leaders'}</h3>
+      <h3 class="font-bold text-team-primary">{title || 'Team Leaders'}</h3>
       <slot />
     </div>
     <div class="flex gap-1.5">

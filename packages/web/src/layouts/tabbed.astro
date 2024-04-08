@@ -18,7 +18,7 @@ const { meta, prefixPath, pages, title, ...rest } = Astro.props
 
 <Layout {meta} colors={{ foreground: '#fff', background: '#00c1d8' }} {...rest}>
   <div class="pt-[54px] pb-10 md:pt-[90px] md:pb-16">
-    <h1 class="font-semibold text-2xl md:text-3xl">
+    <h1 class="font-bold text-2xl md:text-3xl">
       {title}
     </h1>
   </div>
@@ -30,7 +30,7 @@ const { meta, prefixPath, pages, title, ...rest } = Astro.props
             href={page.href}
             class={`flex items-center h-[50px] text-sm md:text-base text-white hover:no-underline hover:opacity-100 ${
               page.href.includes(prefixPath)
-                ? 'font-semibold opacity-100'
+                ? 'font-bold opacity-100'
                 : 'opacity-80'
             }`}
           >

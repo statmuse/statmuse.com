@@ -37,7 +37,7 @@ const productPages = [
       <div class="block md:hidden">
         <select
           id="select"
-          class="w-full font-semibold text-sm text-primary border border-[#e4e4e4] p-[0.5em]"
+          class="w-full font-bold text-sm text-primary border border-[#e4e4e4] p-[0.5em]"
         >
           {
             domains.map((domain) => (
@@ -60,7 +60,7 @@ const productPages = [
               class={`rounded-md hover:bg-[#f4f6f9] ${
                 ((domain === 'Premier League' && league === 'fc') ||
                   league === domain.toLowerCase()) &&
-                'font-semibold bg-[#f4f6f9]'
+                'font-bold bg-[#f4f6f9]'
               }`}
             >
               <a

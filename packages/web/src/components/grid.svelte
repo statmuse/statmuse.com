@@ -332,7 +332,7 @@
           {#if !limitRows || (limitRows && $session?.type === 'user' && $session.properties.subscriptionStatus === 'active')}
             {#if aggregations}
               {#each aggregations as row (row)}
-                <tr class="text-sm font-semibold">
+                <tr class="text-sm font-bold">
                   {#each columns as col, index (row[col.rowItemKey])}
                     {#if row[col.rowItemKey]}
                       {@const { display } = row[col.rowItemKey]}

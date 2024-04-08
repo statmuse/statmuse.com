@@ -15,19 +15,8 @@
 }
 
 @layer base {
-  :root {
-    --base-font-size: 16px;
-    --font-size-sm: 0.8rem;
-    --font-size-lg: 2rem;
-    --font-size-xlg: 3rem;
-    --font-weight-bold: 600;
-    --wide-letter-spacing: 0.07rem;
-    --sm-primary-color: #00c1d8;
-    --sm-secondary-color: #0086ff;
-    --primary-header-height: 64px;
-    --primary-header-height-mobile: 55px;
-    --search-bar-height: 53px;
-    --search-bar-height-mobile: 48px;
+  html {
+    font-size: 18px;
   }
 
   a {
@@ -36,126 +25,15 @@
   }
 }
 
-@layer components {
-  .nlg-answer {
-    a {
-      @apply underline;
-      @apply text-team-secondary;
-    }
+@layer components
 
-    & > p,
-    & > ul {
-      @apply my-[1em];
-    }
-  }
-
-  .main-layout {
-    @apply grid;
-    @apply grid-cols-[1fr_min(1250px,_100%)_1fr];
-    @apply w-full;
-    @apply px-3;
-    @apply md:px-[75px];
-
-    & > * {
-      @apply col-span-1;
-      @apply col-start-2;
-    }
-  }
-
-  .home-layout {
-    @apply grid;
-    @apply grid-cols-[auto_1fr];
-    @apply grid-rows-[auto_1fr_auto];
-
-    .sidebar {
-      @apply col-span-1;
-      @apply col-start-1;
-      @apply row-span-full;
-    }
-
-    .main {
-      @apply col-span-1;
-      @apply col-start-2;
-    }
-
-    .content-layout {
-      @apply grid;
-      @apply grid-cols-[1fr_min(780px,_calc(100%_-_20px))_1fr];
-
-      & > * {
-        @apply col-span-1;
-        @apply col-start-2;
-      }
-
-      .content-item-full {
-        @apply col-span-full;
-      }
-    }
-  }
-}
 
 input {
   padding: 0.5rem 0.75rem;
 }
 
-.btn-gallery-icon {
-  background: url('data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDA4NmZmIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCI+PHBhdGggZD0ibTIuMyAyLjNoOHY4aC04eiIvPjxwYXRoIGQ9Im0xMi41IDIuM2g4djhoLTh6Ii8+PHBhdGggZD0ibTIuMyAxMi41aDh2OGgtOHoiLz48cGF0aCBkPSJtMTIuNSAxMi41aDh2OGgtOHoiLz48L2c+PC9zdmc+Cg==');
-}
-
-.btn-money-icon {
-  background: url('data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDA4NmZmIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCI+PGNpcmNsZSBjeD0iOS44IiBjeT0iOS44IiByPSI3LjYiLz48cGF0aCBkPSJtMTUuMiAxNS4yIDUuMiA1LjIiLz48L2c+PC9zdmc+Cg==');
-}
-
-.group:hover {
-  .btn-gallery-icon {
-    background: url('data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiPjxwYXRoIGQ9Im0yLjMgMi4zaDh2OGgtOHoiLz48cGF0aCBkPSJtMTIuNSAyLjNoOHY4aC04eiIvPjxwYXRoIGQ9Im0yLjMgMTIuNWg4djhoLTh6Ii8+PHBhdGggZD0ibTEyLjUgMTIuNWg4djhoLTh6Ii8+PC9nPjwvc3ZnPgo=');
-  }
-
-  .btn-money-icon {
-    background: url('data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiPjxjaXJjbGUgY3g9IjkuOCIgY3k9IjkuOCIgcj0iNy42Ii8+PHBhdGggZD0ibTE1LjIgMTUuMiA1LjIgNS4yIi8+PC9nPjwvc3ZnPgo=');
-  }
-}
-
-.suggestion-nba-icon {
-  background: url('/icons/icon-nba.svg') center / contain;
-}
-
-.suggestion-nfl-icon {
-  background: url('/icons/icon-nfl.svg') center / contain;
-}
-
-.suggestion-mlb-icon {
-  background: url('/icons/icon-mlb.svg') center / contain;
-}
-
-.suggestion-nhl-icon {
-  background: url('/icons/icon-nhl.svg') center / contain;
-}
-
-.suggestion-pga-icon {
-  background: url('/icons/icon-pga.svg') center / contain;
-}
-
-.suggestion-epl-icon {
-  background: url('/icons/icon-epl.svg') center / contain;
-}
-
 .suggestion-history-icon {
   background: url('/icons/icon-history.svg') center / contain;
-}
-
-.suggestion-example-icon {
-  background: url('/finance/icons/icon-mag.svg') center / contain;
-}
-
-.container-open .input {
-  border-bottom-color: transparent;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.container-open .suggestions-container {
-  display: block;
 }
 
 /* ^^^^^^^ */
@@ -202,34 +80,6 @@ input {
   }
 }
 
-.about-stars-close-btn {
-  background-image: url('/about-stars/close_button.svg');
-}
-
-.about-stars-play-btn {
-  background-image: url('/about-stars/play_button.svg');
-}
-
-.star {
-  &:nth-of-type(5) {
-    @media screen and (max-width: 735px) {
-      display: none;
-    }
-  }
-
-  &:nth-of-type(6) {
-    @media screen and (max-width: 799px) {
-      display: none;
-    }
-  }
-
-  &:nth-of-type(7) {
-    @media screen and (max-width: 863px) {
-      display: none;
-    }
-  }
-}
-
 .explore-search-icon {
   background: url('data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjciIHZpZXdCb3g9IjAgMCAyMi43IDIyLjciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDBjMWQ4IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLXdpZHRoPSIyIj48Y2lyY2xlIGN4PSI5LjUiIGN5PSI5LjciIHI9IjcuMyIvPjxwYXRoIGQ9Im0xOS45IDIwLTUuMi01LjIiLz48L2c+PC9zdmc+Cg==')
     no-repeat center / contain;
@@ -241,7 +91,6 @@ input {
 }
 
 /* ads */
-
 .ad-wrapper {
   margin: 20px auto;
   width: 100%;
@@ -321,11 +170,11 @@ input {
     font-size: 2rem;
     line-height: 1.2;
 
-    @apply font-semibold;
+    @apply font-bold;
   }
 
   &-sub-header {
-    @apply font-semibold;
+    @apply font-bold;
     @apply text-xl;
 
     line-height: 1;
@@ -352,8 +201,4 @@ input {
       text-decoration: none;
     }
   }
-}
-
-.alert-icon {
-  background: url('/alert.svg') no-repeat center / contain;
 }
