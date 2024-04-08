@@ -4,7 +4,7 @@
 - [ ] new font
 - [ ] fix links to team seasons that get rewritten
 - [ ] share links broken
-- [ ] cookie banner shows up repeatedly, use local storage
+- [x] cookie banner shows up repeatedly, use local storage
 - [ ] trending dropdowns in hero
 - [ ] new homepage layout
 - [ ] bedrock cache

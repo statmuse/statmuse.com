@@ -438,7 +438,7 @@ const hasSupplement = hero?.hasSupplement
       </div>
       <Footer />
     </div>
-    <CookieConsent client:only="svelte" />
+    <CookieConsent client:only="svelte" transition:persist="cookie-banner" />
     {enableAdBanner && <AditudeAdAnchor client:only="svelte" />}
     <script>
       import { segment, getOrigin } from '@lib/analytics'
