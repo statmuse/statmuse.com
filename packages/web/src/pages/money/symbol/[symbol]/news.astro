@@ -27,7 +27,7 @@ Caching.swr(Astro)
     {
       news.map((newsItem) => (
         <div class="py-4">
-          <p class="text-xs text-[#969ca1]">
+          <p class="text-sm text-[#969ca1]">
             Yahoo Finance • {relativeTimeFromDates(newsItem.timestamp)}
           </p>
           <h3>
@@ -42,7 +42,7 @@ Caching.swr(Astro)
             </a>
           </p>
           {newsItem.relatedAssets.length ? (
-            <ul class="pt-3 space-x-2 text-xs flex flex-row flex-wrap">
+            <ul class="pt-3 space-x-2 text-sm flex flex-row flex-wrap">
               <h4 class="text-[#969ca1]">Mentioned: </h4>
               {newsItem.relatedAssets.map((related) => (
                 <li>

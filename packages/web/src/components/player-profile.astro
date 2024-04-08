@@ -894,7 +894,7 @@ const games = recentGames?.grid.rows.map((r, index) => ({
             />
             <div class="">
               <p class="whitespace-nowrap">{bio.usedName}</p>
-              <div class="flex items-center justify-between gap-2 text-xs text-gray-5">
+              <div class="flex items-center justify-between gap-2 text-sm text-gray-5">
                 <p class="whitespace-nowrap">
                   {formatDate(lastGame.DATE.value as string, 'MMM DD')}
                 </p>
@@ -954,7 +954,7 @@ const games = recentGames?.grid.rows.map((r, index) => ({
               <li class="-mx-3 px-3 border-b border-gray-6 dark:border-gray-4">
                 <div class="grid grid-cols-4 gap-2 justify-stretch items-end pb-2.5">
                   <div>
-                    <p class="text-xs text-gray-5">Next</p>
+                    <p class="text-sm text-gray-5">Next</p>
                     <div class="flex gap-1 items-center -mt-0.5">
                       <p class="whitespace-nowrap">
                         {isNextGameHome ? 'vs' : 'at'}
@@ -978,14 +978,14 @@ const games = recentGames?.grid.rows.map((r, index) => ({
                   </div>
                   <div class="col-span-3 grid grid-cols-5 gap-1">
                     <div class="whitespace-nowrap text-gray-5">
-                      <p class="text-xs">CAREER</p>
+                      <p class="text-sm">CAREER</p>
                       <p>{`${isNextGameHome ? 'vs' : 'at'} ${
                         nextGameOpponnent.abbreviation
                       }`}</p>
                     </div>
                     {nextGameData.stats?.map((stat) => (
                       <div class="text-gray-5 text-center">
-                        <p class="text-xs">{stat.key}</p>
+                        <p class="text-sm">{stat.key}</p>
                         <p class="">{stat.value}</p>
                       </div>
                     ))}
@@ -1007,7 +1007,7 @@ const games = recentGames?.grid.rows.map((r, index) => ({
                   }}
                 >
                   <div>
-                    <p class="text-xs text-gray-5 whitespace-nowrap">
+                    <p class="text-sm text-gray-5 whitespace-nowrap">
                       {formatDate(game.DATE.display, 'ddd, MMM DD')}
                     </p>
                     <div class="flex gap-1 items-center -mt-0.5">
@@ -1037,7 +1037,7 @@ const games = recentGames?.grid.rows.map((r, index) => ({
                   <div class="col-span-2 grid grid-cols-4 gap-1 text-center">
                     {stats?.map((stat) => (
                       <div>
-                        <p class="text-xs text-gray-5 whitespace-nowrap">
+                        <p class="text-sm text-gray-5 whitespace-nowrap">
                           {stat.key}
                         </p>
                         <p class="">{stat.value}</p>

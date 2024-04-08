@@ -397,7 +397,7 @@
     <div class="absolute bottom-5 left-1/2 -translate-x-1/2">
       <a
         href="/auth/signup"
-        class="flex gap-2 items-center w-fit py-3 px-4 bg-primary text-white text-lg rounded-2xl hover:no-underline"
+        class="flex gap-2 items-center w-fit py-3 px-4 bg-primary text-white text-xl rounded-2xl hover:no-underline"
       >
         <span class="shrink-0 mt-[1px]">Unlock 2x data</span>
         <svg

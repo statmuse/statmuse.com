@@ -83,7 +83,7 @@ const { card, title, href, entity } = Astro.props
               {player.stat && <p>{subTitle(player.stat)}</p>}
               <h3 class="text-2xl">{player.statDisplayValue}</h3>
               {player.entity ? (
-                <p class="uppercase text-xs tracking-[0.07rem]">
+                <p class="uppercase text-sm tracking-[0.07rem]">
                   {lastName(player.entity.display)}
                 </p>
               ) : null}

@@ -59,7 +59,7 @@ const awayTeamUrl = awayTeam.entity ? getUrlForEntity(awayTeam.entity) : ''
             <h1 class="font-semibold text-2xl md:text-3xl">{awayTeam.name}</h1>
           )
         }
-        <p class="font-semibold md:text-xl">{awayTeam.record}</p>
+        <p class="font-semibold md:text-2xl">{awayTeam.record}</p>
       </div>
       <h2 class="font-semibold text-5xl">{awayTeam.score}</h2>
     </div>
@@ -86,7 +86,7 @@ const awayTeamUrl = awayTeam.entity ? getUrlForEntity(awayTeam.entity) : ''
             <h1 class="font-semibold text-2xl md:text-3xl">{homeTeam.name}</h1>
           )
         }
-        <p class="font-semibold md:text-xl">{homeTeam.record}</p>
+        <p class="font-semibold md:text-2xl">{homeTeam.record}</p>
       </div>
       <h2 class="font-semibold text-5xl">{homeTeam.score}</h2>
     </div>
@@ -95,11 +95,11 @@ const awayTeamUrl = awayTeam.entity ? getUrlForEntity(awayTeam.entity) : ''
     {
       boxScoreData.summary.columns.map((column) => (
         <div class="first:flex-1 divide-y divide-[#e4e4e4] text-center first:text-left">
-          <p class="p-2.5 text-xs md:text-base text-[#a8a8a8]">
+          <p class="p-2.5 text-sm md:text-base text-[#a8a8a8]">
             {column.title}
           </p>
           {boxScoreData.summary.rows.map((row) => (
-            <p class="p-2.5 text-xs md:text-base font-semibold">
+            <p class="p-2.5 text-sm md:text-base font-semibold">
               {row[column.rowItemKey].entity ? (
                 <a
                   title={row[column.rowItemKey].display}

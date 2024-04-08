@@ -326,7 +326,7 @@ input {
 
   &-sub-header {
     @apply font-semibold;
-    @apply text-lg;
+    @apply text-xl;
 
     line-height: 1;
   }
