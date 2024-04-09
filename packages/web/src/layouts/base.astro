@@ -79,6 +79,11 @@ const canonicalUrl = meta?.canonical
 
 <html lang="en">
   <head>
+    {
+      import.meta.env.PUBLIC_STAGE !== 'production' && (
+        <meta name="robots" content="noindex" />
+      )
+    }
     <meta charset="utf-8" />
     <meta name="color-scheme" content="light only" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
