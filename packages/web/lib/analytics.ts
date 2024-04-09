@@ -30,6 +30,7 @@ export type AnalyticsPageviewProperties = {
   page_type?:
     | 'ask'
     | 'asset'
+    | 'error'
     | 'game'
     | 'home'
     | 'musing'

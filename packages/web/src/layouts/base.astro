@@ -373,8 +373,8 @@ const canonicalUrl = meta?.canonical
         if (!subject) return {}
         return {
           subject_image: subject.imageUrl,
-          subject_background_color: subject.colors.background,
-          subject_foreground_color: subject.colors.foreground,
+          subject_background_color: subject.colors?.background,
+          subject_foreground_color: subject.colors?.foreground,
         }
       }
 

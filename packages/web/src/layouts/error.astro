@@ -44,6 +44,7 @@ const {
   fantasy,
   image = sample(images),
   enableAdBanner,
+  analytics = {},
 } = Astro.props
 
 if (render) {
@@ -57,6 +58,10 @@ if (render) {
       {...Astro.props}
       colors={{ foreground: '#fff', background: '#0086ff' }}
       {enableAdBanner}
+      analytics={{
+        ...analytics,
+        page_type: 'error',
+      }}
     >
       <Header {query} {money} {fantasy} />
       <Hero content={message} imageUrl={image?.url} imageAlt={image?.alt} />
