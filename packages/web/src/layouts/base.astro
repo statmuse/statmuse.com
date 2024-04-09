@@ -404,9 +404,7 @@ const hasSupplement = hero?.hasSupplement
                     }}
                   >
                     <TwitterShare shareUrl={Astro.url.href} />
-                    {hero?.shareUrl ? (
-                      <AnswerShare onlyIcon url={hero?.shareUrl} />
-                    ) : null}
+                    {hero?.share ? <AnswerShare {...hero.share} /> : null}
                   </div>
                   {parameters && (
                     <GridDropdown

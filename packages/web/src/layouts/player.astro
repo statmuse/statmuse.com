@@ -131,7 +131,10 @@ const navProps: ComponentProps<typeof Nav> = {
     imageAlt: bustImageAlt,
     affiliation: bio.team?.nickname || bio.team?.name,
     affiliationUrl: teamUrl,
-    shareUrl,
+    share: {
+      type: 'profile',
+      url: shareUrl,
+    },
   }}
   class={Astro.props.class}
 >

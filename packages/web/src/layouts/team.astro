@@ -223,7 +223,10 @@ const navProps: ComponentProps<typeof Nav> = {
           href: teamFranchiseUrl,
         }
       : undefined,
-    shareUrl,
+    share: {
+      type: 'profile',
+      url: shareUrl,
+    },
   }}
   {navProps}
   {parameters}
