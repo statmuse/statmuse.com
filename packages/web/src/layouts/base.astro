@@ -378,8 +378,11 @@ const canonicalUrl = meta?.canonical
         }
       }
 
+      // initialize referrer var
+      let referrer: string | undefined
+
       // default page tracking
-      segment.page()
+      segment.page(referrer ? { referrer } : {})
 
       // custom Pageview event
       const eventProps = document.querySelector<HTMLMetaElement>(
@@ -394,14 +397,18 @@ const canonicalUrl = meta?.canonical
           subject,
           ...props
         } = JSON.parse(eventProps)
-        segment.track('Pageview', {
-          ...props,
-          ...flattenObj('disposition', disposition),
-          ...flattenObj('tokenizationScore', tokenizationScore),
-          ...getReferenceIds(contentReference),
-          ...getSubjectItems(subject),
-          origin: getOrigin(navigator.userAgent),
-        })
+        segment.track(
+          'Pageview',
+          {
+            ...props,
+            ...flattenObj('disposition', disposition),
+            ...flattenObj('tokenizationScore', tokenizationScore),
+            ...getReferenceIds(contentReference),
+            ...getSubjectItems(subject),
+            origin: getOrigin(navigator.userAgent),
+          },
+          referrer ? { page: { referrer } } : {},
+        )
 
         var tude = window.tude || { cmd: [] }
         tude.cmd.push(function () {
@@ -411,11 +418,13 @@ const canonicalUrl = meta?.canonical
         })
       }
 
+      referrer = window.location.href
+
       // hack: 'astro:page-load' does not fire consistently
       // TODO: move into astro:page-load callback
       document.addEventListener('astro:after-swap', async () => {
         // default page tracking
-        segment.page()
+        segment.page(referrer ? { referrer } : {})
 
         // custom Pageview event
         const eventProps = document.querySelector<HTMLMetaElement>(
@@ -430,14 +439,18 @@ const canonicalUrl = meta?.canonical
             subject,
             ...props
           } = JSON.parse(eventProps)
-          segment.track('Pageview', {
-            ...props,
-            ...flattenObj('disposition', disposition),
-            ...flattenObj('tokenizationScore', tokenizationScore),
-            ...getReferenceIds(contentReference),
-            ...getSubjectItems(subject),
-            origin: getOrigin(navigator.userAgent),
-          })
+          segment.track(
+            'Pageview',
+            {
+              ...props,
+              ...flattenObj('disposition', disposition),
+              ...flattenObj('tokenizationScore', tokenizationScore),
+              ...getReferenceIds(contentReference),
+              ...getSubjectItems(subject),
+              origin: getOrigin(navigator.userAgent),
+            },
+            referrer ? { page: { referrer } } : {},
+          )
 
           var tude = window.tude || { cmd: [] }
           tude.cmd.push(function () {
@@ -446,6 +459,8 @@ const canonicalUrl = meta?.canonical
             })
           })
         }
+
+        referrer = window.location.href
       })
 
       document.addEventListener('astro:page-load', async () => {
