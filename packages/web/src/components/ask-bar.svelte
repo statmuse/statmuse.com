@@ -4,7 +4,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { throttle, uniqBy } from 'lodash-es'
-  import { session } from '@lib/session-store'
+  import { session } from '@lib/stores'
   import type { AskDocument } from '@statmuse/core/elastic'
   import { isMobileTest } from '@lib/useragent'
   import Icon from '@components/icon.svelte'

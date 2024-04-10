@@ -14,11 +14,12 @@ import Header from '@components/header.astro'
 import type { ComponentProps } from 'astro/types'
 import type { GameraParameter } from '@statmuse/core/gamera'
 import GridDropdown from '@components/grid-dropdown.astro'
-import AnswerShare from '@components/answer-share.astro'
 import TwitterShare from '@components/icons/twitter.astro'
 import type { HeroProps } from '@lib/props'
 import { marked } from 'marked'
 import MenuLinks from '@components/menu-links.astro'
+import Share from '@components/share/index.svelte'
+import ShareModal from '@components/share/modal.svelte'
 
 interface Props extends ComponentProps<typeof Header> {
   meta?: Metadata
@@ -404,9 +405,7 @@ const hasSupplement = hero?.hasSupplement
                     }}
                   >
                     <TwitterShare shareUrl={Astro.url.href} />
-                    {hero?.shareUrl ? (
-                      <AnswerShare onlyIcon url={hero?.shareUrl} />
-                    ) : null}
+                    {hero?.share ? <Share client:load {...hero.share} /> : null}
                   </div>
                   {parameters && (
                     <GridDropdown
@@ -439,11 +438,12 @@ const hasSupplement = hero?.hasSupplement
       <Footer />
     </div>
     <CookieConsent client:only="svelte" transition:persist="cookie-banner" />
+    {hero?.share && <ShareModal client:load {...hero.share} />}
     {enableAdBanner && <AditudeAdAnchor client:only="svelte" />}
     <script>
       import { segment, getOrigin } from '@lib/analytics'
       import type { Session } from '@lib/session'
-      import { session as sessionStore } from '@lib/session-store'
+      import { session as sessionStore } from '@lib/stores'
       import type { ContentReference, Subject } from '@statmuse/core/gamera'
       import type { ContentReference as KanedamaContentReference } from '@statmuse/core/kanedama'
 

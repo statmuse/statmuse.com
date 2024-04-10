@@ -110,7 +110,16 @@ const hasSupplement = !!columnChart
   {query}
   {conversationToken}
   {preferredDomain}
-  hero={{ ...heroProps, hasSupplement, shareUrl }}
+  hero={{
+    ...heroProps,
+    hasSupplement,
+    share: {
+      type: 'ask',
+      query,
+      domain: preferredDomain,
+      shortCode: code?.short_code,
+    },
+  }}
 >
   <div class="h-[50px] md:h-[90px] mb-1.5 flex justify-center items-center">
     <AditudeAdBanner client:only="svelte" />

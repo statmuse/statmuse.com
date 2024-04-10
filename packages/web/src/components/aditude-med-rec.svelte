@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { session } from '@lib/session-store'
+  import { session } from '@lib/stores'
   import { isMobileTest } from '@lib/useragent'
   import { afterUpdate, onMount } from 'svelte'
 

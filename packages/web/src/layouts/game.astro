@@ -87,7 +87,7 @@ const meta = {
     imageAlt: subject.entities
       ? subject.entities[0].display
       : `${preferredDomain} image`,
-    shareUrl: Astro.url.href,
+    share: { url: Astro.url.href },
   }}
 >
   <div class="h-[50px] md:h-[90px] mb-1.5 flex justify-center items-center">

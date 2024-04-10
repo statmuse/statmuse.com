@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { session } from '@lib/session-store'
+  import { session } from '@lib/stores'
 
   const consent = () => {
     fetch(`/auth/cookie-consent`, {

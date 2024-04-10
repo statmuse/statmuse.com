@@ -8,7 +8,12 @@ export type HeroProps = {
   answered?: string
   markdown?: boolean
   html?: boolean
-  audioUrl?: string
-  shareUrl?: string
   hasSupplement?: boolean
+  share?: {
+    type?: 'ask' | 'musing' | 'profile'
+    shortCode?: string
+    url?: string
+    query?: string
+    domain?: string
+  }
 }

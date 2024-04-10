@@ -30,7 +30,7 @@ const background = musing.background_rgba
   : undefined
 
 const heroProps = getHeroProps({ imageAlt: query, musing })
-console.log("heroProps", heroProps)
+console.log('heroProps', heroProps)
 
 const meta = {
   title: title(query),
@@ -73,7 +73,15 @@ Caching.swr(Astro)
   {query}
   {conversationToken}
   {preferredDomain}
-  hero={heroProps}
+  hero={{
+    ...heroProps,
+    share: {
+      type: 'musing',
+      domain: musing.domain.toLowerCase(),
+      shortCode: musing.short_code,
+      query,
+    },
+  }}
 >
   <!-- { -->
   <!--   heroProps ? ( -->
@@ -98,8 +106,8 @@ Caching.swr(Astro)
           contentReference?.questionTags?.teamIds.length > 0
             ? contentReference?.questionTags?.teamIds[0]
             : contentReference?.answerTags?.teamIds.length > 0
-              ? contentReference?.answerTags?.teamIds[0]
-              : undefined
+            ? contentReference?.answerTags?.teamIds[0]
+            : undefined
         }
       />
     ) : null

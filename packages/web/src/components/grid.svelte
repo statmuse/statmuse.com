@@ -4,7 +4,7 @@
 <script lang="ts">
   import type { ComponentProps } from 'svelte'
   import { orderBy, some } from 'lodash-es'
-  import { session } from '@lib/session-store'
+  import { session } from '@lib/stores'
   import type { GameraGrid } from '@statmuse/core/gamera'
   import EntityLink from '@components/entity-link.svelte'
   import Image from '@components/image.svelte'

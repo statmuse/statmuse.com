@@ -92,6 +92,12 @@ const navProps: ComponentProps<typeof Nav> = {
     content: profile.asset.canonicalName,
     imageUrl: bustImageUrl,
     imageAlt: bustImageAlt,
+    share: {
+      type: 'profile',
+      url: meta?.canonical?.url
+        ? Astro.url.origin + meta.canonical.url
+        : Astro.url.href,
+    },
   }}
   {navProps}
 >
