@@ -20,12 +20,12 @@
     on:click={onClickClose}
   >
     <div
-      class="bg-white w-[98%] max-w-[500px] absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-[#333] px-3 py-6 sm:p-6 text-left"
+      class="w-[98%] max-w-[500px] absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-[#333] rounded-2xl px-3 py-2 overflow-clip bg-gray-7 dark:bg-gray-2 text-inherit border border-gray-6 dark:border-none text-left"
       on:click|stopPropagation
     >
       <Icon
         name="x"
-        class="w-4 h-4 absolute top-6 right-3 sm:right-6 cursor-pointer"
+        class="w-4 h-4 absolute top-2 right-3 cursor-pointer"
         alt="close"
         on:click={onClickClose}
       />
@@ -40,7 +40,11 @@
             rel="noopener noreferrer"
             data-track-click="Click Musing Share Link"
           >
-            <img src="" class="w-7 h-7 object-contain" alt="Facebook" />
+            <img
+              src="/share-icons/facebook-light.svg"
+              class="w-7 h-7 object-contain"
+              alt="Facebook"
+            />
           </a>
           Facebook
         </div>
@@ -48,19 +52,23 @@
           <a
             href=""
             class="flex items-center justify-center w-16 h-16 my-1 mx-2.5 rounded-full"
-            style:background="#3C5A99"
+            style:background="#1DA1F2"
             target="_blank"
             rel="noopener noreferrer"
             data-track-click="Click Musing Share Link"
           >
-            <img src="" class="w-7 h-7 object-contain" alt="Twitter" />
+            <img
+              src="/share-icons/twitter-light.svg"
+              class="w-7 h-7 object-contain"
+              alt="Twitter"
+            />
           </a>
           Twitter
         </div>
       </div>
       <div class="relative my-5 cursor-pointer">
         <input
-          class="w-full h-[42px] outline-none cursor-pointer px-4 pr-[70px] text-sm bg-[#fbfbfb] border border-[#e4e4e4] overflow-auto"
+          class="w-full h-[42px] dark:bg-gray-3 border border-gray-6 dark:border-transparent rounded-2xl outline-none cursor-pointer px-4 pr-[70px] text-sm overflow-auto"
           type="text"
           value=""
           readonly
