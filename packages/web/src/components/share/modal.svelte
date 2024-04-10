@@ -4,14 +4,43 @@
 <script lang="ts">
   import Icon from '@components/icon.svelte'
   import { isShareModalOpen } from '@lib/stores'
+  import { createAskPath } from '@statmuse/core/path'
+  import { onMount } from 'svelte'
 
   type ShareType = 'profile' | 'ask' | 'musing'
   export let type: ShareType = 'profile'
-  export let url: string
-  export let query: string
-  export let domain: string
+  export let shortCode: string | undefined
+  export let url: string | undefined
+  export let query: string = ''
+  export let domain: string = ''
 
-  const onClickClose = () => isShareModalOpen.set(!$isShareModalOpen)
+  let shareUrl: string
+  let shortLinkUrl: string
+  let checked = false
+
+  onMount(() => {
+    shareUrl =
+      url || `${window.location.origin}${createAskPath({ domain, query })}`
+    shortLinkUrl = shortCode
+      ? `${
+          import.meta.env.SHORT_LINK_URL || 'http://localhost:3000/'
+        }e/${shortCode}`
+      : ''
+  })
+
+  const onClickClose = () => {
+    isShareModalOpen.set(!$isShareModalOpen)
+    checked = false
+  }
+
+  $: shareLink =
+    type == 'musing'
+      ? !checked
+        ? shortLinkUrl
+        : shareUrl
+      : checked
+      ? shortLinkUrl
+      : shareUrl
 </script>
 
 {#if $isShareModalOpen}
@@ -33,7 +62,8 @@
       <div class="flex">
         <div style:text-align="center" style:font-size="14px">
           <a
-            href=""
+            href={'https://www.facebook.com/sharer/sharer.php?' +
+              new URLSearchParams({ u: shareLink }).toString()}
             class="flex items-center justify-center w-16 h-16 my-1 mx-2.5 rounded-full"
             style:background="#3C5A99"
             target="_blank"
@@ -50,7 +80,8 @@
         </div>
         <div style:text-align="center" style:font-size="14px">
           <a
-            href=""
+            href={'https://twitter.com/share?' +
+              new URLSearchParams({ url: shareLink }).toString()}
             class="flex items-center justify-center w-16 h-16 my-1 mx-2.5 rounded-full"
             style:background="#1DA1F2"
             target="_blank"
@@ -70,7 +101,7 @@
         <input
           class="w-full h-[42px] dark:bg-gray-3 border border-gray-6 dark:border-transparent rounded-2xl outline-none cursor-pointer px-4 pr-[70px] text-sm overflow-auto"
           type="text"
-          value=""
+          value={shareLink}
           readonly
           data-share-input
         />
@@ -86,19 +117,21 @@
         />
         <div style="display: flex; align-items: center">
           <input
+            on:change={() => {
+              checked = !checked
+            }}
             id="share-checkbox"
             type="checkbox"
-            class="appearance-none p-0 bg-white checked:bg-primary border-2 border-primary rounded-sm w-5 h-5 mr-2.5 cursor-pointer flex items-center justify-center after:content-['✓'] after:text-white"
+            class="appearance-none p-0 bg-white dark:bg-gray-2 checked:bg-primary border-2 border-primary rounded-sm w-[20px] h-[20px] mr-2.5 cursor-pointer flex items-center justify-center after:content-['✓']"
+            class:after:text-white={checked}
+            class:after:text-transparent={!checked}
           />
-          <label
-            for="share-checkbox"
-            style="color: #d1d1d1; fontSize: 14px; cursor: pointer"
-          >
-            Keep Answer Updated
+          <label for="share-checkbox" style="font-size: 14px; cursor: pointer">
+            {type === 'ask' ? 'Shorten link' : 'Keep answer updated'}
           </label>
         </div>
-        <p style="margin-top: 1em; font-size: 14px; color: #d1d1d1">
-          {type === 'musing'
+        <p style="margin-top: 1em; font-size: 14px">
+          {type === 'musing' && !checked
             ? 'This answer is static and will not update'
             : 'This answer is live and will keep updating'}
         </p>
