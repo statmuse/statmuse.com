@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import Icon from '@components/icon.svelte'
   import { isMobileTest } from '@lib/useragent'
   import { createAskPath } from '@statmuse/core/path'
@@ -8,7 +9,10 @@
   export let query: string
   export let domain: string
 
-  const mobile = isMobileTest(navigator.userAgent)
+  let mobile = false
+  onMount(() => {
+    mobile = isMobileTest(navigator.userAgent)
+  })
 
   const clickHandler = () => {
     if (mobile && navigator.share) {
@@ -23,8 +27,4 @@
   }
 </script>
 
-<Icon
-  name="share"
-  class="w-5 h-5 cursor-pointer"
-  on:click|preventDefault={clickHandler}
-/>
+<Icon name="share" class="w-5 h-5 cursor-pointer" on:click={clickHandler} />
