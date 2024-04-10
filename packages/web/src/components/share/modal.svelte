@@ -1,3 +1,6 @@
+<!-- svelte-ignore a11y-invalid-attribute -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <script lang="ts">
   import Icon from '@components/icon.svelte'
   import { isShareModalOpen } from '@lib/stores'
@@ -7,17 +10,24 @@
   export let url: string
   export let query: string
   export let domain: string
+
+  const onClickClose = () => isShareModalOpen.set(!$isShareModalOpen)
 </script>
 
 {#if $isShareModalOpen}
-  <div class="fixed w-full h-full top-0 left-0 z-[10] bg-black/40">
+  <div
+    class="fixed w-full h-full top-0 left-0 z-[10] bg-black/40"
+    on:click={onClickClose}
+  >
     <div
       class="bg-white w-[98%] max-w-[500px] absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-[#333] px-3 py-6 sm:p-6 text-left"
+      on:click|stopPropagation
     >
       <Icon
         name="x"
-        class="w-4 h-4 absolute top-6 right-3 sm:right-6"
+        class="w-4 h-4 absolute top-6 right-3 sm:right-6 cursor-pointer"
         alt="close"
+        on:click={onClickClose}
       />
       <p class="mb-4">Share a link to this question</p>
       <div class="flex">
