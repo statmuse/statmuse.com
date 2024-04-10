@@ -17,6 +17,7 @@
   let shareUrl: string
   let shortLinkUrl: string
   let checked = false
+  let copied = false
 
   onMount(() => {
     shareUrl =
@@ -31,6 +32,17 @@
   const onClickClose = () => {
     isShareModalOpen.set(!$isShareModalOpen)
     checked = false
+    copied = false
+  }
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(shareLink)
+      copied = true
+      // window.segment.track('Copy Musing Share Link', {
+      //   href: input.value,
+      // })
+    } catch (err) {}
   }
 
   $: shareLink =
@@ -103,12 +115,12 @@
           type="text"
           value={shareLink}
           readonly
-          data-share-input
+          on:click={copyToClipboard}
         />
         <span
           class="absolute top-1/2 right-4 -translate-y-1/2 text-primary font-bold text-sm"
         >
-          COPY
+          {copied ? 'COPIED' : 'COPY'}
         </span>
       </div>
       {#if type !== 'profile'}
@@ -119,6 +131,7 @@
           <input
             on:change={() => {
               checked = !checked
+              copied = false
             }}
             id="share-checkbox"
             type="checkbox"
