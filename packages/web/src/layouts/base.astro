@@ -19,6 +19,7 @@ import type { HeroProps } from '@lib/props'
 import { marked } from 'marked'
 import MenuLinks from '@components/menu-links.astro'
 import Share from '@components/share/index.svelte'
+import ShareModal from '@components/share/modal.svelte'
 
 interface Props extends ComponentProps<typeof Header> {
   meta?: Metadata
@@ -404,7 +405,7 @@ const hasSupplement = hero?.hasSupplement
                     }}
                   >
                     <TwitterShare shareUrl={Astro.url.href} />
-                    {hero?.share ? <Share {...hero.share} /> : null}
+                    {hero?.share ? <Share client:load {...hero.share} /> : null}
                   </div>
                   {parameters && (
                     <GridDropdown
@@ -437,6 +438,7 @@ const hasSupplement = hero?.hasSupplement
       <Footer />
     </div>
     <CookieConsent client:only="svelte" transition:persist="cookie-banner" />
+    <ShareModal client:load />
     {enableAdBanner && <AditudeAdAnchor client:only="svelte" />}
     <script>
       import { segment, getOrigin } from '@lib/analytics'
