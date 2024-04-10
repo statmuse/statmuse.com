@@ -39,10 +39,16 @@
     try {
       await navigator.clipboard.writeText(shareLink)
       copied = true
-      // window.segment.track('Copy Musing Share Link', {
-      //   href: input.value,
-      // })
+      window.segment.track('Copy Musing Share Link', {
+        href: shareLink,
+      })
     } catch (err) {}
+  }
+
+  const onClickTracking = (e) => {
+    window.segment.track('Click Musing Share Link', {
+      href: e.target.href,
+    })
   }
 
   $: shareLink =
@@ -80,7 +86,7 @@
             style:background="#3C5A99"
             target="_blank"
             rel="noopener noreferrer"
-            data-track-click="Click Musing Share Link"
+            on:click={onClickTracking}
           >
             <img
               src="/share-icons/facebook-light.svg"
@@ -98,7 +104,7 @@
             style:background="#1DA1F2"
             target="_blank"
             rel="noopener noreferrer"
-            data-track-click="Click Musing Share Link"
+            on:click={onClickTracking}
           >
             <img
               src="/share-icons/twitter-light.svg"
