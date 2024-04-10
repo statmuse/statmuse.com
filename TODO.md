@@ -3,7 +3,7 @@
 - [ ] missing stats on player profiles
 - [ ] new font
 - [ ] fix links to team seasons that get rewritten
-- [ ] share links broken
+- [x] share links broken
 - [x] cookie banner shows up repeatedly, use local storage
 - [ ] trending dropdowns in hero
 - [ ] new homepage layout
