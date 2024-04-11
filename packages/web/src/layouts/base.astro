@@ -449,7 +449,7 @@ const canonicalUrl = meta?.canonical
           'meta[name="analytics:event:properties"]',
         )?.content
 
-        const { page_type, page_domain } = JSON.parse(eventProps)
+        const { page_type, page_domain, is_search } = JSON.parse(eventProps)
 
         window.segment.track(
           'Time On Page',
@@ -458,6 +458,7 @@ const canonicalUrl = meta?.canonical
             timeSpent,
             page_type,
             page_domain,
+            is_search,
           },
           { page: { referrer } },
         )
@@ -465,14 +466,14 @@ const canonicalUrl = meta?.canonical
         timeSpent = 0
       }
 
-      document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-          // Page is not visible, pause the timer and calculate timeSpent
-          timeSpent += (Date.now() - startTime) / 1000
-        } else {
-          // Page became visible again, resume the timer
-          startTime = Date.now()
-        }
+      window.addEventListener('blur', () => {
+        // Page is not visible, pause the timer and calculate timeSpent
+        timeSpent += (Date.now() - startTime) / 1000
+      })
+
+      window.addEventListener('focus', () => {
+        // Page became visible again, resume the timer
+        startTime = Date.now()
       })
 
       document.addEventListener('beforeunload', trackTimeOnPage)
