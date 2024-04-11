@@ -464,6 +464,10 @@ const canonicalUrl = meta?.canonical
 
       document.addEventListener('beforeunload', trackTimeOnPage)
 
+      document.addEventListener('astro:after-swap', () => {
+        trackTimeOnPage()
+      })
+
       document.addEventListener('astro:page-load', async () => {
         maybeRewriteUrl(window, document)
 
@@ -503,8 +507,6 @@ const canonicalUrl = meta?.canonical
             })
           })
         }
-
-        trackTimeOnPage()
 
         referrer = window.location.href
       })
