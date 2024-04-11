@@ -443,16 +443,29 @@ const canonicalUrl = meta?.canonical
       const trackTimeOnPage = () => {
         const endTime = Date.now()
         timeSpent += (endTime - startTime) / 1000
-        window.segment.track('Time On Page', {
-          sessionId,
-          timeSpent,
-        })
+
+        // custom Pageview event
+        const eventProps = document.querySelector<HTMLMetaElement>(
+          'meta[name="analytics:event:properties"]',
+        )?.content
+
+        const { page_type, page_domain } = JSON.parse(eventProps)
+
+        window.segment.track(
+          'Time On Page',
+          {
+            sessionId,
+            timeSpent,
+            page_type,
+            page_domain,
+          },
+          { page: { referrer } },
+        )
         startTime = endTime
         timeSpent = 0
       }
 
       document.addEventListener('visibilitychange', () => {
-        console.log('cmd + tab away')
         if (document.hidden) {
           // Page is not visible, pause the timer and calculate timeSpent
           timeSpent += (Date.now() - startTime) / 1000
