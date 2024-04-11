@@ -430,6 +430,40 @@ const canonicalUrl = meta?.canonical
       // initialize referrer var
       let referrer: string | undefined
 
+      let sessionId: string | null
+      let startTime = Date.now()
+      let timeSpent = 0
+
+      sessionId = sessionStorage.getItem('sessionId')
+      if (!sessionId) {
+        sessionId = crypto.randomUUID()
+        sessionStorage.setItem('sessionId', sessionId)
+      }
+
+      const trackTimeOnPage = () => {
+        const endTime = Date.now()
+        timeSpent += (endTime - startTime) / 1000
+        window.segment.track('Time On Page', {
+          sessionId,
+          timeSpent,
+        })
+        startTime = endTime
+        timeSpent = 0
+      }
+
+      document.addEventListener('visibilitychange', () => {
+        console.log('cmd + tab away')
+        if (document.hidden) {
+          // Page is not visible, pause the timer and calculate timeSpent
+          timeSpent += (Date.now() - startTime) / 1000
+        } else {
+          // Page became visible again, resume the timer
+          startTime = Date.now()
+        }
+      })
+
+      document.addEventListener('beforeunload', trackTimeOnPage)
+
       document.addEventListener('astro:page-load', async () => {
         maybeRewriteUrl(window, document)
 
@@ -469,6 +503,8 @@ const canonicalUrl = meta?.canonical
             })
           })
         }
+
+        trackTimeOnPage()
 
         referrer = window.location.href
       })
