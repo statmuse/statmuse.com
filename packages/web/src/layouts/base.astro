@@ -312,6 +312,55 @@ const canonicalUrl = meta?.canonical
       import type { ContentReference, Subject } from '@statmuse/core/gamera'
       import type { ContentReference as KanedamaContentReference } from '@statmuse/core/kanedama'
 
+      /**
+       * Given window and document, add or remove "selected" class to league nav
+       * links if current window location matches nav href. Note that the argument
+       * tests are more comprehensive to protect functions downstream of this.
+       *
+       * @param {Window} win - DOM window
+       * @param {Element} ctag - Node Element with data for canonical link
+       *
+       */
+      const shouldRewriteUrl = (win: Window, ctag: HTMLLinkElement) => {
+        return (
+          win instanceof Window &&
+          win.history instanceof History &&
+          win.location instanceof Location &&
+          ctag.href !== win.location.href &&
+          ctag.dataset.shouldRewrite === 'true'
+        )
+      }
+
+      /**
+       * Rewrite URL.
+       *
+       * @param {Window} win - DOM window
+       * @param {HTMLDocument} doc - DOM document
+       * @param {String} newUrl - Destination URL
+       *
+       */
+      const rewriteUrl = (win: Window, doc: Document, newUrl: string) =>
+        win.history.replaceState(null, doc.title, newUrl)
+
+      /**
+       * Given window and document, get canonical link tag and check if URL should be
+       * rewritten, in which case call rewriteUrl and updateLeagueNav.
+       *
+       * @param {Window} win - DOM window
+       * @param {HTMLDocument} doc - DOM document
+       *
+       */
+      const maybeRewriteUrl = (win: Window, doc: Document) => {
+        const canonicalTag = doc.querySelector(
+          'link[rel="canonical"]',
+        ) as HTMLLinkElement | null
+        if (!canonicalTag) return
+
+        if (shouldRewriteUrl(win, canonicalTag)) {
+          rewriteUrl(win, doc, canonicalTag.href)
+        }
+      }
+
       const flattenObj = (key: string, obj?: {}) => {
         return !obj
           ? {}
@@ -381,48 +430,9 @@ const canonicalUrl = meta?.canonical
       // initialize referrer var
       let referrer: string | undefined
 
-      // default page tracking
-      segment.page(referrer ? { referrer } : {})
+      document.addEventListener('astro:page-load', async () => {
+        maybeRewriteUrl(window, document)
 
-      // custom Pageview event
-      const eventProps = document.querySelector<HTMLMetaElement>(
-        'meta[name="analytics:event:properties"]',
-      )?.content
-
-      if (eventProps) {
-        const {
-          disposition,
-          tokenizationScore,
-          contentReference,
-          subject,
-          ...props
-        } = JSON.parse(eventProps)
-        segment.track(
-          'Pageview',
-          {
-            ...props,
-            ...flattenObj('disposition', disposition),
-            ...flattenObj('tokenizationScore', tokenizationScore),
-            ...getReferenceIds(contentReference),
-            ...getSubjectItems(subject),
-            origin: getOrigin(navigator.userAgent),
-          },
-          referrer ? { page: { referrer } } : {},
-        )
-
-        var tude = window.tude || { cmd: [] }
-        tude.cmd.push(function () {
-          tude.setPageTargeting({
-            pagetype: props.page_domain + '-' + props.page_type,
-          })
-        })
-      }
-
-      referrer = window.location.href
-
-      // hack: 'astro:page-load' does not fire consistently
-      // TODO: move into astro:page-load callback
-      document.addEventListener('astro:after-swap', async () => {
         // default page tracking
         segment.page(referrer ? { referrer } : {})
 
@@ -461,59 +471,6 @@ const canonicalUrl = meta?.canonical
         }
 
         referrer = window.location.href
-      })
-
-      document.addEventListener('astro:page-load', async () => {
-        /**
-         * Given window and document, add or remove "selected" class to league nav
-         * links if current window location matches nav href. Note that the argument
-         * tests are more comprehensive to protect functions downstream of this.
-         *
-         * @param {Window} win - DOM window
-         * @param {Element} ctag - Node Element with data for canonical link
-         *
-         */
-        const shouldRewriteUrl = (win: Window, ctag: HTMLLinkElement) => {
-          return (
-            win instanceof Window &&
-            win.history instanceof History &&
-            win.location instanceof Location &&
-            ctag.href !== win.location.href &&
-            ctag.dataset.shouldRewrite === 'true'
-          )
-        }
-
-        /**
-         * Rewrite URL.
-         *
-         * @param {Window} win - DOM window
-         * @param {HTMLDocument} doc - DOM document
-         * @param {String} newUrl - Destination URL
-         *
-         */
-        const rewriteUrl = (win: Window, doc: Document, newUrl: string) =>
-          win.history.replaceState(null, doc.title, newUrl)
-
-        /**
-         * Given window and document, get canonical link tag and check if URL should be
-         * rewritten, in which case call rewriteUrl and updateLeagueNav.
-         *
-         * @param {Window} win - DOM window
-         * @param {HTMLDocument} doc - DOM document
-         *
-         */
-        const maybeRewriteUrl = (win: Window, doc: Document) => {
-          const canonicalTag = doc.querySelector(
-            'link[rel="canonical"]',
-          ) as HTMLLinkElement | null
-          if (!canonicalTag) return
-
-          if (shouldRewriteUrl(win, canonicalTag)) {
-            rewriteUrl(win, doc, canonicalTag.href)
-          }
-        }
-
-        maybeRewriteUrl(window, document)
       })
 
       document.addEventListener(
