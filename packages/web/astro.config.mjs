@@ -16,7 +16,7 @@ export default defineConfig({
   ],
   output: 'server',
   server: { port: 3000 },
-  // devToolbar: { enabled: false },
+  devToolbar: { enabled: false },
   adapter: aws({
     responseMode: 'buffer',
     serverRoutes: ['ask', 'money/ask', 'fantasy/ask', 'auth/*', 'account/*'],
