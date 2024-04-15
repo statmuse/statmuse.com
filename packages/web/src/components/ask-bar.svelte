@@ -320,9 +320,12 @@
               clickedItem = false
               return
             }
-            sectionIdx = suggestionIdx = undefined
-            sections = []
-            inFocus = false
+
+            if (!isMobileTest(navigator.userAgent)) {
+              sectionIdx = suggestionIdx = undefined
+              sections = []
+              inFocus = false
+            }
           }}
           on:focus={() => (inFocus = true)}
         />
