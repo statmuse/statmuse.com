@@ -320,9 +320,12 @@
               clickedItem = false
               return
             }
-            sectionIdx = suggestionIdx = undefined
-            sections = []
-            inFocus = false
+
+            if (!isMobileTest(navigator.userAgent)) {
+              sectionIdx = suggestionIdx = undefined
+              sections = []
+              inFocus = false
+            }
           }}
           on:focus={() => (inFocus = true)}
         />
@@ -369,8 +372,9 @@
                   }}
                 >
                   {#if section.type === 'history'}
-                    <span
-                      class="suggestion-history-icon w-6 h-6 mr-2.5 shrink-0"
+                    <Icon
+                      name="history"
+                      class="w-6 h-6 mr-2.5 shrink-0 text-[#a7a9ac] dark:text-white"
                     />
                     <span>{suggestion.display}</span>
                   {:else if section.type === 'example' && suggestion.league}

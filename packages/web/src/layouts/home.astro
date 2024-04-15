@@ -48,6 +48,11 @@ const Layout = league === 'money' ? MoneyBaseLayout : BaseLayout
         : (league as AnalyticsPageviewProperties['page_domain']),
     page_type: 'home',
   }}
+  preferredDomain={league === 'fc'
+    ? 'epl'
+    : league === 'All'
+    ? undefined
+    : league}
   navProps={{
     links,
     selected: league.toLowerCase(),

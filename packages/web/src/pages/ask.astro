@@ -1,20 +1,26 @@
 ---
+import Layout from '@layouts/base.astro'
 import { ask } from '@lib/gamera'
 import { upsert } from '@statmuse/core/ask'
 import * as Enforcer from '@lib/enforcer'
 import { NOT_FOUND_404 } from '@lib/response'
 import { createSlug } from '@statmuse/core/path'
+import { tokensToHtml } from '@statmuse/core/gamera'
 
 let query: string | null | undefined = Astro.url.searchParams.get('q')
 const league = Astro.url.searchParams.get('d')
 let preferredDomain: string | undefined
 let conversationToken: string | undefined
+let queryClarificationFor: string | undefined
 
 if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData()
   preferredDomain = data.get('question[preferred_domain]')?.toString()
   query = data.get('question[query]')?.toString()
   conversationToken = data.get('question[conversation_token]')?.toString()
+  queryClarificationFor = data
+    .get('question[query_clarification_for]')
+    ?.toString()
 
   const canQuery = await Enforcer.canQuery(Astro.locals)
   if (!canQuery) {
@@ -47,5 +53,64 @@ const domain =
     ? 'fc'
     : response?.visual?.domain?.toLowerCase()
 
-return Astro.redirect(`/${domain}/ask/${createSlug(query)}`)
+if (queryClarificationFor)
+  return Astro.redirect(`/${domain}/ask/${createSlug(queryClarificationFor)}`)
+
+if (response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional')
+  return Astro.redirect(`/${domain}/ask/${createSlug(query)}`)
 ---
+
+<Layout
+  class="flex flex-col gap-3"
+  analytics={{
+    is_search: true,
+    page_type: 'prompt',
+    page_domain: 'unknown',
+    disposition: response.disposition,
+    query,
+  }}
+  {query}
+  conversationToken={response.conversation.token}
+>
+  <div class="h-screen w-full flex flex-col justify-center items-center">
+    <h1
+      class="text-3xl my-5 font-bold"
+      set:html={tokensToHtml(response.visual.summary.answer)}
+    />
+    <div class="w-full flex flex-col sm:flex-row sm:justify-center my-5 gap-2">
+      {
+        response.visual.choices.map((choice) => (
+          <form action="/ask" method="post">
+            <input name="_method" type="hidden" value="POST" />
+            <input
+              id="question_conversation_token"
+              name="question[conversation_token]"
+              type="hidden"
+              value={response.conversation.token}
+            />
+            <input
+              id="question_query"
+              name="question[query]"
+              required=""
+              type="hidden"
+              value={choice.input}
+            />
+            <input
+              id="question_query_clarification_for"
+              name="question[query_clarification_for]"
+              type="hidden"
+              value={query}
+            />
+            <button
+              data-cy-choice-btn
+              class="w-full text-2xl border-2 border-black rounded-md cursor-pointer p-7"
+              type="submit"
+            >
+              {choice.display}
+            </button>
+          </form>
+        ))
+      }
+    </div>
+  </div>
+</Layout>

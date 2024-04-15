@@ -63,7 +63,7 @@
 
 {#if $isShareModalOpen}
   <div
-    class="fixed w-full h-full top-0 left-0 z-[10] bg-black/40"
+    class="fixed w-full h-full top-0 left-0 z-[100] bg-black/40"
     on:click={onClickClose}
   >
     <div

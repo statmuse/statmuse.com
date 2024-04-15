@@ -2,12 +2,10 @@
   import { onMount } from 'svelte'
   import Icon from '@components/icon.svelte'
   import { isMobileTest } from '@lib/useragent'
-  import { createAskPath } from '@statmuse/core/path'
   import { isShareModalOpen } from '@lib/stores'
 
   export let url: string
-  export let query: string
-  export let domain: string
+  export let shortCode: string
 
   let mobile = false
   onMount(() => {
@@ -16,8 +14,11 @@
 
   const clickHandler = () => {
     if (mobile && navigator.share) {
-      const shareUrl =
-        url || `${window.location.origin}${createAskPath({ query, domain })}`
+      const shareUrl = shortCode
+        ? `${
+            import.meta.env.SHORT_LINK_URL || 'http://localhost:3000/'
+          }e/${shortCode}`
+        : url || window.location.href
       try {
         navigator.share({ url: shareUrl })
       } catch (e) {}
