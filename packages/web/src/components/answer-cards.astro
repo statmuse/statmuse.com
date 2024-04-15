@@ -1447,18 +1447,32 @@ if (allowedDomains.includes(league) && teamId) {
       )
   }
   {
-    teamCardsResp && bettingCards.length > 0 && (
-      <div>
-        <h3 class="text-3xl font-semibold mb-1.5">
-          {`${league === 'fc' ? 'Premier League' : domain.toUpperCase()} ${
-            teamCardsResp.seasonYearDisplay
-          } Betting`}
-        </h3>
-        <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
-          {bettingCards.map((card) => (
-            <div>
-              <div class="flex justify-between">
-                <p class="font-semibold">{teamCardTitle(card.stat)}</p>
+    teamCardsResp &&
+      bettingCards.length > 0 &&
+      domain !== 'mlb' &&
+      domain !== 'nhl' && (
+        <div>
+          <h3 class="text-3xl font-semibold mb-1.5">
+            {`${league === 'fc' ? 'Premier League' : domain.toUpperCase()} ${
+              teamCardsResp.seasonYearDisplay
+            } Betting`}
+          </h3>
+          <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-4">
+            {bettingCards.map((card) => (
+              <div>
+                <div class="flex justify-between">
+                  <p class="font-semibold">{teamCardTitle(card.stat)}</p>
+                  <a
+                    href={teamAskLink(
+                      card.stat,
+                      league,
+                      teamCardsResp!.seasonType,
+                      teamCardsResp!.seasonYearDisplay,
+                    )}
+                  >
+                    See more
+                  </a>
+                </div>
                 <a
                   href={teamAskLink(
                     card.stat,
@@ -1466,26 +1480,15 @@ if (allowedDomains.includes(league) && teamId) {
                     teamCardsResp!.seasonType,
                     teamCardsResp!.seasonYearDisplay,
                   )}
+                  class="hover:no-underline"
                 >
-                  See more
+                  <TeamCardComponent card={card} />
                 </a>
               </div>
-              <a
-                href={teamAskLink(
-                  card.stat,
-                  league,
-                  teamCardsResp!.seasonType,
-                  teamCardsResp!.seasonYearDisplay,
-                )}
-                class="hover:no-underline"
-              >
-                <TeamCardComponent card={card} />
-              </a>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-    )
+      )
   }
 
   {
