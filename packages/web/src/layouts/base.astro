@@ -144,6 +144,11 @@ const hasSupplement = hero?.hasSupplement
       })
     </script>
 
+    {
+      import.meta.env.PUBLIC_STAGE !== 'production' && (
+        <meta name="robots" content="noindex" />
+      )
+    }
     <meta charset="utf-8" />
     <meta name="color-scheme" content="light only" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -508,13 +513,16 @@ const hasSupplement = hero?.hasSupplement
         if (!subject) return {}
         return {
           subject_image: subject.imageUrl,
-          subject_background_color: subject.colors.background,
-          subject_foreground_color: subject.colors.foreground,
+          subject_background_color: subject.colors?.background,
+          subject_foreground_color: subject.colors?.foreground,
         }
       }
 
+      // initialize referrer var
+      let referrer: string | undefined
+
       // default page tracking
-      segment.page()
+      segment.page(referrer ? { referrer } : {})
 
       // custom Pageview event
       const eventProps = document.querySelector<HTMLMetaElement>(
@@ -529,14 +537,18 @@ const hasSupplement = hero?.hasSupplement
           subject,
           ...props
         } = JSON.parse(eventProps)
-        segment.track('Pageview', {
-          ...props,
-          ...flattenObj('disposition', disposition),
-          ...flattenObj('tokenizationScore', tokenizationScore),
-          ...getReferenceIds(contentReference),
-          ...getSubjectItems(subject),
-          origin: getOrigin(navigator.userAgent),
-        })
+        segment.track(
+          'Pageview',
+          {
+            ...props,
+            ...flattenObj('disposition', disposition),
+            ...flattenObj('tokenizationScore', tokenizationScore),
+            ...getReferenceIds(contentReference),
+            ...getSubjectItems(subject),
+            origin: getOrigin(navigator.userAgent),
+          },
+          referrer ? { page: { referrer } } : {},
+        )
 
         var tude = window.tude || { cmd: [] }
         tude.cmd.push(function () {
@@ -546,11 +558,13 @@ const hasSupplement = hero?.hasSupplement
         })
       }
 
+      referrer = window.location.href
+
       // hack: 'astro:page-load' does not fire consistently
       // TODO: move into astro:page-load callback
       document.addEventListener('astro:after-swap', async () => {
         // default page tracking
-        segment.page()
+        segment.page(referrer ? { referrer } : {})
 
         // custom Pageview event
         const eventProps = document.querySelector<HTMLMetaElement>(
@@ -565,14 +579,18 @@ const hasSupplement = hero?.hasSupplement
             subject,
             ...props
           } = JSON.parse(eventProps)
-          segment.track('Pageview', {
-            ...props,
-            ...flattenObj('disposition', disposition),
-            ...flattenObj('tokenizationScore', tokenizationScore),
-            ...getReferenceIds(contentReference),
-            ...getSubjectItems(subject),
-            origin: getOrigin(navigator.userAgent),
-          })
+          segment.track(
+            'Pageview',
+            {
+              ...props,
+              ...flattenObj('disposition', disposition),
+              ...flattenObj('tokenizationScore', tokenizationScore),
+              ...getReferenceIds(contentReference),
+              ...getSubjectItems(subject),
+              origin: getOrigin(navigator.userAgent),
+            },
+            referrer ? { page: { referrer } } : {},
+          )
 
           var tude = window.tude || { cmd: [] }
           tude.cmd.push(function () {
@@ -581,6 +599,8 @@ const hasSupplement = hero?.hasSupplement
             })
           })
         }
+
+        referrer = window.location.href
       })
 
       document.addEventListener('astro:page-load', async () => {

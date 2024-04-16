@@ -1,6 +1,6 @@
 import * as Asks from '@statmuse/core/ask'
 
-const freeAskLimit = 35
+const freeAskLimit = 75
 export const freeRowLimit = 25
 
 export const canQuery = async (locals: App.Locals) => {

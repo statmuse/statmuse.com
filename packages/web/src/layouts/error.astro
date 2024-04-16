@@ -40,6 +40,7 @@ const {
   money,
   image = sample(images),
   enableAdBanner,
+  analytics = {},
 } = Astro.props
 
 if (render) {
@@ -60,6 +61,10 @@ if (render) {
         imageUrl: image?.url,
         imageAlt: image?.alt,
         html: true,
+      }}
+      analytics={{
+        ...analytics,
+        page_type: 'error',
       }}
     />
   ) : (
