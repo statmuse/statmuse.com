@@ -14,24 +14,11 @@ const token = Astro.url.searchParams.get('t') ?? ''
 const userId = Astro.url.searchParams.get('u') ?? ''
 const upgrade = Astro.url.searchParams.get('upgrade')
 
-const verified = await User.verifySigninToken(userId, token)
-
-const user = await User.get(userId)
+const user = await User.verifySigninToken(userId, token)
 
 if (!user) return NOT_FOUND_404
 
-const visitor = Astro.locals.visitor
-
-Session.createFrom(Astro, {
-  id: user.id,
-  email: user.email,
-  visitorId: visitor.id,
-  upgrade: false,
-  updated: false,
-  cookieStatus: visitor.cookie_status,
-  origin: visitor.origin_name,
-  subscriptionStatus: user.stripe_subscription_status || undefined,
-})
+Session.createUserSession(Astro, user)
 
 if (
   upgrade &&
@@ -60,7 +47,3 @@ if (upgrade && user?.stripe_subscription_status !== 'active') {
 
 return Astro.redirect('/')
 ---
-
-Hello {verified}
-
-{JSON.stringify(Astro.locals, null, 2)}

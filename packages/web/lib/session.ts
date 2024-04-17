@@ -3,6 +3,7 @@ import type { sessions } from '@statmuse/functions/session'
 import type { APIContext, AstroGlobal } from 'astro'
 import { fromRequest } from '@lib/visitor'
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js'
+import type { User } from '@statmuse/core/user'
 
 const builder = createSessionBuilder<typeof sessions.$type>()
 const SESSION_COOKIE = 'sm_session'
@@ -49,12 +50,19 @@ export const create = async (context: Context) => {
   }
 }
 
-export const createFrom = async (
-  context: Context,
-  props: (typeof sessions.$type)['user'],
-) => {
+export const createUserSession = (context: Context, user: User) => {
   try {
-    const token = builder.create('user', props)
+    const visitor = context.locals.visitor
+    const token = builder.create('user', {
+      id: user.id,
+      email: user.email,
+      visitorId: visitor.id,
+      upgrade: undefined,
+      updated: undefined,
+      cookieStatus: visitor.cookie_status,
+      origin: visitor.origin_name,
+      subscriptionStatus: user.stripe_subscription_status || undefined,
+    })
     set(context, token)
     return builder.verify(token)
   } catch (error) {

@@ -173,6 +173,16 @@ export async function updateEmail(id: string, email: string) {
     .executeTakeFirst()
 }
 
+export async function findOrCreateFromEmail(email: string, visitorId: string) {
+  const user = await fromEmail(email)
+
+  if (user) {
+    return user
+  }
+
+  return create(email, visitorId)
+}
+
 export async function createSigninToken(id: string) {
   return db
     .updateTable('users')
@@ -187,5 +197,19 @@ export async function createSigninToken(id: string) {
 
 export async function verifySigninToken(id: string, token: string) {
   const user = await get(id)
-  return user?.sign_in_token === token
+  if (!user) return undefined
+
+  const timeElasped = (new Date() - user.sign_in_token_created_at) / 1000
+  console.log('timeElasped: ', timeElasped)
+
+  if (user.sign_in_token === token && timeElasped < 1800) {
+    await db
+      .updateTable('users')
+      .set({ sign_in_token: null })
+      .where('users.id', '=', user.id)
+      .returningAll()
+      .executeTakeFirst()
+    return user
+  }
+  return undefined
 }
