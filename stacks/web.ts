@@ -128,6 +128,7 @@ export function Web({ stack }: StackContext) {
       auth.privateKey,
       api.api,
       secrets.BOTPOISON_PUBLIC_KEY,
+      secrets.BOTPOISON_SECRET_KEY,
       secrets.STRIPE_SECRET,
       secrets.STRIPE_WEBHOOK_SECRET,
       secrets.STRIPE_PRICE_ID,

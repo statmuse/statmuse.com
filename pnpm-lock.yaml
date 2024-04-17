@@ -181,6 +181,9 @@ importers:
       '@botpoison/browser':
         specifier: ^0.1.30
         version: 0.1.30
+      '@botpoison/node':
+        specifier: ^0.1.10
+        version: 0.1.10
       '@segment/analytics-next':
         specifier: ^1.55.0
         version: 1.55.0
