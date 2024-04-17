@@ -9,8 +9,10 @@ import { deleteUser } from '@statmuse/core/user'
 import { deleteCustomer } from '@statmuse/core/stripe'
 import * as Session from '@lib/session'
 import { Caching } from '@lib/caching'
+import { Config } from 'sst/node/config'
+import contacts from '@sendgrid/client'
 
-// export const prerender = true
+contacts.setApiKey(Config.SENDGRID_API_KEY)
 
 const meta = {
   title: 'Settings',
@@ -52,6 +54,11 @@ if (Astro.request.method === 'POST') {
   const updated = await User.updateEmail(user.id, email)
   if (updated) {
     Session.createUserSession(Astro, updated)
+    await contacts.request({
+      url: '/v3/contactdb/recipients',
+      method: 'POST',
+      body: [{ email }],
+    })
   }
 
   return Astro.redirect('/account/settings')

@@ -11,6 +11,9 @@ import {
 import { Config } from 'sst/node/config'
 import * as User from '@statmuse/core/user'
 import { sendSigninEmail } from '@lib/mailer'
+import contacts from '@sendgrid/client'
+
+contacts.setApiKey(Config.SENDGRID_API_KEY)
 
 if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData()
@@ -37,7 +40,14 @@ if (Astro.request.method === 'POST') {
       upgrade: 'true',
     })
 
-  await sendSigninEmail(email, url)
+  await Promise.all([
+    sendSigninEmail(email, url),
+    contacts.request({
+      url: '/v3/contactdb/recipients',
+      method: 'POST',
+      body: [{ email }],
+    }),
+  ])
 
   return Astro.redirect('/auth/confirm')
 }
