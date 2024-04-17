@@ -9,6 +9,13 @@ export interface UserTable {
   has_completed_signup: boolean
   referrer_id: string | null
 
+  sign_in_token: string | null
+  sign_in_token_created_at: ColumnType<
+    Date,
+    string | undefined,
+    string | undefined
+  >
+
   stripe_customer_id: string | null
   stripe_subscription_status: string | null
 

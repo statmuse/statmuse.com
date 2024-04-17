@@ -9,8 +9,10 @@ import { deleteUser } from '@statmuse/core/user'
 import { deleteCustomer } from '@statmuse/core/stripe'
 import * as Session from '@lib/session'
 import { Caching } from '@lib/caching'
+import { Config } from 'sst/node/config'
+import contacts from '@sendgrid/client'
 
-// export const prerender = true
+contacts.setApiKey(Config.SENDGRID_API_KEY)
 
 const meta = {
   title: 'Settings',
@@ -49,17 +51,17 @@ if (Astro.request.method === 'POST') {
     return Astro.redirect('?error=email-taken')
   }
 
-  const visitor = Astro.locals.visitor.id
-  data.set('visitor', visitor)
-  data.set('update', user.id)
+  const updated = await User.updateEmail(user.id, email)
+  if (updated) {
+    Session.createUserSession(Astro, updated)
+    await contacts.request({
+      url: '/v3/contactdb/recipients',
+      method: 'POST',
+      body: [{ email }],
+    })
+  }
 
-  const url =
-    import.meta.env.PUBLIC_AUTH_URL +
-    '/authorize?' +
-    // @ts-expect-error
-    new URLSearchParams(data).toString()
-
-  return Astro.redirect(url)
+  return Astro.redirect('/account/settings')
 }
 
 const email = Astro.locals.session.properties.email

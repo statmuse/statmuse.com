@@ -5,23 +5,55 @@ import Container from '@components/container.astro'
 import Image from '@components/image.astro'
 import { Caching } from '@lib/caching'
 import { Config } from 'sst/node/config'
+import * as User from '@statmuse/core/user'
+import { sendSigninEmail } from '@lib/mailer'
+import contacts from '@sendgrid/client'
+import Botpoison from '@botpoison/node'
+
+const botpoison = new Botpoison({
+  secretKey: Config.BOTPOISON_SECRET_KEY,
+})
+
+contacts.setApiKey(Config.SENDGRID_API_KEY)
 
 if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData()
   const email = data.get('email')?.toString()
-  if (!email)
+  const challenge = data.get('challenge')?.toString()
+  if (!email || !challenge)
     return new Response(null, { status: 400, statusText: 'No email provided' })
 
-  const visitor = Astro.locals.visitor.id
-  data.set('visitor', visitor)
+  const { ok } = await botpoison.verify(challenge)
+
+  if (!ok) {
+    return new Response(null, { status: 400, statusText: 'Unauthorized' })
+  }
+
+  let user = await User.findOrCreateFromEmail(email, Astro.locals.visitor.id)
+
+  if (!user)
+    return new Response(null, {
+      status: 400,
+      statusText: 'Error creating user',
+    })
+
+  user = await User.createSigninToken(user.id)
 
   const url =
-    import.meta.env.PUBLIC_AUTH_URL +
-    '/authorize?' +
-    // @ts-expect-error
-    new URLSearchParams(data).toString()
+    Astro.url.origin +
+    '/auth/email/callback?' +
+    new URLSearchParams({ t: user?.sign_in_token ?? '', u: user?.id ?? '' })
 
-  return Astro.redirect(url)
+  await Promise.all([
+    sendSigninEmail(email, url),
+    contacts.request({
+      url: '/v3/contactdb/recipients',
+      method: 'POST',
+      body: [{ email }],
+    }),
+  ])
+
+  return Astro.redirect('/auth/confirm')
 }
 
 Caching.none(Astro)
