@@ -49,6 +49,21 @@ export const create = async (context: Context) => {
   }
 }
 
+export const createFrom = async (
+  context: Context,
+  props: (typeof sessions.$type)['user'],
+) => {
+  try {
+    const token = builder.create('user', props)
+    set(context, token)
+    return builder.verify(token)
+  } catch (error) {
+    console.error(error)
+    const publicSession = builder.create('public', {})
+    return builder.verify(publicSession)
+  }
+}
+
 export const set = (context: Context, token: string) => {
   const expires = new Date()
   expires.setDate(expires.getDate() + 90)

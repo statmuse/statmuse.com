@@ -172,3 +172,20 @@ export async function updateEmail(id: string, email: string) {
     .returningAll()
     .executeTakeFirst()
 }
+
+export async function createSigninToken(id: string) {
+  return db
+    .updateTable('users')
+    .set({
+      sign_in_token: randomUUID(),
+      sign_in_token_created_at: new Date().toISOString(),
+    })
+    .where('users.id', '=', id)
+    .returningAll()
+    .executeTakeFirst()
+}
+
+export async function verifySigninToken(id: string, token: string) {
+  const user = await get(id)
+  return user?.sign_in_token === token
+}

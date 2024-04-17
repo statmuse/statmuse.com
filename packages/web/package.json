@@ -20,6 +20,7 @@
     "@astrojs/tailwind": "5.1.0",
     "@aws-sdk/client-dynamodb": "^3.499.0",
     "@aws-sdk/client-secrets-manager": "^3.354.0",
+    "@aws-sdk/client-sesv2": "^3.391.0",
     "@aws-sdk/lib-dynamodb": "^3.499.0",
     "@botpoison/browser": "^0.1.30",
     "@segment/analytics-next": "^1.55.0",

@@ -9,6 +9,10 @@ import {
   createCheckoutSession,
 } from '@statmuse/core/stripe'
 import { Config } from 'sst/node/config'
+import { SESv2Client, SendEmailCommand } from '@aws-sdk/client-sesv2'
+import * as User from '@statmuse/core/user'
+
+const sesClient = new SESv2Client()
 
 if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData()
@@ -16,17 +20,46 @@ if (Astro.request.method === 'POST') {
   if (!email)
     return new Response(null, { status: 400, statusText: 'No email provided' })
 
+  let user = await User.fromEmail(email)
   const visitor = Astro.locals.visitor.id
-  data.set('visitor', visitor)
-  data.set('upgrade', 'true')
+
+  if (!user) {
+    user = await User.create(email, visitor)
+  }
+
+  user = await User.createSigninToken(user?.id || '')
 
   const url =
-    import.meta.env.PUBLIC_AUTH_URL +
-    '/authorize?' +
-    // @ts-expect-error
-    new URLSearchParams(data).toString()
+    Astro.url.origin +
+    '/auth/email/callback?' +
+    new URLSearchParams({
+      t: user?.sign_in_token ?? '',
+      u: user?.id ?? '',
+      upgrade: 'true',
+    })
 
-  return Astro.redirect(url)
+  await sesClient.send(
+    new SendEmailCommand({
+      FromEmailAddress: 'StatMuse<hello@auth.statmuse.com>',
+      Destination: {
+        ToAddresses: [email],
+      },
+      Content: {
+        Template: {
+          TemplateName: 'auth',
+          TemplateData: JSON.stringify({ pin_code: url }),
+        },
+      },
+      EmailTags: [
+        {
+          Name: 'email_type',
+          Value: 'auth',
+        },
+      ],
+    }),
+  )
+
+  return Astro.redirect('/auth/confirm')
 }
 
 Caching.none(Astro)

@@ -172,6 +172,9 @@ importers:
       '@aws-sdk/client-secrets-manager':
         specifier: ^3.354.0
         version: 3.379.1
+      '@aws-sdk/client-sesv2':
+        specifier: ^3.391.0
+        version: 3.391.0
       '@aws-sdk/lib-dynamodb':
         specifier: ^3.499.0
         version: 3.499.0(@aws-sdk/client-dynamodb@3.499.0)
@@ -606,6 +609,9 @@ packages:
   /@aws-cdk/cloud-assembly-schema@2.124.0:
     resolution: {integrity: sha512-vVGGXVwqug0/oSRf2meLerqxu11aN/ULKjcVnBw339kiWLBfZYXktqxWYtgXoaAiZBS7eGSuhKrPYDE2Jx2kdA==}
     engines: {node: '>= 14.15.0'}
+    dependencies:
+      jsonschema: 1.4.1
+      semver: 7.5.4
     dev: true
     bundledDependencies:
       - jsonschema
@@ -631,6 +637,7 @@ packages:
       '@aws-cdk/cloud-assembly-schema': 2.124.0
     dependencies:
       '@aws-cdk/cloud-assembly-schema': 2.124.0
+      semver: 7.5.4
     dev: true
     bundledDependencies:
       - semver
@@ -2114,9 +2121,9 @@ packages:
       '@aws-sdk/credential-provider-sso': 3.391.0
       '@aws-sdk/credential-provider-web-identity': 3.391.0
       '@aws-sdk/types': 3.391.0
-      '@smithy/credential-provider-imds': 2.0.4
-      '@smithy/property-provider': 2.0.4
-      '@smithy/shared-ini-file-loader': 2.0.4
+      '@smithy/credential-provider-imds': 2.2.1
+      '@smithy/property-provider': 2.1.1
+      '@smithy/shared-ini-file-loader': 2.3.1
       '@smithy/types': 2.9.1
       tslib: 2.6.2
     transitivePeerDependencies:
@@ -2646,9 +2653,9 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@aws-sdk/types': 3.391.0
-      '@smithy/property-provider': 2.0.4
+      '@smithy/property-provider': 2.1.1
       '@smithy/protocol-http': 2.0.4
-      '@smithy/signature-v4': 2.0.4
+      '@smithy/signature-v4': 2.1.1
       '@smithy/types': 2.9.1
       '@smithy/util-middleware': 2.1.1
       tslib: 2.6.2
@@ -5600,20 +5607,6 @@ packages:
 
   /@smithy/signature-v4@2.0.1:
     resolution: {integrity: sha512-jztv5Mirca42ilxmMDjzLdXcoAmRhZskGafGL49sRo5u7swEZcToEFrq6vtX5YMbSyTVrE9Teog5EFexY5Ff2Q==}
-    engines: {node: '>=14.0.0'}
-    dependencies:
-      '@smithy/eventstream-codec': 2.1.1
-      '@smithy/is-array-buffer': 2.1.1
-      '@smithy/types': 2.9.1
-      '@smithy/util-hex-encoding': 2.1.1
-      '@smithy/util-middleware': 2.1.1
-      '@smithy/util-uri-escape': 2.1.1
-      '@smithy/util-utf8': 2.1.1
-      tslib: 2.6.2
-    dev: false
-
-  /@smithy/signature-v4@2.0.4:
-    resolution: {integrity: sha512-y2xblkS0hb44QJDn9YjPp5aRFYSiI7w0bI3tATE3ybOrII2fppqD0SE3zgvew/B/3rTunuiCW+frTD0W4UYb9Q==}
     engines: {node: '>=14.0.0'}
     dependencies:
       '@smithy/eventstream-codec': 2.1.1
@@ -10605,6 +10598,10 @@ packages:
       universalify: 2.0.1
     optionalDependencies:
       graceful-fs: 4.2.11
+    dev: true
+
+  /jsonschema@1.4.1:
+    resolution: {integrity: sha512-S6cATIPVv1z0IlxdN+zUk5EPjkGCdnhN4wVSBlvoUO1tOLJootbo9CquNJmbIh4yikWHiUedhRYrNPn1arpEmQ==}
     dev: true
 
   /kind-of@6.0.3:

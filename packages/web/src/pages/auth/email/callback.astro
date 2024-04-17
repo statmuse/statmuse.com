@@ -1,0 +1,66 @@
+---
+import { Caching } from '@lib/caching'
+import * as User from '@statmuse/core/user'
+import * as Session from '@lib/session'
+import { NOT_FOUND_404 } from '@lib/response'
+import {
+  createBillingSession,
+  createCheckoutSession,
+} from '@statmuse/core/stripe'
+
+Caching.none(Astro)
+
+const token = Astro.url.searchParams.get('t') ?? ''
+const userId = Astro.url.searchParams.get('u') ?? ''
+const upgrade = Astro.url.searchParams.get('upgrade')
+
+const verified = await User.verifySigninToken(userId, token)
+
+const user = await User.get(userId)
+
+if (!user) return NOT_FOUND_404
+
+const visitor = Astro.locals.visitor
+
+Session.createFrom(Astro, {
+  id: user.id,
+  email: user.email,
+  visitorId: visitor.id,
+  upgrade: false,
+  updated: false,
+  cookieStatus: visitor.cookie_status,
+  origin: visitor.origin_name,
+  subscriptionStatus: user.stripe_subscription_status || undefined,
+})
+
+if (
+  upgrade &&
+  (user?.stripe_subscription_status === 'canceled' ||
+    !user?.stripe_subscription_status)
+) {
+  const { url } = await createCheckoutSession({
+    email: user.email,
+    userId: user.id,
+    successUrl: Astro.url.origin,
+    cancelUrl: Astro.url.origin + '/auth/signup',
+    customerId: user?.stripe_customer_id ?? undefined,
+  })
+
+  if (url) return Astro.redirect(url)
+}
+
+if (upgrade && user?.stripe_subscription_status !== 'active') {
+  const { url } = await createBillingSession({
+    customerId: user?.stripe_customer_id as string,
+    returnUrl: Astro.url.origin,
+  })
+
+  if (url) return Astro.redirect(url)
+}
+
+return Astro.redirect('/')
+---
+
+Hello {verified}
+
+{JSON.stringify(Astro.locals, null, 2)}

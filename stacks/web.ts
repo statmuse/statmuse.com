@@ -174,7 +174,7 @@ export function Web({ stack }: StackContext) {
         },
       },
     },
-    permissions: [[api.rdsCredentialsSecret, 'grantRead']],
+    permissions: [[api.rdsCredentialsSecret, 'grantRead'], 'ses'],
     invalidation: { paths: 'none' },
     customDomain: {
       hostedZone: dns.zone,
