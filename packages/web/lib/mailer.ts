@@ -11,8 +11,8 @@ export const sendSigninEmail = (to: string, url: string) =>
       },
       Content: {
         Template: {
-          TemplateName: 'auth',
-          TemplateData: JSON.stringify({ pin_code: url }),
+          TemplateName: 'auth_magic_link',
+          TemplateData: JSON.stringify({ url }),
         },
       },
       EmailTags: [

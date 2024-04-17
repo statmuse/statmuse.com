@@ -200,7 +200,6 @@ export async function verifySigninToken(id: string, token: string) {
   if (!user) return undefined
 
   const timeElasped = (new Date() - user.sign_in_token_created_at) / 1000
-  console.log('timeElasped: ', timeElasped)
 
   if (user.sign_in_token === token && timeElasped < 1800) {
     await db
