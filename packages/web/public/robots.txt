@@ -1,8 +1,0 @@
-User-agent: *
-Sitemap: https://www.statmuse.com/sitemap.xml
-Disallow: /auth/*
-Disallow: /alexa
-Disallow: /slack-success
-Disallow: /metal/*
-Disallow: /decks/*
-Disallow: /contests
