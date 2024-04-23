@@ -4,26 +4,63 @@ import svelte, { vitePreprocess } from '@astrojs/svelte'
 import { preprocessMeltUI } from '@melt-ui/pp'
 import aws from 'astro-sst'
 import { defineConfig } from 'astro/config'
+import robotsTxt from 'astro-robots-txt'
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://www.statmuse.com',
   integrations: [
     tailwind({
       applyBaseStyles: false,
     }),
     react(),
-    svelte({ preprocess: [vitePreprocess(), preprocessMeltUI()] }),
+    svelte({
+      preprocess: [vitePreprocess(), preprocessMeltUI()],
+    }),
+    robotsTxt(
+      process.env.SST_STAGE === 'production'
+        ? {
+            sitemap: 'https://www.statmuse.com/sitemap.xml',
+            policy: [
+              {
+                userAgent: '*',
+                disallow: [
+                  '/auth/*',
+                  '/alexa',
+                  '/slack-success',
+                  '/metal/*',
+                  '/decks/*',
+                  '/contests',
+                ],
+              },
+            ],
+          }
+        : {
+            policy: [
+              {
+                userAgent: '*',
+                disallow: '/',
+              },
+            ],
+          },
+    ),
   ],
   output: 'server',
-  server: { port: 3000 },
-  devToolbar: { enabled: false },
+  server: {
+    port: 3000,
+  },
+  devToolbar: {
+    enabled: false,
+  },
   adapter: aws({
     responseMode: 'buffer',
     serverRoutes: ['ask', 'money/ask', 'fantasy/ask', 'auth/*', 'account/*'],
   }),
   vite: {
     optimizeDeps: ['sst'],
-    build: { sourcemap: process.env.NODE_ENV === 'production' },
+    build: {
+      sourcemap: process.env.NODE_ENV === 'production',
+    },
   },
   image: {
     remotePatterns: [
