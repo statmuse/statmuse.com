@@ -3,7 +3,7 @@
 <!-- svelte-ignore a11y-invalid-attribute -->
 <script lang="ts">
   import type { ComponentProps } from 'svelte'
-  import { orderBy, some } from 'lodash-es'
+  import { orderBy, some, upperCase } from 'lodash-es'
   import { session } from '@lib/stores'
   import type { GameraGrid } from '@statmuse/core/gamera'
   import EntityLink from '@components/entity-link.svelte'
@@ -215,7 +215,7 @@
         {@const { columns, rows, aggregations } = grid}
         {#if head}
           <thead>
-            <tr class="text-sm uppercase tracking-[0.07rem]">
+            <tr class="text-sm tracking-[0.07rem]">
               {#each columns as col, index (col.rowItemKey)}
                 <th
                   class={`cursor-pointer font-normal p-1.5 text-gray-5 ${applyStyles(
