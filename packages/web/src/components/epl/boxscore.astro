@@ -41,8 +41,6 @@ const plays = orderBy(
   'minuteRaw',
 )
 
-console.log(plays)
-
 type Play = (typeof plays)[0]
 
 const playsByPeriod = groupBy(plays, 'period')
@@ -70,9 +68,6 @@ const awayReds = plays.filter(
     (p.eventType === 'red_card' || p.eventType === 'yellow_red_card') &&
     p.team === awayTeam.name,
 )
-
-console.log(homeReds)
-console.log(awayReds)
 
 const homeTeamGoals = plays
   .filter(
@@ -269,7 +264,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       </EntityLink>
     </div>
   </div>
-  <div>
+  <div class="mt-5 space-y-1.5">
     {
       (homeGoals.length > 0 || awayGoals.length > 0) && (
         <div class="flex items-start justify-center">
@@ -323,7 +318,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       )
     }
   </div>
-  <p class="text-center text-[0.8rem] uppercase tracking-[0.07rem]">
+  <p class="text-center text-[0.8rem] uppercase tracking-[0.07rem] mt-5">
     {dayjs(boxscoreData.gameDate).format('ddd D MMM YYYY')}
   </p>
 </Panel>
