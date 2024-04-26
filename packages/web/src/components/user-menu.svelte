@@ -50,6 +50,7 @@
       class="z-30 block px-4 py-2 text-sm text-gray-700 no-underline hover:no-underline data-[highlighted]:text-gray-900 data-[highlighted]:bg-gray-100 data-[disabled]:text-neutral-300 ring-0"
       use:melt={$item}
       data-astro-reload
+      data-astro-prefetch="false"
     >
       Sign out
     </a>
