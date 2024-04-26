@@ -4,8 +4,13 @@ import Image from '@components/image.astro'
 import { Caching } from '@lib/caching'
 import Panel from '@components/panel.astro'
 
+Caching.none(Astro)
+
 const meta = { title: 'Confirm your email' }
-Caching.swr(Astro)
+
+if (Astro.locals.session.type === 'user') {
+  return Astro.redirect('/')
+}
 ---
 
 <Layout {meta} enableAdBanner={false}>
