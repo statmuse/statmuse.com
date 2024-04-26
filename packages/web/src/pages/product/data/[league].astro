@@ -1202,7 +1202,7 @@ const data = [
       { term: 'Aerials won (AER-W)' },
       { term: 'Assists (A)' },
       { term: 'Ball recovered (REC)' },
-      { term: 'Big chance created (BIG CHNC)' },
+      { term: 'Big chance created (BCC)' },
       { term: 'Blocked crosses (BLK-CRS)' },
       { term: 'Blocked shots (BLK-SH)' },
       { term: 'Clean sheet (CS)' },
@@ -1215,6 +1215,7 @@ const data = [
       { term: 'Duels won (DUEL-W)' },
       { term: 'Error leading to goal (ERR-G)' },
       { term: 'Error leading to shot (ERR-SH)' },
+      { term: 'Expected assists (xA)' },
       { term: 'Expected goals (xG)' },
       { term: 'Forward (FW)' },
       { term: 'Fouled (FOULED)' },
@@ -1236,7 +1237,7 @@ const data = [
       { term: 'Matches started (START)' },
       { term: 'Midfielder (MF)' },
       { term: 'Minutes played (MIN)' },
-      { term: 'Offside (O F)' },
+      { term: 'Offside (OF)' },
       { term: 'Opponent (OPP)' },
       { term: 'Own goals (OG)' },
       { term: 'Pass accuracy (PASS%)' },
@@ -1253,7 +1254,7 @@ const data = [
       { term: 'Saves (SV)' },
       { term: 'Shot accuracy (SH%)' },
       { term: 'Shots (SH)' },
-      { term: 'Shots on target (ST)' },
+      { term: 'Shots on target (SoT)' },
       { term: 'Tackles (TKL)' },
       { term: 'Tackles won (TKL-W)' },
       { term: 'Touches (TCH)' },
@@ -1292,14 +1293,23 @@ Caching.swr(Astro)
           alt={poweredBy === 'sportsradar'
             ? 'Sportradar'
             : poweredBy === 'data-sports-group'
-              ? 'Data Sports Group'
-              : ''}
+            ? 'Data Sports Group'
+            : ''}
           src={poweredBy === 'sportsradar'
             ? 'https://developer.sportradar.com/files/powered-by-sportradar-1000w.png'
             : poweredBy === 'data-sports-group'
-              ? '/affiliations/data-sports-group.png'
-              : ''}
+            ? '/affiliations/data-sports-group.png'
+            : ''}
         />
+        {
+          poweredBy === 'data-sports-group' && (
+            <img
+              class="inline-block h-[20px] object-contain"
+              alt="Statsbomb"
+              src="/affiliations/statsbomb.svg"
+            />
+          )
+        }
       </li>
     </ul>
 
