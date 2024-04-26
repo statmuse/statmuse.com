@@ -2,13 +2,14 @@
 import Layout from '@layouts/base.astro'
 import Image from '@components/image.astro'
 import { Caching } from '@lib/caching'
+import Panel from '@components/panel.astro'
 
 const meta = { title: 'Confirm your email' }
 Caching.swr(Astro)
 ---
 
 <Layout {meta} enableAdBanner={false}>
-  <div
+  <Panel
     class="w-full max-w-md bg-white rounded-lg border border-[#e4e4e4] mx-auto mb-5 pt-8 px-8 pb-44 relative text-center overflow-hidden"
   >
     <h2 class="my-5 text-center">
@@ -21,5 +22,5 @@ Caching.swr(Astro)
       width={300}
       height={133}
     />
-  </div>
+  </Panel>
 </Layout>
