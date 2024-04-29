@@ -193,9 +193,7 @@
         {@const { columns, rows, aggregations } = grid}
         {#if head}
           <thead>
-            <tr
-              class="text-xs text-team-secondary uppercase tracking-[0.07rem]"
-            >
+            <tr class="text-xs text-team-secondary tracking-[0.07rem]">
               {#each columns as col (col.rowItemKey)}
                 <th
                   class={`first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5 ${applyStyles(
