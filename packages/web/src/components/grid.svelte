@@ -88,7 +88,7 @@
       }, row),
     )
 
-    let rows = limitRows ? allRows.slice(0, 25) : allRows
+    let rows = limitRows ? allRows.slice(0, freeRowLimit) : allRows
 
     return {
       ...grid,
@@ -182,7 +182,7 @@
       ) {
         grids = grids.map((grid) => ({
           ...grid,
-          rows: expand ? grid.allRows : grid.allRows.slice(0, 25),
+          rows: expand ? grid.allRows : grid.allRows.slice(0, freeRowLimit),
         }))
       }
     } else {
@@ -329,31 +329,29 @@
               {/each}
             </tr>
           {/each}
-          {#if !limitRows || (limitRows && $session?.type === 'user' && $session.properties.subscriptionStatus === 'active')}
-            {#if aggregations}
-              {#each aggregations as row (row)}
-                <tr class="text-sm font-bold">
-                  {#each columns as col, index (row[col.rowItemKey])}
-                    {#if row[col.rowItemKey]}
-                      {@const { display } = row[col.rowItemKey]}
-                      <td
-                        class={`${applyStyles(col)} ${padding} py-1`}
-                        class:sticky={col.sticky}
-                        class:left-0={col.sticky}
-                        class:pl-3={index === 0}
-                        class:pr-3={index === columns.length - 1}
-                        class:bg-gray-8={col.sticky}
-                        class:dark:bg-gray-3={col.sticky}
-                      >
-                        {display}
-                      </td>
-                    {:else}
-                      <td></td>
-                    {/if}
-                  {/each}
-                </tr>
-              {/each}
-            {/if}
+          {#if aggregations}
+            {#each aggregations as row (row)}
+              <tr class="text-sm font-bold">
+                {#each columns as col, index (row[col.rowItemKey])}
+                  {#if row[col.rowItemKey]}
+                    {@const { display } = row[col.rowItemKey]}
+                    <td
+                      class={`${applyStyles(col)} ${padding} py-1`}
+                      class:sticky={col.sticky}
+                      class:left-0={col.sticky}
+                      class:pl-3={index === 0}
+                      class:pr-3={index === columns.length - 1}
+                      class:bg-gray-8={col.sticky}
+                      class:dark:bg-gray-3={col.sticky}
+                    >
+                      {display}
+                    </td>
+                  {:else}
+                    <td></td>
+                  {/if}
+                {/each}
+              </tr>
+            {/each}
           {/if}
         </tbody>
         {#if limitRows && grids[0].allRows.length > freeRowLimit && ($session?.type === 'visitor' || $session?.properties.subscriptionStatus !== 'active')}
