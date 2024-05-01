@@ -1,11 +1,11 @@
 - [ ] links on player profiles
 - [ ] player profile fixes for retired players
 - [ ] missing stats on player profiles
-- [ ] new font
+- [ ] bedrock cache
+- [ ] new homepage layout
+- [ ] trending dropdowns in hero
+- [ ] team profile redesign
 - [ ] fix links to team seasons that get rewritten
+- [x] new font
 - [x] share links broken
 - [x] cookie banner shows up repeatedly, use local storage
-- [ ] trending dropdowns in hero
-- [ ] new homepage layout
-- [ ] bedrock cache
-- [ ] team profile redesign
