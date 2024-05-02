@@ -1390,6 +1390,10 @@ export type Detail =
   | NbaShotsDetail
 
 export interface PlayerInfo {
+  id: number
+  usedName: string
+  firstName: string
+  lastName: string
   entity: GameraEntity
   stat?: string
   imageUrl: string
