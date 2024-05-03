@@ -1,6 +1,6 @@
 ---
 import Panel from '@components/panel.astro'
-import TabbedLayout from '@layouts/tabbed.astro'
+import Layout from '@layouts/base.astro'
 import type { Metadata } from '@lib/meta'
 
 interface Props {
@@ -8,9 +8,10 @@ interface Props {
   meta?: Metadata
   prefixPath: string
   enableAdBanner?: boolean
+  selected: 'examples' | 'data'
 }
 
-const { league, meta, prefixPath, ...rest } = Astro.props
+const { league, meta, prefixPath, selected, ...rest } = Astro.props
 
 const domains = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA', 'Premier League']
 
@@ -26,11 +27,26 @@ const productPages = [
 ]
 ---
 
-<TabbedLayout
+<Layout
   {meta}
-  title="The elephant of sports and financial information."
-  prefixPath={Astro.props.prefixPath}
-  pages={productPages}
+  hero={{ content: 'The elephant of sports and financial information.' }}
+  colors={{ foreground: '#fff', background: '#00c1d8' }}
+  navProps={{
+    href: () => '',
+    selected,
+    links: [
+      {
+        text: 'Examples',
+        param: 'examples',
+        href: '/product/examples',
+      },
+      {
+        text: 'Data Coverage',
+        param: 'data',
+        href: '/product/data',
+      },
+    ],
+  }}
   {...rest}
 >
   <div class="flex flex-wrap gap-6 md:gap-12 py-12">
@@ -81,7 +97,7 @@ const productPages = [
       <slot />
     </div>
   </div>
-</TabbedLayout>
+</Layout>
 
 <script define:vars={{ prefixPath }}>
   const onChange = (e) => {
