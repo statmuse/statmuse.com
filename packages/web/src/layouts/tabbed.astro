@@ -20,25 +20,23 @@ const { meta, prefixPath, pages, title, ...rest } = Astro.props
   {meta}
   colors={{ foreground: '#fff', background: '#00c1d8' }}
   hero={{ content: title }}
+  navProps={{
+    href: () => '',
+    selected: 'examples',
+    links: [
+      {
+        text: 'Examples',
+        param: 'examples',
+        href: '/product/examples',
+      },
+      {
+        text: 'Data Coverage',
+        param: 'data',
+        href: '/product/data',
+      },
+    ],
+  }}
   {...rest}
 >
-  <ul class="flex items-center overflow-x-auto space-x-6 md:space-x-12">
-    {
-      pages.map((page) => (
-        <li class="whitespace-nowrap">
-          <a
-            href={page.href}
-            class={`flex items-center h-[50px] text-sm md:text-base text-white hover:no-underline hover:opacity-100 ${
-              page.href.includes(prefixPath)
-                ? 'font-bold opacity-100'
-                : 'opacity-80'
-            }`}
-          >
-            {page.title}
-          </a>
-        </li>
-      ))
-    }
-  </ul>
   <slot />
 </Layout>
