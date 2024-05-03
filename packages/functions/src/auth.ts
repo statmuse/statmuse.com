@@ -8,7 +8,7 @@ import { sessions } from './session'
 import Botpoison from '@botpoison/node'
 
 const botpoison = new Botpoison({
-  secretKey: Config.BOTPOISON_SECRET_KEY,
+  secretKey: JSON.parse(Config.BOTPOISON).secret,
 })
 
 const sesClient = new SESv2Client()

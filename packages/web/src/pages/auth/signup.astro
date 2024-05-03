@@ -13,8 +13,12 @@ import { sendSigninEmail } from '@lib/mailer'
 import contacts from '@sendgrid/client'
 import Botpoison from '@botpoison/node'
 
+const { public: botpoisonPublicKey, secret: botpoisonSecretKey } = JSON.parse(
+  Config.BOTPOISON,
+)
+
 const botpoison = new Botpoison({
-  secretKey: Config.BOTPOISON_SECRET_KEY,
+  secretKey: botpoisonSecretKey,
 })
 
 contacts.setApiKey(Config.SENDGRID_API_KEY)
@@ -162,7 +166,7 @@ const meta = {
         <input
           type="hidden"
           name="challenge"
-          data-botpoison-public-key={Config.BOTPOISON_PUBLIC_KEY}
+          data-botpoison-public-key={botpoisonPublicKey}
           value=""
         />
         <button
