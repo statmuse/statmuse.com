@@ -1,5 +1,5 @@
 ---
-import AccountLayout from './_layout.astro'
+import Layout from '@layouts/base.astro'
 import { getUserAsks, getFinanceUserAsks } from '@statmuse/core/ask'
 import { ASK_LIMIT } from '@statmuse/core/ask'
 import { formatDate } from '@statmuse/core/time'
@@ -45,7 +45,27 @@ if (overflow && (searchParams.p || searchParams.page === 'last')) {
 const paginationOptions = paginate(asks, searchParams, overflow)
 ---
 
-<AccountLayout {meta} prefixPath="/account/history">
+<Layout
+  {meta}
+  colors={{ foreground: '#fff', background: '#00c1d8' }}
+  hero={{ content: 'Manage your account.' }}
+  navProps={{
+    href: () => '',
+    selected: 'history',
+    links: [
+      {
+        text: 'History',
+        param: 'history',
+        href: '/account/history',
+      },
+      {
+        text: 'Settings',
+        param: 'settings',
+        href: '/account/settings',
+      },
+    ],
+  }}
+>
   <div style="display: flex; gap: 10px; margin-top: 20px;">
     <a
       class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
@@ -157,4 +177,4 @@ const paginationOptions = paginate(asks, searchParams, overflow)
       </a>
     </li>
   </ul>
-</AccountLayout>
+</Layout>
