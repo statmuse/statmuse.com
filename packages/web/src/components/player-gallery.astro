@@ -83,11 +83,11 @@ const meta = {
       domain={domain?.toLowerCase()}
     />
   </div>
-  <div class="flex justify-start md:justify-center py-4 overflow-auto bg-white">
+  <div class="flex justify-start md:justify-center py-4 overflow-auto">
     {
       alphabet.map((letter) => (
         <a
-          class="text-[#333] mx-0.5 rounded-md uppercase w-6 h-6 shrink-0 flex justify-center items-center"
+          class="text-[#333] dark:text-current mx-0.5 rounded-md uppercase w-6 h-6 shrink-0 flex justify-center items-center"
           href={`#${letter}`}
           data-click-nav
         >
