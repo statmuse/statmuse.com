@@ -479,3 +479,61 @@ video.unrulymedia.com, 2444764291, RESELLER
 contextweb.com, 558511, RESELLER,
 krushmedia.com, AJxF6R572a9M6CaTvK, RESELLER,
 inmobi.com, b01aa06531c543d8a5fb9982f60afb00, RESELLER, 83e75a7ae333ca9d
+
+# SOVRN
+lijit.com, 353839, DIRECT, fafdf38b16bf6b2b #SOVRN
+lijit.com, 353839-eb, DIRECT, fafdf38b16bf6b2b #SOVRN
+openx.com, 538959099, RESELLER, 6a698e2ec38604c6
+pubmatic.com, 137711, RESELLER, 5d62403b186f2ace
+pubmatic.com, 156212, RESELLER, 5d62403b186f2ace
+rubiconproject.com, 17960, RESELLER, 0bfd66d529a55807
+appnexus.com, 1019, RESELLER, f5ab79cb980f11d1
+video.unrulymedia.com, 12444764291, RESELLER
+
+#GumGum
+gumgum.com, 15913, DIRECT, ffdef49475d318a9
+rubiconproject.com, 23434, RESELLER, 0bfd66d529a55807
+pubmatic.com, 157897, RESELLER, 5d62403b186f2ace
+appnexus.com, 2758, RESELLER, f5ab79cb980f11d1
+contextweb.com, 558355, RESELLER, 89ff185a4c4e857c
+openx.com, 537149485, RESELLER, 6a698e2ec38604c6
+improvedigital.com, 1884, RESELLER
+smartadserver.com, 4005, RESELLER, 060d053dcf45cbf3
+imds.tv, 82151, RESELLER, ae6c32151e71f19d
+admanmedia.com, 799, RESELLER
+revcontent.com, 110029, RESELLER
+google.com, pub-3848273848634341, RESELLER, f08c47fec0942fa0
+
+#qortex.ai
+qortex.ai, 161124, DIRECT
+xandr.com, 13416, RESELLER
+pubmatic.com, 161089, RESELLER, 5d62403b186f2ace
+rubiconproject.com, 24138, RESELLER, 0bfd66d529a55807
+sovrn.com, 347623, RESELLER, fafdf38b16bf6b2b
+betweendigital.com, 44016, RESELLER
+nobid.io, 22491714326, RESELLER
+lijit.com, 347623, RESELLER, fafdf38b16bf6b2b
+rhythmone.com, 3468144962, RESELLER, a670c89d4a324e47
+nextmillennium.io, 15956, RESELLER, 65bd090fa4a1e3d6
+appnexus.com, 9284, RESELLER, f5ab79cb980f11d1
+rubiconproject.com, 17888, RESELLER, 0bfd66d529a55807
+pubmatic.com, 157577, RESELLER, 5d62403b186f2ace
+openx.com, 540224251, RESELLER, 6a698e2ec38604c6
+33across.com, 0010b00002e4MRRAA2, RESELLER, bbea06d9c4d2853c
+indexexchange.com, 194648, RESELLER, 50b1c356f2c5c8fc
+amxrtb.com, 105199467, RESELLER
+152media.info, 152M194, RESELLER
+appnexus.com, 11924, RESELLER, f5ab79cb980f11d1
+axonix.com, 59081, RESELLER, bc385f2b4a87b721
+appnexus.com, 14077, RESELLER
+33across.com, 0015a00002qt8uxAAA, RESELLER, bbea06d9c4d2853c
+smartadserver.com, 4205, RESELLER
+openx.com, 557927444, RESELLER, 6a698e2ec38604c6
+yieldmo.com, 3117806966060032819, RESELLER
+amxrtb.com, 105199608, RESELLER
+contextweb.com, 562422, RESELLER, 89ff185a4c4e857c
+risecodes.com, 653b9491697a4200010b373e, RESELLER
+admixer.net, eacb57fd-226f-481c-9d2e-77df6a29bead, RESELLER
+risecodes.com, 653b9491697a4200010b373e, DIRECT
+admanmedia.com, 2162, DIRECT
+visiblemeasures.com, 1004, DIRECT
