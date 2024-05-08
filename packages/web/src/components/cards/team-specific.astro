@@ -244,12 +244,6 @@ const teamPitchingLeaders = domain === 'MLB' && {
           })}
           data={teamSeasonOverview.standings}
           columnStyles={{ rank: 'w-2' }}
-          colors={{
-            backgroundColor:
-              teamLeaders?.players[0]?.colors?.backgroundColor ?? '#FFF',
-            foregroundColor:
-              teamLeaders?.players[0]?.colors?.foregroundColor ?? '#000',
-          }}
         />
       )
     }
@@ -262,12 +256,6 @@ const teamPitchingLeaders = domain === 'MLB' && {
             query: `${playerCardsResp.team?.nickname} schedule`,
           })}
           data={scheduleResp}
-          colors={{
-            backgroundColor:
-              teamLeaders?.players[0]?.colors?.backgroundColor ?? '#FFF',
-            foregroundColor:
-              teamLeaders?.players[0]?.colors?.foregroundColor ?? '#000',
-          }}
         />
       )
     }
