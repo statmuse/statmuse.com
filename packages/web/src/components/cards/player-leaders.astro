@@ -511,7 +511,8 @@ const askLink = (
   }
 }
 
-const title = `${domain} ${response.seasonYearDisplay} ${
+const domainDisplay = domain === 'EPL' ? 'PL' : domain
+const title = `${domainDisplay} ${response.seasonYearDisplay} ${
   mlbBatting ? 'Batting ' : mlbPitching ? 'Pitching ' : ''
 }Leaders`
 

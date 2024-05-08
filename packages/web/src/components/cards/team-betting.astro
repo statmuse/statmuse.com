@@ -28,39 +28,33 @@ const filterBettingCards = (card: TeamCard) =>
     'worstRecordAgainstTheSpread',
   ].includes(card.stat)
 
-const cardTitle = (stat: string, season: string) => {
-  let title: string
-  const playoffs = season === 'postseason' ? 'Playoffs ' : ''
+const cardTitle = (stat: string) => {
   switch (stat) {
     // ALL
     case 'bestRecordAgainstTheSpread':
-      title = 'Best Record ATS'
-      break
+      return 'Best Record ATS'
     case 'worstRecordAgainstTheSpread':
-      title = 'Worst Record ATS'
-      break
+      return 'Worst Record ATS'
     default:
-      title = stat
+      return stat
   }
-
-  return `${playoffs}${title}`
 }
 
-const askLink = (
-  stat: string,
-  league: string,
-  season: string,
-  year: string,
-) => {
-  const postseason = season === 'postseason' ? ' postseason' : ''
+const askLink = (stat: string, league: string, year: string) => {
+  const query =
+    league === 'mlb'
+      ? `record against the run line ${year}`
+      : league === 'nhl'
+      ? `record aginst the puck line ${year}`
+      : `record ats ${year}`
   switch (stat) {
     // ALL
     case 'bestRecordAgainstTheSpread':
-      return createAskPath({ domain: league, query: `best record ats ${year}` })
+      return createAskPath({ domain: league, query: `best ${query}` })
     case 'worstRecordAgainstTheSpread':
       return createAskPath({
         domain: league,
-        query: `worst record ats ${year}`,
+        query: `worst ${query}`,
       })
     default:
       return stat
@@ -87,13 +81,8 @@ if (cards.length === 0) return undefined
       cards.map((card) => (
         <TeamCardComponent
           card={card}
-          title={cardTitle(card.stat, response.seasonType)}
-          href={askLink(
-            card.stat,
-            league,
-            response.seasonType,
-            response.seasonYearDisplay,
-          )}
+          title={cardTitle(card.stat)}
+          href={askLink(card.stat, league, response.seasonYearDisplay)}
         />
       ))
     }

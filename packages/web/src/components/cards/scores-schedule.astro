@@ -23,7 +23,9 @@ if (
 )
   return undefined
 
-const title = `${domain} ${scoresResponse.seasonYearDisplay} Scores & Schedule`
+const title = `${domain === 'EPL' ? 'PL' : domain} ${
+  scoresResponse.seasonYearDisplay
+} Scores & Schedule`
 ---
 
 <div>

@@ -215,7 +215,9 @@ const askLink = (
   }
 }
 
-const title = `${domain} ${response.seasonYearDisplay} Rankings`
+const title = `${domain === 'EPL' ? 'PL' : domain} ${
+  response.seasonYearDisplay
+} Rankings`
 
 const cards = response.cards
   .filter(filterTeamCards)
