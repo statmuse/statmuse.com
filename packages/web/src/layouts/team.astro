@@ -270,5 +270,5 @@ const navProps: ComponentProps<typeof Nav> = {
   {parameters && <GridDropdown class="flex" {parameters} />}
   <slot />
   <Explore {league} />
-  {ANSWER_CARDS_ENABLED && <AnswerCards {league} />}
+  {ANSWER_CARDS_ENABLED && <AnswerCards {domain} />}
 </Layout>
