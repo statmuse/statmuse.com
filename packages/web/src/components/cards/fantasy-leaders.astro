@@ -1,0 +1,198 @@
+---
+import AditudeCardMedRec from '@components/aditude-card-med-rec.svelte'
+import PlayerCardComponent from '@components/cards/player.astro'
+import type {
+  GameraDomain,
+  PlayerCardResponse,
+  PlayerCard,
+} from '@statmuse/core/gamera'
+import { createAskPath } from '@statmuse/core/path'
+
+interface Props {
+  domain: GameraDomain
+  response?: PlayerCardResponse
+  adSlot?: {
+    slotId: string
+    baseDivId: string
+  }
+}
+
+const { domain, response, adSlot } = Astro.props
+
+if (!response || response.cards.length === 0) return undefined
+
+const filterFantasyCards = (card: PlayerCard) =>
+  [
+    // NBA Player
+    'mostFanDuelPoints',
+    'mostDraftKingsPoints',
+    'mostFanDuelPointsPerMinute',
+    'mostDraftKingsPointsPerMinute',
+    'bestUsagePercentage',
+    'mostMinutesPerGame',
+    // NFL Player
+    'mostQuarterbackFantasyPoints',
+    'mostRunningBackFantasyPoints',
+    'mostWideReceiverFantasyPoints',
+    'mostTightEndFantasyPoints',
+    'mostKickerFantasyPoints',
+    // MLB
+    'mostFanDuelPoints',
+    'mostDraftKingsPoints',
+  ].includes(card.stat)
+
+const cardTitle = (stat: string, season: string) => {
+  let title: string
+  const playoffs = season === 'postseason' ? 'Playoffs ' : ''
+  switch (stat) {
+    // NBA Player
+    case 'mostFanDuelPoints':
+      title = 'FanDuel Points Leaders'
+      break
+    case 'mostDraftKingsPoints':
+      title = 'DraftKings Points Leaders'
+      break
+    case 'mostFanDuelPointsPerMinute':
+      title = 'FanDuel PTS/MIN Leaders'
+      break
+    case 'mostDraftKingsPointsPerMinute':
+      title = 'DraftKings PTS/MIN Leaders'
+      break
+    case 'bestUsagePercentage':
+      title = 'USG% Leaders'
+      break
+    case 'mostMinutesPerGame':
+      title = 'MPG Leaders'
+      break
+    // NFL Player
+    case 'mostQuarterbackFantasyPoints':
+      title = 'Fantasy QB Rankings'
+      break
+    case 'mostRunningBackFantasyPoints':
+      title = 'Fantasy RB Rankings'
+      break
+    case 'mostWideReceiverFantasyPoints':
+      title = 'Fantasy WR Rankings'
+      break
+    case 'mostTightEndFantasyPoints':
+      title = 'Fantasy TE Rankings'
+      break
+    case 'mostKickerFantasyPoints':
+      title = 'Fantasy K Rankings'
+      break
+    // MLB Team (overlap with NBA)
+    default:
+      title = stat
+  }
+
+  return `${playoffs}${title}`
+}
+
+const askLink = (
+  stat: string,
+  league: string,
+  season: string,
+  year: string,
+) => {
+  // const postseason = season === 'postseason' ? ' postseason' : ''
+  switch (stat) {
+    // NBA Player
+    case 'mostFanDuelPoints':
+      return createAskPath({
+        domain: league,
+        query: `most fanduel points ${year}`,
+      })
+    case 'mostDraftKingsPoints':
+      return createAskPath({
+        domain: league,
+        query: `most draftkings points ${year}`,
+      })
+    case 'mostFanDuelPointsPerMinute':
+      return createAskPath({
+        domain: league,
+        query: `most fanduel points per minute ${year} minimum 20 min minimum 10 mpg`,
+      })
+    case 'mostDraftKingsPointsPerMinute':
+      return createAskPath({
+        domain: league,
+        query: `most draftkings points per minute ${year} minimum 20 min minimum 10 mpg`,
+      })
+    case 'bestUsagePercentage':
+      return createAskPath({ domain: league, query: `usage% leaders ${year}` })
+    case 'mostMinutesPerGame':
+      return createAskPath({ domain: league, query: `mpg leaders ${year}` })
+    // NFL Player
+    case 'mostQuarterbackFantasyPoints':
+      return createAskPath({
+        domain: league,
+        query: `most fantasy points by a qb ${year}`,
+      })
+    case 'mostRunningBackFantasyPoints':
+      return createAskPath({
+        domain: league,
+        query: `most fantasy points by a rb ${year}`,
+      })
+    case 'mostWideReceiverFantasyPoints':
+      return createAskPath({
+        domain: league,
+        query: `most fantasy points by a wr ${year}`,
+      })
+    case 'mostTightEndFantasyPoints':
+      return createAskPath({
+        domain: league,
+        query: `most fantasy points by a te ${year}`,
+      })
+    case 'mostKickerFantasyPoints':
+      return createAskPath({
+        domain: league,
+        query: `most fantasy points by a kicker ${year}`,
+      })
+    // MLB Player (overlap with NBA)
+    default:
+      return stat
+  }
+}
+
+const title = `Fantasy ${response.seasonYearDisplay}`
+
+const cards = response.cards
+  .filter(filterFantasyCards)
+  .filter((c) => c.players.length > 0)
+
+const league = domain === 'EPL' ? 'fc' : domain.toLowerCase()
+
+if (cards.length === 0) return undefined
+---
+
+<div>
+  <h2 class="text-xl font-bold mb-1.5">
+    {title}
+  </h2>
+  <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
+    {
+      cards.map((card) => (
+        <PlayerCardComponent
+          card={card}
+          title={cardTitle(card.stat, response.seasonType)}
+          href={askLink(
+            card.stat,
+            league,
+            response.seasonType,
+            response.seasonYearDisplay,
+          )}
+        />
+      ))
+    }
+  </div>
+</div>
+{
+  adSlot && (
+    <div>
+      <AditudeCardMedRec
+        client:only="svelte"
+        slotId={adSlot.slotId}
+        baseDivId={adSlot.baseDivId}
+      />
+    </div>
+  )
+}
