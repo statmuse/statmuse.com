@@ -41,14 +41,14 @@
   >
     <a
       href="/account"
-      class="z-30 block px-4 py-2 text-sm text-gray-700 dark:text-inherit no-underline hover:no-underline data-[highlighted]:text-gray-900 data-[highlighted]:bg-gray-100 data-[disabled]:text-neutral-300 ring-0"
+      class="z-30 block px-4 py-2 text-sm text-gray-700 dark:text-inherit no-underline hover:no-underline data-[highlighted]:text-gray-900 data-[highlighted]:bg-gray-100 dark:data-[highlighted]:text-inherit dark:data-[highlighted]:bg-gray-2 data-[disabled]:text-neutral-300 ring-0"
       use:melt={$item}
     >
       Your Account
     </a>
     <a
       href="/auth/sign-out"
-      class="z-30 block px-4 py-2 text-sm text-gray-700 dark:text-inherit no-underline hover:no-underline data-[highlighted]:text-gray-900 data-[highlighted]:bg-gray-100 data-[disabled]:text-neutral-300 ring-0"
+      class="z-30 block px-4 py-2 text-sm text-gray-700 dark:text-inherit no-underline hover:no-underline data-[highlighted]:text-gray-900 data-[highlighted]:bg-gray-100 dark:data-[highlighted]:text-inherit dark:data-[highlighted]:bg-gray-2 data-[disabled]:text-neutral-300 ring-0"
       use:melt={$item}
       data-astro-reload
       data-astro-prefetch="false"
