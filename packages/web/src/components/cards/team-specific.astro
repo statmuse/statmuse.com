@@ -1,0 +1,349 @@
+---
+import dayjs from 'dayjs'
+import PlayerCardComponent from '@components/cards/player.astro'
+import ScheduleCard from '@components/cards/schedule-card.astro'
+import EntityLink from '@components/entity-link.astro'
+import Panel from '@components/panel.astro'
+import { getGame, getSchedule } from '@lib/game'
+import { getPlayerCards } from '@lib/related-content'
+import { getTeamSeasonBio, getTeamSeasonOverview } from '@lib/team'
+import type {
+  GameraDomain,
+  PlayerCard,
+  GameraTeamSeasonBio,
+  GameraTeamSeasonOverview,
+  Team,
+} from '@statmuse/core/gamera'
+import { createAskPath } from '@statmuse/core/path'
+import Grid from '@components/grid.svelte'
+import Image from '@components/image.astro'
+import AditudeCardMedRec from '@components/aditude-card-med-rec.svelte'
+
+interface Props {
+  domain: GameraDomain
+  teamId?: string | number
+  adSlot?: {
+    slotId: string
+    baseDivId: string
+  }
+}
+
+const { domain, teamId, adSlot } = Astro.props
+
+const alowedDomains = ['NBA', 'NFL', 'NHL', 'MLB', 'EPL']
+
+if (!alowedDomains.includes(domain) || !teamId) return undefined
+
+const filterTeamLeaders = (cards: PlayerCard[], domain: string) => {
+  switch (domain) {
+    case 'NBA':
+      return cards
+        .filter((c) =>
+          [
+            'mostPointsPerGame',
+            'mostReboundsPerGame',
+            'mostAssistsPerGame',
+          ].includes(c.stat),
+        )
+        .map((c) => ({ ...c.players[0], stat: c.stat }))
+    case 'NFL':
+      return cards
+        .filter((c) =>
+          [
+            'mostPassingYards',
+            'mostRushingYards',
+            'mostReceivingYards',
+          ].includes(c.stat),
+        )
+        .map((c) => ({ ...c.players[0], stat: c.stat }))
+    case 'NHL':
+      return cards
+        .filter((c) =>
+          ['mostGoals', 'mostAssists', 'bestPlusMinus'].includes(c.stat),
+        )
+        .map((c) => ({ ...c.players[0], stat: c.stat }))
+    case 'MLB':
+      return cards
+        .filter((c) =>
+          [
+            'mostBattingHomeRuns',
+            'mostBattingRunsBattedIn',
+            'bestBattingAverage',
+          ].includes(c.stat),
+        )
+        .map((c) => ({ ...c.players[0], stat: c.stat }))
+    case 'EPL':
+      return cards
+        .filter((c) =>
+          ['mostGoals', 'mostAssists', 'mostMinutesPlayed'].includes(c.stat),
+        )
+        .map((c) => ({ ...c.players[0], stat: c.stat }))
+    default:
+      return []
+  }
+}
+
+const filterMlbTeamLeaders = (
+  cards: PlayerCard[],
+  type: 'batting' | 'pitching',
+) => {
+  return cards
+    .filter(
+      (c) =>
+        (type === 'batting'
+          ? [
+              'mostBattingHomeRuns',
+              'mostBattingRunsBattedIn',
+              'bestBattingAverage',
+            ]
+          : [
+              'mostPitchingWins',
+              'mostPitchingStrikeouts',
+              'bestPitchingEarnedRunAverage',
+            ]
+        ).includes(c.stat) && c.players.length > 0,
+    )
+    .map((c) => ({ ...c.players[0], stat: c.stat }))
+}
+
+const [playerCardsResp, scheduleResp] = await Promise.all([
+  getPlayerCards({
+    context: Astro,
+    domain,
+    teamId,
+  }),
+  getSchedule({
+    context: Astro,
+    domain,
+    teamId,
+  }),
+])
+
+if (!playerCardsResp) return undefined
+
+let teamSeasonBio: GameraTeamSeasonBio | undefined
+let teamSeasonOverview: GameraTeamSeasonOverview | undefined
+
+if (playerCardsResp.team?.seasonYear) {
+  ;[teamSeasonBio, teamSeasonOverview] = await Promise.all([
+    getTeamSeasonBio({
+      context: Astro,
+      domain,
+      team: `team-${teamId}`,
+      year: playerCardsResp.team.seasonYear.toString() ?? '',
+    }),
+    getTeamSeasonOverview({
+      context: Astro,
+      domain,
+      team: `team-${teamId}`,
+      year: playerCardsResp.team.seasonYear.toString() ?? '',
+    }),
+  ])
+}
+
+interface Boxscore {
+  homeTeam: Team
+  awayTeam: Team
+  completedGameStatus: string
+  gameDate?: string
+}
+let teamLastGame: Boxscore | undefined
+
+if (teamSeasonOverview && teamSeasonOverview.scoresAndSchedule) {
+  const score = teamSeasonOverview.scoresAndSchedule.rows.find(
+    (r) => r.SCORE.entity,
+  )?.SCORE
+  if (score?.entity) {
+    const res = await getGame({
+      context: Astro,
+      domain,
+      game: `game-${score.entity.id}`,
+    })
+    if (res?.visual?.detail?.length) teamLastGame = res?.visual.detail[0]
+  }
+}
+
+const teamLeaders =
+  domain === 'MLB'
+    ? {
+        stat: '',
+        type: 'stats',
+        players: filterMlbTeamLeaders(playerCardsResp.cards, 'batting'),
+      }
+    : {
+        stat: '',
+        type: 'stats',
+        players: filterTeamLeaders(playerCardsResp.cards, domain),
+      }
+
+const teamPitchingLeaders = domain === 'MLB' && {
+  stat: '',
+  type: 'stats',
+  players: filterMlbTeamLeaders(playerCardsResp.cards, 'pitching'),
+}
+---
+
+<div>
+  <h2 class="text-xl font-bold mb-1.5">
+    {`More ${playerCardsResp.team?.nickname} Stats`}
+  </h2>
+  <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
+    {
+      teamLeaders && teamLeaders.players.length > 0 && (
+        <PlayerCardComponent
+          title={`Team ${domain === 'MLB' ? 'Batting ' : ''}Leaders`}
+          entity={playerCardsResp.team?.entity}
+          card={teamLeaders}
+        />
+      )
+    }
+    {
+      teamPitchingLeaders && teamPitchingLeaders.players.length > 0 && (
+        <PlayerCardComponent
+          title="Team Pitching Leaders"
+          entity={playerCardsResp.team?.entity}
+          card={teamPitchingLeaders}
+        />
+      )
+    }
+    {
+      teamSeasonBio && teamSeasonBio.statsSummary && (
+        <Panel
+          class="flex flex-col"
+          title="Team Rankings"
+          entity={playerCardsResp.team?.entity}
+          background={
+            teamLeaders?.players[0]?.colors?.backgroundColor ?? '#FFF'
+          }
+          foreground={
+            teamLeaders?.players[0]?.colors?.foregroundColor ?? '#000'
+          }
+        >
+          <div class="-mt-3 py-5 md:py-0 flex flex-grow items-center gap-5 text-center mx-auto">
+            {teamSeasonBio.statsSummary.stats.map((stat) => (
+              <div>
+                <p class="uppercase whitespace-nowrap">{stat.label}</p>
+                <p class="text-2xl">{stat.value}</p>
+                <p class="text-sm uppercase tracking-[0.07rem]">
+                  {stat.label !== 'FORM' ? stat.rank : 'last 5'}
+                </p>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      )
+    }
+    {
+      teamSeasonOverview && teamSeasonOverview.standings && (
+        <Grid
+          class="flex flex-col justify-between"
+          title={teamSeasonOverview.standings.name}
+          href={createAskPath({
+            domain,
+            query: `${playerCardsResp.team?.nickname} standings`,
+          })}
+          data={teamSeasonOverview.standings}
+          columnStyles={{ rank: 'w-2' }}
+        />
+      )
+    }
+    {
+      scheduleResp && scheduleResp.games.length > 0 && (
+        <ScheduleCard
+          title="Schedule"
+          href={createAskPath({
+            domain,
+            query: `${playerCardsResp.team?.nickname} schedule`,
+          })}
+          data={scheduleResp}
+        />
+      )
+    }
+    {
+      teamLastGame && (
+        <Panel
+          class="flex flex-col"
+          title="Last Game"
+          href={createAskPath({
+            domain,
+            query: `${playerCardsResp.team?.nickname} last game`,
+          })}
+          background={
+            teamLeaders?.players[0]?.colors?.backgroundColor ?? '#FFF'
+          }
+          foreground={
+            teamLeaders?.players[0]?.colors?.foregroundColor ?? '#000'
+          }
+        >
+          <div class="py-10 md:py-5 md:-mt-5 flex flex-1 gap-2 rounded-2xl overflow-hidden hover:no-underline relative">
+            <div class="flex-1 flex flex-col items-center justify-center flex-shrink">
+              <EntityLink entity={teamLastGame.homeTeam.entity}>
+                <Image
+                  class="w-11 h-11 object-contain"
+                  src={teamLastGame.homeTeam.logoUrl}
+                  alt={teamLastGame.homeTeam.abbrev}
+                  width={100}
+                  height={100}
+                  loading="lazy"
+                />
+              </EntityLink>
+              <EntityLink
+                entity={teamLastGame.homeTeam.entity}
+                class="font-bold text-current whitespace-nowrap"
+              >
+                {teamLastGame.homeTeam.shortName || teamLastGame.homeTeam.name}
+              </EntityLink>
+              <p class="text-[0.8rem] tracking-[0.07rem]">
+                {teamLastGame.homeTeam.record}
+              </p>
+            </div>
+            <div class="flex items-center gap-3 -mt-[38px] flex-shrink-0">
+              <p class="text-2xl font-bold">{teamLastGame.homeTeam.score}</p>
+              <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
+                {teamLastGame.completedGameStatus}
+              </p>
+              <p class="text-2xl font-bold">{teamLastGame.awayTeam.score}</p>
+            </div>
+            <div class="flex-1 flex flex-col justify-center items-center flex-shrink">
+              <EntityLink entity={teamLastGame.awayTeam.entity}>
+                <Image
+                  class="w-11 h-11 object-contain"
+                  src={teamLastGame.awayTeam.logoUrl}
+                  alt={teamLastGame.awayTeam.abbrev}
+                  width={100}
+                  height={100}
+                  loading="lazy"
+                />
+              </EntityLink>
+              <EntityLink
+                entity={teamLastGame.awayTeam.entity}
+                class="font-bold text-current whitespace-nowrap"
+              >
+                {teamLastGame.awayTeam.shortName || teamLastGame.awayTeam.name}
+              </EntityLink>
+              <p class="text-[0.8rem] tracking-[0.07rem]">
+                {teamLastGame.awayTeam.record}
+              </p>
+            </div>
+            {teamLastGame.gameDate ? (
+              <p class="absolute bottom-5 left-1/2 -translate-x-1/2 text-[0.8rem] uppercase tracking-[0.07rem]">
+                {dayjs(teamLastGame.gameDate).format('ddd D MMM YYYY')}
+              </p>
+            ) : null}
+          </div>
+        </Panel>
+      )
+    }
+  </div>
+</div>
+{
+  adSlot && (
+    <div>
+      <AditudeCardMedRec
+        client:only="svelte"
+        slotId={adSlot.slotId}
+        baseDivId={adSlot.baseDivId}
+      />
+    </div>
+  )
+}

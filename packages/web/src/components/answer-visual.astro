@@ -136,5 +136,9 @@ const hasSupplement = !!columnChart
   }
   <Visuals class="" response={answer} {conversationToken} />
   <Explore {league} additionalQuestions={answer.visual.additionalQuestions} />
-  {preferredDomain && ANSWER_CARDS_ENABLED && <AnswerCards {league} {teamId} />}
+  {
+    preferredDomain && ANSWER_CARDS_ENABLED && (
+      <AnswerCards domain={domain!} {teamId} />
+    )
+  }
 </Layout>

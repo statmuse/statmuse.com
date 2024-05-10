@@ -25,11 +25,19 @@ if (data.type === 'error') return NOT_FOUND_404
 const subject = data.visual.summary.subject
 const preferredDomain = domain.toLowerCase()
 
-const [ detail ] = data.visual.detail
-const winner = detail.homeTeam.score < detail.awayTeam.score ? detail.awayTeam : detail.homeTeam
-const loser = detail.homeTeam.score < detail.awayTeam.score ? detail.homeTeam : detail.awayTeam
-const formattedDate = formatDate(new Date(detail.gameDate), "MMM DD, YYYY")
-const title = `${winner.shortName ?? winner.name} ${winner.score}-${loser.score} ${loser.shortName ?? loser.name} (${formattedDate}) Box Score`
+const [detail] = data.visual.detail
+const winner =
+  detail.homeTeam.score < detail.awayTeam.score
+    ? detail.awayTeam
+    : detail.homeTeam
+const loser =
+  detail.homeTeam.score < detail.awayTeam.score
+    ? detail.homeTeam
+    : detail.awayTeam
+const formattedDate = formatDate(new Date(detail.gameDate), 'MMM DD, YYYY')
+const title = `${winner.shortName ?? winner.name} ${winner.score}-${
+  loser.score
+} ${loser.shortName ?? loser.name} (${formattedDate}) Box Score`
 
 const meta = {
   title,
@@ -67,7 +75,5 @@ Caching.swr(Astro)
   {preferredDomain}
 >
   <EplBoxscore {data} />
-  {
-    ANSWER_CARDS_ENABLED && (<AnswerCards league="fc" {teamId} />)
-  }
+  {ANSWER_CARDS_ENABLED && <AnswerCards domain="EPL" {teamId} />}
 </Layout>

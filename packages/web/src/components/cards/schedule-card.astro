@@ -18,18 +18,12 @@ interface Props {
   data: ScheduleResponse
   href?: string
   entity?: GameraEntity | KanedamaEntity
-  colors?: {
-    foregroundColor: string
-    backgroundColor: string
-  }
 }
 
 const data = Astro.props.data
 const title = Astro.props.title
 const href = Astro.props.href
 const entity = Astro.props.entity
-
-let colors = Astro.props.colors
 
 const teams = data.teams.reduce(
   (result, team) => ({
@@ -83,8 +77,6 @@ const grid: GameraGrid = {
     }
   }),
 }
-
-colors = colors || teams[games[0].homeTeamId].colors
 ---
 
 <Grid

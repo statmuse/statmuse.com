@@ -1,0 +1,101 @@
+---
+import AditudeCardMedRec from '@components/aditude-card-med-rec.svelte'
+import TeamCardComponent from '@components/cards/team.astro'
+import type {
+  GameraDomain,
+  TeamCardResponse,
+  TeamCard,
+} from '@statmuse/core/gamera'
+import { createAskPath } from '@statmuse/core/path'
+
+interface Props {
+  domain: GameraDomain
+  response?: TeamCardResponse
+  adSlot?: {
+    slotId: string
+    baseDivId: string
+  }
+}
+
+const { domain, response, adSlot } = Astro.props
+
+if (!response || response.cards.length === 0) return undefined
+
+const filterBettingCards = (card: TeamCard) =>
+  [
+    // NBA, NFL, NHL Team
+    'bestRecordAgainstTheSpread',
+    'worstRecordAgainstTheSpread',
+  ].includes(card.stat)
+
+const cardTitle = (stat: string) => {
+  switch (stat) {
+    // ALL
+    case 'bestRecordAgainstTheSpread':
+      return 'Best Record ATS'
+    case 'worstRecordAgainstTheSpread':
+      return 'Worst Record ATS'
+    default:
+      return stat
+  }
+}
+
+const askLink = (stat: string, league: string, year: string) => {
+  const query =
+    league === 'mlb'
+      ? `record against the run line ${year}`
+      : league === 'nhl'
+      ? `record aginst the puck line ${year}`
+      : `record ats ${year}`
+  switch (stat) {
+    // ALL
+    case 'bestRecordAgainstTheSpread':
+      return createAskPath({ domain: league, query: `best ${query}` })
+    case 'worstRecordAgainstTheSpread':
+      return createAskPath({
+        domain: league,
+        query: `worst ${query}`,
+      })
+    default:
+      return stat
+  }
+}
+
+const title = `${domain} ${response.seasonYearDisplay} Betting`
+
+const cards = response.cards
+  .filter(filterBettingCards)
+  .filter((c) => c.teams.length > 0)
+
+const league = domain === 'EPL' ? 'fc' : domain.toLowerCase()
+
+if (cards.length === 0) return undefined
+---
+
+<div>
+  <h2 class="text-xl font-bold mb-1.5">
+    {title}
+  </h2>
+  <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
+    {
+      cards.map((card) => (
+        <TeamCardComponent
+          card={card}
+          title={cardTitle(card.stat)}
+          href={askLink(card.stat, league, response.seasonYearDisplay)}
+        />
+      ))
+    }
+  </div>
+</div>
+{
+  adSlot && (
+    <div>
+      <AditudeCardMedRec
+        client:only="svelte"
+        slotId={adSlot.slotId}
+        baseDivId={adSlot.baseDivId}
+      />
+    </div>
+  )
+}

@@ -60,7 +60,7 @@ const links: NavLink[] = [
   { text: 'Stats', href: `${playerPath}/career-stats`, param: 'stats' },
   league === 'fc'
     ? { text: 'Matches', param: 'matches' }
-    : { text: 'Game Log', param: 'game-log' },
+    : { text: 'Games', param: 'game-log' },
   { text: 'Splits', param: 'splits' },
   { text: 'Bio', param: 'bio' },
 ]
@@ -145,7 +145,7 @@ const navProps: ComponentProps<typeof Nav> = {
   <Explore {league} additionalQuestions={bio.additionalQuestions} />
   {
     ANSWER_CARDS_ENABLED && (
-      <AnswerCards {league} teamId={bio.team?.entity.id.split('/')[0]} />
+      <AnswerCards {domain} teamId={bio.team?.entity.id.split('/')[0]} />
     )
   }
 </Layout>

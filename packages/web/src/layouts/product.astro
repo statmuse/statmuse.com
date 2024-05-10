@@ -1,5 +1,6 @@
 ---
-import TabbedLayout from '@layouts/tabbed.astro'
+import Panel from '@components/panel.astro'
+import Layout from '@layouts/base.astro'
 import type { Metadata } from '@lib/meta'
 
 interface Props {
@@ -7,9 +8,10 @@ interface Props {
   meta?: Metadata
   prefixPath: string
   enableAdBanner?: boolean
+  selected: 'examples' | 'data'
 }
 
-const { league, meta, prefixPath, ...rest } = Astro.props
+const { league, meta, prefixPath, selected, ...rest } = Astro.props
 
 const domains = ['NBA', 'NFL', 'NHL', 'MLB', 'PGA', 'Premier League']
 
@@ -25,19 +27,34 @@ const productPages = [
 ]
 ---
 
-<TabbedLayout
+<Layout
   {meta}
-  title="The elephant of sports and financial information."
-  prefixPath={Astro.props.prefixPath}
-  pages={productPages}
+  hero={{ content: 'The elephant of sports and financial information.' }}
+  colors={{ foreground: '#fff', background: '#00c1d8' }}
+  navProps={{
+    href: () => '',
+    selected,
+    links: [
+      {
+        text: 'Examples',
+        param: 'examples',
+        href: '/product/examples',
+      },
+      {
+        text: 'Data Coverage',
+        param: 'data',
+        href: '/product/data',
+      },
+    ],
+  }}
   {...rest}
 >
   <div class="flex flex-wrap gap-6 md:gap-12 py-12">
-    <div class="w-full md:w-64 text-sm md:text-base text-[#333]">
+    <Panel class="w-full md:w-64 text-sm md:text-base self-start">
       <div class="block md:hidden">
         <select
           id="select"
-          class="w-full font-bold text-sm text-primary border border-[#e4e4e4] p-[0.5em]"
+          class="w-full font-bold text-sm text-primary dark:bg-gray-3 p-[0.5em]"
         >
           {
             domains.map((domain) => (
@@ -57,10 +74,10 @@ const productPages = [
         {
           domains.map((domain) => (
             <li
-              class={`rounded-md hover:bg-[#f4f6f9] ${
+              class={`rounded-md hover:bg-[#f4f6f9] hover:dark:bg-gray-2 ${
                 ((domain === 'Premier League' && league === 'fc') ||
                   league === domain.toLowerCase()) &&
-                'font-bold bg-[#f4f6f9]'
+                'font-bold bg-[#f4f6f9] dark:bg-gray-2'
               }`}
             >
               <a
@@ -75,12 +92,12 @@ const productPages = [
           ))
         }
       </ul>
-    </div>
+    </Panel>
     <div class="flex-1">
       <slot />
     </div>
   </div>
-</TabbedLayout>
+</Layout>
 
 <script define:vars={{ prefixPath }}>
   const onChange = (e) => {

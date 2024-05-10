@@ -5,6 +5,7 @@ import {
   type GameraBoxScore,
   tokensToHtml,
   tokensToText,
+  type GameraDomain,
 } from '@statmuse/core/gamera'
 import type { Metadata } from '@lib/meta'
 import { imageForgeUrl } from '@statmuse/core/path'
@@ -18,14 +19,15 @@ import { formatDate } from '@statmuse/core/time'
 
 interface Props {
   data: GameraBoxScore
-  preferredDomain: string
+  domain: GameraDomain
   meta?: Metadata
 }
 
-const { data, preferredDomain } = Astro.props
+const { data, domain } = Astro.props
 const { league, game } = Astro.params
-if (!game || !preferredDomain) return NOT_FOUND_404
+if (!game || !domain) return NOT_FOUND_404
 
+const preferredDomain = domain.toLowerCase()
 // const domain = league.toUpperCase() as GameraDomain
 // const path = Astro.url.pathname
 // const canonical = Astro.url.pathname + Astro.url.search
@@ -95,9 +97,5 @@ const meta = {
   </div>
   <slot />
   <Explore {league} additionalQuestions={data.visual.additionalQuestions} />
-  {
-    ANSWER_CARDS_ENABLED ? (
-      <AnswerCards league={league as LeagueParam} {teamId} />
-    ) : null
-  }
+  {ANSWER_CARDS_ENABLED ? <AnswerCards {domain} {teamId} /> : null}
 </Layout>

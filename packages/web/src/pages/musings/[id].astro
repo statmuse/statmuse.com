@@ -13,6 +13,7 @@ import Explore from '@components/explore.astro'
 import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
 import type { LeagueParam } from '@lib/params'
+import type { GameraDomain } from '@statmuse/core/gamera'
 
 const id = Astro.params.id as string
 const musing = await getMusingByIdOrFriendlyId(id).executeTakeFirst()
@@ -99,9 +100,7 @@ Caching.swr(Astro)
   {
     ANSWER_CARDS_ENABLED ? (
       <AnswerCards
-        league={
-          musing.domain === 'EPL' ? 'fc' : (preferredDomain as LeagueParam)
-        }
+        domain={musing.domain as GameraDomain}
         teamId={
           contentReference?.questionTags?.teamIds.length > 0
             ? contentReference?.questionTags?.teamIds[0]

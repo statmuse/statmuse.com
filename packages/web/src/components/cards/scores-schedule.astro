@@ -1,0 +1,39 @@
+---
+import type {
+  GameraDomain,
+  ScheduleResponse,
+  ScoresResponse,
+} from '@statmuse/core/gamera'
+import ScheduleCard from '@components/cards/schedule-card.astro'
+import ScoresCard from '@components/cards/scores-card.astro'
+
+interface Props {
+  domain: GameraDomain
+  scoresResponse?: ScoresResponse
+  scheduleResponse?: ScheduleResponse
+}
+
+const { domain, scoresResponse, scheduleResponse } = Astro.props
+
+if (
+  !scoresResponse ||
+  scoresResponse.games.length === 0 ||
+  !scheduleResponse ||
+  scheduleResponse.games.length === 0
+)
+  return undefined
+
+const title = `${domain === 'EPL' ? 'PL' : domain} ${
+  scoresResponse.seasonYearDisplay
+} Scores & Schedule`
+---
+
+<div>
+  <h2 class="text-xl font-bold mb-1.5">
+    {title}
+  </h2>
+  <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
+    <ScoresCard title="Scores" data={scoresResponse} />
+    <ScheduleCard title="Schedule" data={scheduleResponse} />
+  </div>
+</div>
