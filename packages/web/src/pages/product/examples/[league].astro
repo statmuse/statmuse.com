@@ -1,19 +1,7 @@
 ---
-import ProductLayout from '@layouts/product.astro'
+import Layout from '@layouts/base.astro'
 import { Caching } from '@lib/caching'
 import { createAskPath } from '@statmuse/core/path'
-
-// export const prerender = true
-
-export function getStaticPaths() {
-  return [
-    { params: { league: 'nba' } },
-    { params: { league: 'nfl' } },
-    { params: { league: 'mlb' } },
-    { params: { league: 'nhl' } },
-    { params: { league: 'pga' } },
-  ]
-}
 
 const { league } = Astro.params
 
@@ -1227,14 +1215,51 @@ const { exampleSets } = leagueSets.find(
   (x) => x.league.toLowerCase() === league,
 ) || { exampleSets: [] }
 
+const links = [
+  {
+    text: 'FC',
+    param: 'fc',
+    href: '/product/examples/fc',
+  },
+  {
+    text: 'NBA',
+    param: 'nba',
+    href: '/product/examples/nba',
+  },
+  {
+    text: 'NFL',
+    param: 'nfl',
+    href: '/product/examples/nfl',
+  },
+  {
+    text: 'NHL',
+    param: 'nhl',
+    href: '/product/examples/nhl',
+  },
+  {
+    text: 'MLB',
+    param: 'mlb',
+    href: '/product/examples/mlb',
+  },
+  {
+    text: 'PGA',
+    param: 'pga',
+    href: '/product/examples/pga',
+  },
+]
+
 Caching.swr(Astro)
 ---
 
-<ProductLayout
+<Layout
   {meta}
-  league={league || 'nfl'}
-  prefixPath="/product/examples"
-  selected="examples"
+  hero={{ content: 'Example Searches' }}
+  colors={{ foreground: '#fff', background: '#00c1d8' }}
+  navProps={{
+    href: () => '',
+    selected: league,
+    links,
+  }}
   enableAdBanner={false}
 >
   {
@@ -1257,4 +1282,4 @@ Caching.swr(Astro)
       </div>
     ))
   }
-</ProductLayout>
+</Layout>

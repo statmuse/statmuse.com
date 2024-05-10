@@ -1,5 +1,5 @@
 ---
-import ProductLayout from '@layouts/product.astro'
+import Layout from '@layouts/base.astro'
 import { Caching } from '@lib/caching'
 
 // export const prerender = true
@@ -1371,14 +1371,51 @@ const { coverage, poweredBy, glossaryItems } = data.find(
   (x) => x.league.toLowerCase() === league,
 ) || { coverage: [], poweredBy: '', glossaryItems: [] }
 
+const links = [
+  {
+    text: 'FC',
+    param: 'fc',
+    href: '/product/data/fc',
+  },
+  {
+    text: 'NBA',
+    param: 'nba',
+    href: '/product/data/nba',
+  },
+  {
+    text: 'NFL',
+    param: 'nfl',
+    href: '/product/data/nfl',
+  },
+  {
+    text: 'NHL',
+    param: 'nhl',
+    href: '/product/data/nhl',
+  },
+  {
+    text: 'MLB',
+    param: 'mlb',
+    href: '/product/data/mlb',
+  },
+  {
+    text: 'PGA',
+    param: 'pga',
+    href: '/product/data/pga',
+  },
+]
+
 Caching.swr(Astro)
 ---
 
-<ProductLayout
+<Layout
   {meta}
-  league={league || 'nfl'}
-  prefixPath="/product/data"
-  selected="data"
+  hero={{ content: 'Data Coverage' }}
+  colors={{ foreground: '#fff', background: '#00c1d8' }}
+  navProps={{
+    href: () => '',
+    selected: league,
+    links,
+  }}
   enableAdBanner={false}
 >
   <div class="pb-6">
@@ -1430,4 +1467,4 @@ Caching.swr(Astro)
       }
     </ul>
   </div>
-</ProductLayout>
+</Layout>
