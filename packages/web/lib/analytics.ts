@@ -104,3 +104,97 @@ export const getOrigin = (userAgent: string) => {
   if (isBot) return 'web.bot'
   return 'web'
 }
+
+const flattenObj = (key: string, obj?: object) => {
+  return !obj
+    ? {}
+    : Object.entries(obj).reduce((x, [k, v]) => {
+        return {
+          ...x,
+          [`${key}.${k}`]: v,
+        }
+      }, {})
+}
+
+const getReferenceIds = (
+  contentReference?: GameraContentReference | KanedamaContentReference,
+) => {
+  if (!contentReference) return {}
+  const { questionTags, answerTags } = contentReference
+
+  if (
+    questionTags?.playerIds ||
+    questionTags?.teamIds ||
+    answerTags?.playerIds ||
+    answerTags?.teamIds
+  ) {
+    return {
+      players: JSON.stringify(
+        Array.from(
+          new Set([
+            ...(questionTags?.playerIds ? questionTags.playerIds : []),
+            ...(answerTags?.playerIds ? answerTags.playerIds : []),
+          ]),
+        ),
+      ),
+      teams: JSON.stringify(
+        Array.from(
+          new Set([
+            ...(questionTags?.teamIds ? questionTags.teamIds : []),
+            ...(answerTags?.teamIds ? answerTags.teamIds : []),
+          ]),
+        ),
+      ),
+    }
+  }
+
+  if (questionTags?.assetIds || answerTags?.assetIds) {
+    return {
+      assets: JSON.stringify(
+        Array.from(
+          new Set([
+            ...(questionTags?.assetIds ? questionTags.assetIds : []),
+            ...(answerTags?.assetIds ? answerTags.assetIds : []),
+          ]),
+        ),
+      ),
+    }
+  }
+}
+
+const getSubjectItems = (subject?: GameraSubject | KanedamaSubject) => {
+  if (!subject) return {}
+  return {
+    subject_image: subject.imageUrl,
+    subject_background_color: subject.colors?.background,
+    subject_foreground_color: subject.colors?.foreground,
+  }
+}
+
+export const getPageviewProps = (document: Document) => {
+  const eventProps = document.querySelector<HTMLMetaElement>(
+    'meta[name="analytics:event:properties"]',
+  )?.content
+
+  if (eventProps) {
+    try {
+      const {
+        disposition,
+        tokenizationScore,
+        contentReference,
+        subject,
+        ...props
+      } = JSON.parse(eventProps) as AnalyticsPageviewProperties
+      return {
+        ...props,
+        ...flattenObj('disposition', disposition),
+        ...flattenObj('tokenizationScore', tokenizationScore),
+        ...getReferenceIds(contentReference),
+        ...getSubjectItems(subject),
+        origin: getOrigin(navigator.userAgent),
+      }
+    } catch (_e) {
+      return undefined
+    }
+  }
+}
