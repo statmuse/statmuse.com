@@ -1222,6 +1222,7 @@ const data = [
         description:
           'A clear-cut scoring opportunity which was not converted or scored',
       },
+      { term: 'Birthdates', description: '' },
       {
         term: 'Blocked crosses (BLK-CRS)',
         description: 'Total number of opposition crosses blocked',
@@ -1305,6 +1306,8 @@ const data = [
       { term: 'Non-penalty goals (NPG)', description: '' },
       { term: 'Nutmegs (NUTMEG)', description: '' },
       { term: 'Offsides (OFF)', description: '' },
+      { term: 'Open play goals (G-OP)', description: '' },
+      { term: 'Open play xG (xG-OP)', description: '' },
       { term: 'Own goals (OG)', description: '' },
       { term: 'Pass% (PASS%)', description: '' },
       { term: 'Pass attempts (PASS-ATT)', description: '' },
@@ -1320,9 +1323,12 @@ const data = [
       { term: 'Penalties won (PK-W)', description: '' },
       { term: 'Penalty conversion rate (PK%)', description: '' },
       { term: 'Penalty goals (PK)', description: '' },
+      { term: 'Per 90 stats', description: 'Stats per 90 minutes' },
       { term: 'Player comparions', description: '' },
       { term: 'Possession% (POSS%)', description: '' },
       { term: 'Possessions lost (POSS-L)', description: '' },
+      { term: 'Post-shot xG (PSxG)', description: '' },
+      { term: 'Preferred foot', description: '' },
       {
         term: 'Pressures (PRESS)',
         description: 'The number of times a team pressures the opponent',
@@ -1334,6 +1340,8 @@ const data = [
       { term: 'Red cards (RC)', description: '' },
       { term: 'Saves (SV)', description: '' },
       { term: 'Second yellow cards (2ND-YC)', description: '' },
+      { term: 'Set piece goals (G-SP)', description: '' },
+      { term: 'Set piece xG (xG-SP)', description: '' },
       { term: 'Shot% (SH%)', description: '' },
       { term: 'Shots (SH)', description: '' },
       { term: 'Shots blocked (SH-BLK)', description: '' },
@@ -1355,6 +1363,7 @@ const data = [
         description:
           'A completed pass splitting the defence for a teammate to run onto',
       },
+      { term: 'Titles', description: '' },
       { term: 'Touches (TCH)', description: '' },
       { term: 'Touches in opposition box (TCH-BOX)', description: '' },
       { term: 'WDL', description: '' },
@@ -1444,7 +1453,7 @@ Caching.swr(Astro)
         {
           poweredBy === 'data-sports-group' && (
             <img
-              class="inline-block h-[20px] object-contain"
+              class="inline-block h-[15px] object-contain"
               alt="Statsbomb"
               src="/affiliations/statsbomb.svg"
             />
