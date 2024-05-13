@@ -1,6 +1,6 @@
-- [ ] links on player profiles
+- [x] links on player profiles
+- [x] missing stats on player profiles
 - [ ] player profile fixes for retired players
-- [ ] missing stats on player profiles
 - [ ] bedrock cache
 - [ ] new homepage layout
 - [ ] trending dropdowns in hero

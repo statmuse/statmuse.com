@@ -15,6 +15,7 @@ import { NOT_FOUND_404 } from '@lib/response'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { age, formatDate } from '@statmuse/core/time'
+import EntityLink from './entity-link.astro'
 
 interface Props {
   league: LeagueParam
@@ -203,13 +204,13 @@ const calculateStat = (stat: Stat, row: Row | undefined) => ({
       ? stat[0]
       : stat?.label,
   value:
-    row === undefined
+    (row === undefined
       ? undefined
       : typeof stat === 'string'
       ? row[stat]?.display
       : Array.isArray(stat)
       ? row[stat[1]]?.display
-      : formatNumber(stat?.value(row)),
+      : formatNumber(stat?.value(row))) || '-',
 })
 
 const normalizeNflPosition = (position: string) => {
@@ -238,28 +239,34 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
     FW: [
       ['Goals', 'G'],
       ['Assists', 'A'],
-      ['xG', ''],
-      ['xA', ''],
+      'xG',
+      'xA',
       ['Matches', 'M'],
       ['Starts', 'START'],
       ['Shots', 'SH'],
-      ['On Target', 'ST'],
+      ['On Target', 'SOT'],
     ],
     MF: [
       ['Goals', 'G'],
       ['Assists', 'A'],
-      ['xG', ''],
-      ['xA', ''],
+      'xG',
+      'xA',
       ['Matches', 'M'],
       ['Starts', 'START'],
-      ['Big Chance Crtd', ''],
-      ['Pass %', ''],
+      'BCC',
+      ['Pass%', 'PASS%'],
     ],
     DF: [
       ['Goals', 'G'],
       ['Assists', 'A'],
-      ['Duel W-L', ''],
-      ['Aerial W-L', ''],
+      {
+        label: 'Duel W-L',
+        value: (v) => `${v['DUEL-W'].display}-${v['DUEL-L'].display}`,
+      },
+      {
+        label: 'Aerial W-L',
+        value: (v) => `${v['AER-W'].display}-${v['AER-L'].display}`,
+      },
       ['Matches', 'M'],
       ['Starts', 'START'],
       ['Tackles Made', 'TKL'],
@@ -270,7 +277,7 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       ['Goals Conceded', 'GC'],
       ['Saves', 'SV'],
       ['Matches', 'M'],
-      ['Recoveries', ''],
+      ['Recoveries', 'REC'],
       ['Penalty Saves', 'SV-PK'],
     ],
   },
@@ -320,11 +327,14 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       ['Sacks', 'SCK'],
       ['TFL', 'TFL'],
       ['Int', 'INT'],
-      ['FF', ''],
+      'FF',
       ['Games', 'GP'],
       ['Tackles', 'TKL'],
       ['Pass Def', 'PDEF'],
-      ['TD', ''],
+      {
+        label: 'TD',
+        value: (v) => `${v['FR TD'].value + v['INT TD-TD'].value}`,
+      },
     ],
     OL: [
       ['Games', 'GP'],
@@ -423,19 +433,21 @@ const seasonPanels = statPanels.map((title, index) => ({
   ),
 }))
 
+console.log('stats', JSON.stringify(stats?.grid.rows, undefined, 2))
+
 const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   fc: {
     DEFAULT: [
       'MIN',
       'G',
       'A',
-      ['xG', ''],
-      ['xA', ''],
+      'xG',
+      'xA',
       {
         label: 'Shot %',
         value: (v) =>
-          `${v.ST.value}/${v.SH.value} (${formatPercentage(
-            ((v.ST.value as number) / (v.SH.value as number)) * 100,
+          `${v.SOT?.value}/${v.SH?.value} (${formatPercentage(
+            ((v.SOT?.value as number) / (v.SH?.value as number)) * 100,
           )})`,
       },
       {
@@ -443,7 +455,8 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
         value: (v) =>
           `${v.PASS.value}/${v['PASS-ATT'].value} (${v['PASS%'].display}%)`,
       },
-      ['Big Chance Crtd', 'BIG CHNC'],
+      'BCM',
+      'BCC',
       ['Key Pass', 'PASS-KEY'],
       ['Touches (Opp Box)', 'TCH-BOX'],
       {
@@ -467,10 +480,10 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       'GC',
       'SV',
       ['PK SV', 'SV-PK'],
-      ['REC', ''],
+      'REC',
       ['Error Led To Shot', 'ERR-SH'],
       ['Error Led To Goal', 'ERR-G'],
-      ['Long Pass', ''],
+      ['Long Pass', 'PASS-LNG'],
       'YC',
       'RC',
     ],
@@ -551,7 +564,10 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       ['FF', 'FF'],
       ['Int', 'INT'],
       ['Pass Def', 'PDEF'],
-      ['TD', 'TD'],
+      // {
+      //   label: 'TD',
+      //   value: (v) => `${v['FR TD'].value + v['INT TD-TD'].value}`,
+      // },
     ],
     OL: [],
     K: [
@@ -680,6 +696,8 @@ const lastGameStats_ = lastGame
       calculateStat(stat, recentGames.grid.rows[0]),
     ) ?? []
   : []
+
+console.log('lastGame', JSON.stringify(lastGame, undefined, 2))
 
 const nextGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   fc: {
@@ -855,7 +873,11 @@ const games = recentGames?.grid.rows.map((r, index) => ({
     </Panel>
     {
       seasonPanels.map((panel, index) => (
-        <Panel team={index === 0} title={panel.title}>
+        <Panel
+          team={index === 0}
+          title={panel.title}
+          href={playerPath + '/career-stats'}
+        >
           <div
             class:list={{
               'grid grid-cols-2 gap-3 py-3 leading-snug items-center': true,
@@ -878,47 +900,59 @@ const games = recentGames?.grid.rows.map((r, index) => ({
     }
     {
       lastGame && lastGameStats_?.length ? (
-        <Panel title="Latest Performance">
+        <Panel title="Latest Performance" entity={lastGame.SCORE.entity}>
           <div class="flex items-center justify-stretch gap-1 border-b border-gray-6 dark:border-gray-4 -mx-3 px-3">
             <Image
               class:list={{
-                'h-16 max-w-20': true,
                 'select-none': true,
                 'object-contain object-bottom': true,
               }}
               alt={bustImageAlt}
               src={bustImageUrl}
-              width={64}
-              height={64}
+              width={100}
+              height={100}
               loading="eager"
             />
             <div class="">
               <p class="whitespace-nowrap">{bio.usedName}</p>
               <div class="flex items-center justify-between gap-2 text-sm text-gray-5">
-                <p class="whitespace-nowrap">
+                <EntityLink
+                  entity={lastGame.SCORE.entity}
+                  class="whitespace-nowrap text-inherit"
+                >
                   {formatDate(lastGame.DATE.value as string, 'MMM DD')}
-                </p>
-                <div class="flex gap-1 items-center">
+                </EntityLink>
+                <EntityLink
+                  entity={lastGame.OPP.entity}
+                  class="flex gap-1 items-center text-inherit"
+                >
                   <p class="whitespace-nowrap">
                     {lastGame.ALIGNMENT.display.replace('@', 'at')}
                   </p>
-                  {lastGame.OPP.imageUrl ? (
-                    <Image
-                      class:list={{
-                        'h-4 max-w-4': true,
-                        'select-none': true,
-                        'object-contain object-center': true,
-                      }}
-                      alt={lastGame.OPP.display}
-                      src={lastGame.OPP.imageUrl}
-                      width={16}
-                      height={16}
-                      loading="eager"
-                    />
-                  ) : null}
-                  <p class="whitespace-nowrap">{lastGame.OPP.display}</p>
-                </div>
-                <p class="whitespace-nowrap">{lastGame.SCORE.display}</p>
+                  <div class="flex gap-1 items-center">
+                    {lastGame.OPP.imageUrl ? (
+                      <Image
+                        class:list={{
+                          'h-4 max-w-4': true,
+                          'select-none': true,
+                          'object-contain object-center': true,
+                        }}
+                        alt={lastGame.OPP.display}
+                        src={lastGame.OPP.imageUrl}
+                        width={16}
+                        height={16}
+                        loading="eager"
+                      />
+                    ) : null}
+                    <p class="whitespace-nowrap">{lastGame.OPP.display}</p>
+                  </div>
+                </EntityLink>
+                <EntityLink
+                  class="whitespace-nowrap text-inherit"
+                  entity={lastGame.SCORE.entity}
+                >
+                  {lastGame.SCORE.display}
+                </EntityLink>
               </div>
             </div>
           </div>
@@ -948,14 +982,17 @@ const games = recentGames?.grid.rows.map((r, index) => ({
     </Panel>
     {
       games ? (
-        <Panel title="Games">
+        <Panel title="Games" href={playerPath + '/game-log'}>
           <ol class="flex flex-col gap-2">
             {nextGame ? (
               <li class="-mx-3 px-3 border-b border-gray-6 dark:border-gray-4">
                 <div class="grid grid-cols-4 gap-2 justify-stretch items-end pb-2.5">
                   <div>
                     <p class="text-sm text-gray-5">Next</p>
-                    <div class="flex gap-1 items-center -mt-0.5">
+                    <EntityLink
+                      entity={nextGameOpponnent.entity}
+                      class="flex gap-1 items-center -mt-0.5 text-inherit"
+                    >
                       <p class="whitespace-nowrap">
                         {isNextGameHome ? 'vs' : 'at'}
                       </p>
@@ -974,7 +1011,7 @@ const games = recentGames?.grid.rows.map((r, index) => ({
                       <p class="whitespace-nowrap">
                         {nextGameOpponnent.abbreviation}
                       </p>
-                    </div>
+                    </EntityLink>
                   </div>
                   <div class="col-span-3 grid grid-cols-5 gap-1">
                     <div class="whitespace-nowrap text-gray-5">
@@ -1007,10 +1044,16 @@ const games = recentGames?.grid.rows.map((r, index) => ({
                   }}
                 >
                   <div>
-                    <p class="text-sm text-gray-5 whitespace-nowrap">
+                    <EntityLink
+                      entity={game.SCORE.entity}
+                      class="text-sm text-gray-5 whitespace-nowrap"
+                    >
                       {formatDate(game.DATE.display, 'ddd, MMM DD')}
-                    </p>
-                    <div class="flex gap-1 items-center -mt-0.5">
+                    </EntityLink>
+                    <EntityLink
+                      entity={game.OPP.entity}
+                      class="flex gap-1 items-center -mt-0.5 text-inherit"
+                    >
                       <p class="whitespace-nowrap">
                         {game.ALIGNMENT.display.replace('@', 'at')}
                       </p>
@@ -1029,11 +1072,14 @@ const games = recentGames?.grid.rows.map((r, index) => ({
                         />
                       ) : null}
                       <p class="whitespace-nowrap">{game.OPP.display}</p>
-                    </div>
+                    </EntityLink>
                   </div>
-                  <div class="whitespace-nowrap text-right">
+                  <EntityLink
+                    entity={game.SCORE.entity}
+                    class="whitespace-nowrap text-right text-inherit"
+                  >
                     {game.SCORE.display}
-                  </div>
+                  </EntityLink>
                   <div class="col-span-2 grid grid-cols-4 gap-1 text-center">
                     {stats?.map((stat) => (
                       <div>

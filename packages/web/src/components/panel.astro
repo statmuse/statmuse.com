@@ -4,6 +4,7 @@ import { rgbToHex } from '@statmuse/core/color'
 import EntityLink from '@components/entity-link.svelte'
 import type { GameraEntity } from '@statmuse/core/gamera'
 import type { KanedamaEntity } from '@statmuse/core/kanedama'
+import Icon from './icon.svelte'
 
 type Color = string | { r: number; g: number; b: number; a: number }
 
@@ -48,12 +49,20 @@ const foregroundHex = foreground
 >
   {
     entity ? (
-      <EntityLink {entity} class="font-bold mb-2 text-inherit">
+      <EntityLink
+        {entity}
+        class="font-bold mb-2 text-inherit block flex justify-between items-center"
+      >
         {title}
+        <Icon class="w-4 h-4" name="next" />
       </EntityLink>
     ) : href ? (
-      <a {href} class="font-bold mb-2 text-inherit no-underline">
+      <a
+        {href}
+        class="font-bold mb-2 text-inherit no-underline block flex justify-between items-center"
+      >
         {title}
+        <Icon class="w-4 h-4" name="next" />
       </a>
     ) : title ? (
       <h3 class="font-bold mb-2">{title}</h3>

@@ -224,7 +224,9 @@ export const getDefaultTeamLogoUrl = (domain: GameraDomain) => {
   }
 }
 
-export const getUrlForEntity = (entity: GameraEntity) => {
+export const getUrlForEntity = (entity: GameraEntity | undefined) => {
+  if (!entity) return ''
+
   const { display, domain, type, parameters, id } = entity
   const league = domain.toUpperCase() === 'EPL' ? 'fc' : domain.toLowerCase()
   const isPga = domain.toUpperCase() === 'PGA'
