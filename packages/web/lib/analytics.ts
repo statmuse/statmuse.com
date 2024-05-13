@@ -43,8 +43,6 @@ export type AnalyticsPageviewProperties = {
     | 'team'
     | 'unknown'
   query?: string
-  user_id?: string
-  visitor_id?: string
   disposition?: Disposition
   tokenizationScore?: TokenizationScore
   contentReference?: GameraContentReference | KanedamaContentReference
@@ -98,7 +96,7 @@ export const segment = (window.segment =
         {},
       ) as AnalyticsBrowser))
 
-export const getOrigin = (userAgent: string) => {
+const getOrigin = (userAgent: string) => {
   const isBot = isBotTest(userAgent)
   if (isBot && userAgent.includes('Google')) return 'web.googlebot'
   if (isBot) return 'web.bot'
