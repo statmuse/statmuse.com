@@ -451,6 +451,17 @@ const hasSupplement = hero?.hasSupplement
       import { session as sessionStore } from '@lib/stores'
       import { maybeRewriteUrl } from '@lib/client'
 
+      // set page targeting for GAM
+      const eventProps = getPageviewProps(document)
+      if (eventProps) {
+        var tude = window.tude || { cmd: [] }
+        tude.cmd.push(function () {
+          tude.setPageTargeting({
+            pagetype: eventProps.page_domain + '-' + eventProps.page_type,
+          })
+        })
+      }
+
       // initialize referrer var
       let referrer: string | undefined
 
@@ -460,6 +471,64 @@ const hasSupplement = hero?.hasSupplement
         sessionId = crypto.randomUUID()
         sessionStorage.setItem('sessionId', sessionId)
       }
+
+      let startTime = Date.now()
+      let timeSpent = 0
+
+      const trackTimeOnPage = () => {
+        const endTime = Date.now()
+        timeSpent += (endTime - startTime) / 1000
+
+        const props = getPageviewProps(document)
+        if (props) {
+          const { page_type, page_domain, is_search } = props
+          window.segment.track(
+            'Time On Page',
+            {
+              session_id: sessionId,
+              time_spent: timeSpent,
+              page_type,
+              page_domain,
+              is_search,
+            },
+            referrer ? { page: { referrer } } : {},
+          )
+          startTime = endTime
+          timeSpent = 0
+        }
+      }
+
+      document.addEventListener('visibilitychange', () => {
+        console.log('Visibility Change')
+      })
+
+      window.addEventListener('blur', () => {
+        // Page is not visible, pause the timer and calculate timeSpent
+        timeSpent += (Date.now() - startTime) / 1000
+      })
+
+      window.addEventListener('focus', () => {
+        // Page became visible again, resume the timer
+        startTime = Date.now()
+      })
+
+      document.addEventListener('astro:before-swap', () => {
+        trackTimeOnPage()
+        referrer = window.location.href
+      })
+
+      document.addEventListener('astro:after-swap', () => {
+        // set page targeting for GAM
+        const eventProps = getPageviewProps(document)
+        if (eventProps) {
+          var tude = window.tude || { cmd: [] }
+          tude.cmd.push(function () {
+            tude.setPageTargeting({
+              pagetype: eventProps.page_domain + '-' + eventProps.page_type,
+            })
+          })
+        }
+      })
 
       document.addEventListener('astro:page-load', async () => {
         maybeRewriteUrl(window, document)
@@ -475,16 +544,7 @@ const hasSupplement = hero?.hasSupplement
             { ...eventProps, session_id: sessionId },
             referrer ? { page: { referrer } } : {},
           )
-
-          var tude = window.tude || { cmd: [] }
-          tude.cmd.push(function () {
-            tude.setPageTargeting({
-              pagetype: eventProps.page_domain + '-' + eventProps.page_type,
-            })
-          })
         }
-
-        referrer = window.location.href
       })
 
       document.addEventListener(
