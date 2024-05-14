@@ -454,6 +454,13 @@ const hasSupplement = hero?.hasSupplement
       // initialize referrer var
       let referrer: string | undefined
 
+      let sessionId: string | null
+      sessionId = sessionStorage.getItem('sessionId')
+      if (!sessionId) {
+        sessionId = crypto.randomUUID()
+        sessionStorage.setItem('sessionId', sessionId)
+      }
+
       document.addEventListener('astro:page-load', async () => {
         maybeRewriteUrl(window, document)
 
@@ -465,7 +472,7 @@ const hasSupplement = hero?.hasSupplement
         if (eventProps) {
           segment.track(
             'Pageview',
-            eventProps,
+            { ...eventProps, session_id: sessionId },
             referrer ? { page: { referrer } } : {},
           )
 
