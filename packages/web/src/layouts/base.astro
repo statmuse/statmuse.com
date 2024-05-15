@@ -473,12 +473,14 @@ const hasSupplement = hero?.hasSupplement
         sessionStorage.setItem('sessionId', sessionId)
       }
 
-      let startTime = Date.now()
+      let startTime: number | undefined = Date.now()
       let timeSpent = 0
 
       const trackTimeOnPage = () => {
         const endTime = Date.now()
-        timeSpent += (endTime - startTime) / 1000
+        if (startTime) {
+          timeSpent += (endTime - startTime) / 1000
+        }
 
         const props = getPageviewProps(document)
         if (props) {
@@ -494,18 +496,26 @@ const hasSupplement = hero?.hasSupplement
             },
             referrer ? { page: { referrer } } : {},
           )
-          startTime = endTime
+
+          if (startTime) {
+            startTime = endTime
+          }
           timeSpent = 0
         }
       }
 
-      document.addEventListener('visibilitychange', () => {
-        console.log('Visibility Change')
+      window.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+          trackTimeOnPage()
+        }
       })
 
       window.addEventListener('blur', () => {
-        // Page is not visible, pause the timer and calculate timeSpent
-        timeSpent += (Date.now() - startTime) / 1000
+        // Page is not visible, calculate timespent and pause the timer
+        if (startTime) {
+          timeSpent += (Date.now() - startTime) / 1000
+        }
+        startTime = undefined
       })
 
       window.addEventListener('focus', () => {
