@@ -446,6 +446,7 @@ const hasSupplement = hero?.hasSupplement
     {hero?.share && <ShareModal client:load {...hero.share} />}
     {enableAdBanner && <AditudeAdAnchor client:only="svelte" />}
     <script>
+      import { v4 as uuidv4 } from 'uuid'
       import { segment, getPageviewProps } from '@lib/analytics'
       import type { Session } from '@lib/session'
       import { session as sessionStore } from '@lib/stores'
@@ -468,7 +469,7 @@ const hasSupplement = hero?.hasSupplement
       let sessionId: string | null
       sessionId = sessionStorage.getItem('sessionId')
       if (!sessionId) {
-        sessionId = crypto.randomUUID()
+        sessionId = uuidv4()
         sessionStorage.setItem('sessionId', sessionId)
       }
 
