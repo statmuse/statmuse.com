@@ -7,7 +7,7 @@ import { type TrendingListItem as Item } from 'src/types'
 interface Props {
   items: Item[]
   title: string
-  moreUrl: string
+  moreUrl?: string
   eager?: boolean
   prominent?: boolean
   class?: string | null
@@ -16,15 +16,21 @@ interface Props {
 const { items, title, eager, moreUrl, prominent } = Astro.props
 ---
 
-<Panel {title} class:list={{ [Astro.props.class ?? '']: !!Astro.props.class }}>
+<Panel
+  {title}
+  class:list={{
+    [Astro.props.class ?? '']: !!Astro.props.class,
+    'pb-0': !moreUrl,
+  }}
+>
   {
     items?.length ? (
       <>
-        <ol class="-mx-3 mt-1 list-none divide-y divide-gray-6">
+        <ol class="-mx-3 mt-1 list-none divide-y divide-gray-6 dark:divide-gray-4">
           {items.slice(0, 5).map((item, index) => (
             <TrendingListItem {item} {index} {prominent} {eager} />
           ))}
-          {items.length > 5 ? (
+          {items.length > 5 && moreUrl && (
             <li class="pt-3 pb-1">
               <a
                 href={moreUrl}
@@ -33,8 +39,6 @@ const { items, title, eager, moreUrl, prominent } = Astro.props
                 See more <Icon name="dropdown" class="w-5 h-5" />
               </a>
             </li>
-          ) : (
-            <li class="pt-3 pb-1" />
           )}
         </ol>
       </>
