@@ -10,6 +10,9 @@ import MusingsCard from '@components/home/musings-card.astro'
 import { homeLeadersByDomain, homeRankingsByDomain } from '@lib/related-content'
 import Image from '@components/image.astro'
 import EntityLink from '@components/entity-link.astro'
+import { getTrendingData } from '@lib/trending'
+import { find } from 'lodash-es'
+import TrendingList from '@components/trending-list.astro'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
@@ -575,6 +578,12 @@ const leaders = await homeLeadersByDomain({ context: Astro, domain })
 
 const rankings = await homeRankingsByDomain({ context: Astro, domain })
 
+const data = await getTrendingData({ league })
+
+const trendingSearches = find(data.datasets, { name: 'Searches' })
+const trendingPlayers = find(data.datasets, { name: 'Players' })
+const trendingTeams = find(data.datasets, { name: 'Teams' })
+
 Caching.swr(Astro)
 ---
 
@@ -686,6 +695,30 @@ Caching.swr(Astro)
           }
         </div>
       </Panel>
+      {
+        trendingPlayers && (
+          <TrendingList
+            title={`Trending ${trendingPlayers.name}`}
+            items={trendingPlayers.items}
+          />
+        )
+      }
+      {
+        trendingTeams && (
+          <TrendingList
+            title={`Trending ${trendingTeams.name}`}
+            items={trendingTeams.items}
+          />
+        )
+      }
+      {
+        trendingSearches && (
+          <TrendingList
+            title={`Trending ${trendingSearches.name}`}
+            items={trendingSearches.items}
+          />
+        )
+      }
       <!-- {
         examples[league || 'nba'].map(([title, queries]) => (
           <Panel {title} class="break-inside-avoid-column">
