@@ -4,7 +4,9 @@ import Panel from '@components/panel.astro'
 import { Caching } from '@lib/caching'
 import { createAskPath } from '@statmuse/core/path'
 import { NOT_FOUND_404 } from '@lib/response'
-import { type LeagueParam } from '@lib/params'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
+import { listLatestMusings } from '@statmuse/core/musing'
+import MusingsCard from '@components/home/musings-card.astro'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
@@ -562,25 +564,33 @@ const meta = {
   },
 }
 
+const musings = await listLatestMusings(leagueToDomain(league))
+
 Caching.swr(Astro)
 ---
 
 <HomeLayout {meta} {league}>
-  <div class="gap-3 space-y-3 columns-2xs lg:min-w-[48rem]">
-    {
-      examples[league || 'nba'].map(([title, queries]) => (
-        <Panel {title} class="break-inside-avoid-column">
-          <ul class="flex flex-col gap-2">
-            {queries.map(({ query, path }) => (
-              <li class="max-w-xs">
-                <a href={path} class="text-pretty">
-                  {query}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </Panel>
-      ))
-    }
+  <div class="flex gap-3">
+    <div class="flex-1 space-y-3">
+      {musings.map(async (musing, i) => <MusingsCard {musing} index={i} />)}
+    </div>
+    <div class="flex-1 space-y-3">
+      <!-- {
+        examples[league || 'nba'].map(([title, queries]) => (
+          <Panel {title} class="break-inside-avoid-column">
+            <ul class="flex flex-col gap-2">
+              {queries.map(({ query, path }) => (
+                <li class="max-w-xs">
+                  <a href={path} class="text-pretty">
+                    {query}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </Panel>
+        ))
+      } -->
+    </div>
+    <div class="basis-[300px]"></div>
   </div>
 </HomeLayout>
