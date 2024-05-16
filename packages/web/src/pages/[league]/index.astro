@@ -7,8 +7,9 @@ import { NOT_FOUND_404 } from '@lib/response'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import { listLatestMusings } from '@statmuse/core/musing'
 import MusingsCard from '@components/home/musings-card.astro'
-import { homeLeadersByDomain } from '@lib/related-content'
+import { homeLeadersByDomain, homeRankingsByDomain } from '@lib/related-content'
 import Image from '@components/image.astro'
+import EntityLink from '@components/entity-link.astro'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
@@ -572,6 +573,8 @@ const musings = await listLatestMusings(domain)
 
 const leaders = await homeLeadersByDomain({ context: Astro, domain })
 
+const rankings = await homeRankingsByDomain({ context: Astro, domain })
+
 Caching.swr(Astro)
 ---
 
@@ -609,7 +612,9 @@ Caching.swr(Astro)
                             {player.statDisplayValue}
                           </span>
                         </div>
-                        {player.usedName}
+                        <EntityLink entity={player.entity} class="text-inherit">
+                          {player.usedName}
+                        </EntityLink>
                       </div>
                     ))}
                   </div>
@@ -622,6 +627,57 @@ Caching.swr(Astro)
                     src={section.players[0]?.imageUrl}
                     width={100}
                     height={100}
+                    loading="eager"
+                  />
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </Panel>
+      <Panel title="League Rankings">
+        <div class="divide-y divide-gray-6 dark:divide-gray-4">
+          {
+            rankings?.map((section) => (
+              <div class="-mx-3 px-3">
+                <p class="text-sm text-gray-5">{section.title}</p>
+                <div class="flex">
+                  <div class="flex-1">
+                    {section.teams.map((team, index) => (
+                      <div
+                        class="flex"
+                        class:list={{ 'text-sm text-gray-5': index !== 0 }}
+                      >
+                        <div class="w-14">
+                          <span
+                            class:list={{
+                              'px-2 rounded-2xl text-white': index === 0,
+                              'ml-1': index !== 0,
+                            }}
+                            style={
+                              index === 0
+                                ? `background: ${team.colors?.backgroundColor}`
+                                : ''
+                            }
+                          >
+                            {team.statDisplayValue}
+                          </span>
+                        </div>
+                        <EntityLink entity={team.entity} class="text-inherit">
+                          {team.name}
+                        </EntityLink>
+                      </div>
+                    ))}
+                  </div>
+                  <Image
+                    class:list={{
+                      'select-none w-[75px] h-[75px]': true,
+                      'object-contain object-center': true,
+                    }}
+                    alt={section.teams[0]?.nickname}
+                    src={section.teams[0]?.logoImageUrl}
+                    width={75}
+                    height={75}
                     loading="eager"
                   />
                 </div>
