@@ -7,6 +7,8 @@ import { NOT_FOUND_404 } from '@lib/response'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import { listLatestMusings } from '@statmuse/core/musing'
 import MusingsCard from '@components/home/musings-card.astro'
+import { homeLeadersByDomain } from '@lib/related-content'
+import Image from '@components/image.astro'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
@@ -564,7 +566,11 @@ const meta = {
   },
 }
 
-const musings = await listLatestMusings(leagueToDomain(league))
+const domain = leagueToDomain(league)
+
+const musings = await listLatestMusings(domain)
+
+const leaders = await homeLeadersByDomain({ context: Astro, domain })
 
 Caching.swr(Astro)
 ---
@@ -575,6 +581,55 @@ Caching.swr(Astro)
       {musings.map(async (musing, i) => <MusingsCard {musing} index={i} />)}
     </div>
     <div class="flex-1 space-y-3">
+      <Panel title="League Leaders">
+        <div class="divide-y divide-gray-6 dark:divide-gray-4">
+          {
+            leaders?.map((section) => (
+              <div class="-mx-3 px-3">
+                <p class="text-sm text-gray-5">{section.title}</p>
+                <div class="flex">
+                  <div class="flex-1">
+                    {section.players.map((player, index) => (
+                      <div
+                        class="flex"
+                        class:list={{ 'text-sm text-gray-5': index !== 0 }}
+                      >
+                        <div class="w-14">
+                          <span
+                            class:list={{
+                              'px-2 rounded-2xl text-white': index === 0,
+                              'ml-1': index !== 0,
+                            }}
+                            style={
+                              index === 0
+                                ? `background: ${player.colors?.backgroundColor}`
+                                : ''
+                            }
+                          >
+                            {player.statDisplayValue}
+                          </span>
+                        </div>
+                        {player.usedName}
+                      </div>
+                    ))}
+                  </div>
+                  <Image
+                    class:list={{
+                      'select-none': true,
+                      'object-contain object-bottom': true,
+                    }}
+                    alt={section.players[0]?.usedName}
+                    src={section.players[0]?.imageUrl}
+                    width={100}
+                    height={100}
+                    loading="eager"
+                  />
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </Panel>
       <!-- {
         examples[league || 'nba'].map(([title, queries]) => (
           <Panel {title} class="break-inside-avoid-column">
