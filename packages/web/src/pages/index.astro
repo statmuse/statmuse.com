@@ -8,7 +8,7 @@ import Panel from '@components/panel.astro'
 import FreestarVideo from '@components/freestar-video.svelte'
 import { getTrendingData } from '@lib/trending'
 
-const musings = await listLatestMusings.execute()
+const musings = await listLatestMusings()
 const trending = await getTrendingData()
 const players = trending?.datasets
   .find((d) => d.key === 'players')

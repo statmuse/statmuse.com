@@ -1,6 +1,7 @@
 import type { InferResult } from 'kysely'
 import { dbReader } from '../db'
 import { isUUID } from '../question'
+import type { GameraDomain } from '../gamera'
 export * from './musing.sql'
 
 export const getMusingByIdOrFriendlyId = (id: string) => {
@@ -41,19 +42,30 @@ export type Musing = InferResult<
   ReturnType<typeof getMusingByIdOrFriendlyId>
 >[number]
 
-export const listLatestMusings = dbReader
-  .selectFrom('musings')
-  .innerJoin('links', 'links.musing_id', 'musings.id')
-  .where('musings.content_type', '=', 'latest-stats')
-  .where((eb) =>
-    eb.or([
-      eb.cmpr('musings.publish_at', '=', null),
-      eb.cmpr('musings.publish_at', '<=', new Date()),
-    ]),
-  )
-  .limit(20)
-  .orderBy('musings.publish_at', 'desc')
-  .selectAll('musings')
-  .select('links.short_code')
+export const listLatestMusings = (league?: GameraDomain) => {
+  let query = dbReader
+    .selectFrom('musings')
+    .innerJoin('links', 'links.musing_id', 'musings.id')
 
-export type LatestMusing = InferResult<typeof listLatestMusings>[number]
+  if (league) {
+    query = query
+      .innerJoin('leagues', 'leagues.id', 'musings.league_id')
+      .where('leagues.name', '=', league)
+  }
+
+  return query
+    .where('musings.content_type', '=', 'latest-stats')
+    .where((eb) =>
+      eb.or([
+        eb.cmpr('musings.publish_at', '=', null),
+        eb.cmpr('musings.publish_at', '<=', new Date()),
+      ]),
+    )
+    .limit(20)
+    .orderBy('musings.publish_at', 'desc')
+    .selectAll('musings')
+    .select('links.short_code')
+    .execute()
+}
+
+export type LatestMusing = Awaited<ReturnType<typeof listLatestMusings>>[number]
