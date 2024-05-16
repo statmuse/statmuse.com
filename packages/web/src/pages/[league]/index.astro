@@ -719,21 +719,26 @@ Caching.swr(Astro)
           />
         )
       }
-      <!-- {
-        examples[league || 'nba'].map(([title, queries]) => (
-          <Panel {title} class="break-inside-avoid-column">
-            <ul class="flex flex-col gap-2">
-              {queries.map(({ query, path }) => (
-                <li class="max-w-xs">
-                  <a href={path} class="text-pretty">
-                    {query}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </Panel>
-        ))
-      } -->
+      <Panel title="Example Questions">
+        <div class="divide-y divide-gray-6 dark:divide-gray-4">
+          {
+            examples[league || 'nba'].map(([title, queries]) => (
+              <div class="-mx-3 px-3">
+                <p class="text-sm text-gray-5">{title}</p>
+                <ul class="flex flex-col mb-2">
+                  {queries.map(({ query, path }) => (
+                    <li class="max-w-xs">
+                      <a href={path} class="text-pretty text-inherit">
+                        {query}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+      </Panel>
     </div>
     <div class="basis-[300px]"></div>
   </div>
