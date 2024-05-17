@@ -17,6 +17,8 @@ import EntityLink from '@components/entity-link.astro'
 import { getTrendingData } from '@lib/trending'
 import { find } from 'lodash-es'
 import TrendingList from '@components/trending-list.astro'
+import { getStandings } from '@lib/standings'
+import StandingsCard from '@components/cards/standings-card.astro'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
@@ -590,6 +592,8 @@ const trendingTeams = find(data.datasets, { name: 'Teams' })
 
 const betting = await homeBettingByDomain({ context: Astro, domain })
 
+const standings = await getStandings({ context: Astro, domain })
+
 Caching.swr(Astro)
 ---
 
@@ -701,6 +705,33 @@ Caching.swr(Astro)
           }
         </div>
       </Panel>
+      {
+        standings && (
+          <Panel title="Standings">
+            <div class="flex flex-wrap">
+              {Object.entries(standings.teams).map(([name, teams], index) => (
+                <Fragment>
+                  <input
+                    class="absolute opacity-0 peer [&:checked_+_div]:block"
+                    type="radio"
+                    name="standings"
+                    id={`standings-${index}`}
+                    checked={index === 0}
+                  />
+                  <label for={`standings-${index}`} class="flex-1">
+                    {name}
+                  </label>
+                  <StandingsCard
+                    class="-mx-3 pt-0 hidden peer-checked:block w-full order-last"
+                    {teams}
+                    {domain}
+                  />
+                </Fragment>
+              ))}
+            </div>
+          </Panel>
+        )
+      }
       {
         betting && (
           <Panel title="Betting Trends">
