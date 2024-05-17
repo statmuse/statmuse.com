@@ -1,12 +1,12 @@
 ---
-import { groupBy } from 'lodash-es'
-import type { GameraDomain, StandingsResponse } from '@statmuse/core/gamera'
+import type { GameraDomain } from '@statmuse/core/gamera'
 import StandingsCard from '@components/cards/standings-card.astro'
 import AditudeCardMedRec from '@components/aditude-card-med-rec.svelte'
+import { getStandings } from '@lib/standings'
 
 interface Props {
   domain: GameraDomain
-  response?: StandingsResponse
+  response?: Awaited<ReturnType<typeof getStandings>>
   adSlot?: {
     slotId: string
     baseDivId: string
@@ -45,9 +45,9 @@ const limit =
   </h2>
   <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
     {
-      Object.entries(groupBy(response.teams, 'conference.name')).map(
-        ([_, teams]) => <StandingsCard {teams} {domain} {group} {limit} />,
-      )
+      Object.entries(response.teams).map(([_, teams]) => (
+        <StandingsCard {teams} {domain} {group} {limit} />
+      ))
     }
   </div>
 </div>

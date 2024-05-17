@@ -4,7 +4,6 @@ import type {
   PlayerCardResponse,
   ScoresResponse,
   ScheduleResponse,
-  StandingsResponse,
   TeamCardResponse,
   GameraDomain,
 } from '@statmuse/core/gamera'
@@ -27,7 +26,7 @@ const { domain, teamId } = Astro.props
 
 let playerCardsResp: PlayerCardResponse | undefined
 let teamCardsResp: TeamCardResponse | undefined
-let standingsResp: StandingsResponse | undefined
+let standingsResp: Awaited<ReturnType<typeof getStandings>> | undefined
 let scheduleResp: ScheduleResponse | undefined
 let scoresResp: ScoresResponse | undefined
 
