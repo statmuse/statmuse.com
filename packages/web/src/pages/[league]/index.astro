@@ -7,7 +7,11 @@ import { NOT_FOUND_404 } from '@lib/response'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import { listLatestMusings } from '@statmuse/core/musing'
 import MusingsCard from '@components/home/musings-card.astro'
-import { homeLeadersByDomain, homeRankingsByDomain } from '@lib/related-content'
+import {
+  homeLeadersByDomain,
+  homeRankingsByDomain,
+  homeBettingByDomain,
+} from '@lib/related-content'
 import Image from '@components/image.astro'
 import EntityLink from '@components/entity-link.astro'
 import { getTrendingData } from '@lib/trending'
@@ -584,6 +588,8 @@ const trendingSearches = find(data.datasets, { name: 'Searches' })
 const trendingPlayers = find(data.datasets, { name: 'Players' })
 const trendingTeams = find(data.datasets, { name: 'Teams' })
 
+const betting = await homeBettingByDomain({ context: Astro, domain })
+
 Caching.swr(Astro)
 ---
 
@@ -695,6 +701,59 @@ Caching.swr(Astro)
           }
         </div>
       </Panel>
+      {
+        betting && (
+          <Panel title="Betting Trends">
+            <div class="divide-y divide-gray-6 dark:divide-gray-4">
+              {betting?.map((section) => (
+                <div class="-mx-3 px-3">
+                  <p class="text-sm text-gray-5">{section.title}</p>
+                  <div class="flex">
+                    <div class="flex-1">
+                      {section.teams.map((team, index) => (
+                        <div
+                          class="flex"
+                          class:list={{ 'text-sm text-gray-5': index !== 0 }}
+                        >
+                          <div class="w-14">
+                            <span
+                              class:list={{
+                                'px-2 rounded-2xl text-white': index === 0,
+                                'ml-1': index !== 0,
+                              }}
+                              style={
+                                index === 0
+                                  ? `background: ${team.colors?.backgroundColor}`
+                                  : ''
+                              }
+                            >
+                              {team.statDisplayValue}
+                            </span>
+                          </div>
+                          <EntityLink entity={team.entity} class="text-inherit">
+                            {team.name}
+                          </EntityLink>
+                        </div>
+                      ))}
+                    </div>
+                    <Image
+                      class:list={{
+                        'select-none w-[75px] h-[75px]': true,
+                        'object-contain object-center': true,
+                      }}
+                      alt={section.teams[0]?.nickname}
+                      src={section.teams[0]?.logoImageUrl}
+                      width={75}
+                      height={75}
+                      loading="eager"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Panel>
+        )
+      }
       {
         trendingPlayers && (
           <TrendingList

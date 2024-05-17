@@ -147,3 +147,64 @@ export const homeRankingsByDomain = async (props: {
     }))
   }
 }
+
+const bettingMapByDomain: Record<
+  GameraDomain,
+  { stat: string; title: string }[]
+> = {
+  NBA: [
+    {
+      stat: 'bestRecordAgainstTheSpread',
+      title: 'Best Record Against the Spread',
+    },
+    {
+      stat: 'worstRecordAgainstTheSpread',
+      title: 'Worst Record Against the Spread',
+    },
+  ],
+  NFL: [
+    {
+      stat: 'bestRecordAgainstTheSpread',
+      title: 'Best Record Against the Spread',
+    },
+    {
+      stat: 'worstRecordAgainstTheSpread',
+      title: 'Worst Record Against the Spread',
+    },
+  ],
+  NHL: [
+    {
+      stat: 'bestRecordAgainstTheSpread',
+      title: 'Best Record Against the Puck Line',
+    },
+    {
+      stat: 'worstRecordAgainstTheSpread',
+      title: 'Worst Record Against the Puck Line',
+    },
+  ],
+  MLB: [
+    {
+      stat: 'bestRecordAgainstTheSpread',
+      title: 'Best Record Against the Run Line',
+    },
+    {
+      stat: 'worstRecordAgainstTheSpread',
+      title: 'Worst Record Against the Run Line',
+    },
+  ],
+}
+
+export const homeBettingByDomain = async (props: {
+  context: Context
+  domain: GameraDomain
+}) => {
+  if (props.domain === 'EPL') return undefined
+  const leaders = await getTeamCards(props)
+  console.log(leaders)
+  if (leaders) {
+    return bettingMapByDomain[props.domain].map((x) => ({
+      ...x,
+      teams: find(leaders.cards, { stat: x.stat })?.teams.slice(0, 3) ?? [],
+    }))
+  }
+}
