@@ -1,0 +1,422 @@
+---
+import EntityLink from '@components/entity-link.astro'
+import Image from '@components/image.astro'
+import Panel from '@components/panel.astro'
+import {
+  getDefaultBustImageUrl,
+  type GameraDomain,
+  type GameraGrid,
+  type GameraPlayerBio,
+} from '@statmuse/core/gamera'
+import { type LeagueParam } from '@lib/params'
+import { formatDate } from '@statmuse/core/time'
+
+interface Props {
+  bio: GameraPlayerBio
+  domain: GameraDomain
+  recentGames: GameraGrid | { grid: GameraGrid }
+}
+
+type League = Exclude<LeagueParam, 'money' | 'pga'>
+type Stat =
+  | string
+  | string[]
+  | { label: string; value: (v: Row) => string }
+  | undefined
+type Row = GameraGrid['rows'][number]
+
+const formatNumber = (value: unknown) =>
+  (typeof value === 'number'
+    ? value.toFixed(1).replace('.0', '')
+    : (value as string)) ?? '-'
+const formatPercentage = (value: number) =>
+  isNaN(value) ? '0%' : `${formatNumber(value)}%`
+
+const { bio, domain } = Astro.props
+const league = domain === 'EPL' ? 'fc' : (domain.toLowerCase() as LeagueParam)
+const recentGames = Astro.props.recentGames
+  ? 'grid' in Astro.props.recentGames
+    ? Astro.props.recentGames
+    : { grid: Astro.props.recentGames }
+  : undefined
+
+const calculateStat = (stat: Stat, row: Row | undefined) => ({
+  key:
+    typeof stat === 'string'
+      ? stat
+      : Array.isArray(stat)
+      ? stat[0]
+      : stat?.label,
+  value:
+    (row === undefined
+      ? undefined
+      : typeof stat === 'string'
+      ? row[stat]?.display
+      : Array.isArray(stat)
+      ? row[stat[1]]?.display
+      : formatNumber(stat?.value(row))) || '-',
+})
+
+const normalizeNflPosition = (position: string) => {
+  switch (position) {
+    case 'QB':
+    case 'RB':
+    case 'WR':
+    case 'K':
+    case 'P':
+    case 'OL':
+      return position
+    case 'TE':
+      return 'WR'
+    default:
+      return 'DEF'
+  }
+}
+const normalizedPosition =
+  league === 'nfl' ? normalizeNflPosition(bio.position) : bio.position
+
+const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
+  fc: {
+    DEFAULT: [
+      'MIN',
+      'G',
+      'A',
+      'xG',
+      'xA',
+      {
+        label: 'Shot %',
+        value: (v) =>
+          `${v.SOT?.value}/${v.SH?.value} (${formatPercentage(
+            ((v.SOT?.value as number) / (v.SH?.value as number)) * 100,
+          )})`,
+      },
+      {
+        label: 'Pass %',
+        value: (v) =>
+          `${v.PASS.value}/${v['PASS-ATT'].value} (${v['PASS%'].display}%)`,
+      },
+      'BCM',
+      'BCC',
+      ['Key Pass', 'PASS-KEY'],
+      ['Touches (Opp Box)', 'TCH-BOX'],
+      {
+        label: 'Duel W-L',
+        value: (v) => `${v['DUEL-W'].display}-${v['DUEL-L'].display}`,
+      },
+      {
+        label: 'Aerial W-L',
+        value: (v) => `${v['AER-W'].display}-${v['AER-L'].display}`,
+      },
+      ['Tackle Made', 'TKL'],
+      ['Clearance', 'CLR'],
+      ['Foul', 'FOUL'],
+      ['Fouled', 'FOULED'],
+      ['Offside', 'OFF'],
+      'YC',
+      'RC',
+    ],
+    GK: [
+      'MIN',
+      'GC',
+      'SV',
+      ['PK SV', 'SV-PK'],
+      'REC',
+      ['Error Led To Shot', 'ERR-SH'],
+      ['Error Led To Goal', 'ERR-G'],
+      ['Long Pass', 'PASS-LNG'],
+      'YC',
+      'RC',
+    ],
+  },
+  nba: [
+    'MIN',
+    'PTS',
+    {
+      label: 'REB (O)',
+      value: (v) =>
+        `${(v?.DREB?.value as number) + (v?.OREB?.value as number)} (${
+          v?.OREB?.value
+        })`,
+    },
+    'AST',
+    'STL',
+    'BLK',
+    '+/-',
+    'TOV',
+    'PF',
+    { label: 'FG', value: (v) => `${v?.FGM?.value}/${v?.FGA?.value}` },
+    { label: '3P', value: (v) => `${v['3PM']?.value}/${v['3PA']?.value}` },
+    { label: 'FT', value: (v) => `${v?.FTM?.value}/${v?.FTA?.value}` },
+    'TS%',
+  ],
+  nfl: {
+    QB: [
+      ['Comp', 'CMP'],
+      ['Att', 'ATT'],
+      {
+        label: 'Pct',
+        value: (v) =>
+          formatPercentage(
+            ((v.CMP.value as number) / (v.ATT.value as number)) * 100,
+          ),
+      },
+      ['Yds', 'YDS'],
+      ['Avg', 'AVG'],
+      'TD',
+      ['Int', 'INT'],
+      ['Sacked', 'SCK'],
+      ['Long', 'LNG'],
+      ['Rating', 'RATE'],
+      ['Tot Yds', 'TOTALYDS-TOT YDS'],
+      ['Tot TD', 'TOTALTD-TOT TD'],
+      ['Fum (L)', 'LOST'],
+    ],
+    RB: [
+      ['Att', 'ATT-ATT'],
+      ['Rush Yds', 'RUSHYDS'],
+      ['Avg', 'YPC-YPC'],
+      ['TD', 'RUSHTD'],
+      ['Long', 'RUSHLNG'],
+      ['Rec', 'REC-REC'],
+      ['Rec Yds', 'RECYDS'],
+      ['Rec TD', 'RECTD'],
+      ['Tot Yds', 'YDS-TOT YDS'],
+      ['Tot TD', 'TD-TOT TD'],
+      ['Fum (L)', 'LOST'],
+    ],
+    WR: [
+      ['Rec', 'REC-REC'],
+      ['Trg', 'TRG-TRG'],
+      ['Yds', 'RECYDS'],
+      ['Avg', 'RECAVG'],
+      ['TD', 'RECTD'],
+      ['Long', 'RECLNG'],
+      ['Tot Yds', 'YDS-TOT YDS'],
+      ['Tot TD', 'TD-TOT TD'],
+      ['Fum (L)', 'LOST'],
+    ],
+    DEF: [
+      ['Comb Tkl', 'COMB'],
+      ['Solo Tkl', 'TKL'],
+      ['Ast Tkl', 'AST'],
+      ['TFL', 'TFL'],
+      ['Sacks', 'SCK'],
+      ['FF', 'FF'],
+      ['Int', 'INT'],
+      ['Pass Def', 'PDEF'],
+      // {
+      //   label: 'TD',
+      //   value: (v) => `${v['FR TD'].value + v['INT TD-TD'].value}`,
+      // },
+    ],
+    OL: [],
+    K: [
+      'FGM',
+      'FGA',
+      'FG 1-19',
+      'FG 20-29',
+      'FG 30-39',
+      'FG 40-49',
+      'FG 50+',
+      'XPM',
+      'XPA',
+    ],
+    P: [
+      ['Punts', 'PUNT'],
+      ['Yds', 'YDS'],
+      ['Avg', 'AVG'],
+      ['Long', 'LNG'],
+      ['Blocked', 'BLK'],
+    ],
+  },
+  mlb: {
+    DEFAULT: [
+      'AB',
+      'R',
+      'H',
+      '2B',
+      '3B',
+      'HR',
+      'RBI',
+      'AVG',
+      'OBP',
+      'SLG',
+      'OPS',
+      'BB',
+      'HBP',
+      'SO',
+      'SB',
+      'CS',
+    ],
+    P: [
+      {
+        label: 'W/L',
+        value: (v) => (v.W.value === 1 ? 'W' : v.L.value === 1 ? 'L' : 'ND'),
+      },
+      'ERA',
+      'SO',
+      'GS',
+      'CG',
+      'SHO',
+      'SV',
+      'IP',
+      'H',
+      'ER',
+      'R',
+      'HR',
+      'BB',
+      'HBP',
+      ['Game Score', 'GSc'],
+    ],
+  },
+  nhl: {
+    DEFAULT: [
+      'G',
+      'A',
+      'P',
+      '+/-',
+      'PIM',
+      'PPG',
+      'PPA',
+      'SHG',
+      'SHA',
+      'S',
+      'S%',
+      'FOW',
+      'FO',
+      'FOW%',
+      'HIT',
+      'BLK',
+      'TKA',
+      'GVA',
+      'TOI',
+    ],
+    D: [
+      'G',
+      'A',
+      'P',
+      '+/-',
+      'PIM',
+      'PPG',
+      'PPA',
+      'SHG',
+      'SHA',
+      'HIT',
+      'BLK',
+      'TKA',
+      'GVA',
+      'S',
+      'S%',
+      'TOI',
+    ],
+    G: [
+      'W',
+      'L',
+      'OTL',
+      'SA',
+      ['SV', 'Sv'],
+      ['SV%', 'Sv%'],
+      'GA',
+      'GAA',
+      'SHO',
+      'MIN',
+    ],
+  },
+}
+
+const lastGameLeagueColumns =
+  league === 'pga' || league === 'money' ? [] : lastGameStatColumns[league]
+const lastGameStats = Array.isArray(lastGameLeagueColumns)
+  ? lastGameLeagueColumns
+  : lastGameLeagueColumns[normalizedPosition] ??
+    lastGameLeagueColumns['DEFAULT']
+const lastGame = recentGames?.grid.rows[0]
+const lastGameStats_ = lastGame
+  ? lastGameStats?.map((stat) =>
+      calculateStat(stat, recentGames.grid.rows[0]),
+    ) ?? []
+  : []
+
+const bustImageUrl = bio.bustImageUrl || getDefaultBustImageUrl(domain)
+const bustImageAlt = bio.bustImageUrl?.includes('silhouette')
+  ? `Illustrated silhouette of a player wearing the ${bio.team?.name} uniform`
+  : `Illustration of ${bio.usedName} wearing the ${bio.team?.name} uniform`
+---
+
+{
+  lastGame && lastGameStats_?.length ? (
+    <Panel title="Top Performance">
+      <div class="flex items-center justify-stretch gap-1 border-b border-gray-6 dark:border-gray-4 -mx-3 px-3">
+        <Image
+          class:list={{
+            'select-none': true,
+            'object-contain object-bottom': true,
+          }}
+          alt={bustImageAlt}
+          src={bustImageUrl}
+          width={100}
+          height={100}
+          loading="eager"
+        />
+        <div class="">
+          <p class="whitespace-nowrap">{bio.usedName}</p>
+          <div class="flex items-center justify-between gap-2 text-sm text-gray-5">
+            <EntityLink
+              entity={lastGame.SCORE.entity}
+              class="whitespace-nowrap text-inherit"
+            >
+              {formatDate(lastGame.DATE.value as string, 'MMM DD')}
+            </EntityLink>
+            <EntityLink
+              entity={lastGame.OPP.entity}
+              class="flex gap-1 items-center text-inherit"
+            >
+              <p class="whitespace-nowrap">
+                {lastGame.ALIGNMENT.display.replace('@', 'at')}
+              </p>
+              <div class="flex gap-1 items-center">
+                {lastGame.OPP.imageUrl ? (
+                  <Image
+                    class:list={{
+                      'h-4 max-w-4': true,
+                      'select-none': true,
+                      'object-contain object-center': true,
+                    }}
+                    alt={lastGame.OPP.display}
+                    src={lastGame.OPP.imageUrl}
+                    width={16}
+                    height={16}
+                    loading="eager"
+                  />
+                ) : null}
+                <p class="whitespace-nowrap">{lastGame.OPP.display}</p>
+              </div>
+            </EntityLink>
+            <EntityLink
+              class="whitespace-nowrap text-inherit"
+              entity={lastGame.SCORE.entity}
+            >
+              {lastGame.SCORE.display}
+            </EntityLink>
+          </div>
+        </div>
+      </div>
+      <div
+        class:list={{
+          'flex flex-wrap gap-3 py-3 leading-snug items-center': true,
+          // 'grid-cols-5 @xs:grid-cols-7': league !== 'fc',
+          // 'grid-cols-2 @xs:grid-cols-4': league === 'fc',
+        }}
+      >
+        {lastGameStats_?.map(({ key, value }) => (
+          <div class="flex flex-col items-center">
+            <div class="whitespace-nowrap">{formatNumber(value)}</div>
+            <div class="font-light text-sm opacity-80 whitespace-nowrap">
+              {key}
+            </div>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  ) : null
+}
