@@ -19,6 +19,9 @@ import { find } from 'lodash-es'
 import TrendingList from '@components/trending-list.astro'
 import { getStandings } from '@lib/standings'
 import StandingsCard from '@components/cards/standings-card.astro'
+import type { GameraPlayerProfileResponse } from '@statmuse/core/gamera'
+import { getPlayerProfile } from '@lib/player'
+import PlayerPerformanceCard from '@components/player/performance-card.astro'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
@@ -594,6 +597,13 @@ const betting = await homeBettingByDomain({ context: Astro, domain })
 
 const standings = await getStandings({ context: Astro, domain })
 
+let profile: GameraPlayerProfileResponse | undefined
+for (const player of trendingPlayers?.items.slice(0, 10) ?? []) {
+  const playerSlug = player.uri.split('/')[3]
+  profile = await getPlayerProfile(Astro, domain, playerSlug)
+  if (profile?.recentGames) break
+}
+
 Caching.swr(Astro)
 ---
 
@@ -603,6 +613,15 @@ Caching.swr(Astro)
       {musings.map(async (musing, i) => <MusingsCard {musing} index={i} />)}
     </div>
     <div class="flex-1 space-y-3">
+      {
+        profile && (
+          <PlayerPerformanceCard
+            {domain}
+            bio={profile?.bio}
+            recentGames={profile?.recentGames}
+          />
+        )
+      }
       <Panel title="League Leaders">
         <div class="divide-y divide-gray-6 dark:divide-gray-4">
           {
