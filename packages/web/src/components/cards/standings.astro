@@ -1,15 +1,15 @@
 ---
 import type { GameraDomain } from '@statmuse/core/gamera'
 import StandingsCard from '@components/cards/standings-card.astro'
-import AditudeCardMedRec from '@components/aditude-card-med-rec.svelte'
 import { getStandings } from '@lib/standings'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 interface Props {
   domain: GameraDomain
   response?: Awaited<ReturnType<typeof getStandings>>
   adSlot?: {
+    divId: string
     slotId: string
-    baseDivId: string
   }
 }
 
@@ -54,10 +54,13 @@ const limit =
 {
   adSlot && (
     <div>
-      <AditudeCardMedRec
+      <AditudeAdBanner
         client:only="svelte"
+        class="py-4 flex justify-center"
+        divId={adSlot.divId}
         slotId={adSlot.slotId}
-        baseDivId={adSlot.baseDivId}
+        onlyMobile
+        lazy
       />
     </div>
   )

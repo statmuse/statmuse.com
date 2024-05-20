@@ -256,7 +256,11 @@ const navProps: ComponentProps<typeof Nav> = {
     }
   </Fragment>
   <div class="h-[50px] md:h-[90px] mb-1.5 flex justify-center items-center">
-    <AditudeAdBanner client:only="svelte" />
+    <AditudeAdBanner
+      client:only="svelte"
+      divId="pb-slot-anchor"
+      slotId="pb-slot-anchor"
+    />
   </div>
   {
     isTeam ? (
