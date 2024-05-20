@@ -1,0 +1,41 @@
+---
+import StandingsCard from '@components/cards/standings-card.astro'
+import Panel from '@components/panel.astro'
+import type { GameraDomain, StandingsTeam } from '@statmuse/core/gamera'
+import type { Dictionary } from 'lodash'
+
+interface Props {
+  domain: GameraDomain
+  standings: {
+    teams: Dictionary<StandingsTeam[]>
+  }
+}
+
+const { domain, standings } = Astro.props
+---
+
+<Panel title="Standings">
+  <div class="flex flex-wrap">
+    {
+      Object.entries(standings.teams).map(([name, teams], index) => (
+        <Fragment>
+          <input
+            class="absolute opacity-0 peer [&:checked_+_div]:block"
+            type="radio"
+            name="standings"
+            id={`standings-${index}`}
+            checked={index === 0}
+          />
+          <label for={`standings-${index}`} class="flex-1">
+            {name}
+          </label>
+          <StandingsCard
+            class="-mx-3 pt-0 hidden peer-checked:block w-full order-last"
+            {teams}
+            {domain}
+          />
+        </Fragment>
+      ))
+    }
+  </div>
+</Panel>

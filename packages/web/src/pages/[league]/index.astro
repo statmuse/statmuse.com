@@ -21,6 +21,7 @@ import type { GameraPlayerProfileResponse } from '@statmuse/core/gamera'
 import { getPlayerProfile } from '@lib/player'
 import PlayerPerformanceCard from '@components/player/performance-card.astro'
 import RankingCard from '@components/home/ranking-card.astro'
+import Standings from '@components/home/standings.astro'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
@@ -655,33 +656,7 @@ Caching.swr(Astro)
           />
         )
       }
-      {
-        standings && (
-          <Panel title="Standings">
-            <div class="flex flex-wrap">
-              {Object.entries(standings.teams).map(([name, teams], index) => (
-                <Fragment>
-                  <input
-                    class="absolute opacity-0 peer [&:checked_+_div]:block"
-                    type="radio"
-                    name="standings"
-                    id={`standings-${index}`}
-                    checked={index === 0}
-                  />
-                  <label for={`standings-${index}`} class="flex-1">
-                    {name}
-                  </label>
-                  <StandingsCard
-                    class="-mx-3 pt-0 hidden peer-checked:block w-full order-last"
-                    {teams}
-                    {domain}
-                  />
-                </Fragment>
-              ))}
-            </div>
-          </Panel>
-        )
-      }
+      {standings && <Standings {standings} {domain} />}
       {
         betting && (
           <RankingCard
