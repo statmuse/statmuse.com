@@ -5,7 +5,6 @@ import { Config } from 'sst/node/config'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import CookieConsent from '@components/cookie-consent.svelte'
 import { ViewTransitions } from 'astro:transitions'
-import AditudeAdAnchor from '@components/aditude-ad-anchor.svelte'
 import Footer from '@components/footer.astro'
 import Image from '@components/image.astro'
 import Nav from '@components/nav.astro'
@@ -20,6 +19,8 @@ import { marked } from 'marked'
 import MenuLinks from '@components/menu-links.astro'
 import Share from '@components/share/index.svelte'
 import ShareModal from '@components/share/modal.svelte'
+import CloseContainer from '@components/close-container.svelte'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 interface Props extends ComponentProps<typeof Header> {
   meta?: Metadata
@@ -444,7 +445,20 @@ const hasSupplement = hero?.hasSupplement
     </div>
     <CookieConsent client:only="svelte" transition:persist="cookie-banner" />
     {hero?.share && <ShareModal client:load {...hero.share} />}
-    {enableAdBanner && <AditudeAdAnchor client:only="svelte" />}
+    {
+      enableAdBanner && (
+        <CloseContainer
+          client:only="svelte"
+          class="bg-[#f7f7f7]/90 fixed bottom-0 left-0 md:left-1/2 md:-translate-x-1/2 w-screen min-h-[50px] md:w-fit md:min-h-[90px] z-50 flex justify-center md:pr-5"
+        >
+          <AditudeAdBanner
+            client:only="svelte"
+            divId="pb-slot-banner"
+            slotId="pb-slot-banner"
+          />
+        </CloseContainer>
+      )
+    }
     <script>
       import { segment, getOrigin } from '@lib/analytics'
       import type { Session } from '@lib/session'
