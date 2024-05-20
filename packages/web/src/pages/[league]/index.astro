@@ -12,8 +12,6 @@ import {
   homeRankingsByDomain,
   homeBettingByDomain,
 } from '@lib/related-content'
-import Image from '@components/image.astro'
-import EntityLink from '@components/entity-link.astro'
 import { getTrendingData } from '@lib/trending'
 import { find } from 'lodash-es'
 import TrendingList from '@components/trending-list.astro'
@@ -22,6 +20,7 @@ import StandingsCard from '@components/cards/standings-card.astro'
 import type { GameraPlayerProfileResponse } from '@statmuse/core/gamera'
 import { getPlayerProfile } from '@lib/player'
 import PlayerPerformanceCard from '@components/player/performance-card.astro'
+import RankingCard from '@components/home/ranking-card.astro'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
@@ -622,108 +621,40 @@ Caching.swr(Astro)
           />
         )
       }
-      <Panel title="League Leaders">
-        <div class="divide-y divide-gray-6 dark:divide-gray-4">
-          {
-            leaders?.map((section) => (
-              <div class="-mx-3 px-3">
-                <p class="text-sm text-gray-5">{section.title}</p>
-                <div class="flex">
-                  <div class="flex-1">
-                    {section.players.map((player, index) => (
-                      <div
-                        class="flex"
-                        class:list={{ 'text-sm text-gray-5': index !== 0 }}
-                      >
-                        <div class="w-14">
-                          <span
-                            class:list={{
-                              'px-2 rounded-2xl text-white': index === 0,
-                              'ml-1': index !== 0,
-                            }}
-                            style={
-                              index === 0
-                                ? `background: ${player.colors?.backgroundColor}`
-                                : ''
-                            }
-                          >
-                            {player.statDisplayValue}
-                          </span>
-                        </div>
-                        <EntityLink entity={player.entity} class="text-inherit">
-                          {player.usedName}
-                        </EntityLink>
-                      </div>
-                    ))}
-                  </div>
-                  <Image
-                    class:list={{
-                      'select-none': true,
-                      'object-contain object-bottom': true,
-                    }}
-                    alt={section.players[0]?.usedName}
-                    src={section.players[0]?.imageUrl}
-                    width={100}
-                    height={100}
-                    loading="eager"
-                  />
-                </div>
-              </div>
-            ))
-          }
-        </div>
-      </Panel>
-      <Panel title="League Rankings">
-        <div class="divide-y divide-gray-6 dark:divide-gray-4">
-          {
-            rankings?.map((section) => (
-              <div class="-mx-3 px-3">
-                <p class="text-sm text-gray-5">{section.title}</p>
-                <div class="flex">
-                  <div class="flex-1">
-                    {section.teams.map((team, index) => (
-                      <div
-                        class="flex"
-                        class:list={{ 'text-sm text-gray-5': index !== 0 }}
-                      >
-                        <div class="w-14">
-                          <span
-                            class:list={{
-                              'px-2 rounded-2xl text-white': index === 0,
-                              'ml-1': index !== 0,
-                            }}
-                            style={
-                              index === 0
-                                ? `background: ${team.colors?.backgroundColor}`
-                                : ''
-                            }
-                          >
-                            {team.statDisplayValue}
-                          </span>
-                        </div>
-                        <EntityLink entity={team.entity} class="text-inherit">
-                          {team.name}
-                        </EntityLink>
-                      </div>
-                    ))}
-                  </div>
-                  <Image
-                    class:list={{
-                      'select-none w-[75px] h-[75px]': true,
-                      'object-contain object-center': true,
-                    }}
-                    alt={section.teams[0]?.nickname}
-                    src={section.teams[0]?.logoImageUrl}
-                    width={75}
-                    height={75}
-                    loading="eager"
-                  />
-                </div>
-              </div>
-            ))
-          }
-        </div>
-      </Panel>
+      {
+        leaders && (
+          <RankingCard
+            title="League Leaders"
+            sections={leaders.map((leader) => ({
+              title: leader.title,
+              items: leader.players.map((player) => ({
+                display: player.usedName,
+                stat: player.statDisplayValue,
+                imageUrl: player.imageUrl,
+                entity: player.entity,
+                colors: player.colors,
+              })),
+            }))}
+          />
+        )
+      }
+      {
+        rankings && (
+          <RankingCard
+            title="League Rankings"
+            sections={rankings.map((ranking) => ({
+              title: ranking.title,
+              items: ranking.teams.map((team) => ({
+                display: team.name,
+                stat: team.statDisplayValue,
+                imageUrl: team.logoImageUrl,
+                entity: team.entity,
+                colors: team.colors,
+              })),
+            }))}
+          />
+        )
+      }
       {
         standings && (
           <Panel title="Standings">
@@ -753,55 +684,19 @@ Caching.swr(Astro)
       }
       {
         betting && (
-          <Panel title="Betting Trends">
-            <div class="divide-y divide-gray-6 dark:divide-gray-4">
-              {betting?.map((section) => (
-                <div class="-mx-3 px-3">
-                  <p class="text-sm text-gray-5">{section.title}</p>
-                  <div class="flex">
-                    <div class="flex-1">
-                      {section.teams.map((team, index) => (
-                        <div
-                          class="flex"
-                          class:list={{ 'text-sm text-gray-5': index !== 0 }}
-                        >
-                          <div class="w-14">
-                            <span
-                              class:list={{
-                                'px-2 rounded-2xl text-white': index === 0,
-                                'ml-1': index !== 0,
-                              }}
-                              style={
-                                index === 0
-                                  ? `background: ${team.colors?.backgroundColor}`
-                                  : ''
-                              }
-                            >
-                              {team.statDisplayValue}
-                            </span>
-                          </div>
-                          <EntityLink entity={team.entity} class="text-inherit">
-                            {team.name}
-                          </EntityLink>
-                        </div>
-                      ))}
-                    </div>
-                    <Image
-                      class:list={{
-                        'select-none w-[75px] h-[75px]': true,
-                        'object-contain object-center': true,
-                      }}
-                      alt={section.teams[0]?.nickname}
-                      src={section.teams[0]?.logoImageUrl}
-                      width={75}
-                      height={75}
-                      loading="eager"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Panel>
+          <RankingCard
+            title="League Rankings"
+            sections={betting.map((section) => ({
+              title: section.title,
+              items: section.teams.map((team) => ({
+                display: team.name,
+                stat: team.statDisplayValue,
+                imageUrl: team.logoImageUrl,
+                entity: team.entity,
+                colors: team.colors,
+              })),
+            }))}
+          />
         )
       }
       {
