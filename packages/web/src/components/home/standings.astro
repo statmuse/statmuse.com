@@ -14,28 +14,43 @@ interface Props {
 const { domain, standings } = Astro.props
 ---
 
-<Panel title="Standings">
-  <div class="flex flex-wrap">
+<Panel class="group !py-0 relative">
+  <div class="flex font-semibold text-center -mx-3">
     {
-      Object.entries(standings.teams).map(([name, teams], index) => (
-        <Fragment>
-          <input
-            class="absolute opacity-0 peer [&:checked_+_div]:block"
-            type="radio"
-            name="standings"
-            id={`standings-${index}`}
-            checked={index === 0}
-          />
-          <label for={`standings-${index}`} class="flex-1">
-            {name}
-          </label>
-          <StandingsCard
-            class="-mx-3 pt-0 hidden peer-checked:block w-full order-last"
-            {teams}
-            {domain}
-          />
-        </Fragment>
+      Object.entries(standings.teams).map(([name, _teams], index) => (
+        <label
+          for={`standings-${index}`}
+          class:list={[
+            'flex-1 py-2 text-gray-5 bg-gray-4 hover:cursor-pointer',
+            {
+              'group-has-[#standings-0:checked]:bg-gray-3 group-has-[#standings-0:checked]:text-white':
+                index === 0,
+              'group-has-[#standings-1:checked]:bg-gray-3 group-has-[#standings-1:checked]:text-white':
+                index === 1,
+            },
+          ]}
+        >
+          {name}
+        </label>
       ))
     }
   </div>
+  {
+    Object.entries(standings.teams).map(([_name, teams], index) => (
+      <div class="-mx-3">
+        <input
+          class="absolute top-0 opacity-0 peer"
+          type="radio"
+          name="standings"
+          id={`standings-${index}`}
+          checked={index === 0}
+        />
+        <StandingsCard
+          class="pt-0 hidden peer-checked:block w-full"
+          {teams}
+          {domain}
+        />
+      </div>
+    ))
+  }
 </Panel>
