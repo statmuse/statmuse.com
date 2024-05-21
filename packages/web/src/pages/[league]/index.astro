@@ -609,116 +609,155 @@ Caching.swr(Astro)
 
 <HomeLayout {meta} {league}>
   <div class="flex gap-3">
-    <div class="flex-1 space-y-3">
-      {musings.map(async (musing, i) => <MusingsCard {musing} index={i} />)}
-    </div>
-    <div class="flex-1 space-y-3">
-      {
-        profile && (
-          <PlayerPerformanceCard
-            {domain}
-            bio={profile?.bio}
-            recentGames={profile?.recentGames}
+    <div class="flex-1 group">
+      <div class="flex lg:hidden font-semibold text-center mb-3">
+        <label
+          for="story"
+          class="flex-1 py-2 text-gray-5 bg-gray-4 rounded-tl-2xl hover:cursor-pointer group-has-[#story:checked]:bg-gray-3 group-has-[#story:checked]:text-white"
+        >
+          Stories
+        </label>
+        <label
+          for="summary"
+          class="flex-1 py-2 text-gray-5 bg-gray-4 rounded-tr-2xl hover:cursor-pointer group-has-[#summary:checked]:bg-gray-3 group-has-[#summary:checked]:text-white"
+        >
+          Summary
+        </label>
+      </div>
+      <div class="flex gap-3">
+        <div class="hidden has-[#story:checked]:block lg:block flex-1">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="home"
+            id="story"
+            checked
           />
-        )
-      }
-      {
-        leaders && (
-          <RankingCard
-            title="League Leaders"
-            sections={leaders.map((leader) => ({
-              title: leader.title,
-              items: leader.players.map((player) => ({
-                display: player.usedName,
-                stat: player.statDisplayValue,
-                imageUrl: player.imageUrl,
-                entity: player.entity,
-                colors: player.colors,
-              })),
-            }))}
-          />
-        )
-      }
-      {
-        rankings && (
-          <RankingCard
-            title="League Rankings"
-            sections={rankings.map((ranking) => ({
-              title: ranking.title,
-              items: ranking.teams.map((team) => ({
-                display: team.name,
-                stat: team.statDisplayValue,
-                imageUrl: team.logoImageUrl,
-                entity: team.entity,
-                colors: team.colors,
-              })),
-            }))}
-          />
-        )
-      }
-      {standings && <Standings {standings} {domain} />}
-      {
-        betting && (
-          <RankingCard
-            title="League Rankings"
-            sections={betting.map((section) => ({
-              title: section.title,
-              items: section.teams.map((team) => ({
-                display: team.name,
-                stat: team.statDisplayValue,
-                imageUrl: team.logoImageUrl,
-                entity: team.entity,
-                colors: team.colors,
-              })),
-            }))}
-          />
-        )
-      }
-      {
-        trendingPlayers && (
-          <TrendingList
-            title={`Trending ${trendingPlayers.name}`}
-            items={trendingPlayers.items}
-          />
-        )
-      }
-      {
-        trendingTeams && (
-          <TrendingList
-            title={`Trending ${trendingTeams.name}`}
-            items={trendingTeams.items}
-          />
-        )
-      }
-      {
-        trendingSearches && (
-          <TrendingList
-            title={`Trending ${trendingSearches.name}`}
-            items={trendingSearches.items}
-          />
-        )
-      }
-      <Panel title="Example Questions">
-        <div class="divide-y divide-gray-6 dark:divide-gray-4">
-          {
-            examples[league || 'nba'].map(([title, queries]) => (
-              <div class="-mx-3 px-3">
-                <p class="text-sm text-gray-5">{title}</p>
-                <ul class="flex flex-col mb-2">
-                  {queries.map(({ query, path }) => (
-                    <li class="max-w-xs">
-                      <a href={path} class="text-pretty text-inherit">
-                        {query}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))
-          }
+          <div class="space-y-3">
+            {
+              musings.map(async (musing, i) => (
+                <MusingsCard {musing} index={i} />
+              ))
+            }
+          </div>
         </div>
-      </Panel>
+        <div class="hidden has-[#summary:checked]:block lg:block flex-1">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="home"
+            id="summary"
+          />
+          <div class="space-y-3">
+            {
+              profile && (
+                <PlayerPerformanceCard
+                  {domain}
+                  bio={profile?.bio}
+                  recentGames={profile?.recentGames}
+                />
+              )
+            }
+            {
+              leaders && (
+                <RankingCard
+                  title="League Leaders"
+                  sections={leaders.map((leader) => ({
+                    title: leader.title,
+                    items: leader.players.map((player) => ({
+                      display: player.usedName,
+                      stat: player.statDisplayValue,
+                      imageUrl: player.imageUrl,
+                      entity: player.entity,
+                      colors: player.colors,
+                    })),
+                  }))}
+                />
+              )
+            }
+            {
+              rankings && (
+                <RankingCard
+                  title="League Rankings"
+                  sections={rankings.map((ranking) => ({
+                    title: ranking.title,
+                    items: ranking.teams.map((team) => ({
+                      display: team.name,
+                      stat: team.statDisplayValue,
+                      imageUrl: team.logoImageUrl,
+                      entity: team.entity,
+                      colors: team.colors,
+                    })),
+                  }))}
+                />
+              )
+            }
+            {standings && <Standings {standings} {domain} />}
+            {
+              betting && (
+                <RankingCard
+                  title="Betting Trends"
+                  sections={betting.map((section) => ({
+                    title: section.title,
+                    items: section.teams.map((team) => ({
+                      display: team.name,
+                      stat: team.statDisplayValue,
+                      imageUrl: team.logoImageUrl,
+                      entity: team.entity,
+                      colors: team.colors,
+                    })),
+                  }))}
+                />
+              )
+            }
+            {
+              trendingPlayers && (
+                <TrendingList
+                  title={`Trending ${trendingPlayers.name}`}
+                  items={trendingPlayers.items}
+                />
+              )
+            }
+            {
+              trendingTeams && (
+                <TrendingList
+                  title={`Trending ${trendingTeams.name}`}
+                  items={trendingTeams.items}
+                />
+              )
+            }
+            {
+              trendingSearches && (
+                <TrendingList
+                  title={`Trending ${trendingSearches.name}`}
+                  items={trendingSearches.items}
+                />
+              )
+            }
+            <Panel title="Example Questions">
+              <div class="divide-y divide-gray-6 dark:divide-gray-4">
+                {
+                  examples[league || 'nba'].map(([title, queries]) => (
+                    <div class="-mx-3 px-3">
+                      <p class="text-sm text-gray-5">{title}</p>
+                      <ul class="flex flex-col mb-2">
+                        {queries.map(({ query, path }) => (
+                          <li class="max-w-xs">
+                            <a href={path} class="text-pretty text-inherit">
+                              {query}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))
+                }
+              </div>
+            </Panel>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="basis-[300px]"></div>
+    <div class="hidden md:block basis-[300px]"></div>
   </div>
 </HomeLayout>
