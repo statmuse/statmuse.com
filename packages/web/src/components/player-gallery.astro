@@ -31,7 +31,7 @@ const alphabet = [...Array(26)].map((_x, i) =>
 
 const groupedByFirstLetterLastName = players.reduce(
   (acc: { [key: string]: PlayerGalleryItem[] }, player) => {
-    const [char] = player.last_name
+    const [char] = player.last_name ?? player.used_name
 
     if (acc.hasOwnProperty(char.toLowerCase())) {
       acc[char.toLowerCase()].push(player)
