@@ -5,7 +5,7 @@ import { Caching } from '@lib/caching'
 import { createAskPath } from '@statmuse/core/path'
 import { NOT_FOUND_404 } from '@lib/response'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
-import { listLatestMusings } from '@statmuse/core/musing'
+import { listLatestMusings, type LatestMusing } from '@statmuse/core/musing'
 import MusingsCard from '@components/home/musings-card.astro'
 import {
   homeLeadersByDomain,
@@ -16,12 +16,12 @@ import { getTrendingData } from '@lib/trending'
 import { find } from 'lodash-es'
 import TrendingList from '@components/trending-list.astro'
 import { getStandings } from '@lib/standings'
-import StandingsCard from '@components/cards/standings-card.astro'
 import type { GameraPlayerProfileResponse } from '@statmuse/core/gamera'
 import { getPlayerProfile } from '@lib/player'
 import PlayerPerformanceCard from '@components/player/performance-card.astro'
 import RankingCard from '@components/home/ranking-card.astro'
 import Standings from '@components/home/standings.astro'
+import type { TrendingItem } from 'src/types'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
@@ -581,27 +581,38 @@ const meta = {
 
 const domain = leagueToDomain(league)
 
-const musings = await listLatestMusings(domain)
-
-const leaders = await homeLeadersByDomain({ context: Astro, domain })
-
-const rankings = await homeRankingsByDomain({ context: Astro, domain })
-
-const data = await getTrendingData({ league })
-
-const trendingSearches = find(data.datasets, { name: 'Searches' })
-const trendingPlayers = find(data.datasets, { name: 'Players' })
-const trendingTeams = find(data.datasets, { name: 'Teams' })
-
-const betting = await homeBettingByDomain({ context: Astro, domain })
-
-const standings = await getStandings({ context: Astro, domain })
-
+let musings: LatestMusing[] | undefined
+let leaders: Awaited<ReturnType<typeof homeLeadersByDomain>>
+let rankings: Awaited<ReturnType<typeof homeRankingsByDomain>>
+let trendingSearches: TrendingItem['datasets'][number] | undefined
+let trendingPlayers: TrendingItem['datasets'][number] | undefined
+let trendingTeams: TrendingItem['datasets'][number] | undefined
+let betting: Awaited<ReturnType<typeof homeBettingByDomain>>
+let standings: Awaited<ReturnType<typeof getStandings>>
 let profile: GameraPlayerProfileResponse | undefined
-for (const player of trendingPlayers?.items.slice(0, 10) ?? []) {
-  const playerSlug = player.uri.split('/')[3]
-  profile = await getPlayerProfile(Astro, domain, playerSlug)
-  if (profile?.recentGames) break
+
+if (domain !== 'PGA') {
+  musings = await listLatestMusings(domain)
+
+  leaders = await homeLeadersByDomain({ context: Astro, domain })
+
+  rankings = await homeRankingsByDomain({ context: Astro, domain })
+
+  const data = await getTrendingData({ league })
+
+  trendingSearches = find(data.datasets, { name: 'Searches' })
+  trendingPlayers = find(data.datasets, { name: 'Players' })
+  trendingTeams = find(data.datasets, { name: 'Teams' })
+
+  betting = await homeBettingByDomain({ context: Astro, domain })
+
+  standings = await getStandings({ context: Astro, domain })
+
+  for (const player of trendingPlayers?.items.slice(0, 10) ?? []) {
+    const playerSlug = player.uri.split('/')[3]
+    profile = await getPlayerProfile(Astro, domain, playerSlug)
+    if (profile?.recentGames) break
+  }
 }
 
 Caching.swr(Astro)
@@ -610,153 +621,159 @@ Caching.swr(Astro)
 <HomeLayout {meta} {league}>
   <div class="flex gap-3">
     <div class="flex-1 group">
-      <div class="flex lg:hidden font-semibold text-center mb-3">
-        <label
-          for="story"
-          class="flex-1 py-2 text-gray-5 bg-gray-4 rounded-tl-2xl hover:cursor-pointer group-has-[#story:checked]:bg-gray-3 group-has-[#story:checked]:text-white"
-        >
-          Stories
-        </label>
-        <label
-          for="summary"
-          class="flex-1 py-2 text-gray-5 bg-gray-4 rounded-tr-2xl hover:cursor-pointer group-has-[#summary:checked]:bg-gray-3 group-has-[#summary:checked]:text-white"
-        >
-          Summary
-        </label>
-      </div>
-      <div class="flex gap-3">
-        <div class="hidden has-[#story:checked]:block lg:block flex-1">
-          <input
-            class="absolute opacity-0"
-            type="radio"
-            name="home"
-            id="story"
-            checked
-          />
-          <div class="space-y-3">
-            {
-              musings.map(async (musing, i) => (
-                <MusingsCard {musing} index={i} />
-              ))
-            }
-          </div>
-        </div>
-        <div class="hidden has-[#summary:checked]:block lg:block flex-1">
-          <input
-            class="absolute opacity-0"
-            type="radio"
-            name="home"
-            id="summary"
-          />
-          <div class="space-y-3">
-            {
-              profile && (
-                <PlayerPerformanceCard
-                  {domain}
-                  bio={profile?.bio}
-                  recentGames={profile?.recentGames}
+      {
+        domain !== 'PGA' ? (
+          <>
+            <div class="flex lg:hidden font-semibold text-center mb-3">
+              <label
+                for="story"
+                class="flex-1 py-2 text-gray-5 bg-gray-4 rounded-tl-2xl hover:cursor-pointer group-has-[#story:checked]:bg-gray-3 group-has-[#story:checked]:text-white"
+              >
+                Stories
+              </label>
+              <label
+                for="summary"
+                class="flex-1 py-2 text-gray-5 bg-gray-4 rounded-tr-2xl hover:cursor-pointer group-has-[#summary:checked]:bg-gray-3 group-has-[#summary:checked]:text-white"
+              >
+                Summary
+              </label>
+            </div>
+            <div class="flex gap-3">
+              <div class="hidden has-[#story:checked]:block lg:block flex-1">
+                <input
+                  class="absolute opacity-0"
+                  type="radio"
+                  name="home"
+                  id="story"
+                  checked
                 />
-              )
-            }
-            {
-              leaders && (
-                <RankingCard
-                  title="League Leaders"
-                  sections={leaders.map((leader) => ({
-                    title: leader.title,
-                    items: leader.players.map((player) => ({
-                      display: player.usedName,
-                      stat: player.statDisplayValue,
-                      imageUrl: player.imageUrl,
-                      entity: player.entity,
-                      colors: player.colors,
-                    })),
-                  }))}
-                />
-              )
-            }
-            {
-              rankings && (
-                <RankingCard
-                  title="League Rankings"
-                  sections={rankings.map((ranking) => ({
-                    title: ranking.title,
-                    items: ranking.teams.map((team) => ({
-                      display: team.name,
-                      stat: team.statDisplayValue,
-                      imageUrl: team.logoImageUrl,
-                      entity: team.entity,
-                      colors: team.colors,
-                    })),
-                  }))}
-                />
-              )
-            }
-            {standings && <Standings {standings} {domain} />}
-            {
-              betting && (
-                <RankingCard
-                  title="Betting Trends"
-                  sections={betting.map((section) => ({
-                    title: section.title,
-                    items: section.teams.map((team) => ({
-                      display: team.name,
-                      stat: team.statDisplayValue,
-                      imageUrl: team.logoImageUrl,
-                      entity: team.entity,
-                      colors: team.colors,
-                    })),
-                  }))}
-                />
-              )
-            }
-            {
-              trendingPlayers && (
-                <TrendingList
-                  title={`Trending ${trendingPlayers.name}`}
-                  items={trendingPlayers.items}
-                />
-              )
-            }
-            {
-              trendingTeams && (
-                <TrendingList
-                  title={`Trending ${trendingTeams.name}`}
-                  items={trendingTeams.items}
-                />
-              )
-            }
-            {
-              trendingSearches && (
-                <TrendingList
-                  title={`Trending ${trendingSearches.name}`}
-                  items={trendingSearches.items}
-                />
-              )
-            }
-            <Panel title="Example Questions">
-              <div class="divide-y divide-gray-6 dark:divide-gray-4">
-                {
-                  examples[league || 'nba'].map(([title, queries]) => (
-                    <div class="-mx-3 px-3">
-                      <p class="text-sm text-gray-5">{title}</p>
-                      <ul class="flex flex-col mb-2">
-                        {queries.map(({ query, path }) => (
-                          <li class="max-w-xs">
-                            <a href={path} class="text-pretty text-inherit">
-                              {query}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))
-                }
+                {musings && (
+                  <div class="space-y-3">
+                    {musings.map(async (musing, i) => (
+                      <MusingsCard {musing} index={i} />
+                    ))}
+                  </div>
+                )}
               </div>
-            </Panel>
+              <div class="hidden has-[#summary:checked]:block lg:block flex-1">
+                <input
+                  class="absolute opacity-0"
+                  type="radio"
+                  name="home"
+                  id="summary"
+                />
+                <div class="space-y-3">
+                  {profile && (
+                    <PlayerPerformanceCard
+                      {domain}
+                      bio={profile?.bio}
+                      recentGames={profile?.recentGames}
+                    />
+                  )}
+                  {leaders && (
+                    <RankingCard
+                      title="League Leaders"
+                      sections={leaders.map((leader) => ({
+                        title: leader.title,
+                        items: leader.players.map((player) => ({
+                          display: player.usedName,
+                          stat: player.statDisplayValue,
+                          imageUrl: player.imageUrl,
+                          entity: player.entity,
+                          colors: player.colors,
+                        })),
+                      }))}
+                    />
+                  )}
+                  {rankings && (
+                    <RankingCard
+                      title="League Rankings"
+                      sections={rankings.map((ranking) => ({
+                        title: ranking.title,
+                        items: ranking.teams.map((team) => ({
+                          display: team.name,
+                          stat: team.statDisplayValue,
+                          imageUrl: team.logoImageUrl,
+                          entity: team.entity,
+                          colors: team.colors,
+                        })),
+                      }))}
+                    />
+                  )}
+                  {standings && <Standings {standings} {domain} />}
+                  {betting && (
+                    <RankingCard
+                      title="Betting Trends"
+                      sections={betting.map((section) => ({
+                        title: section.title,
+                        items: section.teams.map((team) => ({
+                          display: team.name,
+                          stat: team.statDisplayValue,
+                          imageUrl: team.logoImageUrl,
+                          entity: team.entity,
+                          colors: team.colors,
+                        })),
+                      }))}
+                    />
+                  )}
+                  {trendingPlayers && (
+                    <TrendingList
+                      title={`Trending ${trendingPlayers.name}`}
+                      items={trendingPlayers.items}
+                    />
+                  )}
+                  {trendingTeams && (
+                    <TrendingList
+                      title={`Trending ${trendingTeams.name}`}
+                      items={trendingTeams.items}
+                    />
+                  )}
+                  {trendingSearches && (
+                    <TrendingList
+                      title={`Trending ${trendingSearches.name}`}
+                      items={trendingSearches.items}
+                    />
+                  )}
+                  <Panel title="Example Questions">
+                    <div class="divide-y divide-gray-6 dark:divide-gray-4">
+                      {examples[league || 'nba'].map(([title, queries]) => (
+                        <div class="-mx-3 px-3">
+                          <p class="text-sm text-gray-5">{title}</p>
+                          <ul class="flex flex-col mb-2">
+                            {queries.map(({ query, path }) => (
+                              <li class="max-w-xs">
+                                <a href={path} class="text-pretty text-inherit">
+                                  {query}
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  </Panel>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div class="gap-3 space-y-3 columns-2xs">
+            {examples[league || 'nba'].map(([title, queries]) => (
+              <Panel {title} class="break-inside-avoid-column">
+                <ul class="flex flex-col gap-2">
+                  {queries.map(({ query, path }) => (
+                    <li class="max-w-xs">
+                      <a href={path} class="text-pretty">
+                        {query}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </Panel>
+            ))}
           </div>
-        </div>
-      </div>
+        )
+      }
     </div>
     <div class="hidden md:block basis-[300px]"></div>
   </div>
