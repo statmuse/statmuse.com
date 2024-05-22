@@ -53,12 +53,12 @@ const limit =
 </div>
 {
   adSlot && (
-    <div>
+    <div class="w-fit mx-auto">
       <AditudeAdBanner
         client:only="svelte"
-        class="py-4 flex justify-center"
         divId={adSlot.divId}
         slotId={adSlot.slotId}
+        placeholderClass="w-[300px] h-[250px]"
         onlyMobile
         lazy
       />

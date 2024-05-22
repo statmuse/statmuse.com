@@ -8,6 +8,7 @@
   export let onlyMobile = false
   export let onlyDesktop = false
   export let lazy = false
+  export let placeholderClass
 
   const renderAd = () => {
     window.tude = window.tude || { cmd: [] }
@@ -60,7 +61,7 @@
 
   afterUpdate(() => {
     if (isNotSubscriber && shouldRender) {
-      if (lazy && 'IntersectionObserver' in window) {
+      if (lazy && container && 'IntersectionObserver' in window) {
         observer = new IntersectionObserver(observerCallback, observerOptions)
         observer.observe(container)
       } else {
@@ -75,6 +76,20 @@
     ($session?.type === 'visitor' && !$session?.properties.bot)
 </script>
 
-{#if import.meta.env.PROD && shouldRender && isNotSubscriber}
-  <div {...$$restProps} bind:this={container} id={divId}></div>
+{#if shouldRender && isNotSubscriber}
+  {#if import.meta.env.PROD}
+    <div {...$$restProps} bind:this={container} id={divId}></div>
+  {:else}
+    <div
+      {...$$restProps}
+      class={placeholderClass}
+      class:bg-gray-1={true}
+      class:flex={true}
+      class:items-center={true}
+      class:justify-center={true}
+      class:rounded-2xl={true}
+    >
+      Display Ad
+    </div>
+  {/if}
 {/if}

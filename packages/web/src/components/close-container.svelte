@@ -9,15 +9,13 @@
     isOpen = false
   }
 
-  console.log('DEV: ', import.meta.env.DEV)
-
   $: isNotSubscriber =
     ($session?.type === 'user' &&
       $session?.properties.subscriptionStatus !== 'active') ||
     ($session?.type === 'visitor' && !$session?.properties.bot)
 </script>
 
-{#if import.meta.env.PROD && isNotSubscriber && isOpen}
+{#if isNotSubscriber && isOpen}
   <div {...$$props}>
     <slot />
     <img
