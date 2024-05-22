@@ -298,13 +298,25 @@ Caching.swr(Astro)
         </div>
       </div>
     </div>
-    <div class="hidden md:block basis-[300px]">
-      <AditudeAdBanner
-        client:only="svelte"
-        divId="pb-slot-right-2"
-        slotId="pb-slot-right-2"
-        placeholderClass="w-[300px] h-[600px]"
-      />
+    <div class="hidden md:block basis-[300px] space-y-3">
+      <div>
+        <AditudeAdBanner
+          client:only="svelte"
+          divId="pb-slot-square-1"
+          slotId="pb-slot-square-1"
+          placeholderClass="w-[300px] h-[250px]"
+          onlyDesktop
+        />
+      </div>
+      <div>
+        <AditudeAdBanner
+          client:only="svelte"
+          divId="pb-slot-right-2"
+          slotId="pb-slot-right-2"
+          placeholderClass="w-[300px] h-[600px]"
+          onlyDesktop
+        />
+      </div>
     </div>
   </div>
 </HomeLayout>
