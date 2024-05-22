@@ -22,6 +22,7 @@ import type {
 } from '@statmuse/core/gamera'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import PlayerPerformanceCard from '@components/player/performance-card.astro'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 const musings = await listLatestMusings()
 const trending = await getTrendingData()
@@ -297,6 +298,13 @@ Caching.swr(Astro)
         </div>
       </div>
     </div>
-    <div class="hidden md:block basis-[300px]"></div>
+    <div class="hidden md:block basis-[300px]">
+      <AditudeAdBanner
+        client:only="svelte"
+        divId="pb-slot-right-2"
+        slotId="pb-slot-right-2"
+        class="w-[300px] h-[600px]"
+      />
+    </div>
   </div>
 </HomeLayout>

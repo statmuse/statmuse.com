@@ -22,6 +22,7 @@ import PlayerPerformanceCard from '@components/player/performance-card.astro'
 import RankingCard from '@components/home/ranking-card.astro'
 import Standings from '@components/home/standings.astro'
 import type { TrendingItem } from 'src/types'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
@@ -775,6 +776,13 @@ Caching.swr(Astro)
         )
       }
     </div>
-    <div class="hidden md:block basis-[300px]"></div>
+    <div class="hidden md:block basis-[300px]">
+      <AditudeAdBanner
+        client:only="svelte"
+        divId="pb-slot-right-2"
+        slotId="pb-slot-right-2"
+        class="w-[300px] h-[600px]"
+      />
+    </div>
   </div>
 </HomeLayout>
