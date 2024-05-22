@@ -200,10 +200,10 @@ export const homeBettingByDomain = async (props: {
 }) => {
   if (props.domain === 'EPL') return undefined
   const leaders = await getTeamCards(props)
-  console.log(leaders)
   if (leaders) {
     return bettingMapByDomain[props.domain].map((x) => ({
       ...x,
+      domain: props.domain,
       teams: find(leaders.cards, { stat: x.stat })?.teams.slice(0, 3) ?? [],
     }))
   }

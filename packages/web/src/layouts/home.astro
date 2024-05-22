@@ -59,13 +59,6 @@ const Layout = league === 'money' ? MoneyBaseLayout : BaseLayout
     href: (league) => `/${league}`,
   }}
 >
-  <main
-    class:list={{
-      'md:flex w-full': true,
-      [Astro.props.class ?? '']: !!Astro.props.class,
-    }}
-  >
-    <slot />
-  </main>
+  <slot />
   <NewsletterSignup />
 </Layout>
