@@ -21,8 +21,10 @@ import { getPlayerProfile } from '@lib/player'
 import PlayerPerformanceCard from '@components/player/performance-card.astro'
 import RankingCard from '@components/home/ranking-card.astro'
 import Standings from '@components/home/standings.astro'
-import type { TrendingItem } from 'src/types'
+import type { TrendingItem, TrendingListItem } from 'src/types'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import { groupBy } from 'lodash-es'
+import type { Dictionary } from 'lodash'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
@@ -591,6 +593,7 @@ let trendingTeams: TrendingItem['datasets'][number] | undefined
 let betting: Awaited<ReturnType<typeof homeBettingByDomain>>
 let standings: Awaited<ReturnType<typeof getStandings>>
 let profile: GameraPlayerProfileResponse | undefined
+let teamRepresentativeMap: Dictionary<TrendingListItem[]> | undefined
 
 if (domain !== 'PGA') {
   musings = await listLatestMusings(domain)
@@ -604,6 +607,8 @@ if (domain !== 'PGA') {
   trendingSearches = find(data.datasets, { name: 'Searches' })
   trendingPlayers = find(data.datasets, { name: 'Players' })
   trendingTeams = find(data.datasets, { name: 'Teams' })
+
+  teamRepresentativeMap = groupBy(trendingTeams?.items, 'title')
 
   betting = await homeBettingByDomain({ context: Astro, domain })
 
@@ -694,7 +699,9 @@ Caching.swr(Astro)
                         items: ranking.teams.map((team) => ({
                           display: team.name,
                           stat: team.statDisplayValue,
-                          imageUrl: team.logoImageUrl,
+                          imageUrl: teamRepresentativeMap[team.name]
+                            ? teamRepresentativeMap[team.name][0].images
+                            : team.logoImageUrl,
                           entity: team.entity,
                           colors: team.colors,
                         })),
@@ -710,7 +717,9 @@ Caching.swr(Astro)
                         items: section.teams.map((team) => ({
                           display: team.name,
                           stat: team.statDisplayValue,
-                          imageUrl: team.logoImageUrl,
+                          imageUrl: teamRepresentativeMap[team.name]
+                            ? teamRepresentativeMap[team.name][0].images
+                            : team.logoImageUrl,
                           entity: team.entity,
                           colors: team.colors,
                         })),

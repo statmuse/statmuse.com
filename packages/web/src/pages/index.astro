@@ -23,6 +23,7 @@ import type {
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import PlayerPerformanceCard from '@components/player/performance-card.astro'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import { groupBy } from 'lodash-es'
 
 const musings = await listLatestMusings()
 const trending = await getTrendingData()
@@ -40,6 +41,8 @@ let trendingTeams: TrendingItem['datasets'][number] | undefined
 trendingSearches = find(trending.datasets, { name: 'Searches' })
 trendingPlayers = find(trending.datasets, { name: 'Players' })
 trendingTeams = find(trending.datasets, { name: 'Teams' })
+
+const teamRepresentativeMap = groupBy(trendingTeams?.items, 'title')
 
 const bettingTrends = await Promise.all([
   homeBettingByDomain({ context: Astro, domain: 'NBA' }),
@@ -237,7 +240,9 @@ Caching.swr(Astro)
                       items: section?.teams.map((team) => ({
                         display: team.name,
                         stat: team.statDisplayValue,
-                        imageUrl: team.logoImageUrl,
+                        imageUrl: teamRepresentativeMap[team.name]
+                          ? teamRepresentativeMap[team.name][0].images
+                          : team.logoImageUrl,
                         entity: team.entity,
                         colors: team.colors,
                       })),
@@ -262,7 +267,9 @@ Caching.swr(Astro)
                       items: section.teams.map((team) => ({
                         display: team.name,
                         stat: team.statDisplayValue,
-                        imageUrl: team.logoImageUrl,
+                        imageUrl: teamRepresentativeMap[team.name]
+                          ? teamRepresentativeMap[team.name][0].images
+                          : team.logoImageUrl,
                         entity: team.entity,
                         colors: team.colors,
                       })),
