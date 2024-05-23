@@ -11,6 +11,7 @@ interface Props {
     items: {
       colors?: {
         backgroundColor: string
+        foregroundColor: string
       }
       stat: string
       display: string
@@ -44,7 +45,7 @@ const { title, sections } = Astro.props
                       }}
                       style={
                         index === 0
-                          ? `background: ${item.colors?.backgroundColor}`
+                          ? `background: ${item.colors?.backgroundColor}; color: ${item.colors?.foregroundColor}`
                           : ''
                       }
                     >
