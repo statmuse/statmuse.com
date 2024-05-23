@@ -2,6 +2,7 @@
   import { session } from '@lib/stores'
   import { isMobileTest } from '@lib/useragent'
   import { afterUpdate, onMount } from 'svelte'
+  import Panel from '@components/panel.svelte'
 
   export let divId: string
   export let slotId: string
@@ -80,16 +81,11 @@
   {#if import.meta.env.PROD}
     <div {...$$restProps} bind:this={container} id={divId}></div>
   {:else}
-    <div
+    <Panel
       {...$$restProps}
-      class={placeholderClass}
-      class:bg-gray-1={true}
-      class:flex={true}
-      class:items-center={true}
-      class:justify-center={true}
-      class:rounded-2xl={true}
+      class={`${placeholderClass} flex items-center justify-center`}
     >
       Display Ad
-    </div>
+    </Panel>
   {/if}
 {/if}
