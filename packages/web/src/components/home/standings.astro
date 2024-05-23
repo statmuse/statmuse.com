@@ -12,29 +12,44 @@ interface Props {
 }
 
 const { domain, standings } = Astro.props
+
+const group = domain !== 'NBA' && domain !== 'EPL' ? 'division' : undefined
+
+const tabTitle = (name: string, domain: GameraDomain) => {
+  if (domain === 'NBA' || domain === 'NHL') {
+    if (name.includes('East')) {
+      return 'East Standings'
+    } else {
+      return 'West Standings'
+    }
+  }
+  return `${name} Standings`
+}
 ---
 
 <Panel class="group !py-0 relative">
-  <div class="flex font-semibold text-center -mx-3">
-    {
-      Object.entries(standings.teams).map(([name, _teams], index) => (
-        <label
-          for={`standings-${index}`}
-          class:list={[
-            'flex-1 py-2 text-gray-5 bg-gray-4 hover:cursor-pointer',
-            {
-              'group-has-[#standings-0:checked]:bg-gray-3 group-has-[#standings-0:checked]:text-white':
-                index === 0,
-              'group-has-[#standings-1:checked]:bg-gray-3 group-has-[#standings-1:checked]:text-white':
-                index === 1,
-            },
-          ]}
-        >
-          {name}
-        </label>
-      ))
-    }
-  </div>
+  {
+    Object.entries(standings.teams).length > 1 && (
+      <div class="flex font-semibold text-center -mx-3">
+        {Object.entries(standings.teams).map(([name, _teams], index) => (
+          <label
+            for={`standings-${index}`}
+            class:list={[
+              'flex-1 py-2 text-gray-5 bg-gray-4 hover:cursor-pointer',
+              {
+                'group-has-[#standings-0:checked]:bg-gray-3 group-has-[#standings-0:checked]:text-white':
+                  index === 0,
+                'group-has-[#standings-1:checked]:bg-gray-3 group-has-[#standings-1:checked]:text-white':
+                  index === 1,
+              },
+            ]}
+          >
+            {tabTitle(name, domain)}
+          </label>
+        ))}
+      </div>
+    )
+  }
   {
     Object.entries(standings.teams).map(([_name, teams], index) => (
       <div class="-mx-3">
@@ -49,6 +64,7 @@ const { domain, standings } = Astro.props
           class="pt-0 hidden peer-checked:block w-full"
           {teams}
           {domain}
+          {group}
         />
       </div>
     ))
