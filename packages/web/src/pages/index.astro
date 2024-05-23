@@ -1,10 +1,7 @@
 ---
 import HomeLayout from '@layouts/home.astro'
-import Image from '@components/image.astro'
-import { listLatestMusings } from '@statmuse/core/musing'
-import { relativeTimeFromDates } from '@statmuse/core/time'
+import { listLatestHomeMusings } from '@statmuse/core/musing'
 import { Caching } from '@lib/caching'
-import Panel from '@components/panel.astro'
 import FreestarVideo from '@components/freestar-video.svelte'
 import { getTrendingData } from '@lib/trending'
 import MusingsCard from '@components/home/musings-card.astro'
@@ -25,14 +22,8 @@ import PlayerPerformanceCard from '@components/player/performance-card.astro'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import { groupBy } from 'lodash-es'
 
-const musings = await listLatestMusings()
+const musings = await listLatestHomeMusings()
 const trending = await getTrendingData()
-const players = trending?.datasets
-  .find((d) => d.key === 'players')
-  ?.items?.slice(0, 4)
-const [first] = players ?? []
-const background = first?.background
-const foreground = first?.foreground
 
 let trendingSearches: TrendingItem['datasets'][number] | undefined
 let trendingPlayers: TrendingItem['datasets'][number] | undefined

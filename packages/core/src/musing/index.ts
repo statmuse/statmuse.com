@@ -1,4 +1,4 @@
-import type { InferResult } from 'kysely'
+import { type InferResult, sql } from 'kysely'
 import { dbReader } from '../db'
 import { isUUID } from '../question'
 import type { GameraDomain } from '../gamera'
@@ -69,3 +69,46 @@ export const listLatestMusings = (league?: GameraDomain) => {
 }
 
 export type LatestMusing = Awaited<ReturnType<typeof listLatestMusings>>[number]
+
+export const listLatestHomeMusings = async () =>
+  dbReader
+    .selectFrom((eb) =>
+      eb
+        .selectFrom('musings')
+        .innerJoin('links', 'links.musing_id', 'musings.id')
+        .innerJoin('leagues', 'leagues.id', 'musings.league_id')
+        .where('leagues.name', 'in', ['EPL', 'NBA', 'NFL', 'NHL', 'MLB'])
+        .where('musings.content_type', '=', 'latest-stats')
+        .where((eb) =>
+          eb.or([
+            eb.cmpr('musings.publish_at', '=', null),
+            eb.cmpr('musings.publish_at', '<=', new Date()),
+          ]),
+        )
+        .selectAll('musings')
+        .select('links.short_code')
+        .select('leagues.name as domain')
+        .select(
+          sql<number>`ROW_NUMBER() OVER (PARTITION BY musings.league_id ORDER BY musings.inserted_at DESC)`.as(
+            'row',
+          ),
+        )
+        .as('musings_with_row'),
+    )
+    .where('musings_with_row.row', '<=', 5)
+    .orderBy('musings_with_row.row')
+    .orderBy(
+      sql`
+        CASE domain
+          WHEN 'EPL' THEN 1
+          WHEN 'NBA' THEN 2
+          WHEN 'NFL' THEN 3
+          WHEN 'NHL' THEN 4
+          WHEN 'MLB' THEN 5
+          ELSE 6
+        END
+      `,
+    )
+    .limit(25)
+    .selectAll()
+    .execute()
