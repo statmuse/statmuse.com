@@ -34,118 +34,46 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
 <>
   {
     representatives.length === 0 && (
-      <div
-        class:list={{
-          '!h-32 w-52 flex items-center justify-center': true,
-          '!my-3 md:!my-0 md:!-mb-3': true,
-          [Astro.props.class ?? '']: !!Astro.props.class,
-        }}
-      >
-        <Image
-          data-cy-illustration
-          class="md:h-[150%] md:w-[150%] object-cover object-bottom md:object-right"
-          alt={alt}
-          src={fallback}
-          width={250}
-          height={250}
-          loading="eager"
-        />
-      </div>
+      <Image
+        class="h-[90px] max-w-[120px] select-none object-contain object-bottom"
+        alt={alt}
+        src={fallback}
+        width={180}
+        height={180}
+        loading="eager"
+      />
     )
   }
   {
     representatives.length === 1 && (
-      <div
-        class:list={{
-          'flex items-end justify-center': true,
-          [Astro.props.class ?? '']: !!Astro.props.class,
-        }}
-      >
-        <Image
-          data-cy-illustration
-          class="max-w-[200px] object-contain object-bottom"
-          alt={representatives[0].entity?.display ?? ''}
-          src={representatives[0].url}
-          style={`height: ${getIllustrationHeight(representatives[0])}px;`}
-          width={200}
-          height={200}
-          loading="eager"
-        />
-      </div>
+      <Image
+        class="h-[90px] max-w-[120px] select-none object-contain object-bottom"
+        alt={representatives[0].entity?.display ?? ''}
+        src={representatives[0].url}
+        width={180}
+        height={180}
+        loading="eager"
+      />
     )
   }
   {
-    representatives.length === 3 && (
-      <div
-        class:list={{
-          'flex items-end justify-center w-[300px]': true,
-          [Astro.props.class ?? '']: !!Astro.props.class,
-        }}
-      >
-        <div class="relative">
-          <Image
-            data-cy-illustration
-            class="max-w-[200px] absolute bottom-0 left-0 -translate-x-[80px] object-contain object-bottom"
-            alt={representatives[0].entity?.display ?? ''}
-            src={representatives[0].url}
-            style={`height: ${getIllustrationHeight(representatives[0])}px;`}
-            width={200}
-            height={200}
-            loading="eager"
-          />
-          <Image
-            data-cy-illustration
-            class="max-w-[200px] relative z-[1] object-contain object-bottom"
-            alt={representatives[1].entity?.display ?? ''}
-            src={representatives[1].url}
-            style={`height: ${getIllustrationHeight(representatives[1])}px;`}
-            width={200}
-            height={200}
-            loading="eager"
-          />
-          <Image
-            data-cy-illustration
-            class="max-w-[200px] absolute bottom-0 right-0 translate-x-[80px] object-contain object-bottom"
-            alt={representatives[2].entity?.display ?? ''}
-            src={representatives[2].url}
-            style={`height: ${getIllustrationHeight(representatives[2])}px;`}
-            width={200}
-            height={200}
-            loading="eager"
-          />
-        </div>
-      </div>
-    )
-  }
-  {
-    representatives.length === 2 && (
-      <div
-        class:list={{
-          'flex items-end justify-center w-[240px]': true,
-          [Astro.props.class ?? '']: !!Astro.props.class,
-        }}
-      >
+    representatives.length > 1 &&
+      representatives.map((representative, index) => (
         <Image
-          data-cy-illustration
-          class="translate-x-1/4 object-contain object-bottom"
-          alt={representatives[0].entity?.display ?? ''}
-          src={representatives[0].url}
-          style={`height: ${getIllustrationHeight(representatives[0])}px;`}
-          width={200}
-          height={200}
+          class:list={[
+            'h-[90px] max-w-[120px] select-none object-contain object-bottom',
+            {
+              'absolute left-0 bottom-0 -translate-x-[40px]': index === 0,
+              'relative z-[1]': index === 1,
+              'absolute right-0 bottom-0 translate-x-[40px]': index === 2,
+            },
+          ]}
+          alt={representative.entity?.display ?? ''}
+          src={representative.url}
+          width={180}
+          height={180}
           loading="eager"
         />
-        <Image
-          data-cy-illustration
-          class="-translate-x-1/4 z-[1] object-contain object-bottom"
-          alt={representatives[1].entity?.display ?? ''}
-          src={representatives[1].url}
-          style={`height: ${getIllustrationHeight(representatives[1])}px;`}
-          width={200}
-          height={200}
-          loading="eager"
-        />
-      </div>
-    )
+      ))
   }
 </>
