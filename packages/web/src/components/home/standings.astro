@@ -35,11 +35,11 @@ const tabTitle = (name: string, domain: GameraDomain) => {
           <label
             for={`standings-${index}`}
             class:list={[
-              'flex-1 py-2 text-gray-5 bg-gray-4 hover:cursor-pointer',
+              'flex-1 py-2 text-gray-5 bg-gray-6 dark:bg-gray-4 hover:cursor-pointer',
               {
-                'group-has-[#standings-0:checked]:bg-gray-3 group-has-[#standings-0:checked]:text-white':
+                'group-has-[#standings-0:checked]:bg-gray-8 dark:group-has-[#standings-0:checked]:bg-gray-3 group-has-[#standings-0:checked]:text-inherit':
                   index === 0,
-                'group-has-[#standings-1:checked]:bg-gray-3 group-has-[#standings-1:checked]:text-white':
+                'group-has-[#standings-1:checked]:bg-gray-8 dark:group-has-[#standings-1:checked]:bg-gray-3 group-has-[#standings-1:checked]:text-inherit':
                   index === 1,
               },
             ]}
@@ -61,7 +61,7 @@ const tabTitle = (name: string, domain: GameraDomain) => {
           checked={index === 0}
         />
         <StandingsCard
-          class="pt-0 hidden peer-checked:block w-full"
+          class="pt-0 hidden peer-checked:block w-full !border-none"
           {teams}
           {domain}
           {group}
