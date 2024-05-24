@@ -3,6 +3,12 @@
 <script lang="ts">
   import { session } from '@lib/stores'
   import Icon from '@components/icon.svelte'
+  import { isMobileTest } from '@lib/useragent'
+
+  export let onlyMobile = false
+
+  const isMobile = isMobileTest(navigator.userAgent)
+  const shouldRender = onlyMobile ? isMobile : true
 
   let isOpen = true
 
@@ -16,7 +22,7 @@
     ($session?.type === 'visitor' && !$session?.properties.bot)
 </script>
 
-{#if isNotSubscriber && isOpen}
+{#if shouldRender && isNotSubscriber && isOpen}
   <div {...$$props}>
     <slot />
     <Icon
