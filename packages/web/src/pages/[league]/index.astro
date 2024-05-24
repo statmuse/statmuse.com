@@ -728,24 +728,52 @@ Caching.swr(Astro)
                       }))}
                     />
                   )}
-                  {trendingPlayers && (
-                    <TrendingList
-                      title={`Trending ${trendingPlayers.name}`}
-                      items={trendingPlayers.items}
-                    />
-                  )}
-                  {trendingTeams && (
-                    <TrendingList
-                      title={`Trending ${trendingTeams.name}`}
-                      items={trendingTeams.items}
-                    />
-                  )}
-                  {trendingSearches && (
-                    <TrendingList
-                      title={`Trending ${trendingSearches.name}`}
-                      items={trendingSearches.items}
-                    />
-                  )}
+                  <div>
+                    <WithSubscription client:only="svelte">
+                      <Fragment slot="subscribed">
+                        <div class="space-y-3 md:hidden">
+                          {trendingPlayers && (
+                            <TrendingList
+                              title={`Trending ${trendingPlayers.name}`}
+                              items={trendingPlayers.items}
+                            />
+                          )}
+                          {trendingTeams && (
+                            <TrendingList
+                              title={`Trending ${trendingTeams.name}`}
+                              items={trendingTeams.items}
+                            />
+                          )}
+                          {trendingSearches && (
+                            <TrendingList
+                              title={`Trending ${trendingSearches.name}`}
+                              items={trendingSearches.items}
+                            />
+                          )}
+                        </div>
+                      </Fragment>
+                      <div class="space-y-3">
+                        {trendingPlayers && (
+                          <TrendingList
+                            title={`Trending ${trendingPlayers.name}`}
+                            items={trendingPlayers.items}
+                          />
+                        )}
+                        {trendingTeams && (
+                          <TrendingList
+                            title={`Trending ${trendingTeams.name}`}
+                            items={trendingTeams.items}
+                          />
+                        )}
+                        {trendingSearches && (
+                          <TrendingList
+                            title={`Trending ${trendingSearches.name}`}
+                            items={trendingSearches.items}
+                          />
+                        )}
+                      </div>
+                    </WithSubscription>
+                  </div>
                   <Panel title="Example Questions">
                     <div class="divide-y divide-gray-6 dark:divide-gray-4">
                       {examples[league || 'nba'].map(([title, queries]) => (
@@ -804,6 +832,14 @@ Caching.swr(Astro)
                 <TrendingList
                   title={`Trending ${trendingTeams.name}`}
                   items={trendingTeams.items}
+                />
+              )
+            }
+            {
+              trendingSearches && (
+                <TrendingList
+                  title={`Trending ${trendingSearches.name}`}
+                  items={trendingSearches.items}
                 />
               )
             }
