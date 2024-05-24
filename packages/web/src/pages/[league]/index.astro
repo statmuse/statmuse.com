@@ -808,3 +808,33 @@ Caching.swr(Astro)
     </div>
   </div>
 </HomeLayout>
+<script>
+  const contentSelection = localStorage.getItem('content-selection')
+  if (contentSelection) {
+    const input = document.querySelector<HTMLInputElement>(
+      `input#${contentSelection}`,
+    )
+    if (input) input.checked = true
+  }
+
+  document.addEventListener('astro:after-swap', () => {
+    const contentSelection = localStorage.getItem('content-selection')
+    if (contentSelection) {
+      const input = document.querySelector<HTMLInputElement>(
+        `input#${contentSelection}`,
+      )
+
+      if (input) input.checked = true
+    }
+  })
+
+  document.addEventListener('astro:page-load', () => {
+    document
+      .querySelectorAll<HTMLInputElement>('input[name="home"]')
+      .forEach((input) => {
+        input.addEventListener('change', () => {
+          localStorage.setItem('content-selection', input.id)
+        })
+      })
+  })
+</script>
