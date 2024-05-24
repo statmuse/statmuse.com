@@ -461,214 +461,116 @@ const hasSupplement = hero?.hasSupplement
       )
     }
     <script>
-      import { segment, getOrigin } from '@lib/analytics'
+      import { v4 as uuidv4 } from 'uuid'
+      import { segment, getPageviewProps } from '@lib/analytics'
       import type { Session } from '@lib/session'
       import { session as sessionStore } from '@lib/stores'
-      import type { ContentReference, Subject } from '@statmuse/core/gamera'
-      import type { ContentReference as KanedamaContentReference } from '@statmuse/core/kanedama'
+      import { maybeRewriteUrl } from '@lib/client'
 
-      const flattenObj = (key: string, obj?: {}) => {
-        return !obj
-          ? {}
-          : Object.entries(obj).reduce((x, [k, v]) => {
-              return {
-                ...x,
-                [`${key}.${k}`]: v,
-              }
-            }, {})
-      }
-
-      const getReferenceIds = (
-        contentReference?: ContentReference | KanedamaContentReference,
-      ) => {
-        if (!contentReference) return {}
-        const { questionTags, answerTags } = contentReference
-
-        if (
-          questionTags?.playerIds ||
-          questionTags?.teamIds ||
-          answerTags?.playerIds ||
-          answerTags?.teamIds
-        ) {
-          return {
-            players: JSON.stringify(
-              Array.from(
-                new Set([
-                  ...(questionTags?.playerIds ? questionTags.playerIds : []),
-                  ...(answerTags?.playerIds ? answerTags.playerIds : []),
-                ]),
-              ),
-            ),
-            teams: JSON.stringify(
-              Array.from(
-                new Set([
-                  ...(questionTags?.teamIds ? questionTags.teamIds : []),
-                  ...(answerTags?.teamIds ? answerTags.teamIds : []),
-                ]),
-              ),
-            ),
-          }
-        }
-
-        if (questionTags?.assetIds || answerTags?.assetIds) {
-          return {
-            assets: JSON.stringify(
-              Array.from(
-                new Set([
-                  ...(questionTags?.assetIds ? questionTags.assetIds : []),
-                  ...(answerTags?.assetIds ? answerTags.assetIds : []),
-                ]),
-              ),
-            ),
-          }
-        }
-      }
-
-      const getSubjectItems = (subject?: Subject) => {
-        if (!subject) return {}
-        return {
-          subject_image: subject.imageUrl,
-          subject_background_color: subject.colors?.background,
-          subject_foreground_color: subject.colors?.foreground,
-        }
+      // set page targeting for GAM
+      const eventProps = getPageviewProps(document)
+      if (eventProps) {
+        var tude = window.tude || { cmd: [] }
+        tude.cmd.push(function () {
+          tude.setPageTargeting({
+            pagetype: eventProps.page_domain + '-' + eventProps.page_type,
+          })
+        })
       }
 
       // initialize referrer var
       let referrer: string | undefined
 
-      // default page tracking
-      segment.page(referrer ? { referrer } : {})
-
-      // custom Pageview event
-      const eventProps = document.querySelector<HTMLMetaElement>(
-        'meta[name="analytics:event:properties"]',
-      )?.content
-
-      if (eventProps) {
-        const {
-          disposition,
-          tokenizationScore,
-          contentReference,
-          subject,
-          ...props
-        } = JSON.parse(eventProps)
-        segment.track(
-          'Pageview',
-          {
-            ...props,
-            ...flattenObj('disposition', disposition),
-            ...flattenObj('tokenizationScore', tokenizationScore),
-            ...getReferenceIds(contentReference),
-            ...getSubjectItems(subject),
-            origin: getOrigin(navigator.userAgent),
-          },
-          referrer ? { page: { referrer } } : {},
-        )
-
-        var tude = window.tude || { cmd: [] }
-        tude.cmd.push(function () {
-          tude.setPageTargeting({
-            pagetype: props.page_domain + '-' + props.page_type,
-          })
-        })
+      let sessionId: string | null
+      sessionId = sessionStorage.getItem('sessionId')
+      if (!sessionId) {
+        sessionId = uuidv4()
+        sessionStorage.setItem('sessionId', sessionId)
       }
 
-      referrer = window.location.href
+      let startTime: number | undefined = Date.now()
+      let timeSpent = 0
 
-      // hack: 'astro:page-load' does not fire consistently
-      // TODO: move into astro:page-load callback
-      document.addEventListener('astro:after-swap', async () => {
-        // default page tracking
-        segment.page(referrer ? { referrer } : {})
+      const trackTimeOnPage = () => {
+        const endTime = Date.now()
+        if (startTime) {
+          timeSpent += (endTime - startTime) / 1000
+        }
 
-        // custom Pageview event
-        const eventProps = document.querySelector<HTMLMetaElement>(
-          'meta[name="analytics:event:properties"]',
-        )?.content
-
-        if (eventProps) {
-          const {
-            disposition,
-            tokenizationScore,
-            contentReference,
-            subject,
-            ...props
-          } = JSON.parse(eventProps)
-          segment.track(
-            'Pageview',
+        const props = getPageviewProps(document)
+        if (props) {
+          const { page_type, page_domain, is_search } = props
+          window.segment.track(
+            'Time On Page',
             {
-              ...props,
-              ...flattenObj('disposition', disposition),
-              ...flattenObj('tokenizationScore', tokenizationScore),
-              ...getReferenceIds(contentReference),
-              ...getSubjectItems(subject),
-              origin: getOrigin(navigator.userAgent),
+              session_id: sessionId,
+              time_spent: timeSpent,
+              page_type,
+              page_domain,
+              is_search,
             },
             referrer ? { page: { referrer } } : {},
           )
 
-          var tude = window.tude || { cmd: [] }
-          tude.cmd.push(function () {
-            tude.setPageTargeting({
-              pagetype: props.page_domain + '-' + props.page_type,
-            })
-          })
+          if (startTime) {
+            startTime = endTime
+          }
+          timeSpent = 0
         }
+      }
 
+      window.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+          trackTimeOnPage()
+        }
+      })
+
+      window.addEventListener('blur', () => {
+        // Page is not visible, calculate timespent and pause the timer
+        if (startTime) {
+          timeSpent += (Date.now() - startTime) / 1000
+        }
+        startTime = undefined
+      })
+
+      window.addEventListener('focus', () => {
+        // Page became visible again, resume the timer
+        startTime = Date.now()
+      })
+
+      document.addEventListener('astro:before-swap', () => {
+        trackTimeOnPage()
         referrer = window.location.href
       })
 
+      document.addEventListener('astro:after-swap', () => {
+        // set page targeting for GAM
+        const eventProps = getPageviewProps(document)
+        if (eventProps) {
+          var tude = window.tude || { cmd: [] }
+          tude.cmd.push(function () {
+            tude.setPageTargeting({
+              pagetype: eventProps.page_domain + '-' + eventProps.page_type,
+            })
+          })
+        }
+      })
+
       document.addEventListener('astro:page-load', async () => {
-        /**
-         * Given window and document, add or remove "selected" class to league nav
-         * links if current window location matches nav href. Note that the argument
-         * tests are more comprehensive to protect functions downstream of this.
-         *
-         * @param {Window} win - DOM window
-         * @param {Element} ctag - Node Element with data for canonical link
-         *
-         */
-        const shouldRewriteUrl = (win: Window, ctag: HTMLLinkElement) => {
-          return (
-            win instanceof Window &&
-            win.history instanceof History &&
-            win.location instanceof Location &&
-            ctag.href !== win.location.href &&
-            ctag.dataset.shouldRewrite === 'true'
+        maybeRewriteUrl(window, document)
+
+        // default page tracking
+        segment.page(referrer ? { referrer } : {})
+
+        const eventProps = getPageviewProps(document)
+
+        if (eventProps) {
+          segment.track(
+            'Pageview',
+            { ...eventProps, session_id: sessionId },
+            referrer ? { page: { referrer } } : {},
           )
         }
-
-        /**
-         * Rewrite URL.
-         *
-         * @param {Window} win - DOM window
-         * @param {HTMLDocument} doc - DOM document
-         * @param {String} newUrl - Destination URL
-         *
-         */
-        const rewriteUrl = (win: Window, doc: Document, newUrl: string) =>
-          win.history.replaceState(null, doc.title, newUrl)
-
-        /**
-         * Given window and document, get canonical link tag and check if URL should be
-         * rewritten, in which case call rewriteUrl and updateLeagueNav.
-         *
-         * @param {Window} win - DOM window
-         * @param {HTMLDocument} doc - DOM document
-         *
-         */
-        const maybeRewriteUrl = (win: Window, doc: Document) => {
-          const canonicalTag = doc.querySelector(
-            'link[rel="canonical"]',
-          ) as HTMLLinkElement | null
-          if (!canonicalTag) return
-
-          if (shouldRewriteUrl(win, canonicalTag)) {
-            rewriteUrl(win, doc, canonicalTag.href)
-          }
-        }
-
-        maybeRewriteUrl(window, document)
       })
 
       document.addEventListener(

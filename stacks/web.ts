@@ -181,7 +181,6 @@ export function Web({ stack }: StackContext) {
       'comprehend',
       'ses',
     ],
-    invalidation: { paths: 'none' },
     customDomain: {
       hostedZone: dns.zone,
       domainName,

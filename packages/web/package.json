@@ -58,7 +58,8 @@
     "stripe": "^12.13.0",
     "svelte": "^4.2.0",
     "svelte-portal": "^2.2.1",
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^3.4.1",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.5.6",
