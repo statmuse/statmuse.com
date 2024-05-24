@@ -349,13 +349,13 @@ const bustImageAlt = bio.bustImageUrl?.includes('silhouette')
       <div class="flex items-center justify-stretch gap-1 border-b border-gray-6 dark:border-gray-4 -mx-3 px-3">
         <Image
           class:list={{
-            'select-none': true,
+            'h-[75px] max-w-[100px] select-none': true,
             'object-contain object-bottom': true,
           }}
           alt={bustImageAlt}
           src={bustImageUrl}
-          width={100}
-          height={100}
+          width={180}
+          height={180}
           loading="eager"
         />
         <div class="">
