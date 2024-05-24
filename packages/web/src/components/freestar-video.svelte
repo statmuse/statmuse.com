@@ -1,24 +1,17 @@
 <script lang="ts">
   import { session } from '@lib/stores'
   import { onMount } from 'svelte'
+  import Panel from '@components/panel.svelte'
   export let league: string
 
   let container: HTMLElement
   let video: HTMLElement
-  let mounted: boolean = false
   let observer: IntersectionObserver
-  let lazyLoadObserver: IntersectionObserver
-  let loadVideo = false
 
   onMount(() => {
-    mounted = true
-
     return () => {
       if (observer) {
         observer.unobserve(container)
-      }
-      if (lazyLoadObserver) {
-        lazyLoadObserver.unobserve(container)
       }
       if (video) {
         video.replaceChildren()
@@ -26,52 +19,42 @@
     }
   })
 
-  $: if (mounted) {
-    if ('IntersectionObserver' in window && container) {
-      const options = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.5,
-      }
-
-      const callback = (
-        entries: IntersectionObserverEntry[],
-        self: IntersectionObserver,
-      ) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && container) {
-            window.segment.track('View Video')
-            self.unobserve(entry.target)
-          }
-        })
-      }
-
-      observer = new IntersectionObserver(callback, options)
-
-      lazyLoadObserver = new IntersectionObserver(
-        (entries: IntersectionObserverEntry[], self: IntersectionObserver) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting && container) {
-              loadVideo = true
-              self.unobserve(entry.target)
-            }
-          })
-        },
-        { root: null, rootMargin: '50px', threshold: 0 },
-      )
-
-      observer.observe(container)
-      lazyLoadObserver.observe(container)
+  $: if ('IntersectionObserver' in window && container) {
+    const options = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.5,
     }
+
+    const callback = (
+      entries: IntersectionObserverEntry[],
+      self: IntersectionObserver,
+    ) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && container) {
+          window.segment.track('View Video')
+          self.unobserve(entry.target)
+        }
+      })
+    }
+
+    observer = new IntersectionObserver(callback, options)
+
+    observer.observe(container)
   }
+
+  $: isNotSubscriber =
+    ($session?.type === 'user' &&
+      $session?.properties.subscriptionStatus !== 'active') ||
+    ($session?.type === 'visitor' && !$session?.properties.bot)
 </script>
 
-<div
-  bind:this={container}
-  class={`${$$props.class} overflow-hidden w-full aspect-video rounded-2xl`}
->
-  {#if (!import.meta.env.DEV && $session?.type === 'visitor' && !$session?.properties.bot) || ($session?.type === 'user' && $session?.properties.subscriptionStatus !== 'active')}
-    {#if loadVideo}
+{#if isNotSubscriber}
+  {#if import.meta.env.PROD}
+    <div
+      bind:this={container}
+      class={`${$$props.class} overflow-hidden rounded-2xl`}
+    >
       {#if league === 'nba'}
         <div
           bind:this={video}
@@ -137,10 +120,12 @@
           data-astro-exec
         ></script>
       {/if}
-    {/if}
-  {:else if !$session}
-    <div class="w-full h-full" />
+    </div>
   {:else}
-    <slot />
+    <Panel
+      class={`${$$props.class} aspect-video flex items-center justify-center`}
+    >
+      Video Player
+    </Panel>
   {/if}
-</div>
+{/if}
