@@ -50,7 +50,7 @@ const playerMapByDomain: Record<
     { stat: 'mostPointsPerGame', title: 'PPG' },
     { stat: 'mostReboundsPerGame', title: 'RPG' },
     { stat: 'mostAssistsPerGame', title: 'APG' },
-    { stat: 'mostThreePointersMade', title: '3PM' },
+    { stat: 'mostThreePointsMade', title: '3PM' },
     { stat: 'bestTrueShootingPercentage', title: 'TS%' },
   ],
   NFL: [
@@ -121,7 +121,7 @@ const teamMapByDomain: Record<GameraDomain, { stat: string; title: string }[]> =
       { stat: 'leastGoalsAllowedPerGame', title: 'Goals Against' },
       { stat: 'bestPowerPlayPercentage', title: 'Power Play%' },
       { stat: 'bestPenaltyKillPercentage', title: 'Penalty Kill%' },
-      { stat: 'bestSavePercentage', title: 'PDO' },
+      { stat: 'bestShootingPlusSavePercentage', title: 'PDO' },
     ],
     MLB: [
       { stat: 'mostBattingHomeRuns', title: 'Home Runs' },
@@ -134,7 +134,7 @@ const teamMapByDomain: Record<GameraDomain, { stat: string; title: string }[]> =
       { stat: 'mostGoals', title: 'Goals' },
       { stat: 'leastGoalsAgainst', title: 'Goals Conceded' },
       { stat: 'bestGoalDifferential', title: 'Goal Difference' },
-      { stat: 'mostPossession', title: 'Possession' },
+      { stat: 'bestPossessionPercentage', title: 'Possession' },
       { stat: 'mostCleanSheets', title: 'Clean Sheets' },
     ],
   }
