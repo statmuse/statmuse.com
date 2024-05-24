@@ -1,4 +1,4 @@
-import type { StandingsResponse } from '@statmuse/core/gamera'
+import type { GameraDomain, StandingsResponse } from '@statmuse/core/gamera'
 import { request } from '@lib/gamera'
 import type { Context } from '@lib/session'
 import { groupBy } from 'lodash-es'
@@ -15,6 +15,7 @@ export const getStandings = async (props: {
     if (data) {
       return {
         ...data,
+        domain: props.domain as GameraDomain,
         teams:
           league === 'epl'
             ? { all: data.teams }
@@ -29,3 +30,5 @@ export const getStandings = async (props: {
     return undefined
   }
 }
+
+export type GetStandingsResponse = Awaited<ReturnType<typeof getStandings>>

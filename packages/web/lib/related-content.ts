@@ -96,6 +96,10 @@ export const homeLeadersByDomain = async (props: {
   }
 }
 
+export type PlayerLeadersResponse = Awaited<
+  ReturnType<typeof homeLeadersByDomain>
+>
+
 const teamMapByDomain: Record<GameraDomain, { stat: string; title: string }[]> =
   {
     NBA: [
@@ -147,6 +151,10 @@ export const homeRankingsByDomain = async (props: {
     }))
   }
 }
+
+export type TeamRankingsResponse = Awaited<
+  ReturnType<typeof homeRankingsByDomain>
+>
 
 const bettingMapByDomain: Record<
   GameraDomain,
