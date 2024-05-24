@@ -590,23 +590,22 @@ let trendingTeams: TrendingItem['datasets'][number] | undefined
 let betting: TeamRankingsResponse
 let standings: GetStandingsResponse
 let profile: GameraPlayerProfileResponse | undefined
+let trendingData: TrendingItem | undefined
 
 if (domain !== 'PGA') {
-  musings = await listLatestMusings(domain)
+  ;[musings, leaders, rankings, trendingData, betting, standings] =
+    await Promise.all([
+      listLatestMusings(domain),
+      homeLeadersByDomain({ context: Astro, domain }),
+      homeRankingsByDomain({ context: Astro, domain }),
+      getTrendingData({ league }),
+      homeBettingByDomain({ context: Astro, domain }),
+      getStandings({ context: Astro, domain }),
+    ])
 
-  leaders = await homeLeadersByDomain({ context: Astro, domain })
-
-  rankings = await homeRankingsByDomain({ context: Astro, domain })
-
-  const data = await getTrendingData({ league })
-
-  trendingSearches = find(data.datasets, { name: 'Searches' })
-  trendingPlayers = find(data.datasets, { name: 'Players' })
-  trendingTeams = find(data.datasets, { name: 'Teams' })
-
-  betting = await homeBettingByDomain({ context: Astro, domain })
-
-  standings = await getStandings({ context: Astro, domain })
+  trendingSearches = find(trendingData?.datasets, { name: 'Searches' })
+  trendingPlayers = find(trendingData?.datasets, { name: 'Players' })
+  trendingTeams = find(trendingData?.datasets, { name: 'Teams' })
 
   for (const player of trendingPlayers?.items.slice(0, 10) ?? []) {
     const playerSlug = player.uri.split('/')[3]
