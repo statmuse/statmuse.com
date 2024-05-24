@@ -19,6 +19,7 @@ import TrendingList from '@components/trending-list.astro'
 import WithSubscription from '@components/with-subscription.svelte'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import Panel from '@components/panel.astro'
+import FreestarVideo from '@components/freestar-video.svelte'
 
 type ExampleSet = [string, { query: string; path: string }[]]
 
@@ -300,6 +301,11 @@ const teamRepresentativeMap = groupBy(trendingTeams?.items, 'title')
     </WithSubscription>
   </div>
 </div>
+<FreestarVideo
+  client:only="svelte"
+  class="w-full md:w-[425px] mt-4"
+  domain={domain?.toLowerCase()}
+/>
 
 <script>
   const contentSelection = localStorage.getItem('content-selection')
