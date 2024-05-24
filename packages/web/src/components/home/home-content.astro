@@ -106,6 +106,9 @@ const teamRepresentativeMap = groupBy(trendingTeams?.items, 'title')
                     recentGames={profile.recentGames}
                   />
                 )}
+                {standings && (
+                  <Standings {standings} domain={standings.domain} />
+                )}
                 {leaders && (
                   <RankingCard
                     title="League Leaders"
@@ -137,9 +140,6 @@ const teamRepresentativeMap = groupBy(trendingTeams?.items, 'title')
                       })),
                     }))}
                   />
-                )}
-                {standings && (
-                  <Standings {standings} domain={standings.domain} />
                 )}
                 {betting && (
                   <RankingCard
