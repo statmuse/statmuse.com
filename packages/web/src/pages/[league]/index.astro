@@ -25,6 +25,7 @@ import type { TrendingItem, TrendingListItem } from 'src/types'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import { groupBy } from 'lodash-es'
 import type { Dictionary } from 'lodash'
+import WithSubscription from '@components/with-subscription.svelte'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
@@ -630,11 +631,11 @@ Caching.swr(Astro)
       {
         domain !== 'PGA' ? (
           <>
-            <div class="bg-gray-4 flex lg:hidden font-semibold text-center mb-3 rounded-2xl relative overflow-clip">
-              <div class="absolute h-full w-1/2 bg-gray-7 rounded-2xl left-0 group-has-[#stat:checked]:translate-x-0 group-has-[#musing:checked]:translate-x-full transition-transform ease-out" />
+            <div class="bg-gray-6 dark:bg-gray-4 text-gray-5 dark:text-inherit flex lg:hidden font-semibold text-center mb-3 rounded-2xl relative overflow-clip">
+              <div class="absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-2xl left-0 group-has-[#stat:checked]:translate-x-0 group-has-[#musing:checked]:translate-x-full transition-transform ease-out" />
               <label
                 for="stat"
-                class="flex-1 py-2 hover:cursor-pointer group-has-[#stat:checked]:text-gray-3 relative tra "
+                class="flex-1 py-2 hover:cursor-pointer group-has-[#stat:checked]:text-gray-3 relative"
               >
                 Stats
               </label>
@@ -786,25 +787,49 @@ Caching.swr(Astro)
         )
       }
     </div>
-    <div class="hidden md:block basis-[300px] space-y-3">
-      <div>
-        <AditudeAdBanner
-          client:only="svelte"
-          divId="pb-slot-square-1"
-          slotId="pb-slot-square-1"
-          placeholderClass="w-[300px] h-[250px]"
-          onlyDesktop
-        />
-      </div>
-      <div>
-        <AditudeAdBanner
-          client:only="svelte"
-          divId="pb-slot-right-2"
-          slotId="pb-slot-right-2"
-          placeholderClass="w-[300px] h-[600px]"
-          onlyDesktop
-        />
-      </div>
+    <div class="hidden md:block basis-[300px]">
+      <WithSubscription client:only="svelte">
+        <Fragment slot="subscribed">
+          <div class="space-y-3">
+            {
+              trendingPlayers && (
+                <TrendingList
+                  title={`Trending ${trendingPlayers.name}`}
+                  items={trendingPlayers.items}
+                />
+              )
+            }
+            {
+              trendingTeams && (
+                <TrendingList
+                  title={`Trending ${trendingTeams.name}`}
+                  items={trendingTeams.items}
+                />
+              )
+            }
+          </div>
+        </Fragment>
+        <div class="space-y-3">
+          <div>
+            <AditudeAdBanner
+              client:only="svelte"
+              divId="pb-slot-square-1"
+              slotId="pb-slot-square-1"
+              placeholderClass="w-[300px] h-[250px]"
+              onlyDesktop
+            />
+          </div>
+          <div>
+            <AditudeAdBanner
+              client:only="svelte"
+              divId="pb-slot-right-2"
+              slotId="pb-slot-right-2"
+              placeholderClass="w-[300px] h-[600px]"
+              onlyDesktop
+            />
+          </div>
+        </div>
+      </WithSubscription>
     </div>
   </div>
 </HomeLayout>
