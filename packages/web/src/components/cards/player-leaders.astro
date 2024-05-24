@@ -1,5 +1,5 @@
 ---
-import AditudeCardMedRec from '@components/aditude-card-med-rec.svelte'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import PlayerCardComponent from '@components/cards/player.astro'
 import type {
   GameraDomain,
@@ -14,8 +14,8 @@ interface Props {
   mlbBatting?: boolean
   mlbPitching?: boolean
   adSlot?: {
+    divId: string
     slotId: string
-    baseDivId: string
   }
 }
 
@@ -548,11 +548,14 @@ if (cards.length === 0) return undefined
 </div>
 {
   adSlot && (
-    <div>
-      <AditudeCardMedRec
+    <div class="w-fit mx-auto">
+      <AditudeAdBanner
         client:only="svelte"
+        divId={adSlot.divId}
         slotId={adSlot.slotId}
-        baseDivId={adSlot.baseDivId}
+        placeholderClass="w-[300px] h-[250px]"
+        onlyMobile
+        lazy
       />
     </div>
   )

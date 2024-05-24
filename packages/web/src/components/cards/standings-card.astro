@@ -57,7 +57,7 @@ const getColumns = (name?: string) => {
     },
     {
       rowItemKey: 'name',
-      title: name ?? '',
+      title: name ?? 'Team',
       type: 'string',
     },
     {
@@ -280,7 +280,12 @@ const grids = props.group
   ? Object.entries(groupBy(props.teams, `${props.group}.name`)).map(
       ([name, teams]) => mapToGrid(teams as Props['teams'], name),
     )
-  : [mapToGrid(props.teams, firstTeam.conference?.name)]
+  : [
+      mapToGrid(
+        props.teams,
+        firstTeam.conference?.name ?? firstTeam.league?.name,
+      ),
+    ]
 ---
 
 <Grid {...props} data={grids} columnStyles={{ rank: 'w-2' }} />

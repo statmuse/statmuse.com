@@ -4,7 +4,6 @@ import type {
   PlayerCardResponse,
   ScoresResponse,
   ScheduleResponse,
-  StandingsResponse,
   TeamCardResponse,
   GameraDomain,
 } from '@statmuse/core/gamera'
@@ -27,7 +26,7 @@ const { domain, teamId } = Astro.props
 
 let playerCardsResp: PlayerCardResponse | undefined
 let teamCardsResp: TeamCardResponse | undefined
-let standingsResp: StandingsResponse | undefined
+let standingsResp: Awaited<ReturnType<typeof getStandings>> | undefined
 let scheduleResp: ScheduleResponse | undefined
 let scoresResp: ScoresResponse | undefined
 
@@ -49,13 +48,13 @@ if (allowedDomains.includes(domain)) {
   <TeamSpecific
     {domain}
     {teamId}
-    adSlot={{ slotId: 'pb-slot-1', baseDivId: 'pb-slot-incontent-1' }}
+    adSlot={{ divId: 'pb-slot-1', slotId: 'pb-slot-incontent-1' }}
   />
   <PlayerLeaders
     {domain}
     response={playerCardsResp}
     mlbBatting={domain === 'MLB'}
-    adSlot={{ slotId: 'pb-slot-2', baseDivId: 'pb-slot-incontent-2' }}
+    adSlot={{ divId: 'pb-slot-2', slotId: 'pb-slot-incontent-2' }}
   />
   {
     domain === 'MLB' && (
@@ -64,8 +63,8 @@ if (allowedDomains.includes(domain)) {
         response={playerCardsResp}
         mlbPitching
         adSlot={{
-          slotId: 'pb-slot-2-pitching',
-          baseDivId: 'pb-slot-incontent-2',
+          divId: 'pb-slot-2-pitching',
+          slotId: 'pb-slot-incontent-2',
         }}
       />
     )
@@ -73,18 +72,18 @@ if (allowedDomains.includes(domain)) {
   <TeamRankings
     {domain}
     response={teamCardsResp}
-    adSlot={{ slotId: 'pb-slot-3', baseDivId: 'pb-slot-incontent-3' }}
+    adSlot={{ divId: 'pb-slot-3', slotId: 'pb-slot-incontent-3' }}
   />
   <FantasyLeaders
     {domain}
     response={playerCardsResp}
-    adSlot={{ slotId: 'pb-slot-4', baseDivId: 'pb-slot-incontent-4' }}
+    adSlot={{ divId: 'pb-slot-4', slotId: 'pb-slot-incontent-4' }}
   />
   <TeamBetting {domain} response={teamCardsResp} />
   <Standings
     {domain}
     response={standingsResp}
-    adSlot={{ slotId: 'pb-slot-5', baseDivId: 'pb-slot-incontent-1' }}
+    adSlot={{ divId: 'pb-slot-5', slotId: 'pb-slot-incontent-1' }}
   />
   <ScoresSchedule
     {domain}

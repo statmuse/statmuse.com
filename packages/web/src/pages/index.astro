@@ -1,106 +1,205 @@
 ---
 import HomeLayout from '@layouts/home.astro'
-import Image from '@components/image.astro'
-import { listLatestMusings } from '@statmuse/core/musing'
-import { relativeTimeFromDates } from '@statmuse/core/time'
+import HomeContent from '@components/home/home-content.astro'
+import { listLatestHomeMusings } from '@statmuse/core/musing'
 import { Caching } from '@lib/caching'
-import Panel from '@components/panel.astro'
-import FreestarVideo from '@components/freestar-video.svelte'
 import { getTrendingData } from '@lib/trending'
+import { find } from 'lodash-es'
+import { getTeamCards } from '@lib/related-content'
+import { getPlayerCards } from '@lib/related-content'
+import { getPlayerProfile } from '@lib/player'
+import type {
+  GameraDomain,
+  GameraPlayerProfileResponse,
+} from '@statmuse/core/gamera'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
 
-const musings = await listLatestMusings.execute()
-const trending = await getTrendingData()
-const players = trending?.datasets
-  .find((d) => d.key === 'players')
-  ?.items?.slice(0, 4)
-const [first] = players ?? []
-const background = first?.background
-const foreground = first?.foreground
+const [musings, trending, playerCards, teamCards, bettingCards] =
+  await Promise.all([
+    listLatestHomeMusings(),
+    getTrendingData(),
+    Promise.all([
+      getPlayerCards({ context: Astro, domain: 'EPL' }).then(
+        (x) =>
+          x && {
+            title: 'PL Goals',
+            players:
+              find(x.cards, { stat: 'mostGoals' })?.players.slice(0, 3) ?? [],
+          },
+      ),
+      getPlayerCards({ context: Astro, domain: 'NBA' }).then(
+        (x) =>
+          x && {
+            title: 'NBA PPG',
+            players:
+              find(x.cards, { stat: 'mostPointsPerGame' })?.players.slice(
+                0,
+                3,
+              ) ?? [],
+          },
+      ),
+      getPlayerCards({ context: Astro, domain: 'NFL' }).then(
+        (x) =>
+          x && {
+            title: 'NFL Total TD',
+            players:
+              find(x.cards, { stat: 'mostTotalTouchdowns' })?.players.slice(
+                0,
+                3,
+              ) ?? [],
+          },
+      ),
+      getPlayerCards({ context: Astro, domain: 'MLB' }).then(
+        (x) =>
+          x && {
+            title: 'MLB Home Runs',
+            players:
+              find(x.cards, { stat: 'mostBattingHomeRuns' })?.players.slice(
+                0,
+                3,
+              ) ?? [],
+          },
+      ),
+      getPlayerCards({ context: Astro, domain: 'NHL' }).then(
+        (x) =>
+          x && {
+            title: 'NHL Goals',
+            players:
+              find(x.cards, { stat: 'mostGoals' })?.players.slice(0, 3) ?? [],
+          },
+      ),
+    ]),
+    Promise.all([
+      getTeamCards({ context: Astro, domain: 'EPL' }).then(
+        (x) =>
+          x && {
+            title: 'PL Goal Difference',
+            teams:
+              find(x.cards, { stat: 'bestGoalDifferential' })?.teams.slice(
+                0,
+                3,
+              ) ?? [],
+          },
+      ),
+      getTeamCards({ context: Astro, domain: 'NBA' }).then(
+        (x) =>
+          x && {
+            title: 'NBA Offensive Rating',
+            teams:
+              find(x.cards, { stat: 'bestOffensiveRating' })?.teams.slice(
+                0,
+                3,
+              ) ?? [],
+          },
+      ),
+      getTeamCards({ context: Astro, domain: 'NFL' }).then(
+        (x) =>
+          x && {
+            title: 'NFL Yards Per Game',
+            teams:
+              find(x.cards, { stat: 'mostTotalYardsPerGame' })?.teams.slice(
+                0,
+                3,
+              ) ?? [],
+          },
+      ),
+      getTeamCards({ context: Astro, domain: 'MLB' }).then(
+        (x) =>
+          x && {
+            title: 'MLB Home Runs',
+            teams:
+              find(x.cards, { stat: 'mostBattingHomeRuns' })?.teams.slice(
+                0,
+                3,
+              ) ?? [],
+          },
+      ),
+      getTeamCards({ context: Astro, domain: 'NHL' }).then(
+        (x) =>
+          x && {
+            title: 'NHL Goals Per Game',
+            teams:
+              find(x.cards, { stat: 'mostGoalsPerGame' })?.teams.slice(0, 3) ??
+              [],
+          },
+      ),
+    ]),
+    Promise.all([
+      getTeamCards({ context: Astro, domain: 'NBA' }).then(
+        (x) =>
+          x && {
+            title: 'NBA Spread Trends',
+            teams:
+              find(x.cards, {
+                stat: 'bestRecordAgainstTheSpread',
+              })?.teams.slice(0, 3) ?? [],
+          },
+      ),
+      getTeamCards({ context: Astro, domain: 'NFL' }).then(
+        (x) =>
+          x && {
+            title: 'NFL Spread Trends',
+            teams:
+              find(x.cards, {
+                stat: 'bestRecordAgainstTheSpread',
+              })?.teams.slice(0, 3) ?? [],
+          },
+      ),
+      getTeamCards({ context: Astro, domain: 'MLB' }).then(
+        (x) =>
+          x && {
+            title: 'MLB Run Line Trends',
+            teams:
+              find(x.cards, {
+                stat: 'bestRecordAgainstTheSpread',
+              })?.teams.slice(0, 3) ?? [],
+          },
+      ),
+      getTeamCards({ context: Astro, domain: 'NHL' }).then(
+        (x) =>
+          x && {
+            title: 'NHL Puck Line Trends',
+            teams:
+              find(x.cards, {
+                stat: 'bestRecordAgainstTheSpread',
+              })?.teams.slice(0, 3) ?? [],
+          },
+      ),
+    ]),
+  ])
+
+const trendingSearches = find(trending?.datasets, { name: 'Searches' })
+const trendingPlayers = find(trending?.datasets, { name: 'Players' })
+const trendingTeams = find(trending?.datasets, { name: 'Teams' })
+
+let profile: GameraPlayerProfileResponse | undefined
+let domain: GameraDomain | undefined
+for (const player of trendingPlayers?.items.slice(0, 10) ?? []) {
+  const playerSlug = player.uri.split('/')[3]
+  const league = player.uri.split('/')[1] as LeagueParam
+  domain = leagueToDomain(league)
+  profile = await getPlayerProfile(Astro, domain, playerSlug)
+  if (profile?.recentGames) break
+}
 
 Caching.swr(Astro)
 ---
 
 <HomeLayout>
-  <div class="gap-3 space-y-3 columns-xs w-full">
-    <FreestarVideo client:load class="w-full">
-      {
-        players?.length ? (
-          <a href="/trending" class="no-underline hover:no-underline">
-            <Panel class="h-full flex flex-col" {background} {foreground}>
-              <h3 class="text-2xl">Trending Now</h3>
-              <div
-                class:list={{
-                  'flex items-end justify-center grow -mb-2': true,
-                }}
-              >
-                {players.map((player, index) => (
-                  <Image
-                    data-cy-illustration
-                    class:list={{
-                      'h-32 object-contain object-bottom': true,
-                    }}
-                    style={`z-index: ${4 - index};transform: translateX(${
-                      index === 0
-                        ? 75
-                        : index === 1
-                        ? 25
-                        : index === 2
-                        ? -25
-                        : -75
-                    }%);`}
-                    alt={player.title}
-                    src={player.images[0]}
-                    width={175}
-                    height={175}
-                    loading="eager"
-                  />
-                ))}
-              </div>
-            </Panel>
-          </a>
-        ) : null
-      }
-    </FreestarVideo>
-    {
-      musings.map(async (musing, i) => (
-        <div>
-          <a
-            href={`/musings/${musing.friendly_id}`}
-            class:list={{
-              'group no-underline hover:no-underline': true,
-            }}
-          >
-            <Panel
-              class:list={{
-                'break-inside-avoid-column font-light min-h-44': true,
-                'cursor-pointer hover:brightness-[85%]': true,
-              }}
-              background={musing.background_rgba}
-              foreground={musing.foreground_rgba}
-            >
-              <div
-                class="leading-snug whitespace-pre-wrap text-pretty w-1/2"
-                set:text={musing.text_plain?.replaceAll(/^-   /gm, '')}
-              />
-              <div class="flex flex-col justify-between items-end -mb-2 w-1/2 absolute right-3 top-0 bottom-2">
-                <div class="text-right mt-1.5">
-                  {relativeTimeFromDates(musing.publish_at)}
-                </div>
-                <Image
-                  data-cy-illustration
-                  class="h-36 max-w-full object-contain object-bottom"
-                  style="visibility: unset;"
-                  alt={musing.text_plain}
-                  src={musing.image_url!}
-                  width={175}
-                  height={175}
-                  loading={i < 4 ? 'eager' : 'lazy'}
-                />
-              </div>
-            </Panel>
-          </a>
-        </div>
-      ))
-    }
-  </div>
+  <HomeContent
+    {musings}
+    {profile}
+    leaders={playerCards.filter((x) => x).length > 0
+      ? playerCards.filter((x) => x)
+      : undefined}
+    rankings={teamCards.filter((x) => x).length > 0
+      ? teamCards.filter((x) => x)
+      : undefined}
+    betting={bettingCards.filter((x) => x).length > 0
+      ? bettingCards.filter((x) => x)
+      : undefined}
+    {trendingPlayers}
+    {trendingTeams}
+    {trendingSearches}
+  />
 </HomeLayout>

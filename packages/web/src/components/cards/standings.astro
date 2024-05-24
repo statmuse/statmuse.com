@@ -1,15 +1,15 @@
 ---
-import { groupBy } from 'lodash-es'
-import type { GameraDomain, StandingsResponse } from '@statmuse/core/gamera'
+import type { GameraDomain } from '@statmuse/core/gamera'
 import StandingsCard from '@components/cards/standings-card.astro'
-import AditudeCardMedRec from '@components/aditude-card-med-rec.svelte'
+import { getStandings } from '@lib/standings'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 interface Props {
   domain: GameraDomain
-  response?: StandingsResponse
+  response?: Awaited<ReturnType<typeof getStandings>>
   adSlot?: {
+    divId: string
     slotId: string
-    baseDivId: string
   }
 }
 
@@ -45,19 +45,22 @@ const limit =
   </h2>
   <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
     {
-      Object.entries(groupBy(response.teams, 'conference.name')).map(
-        ([_, teams]) => <StandingsCard {teams} {domain} {group} {limit} />,
-      )
+      Object.entries(response.teams).map(([_, teams]) => (
+        <StandingsCard {teams} {domain} {group} {limit} />
+      ))
     }
   </div>
 </div>
 {
   adSlot && (
-    <div>
-      <AditudeCardMedRec
+    <div class="w-fit mx-auto">
+      <AditudeAdBanner
         client:only="svelte"
+        divId={adSlot.divId}
         slotId={adSlot.slotId}
-        baseDivId={adSlot.baseDivId}
+        placeholderClass="w-[300px] h-[250px]"
+        onlyMobile
+        lazy
       />
     </div>
   )

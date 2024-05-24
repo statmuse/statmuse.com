@@ -1,10 +1,27 @@
 ---
 import HomeLayout from '@layouts/home.astro'
-import Panel from '@components/panel.astro'
+import HomeContent from '@components/home/home-content.astro'
 import { Caching } from '@lib/caching'
 import { createAskPath } from '@statmuse/core/path'
 import { NOT_FOUND_404 } from '@lib/response'
-import { type LeagueParam } from '@lib/params'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
+import { listLatestMusings, type LatestMusing } from '@statmuse/core/musing'
+import {
+  homeLeadersByDomain,
+  homeRankingsByDomain,
+  homeBettingByDomain,
+} from '@lib/related-content'
+import { getTrendingData } from '@lib/trending'
+import { find } from 'lodash-es'
+import { getStandings } from '@lib/standings'
+import type { GameraPlayerProfileResponse } from '@statmuse/core/gamera'
+import { getPlayerProfile } from '@lib/player'
+import type { TrendingItem } from 'src/types'
+import type {
+  PlayerLeadersResponse,
+  TeamRankingsResponse,
+} from '@lib/related-content'
+import type { GetStandingsResponse } from '@lib/standings'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
@@ -562,25 +579,56 @@ const meta = {
   },
 }
 
+const domain = leagueToDomain(league)
+
+let musings: LatestMusing[] | undefined
+let leaders: PlayerLeadersResponse
+let rankings: TeamRankingsResponse
+let trendingSearches: TrendingItem['datasets'][number] | undefined
+let trendingPlayers: TrendingItem['datasets'][number] | undefined
+let trendingTeams: TrendingItem['datasets'][number] | undefined
+let betting: TeamRankingsResponse
+let standings: GetStandingsResponse
+let profile: GameraPlayerProfileResponse | undefined
+let trendingData: TrendingItem | undefined
+
+if (domain !== 'PGA') {
+  ;[musings, leaders, rankings, trendingData, betting, standings] =
+    await Promise.all([
+      listLatestMusings(domain),
+      homeLeadersByDomain({ context: Astro, domain }),
+      homeRankingsByDomain({ context: Astro, domain }),
+      getTrendingData({ league }),
+      homeBettingByDomain({ context: Astro, domain }),
+      getStandings({ context: Astro, domain }),
+    ])
+
+  trendingSearches = find(trendingData?.datasets, { name: 'Searches' })
+  trendingPlayers = find(trendingData?.datasets, { name: 'Players' })
+  trendingTeams = find(trendingData?.datasets, { name: 'Teams' })
+
+  for (const player of trendingPlayers?.items.slice(0, 10) ?? []) {
+    const playerSlug = player.uri.split('/')[3]
+    profile = await getPlayerProfile(Astro, domain, playerSlug)
+    if (profile?.recentGames) break
+  }
+}
+
 Caching.swr(Astro)
 ---
 
 <HomeLayout {meta} {league}>
-  <div class="gap-3 space-y-3 columns-2xs lg:min-w-[48rem]">
-    {
-      examples[league || 'nba'].map(([title, queries]) => (
-        <Panel {title} class="break-inside-avoid-column">
-          <ul class="flex flex-col gap-2">
-            {queries.map(({ query, path }) => (
-              <li class="max-w-xs">
-                <a href={path} class="text-pretty">
-                  {query}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </Panel>
-      ))
-    }
-  </div>
+  <HomeContent
+    {domain}
+    {musings}
+    {profile}
+    {leaders}
+    {rankings}
+    {betting}
+    {standings}
+    {trendingPlayers}
+    {trendingTeams}
+    {trendingSearches}
+    examples={examples[league ?? 'nba']}
+  />
 </HomeLayout>

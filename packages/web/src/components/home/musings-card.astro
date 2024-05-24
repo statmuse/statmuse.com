@@ -1,0 +1,53 @@
+---
+import { relativeTimeFromDates } from '@statmuse/core/time'
+import Panel from '@components/panel.astro'
+import Image from '@components/image.astro'
+import type { LatestMusing } from '@statmuse/core/musing'
+
+interface Props {
+  musing: LatestMusing
+  index: number
+}
+
+const { musing, index } = Astro.props
+---
+
+<div>
+  <a
+    href={`/musings/${musing.friendly_id}`}
+    class:list={{
+      'group no-underline hover:no-underline': true,
+    }}
+  >
+    <Panel
+      class:list={{
+        'break-inside-avoid-column font-light min-h-44': true,
+        'cursor-pointer hover:brightness-[85%]': true,
+      }}
+      background={musing.background_rgba}
+      foreground={musing.foreground_rgba}
+    >
+      <div
+        class="leading-snug whitespace-pre-wrap text-pretty w-1/2"
+        set:text={musing.text_plain?.replaceAll(/^-   /gm, '')}
+      />
+      <div
+        class="flex flex-col justify-between items-end -mb-2 w-1/2 absolute right-3 top-0 bottom-2"
+      >
+        <div class="text-right mt-1.5">
+          {relativeTimeFromDates(musing.publish_at)}
+        </div>
+        <Image
+          data-cy-illustration
+          class="h-36 max-w-full object-contain object-bottom"
+          style="visibility: unset;"
+          alt={musing.text_plain}
+          src={musing.image_url!}
+          width={175}
+          height={175}
+          loading={index < 4 ? 'eager' : 'lazy'}
+        />
+      </div>
+    </Panel>
+  </a>
+</div>

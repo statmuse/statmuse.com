@@ -3,7 +3,7 @@ import Layout from '@layouts/base.astro'
 import Image from '@components/image.astro'
 import type { PlayerGalleryItem } from '@lib/player'
 import { type GameraDomain, getUrlForEntity } from '@statmuse/core/gamera'
-import FreestarVideo from '@components/freestar-video.svelte'
+import StnVideo from '@components/stn-video.svelte'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 
 interface Props {
@@ -77,7 +77,7 @@ const meta = {
   }}
 >
   <div>
-    <FreestarVideo
+    <StnVideo
       client:only="svelte"
       class="w-full md:w-[425px] mx-auto mt-4"
       domain={domain?.toLowerCase()}

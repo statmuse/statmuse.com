@@ -17,14 +17,14 @@ import type {
 import { createAskPath } from '@statmuse/core/path'
 import Grid from '@components/grid.svelte'
 import Image from '@components/image.astro'
-import AditudeCardMedRec from '@components/aditude-card-med-rec.svelte'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 interface Props {
   domain: GameraDomain
   teamId?: string | number
   adSlot?: {
+    divId: string
     slotId: string
-    baseDivId: string
   }
 }
 
@@ -338,11 +338,14 @@ const teamPitchingLeaders = domain === 'MLB' && {
 </div>
 {
   adSlot && (
-    <div>
-      <AditudeCardMedRec
+    <div class="w-fit mx-auto">
+      <AditudeAdBanner
         client:only="svelte"
+        divId={adSlot.divId}
         slotId={adSlot.slotId}
-        baseDivId={adSlot.baseDivId}
+        placeholderClass="w-[300px] h-[250px]"
+        onlyMobile
+        lazy
       />
     </div>
   )
