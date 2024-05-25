@@ -130,7 +130,7 @@ const teamRepresentativeMap = groupBy(trendingTeams?.items, 'title')
                     sections={rankings.map((ranking) => ({
                       title: ranking.title,
                       items: ranking.teams.map((team) => ({
-                        display: team.name,
+                        display: team.nickname,
                         stat: team.statDisplayValue,
                         imageUrl: teamRepresentativeMap[team.name]
                           ? teamRepresentativeMap[team.name][0].images
@@ -147,7 +147,7 @@ const teamRepresentativeMap = groupBy(trendingTeams?.items, 'title')
                     sections={betting.map((section) => ({
                       title: section.title,
                       items: section.teams.map((team) => ({
-                        display: team.name,
+                        display: team.nickname,
                         stat: team.statDisplayValue,
                         imageUrl: teamRepresentativeMap[team.name]
                           ? teamRepresentativeMap[team.name][0].images
