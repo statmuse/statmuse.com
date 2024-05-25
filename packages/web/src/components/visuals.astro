@@ -1,6 +1,5 @@
 ---
 import Grid from '@components/grid.svelte'
-import Chart from '@components/chart.astro'
 import MlbStandings from '@components/mlb-standings.astro'
 import NbaStandings from '@components/nba-standings.astro'
 import NflStandings from '@components/nfl-standings.astro'
@@ -114,59 +113,6 @@ const details =
           case 'stats':
             return (
               <Fragment>
-                {(() => {
-                  const columnCharts = detail.columnCharts.filter(
-                    (c) => c.categories.length > 5,
-                  )
-
-                  if (columnCharts.length > 1)
-                    return (
-                      <div role="tablist">
-                        <div class="flex">
-                          {columnCharts.map((c, i) => (
-                            <label
-                              role="tab"
-                              class:list={[
-                                'flex-1 h-12 flex items-center justify-center cursor-pointer text-secondary border-b-2',
-                                {
-                                  'border-transparent': i !== 0,
-                                  'border-secondary': i === 0,
-                                },
-                              ]}
-                              for={c.name}
-                            >
-                              {c.name}
-                            </label>
-                          ))}
-                        </div>
-                        {columnCharts.map((chart, i) => (
-                          <div role="tabpanel">
-                            <input
-                              id={chart.name}
-                              name="tabs"
-                              type="radio"
-                              class="peer hidden"
-                              checked={i === 0}
-                            />
-                            <Chart
-                              class="hidden peer-checked:block"
-                              model={chart}
-                              isSuperlative={response.visual.isSuperlative}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    )
-
-                  if (columnCharts.length === 1)
-                    return (
-                      <Chart
-                        class="md:hidden"
-                        model={columnCharts[0]}
-                        isSuperlative={response.visual.isSuperlative}
-                      />
-                    )
-                })()}
                 {detail.grids.map((grid) => (
                   <div class="flex-1 overflow-x-auto">
                     <Grid

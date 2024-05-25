@@ -1,5 +1,5 @@
 ---
-import { getColumnCharts, getHeroProps, getIsSuperlative } from '@lib/gamera'
+import { getHeroProps } from '@lib/gamera'
 import Layout from '@layouts/base.astro'
 import Visuals from '@components/visuals.astro'
 import Explore from '@components/explore.astro'
@@ -9,7 +9,6 @@ import {
   type GameraResponse,
 } from '@statmuse/core/gamera'
 import AnswerCards from '@components/answer-cards.astro'
-import Chart from '@components/chart.astro'
 import { title, description } from '@lib/meta'
 import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
@@ -87,10 +86,6 @@ const league = domain === 'EPL' ? 'fc' : (preferredDomain as LeagueParam)
 const [questionTeamId] = contentReference?.questionTags?.teamIds ?? []
 const [answerTeamId] = contentReference?.answerTags?.teamIds ?? []
 const teamId = questionTeamId ?? answerTeamId
-
-const [columnChart] = getColumnCharts(answer) ?? []
-const isSuperlative = getIsSuperlative(answer)
-const hasSupplement = !!columnChart
 ---
 
 <Layout
@@ -112,7 +107,6 @@ const hasSupplement = !!columnChart
   {preferredDomain}
   hero={{
     ...heroProps,
-    hasSupplement,
     share: {
       type: 'ask',
       query,
@@ -129,16 +123,6 @@ const hasSupplement = !!columnChart
       placeholderClass="w-[320px] md:w-[728px] h-[50px] md:h-[90px]"
     />
   </div>
-  {
-    columnChart ? (
-      <Chart
-        slot="hero-supplement"
-        class="hidden md:block"
-        model={columnChart}
-        {isSuperlative}
-      />
-    ) : null
-  }
   <Visuals class="" response={answer} {conversationToken} />
   <Explore {league} additionalQuestions={answer.visual.additionalQuestions} />
   {

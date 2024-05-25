@@ -118,8 +118,6 @@ const content = markdown
       headerIds: false,
     })
   : hero?.content
-
-const hasSupplement = hero?.hasSupplement
 ---
 
 <html lang="en">
@@ -302,14 +300,11 @@ const hasSupplement = hero?.hasSupplement
               <div
                 class:list={{
                   'mb-3': true,
-                  'grid grid-cols-1 gap-3 md:grid-cols-3 items-start':
-                    hasSupplement,
                 }}
               >
                 <Panel
                   team
                   class:list={{
-                    'md:col-span-2 h-full': hasSupplement,
                     'rounded-none border-0 md:rounded-2xl md:border': true,
                     '-mx-3 pb-2 pt-4 px-3 md:py-3 md:px-5 md:mx-0 whitespace-nowrap': true,
                     'flex flex-col-reverse gap-3 md:flex-row': !markdownOrHtml,
@@ -420,7 +415,6 @@ const hasSupplement = hero?.hasSupplement
                     />
                   )}
                 </Panel>
-                <slot name="hero-supplement" />
               </div>
             ) : null
           }
