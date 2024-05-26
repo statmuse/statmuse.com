@@ -10,7 +10,7 @@ interface Props extends HTMLAttributes<'div'> {}
 const menuLinks = [
   [
     {
-      text: 'All',
+      text: 'Home',
       icon: 'all-home',
       url: '/',
       currentUrl: new RegExp('^/$'),
@@ -97,20 +97,6 @@ const menuLinks = [
       icon: 'glossary',
       url: '/product/data',
       currentUrl: new RegExp('^/product/data(/(nba|nfl|nhl|mlb|pga|fc))?$'),
-    },
-  ],
-  [
-    {
-      text: 'Elements of Bball',
-      icon: 'elements-of-basketball',
-      url: 'https://elementsofbasketball.com/',
-      external: true,
-    },
-    {
-      text: 'Harden Maze',
-      icon: 'harden',
-      url: 'https://hardenmaze.com/',
-      external: true,
     },
   ],
   [
