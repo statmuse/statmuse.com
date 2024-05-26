@@ -248,7 +248,9 @@ const teamRepresentativeMap = groupBy(trendingTeams?.items, 'title')
       )
     }
   </div>
-  <div class="hidden md:block basis-[300px]">
+  <div
+    class="hidden md:block basis-[300px] *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full"
+  >
     <WithSubscription client:only="svelte">
       <Fragment slot="subscribed">
         <div class="space-y-3">
@@ -278,17 +280,15 @@ const teamRepresentativeMap = groupBy(trendingTeams?.items, 'title')
           }
         </div>
       </Fragment>
-      <div class="space-y-3">
-        <div>
-          <AditudeAdBanner
-            client:only="svelte"
-            divId="pb-slot-square-1"
-            slotId="pb-slot-square-1"
-            placeholderClass="w-[300px] h-[250px]"
-            onlyDesktop
-          />
-        </div>
-        <div>
+      <div class="space-y-3 h-full">
+        <AditudeAdBanner
+          client:only="svelte"
+          divId="pb-slot-square-1"
+          slotId="pb-slot-square-1"
+          placeholderClass="w-[300px] h-[250px]"
+          onlyDesktop
+        />
+        <div class="sticky top-[--top-spacing]">
           <AditudeAdBanner
             client:only="svelte"
             divId="pb-slot-right-2"

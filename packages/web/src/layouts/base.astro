@@ -292,130 +292,126 @@ const content = markdown
       }}
     >
       <Header {preferredDomain} {query} {conversationToken} {money} />
-      <div class="flex flex-1 gap-3 -mt-3 md:mt-0">
-        <MenuLinks class="shrink-0 hidden xl:flex sticky top-0" />
+      <div class="flex flex-1 gap-3 -mt-3 md:mt-0 [--top-spacing:74px]">
+        <MenuLinks
+          class="shrink-0 hidden xl:flex h-fit sticky top-[--top-spacing]"
+        />
         <div class="min-w-0 w-full">
           {
             Astro.slots.has('hero') || hero?.content ? (
-              <div
+              <Panel
+                team
                 class:list={{
-                  'mb-3': true,
+                  'rounded-none border-0 md:rounded-2xl md:border mb-3': true,
+                  '-mx-3 pb-2 pt-4 px-3 md:py-3 md:px-5 md:mx-0 whitespace-nowrap': true,
+                  'flex flex-col-reverse gap-3 md:flex-row': !markdownOrHtml,
+                  'flex flex-col-reverse gap-3 md:flex-row-reverse justify-between':
+                    markdownOrHtml,
                 }}
               >
-                <Panel
-                  team
+                <slot name="hero" />
+                {hero?.imageUrl ? (
+                  <Image
+                    class:list={{
+                      'h-32 md:max-w-[200px]': true,
+                      'mt-2 -mb-2 md:mt-0 md:-mb-3 md:-ml-2': true,
+                      'self-center md:self-end select-none': true,
+                      'object-contain object-bottom': true,
+                    }}
+                    alt={hero.imageAlt ?? hero.content}
+                    src={hero.imageUrl}
+                    width={200}
+                    height={200}
+                    loading="eager"
+                  />
+                ) : null}
+                <div class="flex flex-col justify-between md:items-start md:-mb-3">
+                  {markdownOrHtml ? (
+                    <div
+                      class:list={{
+                        'flex-1 flex flex-col justify-between text-center md:text-left': true,
+                      }}
+                    >
+                      <h1
+                        class:list={{
+                          'font-bold text-xl leading-snug my-auto text-pretty': true,
+                          // 'md:text-2xl lg:text-[1.33rem] xl:text-2xl': true,
+                          '[&>p]:my-[1em] [&>ul]:my-[1em] [&>p>a]:underline [&>p>a]:text-team-secondary': true,
+                        }}
+                        set:html={markdown ? content : undefined}
+                      >
+                        {html ? (
+                          <span
+                            class="my-[1em] [&>a]:underline [&>a]:text-team-secondary whitespace-pre-wrap text-pretty"
+                            set:html={content}
+                          />
+                        ) : null}
+                      </h1>
+                    </div>
+                  ) : (
+                    <div
+                      class:list={{
+                        'mx-auto md:mx-0 md:flex md:gap-3 md:items-center md:mt-5': true,
+                        'mb-5 mt-5': !hero?.imageUrl,
+                      }}
+                    >
+                      <h1 class="text-2xl leading-none font-bold text-center md:text-left text-pretty">
+                        {hero?.url ? (
+                          <a
+                            class="text-current"
+                            href={hero.url.href}
+                            title={hero.url.title}
+                            data-cy-team-name-link
+                          >
+                            {hero.content}
+                          </a>
+                        ) : (
+                          hero?.content
+                        )}
+                      </h1>
+                      {hero?.affiliation ? (
+                        <div
+                          class:list={{
+                            'flex flex-1 items-center text-center': true,
+                            'py-0.5 px-2.5 absolute left-3 bottom-3': true,
+                            'md:relative md:left-auto md:bottom-auto': true,
+                            'bg-team-secondary text-team-primary rounded-2xl': true,
+                          }}
+                        >
+                          {hero?.affiliationUrl ? (
+                            <a
+                              class="text-inherit no-underline hover:no-underline"
+                              href={hero?.affiliationUrl}
+                              set:text={hero?.affiliation}
+                            />
+                          ) : (
+                            <>{hero?.affiliation}</>
+                          )}
+                        </div>
+                      ) : null}
+                    </div>
+                  )}
+                  {navProps ? (
+                    <Nav class="hidden md:flex" hero {...navProps} />
+                  ) : null}
+                </div>
+                <div
                   class:list={{
-                    'rounded-none border-0 md:rounded-2xl md:border': true,
-                    '-mx-3 pb-2 pt-4 px-3 md:py-3 md:px-5 md:mx-0 whitespace-nowrap': true,
-                    'flex flex-col-reverse gap-3 md:flex-row': !markdownOrHtml,
-                    'flex flex-col-reverse gap-3 md:flex-row-reverse justify-between':
-                      markdownOrHtml,
+                    'flex flex-row gap-2.5 items-center': true,
+                    'absolute right-3 bottom-3 md:top-3 md:bottom-auto px-2 py-1': true,
+                    'rounded-2xl bg-team-secondary text-team-primary': true,
                   }}
                 >
-                  <slot name="hero" />
-                  {hero?.imageUrl ? (
-                    <Image
-                      class:list={{
-                        'h-32 md:max-w-[200px]': true,
-                        'mt-2 -mb-2 md:mt-0 md:-mb-3 md:-ml-2': true,
-                        'self-center md:self-end select-none': true,
-                        'object-contain object-bottom': true,
-                      }}
-                      alt={hero.imageAlt ?? hero.content}
-                      src={hero.imageUrl}
-                      width={200}
-                      height={200}
-                      loading="eager"
-                    />
-                  ) : null}
-                  <div class="flex flex-col justify-between md:items-start md:-mb-3">
-                    {markdownOrHtml ? (
-                      <div
-                        class:list={{
-                          'flex-1 flex flex-col justify-between text-center md:text-left': true,
-                        }}
-                      >
-                        <h1
-                          class:list={{
-                            'font-bold text-xl leading-snug my-auto text-pretty': true,
-                            // 'md:text-2xl lg:text-[1.33rem] xl:text-2xl': true,
-                            '[&>p]:my-[1em] [&>ul]:my-[1em] [&>p>a]:underline [&>p>a]:text-team-secondary': true,
-                          }}
-                          set:html={markdown ? content : undefined}
-                        >
-                          {html ? (
-                            <span
-                              class="my-[1em] [&>a]:underline [&>a]:text-team-secondary whitespace-pre-wrap text-pretty"
-                              set:html={content}
-                            />
-                          ) : null}
-                        </h1>
-                      </div>
-                    ) : (
-                      <div
-                        class:list={{
-                          'mx-auto md:mx-0 md:flex md:gap-3 md:items-center md:mt-5': true,
-                          'mb-5 mt-5': !hero?.imageUrl,
-                        }}
-                      >
-                        <h1 class="text-2xl leading-none font-bold text-center md:text-left text-pretty">
-                          {hero?.url ? (
-                            <a
-                              class="text-current"
-                              href={hero.url.href}
-                              title={hero.url.title}
-                              data-cy-team-name-link
-                            >
-                              {hero.content}
-                            </a>
-                          ) : (
-                            hero?.content
-                          )}
-                        </h1>
-                        {hero?.affiliation ? (
-                          <div
-                            class:list={{
-                              'flex flex-1 items-center text-center': true,
-                              'py-0.5 px-2.5 absolute left-3 bottom-3': true,
-                              'md:relative md:left-auto md:bottom-auto': true,
-                              'bg-team-secondary text-team-primary rounded-2xl': true,
-                            }}
-                          >
-                            {hero?.affiliationUrl ? (
-                              <a
-                                class="text-inherit no-underline hover:no-underline"
-                                href={hero?.affiliationUrl}
-                                set:text={hero?.affiliation}
-                              />
-                            ) : (
-                              <>{hero?.affiliation}</>
-                            )}
-                          </div>
-                        ) : null}
-                      </div>
-                    )}
-                    {navProps ? (
-                      <Nav class="hidden md:flex" hero {...navProps} />
-                    ) : null}
-                  </div>
-                  <div
-                    class:list={{
-                      'flex flex-row gap-2.5 items-center': true,
-                      'absolute right-3 bottom-3 md:top-3 md:bottom-auto px-2 py-1': true,
-                      'rounded-2xl bg-team-secondary text-team-primary': true,
-                    }}
-                  >
-                    <TwitterShare shareUrl={Astro.url.href} />
-                    {hero?.share ? <Share client:load {...hero.share} /> : null}
-                  </div>
-                  {parameters && (
-                    <GridDropdown
-                      class="hidden lg:flex w-52 absolute right-3 bottom-3"
-                      {parameters}
-                    />
-                  )}
-                </Panel>
-              </div>
+                  <TwitterShare shareUrl={Astro.url.href} />
+                  {hero?.share ? <Share client:load {...hero.share} /> : null}
+                </div>
+                {parameters && (
+                  <GridDropdown
+                    class="hidden lg:flex w-52 absolute right-3 bottom-3"
+                    {parameters}
+                  />
+                )}
+              </Panel>
             ) : null
           }
           {navProps ? <Nav class="md:hidden" {...navProps} /> : null}
@@ -444,6 +440,7 @@ const content = markdown
         <CloseableContainer
           client:only="svelte"
           class="bg-gray-7/90 dark:bg-gray-2/90  fixed bottom-0 left-0 md:left-1/2 md:-translate-x-1/2 w-screen min-h-[50px] md:w-fit md:min-h-[90px] z-50 flex justify-center md:pr-5"
+          onlyMobile
         >
           <AditudeAdBanner
             client:only="svelte"
