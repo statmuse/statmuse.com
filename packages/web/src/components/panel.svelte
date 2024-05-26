@@ -31,7 +31,7 @@
   class:text-inherit={!foreground}
   class:border={!background}
   class:border-gray-6={!background}
-  class:dark:border-none={!background}
+  class:dark:border-gray-3={!background}
   class:!bg-team-primary={team}
   class:!text-team-secondary={team}
   style={`${backgroundHex ? `background-color: ${backgroundHex};` : ''} ${
