@@ -9,3 +9,12 @@
 - [x] new font
 - [x] share links broken
 - [x] cookie banner shows up repeatedly, use local storage
+- [x] remove bar chart from answer pages
+- [ ] remove twitter share button
+- [x] remove elements of basketball and harden maze links from side menu
+- [ ] update about page copy
+- [ ] ui tweaks to boxscore answers
+- [ ] ui tweaks to schedule answers
+- [ ] ui tweaks to standings answers
+- [ ] ui tweaks to user account pages
+- [ ] ad experiece across all answer pages. desktop and mobile
