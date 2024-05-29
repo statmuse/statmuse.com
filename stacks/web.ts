@@ -3,6 +3,7 @@ import {
   AstroSite,
   use,
   KinesisStream,
+  Table,
 } from 'sst/constructs'
 import { SubnetType } from 'aws-cdk-lib/aws-ec2'
 import { API } from './api'
@@ -119,6 +120,11 @@ export function Web({ stack }: StackContext) {
 
   const domainName = isProd ? 'www.statmuse.com' : dns.domain
 
+  const bedrockCache = new Table(stack, 'bedrock-cache', {
+    fields: { query: 'string' },
+    primaryIndex: { partitionKey: 'query' },
+  })
+
   const astroSite = new AstroSite(stack, 'astro-site', {
     path: 'packages/web',
     timeout: '12 seconds',
@@ -136,6 +142,7 @@ export function Web({ stack }: StackContext) {
       secrets.SEGMENT_WRITE_KEY,
       secrets.GAMERA_API_KEY,
       trending.table,
+      bedrockCache,
     ],
     environment: {
       ...api.environment,

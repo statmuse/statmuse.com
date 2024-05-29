@@ -3,13 +3,63 @@ import {
   InvokeModelCommand,
   type InvokeModelCommandInput,
 } from '@aws-sdk/client-bedrock-runtime'
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import {
+  DynamoDBDocumentClient,
+  GetCommand,
+  PutCommand,
+  UpdateCommand,
+} from '@aws-sdk/lib-dynamodb'
 import type { GameraDomain } from '@statmuse/core/gamera'
+import { Table } from 'sst/node/table'
 
 const client = new BedrockRuntimeClient({
   region: 'us-east-1',
 })
 
+const db = DynamoDBDocumentClient.from(new DynamoDBClient({}), {
+  marshallOptions: { removeUndefinedValues: true },
+})
+
+export type Clarification = {
+  query: string
+  domain: GameraDomain | 'money' | 'unknown'
+  lang: string
+  dir: 'ltr' | 'rtl'
+}
+
 export async function clarify(query: string) {
+  console.log('clarify', query)
+
+  const cached = await db.send(
+    new GetCommand({
+      TableName: Table['bedrock-cache'].tableName,
+      Key: { query },
+    }),
+  )
+
+  if (cached.Item) {
+    console.log('cached', cached)
+
+    await db.send(
+      new UpdateCommand({
+        TableName: Table['bedrock-cache'].tableName,
+        Key: { query },
+        UpdateExpression: 'SET #updated = :updated ADD #count :one',
+        ExpressionAttributeNames: { '#updated': 'updated', '#count': 'count' },
+        ExpressionAttributeValues: {
+          ':updated': new Date().toISOString(),
+          ':one': 1,
+        },
+      }),
+    )
+
+    return {
+      ...cached.Item,
+      query: cached.Item.corrected,
+    } as Clarification
+  }
+
   const content = `
 StatMuse is a website that answers sports and finance questions.
 We (StatMuse) received the following search and were unable to understand it.
@@ -47,11 +97,20 @@ Note: "domain" should be one of "nfl", "nba", "mlb", "nhl", "pga", "epl", "money
     stop_sequence: string | null
     usage: { input_tokens: number; output_tokens: number }
   }
-  const correction = JSON.parse(completions.content[0].text) as {
-    query: string
-    domain: GameraDomain | 'money' | 'unknown'
-    lang: string
-    dir: 'ltr' | 'rtl'
-  }
+  const correction = JSON.parse(completions.content[0].text) as Clarification
+
+  await db.send(
+    new PutCommand({
+      TableName: Table['bedrock-cache'].tableName,
+      Item: {
+        ...correction,
+        query,
+        corrected: correction.query,
+        created: new Date().toISOString(),
+        count: 1,
+      },
+    }),
+  )
+
   return correction
 }

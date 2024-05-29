@@ -142,53 +142,52 @@ export async function ask(
     response?.nlg?.text?.answer[0].text === "I didn't understand your question."
   ) {
     try {
-      // TODO: cache bedrock responses in dynamodb
-      // TODO: handle junk input (mraid.js, etc.)
       const correction = await clarify(query)
       console.log('correction', correction)
 
-      if (correction.domain === 'unknown') return { response }
-      if (correction.domain !== 'money') {
-        const url = createAskPath(correction)
-        return { redirect: url }
-      }
+      // if (correction.domain === 'unknown') return { response }
+      // if (correction.domain !== 'money') {
+      //   const url = createAskPath(correction)
+      //   return { redirect: url }
+      // }
 
-      if (correction.lang !== 'en') {
-        const englishQuery = await translate({
-          text: query,
-          from: correction.lang,
-          to: 'en',
-        })
-
-        if (!englishQuery.text) return { response }
-
-        const englishResponse = await ask(
-          {
-            query: englishQuery.text,
-            corrected: true,
-          },
-          context,
-        )
-        if ('redirect' in englishResponse) return englishResponse
-
-        let kanedamaResponse = englishResponse.response
-        if (!kanedamaResponse) return { response }
-
-        kanedamaResponse = await translateObject(
-          kanedamaResponse,
-          'en',
-          correction.lang,
-          [
-            'visual.summaryTokens.*.text',
-            'nlg.text.answer.*.text',
-            'visual.additionalQuestions.*.text',
-          ],
-        )
-        return { response: kanedamaResponse }
-      }
+      // if (correction.lang !== 'en') {
+      //   const englishQuery = await translate({
+      //     text: query,
+      //     from: correction.lang,
+      //     to: 'en',
+      //   })
+      //
+      //   if (!englishQuery.text) return { response }
+      //
+      //   const englishResponse = await ask(
+      //     {
+      //       query: englishQuery.text,
+      //       corrected: true,
+      //     },
+      //     context,
+      //   )
+      //   if ('redirect' in englishResponse) return englishResponse
+      //
+      //   let kanedamaResponse = englishResponse.response
+      //   if (!kanedamaResponse) return { response }
+      //
+      //   kanedamaResponse = await translateObject(
+      //     kanedamaResponse,
+      //     'en',
+      //     correction.lang,
+      //     [
+      //       'visual.summaryTokens.*.text',
+      //       'nlg.text.answer.*.text',
+      //       'visual.additionalQuestions.*.text',
+      //     ],
+      //   )
+      //   return { response: kanedamaResponse }
+      // }
 
       return ask(
         {
+          ...options,
           query: correction.query,
           corrected: true,
         },
