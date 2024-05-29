@@ -2,6 +2,7 @@ import type {
   GameraDomain,
   PlayerCardResponse,
   TeamCardResponse,
+  TeamInfo,
 } from '@statmuse/core/gamera'
 import { request } from '@lib/gamera'
 import type { Context } from '@lib/session'
@@ -152,9 +153,12 @@ export const homeRankingsByDomain = async (props: {
   }
 }
 
-export type TeamRankingsResponse = Awaited<
-  ReturnType<typeof homeRankingsByDomain>
->
+export type TeamRankingsResponse = {
+  teams: TeamInfo[]
+  stat: string
+  title: string
+  images?: string[]
+}[]
 
 const bettingMapByDomain: Record<
   GameraDomain,

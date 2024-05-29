@@ -14,7 +14,6 @@ import RankingCard from '@components/home/ranking-card.astro'
 import Standings from '@components/home/standings.astro'
 import type { GetStandingsResponse } from '@lib/standings'
 import type { TrendingItem } from 'src/types'
-import { groupBy } from 'lodash-es'
 import TrendingList from '@components/trending-list.astro'
 import WithSubscription from '@components/with-subscription.svelte'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
@@ -50,8 +49,6 @@ const {
   trendingSearches,
   examples,
 } = Astro.props
-
-const teamRepresentativeMap = groupBy(trendingTeams?.items, 'title')
 ---
 
 <div class="flex gap-3">
@@ -129,12 +126,11 @@ const teamRepresentativeMap = groupBy(trendingTeams?.items, 'title')
                     title="League Rankings"
                     sections={rankings.map((ranking) => ({
                       title: ranking.title,
+                      images: ranking.images,
                       items: ranking.teams.map((team) => ({
                         display: team.nickname,
                         stat: team.statDisplayValue,
-                        imageUrl: teamRepresentativeMap[team.name]
-                          ? teamRepresentativeMap[team.name][0].images
-                          : team.logoImageUrl,
+                        imageUrl: team.logoImageUrl,
                         entity: team.entity,
                         colors: team.colors,
                       })),
@@ -146,12 +142,11 @@ const teamRepresentativeMap = groupBy(trendingTeams?.items, 'title')
                     title="Betting Trends"
                     sections={betting.map((section) => ({
                       title: section.title,
+                      images: section.images,
                       items: section.teams.map((team) => ({
                         display: team.nickname,
                         stat: team.statDisplayValue,
-                        imageUrl: teamRepresentativeMap[team.name]
-                          ? teamRepresentativeMap[team.name][0].images
-                          : team.logoImageUrl,
+                        imageUrl: team.logoImageUrl,
                         entity: team.entity,
                         colors: team.colors,
                       })),

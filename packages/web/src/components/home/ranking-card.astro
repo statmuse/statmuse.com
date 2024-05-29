@@ -8,6 +8,7 @@ interface Props {
   title: string
   sections: {
     title: string
+    images: string[]
     items: {
       colors?: {
         backgroundColor: string
@@ -58,9 +59,9 @@ const { title, sections } = Astro.props
                 </div>
               ))}
             </div>
-            {Array.isArray(section.items[0]?.imageUrl) ? (
+            {Array.isArray(section.images) ? (
               <div class="relative h-[90px] flex items-end">
-                {section.items[0]?.imageUrl.map((url, index) => (
+                {section.images.map((url, index) => (
                   <Image
                     class:list={[
                       'h-[75px] max-w-[100px] select-none object-contain object-bottom',

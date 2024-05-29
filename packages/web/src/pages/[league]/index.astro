@@ -22,6 +22,7 @@ import type {
   TeamRankingsResponse,
 } from '@lib/related-content'
 import type { GetStandingsResponse } from '@lib/standings'
+import { getTeamSeasonBio } from '@lib/team'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
@@ -583,11 +584,11 @@ const domain = leagueToDomain(league)
 
 let musings: LatestMusing[] | undefined
 let leaders: PlayerLeadersResponse
-let rankings: TeamRankingsResponse
+let rankings: TeamRankingsResponse | undefined
 let trendingSearches: TrendingItem['datasets'][number] | undefined
 let trendingPlayers: TrendingItem['datasets'][number] | undefined
 let trendingTeams: TrendingItem['datasets'][number] | undefined
-let betting: TeamRankingsResponse
+let betting: TeamRankingsResponse | undefined
 let standings: GetStandingsResponse
 let profile: GameraPlayerProfileResponse | undefined
 let trendingData: TrendingItem | undefined
@@ -602,6 +603,51 @@ if (domain !== 'PGA') {
       homeBettingByDomain({ context: Astro, domain }),
       getStandings({ context: Astro, domain }),
     ])
+
+  if (rankings) {
+    const teams = await Promise.all(
+      rankings?.map(
+        (r) =>
+          r &&
+          getTeamSeasonBio({
+            context: Astro,
+            domain: r.teams[0].entity.domain,
+            team: r.teams[0].entity.id,
+            year: r.teams[0].entity.id,
+          }),
+      ),
+    )
+
+    for (const index in teams) {
+      const team = teams[index]
+      const rank = rankings[index]
+      if (team && rank) {
+        rank.images = team.teamRepresentatives.map((r) => r.url)
+      }
+    }
+  }
+
+  if (betting) {
+    const teams = await Promise.all(
+      betting?.map(
+        (r) =>
+          r &&
+          getTeamSeasonBio({
+            context: Astro,
+            domain: r.teams[0].entity.domain,
+            team: r.teams[0].entity.id,
+            year: r.teams[0].entity.id,
+          }),
+      ),
+    )
+    for (const index in teams) {
+      const team = teams[index]
+      const bet = betting[index]
+      if (team && bet) {
+        bet.images = team.teamRepresentatives.map((r) => r.url)
+      }
+    }
+  }
 
   trendingSearches = find(trendingData?.datasets, { name: 'Searches' })
   trendingPlayers = find(trendingData?.datasets, { name: 'Players' })

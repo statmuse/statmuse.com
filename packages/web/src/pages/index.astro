@@ -13,6 +13,7 @@ import type {
   GameraPlayerProfileResponse,
 } from '@statmuse/core/gamera'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
+import { getTeamSeasonBio } from '@lib/team'
 
 const [musings, trending, playerCards, teamCards, bettingCards] =
   await Promise.all([
@@ -167,6 +168,50 @@ const [musings, trending, playerCards, teamCards, bettingCards] =
       ),
     ]),
   ])
+
+if (teamCards) {
+  const teams = await Promise.all(
+    teamCards?.map(
+      (r) =>
+        r &&
+        getTeamSeasonBio({
+          context: Astro,
+          domain: r.teams[0].entity.domain,
+          team: r.teams[0].entity.id,
+          year: r.teams[0].entity.id,
+        }),
+    ),
+  )
+  for (const index in teams) {
+    const team = teams[index]
+    const card = teamCards[index]
+    if (team && card) {
+      card.images = team.teamRepresentatives.map((r) => r.url)
+    }
+  }
+}
+
+if (bettingCards) {
+  const teams = await Promise.all(
+    bettingCards?.map(
+      (r) =>
+        r &&
+        getTeamSeasonBio({
+          context: Astro,
+          domain: r.teams[0].entity.domain,
+          team: r.teams[0].entity.id,
+          year: r.teams[0].entity.id,
+        }),
+    ),
+  )
+  for (const index in teams) {
+    const team = teams[index]
+    const card = bettingCards[index]
+    if (team && ) {
+      card.images = team.teamRepresentatives.map((r) => r.url)
+    }
+  }
+}
 
 const trendingSearches = find(trending?.datasets, { name: 'Searches' })
 const trendingPlayers = find(trending?.datasets, { name: 'Players' })
