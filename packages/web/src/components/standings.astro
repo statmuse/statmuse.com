@@ -34,7 +34,7 @@ function addImageToGrid(grid: GameraGrid): GameraGrid {
 }
 ---
 
-<div class="text-[#333] text-sm md:text-base">
+<div class="text-sm md:text-base">
   {
     groups.length > 1 ? (
       <Tabs titles={groups.map((g) => g.name)}>
@@ -60,9 +60,7 @@ function addImageToGrid(grid: GameraGrid): GameraGrid {
       groups.map((group) =>
         group.standings.map((x) => (
           <div class="my-4">
-            <h3 class="font-bold text-team-primary mb-0.5">
-              {x.grid.name}
-            </h3>
+            <h3 class="font-bold text-team-primary mb-0.5">{x.grid.name}</h3>
             <Grid
               stickyColumns={['TEAM']}
               columnStyles={{ TEAM: 'w-28' }}
