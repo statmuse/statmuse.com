@@ -215,7 +215,7 @@
         {@const { columns, rows, aggregations } = grid}
         {#if head}
           <thead>
-            <tr class="text-sm tracking-[0.07rem]">
+            <tr class="text-sm">
               {#each columns as col, index (col.rowItemKey)}
                 <th
                   class={`cursor-pointer font-normal p-1.5 text-gray-5 ${applyStyles(
@@ -240,6 +240,7 @@
           class="divide-y leading-[22px]"
           class:divide-team-primary={color}
           class:divide-gray-6={!color}
+          class:dark:divide-gray-4={!color}
         >
           {#each rows as row (row)}
             {@const rowHighlight = shouldApplyRowHighlight(
