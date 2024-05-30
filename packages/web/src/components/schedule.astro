@@ -10,6 +10,7 @@ import {
 } from '@statmuse/core/gamera'
 import EntityLink from '@components/entity-link.astro'
 import Image from '@components/image.astro'
+import Panel from './panel.astro'
 
 interface Props {
   league: string
@@ -33,16 +34,18 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
 )
 ---
 
-<div class="text-sm md:text-base w-full max-w-3xl mx-auto">
+<Panel class="text-sm md:text-base w-full max-w-3xl mx-auto">
   {
     gamesByDate.map(([date, games]) => (
       <div>
-        <p class="text-[#a8a8a8] py-1 border-t border-[#e4e4e4]">{date}</p>
+        <p class="text-gray-5 py-1 border-t border-gray-6 dark:border-gray-4">
+          {date}
+        </p>
         {games.map((game) => {
           switch (game.type) {
             case 'completed':
               return (
-                <div class="border-t border-[#e4e4e4] py-2">
+                <div class="border-t border-gray-6 dark:border-gray-4 py-2">
                   <div class="flex">
                     <div
                       class={`flex-1 flex ${
@@ -110,7 +113,7 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
                         </p>
                       </div>
                     </div>
-                    <div class="w-28 text-center border-l border-[#e4e4e4] ml-5 mt-2.5">
+                    <div class="w-28 text-center border-l border-gray-6 dark:border-gray-4 ml-5 mt-2.5">
                       <p class="my-0.5 first:font-bold">
                         <EntityLink entity={game.entity}>
                           {game.completedGameStatus ?? 'Final'}
@@ -122,7 +125,7 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
               )
             case 'inProgress':
               return (
-                <div class="border-t border-[#e4e4e4] py-2">
+                <div class="border-t border-gray-6 dark:border-gray-4 py-2">
                   <div class="flex">
                     <div
                       class={`flex-1 flex ${
@@ -164,7 +167,7 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
                         <p>{game.homeTeam.score}</p>
                       </div>
                     </div>
-                    <div class="w-28 text-center border-l border-[#e4e4e4] ml-5 mt-2.5">
+                    <div class="w-28 text-center border-l border-gray-6 dark:border-gray-4 ml-5 mt-2.5">
                       {game.status?.split(', ').map((s) => (
                         <p class="my-0.5 first:font-bold">{s}</p>
                       ))}
@@ -175,7 +178,7 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
             case 'scheduled':
               return (
                 <div
-                  class={`border-t border-[#e4e4e4] py-2 flex ${
+                  class={`border-t border-gray-6 dark:border-gray-4 py-2 flex ${
                     league === 'epl' ? 'flex-col-reverse' : 'flex-col'
                   }`}
                 >
@@ -223,4 +226,4 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
       </div>
     ))
   }
-</div>
+</Panel>
