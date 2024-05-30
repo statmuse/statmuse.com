@@ -17,6 +17,9 @@ import type { LeagueParam } from '@lib/params'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import { formatDate } from '@statmuse/core/time'
 import WithSubscription from '@components/with-subscription.svelte'
+import TrendingList from '@components/trending-list.astro'
+import { getTrendingData } from '@lib/trending'
+import { find } from 'lodash-es'
 
 interface Props {
   data: GameraBoxScore
@@ -71,6 +74,9 @@ const meta = {
     }),
   },
 }
+
+const trendingData = await getTrendingData({ league })
+const trendingSearches = find(trendingData?.datasets, { name: 'Searches' })
 ---
 
 <Layout
@@ -112,6 +118,16 @@ const meta = {
       class="hidden md:block basis-[300px] *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full"
     >
       <WithSubscription client:only="svelte">
+        <Fragment slot="subscribed">
+          {
+            trendingSearches && (
+              <TrendingList
+                title={`Trending ${trendingSearches.name}`}
+                items={trendingSearches.items}
+              />
+            )
+          }
+        </Fragment>
         <div class="space-y-3 h-full">
           <AditudeAdBanner
             client:only="svelte"

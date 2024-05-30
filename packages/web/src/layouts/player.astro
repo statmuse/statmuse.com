@@ -19,6 +19,9 @@ import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import type { NavLink } from 'src/types'
 import type { ComponentProps } from 'astro/types'
 import WithSubscription from '@components/with-subscription.svelte'
+import { getTrendingData } from '@lib/trending'
+import TrendingList from '@components/trending-list.astro'
+import { find } from 'lodash-es'
 
 interface Props {
   bio: GameraPlayerBio
@@ -100,6 +103,9 @@ const navProps: ComponentProps<typeof Nav> = {
   selected: page,
   href: (p) => `${playerPath}/${p}`,
 }
+
+const trendingData = await getTrendingData({ league })
+const trendingPlayers = find(trendingData?.datasets, { name: 'Players' })
 ---
 
 <Layout
@@ -158,6 +164,16 @@ const navProps: ComponentProps<typeof Nav> = {
       class="hidden md:block basis-[300px] *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full"
     >
       <WithSubscription client:only="svelte">
+        <Fragment slot="subscribed">
+          {
+            trendingPlayers && (
+              <TrendingList
+                title={`Trending ${trendingPlayers.name}`}
+                items={trendingPlayers.items}
+              />
+            )
+          }
+        </Fragment>
         <div class="space-y-3 h-full">
           <AditudeAdBanner
             client:only="svelte"

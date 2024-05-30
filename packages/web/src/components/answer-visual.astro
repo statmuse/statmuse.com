@@ -17,6 +17,9 @@ import { ANSWER_CARDS_ENABLED } from 'src/config'
 import type { LeagueParam } from '@lib/params'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import WithSubscription from '@components/with-subscription.svelte'
+import { getTrendingData } from '@lib/trending'
+import { find } from 'lodash-es'
+import TrendingList from './trending-list.astro'
 
 interface Props {
   answer: GameraDefaultResponse
@@ -87,6 +90,9 @@ const league = domain === 'EPL' ? 'fc' : (preferredDomain as LeagueParam)
 const [questionTeamId] = contentReference?.questionTags?.teamIds ?? []
 const [answerTeamId] = contentReference?.answerTags?.teamIds ?? []
 const teamId = questionTeamId ?? answerTeamId
+
+const trendingData = await getTrendingData({ league })
+const trendingSearches = find(trendingData?.datasets, { name: 'Searches' })
 ---
 
 <Layout
@@ -135,6 +141,16 @@ const teamId = questionTeamId ?? answerTeamId
       class="hidden md:block basis-[300px] *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full"
     >
       <WithSubscription client:only="svelte">
+        <Fragment slot="subscribed">
+          {
+            trendingSearches && (
+              <TrendingList
+                title={`Trending ${trendingSearches.name}`}
+                items={trendingSearches.items}
+              />
+            )
+          }
+        </Fragment>
         <div class="space-y-3 h-full">
           <AditudeAdBanner
             client:only="svelte"
