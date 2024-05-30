@@ -269,8 +269,9 @@
                       !color &&
                       !rowHighlight}
                     class:bg-team-secondary={color}
-                    class:bg-[#e9f9ff]={rowHighlight}
-                    class:bg-[#fffbec]={sortKey === col.rowItemKey}
+                    class:dark:bg-gray-5={rowHighlight ||
+                      sortKey === col.rowItemKey}
+                    class:bg-gray-6={rowHighlight || sortKey === col.rowItemKey}
                   >
                     <EntityLink
                       {entity}
