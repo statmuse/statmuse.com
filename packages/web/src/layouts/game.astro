@@ -16,6 +16,7 @@ import { ANSWER_CARDS_ENABLED } from 'src/config'
 import type { LeagueParam } from '@lib/params'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import { formatDate } from '@statmuse/core/time'
+import WithSubscription from '@components/with-subscription.svelte'
 
 interface Props {
   data: GameraBoxScore
@@ -103,7 +104,35 @@ const meta = {
       onlyMobile
     />
   </div>
-  <slot />
+  <div class="flex gap-3">
+    <div class="flex-1 overflow-clip">
+      <slot />
+    </div>
+    <div
+      class="hidden md:block basis-[300px] *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full"
+    >
+      <WithSubscription client:only="svelte">
+        <div class="space-y-3 h-full">
+          <AditudeAdBanner
+            client:only="svelte"
+            divId="pb-slot-square-1"
+            slotId="pb-slot-square-1"
+            placeholderClass="w-[300px] h-[250px]"
+            onlyDesktop
+          />
+          <div class="sticky top-[--top-spacing]">
+            <AditudeAdBanner
+              client:only="svelte"
+              divId="pb-slot-right-2"
+              slotId="pb-slot-right-2"
+              placeholderClass="w-[300px] h-[600px]"
+              onlyDesktop
+            />
+          </div>
+        </div>
+      </WithSubscription>
+    </div>
+  </div>
   <Explore {league} additionalQuestions={data.visual.additionalQuestions} />
   {ANSWER_CARDS_ENABLED ? <AnswerCards {domain} {teamId} /> : null}
 </Layout>

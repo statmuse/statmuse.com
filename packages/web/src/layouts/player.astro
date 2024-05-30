@@ -18,6 +18,7 @@ import { ANSWER_CARDS_ENABLED } from 'src/config'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import type { NavLink } from 'src/types'
 import type { ComponentProps } from 'astro/types'
+import WithSubscription from '@components/with-subscription.svelte'
 
 interface Props {
   bio: GameraPlayerBio
@@ -149,7 +150,35 @@ const navProps: ComponentProps<typeof Nav> = {
       onlyMobile
     />
   </div>
-  <slot />
+  <div class="flex gap-3">
+    <div class="flex-1 overflow-clip flex flex-col gap-3">
+      <slot />
+    </div>
+    <div
+      class="hidden md:block basis-[300px] *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full"
+    >
+      <WithSubscription client:only="svelte">
+        <div class="space-y-3 h-full">
+          <AditudeAdBanner
+            client:only="svelte"
+            divId="pb-slot-square-1"
+            slotId="pb-slot-square-1"
+            placeholderClass="w-[300px] h-[250px]"
+            onlyDesktop
+          />
+          <div class="sticky top-[--top-spacing]">
+            <AditudeAdBanner
+              client:only="svelte"
+              divId="pb-slot-right-2"
+              slotId="pb-slot-right-2"
+              placeholderClass="w-[300px] h-[600px]"
+              onlyDesktop
+            />
+          </div>
+        </div>
+      </WithSubscription>
+    </div>
+  </div>
   <Explore {league} additionalQuestions={bio.additionalQuestions} />
   {
     ANSWER_CARDS_ENABLED && (

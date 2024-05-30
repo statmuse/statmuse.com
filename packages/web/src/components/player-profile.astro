@@ -853,7 +853,7 @@ const games = recentGames?.grid.rows.map((r, index) => ({
   page="overview"
   class=""
 >
-  <div class="space-y-3 gap-3 justify-center md:columns-2 lg:columns-3">
+  <div class="space-y-3 gap-3 justify-center lg:columns-2">
     <Panel
       team
       class:list={{
@@ -898,6 +898,11 @@ const games = recentGames?.grid.rows.map((r, index) => ({
         </Panel>
       ))
     }
+    <Panel title="Summary">
+      <div class="leading-snug">
+        <p set:html={summary} />
+      </div>
+    </Panel>
     {
       lastGame && lastGameStats_?.length ? (
         <Panel title="Latest Performance" entity={lastGame.SCORE.entity}>
@@ -975,11 +980,6 @@ const games = recentGames?.grid.rows.map((r, index) => ({
         </Panel>
       ) : null
     }
-    <Panel title="Summary">
-      <div class="leading-snug">
-        <p set:html={summary} />
-      </div>
-    </Panel>
     {
       games ? (
         <Panel title="Games" href={playerPath + '/game-log'}>
