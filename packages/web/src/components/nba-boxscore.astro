@@ -10,6 +10,7 @@ import Image from '@components/image.astro'
 import TabPanel from '@components/tab-panel.astro'
 import Tabs from '@components/tabs.astro'
 import TeamStat from '@components/team-stat.astro'
+import Panel from './panel.astro'
 
 interface Props extends HTMLAttributes<'div'> {
   data?: GameraNbaBoxScore
@@ -31,8 +32,10 @@ const homeTeamUrl = homeTeam.entity ? getUrlForEntity(homeTeam.entity) : ''
 const awayTeamUrl = awayTeam.entity ? getUrlForEntity(awayTeam.entity) : ''
 ---
 
-<div class="w-full max-w-3xl mx-auto text-[#333]">
-  <h3 class="font-bold bg-[#e4f2ff] rounded-sm px-3 py-2 w-fit mb-4">
+<Panel class="w-full max-w-3xl mx-auto">
+  <h3
+    class="font-bold text-gray-5 bg-gray-6 dark:bg-gray-4 rounded-2xl px-3 py-2 w-fit mb-4"
+  >
     Final
   </h3>
   <div>
@@ -51,9 +54,7 @@ const awayTeamUrl = awayTeam.entity ? getUrlForEntity(awayTeam.entity) : ''
         {
           awayTeamUrl ? (
             <a title={awayTeam.name} href={awayTeamUrl}>
-              <h1 class="font-bold text-2xl md:text-3xl">
-                {awayTeam.name}
-              </h1>
+              <h1 class="font-bold text-2xl md:text-3xl">{awayTeam.name}</h1>
             </a>
           ) : (
             <h1 class="font-bold text-2xl md:text-3xl">{awayTeam.name}</h1>
@@ -78,9 +79,7 @@ const awayTeamUrl = awayTeam.entity ? getUrlForEntity(awayTeam.entity) : ''
         {
           homeTeamUrl ? (
             <a title={homeTeam.name} href={homeTeamUrl}>
-              <h1 class="font-bold text-2xl md:text-3xl">
-                {homeTeam.name}
-              </h1>
+              <h1 class="font-bold text-2xl md:text-3xl">{homeTeam.name}</h1>
             </a>
           ) : (
             <h1 class="font-bold text-2xl md:text-3xl">{homeTeam.name}</h1>
@@ -91,13 +90,11 @@ const awayTeamUrl = awayTeam.entity ? getUrlForEntity(awayTeam.entity) : ''
       <h2 class="font-bold text-5xl">{homeTeam.score}</h2>
     </div>
   </div>
-  <div class="flex py-0.5 border border-[#e4e4e4] rounded-sm">
+  <div class="flex py-0.5 border border-gray-6 dark:border-gray-4 rounded-2xl">
     {
       boxScoreData.summary.columns.map((column) => (
-        <div class="first:flex-1 divide-y divide-[#e4e4e4] text-center first:text-left">
-          <p class="p-2.5 text-sm md:text-base text-[#a8a8a8]">
-            {column.title}
-          </p>
+        <div class="first:flex-1 divide-y divide-gray-6 dark:divide-gray-4 text-center first:text-left">
+          <p class="p-2.5 text-sm md:text-base text-gray-5">{column.title}</p>
           {boxScoreData.summary.rows.map((row) => (
             <p class="p-2.5 text-sm md:text-base font-bold">
               {row[column.rowItemKey].entity ? (
@@ -122,16 +119,16 @@ const awayTeamUrl = awayTeam.entity ? getUrlForEntity(awayTeam.entity) : ''
       <TabPanel title="Team Stats">
         <div class="flex">
           <p
-            class="flex-1 p-2.5 border-b border-[#e4e4e4] font-bold whitespace-nowrap overflow-hidden text-ellipsis"
+            class="flex-1 p-2.5 border-b border-gray-6 dark:border-gray-4 font-bold whitespace-nowrap overflow-hidden text-ellipsis"
           >
           </p>
           <p
-            class="w-[85px] sm:w-24 py-2.5 text-center font-bold border-b border-[#e4e4e4] whitespace-nowrap overflow-hidden text-ellipsis"
+            class="w-[85px] sm:w-24 py-2.5 text-center font-bold border-b border-gray-6 dark:border-gray-4 whitespace-nowrap overflow-hidden text-ellipsis"
           >
             {awayTeam.name}
           </p>
           <p
-            class="w-[85px] sm:w-24 py-2.5 text-center font-bold border-b border-[#e4e4e4] whitespace-nowrap overflow-hidden text-ellipsis"
+            class="w-[85px] sm:w-24 py-2.5 text-center font-bold border-b border-gray-6 dark:border-gray-4 whitespace-nowrap overflow-hidden text-ellipsis"
           >
             {homeTeam.name}
           </p>
@@ -239,4 +236,4 @@ const awayTeamUrl = awayTeam.entity ? getUrlForEntity(awayTeam.entity) : ''
       </TabPanel>
     </Tabs>
   </div>
-</div>
+</Panel>

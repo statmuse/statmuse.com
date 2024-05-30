@@ -11,6 +11,7 @@ import Image from '@components/image.astro'
 import TabPanel from '@components/tab-panel.astro'
 import Tabs from '@components/tabs.astro'
 import TeamStat from '@components/team-stat.astro'
+import Panel from './panel.astro'
 
 interface Props extends HTMLAttributes<'div'> {
   data?: GameraNflBoxScore
@@ -35,8 +36,10 @@ const plays = boxScoreData.scoringSummary
 const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
 ---
 
-<div class="w-full max-w-3xl mx-auto text-[#333]">
-  <h3 class="font-bold bg-[#e4f2ff] rounded-sm px-3 py-2 w-fit mb-4">
+<Panel class="w-full max-w-3xl mx-auto">
+  <h3
+    class="font-bold text-gray-5 bg-gray-6 dark:bg-gray-4 rounded-2xl px-3 py-2 w-fit mb-4"
+  >
     Final
   </h3>
   <div>
@@ -55,9 +58,7 @@ const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
         {
           awayTeamUrl ? (
             <a title={awayTeam.name} href={awayTeamUrl}>
-              <h1 class="font-bold text-2xl md:text-3xl">
-                {awayTeam.name}
-              </h1>
+              <h1 class="font-bold text-2xl md:text-3xl">{awayTeam.name}</h1>
             </a>
           ) : (
             <h1 class="font-bold text-2xl md:text-3xl">{awayTeam.name}</h1>
@@ -82,9 +83,7 @@ const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
         {
           homeTeamUrl ? (
             <a title={homeTeam.name} href={homeTeamUrl}>
-              <h1 class="font-bold text-2xl md:text-3xl">
-                {homeTeam.name}
-              </h1>
+              <h1 class="font-bold text-2xl md:text-3xl">{homeTeam.name}</h1>
             </a>
           ) : (
             <h1 class="font-bold text-2xl md:text-3xl">{homeTeam.name}</h1>
@@ -95,13 +94,11 @@ const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
       <h2 class="font-bold text-5xl">{homeTeam.score}</h2>
     </div>
   </div>
-  <div class="flex py-0.5 border border-[#e4e4e4] rounded-sm">
+  <div class="flex py-0.5 border border-gray-6 dark:border-gray-4 rounded-2xl">
     {
       boxScoreData.summary.columns.map((column) => (
-        <div class="first:flex-1 divide-y divide-[#e4e4e4] text-center first:text-left">
-          <p class="p-2.5 text-sm md:text-base text-[#a8a8a8]">
-            {column.title}
-          </p>
+        <div class="first:flex-1 divide-y divide-gray-6 dark:divide-gray-4 text-center first:text-left">
+          <p class="p-2.5 text-sm md:text-base text-gray-5">{column.title}</p>
           {boxScoreData.summary.rows.map((row) => (
             <p class="p-2.5 text-sm md:text-base font-bold">
               {row[column.rowItemKey].entity ? (
@@ -127,8 +124,8 @@ const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
         <div>
           {
             quarters.map(([quarter, plays]) => (
-              <div class="border-b border-[#e4e4e4]">
-                <div class="flex text-[#a8a8a8] border-b border-[#e4e4e4]">
+              <div class="border-b border-gray-6 dark:border-gray-4">
+                <div class="flex text-gray-5 border-b border-gray-6 dark:border-gray-4">
                   <p class="flex-1 py-1">{quarter}</p>
                   <p class="text-center py-1 w-16">{awayTeam.abbrev}</p>
                   <p class="text-center py-1 w-16">{homeTeam.abbrev}</p>
@@ -166,16 +163,16 @@ const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
       <TabPanel title="Team Stats">
         <div class="flex">
           <p
-            class="flex-1 p-2.5 border-b border-[#e4e4e4] font-bold whitespace-nowrap overflow-hidden text-ellipsis"
+            class="flex-1 p-2.5 border-b border-gray-6 dark:border-gray-4 font-bold whitespace-nowrap overflow-hidden text-ellipsis"
           >
           </p>
           <p
-            class="w-[85px] sm:w-24 py-2.5 text-center font-bold border-b border-[#e4e4e4] whitespace-nowrap overflow-hidden text-ellipsis"
+            class="w-[85px] sm:w-24 py-2.5 text-center font-bold border-b border-gray-6 dark:border-gray-4 whitespace-nowrap overflow-hidden text-ellipsis"
           >
             {awayTeam.name}
           </p>
           <p
-            class="w-[85px] sm:w-24 py-2.5 text-center font-bold border-b border-[#e4e4e4] whitespace-nowrap overflow-hidden text-ellipsis"
+            class="w-[85px] sm:w-24 py-2.5 text-center font-bold border-b border-gray-6 dark:border-gray-4 whitespace-nowrap overflow-hidden text-ellipsis"
           >
             {homeTeam.name}
           </p>
@@ -334,4 +331,4 @@ const quarters = Object.entries(groupBy(plays, (p) => p.quarter))
       </TabPanel>
     </Tabs>
   </div>
-</div>
+</Panel>

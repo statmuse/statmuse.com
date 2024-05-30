@@ -18,9 +18,9 @@ const tabs = Astro.props.titles.map((tab) => ({
 <div {...Astro.props} class:list={['tabs', Astro.props.class]}>
   <div
     class:list={{
-      'tabs-container flex': true,
+      'tabs-container flex rounded-2xl overflow-clip': true,
       'mt-6 relative': !Astro.props.secondary,
-      'w-[80%] my-6 mx-auto border-2 border-team-primary rounded':
+      'w-[80%] my-6 mx-auto border-2 border-team-primary':
         Astro.props.secondary,
     }}
   >
@@ -43,8 +43,8 @@ const tabs = Astro.props.titles.map((tab) => ({
               Astro.props.selected
                 ? tab.label === Astro.props.selected
                 : i === 0
-                  ? 'checked'
-                  : undefined
+                ? 'checked'
+                : undefined
             }
           />
           <label

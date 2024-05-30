@@ -10,6 +10,7 @@ import Tabs from '@components/tabs.astro'
 import TabPanel from '@components/tab-panel.astro'
 import Grid from '@components/grid.svelte'
 import Image from '@components/image.astro'
+import Panel from './panel.astro'
 
 interface Props extends HTMLAttributes<'div'> {
   data?: GameraMlbBoxScore
@@ -32,8 +33,10 @@ const plays = boxScoreData.scoringSummary
 const innings = Object.entries(groupBy(plays, (p) => p.inning))
 ---
 
-<div class="w-full max-w-3xl mx-auto text-[#333]">
-  <h3 class="font-bold bg-[#e4f2ff] rounded-sm px-3 py-2 w-fit mb-4">
+<Panel class="w-full max-w-3xl mx-auto">
+  <h3
+    class="font-bold text-gray-5 bg-gray-6 dark:bg-gray-4 rounded-2xl px-3 py-2 w-fit mb-4"
+  >
     Final
   </h3>
   <div>
@@ -52,9 +55,7 @@ const innings = Object.entries(groupBy(plays, (p) => p.inning))
         {
           awayTeamUrl ? (
             <a title={awayTeam.name} href={awayTeamUrl}>
-              <h1 class="font-bold text-2xl md:text-3xl">
-                {awayTeam.name}
-              </h1>
+              <h1 class="font-bold text-2xl md:text-3xl">{awayTeam.name}</h1>
             </a>
           ) : (
             <h1 class="font-bold text-2xl md:text-3xl">{awayTeam.name}</h1>
@@ -79,9 +80,7 @@ const innings = Object.entries(groupBy(plays, (p) => p.inning))
         {
           homeTeamUrl ? (
             <a title={homeTeam.name} href={homeTeamUrl}>
-              <h1 class="font-bold text-2xl md:text-3xl">
-                {homeTeam.name}
-              </h1>
+              <h1 class="font-bold text-2xl md:text-3xl">{homeTeam.name}</h1>
             </a>
           ) : (
             <h1 class="font-bold text-2xl md:text-3xl">{homeTeam.name}</h1>
@@ -93,17 +92,17 @@ const innings = Object.entries(groupBy(plays, (p) => p.inning))
     </div>
   </div>
 
-  <div class="flex py-0.5 border border-[#e4e4e4] rounded-sm">
+  <div class="flex py-0.5 border border-gray-6 dark:border-gray-4 rounded-2xl">
     {
       boxScoreData.lineScore.columns.map((column, i) => (
         <div
           class:list={{
-            'first:flex-1 divide-y divide-[#e4e4e4] text-center first:text-left': true,
-            'border-r border-[#e4e4e4]': i === 0 || i === 9,
+            'first:flex-1 divide-y divide-gray-6 dark:divide-gray-4 text-center first:text-left': true,
+            'border-r border-gray-6 dark:border-gray-4': i === 0 || i === 9,
           }}
         >
           <p
-            class="p-2.5 text-sm whitespace-pre md:text-base text-[#a8a8a8]"
+            class="p-2.5 text-sm whitespace-pre md:text-base text-gray-5"
             set:text={column.title || ' '}
           />
           {boxScoreData.lineScore.rows.map((row) => (
@@ -130,8 +129,8 @@ const innings = Object.entries(groupBy(plays, (p) => p.inning))
         <div>
           {
             innings.map(([inning, plays]) => (
-              <div class="border-b border-[#e4e4e4]">
-                <div class="flex text-[#a8a8a8] border-b border-[#e4e4e4]">
+              <div class="border-b border-gray-6 dark:border-gray-4">
+                <div class="flex text-gray-5 border-b border-gray-6 dark:border-gray-4">
                   <p class="flex-1 py-1">{inning}</p>
                   <p class="text-center py-1 w-16">{awayTeam.abbrev}</p>
                   <p class="text-center py-1 w-16">{homeTeam.abbrev}</p>
@@ -200,4 +199,4 @@ const innings = Object.entries(groupBy(plays, (p) => p.inning))
       </TabPanel>
     </Tabs>
   </div>
-</div>
+</Panel>

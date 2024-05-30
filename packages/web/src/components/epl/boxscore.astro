@@ -393,7 +393,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
               plays.map((play) => (
                 <div
                   class:list={[
-                    'flex items-center py-0.5 border-b border-[#c7c8ca]',
+                    'flex items-center py-0.5 border-b border-[#c7c8ca] dark:border-gray-4',
                     { 'flex-row-reverse': play.side === 'away' },
                   ]}
                 >
@@ -485,7 +485,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                           : ''}
                       </p>
                       {play.relatedPlayerName && (
-                        <p class="text-[#969ca1]">
+                        <p class="text-gray-5">
                           Assist:{' '}
                           <EntityLink
                             class="text-current"
@@ -517,11 +517,11 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
             return (
               <>
                 {renderPlays(playsByPeriod['1st Half'] || [])}
-                <div class="text-center text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] py-1.5 border-b border-[#c7c8ca]">
+                <div class="text-center text-[0.8rem] text-gray-5 uppercase tracking-[0.07rem] py-1.5 border-b border-[#c7c8ca] dark:border-gray-4">
                   half time
                 </div>
                 {renderPlays(playsByPeriod['2nd Half'] || [])}
-                <div class="text-center text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] py-1.5 border-b border-[#c7c8ca]">
+                <div class="text-center text-[0.8rem] text-gray-5 uppercase tracking-[0.07rem] py-1.5 border-b border-[#c7c8ca] dark:border-gray-4">
                   full time
                 </div>
               </>
@@ -1002,7 +1002,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
           awayTeamStats.possessionPercentage && (
             <>
               <p class="text-center py-0.5">Possession %</p>
-              <div class="flex pb-1 border-b border-[#c7c8ca] relative">
+              <div class="flex pb-1 border-b border-[#c7c8ca] dark:border-gray-4 relative">
                 <div
                   class="text-sm py-1.5 pl-1.5 rounded-l-full"
                   style={{
@@ -1036,7 +1036,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
 
       {
         (homeTeamStats.shotsOnTarget || awayTeamStats.shotsOnTarget) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.shotsOnTarget}</p>
             <p class="flex-1 text-center">Shots on target</p>
             <p class="mr-1">{awayTeamStats.shotsOnTarget}</p>
@@ -1045,7 +1045,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.shots || awayTeamStats.shots) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.shots}</p>
             <p class="flex-1 text-center">Shots</p>
             <p class="mr-1">{awayTeamStats.shots}</p>
@@ -1055,7 +1055,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       {
         (homeTeamStats.bigChancesCreated ||
           awayTeamStats.bigChancesCreated) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.bigChancesCreated}</p>
             <p class="flex-1 text-center">Big chances created</p>
             <p class="mr-1">{awayTeamStats.bigChancesCreated}</p>
@@ -1064,7 +1064,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.passes || awayTeamStats.passes) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.passes}</p>
             <p class="flex-1 text-center">Passes</p>
             <p class="mr-1">{awayTeamStats.passes}</p>
@@ -1073,7 +1073,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.passesCompleted || awayTeamStats.passesCompleted) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">
               {Math.round(
                 (homeTeamStats.passesCompleted / homeTeamStats.passes) * 1000,
@@ -1094,7 +1094,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.touches || awayTeamStats.touches) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.touches}</p>
             <p class="flex-1 text-center">Touches</p>
             <p class="mr-1">{awayTeamStats.touches}</p>
@@ -1104,7 +1104,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       {
         (homeTeamStats.touchesInOpponentsBox ||
           awayTeamStats.touchesInOpponentsBox) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.touchesInOpponentsBox}</p>
             <p class="flex-1 text-center">Touches in opp box</p>
             <p class="mr-1">{awayTeamStats.touchesInOpponentsBox}</p>
@@ -1113,7 +1113,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.corners || awayTeamStats.corners) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.corners}</p>
             <p class="flex-1 text-center">Corners</p>
             <p class="mr-1">{awayTeamStats.corners}</p>
@@ -1122,7 +1122,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.tackles || awayTeamStats.tackles) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.tackles}</p>
             <p class="flex-1 text-center">Tackles</p>
             <p class="mr-1">{awayTeamStats.tackles}</p>
@@ -1131,7 +1131,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.clearances || awayTeamStats.clearances) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.clearances}</p>
             <p class="flex-1 text-center">Clearances</p>
             <p class="mr-1">{awayTeamStats.clearances}</p>
@@ -1140,7 +1140,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.saves || awayTeamStats.saves) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.saves}</p>
             <p class="flex-1 text-center">Saves</p>
             <p class="mr-1">{awayTeamStats.saves}</p>
@@ -1149,7 +1149,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.offsides || awayTeamStats.offsides) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.offsides}</p>
             <p class="flex-1 text-center">Offsides</p>
             <p class="mr-1">{awayTeamStats.offsides}</p>
@@ -1158,7 +1158,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.fouls || awayTeamStats.fouls) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.fouls}</p>
             <p class="flex-1 text-center">Fouls</p>
             <p class="mr-1">{awayTeamStats.fouls}</p>
@@ -1167,7 +1167,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.yellowCards || awayTeamStats.yellowCards) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.yellowCards}</p>
             <p class="flex-1 text-center">Yellow cards</p>
             <p class="mr-1">{awayTeamStats.yellowCards}</p>
@@ -1176,7 +1176,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.redCards || awayTeamStats.redCards) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.redCards}</p>
             <p class="flex-1 text-center">Red cards</p>
             <p class="mr-1">{awayTeamStats.redCards}</p>
