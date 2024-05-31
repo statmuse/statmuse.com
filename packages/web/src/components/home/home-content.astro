@@ -81,9 +81,24 @@ const {
               />
               {musings && (
                 <div class="space-y-3">
-                  {musings.map(async (musing, i) => (
-                    <MusingsCard {musing} index={i} />
-                  ))}
+                  {musings.map(async (musing, i) =>
+                    i % 5 === 0 && i > 0 ? (
+                      <Fragment>
+                        <AditudeAdBanner
+                          client:only="svelte"
+                          divId={`home-musing-${i}`}
+                          slotId={`pb-slot-incontent-${i / 5}`}
+                          class="mt-3 mx-auto"
+                          placeholderClass="w-[300px] h-[250px] mt-3 mx-auto"
+                          onlyMobile
+                          lazy
+                        />
+                        <MusingsCard {musing} index={i} />
+                      </Fragment>
+                    ) : (
+                      <MusingsCard {musing} index={i} />
+                    ),
+                  )}
                 </div>
               )}
             </div>
@@ -106,6 +121,15 @@ const {
                 {standings && (
                   <Standings {standings} domain={standings.domain} />
                 )}
+                <AditudeAdBanner
+                  client:only="svelte"
+                  divId="home-stats-1"
+                  slotId="pb-slot-incontent-1"
+                  class="mt-3 mx-auto"
+                  placeholderClass="w-[300px] h-[250px] mt-3 mx-auto"
+                  onlyMobile
+                  lazy
+                />
                 {leaders && (
                   <RankingCard
                     title="League Leaders"
@@ -137,6 +161,15 @@ const {
                     }))}
                   />
                 )}
+                <AditudeAdBanner
+                  client:only="svelte"
+                  divId="home-stats-2"
+                  slotId="pb-slot-incontent-2"
+                  class="mt-3 mx-auto"
+                  placeholderClass="w-[300px] h-[250px] mt-3 mx-auto"
+                  onlyMobile
+                  lazy
+                />
                 {betting && (
                   <RankingCard
                     title="Betting Trends"
@@ -199,6 +232,15 @@ const {
                     </div>
                   </WithSubscription>
                 </div>
+                <AditudeAdBanner
+                  client:only="svelte"
+                  divId="home-stats-3"
+                  slotId="pb-slot-incontent-3"
+                  class="mt-3 mx-auto"
+                  placeholderClass="w-[300px] h-[250px] mt-3 mx-auto"
+                  onlyMobile
+                  lazy
+                />
                 {examples && (
                   <Panel title="Example Questions">
                     <div class="divide-y divide-gray-6 dark:divide-gray-4">
