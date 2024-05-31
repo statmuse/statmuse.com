@@ -5,7 +5,11 @@ import Panel from '@components/panel.astro'
 import ThemeSwitch from '@components/theme-switch.svelte'
 import type { HTMLAttributes } from 'astro/types'
 
-interface Props extends HTMLAttributes<'div'> {}
+interface Props extends HTMLAttributes<'div'> {
+  id: string
+}
+
+const { id } = Astro.props
 
 const menuLinks = [
   [
@@ -61,22 +65,30 @@ const menuLinks = [
   ],
   [
     {
-      text: 'Trending Sports',
+      text: 'Trending',
       icon: 'trending-sports',
-      url: '/trending',
-      currentUrl: new RegExp('^(/(nba|nfl|nhl|mlb|pga|fc))?/trending$'),
-    },
-    {
-      text: 'Trending Money',
-      icon: 'trending-money',
-      url: '/money/trending',
-      currentUrl: new RegExp('^/money/trending$'),
-    },
-    {
-      text: 'Trending Real-time',
-      icon: 'trending-sports',
-      url: '/questions',
-      currentUrl: new RegExp('^(/(nba|nfl|nhl|mlb|pga|fc|money))?/questions$'),
+      subLinks: [
+        {
+          text: 'Trending Sports',
+          icon: '',
+          url: '/trending',
+          currentUrl: new RegExp('^(/(nba|nfl|nhl|mlb|pga|fc))?/trending$'),
+        },
+        {
+          text: 'Trending Money',
+          icon: '',
+          url: '/money/trending',
+          currentUrl: new RegExp('^/money/trending$'),
+        },
+        {
+          text: 'Trending Real-time',
+          icon: '',
+          url: '/questions',
+          currentUrl: new RegExp(
+            '^(/(nba|nfl|nhl|mlb|pga|fc|money))?/questions$',
+          ),
+        },
+      ],
     },
     {
       text: 'Gallery',
@@ -141,25 +153,83 @@ const menuLinks = [
   {
     menuLinks.map((links) => (
       <Panel>
-        <ul class="space-y-2">
-          {links.map(({ icon, text, url, external, currentUrl, classes }) => (
-            <li>
-              <a
-                href={url}
-                target={external ? '_blank' : null}
-                class:list={{
-                  'flex flex-1 items-center gap-3 text-inherit': true,
-                  'md:flex-initial': true,
-                  'hover:text-teal hover:no-underline': true,
-                  '!text-teal': currentUrl?.test(Astro.url.pathname),
-                  [classes ?? '']: !!classes,
-                }}
-              >
-                <Icon name={icon} class="block w-5 h-5 object-cover" />
-                {text}
-              </a>
-            </li>
-          ))}
+        <ul class="space-y-2 group/submenu">
+          {links.map(
+            ({ icon, text, url, external, currentUrl, classes, subLinks }) => (
+              <>
+                <li>
+                  {!subLinks ? (
+                    <a
+                      href={url}
+                      target={external ? '_blank' : null}
+                      class:list={{
+                        'flex flex-1 items-center gap-3 text-inherit': true,
+                        'md:flex-initial': true,
+                        'hover:text-teal hover:no-underline': true,
+                        '!text-teal': currentUrl?.test(Astro.url.pathname),
+                        [classes ?? '']: !!classes,
+                      }}
+                    >
+                      <Icon name={icon} class="block w-5 h-5 object-cover" />
+                      {text}
+                    </a>
+                  ) : (
+                    <label
+                      for={`${id}-trending-submenu`}
+                      class:list={{
+                        'flex flex-1 items-center gap-3 text-inherit cursor-pointer': true,
+                        'md:flex-initial': true,
+                        'hover:text-teal hover:no-underline': true,
+                        '!text-teal': currentUrl?.test(Astro.url.pathname),
+                        [classes ?? '']: !!classes,
+                      }}
+                    >
+                      <Icon name={icon} class="block w-5 h-5 object-cover" />
+                      <span class="flex-1">{text}</span>
+                      <Icon
+                        name="dropdown"
+                        class="block w-5 h-5 object-cover group-has-[input:checked]/submenu:rotate-180"
+                      />
+                    </label>
+                  )}
+                </li>
+                {subLinks && (
+                  <div class="flex flex-col space-y-2 relative overflow-clip h-0 has-[input:checked]:h-fit !mt-0">
+                    <input
+                      class="absolute top-0 opacity-0"
+                      type="checkbox"
+                      id={`${id}-trending-submenu`}
+                    />
+                    {subLinks?.map(
+                      ({ icon, text, url, external, currentUrl }) => (
+                        <li>
+                          <a
+                            href={url}
+                            target={external ? '_blank' : null}
+                            class:list={{
+                              'flex flex-1 items-center gap-3 text-inherit': true,
+                              'md:flex-initial': true,
+                              'hover:text-teal hover:no-underline': true,
+                              '!text-teal': currentUrl?.test(
+                                Astro.url.pathname,
+                              ),
+                              [classes ?? '']: !!classes,
+                            }}
+                          >
+                            <Icon
+                              name={icon}
+                              class="block w-5 h-5 object-cover"
+                            />
+                            {text}
+                          </a>
+                        </li>
+                      ),
+                    )}
+                  </div>
+                )}
+              </>
+            ),
+          )}
         </ul>
       </Panel>
     ))
