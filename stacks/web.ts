@@ -131,7 +131,6 @@ export function Web({ stack }: StackContext) {
     memorySize: '1024 MB',
     bind: [
       auth,
-      auth.privateKey,
       api.api,
       secrets.BOTPOISON,
       secrets.STRIPE_SECRET,
