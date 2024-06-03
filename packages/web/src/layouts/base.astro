@@ -22,6 +22,8 @@ import ShareModal from '@components/share/modal.svelte'
 import CloseableContainer from '@components/closeable-container.svelte'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import WithSubscription from '@components/with-subscription.svelte'
+import { find } from 'lodash-es'
+import TrendingList from '@components/trending-list.astro'
 
 interface Props extends ComponentProps<typeof Header> {
   meta?: Metadata
@@ -101,6 +103,11 @@ const analyticsProperties = Object.assign(
   },
   analytics,
 )
+
+const trendingData = Astro.locals.trendingData
+const trendingSearches = find(trendingData?.datasets, { name: 'Searches' })
+const trendingPlayers = find(trendingData?.datasets, { name: 'Players' })
+const trendingTeams = find(trendingData?.datasets, { name: 'Teams' })
 
 const canonicalUrl = meta?.canonical
   ? meta.canonical.url.startsWith('http')
@@ -432,7 +439,7 @@ const content = markdown
         class="hidden md:block w-[300px] shrink-0 *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full"
       >
         <WithSubscription client:only="svelte">
-          <!-- <Fragment slot="subscribed">
+          <Fragment slot="subscribed">
             <div class="space-y-3">
               {
                 trendingPlayers && (
@@ -459,7 +466,7 @@ const content = markdown
                 )
               }
             </div>
-          </Fragment> -->
+          </Fragment>
           <div class="space-y-3 h-full">
             <AditudeAdBanner
               client:only="svelte"

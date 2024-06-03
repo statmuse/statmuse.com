@@ -11,7 +11,6 @@ import {
   homeRankingsByDomain,
   homeBettingByDomain,
 } from '@lib/related-content'
-import { getTrendingData } from '@lib/trending'
 import { find } from 'lodash-es'
 import { getStandings } from '@lib/standings'
 import type { GameraPlayerProfileResponse } from '@statmuse/core/gamera'
@@ -594,15 +593,13 @@ let profile: GameraPlayerProfileResponse | undefined
 let trendingData: TrendingItem | undefined
 
 if (domain !== 'PGA') {
-  ;[musings, leaders, rankings, trendingData, betting, standings] =
-    await Promise.all([
-      listLatestMusings(domain),
-      homeLeadersByDomain({ context: Astro, domain }),
-      homeRankingsByDomain({ context: Astro, domain }),
-      getTrendingData({ league }),
-      homeBettingByDomain({ context: Astro, domain }),
-      getStandings({ context: Astro, domain }),
-    ])
+  ;[musings, leaders, rankings, betting, standings] = await Promise.all([
+    listLatestMusings(domain),
+    homeLeadersByDomain({ context: Astro, domain }),
+    homeRankingsByDomain({ context: Astro, domain }),
+    homeBettingByDomain({ context: Astro, domain }),
+    getStandings({ context: Astro, domain }),
+  ])
 
   if (rankings) {
     const teams = await Promise.all(
@@ -649,6 +646,7 @@ if (domain !== 'PGA') {
     }
   }
 
+  trendingData = Astro.locals.trendingData
   trendingSearches = find(trendingData?.datasets, { name: 'Searches' })
   trendingPlayers = find(trendingData?.datasets, { name: 'Players' })
   trendingTeams = find(trendingData?.datasets, { name: 'Teams' })

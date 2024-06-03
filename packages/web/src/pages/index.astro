@@ -3,7 +3,6 @@ import HomeLayout from '@layouts/home.astro'
 import HomeContent from '@components/home/home-content.astro'
 import { listLatestHomeMusings } from '@statmuse/core/musing'
 import { Caching } from '@lib/caching'
-import { getTrendingData } from '@lib/trending'
 import { find } from 'lodash-es'
 import { getTeamCards } from '@lib/related-content'
 import { getPlayerCards } from '@lib/related-content'
@@ -15,159 +14,151 @@ import type {
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import { getTeamSeasonBio } from '@lib/team'
 
-const [musings, trending, playerCards, teamCards, bettingCards] =
-  await Promise.all([
-    listLatestHomeMusings(),
-    getTrendingData(),
-    Promise.all([
-      getPlayerCards({ context: Astro, domain: 'EPL' }).then(
-        (x) =>
-          x && {
-            title: 'PL Goals',
-            players:
-              find(x.cards, { stat: 'mostGoals' })?.players.slice(0, 3) ?? [],
-          },
-      ),
-      getPlayerCards({ context: Astro, domain: 'NBA' }).then(
-        (x) =>
-          x && {
-            title: 'NBA PPG',
-            players:
-              find(x.cards, { stat: 'mostPointsPerGame' })?.players.slice(
-                0,
-                3,
-              ) ?? [],
-          },
-      ),
-      getPlayerCards({ context: Astro, domain: 'NFL' }).then(
-        (x) =>
-          x && {
-            title: 'NFL Total TD',
-            players:
-              find(x.cards, { stat: 'mostTotalTouchdowns' })?.players.slice(
-                0,
-                3,
-              ) ?? [],
-          },
-      ),
-      getPlayerCards({ context: Astro, domain: 'MLB' }).then(
-        (x) =>
-          x && {
-            title: 'MLB Home Runs',
-            players:
-              find(x.cards, { stat: 'mostBattingHomeRuns' })?.players.slice(
-                0,
-                3,
-              ) ?? [],
-          },
-      ),
-      getPlayerCards({ context: Astro, domain: 'NHL' }).then(
-        (x) =>
-          x && {
-            title: 'NHL Goals',
-            players:
-              find(x.cards, { stat: 'mostGoals' })?.players.slice(0, 3) ?? [],
-          },
-      ),
-    ]),
-    Promise.all([
-      getTeamCards({ context: Astro, domain: 'EPL' }).then(
-        (x) =>
-          x && {
-            title: 'PL Goal Difference',
-            teams:
-              find(x.cards, { stat: 'bestGoalDifferential' })?.teams.slice(
-                0,
-                3,
-              ) ?? [],
-          },
-      ),
-      getTeamCards({ context: Astro, domain: 'NBA' }).then(
-        (x) =>
-          x && {
-            title: 'NBA Offensive Rating',
-            teams:
-              find(x.cards, { stat: 'bestOffensiveRating' })?.teams.slice(
-                0,
-                3,
-              ) ?? [],
-          },
-      ),
-      getTeamCards({ context: Astro, domain: 'NFL' }).then(
-        (x) =>
-          x && {
-            title: 'NFL Yards Per Game',
-            teams:
-              find(x.cards, { stat: 'mostTotalYardsPerGame' })?.teams.slice(
-                0,
-                3,
-              ) ?? [],
-          },
-      ),
-      getTeamCards({ context: Astro, domain: 'MLB' }).then(
-        (x) =>
-          x && {
-            title: 'MLB Home Runs',
-            teams:
-              find(x.cards, { stat: 'mostBattingHomeRuns' })?.teams.slice(
-                0,
-                3,
-              ) ?? [],
-          },
-      ),
-      getTeamCards({ context: Astro, domain: 'NHL' }).then(
-        (x) =>
-          x && {
-            title: 'NHL Goals Per Game',
-            teams:
-              find(x.cards, { stat: 'mostGoalsPerGame' })?.teams.slice(0, 3) ??
-              [],
-          },
-      ),
-    ]),
-    Promise.all([
-      getTeamCards({ context: Astro, domain: 'NBA' }).then(
-        (x) =>
-          x && {
-            title: 'NBA Spread Trends',
-            teams:
-              find(x.cards, {
-                stat: 'bestRecordAgainstTheSpread',
-              })?.teams.slice(0, 3) ?? [],
-          },
-      ),
-      getTeamCards({ context: Astro, domain: 'NFL' }).then(
-        (x) =>
-          x && {
-            title: 'NFL Spread Trends',
-            teams:
-              find(x.cards, {
-                stat: 'bestRecordAgainstTheSpread',
-              })?.teams.slice(0, 3) ?? [],
-          },
-      ),
-      getTeamCards({ context: Astro, domain: 'MLB' }).then(
-        (x) =>
-          x && {
-            title: 'MLB Run Line Trends',
-            teams:
-              find(x.cards, {
-                stat: 'bestRecordAgainstTheSpread',
-              })?.teams.slice(0, 3) ?? [],
-          },
-      ),
-      getTeamCards({ context: Astro, domain: 'NHL' }).then(
-        (x) =>
-          x && {
-            title: 'NHL Puck Line Trends',
-            teams:
-              find(x.cards, {
-                stat: 'bestRecordAgainstTheSpread',
-              })?.teams.slice(0, 3) ?? [],
-          },
-      ),
-    ]),
-  ])
+const [musings, playerCards, teamCards, bettingCards] = await Promise.all([
+  listLatestHomeMusings(),
+  Promise.all([
+    getPlayerCards({ context: Astro, domain: 'EPL' }).then(
+      (x) =>
+        x && {
+          title: 'PL Goals',
+          players:
+            find(x.cards, { stat: 'mostGoals' })?.players.slice(0, 3) ?? [],
+        },
+    ),
+    getPlayerCards({ context: Astro, domain: 'NBA' }).then(
+      (x) =>
+        x && {
+          title: 'NBA PPG',
+          players:
+            find(x.cards, { stat: 'mostPointsPerGame' })?.players.slice(0, 3) ??
+            [],
+        },
+    ),
+    getPlayerCards({ context: Astro, domain: 'NFL' }).then(
+      (x) =>
+        x && {
+          title: 'NFL Total TD',
+          players:
+            find(x.cards, { stat: 'mostTotalTouchdowns' })?.players.slice(
+              0,
+              3,
+            ) ?? [],
+        },
+    ),
+    getPlayerCards({ context: Astro, domain: 'MLB' }).then(
+      (x) =>
+        x && {
+          title: 'MLB Home Runs',
+          players:
+            find(x.cards, { stat: 'mostBattingHomeRuns' })?.players.slice(
+              0,
+              3,
+            ) ?? [],
+        },
+    ),
+    getPlayerCards({ context: Astro, domain: 'NHL' }).then(
+      (x) =>
+        x && {
+          title: 'NHL Goals',
+          players:
+            find(x.cards, { stat: 'mostGoals' })?.players.slice(0, 3) ?? [],
+        },
+    ),
+  ]),
+  Promise.all([
+    getTeamCards({ context: Astro, domain: 'EPL' }).then(
+      (x) =>
+        x && {
+          title: 'PL Goal Difference',
+          teams:
+            find(x.cards, { stat: 'bestGoalDifferential' })?.teams.slice(
+              0,
+              3,
+            ) ?? [],
+        },
+    ),
+    getTeamCards({ context: Astro, domain: 'NBA' }).then(
+      (x) =>
+        x && {
+          title: 'NBA Offensive Rating',
+          teams:
+            find(x.cards, { stat: 'bestOffensiveRating' })?.teams.slice(0, 3) ??
+            [],
+        },
+    ),
+    getTeamCards({ context: Astro, domain: 'NFL' }).then(
+      (x) =>
+        x && {
+          title: 'NFL Yards Per Game',
+          teams:
+            find(x.cards, { stat: 'mostTotalYardsPerGame' })?.teams.slice(
+              0,
+              3,
+            ) ?? [],
+        },
+    ),
+    getTeamCards({ context: Astro, domain: 'MLB' }).then(
+      (x) =>
+        x && {
+          title: 'MLB Home Runs',
+          teams:
+            find(x.cards, { stat: 'mostBattingHomeRuns' })?.teams.slice(0, 3) ??
+            [],
+        },
+    ),
+    getTeamCards({ context: Astro, domain: 'NHL' }).then(
+      (x) =>
+        x && {
+          title: 'NHL Goals Per Game',
+          teams:
+            find(x.cards, { stat: 'mostGoalsPerGame' })?.teams.slice(0, 3) ??
+            [],
+        },
+    ),
+  ]),
+  Promise.all([
+    getTeamCards({ context: Astro, domain: 'NBA' }).then(
+      (x) =>
+        x && {
+          title: 'NBA Spread Trends',
+          teams:
+            find(x.cards, {
+              stat: 'bestRecordAgainstTheSpread',
+            })?.teams.slice(0, 3) ?? [],
+        },
+    ),
+    getTeamCards({ context: Astro, domain: 'NFL' }).then(
+      (x) =>
+        x && {
+          title: 'NFL Spread Trends',
+          teams:
+            find(x.cards, {
+              stat: 'bestRecordAgainstTheSpread',
+            })?.teams.slice(0, 3) ?? [],
+        },
+    ),
+    getTeamCards({ context: Astro, domain: 'MLB' }).then(
+      (x) =>
+        x && {
+          title: 'MLB Run Line Trends',
+          teams:
+            find(x.cards, {
+              stat: 'bestRecordAgainstTheSpread',
+            })?.teams.slice(0, 3) ?? [],
+        },
+    ),
+    getTeamCards({ context: Astro, domain: 'NHL' }).then(
+      (x) =>
+        x && {
+          title: 'NHL Puck Line Trends',
+          teams:
+            find(x.cards, {
+              stat: 'bestRecordAgainstTheSpread',
+            })?.teams.slice(0, 3) ?? [],
+        },
+    ),
+  ]),
+])
 
 if (teamCards) {
   const teams = await Promise.all(
@@ -213,6 +204,7 @@ if (bettingCards) {
   }
 }
 
+const trending = Astro.locals.trendingData
 const trendingSearches = find(trending?.datasets, { name: 'Searches' })
 const trendingPlayers = find(trending?.datasets, { name: 'Players' })
 const trendingTeams = find(trending?.datasets, { name: 'Teams' })
