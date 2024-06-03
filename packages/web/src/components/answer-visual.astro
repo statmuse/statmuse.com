@@ -16,10 +16,6 @@ import * as Link from '@statmuse/core/link'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
 import type { LeagueParam } from '@lib/params'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
-import WithSubscription from '@components/with-subscription.svelte'
-import { getTrendingData } from '@lib/trending'
-import { find } from 'lodash-es'
-import TrendingList from './trending-list.astro'
 
 interface Props {
   answer: GameraDefaultResponse
@@ -90,9 +86,6 @@ const league = domain === 'EPL' ? 'fc' : (preferredDomain as LeagueParam)
 const [questionTeamId] = contentReference?.questionTags?.teamIds ?? []
 const [answerTeamId] = contentReference?.answerTags?.teamIds ?? []
 const teamId = questionTeamId ?? answerTeamId
-
-const trendingData = await getTrendingData({ league })
-const trendingSearches = find(trendingData?.datasets, { name: 'Searches' })
 ---
 
 <Layout
@@ -133,45 +126,7 @@ const trendingSearches = find(trendingData?.datasets, { name: 'Searches' })
       onlyMobile
     />
   </div>
-  <div class="flex gap-3">
-    <div class="flex-1 overflow-clip">
-      <Visuals class="" response={answer} {conversationToken} />
-    </div>
-    <div
-      class="hidden md:block basis-[300px] *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full"
-    >
-      <WithSubscription client:only="svelte">
-        <Fragment slot="subscribed">
-          {
-            trendingSearches && (
-              <TrendingList
-                title={`Trending ${trendingSearches.name}`}
-                items={trendingSearches.items}
-              />
-            )
-          }
-        </Fragment>
-        <div class="space-y-3 h-full">
-          <AditudeAdBanner
-            client:only="svelte"
-            divId="pb-slot-square-1"
-            slotId="pb-slot-square-1"
-            placeholderClass="w-[300px] h-[250px]"
-            onlyDesktop
-          />
-          <div class="sticky top-[--top-spacing]">
-            <AditudeAdBanner
-              client:only="svelte"
-              divId="pb-slot-right-2"
-              slotId="pb-slot-right-2"
-              placeholderClass="w-[300px] h-[600px]"
-              onlyDesktop
-            />
-          </div>
-        </div>
-      </WithSubscription>
-    </div>
-  </div>
+  <Visuals class="" response={answer} {conversationToken} />
   <Explore {league} additionalQuestions={answer.visual.additionalQuestions} />
   {
     preferredDomain && ANSWER_CARDS_ENABLED && (

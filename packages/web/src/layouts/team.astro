@@ -24,10 +24,6 @@ import Select from '@components/select.svelte'
 import type { NavLink } from 'src/types'
 import type { ComponentProps } from 'astro/types'
 import { getTeamFranchiseLatestSeason } from '@lib/team'
-import WithSubscription from '@components/with-subscription.svelte'
-import { getTrendingData } from '@lib/trending'
-import { find } from 'lodash-es'
-import TrendingList from '@components/trending-list.astro'
 
 interface Props {
   bio: GameraTeamSeasonBio | GameraTeamFranchiseOverview
@@ -196,9 +192,6 @@ const navProps: ComponentProps<typeof Nav> = {
   selected: page,
   href: (p) => `${teamPath}/${p}`,
 }
-
-const trendingData = await getTrendingData({ league })
-const trendingTeams = find(trendingData?.datasets, { name: 'Teams' })
 ---
 
 <Layout
@@ -283,44 +276,8 @@ const trendingTeams = find(trendingData?.datasets, { name: 'Teams' })
     ) : null
   }
   {parameters && <GridDropdown class="flex" {parameters} />}
-  <div class="flex gap-3">
-    <div class="flex-1 overflow-clip flex flex-col gap-3">
-      <slot />
-    </div>
-    <div
-      class="hidden md:block basis-[300px] *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full"
-    >
-      <WithSubscription client:only="svelte">
-        <Fragment slot="subscribed">
-          {
-            trendingTeams && (
-              <TrendingList
-                title={`Trending ${trendingTeams.name}`}
-                items={trendingTeams.items}
-              />
-            )
-          }
-        </Fragment>
-        <div class="space-y-3 h-full">
-          <AditudeAdBanner
-            client:only="svelte"
-            divId="pb-slot-square-1"
-            slotId="pb-slot-square-1"
-            placeholderClass="w-[300px] h-[250px]"
-            onlyDesktop
-          />
-          <div class="sticky top-[--top-spacing]">
-            <AditudeAdBanner
-              client:only="svelte"
-              divId="pb-slot-right-2"
-              slotId="pb-slot-right-2"
-              placeholderClass="w-[300px] h-[600px]"
-              onlyDesktop
-            />
-          </div>
-        </div>
-      </WithSubscription>
-    </div>
+  <div class="flex flex-col gap-3">
+    <slot />
   </div>
   <Explore {league} />
   {ANSWER_CARDS_ENABLED && <AnswerCards {domain} />}
