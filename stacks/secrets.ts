@@ -4,6 +4,7 @@ export function Secrets({ stack }: StackContext) {
   const secrets = Config.Secret.create(
     stack,
     'BOTPOISON',
+    'JWT_SECRET',
     'STRIPE_SECRET',
     'STRIPE_WEBHOOK_SECRET',
     'STRIPE_PRICE_ID',

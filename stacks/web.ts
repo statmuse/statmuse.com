@@ -133,6 +133,7 @@ export function Web({ stack }: StackContext) {
       auth,
       api.api,
       secrets.BOTPOISON,
+      secrets.JWT_SECRET,
       secrets.STRIPE_SECRET,
       secrets.STRIPE_WEBHOOK_SECRET,
       secrets.STRIPE_PRICE_ID,
