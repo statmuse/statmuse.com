@@ -9,11 +9,13 @@ interface Props extends HTMLAttributes<'li'> {
   numbered?: boolean
   prominent?: boolean
   eager?: boolean
+  smallImage?: boolean
 }
 
 const { item, index, prominent, ...rest } = Astro.props
 const numbered = Astro.props.numbered ?? true
 const eager = Astro.props.eager ?? false
+const smallImage = Astro.props.smallImage ?? false
 const representatives = item.images.map((i) => ({ url: i }))
 ---
 
@@ -53,7 +55,11 @@ const representatives = item.images.map((i) => ({ url: i }))
       {
         representatives.length === 1 && (
           <Image
-            class="h-[75px] max-w-[100px] select-none object-contain object-bottom"
+            class:list={{
+              'h-[90px] max-w-[120px]': !smallImage,
+              'h-[60px] max-w-[80px]': smallImage,
+              'select-none object-contain object-bottom': true,
+            }}
             alt={representatives[0].entity?.display ?? ''}
             src={representatives[0].url}
             width={180}
@@ -66,14 +72,14 @@ const representatives = item.images.map((i) => ({ url: i }))
         representatives.length > 1 &&
           representatives.map((representative, index) => (
             <Image
-              class:list={[
-                'h-[75px] max-w-[100px] select-none object-contain object-bottom',
-                {
-                  'absolute left-0 bottom-0 -translate-x-[40px]': index === 0,
-                  'relative z-[1]': index === 1,
-                  'absolute right-0 bottom-0 translate-x-[40px]': index === 2,
-                },
-              ]}
+              class:list={{
+                'h-[75px] max-w-[100px]': !smallImage,
+                'h-[60px] max-w-[80px]': smallImage,
+                'select-none object-contain object-bottom': true,
+                'absolute left-0 bottom-0 -translate-x-[40px]': index === 0,
+                'relative z-[1]': index === 1,
+                'absolute right-0 bottom-0 translate-x-[40px]': index === 2,
+              }}
               alt={representative.entity?.display ?? ''}
               src={representative.url}
               width={180}

@@ -11,9 +11,10 @@ interface Props {
   eager?: boolean
   prominent?: boolean
   class?: string | null
+  smallImage?: boolean
 }
 
-const { items, title, eager, moreUrl, prominent } = Astro.props
+const { items, title, eager, moreUrl, prominent, smallImage } = Astro.props
 ---
 
 <Panel
@@ -28,7 +29,7 @@ const { items, title, eager, moreUrl, prominent } = Astro.props
       <>
         <ol class="-mx-3 mt-1 list-none divide-y divide-gray-6 dark:divide-gray-4">
           {items.slice(0, 5).map((item, index) => (
-            <TrendingListItem {item} {index} {prominent} {eager} />
+            <TrendingListItem {item} {index} {prominent} {eager} {smallImage} />
           ))}
           {items.length > 5 && moreUrl && (
             <li class="pt-3 pb-1">
