@@ -40,6 +40,7 @@
     "d3-scale": "^4.0.2",
     "d3-selection": "^3.0.0",
     "dayjs": "^1.11.8",
+    "fast-jwt": "^4.0.1",
     "highcharts": "9.0.0",
     "iframe-resizer": "^4.3.6",
     "kysely": "^0.25.0",
