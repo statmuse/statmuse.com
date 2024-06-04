@@ -105,9 +105,16 @@ const analyticsProperties = Object.assign(
 )
 
 const trendingData = Astro.locals.trendingData
-const trendingSearches = find(trendingData?.datasets, { name: 'Searches' })
-const trendingPlayers = find(trendingData?.datasets, { name: 'Players' })
-const trendingTeams = find(trendingData?.datasets, { name: 'Teams' })
+const trending = money
+  ? [
+      find(trendingData?.datasets, { name: 'Stocks' }),
+      find(trendingData?.datasets, { name: 'Searches' }),
+    ]
+  : [
+      find(trendingData?.datasets, { name: 'Players' }),
+      find(trendingData?.datasets, { name: 'Teams' }),
+      find(trendingData?.datasets, { name: 'Searches' }),
+    ]
 
 const canonicalUrl = meta?.canonical
   ? meta.canonical.url.startsWith('http')
@@ -442,30 +449,15 @@ const content = markdown
           <Fragment slot="subscribed">
             <div class="space-y-3">
               {
-                trendingPlayers && (
-                  <TrendingList
-                    title={`Trending ${trendingPlayers.name}`}
-                    items={trendingPlayers.items}
-                    smallImage
-                  />
-                )
-              }
-              {
-                trendingTeams && (
-                  <TrendingList
-                    title={`Trending ${trendingTeams.name}`}
-                    items={trendingTeams.items}
-                    smallImage
-                  />
-                )
-              }
-              {
-                trendingSearches && (
-                  <TrendingList
-                    title={`Trending ${trendingSearches.name}`}
-                    items={trendingSearches.items}
-                    smallImage
-                  />
+                trending.map(
+                  (trend) =>
+                    trend && (
+                      <TrendingList
+                        title={`Trending ${trend.name}`}
+                        items={trend.items}
+                        smallImage
+                      />
+                    ),
                 )
               }
             </div>

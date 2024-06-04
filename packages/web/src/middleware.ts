@@ -148,6 +148,11 @@ export const headers = defineMiddleware(async (_context, next) => {
 
 export const trending = defineMiddleware(async (context, next) => {
   const league = context.params.league
+    ? context.params.league
+    : /^\/money\/?/.test(context.url.pathname)
+    ? 'money'
+    : undefined
+
   const trendingData = await getTrendingData(league ? { league } : undefined)
   context.locals.trendingData = trendingData
   return next()
