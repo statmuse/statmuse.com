@@ -8,9 +8,8 @@ import {
   getDefaultBustImageUrl,
   tokensToText,
   type GameraPlayerBio,
-  type GameraParameter,
 } from '@statmuse/core/gamera'
-import { type Metadata, getLeagueKeywords } from '@lib/meta'
+import { getLeagueKeywords } from '@lib/meta'
 import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
@@ -19,15 +18,10 @@ import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import type { NavLink } from 'src/types'
 import type { ComponentProps } from 'astro/types'
 
-interface Props {
+interface Props extends ComponentProps<typeof Layout> {
   bio: GameraPlayerBio
   page: 'overview' | 'stats' | 'game-log' | 'matches' | 'splits' | 'bio'
-  meta?: Metadata
   league: LeagueParam
-  query?: string
-  analytics?: AnalyticsPageviewProperties
-  parameters?: Record<string, GameraParameter>
-  class?: string | null
 }
 
 const {

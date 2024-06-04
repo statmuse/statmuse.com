@@ -1,20 +1,16 @@
 ---
 import Layout from '@layouts/base.astro'
 import sample from 'lodash/sample'
-import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import type { ComponentProps } from 'astro/types'
 
-interface Props {
+interface Props extends ComponentProps<typeof Layout> {
   status?: number
   render: boolean
   message: string
-  query?: string
   image?: {
     url: string
     alt: string
   }
-  analytics?: AnalyticsPageviewProperties
-  enableAdBanner?: boolean
-  money?: boolean
 }
 
 const images = [

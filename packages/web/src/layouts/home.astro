@@ -1,22 +1,14 @@
 ---
 import BaseLayout from '@layouts/base.astro'
 import MoneyBaseLayout from '@layouts/money-base.astro'
-import type { Metadata } from '@lib/meta'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import NewsletterSignup from '@components/newsletter-signup.astro'
 import type { LeagueParam } from '@lib/params'
 import type { NavLink } from 'src/types'
+import type { ComponentProps } from 'astro/types'
 
-interface Props {
+interface Props extends ComponentProps<typeof BaseLayout> {
   league?: LeagueParam | 'All'
-  meta?: Metadata
-  colors?: {
-    foreground?: string
-    background?: string
-    foregroundColor?: string
-    backgroundColor?: string
-  }
-  class?: string | null
 }
 
 const { league = 'All', ...rest } = Astro.props

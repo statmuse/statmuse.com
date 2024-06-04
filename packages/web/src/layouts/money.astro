@@ -1,23 +1,16 @@
 ---
 import MoneyBaseLayout from '@layouts/money-base.astro'
-import Image from '@components/image.astro'
 import TradingviewTicker from '@components/tradingview-ticker.astro'
-import AnswerShare from '@components/answer-share.astro'
 import Explore from '@components/explore.astro'
-import type { Metadata } from '@lib/meta'
 import { getUrlForEntity, type AssetProfile } from '@statmuse/core/kanedama'
 import { imageForgeUrl } from '@statmuse/core/path'
 import { cdnBaseUrl } from '@statmuse/core/gamera'
-import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import type { ComponentProps } from 'astro/types'
 import type Nav from '@components/nav.astro'
 import type { NavLink } from 'src/types'
 
-interface Props {
+interface Props extends ComponentProps<typeof MoneyBaseLayout> {
   profile: AssetProfile
-  meta?: Metadata
-  query?: string
-  analytics?: AnalyticsPageviewProperties
   page: 'overview' | 'stats' | 'financials' | 'news'
 }
 

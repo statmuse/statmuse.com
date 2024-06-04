@@ -25,7 +25,7 @@ import type { NavLink } from 'src/types'
 import type { ComponentProps } from 'astro/types'
 import { getTeamFranchiseLatestSeason } from '@lib/team'
 
-interface Props {
+interface Props extends ComponentProps<typeof Layout> {
   bio: GameraTeamSeasonBio | GameraTeamFranchiseOverview
   page:
     | 'overview'
@@ -35,10 +35,6 @@ interface Props {
     | 'roster'
     | 'splits'
     | 'history'
-  meta?: Metadata
-  query?: string
-  analytics?: AnalyticsPageviewProperties
-  parameters?: Record<string, GameraParameter>
 }
 
 const { meta, query, page, parameters, analytics = {} } = Astro.props
