@@ -39,6 +39,7 @@ interface Props extends ComponentProps<typeof Header> {
   navProps?: ComponentProps<typeof Nav>
   hero?: HeroProps
   parameters?: Record<string, GameraParameter>
+  renderRightColumn?: boolean
 }
 
 const {
@@ -53,6 +54,7 @@ const {
   navProps,
   hero,
   parameters,
+  renderRightColumn = true,
 } = Astro.props
 const foreground = colors?.foreground || colors?.foregroundColor || '#fff'
 const background = colors?.background || colors?.backgroundColor || '#00c1d8'
@@ -442,46 +444,46 @@ const content = markdown
           <slot />
         </div>
       </div>
-      <div
-        class="hidden md:block w-[300px] shrink-0 *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full"
-      >
-        <WithSubscription client:only="svelte">
-          <Fragment slot="subscribed">
-            <div class="space-y-3">
-              {
-                trending.map(
-                  (trend) =>
-                    trend && (
-                      <TrendingList
-                        title={`Trending ${trend.name}`}
-                        items={trend.items}
-                        smallImage
-                      />
-                    ),
-                )
-              }
-            </div>
-          </Fragment>
-          <div class="space-y-3 h-full">
-            <AditudeAdBanner
-              client:only="svelte"
-              divId="pb-slot-square-1"
-              slotId="pb-slot-square-1"
-              placeholderClass="w-[300px] h-[250px]"
-              onlyDesktop
-            />
-            <div class="sticky top-[--top-spacing]">
-              <AditudeAdBanner
-                client:only="svelte"
-                divId="pb-slot-right-2"
-                slotId="pb-slot-right-2"
-                placeholderClass="w-[300px] h-[600px]"
-                onlyDesktop
-              />
-            </div>
+      {
+        renderRightColumn && (
+          <div class="hidden md:block w-[300px] shrink-0 *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full">
+            <WithSubscription client:only="svelte">
+              <Fragment slot="subscribed">
+                <div class="space-y-3">
+                  {trending.map(
+                    (trend) =>
+                      trend && (
+                        <TrendingList
+                          title={`Trending ${trend.name}`}
+                          items={trend.items}
+                          smallImage
+                        />
+                      ),
+                  )}
+                </div>
+              </Fragment>
+              <div class="space-y-3 h-full">
+                <AditudeAdBanner
+                  client:only="svelte"
+                  divId="pb-slot-square-1"
+                  slotId="pb-slot-square-1"
+                  placeholderClass="w-[300px] h-[250px]"
+                  onlyDesktop
+                />
+                <div class="sticky top-[--top-spacing]">
+                  <AditudeAdBanner
+                    client:only="svelte"
+                    divId="pb-slot-right-2"
+                    slotId="pb-slot-right-2"
+                    placeholderClass="w-[300px] h-[600px]"
+                    onlyDesktop
+                  />
+                </div>
+              </div>
+            </WithSubscription>
           </div>
-        </WithSubscription>
-      </div>
+        )
+      }
     </div>
     <Footer />
     <CookieConsent client:only="svelte" transition:persist="cookie-banner" />
