@@ -231,8 +231,8 @@ const navProps: ComponentProps<typeof Nav> = {
     <TeamRepresentatives
       class:list={{
         'h-32': true,
-        'mt-2 -mb-2 md:mt-0 md:-mb-3 md:-ml-10 md:mr-3': true,
-        'self-center md:self-end select-none': true,
+        'mt-2 -mb-2 md:mt-0 @lg/main:-mb-3 @lg/main:-ml-10 @lg/main:mr-3': true,
+        'self-center @lg/main:self-end select-none': true,
         'object-contain object-bottom': true,
       }}
       representatives={isTeam
@@ -245,7 +245,7 @@ const navProps: ComponentProps<typeof Nav> = {
       isTeam ? (
         <Select
           client:load
-          class="hidden lg:flex w-32 absolute right-3 bottom-3"
+          class="hidden @2xl/main:flex w-32 absolute right-3 bottom-3"
           {...selectProps}
         />
       ) : null
@@ -266,7 +266,7 @@ const navProps: ComponentProps<typeof Nav> = {
     isTeam ? (
       <Select
         client:load
-        class="md:w-32 md:self-end lg:hidden"
+        class="@lg/main:w-32 @lg/main:self-end @2xl/main:hidden"
         {...selectProps}
       />
     ) : null
