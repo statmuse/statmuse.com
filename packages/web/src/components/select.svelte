@@ -51,7 +51,11 @@
   })
 </script>
 
-<div class={`${$$props.class ?? ''} flex flex-col gap-1 h-8`}>
+<div
+  class={`${
+    $$props.class ?? ''
+  } flex flex-col gap-1 h-8 text-gray-2 dark:text-gray-7`}
+>
   <!-- svelte-ignore a11y-label-has-associated-control - $label contains the 'for' attribute -->
   <label class="block" class:hidden={hideLabel} use:melt={$labelElement}>
     {label}
