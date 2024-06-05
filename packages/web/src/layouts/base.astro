@@ -13,7 +13,6 @@ import Header from '@components/header.astro'
 import type { ComponentProps } from 'astro/types'
 import type { GameraParameter } from '@statmuse/core/gamera'
 import GridDropdown from '@components/grid-dropdown.astro'
-import TwitterShare from '@components/icons/twitter.astro'
 import type { HeroProps } from '@lib/props'
 import { marked } from 'marked'
 import MenuLinks from '@components/menu-links.astro'
@@ -410,16 +409,16 @@ const content = markdown
                   <Nav class="hidden @lg/main:flex" hero {...navProps} />
                 ) : null}
               </div>
-              <div
-                class:list={{
-                  'flex flex-row gap-2.5 items-center': true,
-                  'absolute right-3 bottom-3 @lg/main:top-3 @lg/main:bottom-auto px-2 py-1': true,
-                  'rounded-2xl bg-team-secondary text-team-primary': true,
-                }}
-              >
-                <TwitterShare shareUrl={Astro.url.href} />
-                {hero?.share ? <Share client:load {...hero.share} /> : null}
-              </div>
+              {hero?.share ? (
+                <div
+                  class:list={{
+                    'absolute right-3 bottom-3 @lg/main:top-3 @lg/main:bottom-auto px-2 py-1': true,
+                    'rounded-2xl bg-team-secondary text-team-primary': true,
+                  }}
+                >
+                  <Share client:load {...hero.share} />
+                </div>
+              ) : null}
               {parameters && (
                 <GridDropdown
                   class="hidden @2xl/main:flex w-52 absolute right-3 bottom-3"
