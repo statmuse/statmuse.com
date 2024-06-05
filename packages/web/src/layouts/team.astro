@@ -225,7 +225,6 @@ const navProps: ComponentProps<typeof Nav> = {
     },
   }}
   {navProps}
-  {parameters}
 >
   <Fragment slot="hero">
     <TeamRepresentatives
@@ -264,11 +263,7 @@ const navProps: ComponentProps<typeof Nav> = {
   </div>
   {
     isTeam ? (
-      <Select
-        client:load
-        class="@lg/main:w-32 @lg/main:self-end @2xl/main:hidden"
-        {...selectProps}
-      />
+      <Select client:load class="@2xl/main:hidden" {...selectProps} />
     ) : null
   }
   {parameters && <GridDropdown class="flex" {parameters} />}
