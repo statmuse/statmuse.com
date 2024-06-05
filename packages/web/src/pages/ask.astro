@@ -6,6 +6,7 @@ import * as Enforcer from '@lib/enforcer'
 import { NOT_FOUND_404 } from '@lib/response'
 import { createSlug } from '@statmuse/core/path'
 import { tokensToHtml } from '@statmuse/core/gamera'
+import Panel from '@components/panel.astro'
 
 let query: string | null | undefined = Astro.url.searchParams.get('q')
 const league = Astro.url.searchParams.get('d')
@@ -61,7 +62,7 @@ if (response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional')
 ---
 
 <Layout
-  class="flex flex-col gap-3"
+  class="items-center justify-center h-full"
   analytics={{
     is_search: true,
     page_type: 'prompt',
@@ -71,44 +72,44 @@ if (response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional')
   }}
   {query}
   conversationToken={response.conversation.token}
+  renderRightColumn={false}
 >
-  <div class="h-screen w-full flex flex-col justify-center items-center">
-    <h1
-      class="text-3xl my-5 font-bold"
-      set:html={tokensToHtml(response.visual.summary.answer)}
-    />
-    <div class="w-full flex flex-col sm:flex-row sm:justify-center my-5 gap-2">
+  <div class="text-center min-w-44">
+    <h1 class="mb-5">For which league?</h1>
+    <div class="w-full flex flex-col gap-2">
       {
         response.visual.choices.map((choice) => (
-          <form action="/ask" method="post">
-            <input name="_method" type="hidden" value="POST" />
-            <input
-              id="question_conversation_token"
-              name="question[conversation_token]"
-              type="hidden"
-              value={response.conversation.token}
-            />
-            <input
-              id="question_query"
-              name="question[query]"
-              required=""
-              type="hidden"
-              value={choice.input}
-            />
-            <input
-              id="question_query_clarification_for"
-              name="question[query_clarification_for]"
-              type="hidden"
-              value={query}
-            />
-            <button
-              data-cy-choice-btn
-              class="w-full text-2xl border-2 border-black rounded-md cursor-pointer p-7"
-              type="submit"
-            >
-              {choice.display}
-            </button>
-          </form>
+          <Panel class="rounded-full !py-2">
+            <form action="/ask" method="post">
+              <input name="_method" type="hidden" value="POST" />
+              <input
+                id="question_conversation_token"
+                name="question[conversation_token]"
+                type="hidden"
+                value={response.conversation.token}
+              />
+              <input
+                id="question_query"
+                name="question[query]"
+                required=""
+                type="hidden"
+                value={choice.input}
+              />
+              <input
+                id="question_query_clarification_for"
+                name="question[query_clarification_for]"
+                type="hidden"
+                value={query}
+              />
+              <button
+                data-cy-choice-btn
+                class="w-full cursor-pointer"
+                type="submit"
+              >
+                {choice.display}
+              </button>
+            </form>
+          </Panel>
         ))
       }
     </div>
