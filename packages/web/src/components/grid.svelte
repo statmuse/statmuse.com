@@ -26,7 +26,6 @@
   export let columnStyles = {}
   export let padding = 'px-2'
   export let head = true
-  export let color = false
   export let rankingRange = [10, 20]
   export let highlight: string | undefined = undefined
   export let title: PanelProps['title'] = undefined
@@ -228,6 +227,8 @@
                   class:left-0={col.sticky}
                   class:bg-gray-8={col.sticky}
                   class:dark:bg-gray-3={col.sticky}
+                  class:bg-team-primary={sortKey === col.rowItemKey}
+                  class:text-team-secondary={sortKey === col.rowItemKey}
                   on:click={onClickSort(col.rowItemKey)}
                 >
                   {col.title}
@@ -236,12 +237,7 @@
             </tr>
           </thead>
         {/if}
-        <tbody
-          class="divide-y leading-[22px]"
-          class:divide-team-primary={color}
-          class:divide-gray-6={!color}
-          class:dark:divide-gray-4={!color}
-        >
+        <tbody class="divide-y divide-gray-6 dark:divide-gray-4 leading-[22px]">
           {#each rows as row (row)}
             {@const rowHighlight = shouldApplyRowHighlight(
               row[columns[0].rowItemKey],
@@ -262,20 +258,20 @@
                     class:left-0={col.sticky}
                     class:bg-gray-8={col.sticky &&
                       !(sortKey === col.rowItemKey) &&
-                      !color &&
                       !rowHighlight}
                     class:dark:bg-gray-3={col.sticky &&
                       !(sortKey === col.rowItemKey) &&
-                      !color &&
                       !rowHighlight}
-                    class:bg-team-secondary={color}
-                    class:dark:bg-gray-5={rowHighlight ||
+                    class:bg-team-primary={rowHighlight ||
                       sortKey === col.rowItemKey}
-                    class:bg-gray-6={rowHighlight || sortKey === col.rowItemKey}
+                    class:text-team-secondary={rowHighlight ||
+                      sortKey === col.rowItemKey}
                   >
                     <EntityLink
                       {entity}
-                      class={color ? 'text-team-primary' : ''}
+                      class={rowHighlight || sortKey === col.rowItemKey
+                        ? 'text-team-secondary'
+                        : ''}
                     >
                       {#if col.rowItemKey === 'IMAGE'}
                         {#if imageUrl}
