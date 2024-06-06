@@ -8,11 +8,13 @@ import { marked } from 'marked'
 import Image from '@components/image.astro'
 import GridDropdown from '@components/grid-dropdown.astro'
 import Share from '@components/share/index.svelte'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 interface Props extends HeroProps {
   navProps?: ComponentProps<typeof Nav>
   parameters?: Record<string, GameraParameter>
   class?: string
+  renderAdBanner?: boolean
 }
 
 const {
@@ -27,6 +29,7 @@ const {
   navProps,
   parameters,
   share,
+  renderAdBanner = false,
 } = Astro.props
 
 const markdownOrHtml = markdown || html
@@ -160,5 +163,18 @@ const nlg = markdown
     )
   }
 </Panel>
+{
+  renderAdBanner ? (
+    <div class="md:hidden h-[50px] md:h-[90px] flex justify-center items-center">
+      <AditudeAdBanner
+        client:only="svelte"
+        divId="pb-slot-anchor"
+        slotId="pb-slot-anchor"
+        placeholderClass="w-[320px] md:w-[728px] h-[50px] md:h-[90px]"
+        onlyMobile
+      />
+    </div>
+  ) : null
+}
 {navProps ? <Nav class="@lg/main:hidden" {...navProps} /> : null}
 {parameters && <GridDropdown class="flex @2xl/main:hidden" {parameters} />}

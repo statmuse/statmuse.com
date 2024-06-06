@@ -115,7 +115,7 @@ Caching.swr(Astro)
     {conversationToken}
     {share}
   >
-    {heroProps ? <Hero {...heroProps} {share} /> : null}
+    {heroProps ? <Hero {...heroProps} {share} renderAdBanner /> : null}
     <Visuals {response} {conversationToken} />
     <Explore
       league="money"
