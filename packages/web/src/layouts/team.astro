@@ -191,7 +191,6 @@ const navProps: ComponentProps<typeof Nav> = {
 ---
 
 <Layout
-  class="flex flex-col gap-3"
   colors={bio.colors}
   meta={{
     title,
@@ -267,9 +266,7 @@ const navProps: ComponentProps<typeof Nav> = {
     ) : null
   }
   {parameters && <GridDropdown class="flex" {parameters} />}
-  <div class="flex flex-col gap-3">
-    <slot />
-  </div>
+  <slot />
   <Explore {league} />
   {ANSWER_CARDS_ENABLED && <AnswerCards {domain} />}
 </Layout>

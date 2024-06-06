@@ -143,9 +143,7 @@ const navProps: ComponentProps<typeof Nav> = {
       onlyMobile
     />
   </div>
-  <div class="flex flex-col gap-3">
-    <slot />
-  </div>
+  <slot />
   <Explore {league} additionalQuestions={bio.additionalQuestions} />
   {
     ANSWER_CARDS_ENABLED && (

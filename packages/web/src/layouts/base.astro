@@ -6,17 +6,10 @@ import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import CookieConsent from '@components/cookie-consent.svelte'
 import { ViewTransitions } from 'astro:transitions'
 import Footer from '@components/footer.astro'
-import Image from '@components/image.astro'
-import Nav from '@components/nav.astro'
-import Panel from '@components/panel.astro'
 import Header from '@components/header.astro'
 import type { ComponentProps } from 'astro/types'
-import type { GameraParameter } from '@statmuse/core/gamera'
-import GridDropdown from '@components/grid-dropdown.astro'
 import type { HeroProps } from '@lib/props'
-import { marked } from 'marked'
 import MenuLinks from '@components/menu-links.astro'
-import Share from '@components/share/index.svelte'
 import ShareModal from '@components/share/modal.svelte'
 import CloseableContainer from '@components/closeable-container.svelte'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
@@ -35,9 +28,7 @@ interface Props extends ComponentProps<typeof Header> {
   analytics?: AnalyticsPageviewProperties
   enableAdBanner?: boolean
   class?: string | null
-  navProps?: ComponentProps<typeof Nav>
-  hero?: HeroProps
-  parameters?: Record<string, GameraParameter>
+  share?: HeroProps['share']
   renderRightColumn?: boolean
 }
 
@@ -50,9 +41,7 @@ const {
   query,
   conversationToken,
   money,
-  navProps,
-  hero,
-  parameters,
+  share,
   renderRightColumn = true,
 } = Astro.props
 const foreground = colors?.foreground || colors?.foregroundColor || '#fff'
@@ -122,18 +111,6 @@ const canonicalUrl = meta?.canonical
     ? meta.canonical.url
     : new URL(meta.canonical.url, Astro.url.origin).href
   : undefined
-
-const markdown = hero?.markdown
-const html = hero?.html
-const markdownOrHtml = markdown || html
-const content = markdown
-  ? marked(hero.content, {
-      gfm: true,
-      breaks: true,
-      mangle: false,
-      headerIds: false,
-    })
-  : hero?.content
 ---
 
 <html lang="en">
@@ -309,139 +286,14 @@ const content = markdown
         id="base"
         class="shrink-0 hidden xl:flex h-fit sticky top-[--top-spacing]"
       />
-      <div class="@container/main min-w-0 flex-1">
-        {
-          Astro.slots.has('hero') || hero?.content ? (
-            <Panel
-              team
-              class:list={{
-                'rounded-none border-0 md:rounded-2xl md:border mb-3': true,
-                '-mx-3 pb-2 pt-4 px-3 @lg/main:py-3 @lg/main:px-5 md:mx-0 whitespace-nowrap': true,
-                'flex flex-col-reverse gap-3 @lg/main:flex-row':
-                  !markdownOrHtml,
-                'flex flex-col-reverse gap-3 @lg/main:flex-row-reverse justify-between':
-                  markdownOrHtml,
-              }}
-            >
-              <slot name="hero" />
-              {hero?.imageUrl ? (
-                <Image
-                  class:list={{
-                    'h-32 @lg/main:max-w-[200px]': true,
-                    'mt-2 -mb-2 @lg/main:mt-0 @lg/main:-mb-3 @lg/main:-ml-2': true,
-                    'self-center @lg/main:self-end select-none': true,
-                    'object-contain object-bottom': true,
-                  }}
-                  alt={hero.imageAlt ?? hero.content}
-                  src={hero.imageUrl}
-                  width={200}
-                  height={200}
-                  loading="eager"
-                />
-              ) : null}
-              <div class="flex flex-col justify-between @lg/main:items-start @lg/main:-mb-3">
-                {markdownOrHtml ? (
-                  <div
-                    class:list={{
-                      'flex-1 flex flex-col justify-between text-center @lg/main:text-left': true,
-                    }}
-                  >
-                    <h1
-                      class:list={{
-                        'font-bold text-xl leading-snug my-auto text-pretty': true,
-                        // '@lg/main:text-2xl lg:text-[1.33rem] xl:text-2xl': true,
-                        '[&>p]:my-[1em] [&>ul]:my-[1em] [&>p>a]:underline [&>p>a]:text-team-secondary': true,
-                      }}
-                      set:html={markdown ? content : undefined}
-                    >
-                      {html ? (
-                        <span
-                          class="my-[1em] [&>a]:underline [&>a]:text-team-secondary whitespace-pre-wrap text-pretty"
-                          set:html={content}
-                        />
-                      ) : null}
-                    </h1>
-                  </div>
-                ) : (
-                  <div
-                    class:list={{
-                      'mx-auto @lg/main:mx-0 @lg/main:flex @lg/main:gap-3 @lg/main:items-center @lg/main:mt-5': true,
-                      'mb-5 mt-5': !hero?.imageUrl,
-                    }}
-                  >
-                    <h1 class="text-2xl leading-none font-bold text-center @lg/main:text-left text-pretty">
-                      {hero?.url ? (
-                        <a
-                          class="text-current"
-                          href={hero.url.href}
-                          title={hero.url.title}
-                          data-cy-team-name-link
-                        >
-                          {hero.content}
-                        </a>
-                      ) : (
-                        hero?.content
-                      )}
-                    </h1>
-                    {hero?.affiliation ? (
-                      <div
-                        class:list={{
-                          'flex flex-1 items-center text-center': true,
-                          'py-0.5 px-2.5 absolute left-3 bottom-3': true,
-                          '@lg/main:relative @lg/main:left-auto @lg/main:bottom-auto': true,
-                          'bg-team-secondary text-team-primary rounded-2xl': true,
-                        }}
-                      >
-                        {hero?.affiliationUrl ? (
-                          <a
-                            class="text-inherit no-underline hover:no-underline"
-                            href={hero?.affiliationUrl}
-                            set:text={hero?.affiliation}
-                          />
-                        ) : (
-                          <>{hero?.affiliation}</>
-                        )}
-                      </div>
-                    ) : null}
-                  </div>
-                )}
-                {navProps ? (
-                  <Nav class="hidden @lg/main:flex" hero {...navProps} />
-                ) : null}
-              </div>
-              {hero?.share ? (
-                <div
-                  class:list={{
-                    'absolute right-3 bottom-3 @lg/main:top-3 @lg/main:bottom-auto px-2 py-1': true,
-                    'rounded-2xl bg-team-secondary text-team-primary': true,
-                  }}
-                >
-                  <Share client:load {...hero.share} />
-                </div>
-              ) : null}
-              {parameters && (
-                <GridDropdown
-                  class="hidden @2xl/main:flex w-52 absolute right-3 bottom-3"
-                  {parameters}
-                />
-              )}
-            </Panel>
-          ) : null
-        }
-        {navProps ? <Nav class="@lg/main:hidden" {...navProps} /> : null}
-        {
-          parameters && (
-            <GridDropdown class="flex @2xl/main:hidden my-3" {parameters} />
-          )
-        }
-        <div
-          class:list={{
-            'flex flex-col gap-3': true,
-            [Astro.props.class ?? '']: !!Astro.props.class,
-          }}
-        >
-          <slot />
-        </div>
+      <div
+        class:list={{
+          '@container/main min-w-0 flex-1': true,
+          'flex flex-col gap-3': true,
+          [Astro.props.class ?? '']: !!Astro.props.class,
+        }}
+      >
+        <slot />
       </div>
       {
         renderRightColumn && (
@@ -486,7 +338,7 @@ const content = markdown
     </div>
     <Footer />
     <CookieConsent client:only="svelte" transition:persist="cookie-banner" />
-    {hero?.share && <ShareModal client:load {...hero.share} />}
+    {share && <ShareModal client:load {...share} />}
     {
       enableAdBanner && (
         <CloseableContainer

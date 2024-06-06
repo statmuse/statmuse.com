@@ -844,15 +844,7 @@ const games = recentGames?.grid.rows.map((r, index) => ({
 // console.log('recentGames', JSON.stringify(recentGames, undefined, 2))
 ---
 
-<PlayerLayout
-  {bio}
-  {meta}
-  {league}
-  {query}
-  {analytics}
-  page="overview"
-  class=""
->
+<PlayerLayout {bio} {meta} {league} {query} {analytics} page="overview">
   <div class="space-y-3 gap-3 justify-center lg:columns-2">
     <Panel
       team
