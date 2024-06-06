@@ -11,12 +11,11 @@ import {
   type GameraParameter,
   type GameraTeamFranchiseOverview,
 } from '@statmuse/core/gamera'
-import { getLeagueKeywords, type Metadata } from '@lib/meta'
+import { getLeagueKeywords } from '@lib/meta'
 import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
-import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import Nav from '@components/nav.astro'
 import GridDropdown from '@components/grid-dropdown.astro'
 import type { LeagueParam } from '@lib/params'
@@ -36,6 +35,7 @@ interface Props extends ComponentProps<typeof Layout> {
     | 'roster'
     | 'splits'
     | 'history'
+  parameters?: Record<string, GameraParameter>
 }
 
 const { meta, query, page, parameters, analytics = {} } = Astro.props
@@ -61,6 +61,8 @@ const currentSeason = isTeam
   : undefined
 const parts = currentSeason?.entity.id.split('/') || []
 let yearId: string | undefined = parts[1]
+
+console.log(bio)
 
 if (isFranchise) {
   const latestSeason = await getTeamFranchiseLatestSeason({
@@ -262,6 +264,6 @@ const share = {
   }
   {parameters && <GridDropdown class="flex" {parameters} />}
   <slot />
-  <Explore {league} />
+  <Explore {league} additionalQuestions={bio.additionalQuestions} />
   {ANSWER_CARDS_ENABLED && <AnswerCards {domain} />}
 </Layout>

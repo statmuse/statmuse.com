@@ -539,6 +539,7 @@ export interface GameraPlayerProfileResponse {
 }
 
 export interface GameraTeamSeasonBio {
+  additionalQuestions?: AdditionalQuestion[]
   domain: GameraDomain
   teamId: number
   yearId: number
@@ -1337,6 +1338,7 @@ export interface GameraTeamFranchiseOverview {
   domain: GameraDomain
   teamId: number
   bio: {
+    additionalQuestions?: AdditionalQuestion[]
     domain: GameraDomain
     teamId: number
     name: string
