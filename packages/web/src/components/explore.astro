@@ -10,47 +10,45 @@ interface Props {
 const { league, additionalQuestions } = Astro.props
 ---
 
-<div class="">
+<div class="flex flex-wrap gap-3">
+  <StnVideo
+    client:only="svelte"
+    class="flex-1 min-w-full md:min-w-[401px]"
+    {league}
+  />
   {
-    additionalQuestions?.length ? (
-      <h3 class="text-xl font-bold">Explore</h3>
-    ) : null
-  }
-  <div
-    class="grid md:grid-cols-[repeat(auto-fit,_minmax(425px,_1fr))] gap-3 items-start"
-  >
-    <StnVideo client:only="svelte" class="w-full" {league} />
-    {
-      additionalQuestions ? (
-        <Panel title="Related Searches">
-          <ul class="space-y-3" data-cy-related-questions>
-            {additionalQuestions.slice(0, 3).map((question) => (
-              <li class="flex-1 min-w-[210px] flex gap-1.5 leading-snug">
-                <i class="w-5 h-5 shrink-0 explore-search-icon" />
-                <a
-                  href={createAskPath({
-                    domain: question.domain?.toLowerCase() || league || '',
-                    query: question.text,
-                  })}
-                  data-track-click="Click Try-Also Query"
-                >
-                  {question.text}
-                </a>
-              </li>
-            ))}
-            <li class="flex-1 min-w-[210px] my-1.5 sm:my-2.5 flex gap-1.5 leading-snug">
-              <i class="w-5 h-5 shrink-0 explore-flame-icon" />
-              <a href={league ? `/${league}/trending` : '/trending'}>
-                See trending
+    additionalQuestions ? (
+      <Panel
+        title="Related Searches"
+        class="flex-1 min-w-full md:min-w-[401px]"
+      >
+        <ul class="space-y-3" data-cy-related-questions>
+          {additionalQuestions.slice(0, 3).map((question) => (
+            <li class="flex-1 min-w-[210px] flex gap-1.5 leading-snug">
+              <i class="w-5 h-5 shrink-0 explore-search-icon" />
+              <a
+                href={createAskPath({
+                  domain: question.domain?.toLowerCase() || league || '',
+                  query: question.text,
+                })}
+                data-track-click="Click Try-Also Query"
+              >
+                {question.text}
               </a>
             </li>
-          </ul>
-        </Panel>
-      ) : undefined
-    }
-    <div></div>
-  </div>
+          ))}
+          <li class="flex-1 min-w-[210px] my-1.5 sm:my-2.5 flex gap-1.5 leading-snug">
+            <i class="w-5 h-5 shrink-0 explore-flame-icon" />
+            <a href={league ? `/${league}/trending` : '/trending'}>
+              See trending
+            </a>
+          </li>
+        </ul>
+      </Panel>
+    ) : undefined
+  }
 </div>
+
 <script>
   document.addEventListener('astro:page-load', () => {
     document
