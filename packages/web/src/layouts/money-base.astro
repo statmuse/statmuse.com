@@ -68,7 +68,5 @@ const { class: _, ...props } = Astro.props
       </Fragment>
     ) : null
   }
-  <div class={Astro.props.class}>
-    <slot />
-  </div>
+  <slot />
 </BaseLayout>
