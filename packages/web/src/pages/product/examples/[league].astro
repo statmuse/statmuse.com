@@ -1,4 +1,5 @@
 ---
+import Hero from '@components/hero.astro'
 import Layout from '@layouts/base.astro'
 import { Caching } from '@lib/caching'
 import { createAskPath } from '@statmuse/core/path'
@@ -1253,16 +1254,18 @@ Caching.swr(Astro)
 
 <Layout
   {meta}
-  hero={{ content: 'Example Searches' }}
   colors={{ foreground: '#fff', background: '#00c1d8' }}
-  navProps={{
-    href: () => '',
-    selected: league,
-    links,
-  }}
   enableAdBanner={false}
   renderRightColumn={false}
 >
+  <Hero
+    content="Example Searches"
+    navProps={{
+      href: () => '',
+      selected: league,
+      links,
+    }}
+  />
   {
     exampleSets.map(({ title, examples }) => (
       <div class="border-b border-[#e4e4e4] mb-6 md:mb-12">

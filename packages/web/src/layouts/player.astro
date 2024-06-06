@@ -17,6 +17,7 @@ import { ANSWER_CARDS_ENABLED } from 'src/config'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import type { NavLink } from 'src/types'
 import type { ComponentProps } from 'astro/types'
+import Hero from '@components/hero.astro'
 
 interface Props extends ComponentProps<typeof Layout> {
   bio: GameraPlayerBio
@@ -93,6 +94,11 @@ const navProps: ComponentProps<typeof Nav> = {
   selected: page,
   href: (p) => `${playerPath}/${p}`,
 }
+
+const share = {
+  type: 'profile',
+  url: shareUrl,
+}
 ---
 
 <Layout
@@ -117,21 +123,18 @@ const navProps: ComponentProps<typeof Nav> = {
   }}
   {preferredDomain}
   {query}
-  {navProps}
-  {parameters}
-  hero={{
-    content: bio.usedName,
-    imageUrl: bustImageUrl,
-    imageAlt: bustImageAlt,
-    affiliation: bio.team?.nickname || bio.team?.name,
-    affiliationUrl: teamUrl,
-    share: {
-      type: 'profile',
-      url: shareUrl,
-    },
-  }}
-  class={Astro.props.class}
+  {share}
 >
+  <Hero
+    content={bio.usedName}
+    imageUrl={bustImageUrl}
+    imageAlt={bustImageAlt}
+    affiliation={bio.team?.nickname || bio.team?.name}
+    affiliationUrl={teamUrl}
+    {navProps}
+    {parameters}
+    {share}
+  />
   <div
     class="md:hidden h-[50px] md:h-[90px] mb-1.5 flex justify-center items-center"
   >

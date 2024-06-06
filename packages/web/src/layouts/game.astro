@@ -15,6 +15,7 @@ import { ANSWER_CARDS_ENABLED } from 'src/config'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import { formatDate } from '@statmuse/core/time'
 import type { ComponentProps } from 'astro/types'
+import Hero from '@components/hero.astro'
 
 interface Props extends ComponentProps<typeof Layout> {
   data: GameraBoxScore
@@ -68,6 +69,10 @@ const meta = {
     }),
   },
 }
+
+const share = {
+  url: Astro.url.href,
+}
 ---
 
 <Layout
@@ -79,16 +84,17 @@ const meta = {
     page_type: 'game',
   }}
   {preferredDomain}
-  hero={{
-    content: answer,
-    html: true,
-    imageUrl: subject.imageUrl,
-    imageAlt: subject.entities
-      ? subject.entities[0].display
-      : `${preferredDomain} image`,
-    share: { url: Astro.url.href },
-  }}
+  {share}
 >
+  <Hero
+    html
+    content={answer}
+    imageUrl={subject.imageUrl}
+    imageAlt={subject.entities
+      ? subject.entities[0].display
+      : `${preferredDomain} image`}
+    {share}
+  />
   <div
     class="md:hidden h-[50px] md:h-[90px] mb-1.5 flex justify-center items-center"
   >

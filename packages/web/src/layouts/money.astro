@@ -8,6 +8,7 @@ import { cdnBaseUrl } from '@statmuse/core/gamera'
 import type { ComponentProps } from 'astro/types'
 import type Nav from '@components/nav.astro'
 import type { NavLink } from 'src/types'
+import Hero from '@components/hero.astro'
 
 interface Props extends ComponentProps<typeof MoneyBaseLayout> {
   profile: AssetProfile
@@ -67,6 +68,13 @@ const navProps: ComponentProps<typeof Nav> = {
   selected: page,
   href: (p) => `${assetPath}/${p}`,
 }
+
+const share = {
+  type: 'profile',
+  url: meta?.canonical?.url
+    ? Astro.url.origin + meta.canonical.url
+    : Astro.url.href,
+}
 ---
 
 <MoneyBaseLayout
@@ -81,24 +89,21 @@ const navProps: ComponentProps<typeof Nav> = {
     ...analytics,
   }}
   {query}
-  hero={{
-    content: profile.asset.canonicalName,
-    imageUrl: bustImageUrl,
-    imageAlt: bustImageAlt,
-    share: {
-      type: 'profile',
-      url: meta?.canonical?.url
-        ? Astro.url.origin + meta.canonical.url
-        : Astro.url.href,
-    },
-  }}
-  {navProps}
+  {share}
 >
-  <div slot="hero">
-    <div class="mt-6" style="height: 94px; overflow: hidden;">
-      <TradingviewTicker {profile} />
-    </div>
-  </div>
+  <Hero
+    content={profile.asset.canonicalName}
+    imageUrl={bustImageUrl}
+    imageAlt={bustImageAlt}
+    {navProps}
+    {share}
+  >
+    <!-- <div slot="hero">
+      <div class="mt-6" style="height: 94px; overflow: hidden;">
+        <TradingviewTicker {profile} />
+      </div>
+    </div> -->
+  </Hero>
   <slot />
   <Explore league="money" />
 </MoneyBaseLayout>

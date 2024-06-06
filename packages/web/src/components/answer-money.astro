@@ -10,6 +10,7 @@ import { title } from '@lib/meta'
 import type { KanedamaResponse } from '@statmuse/core/kanedama'
 import * as Link from '@statmuse/core/link'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import Hero from '@components/hero.astro'
 
 interface Props {
   answer: KanedamaResponse
@@ -62,6 +63,12 @@ const meta =
         },
       }
     : {}
+
+const share = {
+  shortCode: code?.short_code,
+  query,
+  domain: 'money',
+}
 ---
 
 <MoneyBaseLayout
@@ -76,16 +83,9 @@ const meta =
   }}
   {query}
   {conversationToken}
-  hero={heroProps}
+  {share}
 >
-  <!-- { -->
-  <!--   heroProps ? ( -->
-  <!--     <Hero -->
-  <!--       {...heroProps} -->
-  <!--       shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`} -->
-  <!--     /> -->
-  <!--   ) : null -->
-  <!-- } -->
+  {heroProps ? <Hero {...heroProps} {share} /> : null}
   <Visuals response={answer} {conversationToken} />
   {
     answer.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (

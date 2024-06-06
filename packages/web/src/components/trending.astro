@@ -1,17 +1,15 @@
 ---
 import Layout from '@layouts/base.astro'
-import Header from '@components/header.astro'
 import Select from '@components/select.svelte'
-import Container from '@components/container.astro'
 import TrendingLists from '@components/trending-lists.astro'
 import TrendingMore from '@components/trending-more.astro'
-import Nav from '@components/nav.astro'
 import Back from '@components/icons/back.astro'
 import type { NavLink, TrendingListItem } from 'src/types'
 import tailwindConfig from '../../tailwind.config.ts'
 import type { Category } from 'src/types'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { getTrendingData } from '@lib/trending'
+import Hero from '@components/hero.astro'
 
 const colors = tailwindConfig.theme.extend.colors
 
@@ -87,30 +85,31 @@ const backUrl =
   }}
   meta={{ title }}
   colors={{ foreground: colors.gray['8'], background: colors.teal }}
-  navProps={{
-    links,
-    selected,
-    href: (l) => `/${l}/trending${categoryPath}${Astro.url.search}`,
-  }}
   money={selected === 'money'}
   preferredDomain={selected}
-  hero={{
-    content: title,
-  }}
   renderRightColumn={false}
 >
-  <Fragment slot="hero">
-    {
-      category ? (
-        <a
-          href={backUrl}
-          class="absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-8 cursor-pointer rounded-full md:p-3 hover:bg-gray-8 hover:text-teal"
-        >
-          <Back class="w-5 aspect-square" />
-        </a>
-      ) : null
-    }
-  </Fragment>
+  <Hero
+    content={title}
+    navProps={{
+      links,
+      selected,
+      href: (l) => `/${l}/trending${categoryPath}${Astro.url.search}`,
+    }}
+  >
+    <Fragment slot="hero">
+      {
+        category ? (
+          <a
+            href={backUrl}
+            class="@lg/main:hidden absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-8 cursor-pointer rounded-full md:p-3 hover:bg-gray-8 hover:text-teal"
+          >
+            <Back class="w-5 aspect-square" />
+          </a>
+        ) : null
+      }
+    </Fragment>
+  </Hero>
   <div
     class="grid grid-cols-2 gap-3 md:grid-cols-none md:flex md:justify-center"
   >

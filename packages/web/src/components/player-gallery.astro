@@ -5,6 +5,7 @@ import type { PlayerGalleryItem } from '@lib/player'
 import { type GameraDomain, getUrlForEntity } from '@statmuse/core/gamera'
 import StnVideo from '@components/stn-video.svelte'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import Hero from '@components/hero.astro'
 
 interface Props {
   domain?: GameraDomain
@@ -61,22 +62,24 @@ const meta = {
         : 'sports',
     page_type: 'player',
   }}
-  hero={{ content: 'Player Gallery' }}
-  navProps={{
-    href: () => '',
-    selected: domain,
-    links: [
-      { text: 'All', param: 'All', href: '/players' },
-      { text: 'NBA', param: 'NBA', href: '/nba/players' },
-      { text: 'NFL', param: 'NFL', href: '/nfl/players' },
-      { text: 'NHL', param: 'NHL', href: '/nhl/players' },
-      { text: 'MLB', param: 'MLB', href: '/mlb/players' },
-      { text: 'PGA', param: 'PGA', href: '/pga/players' },
-      { text: 'Premier League', param: 'EPL', href: '/fc/players' },
-    ],
-  }}
   renderRightColumn={false}
 >
+  <Hero
+    content="Player Gallery"
+    navProps={{
+      href: () => '',
+      selected: domain,
+      links: [
+        { text: 'All', param: 'All', href: '/players' },
+        { text: 'NBA', param: 'NBA', href: '/nba/players' },
+        { text: 'NFL', param: 'NFL', href: '/nfl/players' },
+        { text: 'NHL', param: 'NHL', href: '/nhl/players' },
+        { text: 'MLB', param: 'MLB', href: '/mlb/players' },
+        { text: 'PGA', param: 'PGA', href: '/pga/players' },
+        { text: 'Premier League', param: 'EPL', href: '/fc/players' },
+      ],
+    }}
+  />
   <div>
     <StnVideo
       client:only="svelte"

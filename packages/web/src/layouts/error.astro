@@ -2,6 +2,7 @@
 import Layout from '@layouts/base.astro'
 import sample from 'lodash/sample'
 import type { ComponentProps } from 'astro/types'
+import Hero from '@components/hero.astro'
 
 interface Props extends ComponentProps<typeof Layout> {
   status?: number
@@ -52,17 +53,18 @@ if (render) {
       {enableAdBanner}
       {money}
       {query}
-      hero={{
-        content: message,
-        imageUrl: image?.url,
-        imageAlt: image?.alt,
-        html: true,
-      }}
       analytics={{
         ...analytics,
         page_type: 'error',
       }}
-    />
+    >
+      <Hero
+        content={message}
+        imageUrl={image?.url}
+        imageAlt={image?.alt}
+        html
+      />
+    </Layout>
   ) : (
     <slot />
   )

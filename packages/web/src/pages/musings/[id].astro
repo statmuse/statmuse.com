@@ -14,6 +14,7 @@ import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
 import type { LeagueParam } from '@lib/params'
 import type { GameraDomain } from '@statmuse/core/gamera'
+import Hero from '@components/hero.astro'
 
 const id = Astro.params.id as string
 const musing = await getMusingByIdOrFriendlyId(id).executeTakeFirst()
@@ -58,6 +59,13 @@ const meta = {
 
 const contentReference = musing.answer.visual.contentReference
 
+const share = {
+  type: 'musing',
+  domain: musing.domain.toLowerCase(),
+  shortCode: musing.short_code,
+  query,
+}
+
 Caching.swr(Astro)
 ---
 
@@ -73,24 +81,9 @@ Caching.swr(Astro)
   {query}
   {conversationToken}
   {preferredDomain}
-  hero={{
-    ...heroProps,
-    share: {
-      type: 'musing',
-      domain: musing.domain.toLowerCase(),
-      shortCode: musing.short_code,
-      query,
-    },
-  }}
+  {share}
 >
-  <!-- { -->
-  <!--   heroProps ? ( -->
-  <!--     <Hero -->
-  <!--       {...heroProps} -->
-  <!--       shareUrl={`${process.env.SHORT_LINK_URL}e/${musing.short_code}`} -->
-  <!--     /> -->
-  <!--   ) : null -->
-  <!-- } -->
+  {heroProps ? <Hero {...heroProps} {share} /> : null}
   <Visuals response={musing.answer} />
   <Explore
     league={musing.domain === 'EPL' ? 'fc' : preferredDomain}

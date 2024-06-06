@@ -11,6 +11,7 @@ import * as Session from '@lib/session'
 import { Caching } from '@lib/caching'
 import { Config } from 'sst/node/config'
 import contacts from '@sendgrid/client'
+import Hero from '@components/hero.astro'
 
 contacts.setApiKey(Config.SENDGRID_API_KEY)
 
@@ -93,25 +94,27 @@ const manageAccountUrl =
 <Layout
   {meta}
   colors={{ foreground: '#fff', background: '#00c1d8' }}
-  hero={{ content: 'Manage your account.' }}
-  navProps={{
-    href: () => '',
-    selected: 'settings',
-    links: [
-      {
-        text: 'History',
-        param: 'history',
-        href: '/account/history',
-      },
-      {
-        text: 'Settings',
-        param: 'settings',
-        href: '/account/settings',
-      },
-    ],
-  }}
   renderRightColumn={false}
 >
+  <Hero
+    content="Manage your account."
+    navProps={{
+      href: () => '',
+      selected: 'history',
+      links: [
+        {
+          text: 'History',
+          param: 'history',
+          href: '/account/history',
+        },
+        {
+          text: 'Settings',
+          param: 'settings',
+          href: '/account/settings',
+        },
+      ],
+    }}
+  />
   <main>
     <div class="divide-y divide-black/5">
       <div

@@ -16,6 +16,7 @@ import * as Link from '@statmuse/core/link'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
 import type { LeagueParam } from '@lib/params'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import Hero from '@components/hero.astro'
 
 interface Props {
   answer: GameraDefaultResponse
@@ -86,6 +87,13 @@ const league = domain === 'EPL' ? 'fc' : (preferredDomain as LeagueParam)
 const [questionTeamId] = contentReference?.questionTags?.teamIds ?? []
 const [answerTeamId] = contentReference?.answerTags?.teamIds ?? []
 const teamId = questionTeamId ?? answerTeamId
+
+const share = {
+  type: 'ask',
+  query,
+  domain: preferredDomain,
+  shortCode: code?.short_code,
+}
 ---
 
 <Layout
@@ -104,16 +112,9 @@ const teamId = questionTeamId ?? answerTeamId
   {query}
   {conversationToken}
   {preferredDomain}
-  hero={{
-    ...heroProps,
-    share: {
-      type: 'ask',
-      query,
-      domain: preferredDomain,
-      shortCode: code?.short_code,
-    },
-  }}
+  {share}
 >
+  <Hero {...heroProps} {share} />
   <div
     class="md:hidden h-[50px] md:h-[90px] mb-1.5 flex justify-center items-center"
   >

@@ -16,6 +16,7 @@ import {
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import tailwindConfig from '../../tailwind.config.ts'
 import type { NavLink } from 'src/types'
+import Hero from '@components/hero.astro'
 
 const colors = tailwindConfig.theme.extend.colors
 
@@ -89,16 +90,17 @@ const meta = {
   colors={{ foreground: colors.gray['8'], background: colors.teal }}
   money={selected === 'money'}
   preferredDomain={selected}
-  hero={{
-    content: title,
-  }}
-  navProps={{
-    links,
-    selected,
-    href: (l) => `/${l}/questions${Astro.url.search}`,
-  }}
   renderRightColumn={false}
 >
+  <Hero
+    content={title}
+    navProps={{
+      links,
+      selected,
+      href: (l) => `/${l}/questions${Astro.url.search}`,
+    }}
+  />
+
   <TrendingMore {items} />
 
   <ul class="text-center my-10 space-x-2">

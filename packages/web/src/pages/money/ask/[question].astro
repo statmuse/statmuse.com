@@ -1,7 +1,6 @@
 ---
 import MoneyBaseLayout from '@layouts/money-base.astro'
 import Error from '@layouts/error.astro'
-import Header from '@components/header.astro'
 import Footer from '@components/footer.astro'
 import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals-money.astro'
@@ -76,6 +75,15 @@ const meta =
       }
     : {}
 
+const share = {
+  type: 'ask',
+  shortCode: code?.short_code,
+  query,
+  domain: 'money',
+}
+
+console.log('share: ', share)
+
 Caching.swr(Astro)
 ---
 
@@ -105,17 +113,9 @@ Caching.swr(Astro)
     }}
     {query}
     {conversationToken}
-    hero={heroProps}
+    {share}
   >
-    <!-- { -->
-    <!--   heroProps ? ( -->
-    <!--     <Hero -->
-    <!--       {...heroProps} -->
-    <!--       class="-mt-3" -->
-    <!--       shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`} -->
-    <!--     /> -->
-    <!--   ) : null -->
-    <!-- } -->
+    {heroProps ? <Hero {...heroProps} {share} /> : null}
     <Visuals {response} {conversationToken} />
     <Explore
       league="money"

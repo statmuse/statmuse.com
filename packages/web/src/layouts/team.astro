@@ -24,6 +24,7 @@ import Select from '@components/select.svelte'
 import type { NavLink } from 'src/types'
 import type { ComponentProps } from 'astro/types'
 import { getTeamFranchiseLatestSeason } from '@lib/team'
+import Hero from '@components/hero.astro'
 
 interface Props extends ComponentProps<typeof Layout> {
   bio: GameraTeamSeasonBio | GameraTeamFranchiseOverview
@@ -188,6 +189,11 @@ const navProps: ComponentProps<typeof Nav> = {
   selected: page,
   href: (p) => `${teamPath}/${p}`,
 }
+
+const share = {
+  type: 'profile',
+  url: shareUrl,
+}
 ---
 
 <Layout
@@ -211,44 +217,43 @@ const navProps: ComponentProps<typeof Nav> = {
     disposition: isTeam ? bio.disposition : Astro.props.bio.disposition,
     ...analytics,
   }}
-  hero={{
-    content: bio.name,
-    url: teamFranchiseUrl
+  {share}
+>
+  <Hero
+    content={bio.name}
+    url={teamFranchiseUrl
       ? {
           href: teamFranchiseUrl,
         }
-      : undefined,
-    share: {
-      type: 'profile',
-      url: shareUrl,
-    },
-  }}
-  {navProps}
->
-  <Fragment slot="hero">
-    <TeamRepresentatives
-      class:list={{
-        'h-32': true,
-        'mt-2 -mb-2 md:mt-0 @lg/main:-mb-3 @lg/main:-ml-10 @lg/main:mr-3': true,
-        'self-center @lg/main:self-end select-none': true,
-        'object-contain object-bottom': true,
-      }}
-      representatives={isTeam
-        ? bio.teamRepresentatives
-        : bio.franchiseRepresentatives}
-      fallback={bio.logoImageUrl || getDefaultTeamLogoUrl(domain)}
-      alt={`Logo for the${isTeam ? ' ' + bio.season.name : ''} ${bio.name}`}
-    />
-    {
-      isTeam ? (
-        <Select
-          client:load
-          class="hidden @2xl/main:flex w-32 absolute right-3 bottom-3"
-          {...selectProps}
-        />
-      ) : null
-    }
-  </Fragment>
+      : undefined}
+    {navProps}
+    {share}
+  >
+    <Fragment slot="hero">
+      <TeamRepresentatives
+        class:list={{
+          'h-32': true,
+          'mt-2 -mb-2 md:mt-0 @lg/main:-mb-3 @lg/main:-ml-10 @lg/main:mr-3': true,
+          'self-center @lg/main:self-end select-none': true,
+          'object-contain object-bottom': true,
+        }}
+        representatives={isTeam
+          ? bio.teamRepresentatives
+          : bio.franchiseRepresentatives}
+        fallback={bio.logoImageUrl || getDefaultTeamLogoUrl(domain)}
+        alt={`Logo for the${isTeam ? ' ' + bio.season.name : ''} ${bio.name}`}
+      />
+      {
+        isTeam ? (
+          <Select
+            client:load
+            class="hidden @2xl/main:flex w-32 absolute right-3 bottom-3"
+            {...selectProps}
+          />
+        ) : null
+      }
+    </Fragment>
+  </Hero>
   <div
     class="md:hidden h-[50px] md:h-[90px] mb-1.5 flex justify-center items-center"
   >
