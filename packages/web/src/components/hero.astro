@@ -45,9 +45,7 @@ const nlg = markdown
   class:list={{
     'rounded-none border-0 md:rounded-2xl md:border': true,
     '-mx-3 pb-2 pt-4 px-3 @lg/main:py-3 @lg/main:px-5 md:mx-0 whitespace-nowrap': true,
-    'flex flex-col-reverse gap-3 @lg/main:flex-row': !markdownOrHtml,
-    'flex flex-col-reverse gap-3 @lg/main:flex-row-reverse justify-between':
-      markdownOrHtml,
+    'flex flex-col-reverse gap-3 @lg/main:flex-row': true,
     [Astro.props.class ?? '']: !!Astro.props.class,
   }}
 >
