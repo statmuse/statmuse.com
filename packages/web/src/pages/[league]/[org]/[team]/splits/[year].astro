@@ -1,0 +1,67 @@
+---
+import TeamLayout from '@layouts/team.astro'
+import Grid from '@components/grid.svelte'
+import { getUrlForEntity } from '@statmuse/core/gamera'
+import { getTeamSeasonBio, getTeamSeasonSplits } from '@lib/team'
+import { getLeagueKeywords } from '@lib/meta'
+import { Caching } from '@lib/caching'
+import { NOT_FOUND_404 } from '@lib/response'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
+
+const league = Astro.params.league as LeagueParam
+const team = Astro.params.team
+const year = Astro.params.year
+const org = Astro.params.org
+if (!team || !league || !year || !org) return NOT_FOUND_404
+if (org !== 'team' && org !== 'club') return NOT_FOUND_404
+const schedule = league === 'fc' ? 'fixtures' : 'schedule'
+
+const params = Astro.url.searchParams
+const domain = leagueToDomain(league)
+const bio = await getTeamSeasonBio({ context: Astro, domain, team, year })
+const splits = await getTeamSeasonSplits({
+  context: Astro,
+  domain,
+  team,
+  year,
+  params,
+})
+if (!bio || !splits) return NOT_FOUND_404
+
+if (!bio.hasStats) {
+  return Astro.redirect(`/${league}/${org}/${team}/${schedule}/${year}`)
+}
+
+const title = `${bio.name} ${year} Splits`
+const description = `The ${year} ${bio.name} splits for the ${domain} regular season and playoffs`
+const keywords = `${getLeagueKeywords(domain)} ${year} ${
+  bio.name
+} team splits stats statistics`
+const canonical = {
+  url:
+    `${getUrlForEntity({
+      type: 'teamSeason',
+      domain,
+      id: bio.teamId.toString(),
+      display: bio.name,
+    })}/splits/${year}` + Astro.url.search,
+  rewrite: true,
+}
+const meta = { title, description, keywords, canonical }
+
+Caching.swr(Astro)
+---
+
+<TeamLayout {bio} {meta} page="splits" parameters={splits?.parameters}>
+  {
+    splits?.grids &&
+      splits.grids.map((data) => (
+        <Grid
+          client:load
+          title={data.name}
+          {data}
+          columnStyles={{ SPLIT: 'w-24 min-w-[96px] text-left' }}
+        />
+      ))
+  }
+</TeamLayout>

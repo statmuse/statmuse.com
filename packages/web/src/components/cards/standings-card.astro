@@ -1,0 +1,291 @@
+---
+import type { ComponentProps } from 'astro/types'
+import Grid from '@components/grid.svelte'
+import type Panel from '@components/panel.astro'
+import type {
+  StandingsNba,
+  GameraGrid,
+  StandingsNfl,
+  StandingsNhl,
+  StandingsMlb,
+  StandingsEpl,
+  StandingsTeam,
+} from '@statmuse/core/gamera'
+import { groupBy } from 'lodash-es'
+
+type PanelProps = ComponentProps<typeof Panel>
+
+export type Props = {
+  teams: StandingsTeam[]
+  limit?: number
+} & PanelProps &
+  (
+    | {
+        domain: 'NBA'
+        group?: keyof StandingsNba['rank']
+      }
+    | {
+        domain: 'MLB'
+        group?: keyof StandingsMlb['rank']
+      }
+    | {
+        domain: 'NFL'
+        group?: keyof StandingsNfl['rank']
+      }
+    | {
+        domain: 'NHL'
+        group?: keyof StandingsNhl['rank']
+      }
+    | {
+        domain: 'EPL'
+        group?: keyof StandingsEpl['rank']
+      }
+  )
+
+export type StandingsDomain = Props['domain']
+export type StandingsGroup = Props['group']
+
+const { limit } = Astro.props
+const props = Astro.props
+
+const getColumns = (name?: string) => {
+  let columns = [
+    {
+      rowItemKey: 'rank',
+      title: '',
+      type: 'number',
+    },
+    {
+      rowItemKey: 'name',
+      title: name ?? 'Team',
+      type: 'string',
+    },
+    {
+      rowItemKey: 'wins',
+      title: 'W',
+      type: 'number',
+    },
+    {
+      rowItemKey: 'losses',
+      title: 'L',
+      type: 'number',
+    },
+  ]
+
+  if (props.domain === 'NBA' || props.domain === 'MLB') {
+    columns = [
+      ...columns,
+      {
+        rowItemKey: 'winPercent',
+        title: 'PCT',
+        type: 'number',
+      },
+      {
+        rowItemKey: 'gamesBehind',
+        title: 'GB',
+        type: 'number',
+      },
+    ]
+  }
+
+  if (props.domain === 'NFL') {
+    columns = [
+      ...columns,
+      {
+        rowItemKey: 'ties',
+        title: 'T',
+        type: 'number',
+      },
+      {
+        rowItemKey: 'winPercent',
+        title: 'PCT',
+        type: 'number',
+      },
+    ]
+  }
+
+  if (props.domain === 'NHL') {
+    columns = [
+      ...columns,
+      {
+        rowItemKey: 'overtimeLosses',
+        title: 'OTL',
+        type: 'number',
+      },
+      {
+        rowItemKey: 'points',
+        title: 'PTS',
+        type: 'number',
+      },
+      {
+        rowItemKey: 'goalDifferential',
+        title: 'DIFF',
+        type: 'number',
+      },
+    ]
+  }
+
+  if (props.domain === 'EPL') {
+    const [first, second, third, ...rest] = columns
+    columns = [
+      first,
+      second,
+      third,
+      {
+        rowItemKey: 'draws',
+        title: 'D',
+        type: 'number',
+      },
+      ...rest,
+      {
+        rowItemKey: 'goalDifferential',
+        title: 'GD',
+        type: 'number',
+      },
+      {
+        rowItemKey: 'points',
+        title: 'PTS',
+        type: 'number',
+      },
+    ]
+  }
+
+  return columns
+}
+
+const getRow = (
+  team: (typeof props)['teams'][number],
+): GameraGrid['rows'][number] & {
+  rank: { display: string; value: number }
+} => {
+  if (props.domain === 'NBA') {
+    const nbaTeam = team as StandingsNba
+    return {
+      rank: {
+        display: nbaTeam.rank[props.group ?? 'conference'] + '',
+        value: nbaTeam.rank[props.group ?? 'conference'],
+      },
+      name: {
+        display: nbaTeam.team.nickname,
+        value: nbaTeam.team.nickname,
+        imageUrl: nbaTeam.team.logoImageUrl,
+        entity: nbaTeam.team.entity,
+      },
+      wins: nbaTeam.stats.wins,
+      losses: nbaTeam.stats.losses,
+      winPercent: nbaTeam.stats.winPercent,
+      gamesBehind: nbaTeam.stats.gamesBehind[props.group ?? 'conference'],
+    }
+  }
+
+  if (props.domain === 'MLB') {
+    const mlbTeam = team as StandingsMlb
+    return {
+      rank: {
+        display: mlbTeam.rank[props.group ?? 'league'] + '',
+        value: mlbTeam.rank[props.group ?? 'league'],
+      },
+      name: {
+        display: mlbTeam.team.nickname,
+        value: mlbTeam.team.nickname,
+        imageUrl: mlbTeam.team.logoImageUrl,
+        entity: mlbTeam.team.entity,
+      },
+      wins: mlbTeam.stats.wins,
+      losses: mlbTeam.stats.losses,
+      winPercent: mlbTeam.stats.winPercent,
+      gamesBehind: mlbTeam.stats.gamesBehind[props.group ?? 'league'],
+    }
+  }
+
+  if (props.domain === 'NFL') {
+    const nflTeam = team as StandingsNfl
+    return {
+      rank: {
+        display: nflTeam.rank[props.group ?? 'conference'] + '',
+        value: nflTeam.rank[props.group ?? 'conference'],
+      },
+      name: {
+        display: nflTeam.team.nickname,
+        value: nflTeam.team.nickname,
+        imageUrl: nflTeam.team.logoImageUrl,
+        entity: nflTeam.team.entity,
+      },
+      wins: nflTeam.stats.wins,
+      losses: nflTeam.stats.losses,
+      ties: nflTeam.stats.ties,
+      winPercent: nflTeam.stats.winPercent,
+    }
+  }
+
+  if (props.domain === 'NHL') {
+    const nhlTeam = team as StandingsNhl
+    return {
+      rank: {
+        display: nhlTeam.rank[props.group ?? 'conference'] + '',
+        value: nhlTeam.rank[props.group ?? 'conference'],
+      },
+      name: {
+        display: nhlTeam.team.nickname,
+        value: nhlTeam.team.nickname,
+        imageUrl: nhlTeam.team.logoImageUrl,
+        entity: nhlTeam.team.entity,
+      },
+      wins: nhlTeam.stats.wins,
+      losses: nhlTeam.stats.losses,
+      points: nhlTeam.stats.points,
+      goalDifferential: nhlTeam.stats.goalDifferential,
+      overtimeLosses: nhlTeam.stats.overtimeLosses,
+    }
+  }
+
+  if (props.domain === 'EPL') {
+    const eplTeam = team as StandingsEpl
+    return {
+      rank: {
+        display: eplTeam.rank.league + '',
+        value: eplTeam.rank.league,
+      },
+      name: {
+        display: eplTeam.team.nickname,
+        value: eplTeam.team.nickname,
+        imageUrl: eplTeam.team.logoImageUrl,
+        entity: eplTeam.team.entity,
+      },
+      wins: eplTeam.stats.wins,
+      losses: eplTeam.stats.losses,
+      points: eplTeam.stats.points,
+      draws: eplTeam.stats.draws,
+      goalDifferential: eplTeam.stats.goalDifferential,
+    }
+  }
+
+  throw new Error('Invalid domain')
+}
+
+const mapToGrid = (teams: Props['teams'], conference?: string): GameraGrid => {
+  const columns = getColumns(conference)
+
+  const rows = teams
+    .map((team) => getRow(team))
+    .sort((a, b) => a.rank.value - b.rank.value)
+    .slice(0, limit)
+
+  return { columns, rows }
+}
+
+const firstTeam = props.teams[0]
+
+const grids = props.group
+  ? Object.entries(groupBy(props.teams, `${props.group}.name`)).map(
+      ([name, teams]) => mapToGrid(teams as Props['teams'], name),
+    )
+  : [
+      mapToGrid(
+        props.teams,
+        firstTeam.conference?.name ?? firstTeam.league?.name,
+      ),
+    ]
+---
+
+<Grid {...props} data={grids} columnStyles={{ rank: 'w-2' }} />

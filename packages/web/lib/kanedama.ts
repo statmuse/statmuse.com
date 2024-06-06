@@ -25,6 +25,9 @@ import update from 'lodash/fp/update'
 import type { SeriesOptionsType, SeriesTooltipOptionsObject } from 'highcharts'
 import { getGameraHeaders } from './gamera'
 import type { Context } from './session'
+import { clarify } from '@lib/bedrock'
+import { createAskPath } from '@statmuse/core/path'
+import { translate, translateObject } from '@lib/translate'
 
 export const kanedamaApiUrl = import.meta.env.KANEDAMA_API_URL
 
@@ -91,13 +94,36 @@ export type RenderTarget = {
   supportsCandlestick: boolean
 }
 
+export async function request<T>(
+  context: Context,
+  path: string,
+  params?: Record<string, string | number> | URLSearchParams,
+): Promise<T | undefined> {
+  const requestUrl = `${kanedamaApiUrl}${path}?${new URLSearchParams(
+    params as Record<string, string>,
+  ).toString()}`
+
+  try {
+    const response = await fetch(requestUrl, {
+      headers: getGameraHeaders(context),
+    })
+    return response.json() as Promise<T>
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
+}
+
+type AskResponse = { response?: KanedamaResponse } | { redirect: string }
+
 export async function ask(
   options: {
     query: string
     conversationToken?: string
+    corrected?: boolean
   },
   context: Context,
-) {
+): Promise<AskResponse> {
   const query = options.query
 
   const params: Record<string, string> = {
@@ -108,18 +134,72 @@ export async function ask(
     params['conversationToken'] = options.conversationToken
   }
 
-  const requestUrl = `${kanedamaApiUrl}answer?${new URLSearchParams(
-    params,
-  ).toString()}`
+  let response = await request<KanedamaResponse>(context, 'answer', params)
 
-  try {
-    const response = await fetch(requestUrl, {
-      headers: getGameraHeaders(context),
-    })
-    return response.json() as Promise<KanedamaResponse>
-  } catch (error) {
-    console.error(error)
+  if (
+    !options.corrected && // Don't correct if it's already been corrected
+    response?.type === 'error' &&
+    response?.nlg?.text?.answer[0].text === "I didn't understand your question."
+  ) {
+    try {
+      const correction = await clarify(query)
+      console.log('correction', correction)
+
+      // if (correction.domain === 'unknown') return { response }
+      // if (correction.domain !== 'money') {
+      //   const url = createAskPath(correction)
+      //   return { redirect: url }
+      // }
+
+      // if (correction.lang !== 'en') {
+      //   const englishQuery = await translate({
+      //     text: query,
+      //     from: correction.lang,
+      //     to: 'en',
+      //   })
+      //
+      //   if (!englishQuery.text) return { response }
+      //
+      //   const englishResponse = await ask(
+      //     {
+      //       query: englishQuery.text,
+      //       corrected: true,
+      //     },
+      //     context,
+      //   )
+      //   if ('redirect' in englishResponse) return englishResponse
+      //
+      //   let kanedamaResponse = englishResponse.response
+      //   if (!kanedamaResponse) return { response }
+      //
+      //   kanedamaResponse = await translateObject(
+      //     kanedamaResponse,
+      //     'en',
+      //     correction.lang,
+      //     [
+      //       'visual.summaryTokens.*.text',
+      //       'nlg.text.answer.*.text',
+      //       'visual.additionalQuestions.*.text',
+      //     ],
+      //   )
+      //   return { response: kanedamaResponse }
+      // }
+
+      return ask(
+        {
+          ...options,
+          query: correction.query,
+          corrected: true,
+        },
+        context,
+      )
+    } catch (error) {
+      console.error('Error using Bedrock to cleanup input', error)
+      return { response }
+    }
   }
+
+  return { response }
 }
 
 export async function lookup(symbol: string, context: Context) {
@@ -306,5 +386,7 @@ export function getHeroProps(props: {
     content,
     imageUrl,
     imageAlt,
+    markdown: false,
+    html: true,
   }
 }

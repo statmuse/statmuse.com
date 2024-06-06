@@ -1,57 +1,36 @@
 ---
 import type { GameraParameter } from '@statmuse/core/gamera'
+import Select from '@components/select.svelte'
 
 interface Props {
   parameters: Record<string, GameraParameter>
+  class?: string | null
 }
 
 const { parameters } = Astro.props
+console.log(JSON.stringify(parameters, null, 2))
 ---
 
-<div class="space-x-3">
+<div
+  class:list={{
+    'flex gap-3 justify-end': true,
+    [Astro.props.class ?? '']: !!Astro.props.class,
+  }}
+>
   {
     Object.entries(parameters).map(([key, value]) => (
-      <div class="inline-block relative cursor-pointer" data-cy="select">
-        <div
-          class="w-full bg-team-primary absolute bottom-0"
-          style="height: 1px;"
-        />
-        <select
-          name={key}
-          autocomplete="off"
-          class="grid-filter appearance-none font-semibold text-team-primary bg-white pr-3 cursor-pointer outline-none"
-        >
-          {value.values.map((v) => (
-            <option
-              value={v.id}
-              selected={
-                v.id.toString() === parameters[key].selectedValueId.toString()
-                  ? 'selected'
-                  : undefined
-              }
-            >
-              {v.display}
-            </option>
-          ))}
-        </select>
-        <div
-          class="w-0 h-0 border-x-[5px] border-x-transparent border-t-[5px] border-t-team-primary absolute top-1/2 right-0"
-          style="transform: translateY(-35%);"
-        />
-      </div>
+      <Select
+        client:load
+        class="w-full"
+        hideLabel
+        label={key}
+        param={key}
+        initial={value.selectedValueId.toString()}
+        options={value.values.map((v) => ({
+          label: v.display,
+          value: v.id.toString(),
+        }))}
+      />
     ))
   }
 </div>
-<script>
-  document.addEventListener('astro:page-load', () => {
-    const selects = document.querySelectorAll('select.grid-filter')
-    selects.forEach((select) => {
-      select.addEventListener('change', (event) => {
-        const select = event.target as HTMLSelectElement
-        const url = new URL(window.location.href)
-        url.searchParams.set(select.name, select.value)
-        window.location.href = url.toString()
-      })
-    })
-  })
-</script>

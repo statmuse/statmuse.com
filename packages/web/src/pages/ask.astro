@@ -1,20 +1,27 @@
 ---
+import Layout from '@layouts/base.astro'
 import { ask } from '@lib/gamera'
 import { upsert } from '@statmuse/core/ask'
 import * as Enforcer from '@lib/enforcer'
 import { NOT_FOUND_404 } from '@lib/response'
-import Answer from '@components/answer.astro'
+import { createSlug } from '@statmuse/core/path'
+import { tokensToHtml } from '@statmuse/core/gamera'
+import Panel from '@components/panel.astro'
 
 let query: string | null | undefined = Astro.url.searchParams.get('q')
 const league = Astro.url.searchParams.get('d')
 let preferredDomain: string | undefined
 let conversationToken: string | undefined
+let queryClarificationFor: string | undefined
 
 if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData()
   preferredDomain = data.get('question[preferred_domain]')?.toString()
   query = data.get('question[query]')?.toString()
   conversationToken = data.get('question[conversation_token]')?.toString()
+  queryClarificationFor = data
+    .get('question[query_clarification_for]')
+    ?.toString()
 
   const canQuery = await Enforcer.canQuery(Astro.locals)
   if (!canQuery) {
@@ -25,10 +32,12 @@ if (Astro.request.method === 'POST') {
 if (!query) return Astro.redirect('/')
 
 console.log('query input: ', query)
-const response = await ask(
+const askResponse = await ask(
   { query, preferredDomain, conversationToken, ...(league ? { league } : {}) },
   Astro,
 )
+if ('redirect' in askResponse) return Astro.redirect(askResponse.redirect)
+const response = askResponse.response
 if (!response) return NOT_FOUND_404
 
 if (Astro.request.method === 'POST') {
@@ -39,6 +48,70 @@ if (Astro.request.method === 'POST') {
     userId: Astro.locals.user?.id,
   })
 }
+
+const domain =
+  response?.visual?.domain === 'EPL'
+    ? 'fc'
+    : response?.visual?.domain?.toLowerCase()
+
+if (queryClarificationFor)
+  return Astro.redirect(`/${domain}/ask/${createSlug(queryClarificationFor)}`)
+
+if (response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional')
+  return Astro.redirect(`/${domain}/ask/${createSlug(query)}`)
 ---
 
-<Answer data={response} />
+<Layout
+  class="items-center justify-center"
+  analytics={{
+    is_search: true,
+    page_type: 'prompt',
+    page_domain: 'unknown',
+    disposition: response.disposition,
+    query,
+  }}
+  {query}
+  conversationToken={response.conversation.token}
+  renderRightColumn={false}
+>
+  <div class="text-center min-w-44">
+    <h1 class="mb-5">For which league?</h1>
+    <div class="w-full flex flex-col gap-2">
+      {
+        response.visual.choices.map((choice) => (
+          <Panel class="rounded-full !py-2">
+            <form action="/ask" method="post">
+              <input name="_method" type="hidden" value="POST" />
+              <input
+                id="question_conversation_token"
+                name="question[conversation_token]"
+                type="hidden"
+                value={response.conversation.token}
+              />
+              <input
+                id="question_query"
+                name="question[query]"
+                required=""
+                type="hidden"
+                value={choice.input}
+              />
+              <input
+                id="question_query_clarification_for"
+                name="question[query_clarification_for]"
+                type="hidden"
+                value={query}
+              />
+              <button
+                data-cy-choice-btn
+                class="w-full cursor-pointer"
+                type="submit"
+              >
+                {choice.display}
+              </button>
+            </form>
+          </Panel>
+        ))
+      }
+    </div>
+  </div>
+</Layout>

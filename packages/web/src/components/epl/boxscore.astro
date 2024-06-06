@@ -1,6 +1,5 @@
 ---
 import { orderBy, groupBy } from 'lodash-es'
-import Container from '@components/container.astro'
 import Image from '@components/image.astro'
 import {
   type EplHistoricalBoxScore,
@@ -15,6 +14,7 @@ import SubArrow from '@components/icons/sub-arrow.astro'
 import EntityLink from '@components/entity-link.astro'
 import dayjs from 'dayjs'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import Panel from '@components/panel.astro'
 
 interface Props {
   data: GameraEplBoxScore
@@ -40,8 +40,6 @@ const plays = orderBy(
   })),
   'minuteRaw',
 )
-
-console.log(plays)
 
 type Play = (typeof plays)[0]
 
@@ -70,9 +68,6 @@ const awayReds = plays.filter(
     (p.eventType === 'red_card' || p.eventType === 'yellow_red_card') &&
     p.team === awayTeam.name,
 )
-
-console.log(homeReds)
-console.log(awayReds)
 
 const homeTeamGoals = plays
   .filter(
@@ -207,14 +202,14 @@ const playerEntityMap = [
 const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
 ---
 
-<Container class="mb-2.5 bg-team-primary text-team-secondary py-5 space-y-5">
+<Panel team class="">
   <div class="flex gap-2 md:gap-8 md:items-center justify-center">
     <div
       class="flex-1 flex flex-col-reverse md:flex-row gap-1 md:gap-4 items-center justify-end"
     >
       <div class="text-center md:text-right">
         <EntityLink class="text-current" entity={homeTeam.entity}>
-          <h1 class="font-semibold md:text-3xl">
+          <h1 class="font-bold md:text-3xl">
             {homeTeam.name}
           </h1>
         </EntityLink>
@@ -227,20 +222,20 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
           class="w-20 h-20 object-contain"
           src={homeTeam.logoUrl}
           alt={homeTeam.abbrev}
-          width={200}
-          height={200}
+          width={80}
+          height={80}
           loading="eager"
         />
       </EntityLink>
     </div>
     <div class="h-fit flex items-center gap-4 md:gap-8 mt-5 md:mt-0">
-      <p class="text-4xl font-semibold">
+      <p class="text-4xl font-bold">
         {homeTeam.score}
       </p>
       <p class="text-[0.8rem] uppercase tracking-[0.07rem] mx-4">
         {boxscoreData.completedGameStatus}
       </p>
-      <p class="text-4xl font-semibold">
+      <p class="text-4xl font-bold">
         {awayTeam.score}
       </p>
     </div>
@@ -249,7 +244,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
     >
       <div class="text-center md:text-left">
         <EntityLink class="text-current" entity={awayTeam.entity}>
-          <h1 class="font-semibold md:text-3xl">
+          <h1 class="font-bold md:text-3xl">
             {awayTeam.name}
           </h1>
         </EntityLink>
@@ -262,14 +257,14 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
           class="w-20 h-20 object-contain"
           src={awayTeam.logoUrl}
           alt={awayTeam.abbrev}
-          width={200}
-          height={200}
+          width={80}
+          height={80}
           loading="eager"
         />
       </EntityLink>
     </div>
   </div>
-  <div>
+  <div class="mt-5 space-y-1.5">
     {
       (homeGoals.length > 0 || awayGoals.length > 0) && (
         <div class="flex items-start justify-center">
@@ -323,14 +318,22 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       )
     }
   </div>
-  <p class="text-center text-[0.8rem] uppercase tracking-[0.07rem]">
+  <p class="text-center text-[0.8rem] uppercase tracking-[0.07rem] mt-5">
     {dayjs(boxscoreData.gameDate).format('ddd D MMM YYYY')}
   </p>
-</Container>
-<div class="h-[50px] md:h-[90px] mb-1.5 flex justify-center items-center">
-  <AditudeAdBanner client:only="svelte" />
+</Panel>
+<div
+  class="md:hidden h-[50px] md:h-[90px] mb-1.5 flex justify-center items-center"
+>
+  <AditudeAdBanner
+    client:only="svelte"
+    divId="pb-slot-anchor"
+    slotId="pb-slot-anchor"
+    placeholderClass="w-[320px] md:w-[728px] h-[50px] md:h-[90px]"
+    onlyMobile
+  />
 </div>
-<Container>
+<div>
   <div
     class="flex flex-nowrap overflow-auto mb-5 space-x-5 md:hidden"
     data-hash-links
@@ -342,7 +345,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
         { text: 'Stats', href: '#stats' },
       ].map(({ href, text }, index) => (
         <a
-          class={`text-black text-3xl font-semibold shrink-0 hover:text-team-primary ${
+          class={`text-black text-3xl font-bold shrink-0 hover:text-team-primary ${
             index === 0 ? 'text-team-primary' : ''
           }`}
           {href}
@@ -355,7 +358,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
   <div class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 mb-5">
     <div>
       <div id="timeline" class="relative -top-[65px]"></div>
-      <p class="font-semibold text-[#b8b8b8]">Timeline</p>
+      <p class="font-bold text-[#b8b8b8]">Timeline</p>
       <div
         class="flex justify-between bg-team-primary text-team-secondary rounded py-1"
       >
@@ -364,8 +367,8 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
             class="w-4 h-4 mx-1.5 object-contain"
             src={homeTeam.logoUrl}
             alt={homeTeam.abbrev}
-            width={50}
-            height={50}
+            width={16}
+            height={16}
             loading="eager"
           />
           <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
@@ -377,8 +380,8 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
             class="w-4 h-4 mx-1.5 object-contain"
             src={awayTeam.logoUrl}
             alt={awayTeam.abbrev}
-            width={50}
-            height={50}
+            width={16}
+            height={16}
             loading="eager"
           />
           <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
@@ -393,7 +396,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
               plays.map((play) => (
                 <div
                   class:list={[
-                    'flex items-center py-0.5 border-b border-[#c7c8ca]',
+                    'flex items-center py-0.5 border-b border-[#c7c8ca] dark:border-gray-4',
                     { 'flex-row-reverse': play.side === 'away' },
                   ]}
                 >
@@ -412,7 +415,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                         return (
                           <>
                             {minute}
-                            <span class="text-xs absolute">
+                            <span class="text-sm absolute">
                               +{extraTime.replace("'", '')}
                             </span>
                           </>
@@ -485,7 +488,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                           : ''}
                       </p>
                       {play.relatedPlayerName && (
-                        <p class="text-[#969ca1]">
+                        <p class="text-gray-5">
                           Assist:{' '}
                           <EntityLink
                             class="text-current"
@@ -517,11 +520,11 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
             return (
               <>
                 {renderPlays(playsByPeriod['1st Half'] || [])}
-                <div class="text-center text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] py-1.5 border-b border-[#c7c8ca]">
+                <div class="text-center text-[0.8rem] text-gray-5 uppercase tracking-[0.07rem] py-1.5 border-b border-[#c7c8ca] dark:border-gray-4">
                   half time
                 </div>
                 {renderPlays(playsByPeriod['2nd Half'] || [])}
-                <div class="text-center text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] py-1.5 border-b border-[#c7c8ca]">
+                <div class="text-center text-[0.8rem] text-gray-5 uppercase tracking-[0.07rem] py-1.5 border-b border-[#c7c8ca] dark:border-gray-4">
                   full time
                 </div>
               </>
@@ -532,7 +535,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
     </div>
     <div>
       <div id="lineups" class="relative -top-[65px]"></div>
-      <p class="font-semibold text-[#b8b8b8]">Lineups</p>
+      <p class="font-bold text-[#b8b8b8]">Lineups</p>
       {
         homeTeamStats.formation && awayTeamStats.formation && (
           <>
@@ -568,8 +571,8 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                   class="w-4 h-4 mx-1.5 object-contain"
                   src={homeTeam.logoUrl}
                   alt={homeTeam.abbrev}
-                  width={50}
-                  height={50}
+                  width={16}
+                  height={16}
                   loading="eager"
                 />
                 <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
@@ -584,10 +587,9 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                   class="w-4 h-4 mx-1.5 object-contain"
                   src={awayTeam.logoUrl}
                   alt={awayTeam.abbrev}
-                  width={50}
-                  height={50}
+                  width={16}
+                  height={16}
                   loading="eager"
-                  q
                 />
                 <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
                   {awayTeam.abbrev}
@@ -742,8 +744,8 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                   class="w-4 h-4 mx-1.5 object-contain"
                   src={homeTeam.logoUrl}
                   alt={homeTeam.abbrev}
-                  width={50}
-                  height={50}
+                  width={16}
+                  height={16}
                   loading="eager"
                 />
                 <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
@@ -755,8 +757,8 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                   class="w-4 h-4 mx-1.5 object-contain"
                   src={awayTeam.logoUrl}
                   alt={awayTeam.abbrev}
-                  width={50}
-                  height={50}
+                  width={16}
+                  height={16}
                   loading="eager"
                 />
                 <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
@@ -967,7 +969,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
     </div>
     <div>
       <div id="stats" class="relative -top-[65px]"></div>
-      <p class="font-semibold text-[#b8b8b8]">Stats</p>
+      <p class="font-bold text-[#b8b8b8]">Stats</p>
       <div
         class="flex justify-between bg-team-primary text-team-secondary rounded py-1"
       >
@@ -976,8 +978,8 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
             class="w-4 h-4 mx-1.5 object-contain"
             src={homeTeam.logoUrl}
             alt={homeTeam.abbrev}
-            width={50}
-            height={50}
+            width={16}
+            height={16}
             loading="eager"
           />
           <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
@@ -989,8 +991,8 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
             class="w-4 h-4 mx-1.5 object-contain"
             src={awayTeam.logoUrl}
             alt={awayTeam.abbrev}
-            width={50}
-            height={50}
+            width={16}
+            height={16}
             loading="eager"
           />
           <span class="text-[0.8rem] uppercase tracking-[0.07rem]">
@@ -1003,7 +1005,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
           awayTeamStats.possessionPercentage && (
             <>
               <p class="text-center py-0.5">Possession %</p>
-              <div class="flex pb-1 border-b border-[#c7c8ca] relative">
+              <div class="flex pb-1 border-b border-[#c7c8ca] dark:border-gray-4 relative">
                 <div
                   class="text-sm py-1.5 pl-1.5 rounded-l-full"
                   style={{
@@ -1037,7 +1039,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
 
       {
         (homeTeamStats.shotsOnTarget || awayTeamStats.shotsOnTarget) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.shotsOnTarget}</p>
             <p class="flex-1 text-center">Shots on target</p>
             <p class="mr-1">{awayTeamStats.shotsOnTarget}</p>
@@ -1046,7 +1048,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.shots || awayTeamStats.shots) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.shots}</p>
             <p class="flex-1 text-center">Shots</p>
             <p class="mr-1">{awayTeamStats.shots}</p>
@@ -1056,7 +1058,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       {
         (homeTeamStats.bigChancesCreated ||
           awayTeamStats.bigChancesCreated) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.bigChancesCreated}</p>
             <p class="flex-1 text-center">Big chances created</p>
             <p class="mr-1">{awayTeamStats.bigChancesCreated}</p>
@@ -1065,7 +1067,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.passes || awayTeamStats.passes) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.passes}</p>
             <p class="flex-1 text-center">Passes</p>
             <p class="mr-1">{awayTeamStats.passes}</p>
@@ -1074,7 +1076,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.passesCompleted || awayTeamStats.passesCompleted) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">
               {Math.round(
                 (homeTeamStats.passesCompleted / homeTeamStats.passes) * 1000,
@@ -1095,7 +1097,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.touches || awayTeamStats.touches) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.touches}</p>
             <p class="flex-1 text-center">Touches</p>
             <p class="mr-1">{awayTeamStats.touches}</p>
@@ -1105,7 +1107,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       {
         (homeTeamStats.touchesInOpponentsBox ||
           awayTeamStats.touchesInOpponentsBox) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.touchesInOpponentsBox}</p>
             <p class="flex-1 text-center">Touches in opp box</p>
             <p class="mr-1">{awayTeamStats.touchesInOpponentsBox}</p>
@@ -1114,7 +1116,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.corners || awayTeamStats.corners) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.corners}</p>
             <p class="flex-1 text-center">Corners</p>
             <p class="mr-1">{awayTeamStats.corners}</p>
@@ -1123,7 +1125,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.tackles || awayTeamStats.tackles) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.tackles}</p>
             <p class="flex-1 text-center">Tackles</p>
             <p class="mr-1">{awayTeamStats.tackles}</p>
@@ -1132,7 +1134,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.clearances || awayTeamStats.clearances) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.clearances}</p>
             <p class="flex-1 text-center">Clearances</p>
             <p class="mr-1">{awayTeamStats.clearances}</p>
@@ -1141,7 +1143,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.saves || awayTeamStats.saves) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.saves}</p>
             <p class="flex-1 text-center">Saves</p>
             <p class="mr-1">{awayTeamStats.saves}</p>
@@ -1150,7 +1152,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.offsides || awayTeamStats.offsides) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.offsides}</p>
             <p class="flex-1 text-center">Offsides</p>
             <p class="mr-1">{awayTeamStats.offsides}</p>
@@ -1159,7 +1161,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.fouls || awayTeamStats.fouls) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.fouls}</p>
             <p class="flex-1 text-center">Fouls</p>
             <p class="mr-1">{awayTeamStats.fouls}</p>
@@ -1168,7 +1170,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.yellowCards || awayTeamStats.yellowCards) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.yellowCards}</p>
             <p class="flex-1 text-center">Yellow cards</p>
             <p class="mr-1">{awayTeamStats.yellowCards}</p>
@@ -1177,18 +1179,18 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       }
       {
         (homeTeamStats.redCards || awayTeamStats.redCards) && (
-          <div class="flex py-0.5 border-b border-[#c7c8ca]">
+          <div class="flex py-0.5 border-b border-[#c7c8ca] dark:border-gray-4">
             <p class="ml-1">{homeTeamStats.redCards}</p>
             <p class="flex-1 text-center">Red cards</p>
             <p class="mr-1">{awayTeamStats.redCards}</p>
           </div>
         )
       }
-      <p class="font-semibold text-[#b8b8b8] mt-5">Summary</p>
+      <p class="font-bold text-[#b8b8b8] mt-5">Summary</p>
       <p>{summary}</p>
     </div>
   </div>
-</Container>
+</div>
 
 <script>
   document.addEventListener('astro:page-load', () => {

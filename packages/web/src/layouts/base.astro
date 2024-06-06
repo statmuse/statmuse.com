@@ -5,9 +5,19 @@ import { Config } from 'sst/node/config'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import CookieConsent from '@components/cookie-consent.svelte'
 import { ViewTransitions } from 'astro:transitions'
-import AditudeAdAnchor from '@components/aditude-ad-anchor.svelte'
+import Footer from '@components/footer.astro'
+import Header from '@components/header.astro'
+import type { ComponentProps } from 'astro/types'
+import type { HeroProps } from '@lib/props'
+import MenuLinks from '@components/menu-links.astro'
+import ShareModal from '@components/share/modal.svelte'
+import CloseableContainer from '@components/closeable-container.svelte'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import WithSubscription from '@components/with-subscription.svelte'
+import { find } from 'lodash-es'
+import TrendingList from '@components/trending-list.astro'
 
-interface Props {
+interface Props extends ComponentProps<typeof Header> {
   meta?: Metadata
   colors?: {
     foreground?: string
@@ -17,9 +27,23 @@ interface Props {
   }
   analytics?: AnalyticsPageviewProperties
   enableAdBanner?: boolean
+  class?: string | null
+  share?: HeroProps['share']
+  renderRightColumn?: boolean
 }
 
-const { meta, colors, analytics = {}, enableAdBanner = true } = Astro.props
+const {
+  meta,
+  colors,
+  analytics = {},
+  enableAdBanner = true,
+  preferredDomain,
+  query,
+  conversationToken,
+  money,
+  share,
+  renderRightColumn = true,
+} = Astro.props
 const foreground = colors?.foreground || colors?.foregroundColor || '#fff'
 const background = colors?.background || colors?.backgroundColor || '#00c1d8'
 
@@ -70,6 +94,18 @@ const analyticsProperties = Object.assign(
   analytics,
 )
 
+const trendingData = Astro.locals.trendingData
+const trending = money
+  ? [
+      find(trendingData?.datasets, { name: 'Stocks' }),
+      find(trendingData?.datasets, { name: 'Searches' }),
+    ]
+  : [
+      find(trendingData?.datasets, { name: 'Players' }),
+      find(trendingData?.datasets, { name: 'Teams' }),
+      find(trendingData?.datasets, { name: 'Searches' }),
+    ]
+
 const canonicalUrl = meta?.canonical
   ? meta.canonical.url.startsWith('http')
     ? meta.canonical.url
@@ -79,6 +115,27 @@ const canonicalUrl = meta?.canonical
 
 <html lang="en">
   <head>
+    <script is:inline>
+      function setTheme(document) {
+        if (
+          localStorage.theme === 'dark' ||
+          (!('theme' in localStorage) &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ) {
+          document.documentElement.classList.add('dark')
+        } else {
+          document.documentElement.classList.remove('dark')
+        }
+      }
+
+      setTheme(document)
+
+      document.addEventListener('astro:before-swap', (ev) => {
+        // Pass the incoming document to set the theme on it
+        setTheme(ev.newDocument)
+      })
+    </script>
+
     {
       import.meta.env.PUBLIC_STAGE !== 'production' && (
         <meta name="robots" content="noindex" />
@@ -148,130 +205,44 @@ const canonicalUrl = meta?.canonical
     <!-- Font face definitions -->
     <style is:inline>
       @font-face {
-        font-family: 'canada-type-gibson';
+        font-family: 'calibre';
         src:
-          url('/fonts/Gibson-Light.woff2') format('woff2'),
-          url('/fonts/Gibson-Light.woff') format('woff'),
-          url('/fonts/Gibson-Light.otf') format('opentype');
-        font-display: auto;
-        ascent-override: 85%;
+          url('/fonts/calibre.woff2') format('woff2-variations'),
+          url('/fonts/calibre.woff') format('woff-variations'),
+          url('/fonts/calibre.otf') format('opentype-variations');
+        font-display: swap;
         font-style: normal;
-        font-weight: 200;
-        font-stretch: normal;
+        font-weight: 100 900;
       }
 
       @font-face {
-        font-family: 'canada-type-gibson';
-        src:
-          url('/fonts/Gibson-Light-Italic.woff2') format('woff2'),
-          url('/fonts/Gibson-Light-Italic.woff') format('woff'),
-          url('/fonts/Gibson-Light-Italic.otf') format('opentype');
-        font-display: auto;
-        ascent-override: 85%;
-        font-style: italic;
-        font-weight: 200;
-        font-stretch: normal;
-      }
-
-      @font-face {
-        font-family: 'canada-type-gibson';
-        src:
-          url('/fonts/Gibson.woff2') format('woff2'),
-          url('/fonts/Gibson.woff') format('woff'),
-          url('/fonts/Gibson.otf') format('opentype');
-        font-display: auto;
-        ascent-override: 85%;
-        font-style: normal;
-        font-weight: 400;
-        font-stretch: normal;
-      }
-
-      @font-face {
-        font-family: 'canada-type-gibson';
-        src:
-          url('/fonts/Gibson-Italic.woff2') format('woff2'),
-          url('/fonts/Gibson-Italic.woff') format('woff'),
-          url('/fonts/Gibson-Italic.otf') format('opentype');
-        font-display: auto;
-        ascent-override: 85%;
-        font-style: italic;
-        font-weight: 400;
-        font-stretch: normal;
-      }
-
-      @font-face {
-        font-family: 'canada-type-gibson';
-        src:
-          url('/fonts/Gibson-SemiBold.woff2') format('woff2'),
-          url('/fonts/Gibson-SemiBold.woff') format('woff'),
-          url('/fonts/Gibson-SemiBold.otf') format('opentype');
-        font-display: auto;
-        ascent-override: 85%;
-        font-style: normal;
-        font-weight: 600;
-        font-stretch: normal;
-      }
-
-      @font-face {
-        font-family: 'canada-type-gibson';
-        src:
-          url('/fonts/Gibson-SemiBold-Italic.woff2') format('woff2'),
-          url('/fonts/Gibson-SemiBold-Italic.woff') format('woff'),
-          url('/fonts/Gibson-SemiBold-Italic.otf') format('opentype');
-        font-display: auto;
-        ascent-override: 85%;
-        font-style: italic;
-        font-weight: 600;
-        font-stretch: normal;
-      }
-
-      @font-face {
-        font-family: 'canada-type-gibson';
-        src:
-          url('/fonts/Gibson-Bold.woff2') format('woff2'),
-          url('/fonts/Gibson-Bold.woff') format('woff'),
-          url('/fonts/Gibson-Bold.otf') format('opentype');
-        font-display: auto;
-        ascent-override: 85%;
-        font-style: normal;
-        font-weight: 800;
-        font-stretch: normal;
-      }
-
-      @font-face {
-        font-family: 'canada-type-gibson';
-        src:
-          url('/fonts/Gibson-Bold-Italic.woff2') format('woff2'),
-          url('/fonts/Gibson-Bold-Italic.woff') format('woff'),
-          url('/fonts/Gibson-Bold-Italic.otf') format('opentype');
-        font-display: auto;
-        ascent-override: 85%;
-        font-style: italic;
-        font-weight: 800;
-        font-stretch: normal;
-      }
-
-      @font-face {
-        font-family: 'canada-type-gibson-fallback';
+        font-family: 'calibre-fallback';
         src: local('Arial');
-        ascent-override: 89.13%;
-        descent-override: 22.28%;
+        size-adjust: 88%;
+        ascent-override: 114%;
+        descent-override: 34%;
         line-gap-override: 0%;
-        size-adjust: 89.76%;
       }
     </style>
 
     <!-- Preload custom fonts -->
     <link
       rel="preload"
-      href="/fonts/Gibson.woff2"
+      href="/fonts/calibre.woff2"
       as="font"
       type="font/woff2"
       crossorigin="anonymous"
     />
     <link
       rel="preload"
-      href="/fonts/Gibson-SemiBold.woff2"
+      href="/fonts/calibre.woff"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="/fonts/calibre.otf"
       as="font"
       type="font/woff2"
       crossorigin="anonymous"
@@ -301,219 +272,200 @@ const canonicalUrl = meta?.canonical
       )
     }
   </head>
-  <body class="text-black">
-    <slot />
-    <CookieConsent client:only="svelte" />
-    {enableAdBanner && <AditudeAdAnchor client:only="svelte" />}
+  <body
+    class:list={{
+      'text-gray-2 dark:text-gray-7 bg-gray-7 dark:bg-gray-2 text-pretty': true,
+      'has-[#menu:checked]:overflow-y-scroll has-[#menu:checked]:fixed': true,
+      'has-[#menu:checked]:w-full has-[#menu:checked]:h-full': true,
+      'max-w-7xl min-h-screen mx-auto px-3 md:px-5 flex flex-col gap-3': true,
+    }}
+  >
+    <Header {preferredDomain} {query} {conversationToken} {money} />
+    <div class="flex flex-1 gap-3 -mt-3 md:mt-0 [--top-spacing:74px]">
+      <MenuLinks
+        id="base"
+        class="shrink-0 hidden xl:flex h-fit sticky top-[--top-spacing]"
+      />
+      <div
+        class:list={{
+          '@container/main min-w-0 flex-1': true,
+          'flex flex-col gap-3': true,
+          [Astro.props.class ?? '']: !!Astro.props.class,
+        }}
+      >
+        <slot />
+      </div>
+      {
+        renderRightColumn && (
+          <div class="hidden md:block w-[300px] shrink-0 *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full">
+            <WithSubscription client:only="svelte">
+              <Fragment slot="subscribed">
+                <div class="space-y-3">
+                  {trending.map(
+                    (trend) =>
+                      trend && (
+                        <TrendingList
+                          title={`Trending ${trend.name}`}
+                          items={trend.items}
+                          smallImage
+                        />
+                      ),
+                  )}
+                </div>
+              </Fragment>
+              <div class="space-y-3 h-full">
+                <AditudeAdBanner
+                  client:only="svelte"
+                  divId="pb-slot-square-1"
+                  slotId="pb-slot-square-1"
+                  placeholderClass="w-[300px] h-[250px]"
+                  onlyDesktop
+                />
+                <div class="sticky top-[--top-spacing]">
+                  <AditudeAdBanner
+                    client:only="svelte"
+                    divId="pb-slot-right-2"
+                    slotId="pb-slot-right-2"
+                    placeholderClass="w-[300px] h-[600px]"
+                    onlyDesktop
+                  />
+                </div>
+              </div>
+            </WithSubscription>
+          </div>
+        )
+      }
+    </div>
+    <Footer />
+    <CookieConsent client:only="svelte" transition:persist="cookie-banner" />
+    {share && <ShareModal client:load {...share} />}
+    {
+      enableAdBanner && (
+        <CloseableContainer
+          client:only="svelte"
+          class="bg-gray-7/90 dark:bg-gray-2/90  fixed bottom-0 left-0 md:left-1/2 md:-translate-x-1/2 w-screen min-h-[50px] md:w-fit md:min-h-[90px] z-50 flex justify-center md:pr-5"
+          onlyMobile
+        >
+          <AditudeAdBanner
+            client:only="svelte"
+            divId="pb-slot-banner"
+            slotId="pb-slot-banner"
+            placeholderClass="w-[320px] md:w-[728px] min-h-[50px] md:min-h-[90px]"
+          />
+        </CloseableContainer>
+      )
+    }
     <script>
-      import { segment, getOrigin } from '@lib/analytics'
+      import { v4 as uuidv4 } from 'uuid'
+      import { segment, getPageviewProps } from '@lib/analytics'
       import type { Session } from '@lib/session'
-      import { session as sessionStore } from '@lib/session-store'
-      import type { ContentReference, Subject } from '@statmuse/core/gamera'
-      import type { ContentReference as KanedamaContentReference } from '@statmuse/core/kanedama'
+      import { session as sessionStore } from '@lib/stores'
+      import { maybeRewriteUrl } from '@lib/client'
 
-      const flattenObj = (key: string, obj?: {}) => {
-        return !obj
-          ? {}
-          : Object.entries(obj).reduce((x, [k, v]) => {
-              return {
-                ...x,
-                [`${key}.${k}`]: v,
-              }
-            }, {})
-      }
-
-      const getReferenceIds = (
-        contentReference?: ContentReference | KanedamaContentReference,
-      ) => {
-        if (!contentReference) return {}
-        const { questionTags, answerTags } = contentReference
-
-        if (
-          questionTags?.playerIds ||
-          questionTags?.teamIds ||
-          answerTags?.playerIds ||
-          answerTags?.teamIds
-        ) {
-          return {
-            players: JSON.stringify(
-              Array.from(
-                new Set([
-                  ...(questionTags?.playerIds ? questionTags.playerIds : []),
-                  ...(answerTags?.playerIds ? answerTags.playerIds : []),
-                ]),
-              ),
-            ),
-            teams: JSON.stringify(
-              Array.from(
-                new Set([
-                  ...(questionTags?.teamIds ? questionTags.teamIds : []),
-                  ...(answerTags?.teamIds ? answerTags.teamIds : []),
-                ]),
-              ),
-            ),
-          }
-        }
-
-        if (questionTags?.assetIds || answerTags?.assetIds) {
-          return {
-            assets: JSON.stringify(
-              Array.from(
-                new Set([
-                  ...(questionTags?.assetIds ? questionTags.assetIds : []),
-                  ...(answerTags?.assetIds ? answerTags.assetIds : []),
-                ]),
-              ),
-            ),
-          }
-        }
-      }
-
-      const getSubjectItems = (subject?: Subject) => {
-        if (!subject) return {}
-        return {
-          subject_image: subject.imageUrl,
-          subject_background_color: subject.colors?.background,
-          subject_foreground_color: subject.colors?.foreground,
-        }
+      // set page targeting for GAM
+      const eventProps = getPageviewProps(document)
+      if (eventProps) {
+        var tude = window.tude || { cmd: [] }
+        tude.cmd.push(function () {
+          tude.setPageTargeting({
+            pagetype: eventProps.page_domain + '-' + eventProps.page_type,
+          })
+        })
       }
 
       // initialize referrer var
       let referrer: string | undefined
 
-      // default page tracking
-      segment.page(referrer ? { referrer } : {})
-
-      // custom Pageview event
-      const eventProps = document.querySelector<HTMLMetaElement>(
-        'meta[name="analytics:event:properties"]',
-      )?.content
-
-      if (eventProps) {
-        const {
-          disposition,
-          tokenizationScore,
-          contentReference,
-          subject,
-          ...props
-        } = JSON.parse(eventProps)
-        segment.track(
-          'Pageview',
-          {
-            ...props,
-            ...flattenObj('disposition', disposition),
-            ...flattenObj('tokenizationScore', tokenizationScore),
-            ...getReferenceIds(contentReference),
-            ...getSubjectItems(subject),
-            origin: getOrigin(navigator.userAgent),
-          },
-          referrer ? { page: { referrer } } : {},
-        )
-
-        var tude = window.tude || { cmd: [] }
-        tude.cmd.push(function () {
-          tude.setPageTargeting({
-            pagetype: props.page_domain + '-' + props.page_type,
-          })
-        })
+      let sessionId: string | null
+      sessionId = sessionStorage.getItem('sessionId')
+      if (!sessionId) {
+        sessionId = uuidv4()
+        sessionStorage.setItem('sessionId', sessionId)
       }
 
-      referrer = window.location.href
+      let startTime: number | undefined = Date.now()
+      let timeSpent = 0
 
-      // hack: 'astro:page-load' does not fire consistently
-      // TODO: move into astro:page-load callback
-      document.addEventListener('astro:after-swap', async () => {
-        // default page tracking
-        segment.page(referrer ? { referrer } : {})
+      const trackTimeOnPage = () => {
+        const endTime = Date.now()
+        if (startTime) {
+          timeSpent += (endTime - startTime) / 1000
+        }
 
-        // custom Pageview event
-        const eventProps = document.querySelector<HTMLMetaElement>(
-          'meta[name="analytics:event:properties"]',
-        )?.content
-
-        if (eventProps) {
-          const {
-            disposition,
-            tokenizationScore,
-            contentReference,
-            subject,
-            ...props
-          } = JSON.parse(eventProps)
-          segment.track(
-            'Pageview',
+        const props = getPageviewProps(document)
+        if (props) {
+          const { page_type, page_domain, is_search } = props
+          window.segment.track(
+            'Time On Page',
             {
-              ...props,
-              ...flattenObj('disposition', disposition),
-              ...flattenObj('tokenizationScore', tokenizationScore),
-              ...getReferenceIds(contentReference),
-              ...getSubjectItems(subject),
-              origin: getOrigin(navigator.userAgent),
+              session_id: sessionId,
+              time_spent: timeSpent,
+              page_type,
+              page_domain,
+              is_search,
             },
             referrer ? { page: { referrer } } : {},
           )
 
-          var tude = window.tude || { cmd: [] }
-          tude.cmd.push(function () {
-            tude.setPageTargeting({
-              pagetype: props.page_domain + '-' + props.page_type,
-            })
-          })
+          if (startTime) {
+            startTime = endTime
+          }
+          timeSpent = 0
         }
+      }
 
+      window.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+          trackTimeOnPage()
+        }
+      })
+
+      window.addEventListener('blur', () => {
+        // Page is not visible, calculate timespent and pause the timer
+        if (startTime) {
+          timeSpent += (Date.now() - startTime) / 1000
+        }
+        startTime = undefined
+      })
+
+      window.addEventListener('focus', () => {
+        // Page became visible again, resume the timer
+        startTime = Date.now()
+      })
+
+      document.addEventListener('astro:before-swap', () => {
+        trackTimeOnPage()
         referrer = window.location.href
       })
 
+      document.addEventListener('astro:after-swap', () => {
+        // set page targeting for GAM
+        const eventProps = getPageviewProps(document)
+        if (eventProps) {
+          var tude = window.tude || { cmd: [] }
+          tude.cmd.push(function () {
+            tude.setPageTargeting({
+              pagetype: eventProps.page_domain + '-' + eventProps.page_type,
+            })
+          })
+        }
+      })
+
       document.addEventListener('astro:page-load', async () => {
-        /**
-         * Given window and document, add or remove "selected" class to league nav
-         * links if current window location matches nav href. Note that the argument
-         * tests are more comprehensive to protect functions downstream of this.
-         *
-         * @param {Window} win - DOM window
-         * @param {Element} ctag - Node Element with data for canonical link
-         *
-         */
-        const shouldRewriteUrl = (win: Window, ctag: HTMLLinkElement) => {
-          return (
-            win instanceof Window &&
-            win.history instanceof History &&
-            win.location instanceof Location &&
-            ctag.href !== win.location.href &&
-            ctag.dataset.shouldRewrite === 'true'
+        maybeRewriteUrl(window, document)
+
+        // default page tracking
+        segment.page(referrer ? { referrer } : {})
+
+        const eventProps = getPageviewProps(document)
+
+        if (eventProps) {
+          segment.track(
+            'Pageview',
+            { ...eventProps, session_id: sessionId },
+            referrer ? { page: { referrer } } : {},
           )
         }
-
-        /**
-         * Rewrite URL.
-         *
-         * @param {Window} win - DOM window
-         * @param {HTMLDocument} doc - DOM document
-         * @param {String} newUrl - Destination URL
-         *
-         */
-        const rewriteUrl = (win: Window, doc: Document, newUrl: string) =>
-          win.history.replaceState(null, doc.title, newUrl)
-
-        /**
-         * Given window and document, get canonical link tag and check if URL should be
-         * rewritten, in which case call rewriteUrl and updateLeagueNav.
-         *
-         * @param {Window} win - DOM window
-         * @param {HTMLDocument} doc - DOM document
-         *
-         */
-        const maybeRewriteUrl = (win: Window, doc: Document) => {
-          const canonicalTag = doc.querySelector(
-            'link[rel="canonical"]',
-          ) as HTMLLinkElement | null
-          if (!canonicalTag) return
-
-          if (shouldRewriteUrl(win, canonicalTag)) {
-            rewriteUrl(win, doc, canonicalTag.href)
-          }
-        }
-
-        maybeRewriteUrl(window, document)
       })
 
       document.addEventListener(

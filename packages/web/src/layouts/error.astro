@@ -1,23 +1,17 @@
 ---
-import MainLayout from '@layouts/main.astro'
-import Header from '@components/header.astro'
+import Layout from '@layouts/base.astro'
 import sample from 'lodash/sample'
-import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import type { ComponentProps } from 'astro/types'
 import Hero from '@components/hero.astro'
 
-interface Props {
+interface Props extends ComponentProps<typeof Layout> {
   status?: number
   render: boolean
   message: string
-  query?: string
   image?: {
     url: string
     alt: string
   }
-  analytics?: AnalyticsPageviewProperties
-  enableAdBanner?: boolean
-  money?: boolean
-  fantasy?: boolean
 }
 
 const images = [
@@ -41,7 +35,6 @@ const {
   query,
   status,
   money,
-  fantasy,
   image = sample(images),
   enableAdBanner,
   analytics = {},
@@ -54,18 +47,24 @@ if (render) {
 
 {
   render ? (
-    <MainLayout
+    <Layout
       {...Astro.props}
       colors={{ foreground: '#fff', background: '#0086ff' }}
       {enableAdBanner}
+      {money}
+      {query}
       analytics={{
         ...analytics,
         page_type: 'error',
       }}
     >
-      <Header {query} {money} {fantasy} />
-      <Hero content={message} imageUrl={image?.url} imageAlt={image?.alt} />
-    </MainLayout>
+      <Hero
+        content={message}
+        imageUrl={image?.url}
+        imageAlt={image?.alt}
+        html
+      />
+    </Layout>
   ) : (
     <slot />
   )

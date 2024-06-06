@@ -3,6 +3,7 @@ import {
   AstroSite,
   use,
   KinesisStream,
+  Table,
 } from 'sst/constructs'
 import { SubnetType } from 'aws-cdk-lib/aws-ec2'
 import { API } from './api'
@@ -119,16 +120,20 @@ export function Web({ stack }: StackContext) {
 
   const domainName = isProd ? 'www.statmuse.com' : dns.domain
 
+  const bedrockCache = new Table(stack, 'bedrock-cache', {
+    fields: { query: 'string' },
+    primaryIndex: { partitionKey: 'query' },
+  })
+
   const astroSite = new AstroSite(stack, 'astro-site', {
     path: 'packages/web',
     timeout: '12 seconds',
     memorySize: '1024 MB',
     bind: [
       auth,
-      auth.privateKey,
       api.api,
-      secrets.BOTPOISON_PUBLIC_KEY,
-      secrets.BOTPOISON_SECRET_KEY,
+      secrets.BOTPOISON,
+      secrets.JWT_SECRET,
       secrets.STRIPE_SECRET,
       secrets.STRIPE_WEBHOOK_SECRET,
       secrets.STRIPE_PRICE_ID,
@@ -137,6 +142,7 @@ export function Web({ stack }: StackContext) {
       secrets.SEGMENT_WRITE_KEY,
       secrets.GAMERA_API_KEY,
       trending.table,
+      bedrockCache,
     ],
     environment: {
       ...api.environment,
@@ -175,8 +181,13 @@ export function Web({ stack }: StackContext) {
         },
       },
     },
-    permissions: [[api.rdsCredentialsSecret, 'grantRead'], 'ses'],
-    invalidation: { paths: 'none' },
+    permissions: [
+      [api.rdsCredentialsSecret, 'grantRead'],
+      'bedrock',
+      'translate',
+      'comprehend',
+      'ses',
+    ],
     customDomain: {
       hostedZone: dns.zone,
       domainName,

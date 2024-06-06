@@ -1,9 +1,6 @@
 ---
-import Layout from '@layouts/main.astro'
-import Header from '@components/header.astro'
+import Layout from '@layouts/base.astro'
 import TrendingMore from '@components/trending-more.astro'
-import LeagueNav from '@components/league-nav.astro'
-import Container from '@components/container.astro'
 import {
   ASK_LIMIT,
   type AskForIndex,
@@ -18,6 +15,8 @@ import {
 } from '@lib/asks'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import tailwindConfig from '../../tailwind.config.ts'
+import type { NavLink } from 'src/types'
+import Hero from '@components/hero.astro'
 
 const colors = tailwindConfig.theme.extend.colors
 
@@ -40,9 +39,9 @@ if (overflow && (searchParams.p || searchParams.page === 'last')) {
 
 const paginationOptions = paginate(asks, searchParams, overflow)
 
-const leagues: { text: string; param: string; href?: string }[] = [
+const links: NavLink[] = [
   {
-    text: 'ALL',
+    text: 'All',
     param: 'all',
     href: '/questions',
   },
@@ -52,7 +51,7 @@ const leagues: { text: string; param: string; href?: string }[] = [
   { text: 'NHL', param: 'nhl' },
   { text: 'MLB', param: 'mlb' },
   { text: 'PGA', param: 'pga' },
-  { text: 'MONEY', param: 'money' },
+  { text: 'Money', param: 'money' },
 ]
 
 const items = asks.map((ask) => ({
@@ -89,77 +88,69 @@ const meta = {
   }}
   {meta}
   colors={{ foreground: colors.gray['8'], background: colors.teal }}
+  money={selected === 'money'}
+  preferredDomain={selected}
+  renderRightColumn={false}
 >
-  <Header money={selected === 'money'} preferredDomain={selected} />
-  <Container class="text-gray-8 bg-teal">
-    <div class="pt-8 pb-8 md:pt-[90px] md:pb-16">
-      <h1 class="text-center font-semibold text-4xl md:text-6xl">{title}</h1>
-    </div>
-  </Container>
-  <div class="bg-gray-7 p-3 space-y-3">
-    <LeagueNav
-      {leagues}
-      {selected}
-      href={(l) => `/${l}/questions`}
-    />
+  <Hero
+    content={title}
+    navProps={{
+      links,
+      selected,
+      href: (l) => `/${l}/questions${Astro.url.search}`,
+    }}
+  />
 
-    <TrendingMore {items} />
+  <TrendingMore {items} />
 
-    <ul class="text-center my-10 space-x-2">
-      <li class="inline-block">
-        <a
-          href={Astro.url.pathname}
-          class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
-            ['first', 'first-last'].includes(
-              paginationOptions.current_page || '',
-            )
-              ? 'text-black pointer-events-none'
-              : ''
-          }`}
-        >
-          &laquo; First
-        </a>
-      </li>
-      <li class="inline-block">
-        <a
-          href={Astro.url.pathname +
-            '?' +
-            new URLSearchParams({ p: paginationOptions.p || '' })}
-          class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
-            paginationOptions.p ? '' : 'text-[#c5c9cc] pointer-events-none'
-          }`}
-        >
-          &lt; Previous
-        </a>
-      </li>
-      <li class="inline-block">
-        <a
-          href={Astro.url.pathname +
-            '?' +
-            new URLSearchParams({ n: paginationOptions.n || '' })}
-          class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
-            paginationOptions.n ? '' : 'text-[#c5c9cc] pointer-events-none'
-          }`}
-        >
-          Next &gt;
-        </a>
-      </li>
-      <li class="inline-block">
-        <a
-          href={Astro.url.pathname +
-            '?' +
-            new URLSearchParams({ page: 'last' })}
-          class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
-            ['last', 'first-last'].includes(
-              paginationOptions.current_page || '',
-            )
-              ? 'text-black pointer-events-none'
-              : ''
-          }`}
-        >
-          Last &raquo;
-        </a>
-      </li>
-    </ul>
-  </div>
+  <ul class="text-center my-10 space-x-2">
+    <li class="inline-block">
+      <a
+        href={Astro.url.pathname}
+        class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
+          ['first', 'first-last'].includes(paginationOptions.current_page || '')
+            ? 'text-black pointer-events-none'
+            : ''
+        }`}
+      >
+        &laquo; First
+      </a>
+    </li>
+    <li class="inline-block">
+      <a
+        href={Astro.url.pathname +
+          '?' +
+          new URLSearchParams({ p: paginationOptions.p || '' })}
+        class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
+          paginationOptions.p ? '' : 'text-[#c5c9cc] pointer-events-none'
+        }`}
+      >
+        &lt; Previous
+      </a>
+    </li>
+    <li class="inline-block">
+      <a
+        href={Astro.url.pathname +
+          '?' +
+          new URLSearchParams({ n: paginationOptions.n || '' })}
+        class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
+          paginationOptions.n ? '' : 'text-[#c5c9cc] pointer-events-none'
+        }`}
+      >
+        Next &gt;
+      </a>
+    </li>
+    <li class="inline-block">
+      <a
+        href={Astro.url.pathname + '?' + new URLSearchParams({ page: 'last' })}
+        class={`block p-1 border-b-2 border-transparent hover:border-secondary hover:no-underline ${
+          ['last', 'first-last'].includes(paginationOptions.current_page || '')
+            ? 'text-black pointer-events-none'
+            : ''
+        }`}
+      >
+        Last &raquo;
+      </a>
+    </li>
+  </ul>
 </Layout>

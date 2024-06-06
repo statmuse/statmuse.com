@@ -1,7 +1,5 @@
 ---
-import Layout from '@layouts/main.astro'
-import Header from '@components/header.astro'
-import Container from '@components/container.astro'
+import Layout from '@layouts/base.astro'
 import {
   tokensToText,
   tokensToHtml,
@@ -30,51 +28,48 @@ const query = clean(
     tokenizationScore: answer.tokenizationScore,
     query,
   }}
+  {query}
+  {conversationToken}
 >
-  <Header {query} {conversationToken} />
-  <Container>
-    <div class="h-screen w-full flex flex-col justify-center items-center">
-      <h1
-        class="text-3xl my-5 font-medium md:font-semibold"
-        set:html={tokensToHtml(answer.visual.summary.answer)}
-      />
-      <div
-        class="w-full flex flex-col sm:flex-row sm:justify-center my-5 gap-2"
-      >
-        {
-          answer.visual.choices.map((choice) => (
-            <form action="/ask" method="post">
-              <input name="_method" type="hidden" value="POST" />
-              <input
-                id="question_conversation_token"
-                name="question[conversation_token]"
-                type="hidden"
-                value={conversationToken}
-              />
-              <input
-                id="question_query"
-                name="question[query]"
-                required=""
-                type="hidden"
-                value={choice.input}
-              />
-              <input
-                id="question_query_clarification_for"
-                name="question[query_clarification_for]"
-                type="hidden"
-                value={query}
-              />
-              <button
-                data-cy-choice-btn
-                class="w-full text-xl border-2 border-black rounded-md cursor-pointer p-7"
-                type="submit"
-              >
-                {choice.display}
-              </button>
-            </form>
-          ))
-        }
-      </div>
+  <div class="w-full flex flex-col justify-center items-center">
+    <h1
+      class="text-3xl my-5 font-medium md:font-bold"
+      set:html={tokensToHtml(answer.visual.summary.answer)}
+    />
+    <div class="w-full flex flex-col sm:flex-row sm:justify-center my-5 gap-2">
+      {
+        answer.visual.choices.map((choice) => (
+          <form action="/ask" method="post">
+            <input name="_method" type="hidden" value="POST" />
+            <input
+              id="question_conversation_token"
+              name="question[conversation_token]"
+              type="hidden"
+              value={conversationToken}
+            />
+            <input
+              id="question_query"
+              name="question[query]"
+              required=""
+              type="hidden"
+              value={choice.input}
+            />
+            <input
+              id="question_query_clarification_for"
+              name="question[query_clarification_for]"
+              type="hidden"
+              value={query}
+            />
+            <button
+              data-cy-choice-btn
+              class="w-full text-2xl border-2 border-black rounded-md cursor-pointer p-7"
+              type="submit"
+            >
+              {choice.display}
+            </button>
+          </form>
+        ))
+      }
     </div>
-  </Container>
+  </div>
 </Layout>

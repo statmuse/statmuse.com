@@ -1,5 +1,5 @@
 ---
-import FranchiseLayout from '@layouts/franchise.astro'
+import TeamLayout from '@layouts/team.astro'
 import Grid from '@components/grid.svelte'
 import TeamLeaders from '@components/leaders.astro'
 import PlayerGallery from '@components/gallery.astro'
@@ -51,55 +51,42 @@ const canonical = {
 const meta = { title, description, keywords, canonical }
 ---
 
-<FranchiseLayout {overview} {meta} {query} {analytics} page="history">
-  <div class="space-y-5 mb-5">
+<TeamLayout bio={overview} {meta} {query} {analytics} page="history">
+  {
+    teamHistory && (
+      <Grid
+        client:load
+        title={teamHistory.name}
+        data={teamHistory}
+        columnStyles={{
+          SEASON: 'text-center w-20',
+          POSTSEASON: 'text-left w-20',
+          CHAMPION: 'w-2',
+          default: 'text-center w-20',
+        }}
+        fullWidth={false}
+      />
+    )
+  }
+  <div class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 mb-5">
     {
-      teamHistory && (
-        <div class="mb-5">
-          <h3 class="font-semibold text-team-primary mb-0.5">
-            {teamHistory.name}
-          </h3>
-          <Grid
-            client:load
-            data={teamHistory}
-            columnStyles={{
-              SEASON: 'text-center w-20',
-              POSTSEASON: 'text-left w-20',
-              CHAMPION: 'w-2',
-              default: 'text-center w-20',
-            }}
-            fullWidth={false}
-          />
-        </div>
+      franchiseInfo && (
+        <Grid client:load title={franchiseInfo.name} data={franchiseInfo} />
       )
     }
-    <div
-      class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 mb-5"
-    >
-      {
-        franchiseInfo && (
-          <div class="mb-5">
-            <h3 class="font-semibold text-team-primary mb-0.5">
-              {franchiseInfo.name}
-            </h3>
-            <Grid client:load data={franchiseInfo} />
-          </div>
-        )
-      }
-      {
-        franchiseLeaders && (
-          <TeamLeaders
-            leaders={franchiseLeaders}
-            title="Franchise Leaders"
-            class="mb-5"
-          />
-        )
-      }
-    </div>
     {
-      playerGallery && playerGallery.length > 0 && (
-        <PlayerGallery images={playerGallery} class="mb-5" />
+      franchiseLeaders && (
+        <TeamLeaders
+          leaders={franchiseLeaders}
+          title={leagueParam === 'fc' ? 'Club Leaders' : 'Franchise Leaders'}
+          class="mb-5"
+        />
       )
     }
   </div>
-</FranchiseLayout>
+  {
+    playerGallery && playerGallery.length > 0 && (
+      <PlayerGallery images={playerGallery} class="mb-5" />
+    )
+  }
+</TeamLayout>

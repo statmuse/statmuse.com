@@ -33,6 +33,9 @@ let overview = Astro.props.overview
 
 if (!team || !leagueParam || !year) return NOT_FOUND_404
 
+const isFc = leagueParam === 'fc'
+const schedule = isFc ? 'fixtures' : 'schedule'
+
 const domain = leagueToDomain(leagueParam)
 if (!overview) {
   overview = await getTeamSeasonOverview({
@@ -66,13 +69,21 @@ const { bio, scoresAndSchedule, teamLeaders, standings, stats, playerGallery } =
 
 const summary = bio.summaryNlg ? tokensToHtml(bio.summaryNlg) : undefined
 
-const title = `${bio.name} ${year} Scores, Stats, Schedule, Standings`
+const titleDetail = isFc
+  ? 'Stats, Fixtures, Table'
+  : 'Scores, Stats, Schedule, Standings'
+const descriptionDetail = isFc
+  ? 'scores, stats, fixtures, table and more for the premier league season`'
+  : `scores, stats, schedule, standings and more for the ${domain} regular season and playoffs`
+
+const title = `${bio.name} ${year} ${titleDetail}`
 const description = bio.summaryNlg
   ? tokensToText(bio.summaryNlg)
-  : `The ${year} ${bio.name} scores, stats, schedule, standings and more for the ${domain} regular season and playoffs`
-const keywords = `${getLeagueKeywords(domain)} ${year} ${
-  bio.name
-} team player stats statistics`
+  : `The ${year} ${bio.name} ${descriptionDetail}`
+const keywords = `${getLeagueKeywords(domain)} ${year} ${bio.name} ${
+  Astro.params.org
+} player stats statistics`
+
 const canonical = {
   url: `${getUrlForEntity({
     type: 'teamSeason',
@@ -86,74 +97,73 @@ const meta = { title, description, keywords, canonical }
 ---
 
 <TeamLayout {bio} {meta} {query} {analytics} page="overview">
-  <div>
-    <div class="mb-5 leading-snug">
-      <p set:html={summary} />
-    </div>
-    <div
-      class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 mb-5"
-    >
-      {
-        scoresAndSchedule && (
-          <div>
-            <div class="flex justify-between mb-0.5">
-              <h3 class="font-semibold text-team-primary">
-                {scoresAndSchedule.name}
-              </h3>
-              <a href={`schedule/${year}`}>See schedule</a>
-            </div>
-            <Grid
-              client:load
-              data={scoresAndSchedule}
-              columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
-            />
-          </div>
-        )
-      }
-      {
-        teamLeaders && (
-          <TeamLeaders leaders={teamLeaders}>
-            <a href={`roster/${year}`}>See roster</a>
-          </TeamLeaders>
-        )
-      }
-      {
-        standings && (
-          <div>
-            <h3 class="font-semibold text-team-primary mb-0.5">
-              {standings.name}
-            </h3>
-            <Grid client:load data={standings} />
-          </div>
-        )
-      }
-    </div>
+  <div class="mb-5 leading-snug">
+    <p set:html={summary} />
+  </div>
+  <div class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 mb-5">
     {
-      stats &&
-        (Array.isArray(stats) ? (
-          stats.map((data) => (
-            <div class="mb-5">
-              <div class="flex justify-between mb-0.5">
-                <h3 class="font-semibold text-team-primary">{data.name}</h3>
-                <a href={`stats/${year}`}>See stats</a>
-              </div>
-              <Grid client:load data={data} />
-            </div>
-          ))
-        ) : (
-          <div class="mb-5">
-            <div class="flex justify-between mb-0.5">
-              <h3 class="font-semibold text-team-primary">{stats.name}</h3>
-              <a href={`stats/${year}`}>See stats</a>
-            </div>
-            <Grid client:load data={stats} />
+      scoresAndSchedule && (
+        <div>
+          <div class="flex justify-between mb-0.5">
+            <h3 class="font-bold text-team-primary">
+              {scoresAndSchedule.name}
+            </h3>
+            <a href={`${schedule}/${year}`}>See schedule</a>
           </div>
-        ))
+          <Grid
+            client:load
+            data={scoresAndSchedule}
+            columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+          />
+        </div>
+      )
     }
     {
-      playerGallery && playerGallery.length > 0 && (
-        <PlayerGallery images={playerGallery} class="mb-5" />
+      teamLeaders && (
+        <TeamLeaders
+          leaders={teamLeaders}
+          title={isFc ? 'Club Leaders' : 'Team Leaders'}
+        >
+          <a href={`roster/${year}`}>See roster</a>
+        </TeamLeaders>
+      )
+    }
+    {
+      standings && (
+        <div>
+          <h3 class="font-bold text-team-primary mb-0.5">
+            {standings.name}
+          </h3>
+          <Grid client:load data={standings} />
+        </div>
       )
     }
   </div>
+  {
+    stats &&
+      (Array.isArray(stats) ? (
+        stats.map((data) => (
+          <div class="mb-5">
+            <div class="flex justify-between mb-0.5">
+              <h3 class="font-bold text-team-primary">{data.name}</h3>
+              <a href={`stats/${year}`}>See stats</a>
+            </div>
+            <Grid client:load data={data} />
+          </div>
+        ))
+      ) : (
+        <div class="mb-5">
+          <div class="flex justify-between mb-0.5">
+            <h3 class="font-bold text-team-primary">{stats.name}</h3>
+            <a href={`stats/${year}`}>See stats</a>
+          </div>
+          <Grid client:load data={stats} />
+        </div>
+      ))
+  }
+  {
+    playerGallery && playerGallery.length > 0 && (
+      <PlayerGallery images={playerGallery} class="mb-5" />
+    )
+  }
 </TeamLayout>

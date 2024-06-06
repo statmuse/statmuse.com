@@ -1,16 +1,15 @@
 ---
-import Container from '@components/container.astro'
-import Header from '@components/header.astro'
 import TeamRepresentatives from '@components/representatives.astro'
-import AnswerShare from '@components/answer-share.astro'
 import Explore from '@components/explore.astro'
-import Layout from '@layouts/main.astro'
+import Layout from '@layouts/base.astro'
 import {
   type GameraDomain,
   type GameraTeamSeasonBio,
   getDefaultTeamLogoUrl,
   getUrlForEntity,
   tokensToText,
+  type GameraParameter,
+  type GameraTeamFranchiseOverview,
 } from '@statmuse/core/gamera'
 import { getLeagueKeywords, type Metadata } from '@lib/meta'
 import { imageForgeUrl } from '@statmuse/core/path'
@@ -18,9 +17,17 @@ import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import Nav from '@components/nav.astro'
+import GridDropdown from '@components/grid-dropdown.astro'
+import type { LeagueParam } from '@lib/params'
+import Select from '@components/select.svelte'
+import type { NavLink } from 'src/types'
+import type { ComponentProps } from 'astro/types'
+import { getTeamFranchiseLatestSeason } from '@lib/team'
+import Hero from '@components/hero.astro'
 
-interface Props {
-  bio: GameraTeamSeasonBio
+interface Props extends ComponentProps<typeof Layout> {
+  bio: GameraTeamSeasonBio | GameraTeamFranchiseOverview
   page:
     | 'overview'
     | 'stats'
@@ -29,16 +36,17 @@ interface Props {
     | 'roster'
     | 'splits'
     | 'history'
-  meta?: Metadata
-  query?: string
-  analytics?: AnalyticsPageviewProperties
 }
 
-const { bio, meta, query, analytics = {}, page: pageType } = Astro.props
+const { meta, query, page, parameters, analytics = {} } = Astro.props
+const bio = 'bio' in Astro.props.bio ? Astro.props.bio.bio : Astro.props.bio
+const isTeam = 'franchise' in bio
+const isFranchise = !isTeam
 
 const domain = bio.domain.toUpperCase() as GameraDomain
 const preferredDomain = domain.toLowerCase()
-const teamFranchiseUrl = getUrlForEntity(bio.franchise)
+const league = (domain === 'EPL' ? 'fc' : preferredDomain) as LeagueParam
+const teamFranchiseUrl = isTeam ? getUrlForEntity(bio.franchise) : undefined
 
 const canonical = { url: Astro.url.pathname + Astro.url.search }
 const teamPath = getUrlForEntity({
@@ -47,39 +55,96 @@ const teamPath = getUrlForEntity({
   id: bio.teamId.toString(),
   display: bio.name,
 })
-const year = bio.season.name
-const currentSeason = bio.season?.all?.find((s) => s.name === year)
-const [, yearId] = currentSeason?.entity.id.split('/') || []
+const year = isTeam ? bio.season.name : undefined
+const currentSeason = isTeam
+  ? bio.season?.all?.find((s) => s.name === year)
+  : undefined
+const parts = currentSeason?.entity.id.split('/') || []
+let yearId: string | undefined = parts[1]
 
-const links = [
-  ...(bio.hasStats
-    ? [{ text: 'Overview', href: `${teamPath}/${yearId}`, page: 'overview' }]
-    : []),
-  ...(bio.hasStats
-    ? [{ text: 'Stats', href: `${teamPath}/stats/${yearId}`, page: 'stats' }]
-    : []),
-  domain === 'EPL'
-    ? {
-        text: 'Fixtures',
-        href: `${teamPath}/fixtures/${yearId}`,
-        page: 'fixtures',
-      }
-    : {
-        text: 'Schedule',
-        href: `${teamPath}/schedule/${yearId}`,
-        page: 'schedule',
-      },
-  ...(bio.hasRoster
-    ? [{ text: 'Roster', href: `${teamPath}/roster/${yearId}`, page: 'roster' }]
-    : []),
-  ...(bio.hasStats
-    ? [{ text: 'Splits', href: `${teamPath}/splits/${yearId}`, page: 'splits' }]
-    : []),
-  { text: 'History', href: `${teamPath}/history`, page: 'history' },
-]
+if (isFranchise) {
+  const latestSeason = await getTeamFranchiseLatestSeason({
+    context: Astro,
+    domain,
+    teamId: Astro.props.bio.teamId.toString(),
+  })
+
+  yearId = latestSeason?.entity.id.split('/')[1]
+}
+
+const links: NavLink[] = []
+
+if (isTeam) {
+  if (bio.hasStats) {
+    links.push(
+      { text: 'Overview', href: `${teamPath}/${yearId}`, param: 'overview' },
+      { text: 'Stats', href: `${teamPath}/stats/${yearId}`, param: 'stats' },
+    )
+  }
+
+  links.push(
+    domain === 'EPL'
+      ? {
+          text: 'Fixtures',
+          href: `${teamPath}/fixtures/${yearId}`,
+          param: 'fixtures',
+        }
+      : {
+          text: 'Schedule',
+          href: `${teamPath}/schedule/${yearId}`,
+          param: 'schedule',
+        },
+  )
+
+  if (bio.hasRoster) {
+    links.push({
+      text: 'Roster',
+      href: `${teamPath}/roster/${yearId}`,
+      param: 'roster',
+    })
+  }
+
+  if (bio.hasStats) {
+    links.push({
+      text: 'Splits',
+      href: `${teamPath}/splits/${yearId}`,
+      param: 'splits',
+    })
+  }
+} else if (yearId) {
+  links.push(
+    { text: 'Overview', href: `${teamPath}/${yearId}`, param: 'overview' },
+    { text: 'Stats', href: `${teamPath}/stats/${yearId}`, param: 'stats' },
+  )
+
+  if (domain === 'EPL') {
+    links.push({
+      text: 'Fixtures',
+      href: `${teamPath}/fixtures/${yearId}`,
+      param: 'fixtures',
+    })
+  } else {
+    links.push({
+      text: 'Schedule',
+      href: `${teamPath}/schedule/${yearId}`,
+      param: 'schedule',
+    })
+  }
+
+  links.push(
+    { text: 'Roster', href: `${teamPath}/roster/${yearId}`, param: 'roster' },
+    { text: 'Splits', href: `${teamPath}/splits/${yearId}`, param: 'splits' },
+  )
+}
+
+links.push({ text: 'History', href: `${teamPath}/history`, param: 'history' })
 
 const title = `${bio.name} Overview`
-const description = bio.summaryNlg ? tokensToText(bio.summaryNlg) : undefined
+const description = isTeam
+  ? bio.summaryNlg
+    ? tokensToText(bio.summaryNlg)
+    : undefined
+  : `View ${bio.name} career stats, including game logs, splits, and more.`
 const keywords = `${getLeagueKeywords(domain)} ${
   bio.name
 } career stats statistics`
@@ -97,6 +162,37 @@ const twitter = {
     bgColor: domain === 'NFL' ? 'EFF4F8' : bio.colors?.backgroundColor,
     type: 'twitter',
   }),
+}
+
+const shareUrl = meta?.canonical?.url
+  ? Astro.url.origin + meta.canonical.url
+  : Astro.url.href
+
+const selectProps = isTeam
+  ? {
+      hideLabel: true,
+      initial: currentSeason?.entity.id,
+      options: bio.season.all.map((season) => {
+        const url = Astro.url.origin + getUrlForEntity(season.entity)
+        return {
+          value: season.entity.id,
+          label: season.name,
+          url,
+        }
+      }),
+    }
+  : {}
+
+const navProps: ComponentProps<typeof Nav> = {
+  teamColors: true,
+  links,
+  selected: page,
+  href: (p) => `${teamPath}/${p}`,
+}
+
+const share = {
+  type: 'profile',
+  url: shareUrl,
 }
 ---
 
@@ -118,212 +214,54 @@ const twitter = {
     page_domain:
       domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
     page_type: 'team',
-    disposition: bio.disposition,
+    disposition: isTeam ? bio.disposition : Astro.props.bio.disposition,
     ...analytics,
   }}
+  {share}
 >
-  <Header
-    {query}
-    {preferredDomain}
-    share={{
-      type: 'profile',
-      url: meta?.canonical?.url
-        ? Astro.url.origin + meta.canonical.url
-        : Astro.url.href,
-    }}
-  />
-  <Container class="mb-2.5 bg-team-primary text-team-secondary overflow-hidden">
-    <div
-      class="relative flex flex-col md:flex-row md:flex-wrap justify-center items-center md:items-stretch"
-    >
-      <div class="flex-1 mt-5 mb-7">
-        <h2 class="text-5xl font-semibold mb-2 text-center md:text-left">
-          <a
-            class="text-current"
-            href={teamFranchiseUrl}
-            title={`${bio.name} Franchise`}
-            data-cy-team-name-link
-          >
-            {bio.name}
-          </a>
-        </h2>
-        <div class="flex flex-wrap flex-col md:flex-row items-center gap-3">
-          <div class="cursor-pointer relative">
-            <select
-              class="team-season-select appearance-none border-none bg-team-primary color-current font-semibold outline-none pr-3"
-              data-cy-team-select
-            >
-              <option value="history" data-url={teamFranchiseUrl}>
-                History
-              </option>
-              {
-                bio.season.all.map((season) => {
-                  const url = getUrlForEntity(season.entity)
-                  return (
-                    <option
-                      value={season.entity.id}
-                      data-url={url}
-                      selected={year === season.name ? 'selected' : undefined}
-                    >
-                      {season.name}
-                    </option>
-                  )
-                })
-              }
-            </select>
-            <div class="bg-team-secondary absolute bottom-0 w-full h-[1px]">
-            </div>
-            <div
-              class="border-x-4 border-x-transparent border-t-4 border-t-team-secondary h-0 w-0 absolute right-0 top-1/2 -translate-y-[35%]"
-            >
-            </div>
-          </div>
-          <div class="whitespace-nowrap">
-            {
-              bio.standing?.record && (
-                <>
-                  <span>{bio.standing.record}</span>
-                  <span class="last:hidden" set:text=" • " />
-                </>
-              )
-            }
-            {
-              bio.standing?.points && (
-                <>
-                  <span>{bio.standing.points} Pts</span>
-                  <span class="last:hidden" set:text=" • " />
-                </>
-              )
-            }
-            {
-              bio.standing?.leagueRank && (
-                <>
-                  <span>{bio.standing.leagueRank}</span>
-                  <span class="last:hidden" set:text=" • " />
-                </>
-              )
-            }
-            {
-              bio.standing?.conferenceRank && (
-                <>
-                  <span>{bio.standing.conferenceRank}</span>
-                  <span class="last:hidden" set:text=" • " />
-                </>
-              )
-            }
-            {
-              bio.standing?.divisionRank && (
-                <>
-                  <span>{bio.standing.divisionRank}</span>
-                  <span class="last:hidden" set:text=" • " />
-                </>
-              )
-            }
-            {
-              bio.standing?.championship && (
-                <>
-                  <span>🏆</span>
-                  <span class="last:hidden" set:text=" • " />
-                </>
-              )
-            }
-          </div>
-        </div>
-        <div class="hidden md:block mt-6">
-          <div class="flex gap-5 mb-1 text-center">
-            {
-              bio.statsSummary?.stats.map((stat) => (
-                <div>
-                  <p class="uppercase whitespace-nowrap">{stat.label}</p>
-                  <p class="text-3xl">{stat.value}</p>
-                  <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-                    {stat.label !== 'FORM' ? stat.rank : 'last 5'}
-                  </p>
-                </div>
-              ))
-            }
-          </div>
-        </div>
-      </div>
+  <Hero
+    content={bio.name}
+    url={teamFranchiseUrl
+      ? {
+          href: teamFranchiseUrl,
+        }
+      : undefined}
+    {navProps}
+    {share}
+    renderAdBanner
+  >
+    <Fragment slot="hero">
       <TeamRepresentatives
-        representatives={bio.teamRepresentatives}
+        class:list={{
+          'h-32': true,
+          'mt-2 -mb-2 md:mt-0 @lg/main:-mb-3 @lg/main:-ml-10 @lg/main:mr-3': true,
+          'self-center @lg/main:self-end select-none': true,
+          'object-contain object-bottom': true,
+        }}
+        representatives={isTeam
+          ? bio.teamRepresentatives
+          : bio.franchiseRepresentatives}
         fallback={bio.logoImageUrl || getDefaultTeamLogoUrl(domain)}
-        alt={`Logo for the ${bio.season.name} ${bio.name}`}
+        alt={`Logo for the${isTeam ? ' ' + bio.season.name : ''} ${bio.name}`}
       />
-      <div class="absolute right-0 bottom-2.5 md:hidden" style="z-index: 1;">
-        <div
-          class="flex items-center justify-center w-12 h-12 rounded-full bg-team-primary"
-        >
-          <AnswerShare
-            onlyIcon
-            url={meta?.canonical?.url
-              ? Astro.url.origin + meta.canonical.url
-              : Astro.url.href}
+      {
+        isTeam ? (
+          <Select
+            client:load
+            class="hidden @2xl/main:flex w-32 absolute right-3 bottom-3"
+            {...selectProps}
           />
-        </div>
-      </div>
-    </div>
-  </Container>
-  <div class="h-[50px] md:h-[90px] mb-1.5 flex justify-center items-center">
-    <AditudeAdBanner client:only="svelte" />
-  </div>
+        ) : null
+      }
+    </Fragment>
+  </Hero>
   {
-    bio.statsSummary ? (
-      <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
-        <div class="flex gap-5 mb-1 text-center">
-          {bio.statsSummary.stats.map((stat) => (
-            <div>
-              <p class="uppercase">{stat.label}</p>
-              <p class="text-3xl">{stat.value}</p>
-              <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-                {stat.label !== 'FORM' ? stat.rank : 'last 5'}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
+    isTeam ? (
+      <Select client:load class="@2xl/main:hidden" {...selectProps} />
     ) : null
   }
-  <Container>
-    <div class="flex flex-nowrap overflow-auto mb-5 space-x-5">
-      {
-        links.map(({ href, text, page }) => (
-          <a
-            aria-current={page === pageType ? 'page' : undefined}
-            class:list={{
-              'text-3xl font-semibold shrink-0': true,
-              'text-team-primary active': page === pageType,
-              'text-black': page !== pageType,
-            }}
-            {href}
-          >
-            {text}
-          </a>
-        ))
-      }
-    </div>
-    <div class="mb-1.5">
-      <slot />
-    </div>
-    <Explore league={domain === 'EPL' ? 'fc' : preferredDomain} />
-    {
-      ANSWER_CARDS_ENABLED && (
-        <AnswerCards league={domain === 'EPL' ? 'fc' : preferredDomain} />
-      )
-    }
-  </Container>
+  {parameters && <GridDropdown class="flex" {parameters} />}
+  <slot />
+  <Explore {league} />
+  {ANSWER_CARDS_ENABLED && <AnswerCards {domain} />}
 </Layout>
-
-<script>
-  document.addEventListener('astro:page-load', () => {
-    const selects = document.querySelectorAll('select.team-season-select')
-    selects.forEach((select) => {
-      select.addEventListener('change', (event) => {
-        const select = event.target as HTMLSelectElement
-        if (!select.selectedOptions) return
-        const newUrl = select.selectedOptions[0].dataset['url'] as string
-        window.location.href = newUrl
-      })
-    })
-  })
-</script>

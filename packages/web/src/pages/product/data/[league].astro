@@ -1,5 +1,6 @@
 ---
-import ProductLayout from '@layouts/product.astro'
+import Hero from '@components/hero.astro'
+import Layout from '@layouts/base.astro'
 import { Caching } from '@lib/caching'
 
 // export const prerender = true
@@ -1198,68 +1199,180 @@ const data = [
     ],
     poweredBy: 'data-sports-group',
     glossaryItems: [
-      { term: 'Aerials lost (AER-L)' },
-      { term: 'Aerials won (AER-W)' },
-      { term: 'Assists (A)' },
-      { term: 'Ball recovered (REC)' },
-      { term: 'Big chance created (BIG CHNC)' },
-      { term: 'Blocked crosses (BLK-CRS)' },
-      { term: 'Blocked shots (BLK-SH)' },
-      { term: 'Clean sheet (CS)' },
-      { term: 'Clearances (CLR)' },
-      { term: 'Corner kicks (CNR)' },
-      { term: 'Corner kicks won (CNR-W)' },
-      { term: 'Crosses (CRS)' },
-      { term: 'Defender (DF)' },
-      { term: 'Duels lost (DUEL-L)' },
-      { term: 'Duels won (DUEL-W)' },
-      { term: 'Error leading to goal (ERR-G)' },
-      { term: 'Error leading to shot (ERR-SH)' },
-      { term: 'Expected goals (xG)' },
-      { term: 'Forward (FW)' },
-      { term: 'Fouled (FOULED)' },
-      { term: 'Fouls (FOUL)' },
-      { term: 'Free kick goals (FK)' },
-      { term: 'Goal difference (GD)' },
-      { term: 'Goalkeeper (GK)' },
-      { term: 'Goals (G)' },
-      { term: 'Goals + assists (G+A)' },
-      { term: 'Goals against (GA)' },
-      { term: 'Goals conceded (GC)' },
-      { term: 'Goals for (GF)' },
-      { term: 'Hit woodwork (WOOD)' },
-      { term: 'Interceptions (INT)' },
-      { term: 'Key passes (PASS-KEY)' },
-      { term: 'Last man tackles (TKL-LM)' },
-      { term: 'Long ball passes (PASS-LNG)' },
-      { term: 'Matches (M)' },
-      { term: 'Matches started (START)' },
-      { term: 'Midfielder (MF)' },
-      { term: 'Minutes played (MIN)' },
-      { term: 'Offside (O F)' },
-      { term: 'Opponent (OPP)' },
-      { term: 'Own goals (OG)' },
-      { term: 'Pass accuracy (PASS%)' },
-      { term: 'Pass attempts (PASS-ATT)' },
-      { term: 'Passes (PASS)' },
-      { term: 'Passes in the final third (PASS-F3RD)' },
-      { term: 'Penalty kick conversion rate (PK%)' },
-      { term: 'Penalty kick goals (PK)' },
-      { term: 'Penalty kicks conceded (PKC)' },
-      { term: 'Penalty kicks saved (SV-PK)' },
-      { term: 'Penalty kicks won (PK-W)' },
-      { term: 'Possessions lost (POSS-L)' },
-      { term: 'Red cards (RC)' },
-      { term: 'Saves (SV)' },
-      { term: 'Shot accuracy (SH%)' },
-      { term: 'Shots (SH)' },
-      { term: 'Shots on target (ST)' },
-      { term: 'Tackles (TKL)' },
-      { term: 'Tackles won (TKL-W)' },
-      { term: 'Touches (TCH)' },
-      { term: 'Touches in opponents box (TCH-BOX)' },
-      { term: 'Win-Draw-Loss (W-D-L)' },
-      { term: 'Yellow cards (YC)' },
+      { term: 'Accurate passes (PASS)', description: '' },
+      {
+        term: 'Aerials lost (AER-L)',
+        description:
+          'Aerial: Two outfield players compete for the ball, with either both players jumping or only one jumping and the other contesting the header by making it difficult to win, where one player wins the contest with a header',
+      },
+      { term: 'Aerials won (AER-W)', description: '' },
+      { term: 'Assists (A)', description: '' },
+      { term: 'Betting odds', description: '' },
+      {
+        term: 'Big 6 stats',
+        description:
+          'Stats filtered for Arsenal, Chelsea, Liverpool, Man City, Man United and Tottenham combined',
+      },
+      {
+        term: 'Big chances created (BCC)',
+        description:
+          'A pass which led to a clear scoring opportunity e.g. one-on-one situation or a shot from just a few yards out',
+      },
+      {
+        term: 'Big chances missed (BCM)',
+        description:
+          'A clear-cut scoring opportunity which was not converted or scored',
+      },
+      { term: 'Birthdates', description: '' },
+      {
+        term: 'Blocked crosses (BLK-CRS)',
+        description: 'Total number of opposition crosses blocked',
+      },
+      { term: 'Braces (BRACE)', description: '' },
+      { term: 'Clean sheets (CS)', description: '' },
+      { term: 'Clearances (CLR)', description: '' },
+      {
+        term: 'Conversion rate (CONV%)',
+        description: 'Non-penalty goals per non-penalty shot attempts',
+      },
+      { term: 'Corners (CNR)', description: '' },
+      { term: 'Corners won (CNR-W)', description: '' },
+      { term: 'Crosses (CRS)', description: '' },
+      { term: 'Crossing% (CRS%)', description: '' },
+      { term: 'Debut stats', description: '' },
+      {
+        term: 'Defensive actions (DEF-ACT)',
+        description: 'Tackles, pressure events and fouls recorded',
+      },
+      { term: 'Derby stats', description: '' },
+      {
+        term: 'Dispossessed (DISPOSS)',
+        description:
+          'Number of times a player loses the ball by getting tackled',
+      },
+      { term: 'Dribble attempts (DRIB-ATT)', description: '' },
+      {
+        term: 'Dribble% (DRIB%)',
+        description: 'Successful dribbles per dribble attempts',
+      },
+      { term: 'Dribbled past (DRIB-PAST)', description: '' },
+      { term: 'Dribbles faced (DRIB-FACED)', description: '' },
+      {
+        term: 'Duels lost (DUEL-L)',
+        description: 'Number of 50/50 contests lost',
+      },
+      {
+        term: 'Duels won (DUEL-W)',
+        description: 'Number of 50/50 contests won',
+      },
+      { term: 'Errors leading to goal (ERR-G)', description: '' },
+      { term: 'Errors leading to shot (ERR-SH)', description: '' },
+      {
+        term: 'Form (FORM)',
+        description: 'How a team has performed over the last 5 matches',
+      },
+      { term: 'Fouls committed (FOUL)', description: '' },
+      { term: 'Fouls won (FOULED)', description: '' },
+      { term: 'Free kick goals (FK)', description: '' },
+      { term: 'G/A (G+A)', description: '' },
+      { term: 'Goal difference (GD)', description: '' },
+      { term: 'Goals (G)', description: '' },
+      { term: 'Goals conceded (GC or GA)', description: '' },
+      { term: 'Hat-tricks (HT)', description: '' },
+      { term: 'Head-to-head stats', description: '' },
+      { term: 'Height', description: '' },
+      { term: 'Historical matches', description: '' },
+      { term: 'Historical tables', description: '' },
+      {
+        term: 'Interceptions (INT)',
+        description:
+          'A defending player intercepts a pass between opposition players',
+      },
+      {
+        term: 'Key passes (PASS-KEY)',
+        description:
+          'The final pass from a player to their teammate who then makes an attempt on goal without scoring',
+      },
+      {
+        term: 'Last man tackles (TKL-LM)',
+        description:
+          'A player makes a defensive action/tackle and is the last person between the opponent and the goal',
+      },
+      {
+        term: 'Long ball passes (PASS-LNG)',
+        description: 'Passes longer than 35 yards',
+      },
+      { term: 'Manager stats', description: '' },
+      { term: 'Minutes played (MIN)', description: '' },
+      { term: 'Non-penalty goals (NPG)', description: '' },
+      { term: 'Nutmegs (NUTMEG)', description: '' },
+      { term: 'Offsides (OFF)', description: '' },
+      { term: 'Open play goals (G-OP)', description: '' },
+      { term: 'Open play xG (xG-OP)', description: '' },
+      { term: 'Own goals (OG)', description: '' },
+      { term: 'Pass% (PASS%)', description: '' },
+      { term: 'Pass attempts (PASS-ATT)', description: '' },
+      {
+        term: 'Pass length (PASS-LNGTH)',
+        description: 'Average pass length in yards',
+      },
+      { term: 'Passes in opposition box (PASS-BOX)', description: '' },
+      { term: 'Passes in the final third (PASS-F3RD)', description: '' },
+      { term: 'Passes into box (PASS-INTO-BOX)', description: '' },
+      { term: 'Penalties conceded (PKC)', description: '' },
+      { term: 'Penalties saved (SV-PK)', description: '' },
+      { term: 'Penalties won (PK-W)', description: '' },
+      { term: 'Penalty conversion rate (PK%)', description: '' },
+      { term: 'Penalty goals (PK)', description: '' },
+      { term: 'Per 90 stats', description: 'Stats per 90 minutes' },
+      { term: 'Player comparions', description: '' },
+      { term: 'Possession% (POSS%)', description: '' },
+      { term: 'Possessions lost (POSS-L)', description: '' },
+      { term: 'Post-shot xG (PSxG)', description: '' },
+      { term: 'Preferred foot', description: '' },
+      {
+        term: 'Pressures (PRESS)',
+        description: 'The number of times a team pressures the opponent',
+      },
+      {
+        term: 'Recoveries (REC)',
+        description: 'A player takes possession of a loose ball',
+      },
+      { term: 'Red cards (RC)', description: '' },
+      { term: 'Saves (SV)', description: '' },
+      { term: 'Second yellow cards (2ND-YC)', description: '' },
+      { term: 'Set piece goals (G-SP)', description: '' },
+      { term: 'Set piece xG (xG-SP)', description: '' },
+      { term: 'Shot% (SH%)', description: '' },
+      { term: 'Shots (SH)', description: '' },
+      { term: 'Shots blocked (SH-BLK)', description: '' },
+      { term: 'Shots faced (SH-FACED)', description: '' },
+      { term: 'Shots off target', description: '' },
+      { term: 'Shots on target (SOT)', description: '' },
+      { term: 'Starts (START)', description: '' },
+      {
+        term: 'Stats by age',
+        description: 'Terms like U19, U23 is supported',
+      },
+      { term: 'Stats by nationality', description: '' },
+      { term: 'Stats by positions', description: '' },
+      { term: 'Successful dribbles (DRIB)', description: '' },
+      { term: 'Tackle attempts (TKL)', description: '' },
+      { term: 'Tackles won (TKL-W)', description: '' },
+      {
+        term: 'Through balls (THRU-BALL)',
+        description:
+          'A completed pass splitting the defence for a teammate to run onto',
+      },
+      { term: 'Titles', description: '' },
+      { term: 'Touches (TCH)', description: '' },
+      { term: 'Touches in opposition box (TCH-BOX)', description: '' },
+      { term: 'WDL', description: '' },
+      { term: 'Weight', description: '' },
+      { term: 'Woodwork hit (WOOD)', description: '' },
+      { term: 'xA (xA)', description: '' },
+      { term: 'xG (xG)', description: '' },
+      { term: 'Yellow cards (YC)', description: '' },
     ],
   },
 ]
@@ -1268,15 +1381,56 @@ const { coverage, poweredBy, glossaryItems } = data.find(
   (x) => x.league.toLowerCase() === league,
 ) || { coverage: [], poweredBy: '', glossaryItems: [] }
 
+const links = [
+  {
+    text: 'FC',
+    param: 'fc',
+    href: '/product/data/fc',
+  },
+  {
+    text: 'NBA',
+    param: 'nba',
+    href: '/product/data/nba',
+  },
+  {
+    text: 'NFL',
+    param: 'nfl',
+    href: '/product/data/nfl',
+  },
+  {
+    text: 'NHL',
+    param: 'nhl',
+    href: '/product/data/nhl',
+  },
+  {
+    text: 'MLB',
+    param: 'mlb',
+    href: '/product/data/mlb',
+  },
+  {
+    text: 'PGA',
+    param: 'pga',
+    href: '/product/data/pga',
+  },
+]
+
 Caching.swr(Astro)
 ---
 
-<ProductLayout
+<Layout
   {meta}
-  league={league || 'nfl'}
-  prefixPath="/product/data"
+  colors={{ foreground: '#fff', background: '#00c1d8' }}
   enableAdBanner={false}
+  renderRightColumn={false}
 >
+  <Hero
+    content="Data Coverage"
+    navProps={{
+      href: () => '',
+      selected: league,
+      links,
+    }}
+  />
   <div class="pb-6">
     <h3 class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3">
       {league?.toUpperCase()} data coverage
@@ -1300,6 +1454,15 @@ Caching.swr(Astro)
             ? '/affiliations/data-sports-group.png'
             : ''}
         />
+        {
+          poweredBy === 'data-sports-group' && (
+            <img
+              class="inline-block h-[15px] object-contain"
+              alt="Statsbomb"
+              src="/affiliations/statsbomb.svg"
+            />
+          )
+        }
       </li>
     </ul>
 
@@ -1310,11 +1473,11 @@ Caching.swr(Astro)
       {
         glossaryItems.map(({ term, description }) => (
           <li>
-            <p class="font-semibold">{term}</p>
+            <p class="font-bold">{term}</p>
             <p>{description}</p>
           </li>
         ))
       }
     </ul>
   </div>
-</ProductLayout>
+</Layout>

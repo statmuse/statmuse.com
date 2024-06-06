@@ -1,11 +1,8 @@
 ---
 import MoneyBaseLayout from '@layouts/money-base.astro'
-import Header from '@components/header.astro'
 import Footer from '@components/footer.astro'
-import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals-money.astro'
 import Explore from '@components/explore.astro'
-import Container from '@components/container.astro'
 import { getHeroProps } from '@lib/kanedama'
 import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import { tokensToText } from '@statmuse/core/kanedama'
@@ -13,6 +10,7 @@ import { title } from '@lib/meta'
 import type { KanedamaResponse } from '@statmuse/core/kanedama'
 import * as Link from '@statmuse/core/link'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import Hero from '@components/hero.astro'
 
 interface Props {
   answer: KanedamaResponse
@@ -65,6 +63,12 @@ const meta =
         },
       }
     : {}
+
+const share = {
+  shortCode: code?.short_code,
+  query,
+  domain: 'money',
+}
 ---
 
 <MoneyBaseLayout
@@ -77,32 +81,18 @@ const meta =
     query,
     ...analytics,
   }}
+  {query}
+  {conversationToken}
+  {share}
 >
-  <Header
-    money
-    {query}
-    {conversationToken}
-    share={Astro.request.method === 'POST'
-      ? { type: 'ask', shortCode: code?.short_code, domain: 'money', query }
-      : { type: 'ask', shortCode: code?.short_code, url: Astro.url.href }}
-  />
-  {
-    heroProps ? (
-      <Hero
-        {...heroProps}
-        shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`}
-      />
-    ) : null
-  }
+  {heroProps ? <Hero {...heroProps} {share} renderAdBanner /> : null}
   <Visuals response={answer} {conversationToken} />
   {
     answer.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
-      <Container>
-        <Explore
-          league="money"
-          additionalQuestions={answer.visual.additionalQuestions}
-        />
-      </Container>
+      <Explore
+        league="money"
+        additionalQuestions={answer.visual.additionalQuestions}
+      />
     )
   }
   <Footer />

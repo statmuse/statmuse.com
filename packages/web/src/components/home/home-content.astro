@@ -1,0 +1,320 @@
+---
+import type {
+  GameraDomain,
+  GameraPlayerProfileResponse,
+} from '@statmuse/core/gamera'
+import MusingsCard from '@components/home/musings-card.astro'
+import PlayerPerformanceCard from '@components/player/performance-card.astro'
+import type { LatestMusing } from '@statmuse/core/musing'
+import type {
+  PlayerLeadersResponse,
+  TeamRankingsResponse,
+} from '@lib/related-content'
+import RankingCard from '@components/home/ranking-card.astro'
+import Standings from '@components/home/standings.astro'
+import type { GetStandingsResponse } from '@lib/standings'
+import type { TrendingItem } from 'src/types'
+import TrendingList from '@components/trending-list.astro'
+import WithSubscription from '@components/with-subscription.svelte'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import Panel from '@components/panel.astro'
+import StnVideo from '@components/stn-video.svelte'
+
+type ExampleSet = [string, { query: string; path: string }[]]
+
+interface Props {
+  domain?: GameraDomain
+  musings?: LatestMusing[]
+  profile?: GameraPlayerProfileResponse
+  leaders?: PlayerLeadersResponse
+  rankings?: TeamRankingsResponse
+  betting?: TeamRankingsResponse
+  standings?: GetStandingsResponse
+  trendingPlayers?: TrendingItem['datasets'][number]
+  trendingTeams?: TrendingItem['datasets'][number]
+  trendingSearches?: TrendingItem['datasets'][number]
+  examples?: ExampleSet[]
+}
+
+const {
+  domain,
+  musings,
+  profile,
+  leaders,
+  rankings,
+  betting,
+  standings,
+  trendingPlayers,
+  trendingTeams,
+  trendingSearches,
+  examples,
+} = Astro.props
+---
+
+<div class="flex-1 group">
+  {
+    domain !== 'PGA' ? (
+      <>
+        <div class="bg-gray-6 dark:bg-gray-4 text-gray-5 dark:text-inherit flex lg:hidden font-semibold text-center mb-3 rounded-full relative overflow-clip">
+          <div class="absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 group-has-[#stat:checked]:translate-x-0 group-has-[#musing:checked]:translate-x-full transition-transform ease-out" />
+          <label
+            for="stat"
+            class="flex-1 py-1 hover:cursor-pointer group-has-[#stat:checked]:text-gray-3 relative"
+          >
+            Stats
+          </label>
+          <label
+            for="musing"
+            class="flex-1 py-1 hover:cursor-pointer group-has-[#musing:checked]:text-gray-3 relative"
+          >
+            Musings
+          </label>
+        </div>
+        <div class="flex gap-3">
+          <div class="hidden has-[#musing:checked]:block lg:block flex-1">
+            <input
+              class="absolute opacity-0"
+              type="radio"
+              name="home"
+              id="musing"
+            />
+            {musings && (
+              <div class="space-y-3">
+                {musings.map(async (musing, i) =>
+                  i % 5 === 0 && i > 0 ? (
+                    <Fragment>
+                      <AditudeAdBanner
+                        client:only="svelte"
+                        divId={`home-musing-${i}`}
+                        slotId={`pb-slot-incontent-${i / 5}`}
+                        class="mt-3 mx-auto"
+                        placeholderClass="w-[300px] h-[250px] mt-3 mx-auto"
+                        onlyMobile
+                        lazy
+                      />
+                      <MusingsCard {musing} index={i} />
+                    </Fragment>
+                  ) : (
+                    <MusingsCard {musing} index={i} />
+                  ),
+                )}
+              </div>
+            )}
+          </div>
+          <div class="hidden has-[#stat:checked]:block lg:block flex-1">
+            <input
+              class="absolute opacity-0"
+              type="radio"
+              name="home"
+              id="stat"
+              checked
+            />
+            <div class="space-y-3">
+              {profile && (
+                <PlayerPerformanceCard
+                  domain={profile.bio.domain}
+                  bio={profile.bio}
+                  recentGames={profile.recentGames}
+                />
+              )}
+              {standings && <Standings {standings} domain={standings.domain} />}
+              <AditudeAdBanner
+                client:only="svelte"
+                divId="home-stats-1"
+                slotId="pb-slot-incontent-1"
+                class="mt-3 mx-auto"
+                placeholderClass="w-[300px] h-[250px] mt-3 mx-auto"
+                onlyMobile
+                lazy
+              />
+              {leaders && (
+                <RankingCard
+                  title="League Leaders"
+                  sections={leaders.map((leader) => ({
+                    title: leader.title,
+                    items: leader.players.map((player) => ({
+                      display: player.usedName,
+                      stat: player.statDisplayValue,
+                      imageUrl: player.imageUrl,
+                      entity: player.entity,
+                      colors: player.colors,
+                    })),
+                  }))}
+                />
+              )}
+              {rankings && (
+                <RankingCard
+                  title="League Rankings"
+                  sections={rankings.map((ranking) => ({
+                    title: ranking.title,
+                    images: ranking.images,
+                    items: ranking.teams.map((team) => ({
+                      display: team.nickname,
+                      stat: team.statDisplayValue,
+                      imageUrl: team.logoImageUrl,
+                      entity: team.entity,
+                      colors: team.colors,
+                    })),
+                  }))}
+                />
+              )}
+              <AditudeAdBanner
+                client:only="svelte"
+                divId="home-stats-2"
+                slotId="pb-slot-incontent-2"
+                class="mt-3 mx-auto"
+                placeholderClass="w-[300px] h-[250px] mt-3 mx-auto"
+                onlyMobile
+                lazy
+              />
+              {betting && (
+                <RankingCard
+                  title="Betting Trends"
+                  sections={betting.map((section) => ({
+                    title: section.title,
+                    images: section.images,
+                    items: section.teams.map((team) => ({
+                      display: team.nickname,
+                      stat: team.statDisplayValue,
+                      imageUrl: team.logoImageUrl,
+                      entity: team.entity,
+                      colors: team.colors,
+                    })),
+                  }))}
+                />
+              )}
+              <div>
+                <WithSubscription client:only="svelte">
+                  <Fragment slot="subscribed">
+                    <div class="space-y-3 md:hidden">
+                      {trendingPlayers && (
+                        <TrendingList
+                          title={`Trending ${trendingPlayers.name}`}
+                          items={trendingPlayers.items}
+                        />
+                      )}
+                      {trendingTeams && (
+                        <TrendingList
+                          title={`Trending ${trendingTeams.name}`}
+                          items={trendingTeams.items}
+                        />
+                      )}
+                      {trendingSearches && (
+                        <TrendingList
+                          title={`Trending ${trendingSearches.name}`}
+                          items={trendingSearches.items}
+                        />
+                      )}
+                    </div>
+                  </Fragment>
+                  <div class="space-y-3">
+                    {trendingPlayers && (
+                      <TrendingList
+                        title={`Trending ${trendingPlayers.name}`}
+                        items={trendingPlayers.items}
+                      />
+                    )}
+                    {trendingTeams && (
+                      <TrendingList
+                        title={`Trending ${trendingTeams.name}`}
+                        items={trendingTeams.items}
+                      />
+                    )}
+                    {trendingSearches && (
+                      <TrendingList
+                        title={`Trending ${trendingSearches.name}`}
+                        items={trendingSearches.items}
+                      />
+                    )}
+                  </div>
+                </WithSubscription>
+              </div>
+              <AditudeAdBanner
+                client:only="svelte"
+                divId="home-stats-3"
+                slotId="pb-slot-incontent-3"
+                class="mt-3 mx-auto"
+                placeholderClass="w-[300px] h-[250px] mt-3 mx-auto"
+                onlyMobile
+                lazy
+              />
+              {examples && (
+                <Panel title="Example Questions">
+                  <div class="divide-y divide-gray-6 dark:divide-gray-4">
+                    {examples.map(([title, queries]) => (
+                      <div class="-mx-3 px-3">
+                        <p class="text-sm text-gray-5">{title}</p>
+                        <ul class="flex flex-col mb-2">
+                          {queries.map(({ query, path }) => (
+                            <li class="max-w-xs">
+                              <a href={path} class="text-pretty text-inherit">
+                                {query}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </Panel>
+              )}
+            </div>
+          </div>
+        </div>
+      </>
+    ) : (
+      <div class="gap-3 space-y-3 columns-2xs">
+        {examples &&
+          examples.map(([title, queries]) => (
+            <Panel {title} class="break-inside-avoid-column">
+              <ul class="flex flex-col gap-2">
+                {queries.map(({ query, path }) => (
+                  <li class="max-w-xs">
+                    <a href={path} class="text-pretty">
+                      {query}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </Panel>
+          ))}
+      </div>
+    )
+  }
+</div>
+<StnVideo
+  client:only="svelte"
+  class="w-full md:w-[425px] mt-4"
+  domain={domain?.toLowerCase()}
+/>
+
+<script>
+  const contentSelection = localStorage.getItem('content-selection')
+  if (contentSelection) {
+    const input = document.querySelector<HTMLInputElement>(
+      `input#${contentSelection}`,
+    )
+    if (input) input.checked = true
+  }
+
+  document.addEventListener('astro:after-swap', () => {
+    const contentSelection = localStorage.getItem('content-selection')
+    if (contentSelection) {
+      const input = document.querySelector<HTMLInputElement>(
+        `input#${contentSelection}`,
+      )
+
+      if (input) input.checked = true
+    }
+  })
+
+  document.addEventListener('astro:page-load', () => {
+    document
+      .querySelectorAll<HTMLInputElement>('input[name="home"]')
+      .forEach((input) => {
+        input.addEventListener('change', () => {
+          localStorage.setItem('content-selection', input.id)
+        })
+      })
+  })
+</script>

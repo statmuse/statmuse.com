@@ -583,7 +583,7 @@ export default class Shotchart extends Component {
     const showLegend = true // !minimal;
 
     return (
-      <div className="bg-white">
+      <div>
         {this.state.all.length > 1 && !minimal ? (
           <div style={{ marginTop: 10 }}>
             <span
@@ -622,7 +622,6 @@ export default class Shotchart extends Component {
           style={{
             position: 'relative',
             paddingTop: 15,
-            backgroundColor: 'white',
           }}
         >
           {this.renderCourt()}
@@ -702,7 +701,7 @@ export default class Shotchart extends Component {
                   ref={`zoneInfo.${zone.Z}`}
                   data-shotchart-zone-info
                   className={cx(
-                    'bg-white shadow-lg h-auto p-2.5 pointer-events-none border-l-4 border-[#0064d9] hidden',
+                    'bg-gray-8 dark:bg-gray-4 shadow-lg h-auto p-2.5 pointer-events-none border-l-4 border-[#0064d9] hidden',
                     {
                       'border-none': plainTips,
                     },

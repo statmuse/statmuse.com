@@ -1,19 +1,8 @@
 ---
-import ProductLayout from '@layouts/product.astro'
+import Hero from '@components/hero.astro'
+import Layout from '@layouts/base.astro'
 import { Caching } from '@lib/caching'
 import { createAskPath } from '@statmuse/core/path'
-
-// export const prerender = true
-
-export function getStaticPaths() {
-  return [
-    { params: { league: 'nba' } },
-    { params: { league: 'nfl' } },
-    { params: { league: 'mlb' } },
-    { params: { league: 'nhl' } },
-    { params: { league: 'pga' } },
-  ]
-}
 
 const { league } = Astro.params
 
@@ -477,8 +466,7 @@ const nflExampleSets = [
         query: 'Which TE scored the most fantasy points last season?',
         preferredDomain: 'NFL',
         conversationToken: '',
-        askPath:
-          '/fantasy/ask/which-te-scored-the-most-fantasy-points-last-season',
+        askPath: '/nfl/ask/which-te-scored-the-most-fantasy-points-last-season',
       },
     ],
   },
@@ -1228,15 +1216,56 @@ const { exampleSets } = leagueSets.find(
   (x) => x.league.toLowerCase() === league,
 ) || { exampleSets: [] }
 
+const links = [
+  {
+    text: 'FC',
+    param: 'fc',
+    href: '/product/examples/fc',
+  },
+  {
+    text: 'NBA',
+    param: 'nba',
+    href: '/product/examples/nba',
+  },
+  {
+    text: 'NFL',
+    param: 'nfl',
+    href: '/product/examples/nfl',
+  },
+  {
+    text: 'NHL',
+    param: 'nhl',
+    href: '/product/examples/nhl',
+  },
+  {
+    text: 'MLB',
+    param: 'mlb',
+    href: '/product/examples/mlb',
+  },
+  {
+    text: 'PGA',
+    param: 'pga',
+    href: '/product/examples/pga',
+  },
+]
+
 Caching.swr(Astro)
 ---
 
-<ProductLayout
+<Layout
   {meta}
-  league={league || 'nfl'}
-  prefixPath="/product/examples"
+  colors={{ foreground: '#fff', background: '#00c1d8' }}
   enableAdBanner={false}
+  renderRightColumn={false}
 >
+  <Hero
+    content="Example Searches"
+    navProps={{
+      href: () => '',
+      selected: league,
+      links,
+    }}
+  />
   {
     exampleSets.map(({ title, examples }) => (
       <div class="border-b border-[#e4e4e4] mb-6 md:mb-12">
@@ -1257,4 +1286,4 @@ Caching.swr(Astro)
       </div>
     ))
   }
-</ProductLayout>
+</Layout>

@@ -1,12 +1,32 @@
-import { createSessionBuilder } from 'sst/node/future/auth'
-import type { sessions } from '@statmuse/functions/session'
+import { createSessionBuilder } from '@lib/jwt-builder'
+import type { Visitor as VisitorT } from '@statmuse/core/visitor/visitor.sql'
 import type { APIContext, AstroGlobal } from 'astro'
 import { fromRequest } from '@lib/visitor'
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js'
 import type { User } from '@statmuse/core/user'
 
-const builder = createSessionBuilder<typeof sessions.$type>()
-const SESSION_COOKIE = 'sm_session'
+const builder = createSessionBuilder<{
+  visitor: {
+    id: string
+    bot?: boolean
+    cookieStatus: VisitorT['cookie_status']
+    origin: VisitorT['origin_name']
+  }
+  user: {
+    id: string
+    email: string
+    visitorId: string
+    upgrade?: boolean
+    updated?: boolean
+    cookieStatus: VisitorT['cookie_status']
+    origin: VisitorT['origin_name']
+    subscriptionStatus?: string
+  }
+}>()
+const SESSION_COOKIE =
+  import.meta.env.PUBLIC_STAGE === 'production'
+    ? 'sm_session'
+    : `sm_session-${import.meta.env.PUBLIC_STAGE}`
 
 export type Session = ReturnType<typeof builder.verify>
 

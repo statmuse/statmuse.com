@@ -1,0 +1,20 @@
+---
+/**
+ *
+ *  Legacy Route
+ *
+ *  GET /mlb/team/1948-st.-louis-cardinals-67/1948/schedule
+ *
+ *  Redirect: GET /mlb/team/1948-st.-louis-cardinals-67/schedule/1948
+ *
+ */
+
+const league = Astro.params.league
+const team = Astro.params.team
+const year = Astro.params.year
+const org = Astro.params.org
+const schedule = league === 'fc' ? 'fixtures' : 'schedule'
+if (org !== 'team' && org !== 'club') return NOT_FOUND_404
+
+return Astro.redirect(`/${league}/${org}/${team}/${schedule}/${year}`)
+---

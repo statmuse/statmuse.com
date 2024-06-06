@@ -29,7 +29,7 @@ export function Auth({ stack, app }: StackContext) {
         POSTGRES_HOST: environment.POSTGRES_HOST,
       },
       bind: [
-        secrets.BOTPOISON_SECRET_KEY,
+        secrets.BOTPOISON,
         secrets.STRIPE_SECRET,
         secrets.STRIPE_WEBHOOK_SECRET,
         secrets.STRIPE_PRICE_ID,

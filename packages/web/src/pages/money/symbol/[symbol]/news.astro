@@ -3,9 +3,7 @@ import MoneyLayout from '@layouts/money.astro'
 import { Caching } from '@lib/caching'
 import { getAssetProfile } from '@lib/kanedama'
 import { NOT_FOUND_404 } from '@lib/response'
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
-dayjs.extend(relativeTime)
+import { relativeTimeFromDates } from '@statmuse/core/time'
 
 const { symbol } = Astro.params
 if (!symbol) return NOT_FOUND_404
@@ -24,13 +22,13 @@ const meta = {
 Caching.swr(Astro)
 ---
 
-<MoneyLayout {meta} {profile}>
+<MoneyLayout {meta} {profile} page="news">
   <div class="divide-y divide-[#c7c8ca]">
     {
       news.map((newsItem) => (
         <div class="py-4">
-          <p class="text-xs text-[#969ca1]">
-            Yahoo Finance • {dayjs(newsItem.timestamp).fromNow()}
+          <p class="text-sm text-[#969ca1]">
+            Yahoo Finance • {relativeTimeFromDates(newsItem.timestamp)}
           </p>
           <h3>
             <a href={newsItem.link} target="_blank" rel="noreferrer">
@@ -44,7 +42,7 @@ Caching.swr(Astro)
             </a>
           </p>
           {newsItem.relatedAssets.length ? (
-            <ul class="pt-3 space-x-2 text-xs flex flex-row flex-wrap">
+            <ul class="pt-3 space-x-2 text-sm flex flex-row flex-wrap">
               <h4 class="text-[#969ca1]">Mentioned: </h4>
               {newsItem.relatedAssets.map((related) => (
                 <li>

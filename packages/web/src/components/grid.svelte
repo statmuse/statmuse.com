@@ -2,18 +2,22 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-invalid-attribute -->
 <script lang="ts">
-  import { orderBy, some } from 'lodash-es'
-  import { session } from '@lib/session-store'
+  import type { ComponentProps } from 'svelte'
+  import { orderBy, some, upperCase } from 'lodash-es'
+  import { session } from '@lib/stores'
   import type { GameraGrid } from '@statmuse/core/gamera'
   import EntityLink from '@components/entity-link.svelte'
+  import Image from '@components/image.svelte'
+  import Panel from '@components/panel.svelte'
+  type PanelProps = ComponentProps<Panel>
 
   const freeRowLimit = 25
 
-  type Column = GameraGrid['columns'][0] & {
+  type Column = GameraGrid['columns'][number] & {
     hasImage?: boolean
     sticky?: boolean
   }
-  type RowItem = GameraGrid['rows'][0][string]
+  type RowItem = GameraGrid['rows'][number][string]
 
   export let data: GameraGrid | GameraGrid[]
   export let stickyColumns: string[] = []
@@ -22,9 +26,13 @@
   export let columnStyles = {}
   export let padding = 'px-2'
   export let head = true
-  export let color = false
   export let rankingRange = [10, 20]
   export let highlight: string | undefined = undefined
+  export let title: PanelProps['title'] = undefined
+  export let href: PanelProps['href'] = undefined
+  export let entity: PanelProps['entity'] = undefined
+  export let classes: string | undefined = undefined
+  export { classes as class }
 
   const styles = Object.assign(
     { ALIGNMENT: 'w-2', SEASON: 'text-center' },
@@ -79,7 +87,7 @@
       }, row),
     )
 
-    let rows = limitRows ? allRows.slice(0, 25) : allRows
+    let rows = limitRows ? allRows.slice(0, freeRowLimit) : allRows
 
     return {
       ...grid,
@@ -103,7 +111,11 @@
   }
 
   const applyStyles = (col: Column) => {
-    const style = styles[col.rowItemKey] || styles['default']
+    const style =
+      styles[col.rowItemKey] ||
+      styles[col.rowItemKey.toUpperCase()] ||
+      styles[col.rowItemKey.toLowerCase()] ||
+      styles['default']
     if (/text\-(left|center|right)/.test(style)) {
       return style
     }
@@ -113,12 +125,16 @@
   const imgClass = ({ imageUrl = '', entity }: RowItem) => {
     if (entity?.type.includes('player')) {
       return [
-        'w-6',
-        'h-6',
+        'w-10',
+        'h-8',
         'max-w-none',
         'object-cover',
-        'rounded-full',
-        'bg-white',
+        'object-bottom',
+        'bg-gray-8 dark:bg-gray-3',
+        '-mb-[1px]',
+        'mt-2',
+        'mx-auto',
+        'overflow-visible',
         imageUrl.includes('silhouette') ? 'opacity-50' : '',
       ]
         .filter((x) => x)
@@ -165,7 +181,7 @@
       ) {
         grids = grids.map((grid) => ({
           ...grid,
-          rows: expand ? grid.allRows : grid.allRows.slice(0, 25),
+          rows: expand ? grid.allRows : grid.allRows.slice(0, freeRowLimit),
         }))
       }
     } else {
@@ -186,22 +202,33 @@
   }
 </script>
 
-<div class="relative">
-  <div class="relative overflow-x-auto">
+<Panel
+  {title}
+  {href}
+  {entity}
+  class={`${classes} pb-0 ${!fullWidth ? 'md:w-fit' : ''}`}
+>
+  <div class="relative overflow-x-auto no-scrollbar -mx-3">
     <table class="text-[15px] whitespace-nowrap" class:w-full={fullWidth}>
       {#each grids as grid}
         {@const { columns, rows, aggregations } = grid}
         {#if head}
           <thead>
-            <tr class="text-xs text-team-secondary tracking-[0.07rem]">
-              {#each columns as col (col.rowItemKey)}
+            <tr class="text-sm">
+              {#each columns as col, index (col.rowItemKey)}
                 <th
-                  class={`first:rounded-l last:rounded-r bg-team-primary cursor-pointer font-normal p-1.5 ${applyStyles(
+                  class={`cursor-pointer font-normal p-1.5 text-gray-5 ${applyStyles(
                     col,
                   )}`}
                   class:pl-8={col.hasImage}
+                  class:pl-3={index === 0}
+                  class:pr-3={index === columns.length - 1}
                   class:sticky={col.sticky}
                   class:left-0={col.sticky}
+                  class:bg-gray-8={col.sticky}
+                  class:dark:bg-gray-3={col.sticky}
+                  class:bg-team-primary={sortKey === col.rowItemKey}
+                  class:text-team-secondary={sortKey === col.rowItemKey}
                   on:click={onClickSort(col.rowItemKey)}
                 >
                   {col.title}
@@ -210,18 +237,14 @@
             </tr>
           </thead>
         {/if}
-        <tbody
-          class={`divide-y ${
-            color ? 'divide-team-primary' : 'divide-[#c7c8ca]'
-          } leading-[22px]`}
-        >
+        <tbody class="divide-y divide-gray-6 dark:divide-gray-4 leading-[22px]">
           {#each rows as row (row)}
             {@const rowHighlight = shouldApplyRowHighlight(
               row[columns[0].rowItemKey],
               highlight,
             )}
             <tr>
-              {#each columns as col (row[col.rowItemKey])}
+              {#each columns as col, index (row[col.rowItemKey])}
                 {#if row[col.rowItemKey]}
                   {@const { display, imageUrl, entity } = row[col.rowItemKey]}
                   <td
@@ -229,35 +252,48 @@
                       imageUrl ? 'w-2' : ''
                     } ${rankingColor(row[columns[0].rowItemKey], display)}`}
                     class:py-1={!imageUrl}
+                    class:pl-3={index === 0}
+                    class:pr-3={index === columns.length - 1}
                     class:sticky={col.sticky}
                     class:left-0={col.sticky}
-                    class:bg-white={col.sticky &&
+                    class:bg-gray-8={col.sticky &&
                       !(sortKey === col.rowItemKey) &&
-                      !color &&
                       !rowHighlight}
-                    class:bg-team-secondary={color}
-                    class:bg-[#e9f9ff]={rowHighlight}
-                    class:bg-[#fffbec]={sortKey === col.rowItemKey}
+                    class:dark:bg-gray-3={col.sticky &&
+                      !(sortKey === col.rowItemKey) &&
+                      !rowHighlight}
+                    class:bg-team-primary={rowHighlight ||
+                      sortKey === col.rowItemKey}
+                    class:text-team-secondary={rowHighlight ||
+                      sortKey === col.rowItemKey}
                   >
                     <EntityLink
                       {entity}
-                      class={color ? 'text-team-primary' : ''}
+                      class={rowHighlight || sortKey === col.rowItemKey
+                        ? 'text-team-secondary'
+                        : ''}
                     >
                       {#if col.rowItemKey === 'IMAGE'}
                         {#if imageUrl}
-                          <img
+                          <Image
                             src={imageUrl}
+                            width={40}
+                            height={40}
                             alt={display}
                             class={imgClass(row[col.rowItemKey])}
+                            loading="lazy"
                           />
                         {/if}
                       {:else if col.hasImage}
                         <div class="flex items-center">
                           {#if imageUrl}
-                            <img
+                            <Image
                               src={imageUrl}
+                              width={16}
+                              height={16}
                               alt={display}
                               class={`${imgClass(row[col.rowItemKey])} mr-2.5`}
+                              loading="lazy"
                             />
                           {:else}
                             <div class="w-4 h-4 mr-2.5" />
@@ -291,40 +327,44 @@
               {/each}
             </tr>
           {/each}
-          {#if !limitRows || (limitRows && $session?.type === 'user' && $session.properties.subscriptionStatus === 'active')}
-            {#if aggregations}
-              {#each aggregations as row (row)}
-                <tr class="text-sm font-semibold">
-                  {#each columns as col (row[col.rowItemKey])}
-                    {#if row[col.rowItemKey]}
-                      {@const { display } = row[col.rowItemKey]}
-                      <td
-                        class={`${applyStyles(col)} ${padding} py-1`}
-                        class:sticky={col.sticky}
-                        class:left-0={col.sticky}
-                        class:bg-white={col.sticky}
-                      >
-                        {display}
-                      </td>
-                    {:else}
-                      <td></td>
-                    {/if}
-                  {/each}
-                </tr>
-              {/each}
-            {/if}
+          {#if aggregations}
+            {#each aggregations as row (row)}
+              <tr class="text-sm font-bold">
+                {#each columns as col, index (row[col.rowItemKey])}
+                  {#if row[col.rowItemKey]}
+                    {@const { display } = row[col.rowItemKey]}
+                    <td
+                      class={`${applyStyles(col)} ${padding} py-1`}
+                      class:sticky={col.sticky}
+                      class:left-0={col.sticky}
+                      class:pl-3={index === 0}
+                      class:pr-3={index === columns.length - 1}
+                      class:bg-gray-8={col.sticky}
+                      class:dark:bg-gray-3={col.sticky}
+                    >
+                      {display}
+                    </td>
+                  {:else}
+                    <td></td>
+                  {/if}
+                {/each}
+              </tr>
+            {/each}
           {/if}
         </tbody>
         {#if limitRows && grids[0].allRows.length > freeRowLimit && ($session?.type === 'visitor' || $session?.properties.subscriptionStatus !== 'active')}
           <tbody>
             {#each Array(3) as _row}
               <tr class="border-t border-[#c7c8ca]/30">
-                {#each columns as col}
+                {#each columns as col, index}
                   <td
                     class={`${textAlign(col)} ${padding} py-1`}
                     class:sticky={col.sticky}
+                    class:pl-3={index === 0}
+                    class:pr-3={index === columns.length - 1}
                     class:left-0={col.sticky}
-                    class:bg-white={col.sticky}
+                    class:bg-gray-8={col.sticky}
+                    class:dark:bg-gray-3={col.sticky}
                   >
                     {#if col.rowItemKey === 'IMAGE'}
                       <div class="flex items-center h-[22px]">
@@ -353,7 +393,7 @@
     <div class="absolute bottom-5 left-1/2 -translate-x-1/2">
       <a
         href="/auth/signup"
-        class="flex gap-2 items-center w-fit py-3 px-4 bg-primary text-white text-lg rounded-md hover:no-underline"
+        class="flex gap-2 items-center w-fit py-3 px-4 bg-primary text-white text-xl rounded-2xl hover:no-underline"
       >
         <span class="shrink-0 mt-[1px]">Unlock 2x data</span>
         <svg
@@ -396,4 +436,4 @@
       </a>
     </div>
   {/if}
-</div>
+</Panel>

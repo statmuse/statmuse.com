@@ -1,14 +1,14 @@
 ---
 import TrendingComponent from '@components/trending.astro'
 import { Caching } from '@lib/caching'
-import { moneyCategories, type Category } from "src/types"
+import { moneyCategories, type Category } from 'src/types'
 
-const category = Astro.params.category as Category 
+const category = Astro.params.category as Category
 if (!moneyCategories.includes(category)) {
-  return Astro.redirect("/money/trending")
+  return Astro.redirect('/money/trending')
 }
 
 Caching.swr(Astro)
 ---
 
-<TrendingComponent league={"MONEY"} selected={'money'} {category} />
+<TrendingComponent league={'MONEY'} selected={'money'} {category} />

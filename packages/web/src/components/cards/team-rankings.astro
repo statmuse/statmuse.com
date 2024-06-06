@@ -1,0 +1,265 @@
+---
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import TeamCardComponent from '@components/cards/team.astro'
+import type {
+  GameraDomain,
+  TeamCardResponse,
+  TeamCard,
+} from '@statmuse/core/gamera'
+import { createAskPath } from '@statmuse/core/path'
+
+interface Props {
+  domain: GameraDomain
+  response?: TeamCardResponse
+  adSlot?: {
+    divId: string
+    slotId: string
+  }
+}
+
+const { domain, response, adSlot } = Astro.props
+
+if (!response || response.cards.length === 0) return undefined
+
+const filterTeamCards = (card: TeamCard) =>
+  [
+    // NBA Team
+    'bestOffensiveRating',
+    'bestDefensiveRating',
+    'bestNetRating',
+    'worstRecord',
+    // NFL Team
+    'mostPointsPerGame',
+    'leastPointsAllowedPerGame',
+    'mostTotalYardsPerGame',
+    'mostRushingYardsPerGame',
+    'mostPassingYardsPerGame',
+    'mostDefensiveSacks',
+    // NHL Team
+    'mostGoalsPerGame',
+    'leastGoalsAllowedPerGame',
+    'bestPowerPlayPercentage',
+    'bestPenaltyKillPercentage',
+    // EPL Team
+    'mostGoals',
+    'leastGoalsAgainst',
+    'bestGoalDifferential',
+  ].includes(card.stat)
+
+const cardTitle = (stat: string, season: string) => {
+  let title: string
+  const playoffs = season === 'postseason' ? 'Playoffs ' : ''
+  switch (stat) {
+    // NBA Team
+    case 'bestOffensiveRating':
+      title = 'ORtg Rankings'
+      break
+    case 'bestDefensiveRating':
+      title = 'DRtg Rankings'
+      break
+    case 'bestNetRating':
+      title = 'NetRtg Rankings'
+      break
+    case 'worstRecord':
+      title = 'Tank Leaderboard'
+      break
+    // NFL Team
+    case 'mostPointsPerGame':
+      title = 'PPG Rankings'
+      break
+    case 'leastPointsAllowedPerGame':
+      title = 'Opp PPG Rankings'
+      break
+    case 'mostTotalYardsPerGame':
+      title = 'Total Yards Rankings'
+      break
+    case 'mostRushingYardsPerGame':
+      title = 'Rush Yards Rankings'
+      break
+    case 'mostPassingYardsPerGame':
+      title = 'Pass Yards Rankings'
+      break
+    case 'mostDefensiveSacks':
+      title = 'Sack Leaders'
+      break
+    // NHL Team
+    case 'mostGoalsPerGame':
+      title = 'Goals Rankings'
+      break
+    case 'leastGoalsAllowedPerGame':
+      title = 'Goals Against Rankings'
+      break
+    case 'bestPowerPlayPercentage':
+      title = 'Power Play Rankings'
+      break
+    case 'bestPenaltyKillPercentage':
+      title = 'Penalty Kill Rankings'
+      break
+    // MLB Team
+    // EPL Team
+    case 'mostGoals':
+      title = 'Goals For Rankings'
+      break
+    case 'leastGoalsAgainst':
+      title = 'Goals Against Rankings'
+      break
+    case 'bestGoalDifferential':
+      title = 'Goal Difference Rankings'
+      break
+    default:
+      title = stat
+  }
+
+  return `${playoffs}${title}`
+}
+
+const askLink = (
+  stat: string,
+  league: string,
+  season: string,
+  year: string,
+) => {
+  const postseason = season === 'postseason' ? ' postseason' : ''
+  switch (stat) {
+    // NBA Team
+    case 'bestOffensiveRating':
+      return createAskPath({
+        domain: league,
+        query: `team ortg rankings ${year}${postseason}`,
+      })
+    case 'bestDefensiveRating':
+      return createAskPath({
+        domain: league,
+        query: `team drtg rankings ${year}${postseason}`,
+      })
+    case 'bestNetRating':
+      return createAskPath({
+        domain: league,
+        query: `team net rating rankings ${year}${postseason}`,
+      })
+    case 'worstRecord':
+      return createAskPath({
+        domain: league,
+        query: `worst record ${year}${postseason}`,
+      })
+    // NFL Team
+    case 'mostPointsPerGame':
+      return createAskPath({
+        domain: league,
+        query: `team ppg rankings ${year}${postseason}`,
+      })
+    case 'leastPointsAllowedPerGame':
+      return createAskPath({
+        domain: league,
+        query: `fewest points allowed per game by a team ${year}${postseason}`,
+      })
+    case 'mostTotalYardsPerGame':
+      return createAskPath({
+        domain: league,
+        query: `team total yards per game rankings ${year}${postseason}`,
+      })
+    case 'mostRushingYardsPerGame':
+      return createAskPath({
+        domain: league,
+        query: `team rush yards per game rankings ${year}${postseason}`,
+      })
+    case 'mostPassingYardsPerGame':
+      return createAskPath({
+        domain: league,
+        query: `team pass yards per game rankings ${year}${postseason}`,
+      })
+    case 'mostDefensiveSacks':
+      return createAskPath({
+        domain: league,
+        query: `team sack rankings ${year}${postseason}`,
+      })
+    // NHL Team
+    case 'mostGoalsPerGame':
+      return createAskPath({
+        domain: league,
+        query: `most goals per game by a team ${year}${postseason}`,
+      })
+    case 'leastGoalsAllowedPerGame':
+      return createAskPath({
+        domain: league,
+        query: `fewest goals against per game by a team ${year}${postseason}`,
+      })
+    case 'bestPowerPlayPercentage':
+      return createAskPath({
+        domain: league,
+        query: `most pp% ${year}${postseason}`,
+      })
+    case 'bestPenaltyKillPercentage':
+      return createAskPath({
+        domain: league,
+        query: `best pk% by a team ${year}${postseason}`,
+      })
+    // EPL Team
+    case 'mostGoals':
+      return createAskPath({
+        domain: league,
+        query: `most goals by a team ${year}${postseason}`,
+      })
+    case 'leastGoalsAgainst':
+      return createAskPath({
+        domain: league,
+        query: `fewest goals against by a team ${year}${postseason}`,
+      })
+    case 'bestGoalDifferential':
+      return createAskPath({
+        domain: league,
+        query: `highest goal difference by a team ${year}${postseason}`,
+      })
+    default:
+      return stat
+  }
+}
+
+const title = `${domain === 'EPL' ? 'PL' : domain} ${
+  response.seasonYearDisplay
+} Rankings`
+
+const cards = response.cards
+  .filter(filterTeamCards)
+  .filter((c) => c.teams.length > 0)
+
+const league = domain === 'EPL' ? 'fc' : domain.toLowerCase()
+
+if (cards.length === 0) return undefined
+---
+
+<div>
+  <h2 class="text-xl font-bold mb-1.5">
+    {title}
+  </h2>
+  <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
+    {
+      cards.map((card) => (
+        <TeamCardComponent
+          card={card}
+          title={cardTitle(card.stat, response.seasonType)}
+          href={askLink(
+            card.stat,
+            league,
+            response.seasonType,
+            response.seasonYearDisplay,
+          )}
+        />
+      ))
+    }
+  </div>
+</div>
+{
+  adSlot && (
+    <div class="w-fit mx-auto">
+      <AditudeAdBanner
+        client:only="svelte"
+        divId={adSlot.divId}
+        slotId={adSlot.slotId}
+        placeholderClass="w-[300px] h-[250px]"
+        onlyMobile
+        lazy
+      />
+    </div>
+  )
+}

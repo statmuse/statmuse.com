@@ -4,12 +4,10 @@ import MoneyLayout from '@layouts/money.astro'
 import TradingviewChart from '@components/tradingview-chart.astro'
 import { getAssetProfile } from '@lib/kanedama'
 import { getUrlForEntity } from '@statmuse/core/kanedama'
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import { Caching } from '@lib/caching'
 import { NOT_FOUND_404 } from '@lib/response'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
-dayjs.extend(relativeTime)
+import { relativeTimeFromDates } from '@statmuse/core/time'
 
 interface Props {
   query?: string
@@ -48,11 +46,12 @@ Caching.swr(Astro)
   {query}
   {analytics}
   meta={{ canonical: { url: assetUrl, rewrite: true } }}
+  page="overview"
 >
   <div>
     <div class="mb-5">
       <div class="flex justify-between mb-0.5">
-        <h3 class="font-semibold text-team-primary">Price &amp; Volume</h3>
+        <h3 class="font-bold text-team-primary">Price &amp; Volume</h3>
       </div>
       <article id="tradingview-chart">
         <TradingviewChart {profile} />
@@ -66,7 +65,7 @@ Caching.swr(Astro)
           stats ? (
             <div class="mb-5">
               <div class="flex justify-between mb-0.5 border-b border-[#c7c8ca]">
-                <h3 class="font-semibold text-team-primary">{stats.name}</h3>
+                <h3 class="font-bold text-team-primary">{stats.name}</h3>
                 <a href={statsPath} set:text="See more" />
               </div>
               <Grid head={false} padding="" data={stats} />
@@ -77,7 +76,7 @@ Caching.swr(Astro)
           financials ? (
             <div class="mb-5">
               <div class="flex justify-between mb-0.5 border-b border-[#c7c8ca]">
-                <h3 class="font-semibold text-team-primary">
+                <h3 class="font-bold text-team-primary">
                   {financials.name}
                 </h3>
                 <a href={financialsPath} set:text="See more" />
@@ -92,14 +91,14 @@ Caching.swr(Astro)
           news && news.length ? (
             <div class="mb-5">
               <div class="flex justify-between mb-0.5 border-b border-[#c7c8ca]">
-                <h3 class="font-semibold text-team-primary">News</h3>
+                <h3 class="font-bold text-team-primary">News</h3>
                 <a href={newsPath}>See more</a>
               </div>
               <div class="divide-y divide-[#c7c8ca]">
                 {news.map((n) => (
                   <div class="gap-2 py-2">
-                    <p class="text-xs">
-                      Yahoo Finance • {dayjs(n.timestamp).fromNow()}
+                    <p class="text-sm">
+                      Yahoo Finance • {relativeTimeFromDates(n.timestamp)}
                     </p>
                     <h3>
                       <a href={n.link} target="_blank" rel="noreferrer">
@@ -115,7 +114,7 @@ Caching.swr(Astro)
         {
           companyProfile ? (
             <div class="mb-5">
-              <h3 class="font-semibold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
+              <h3 class="font-bold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
                 About
               </h3>
               <Grid head={false} padding="" data={companyProfile} />

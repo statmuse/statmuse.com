@@ -1,37 +1,39 @@
 ---
-import Layout from '@layouts/main.astro'
-import Header from '@components/header.astro'
-import Image from '@components/image.astro'
-import Container from '@components/container.astro'
-import AnswerShare from '@components/answer-share.astro'
+import Layout from '@layouts/base.astro'
 import Explore from '@components/explore.astro'
+import AnswerCards from '@components/answer-cards.astro'
+import Nav from '@components/nav.astro'
 import {
   getUrlForEntity,
   getDefaultBustImageUrl,
   tokensToText,
   type GameraPlayerBio,
 } from '@statmuse/core/gamera'
-import { type Metadata, getLeagueKeywords } from '@lib/meta'
+import { getLeagueKeywords } from '@lib/meta'
 import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
-import TwitterShare from '@components/icons/twitter.astro'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
-import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
-console.log('ANSWER_CARDS_ENABLED', ANSWER_CARDS_ENABLED)
-console.log('env.ANSWER_CARDS_ENABLED', process.env.ANSWER_CARDS_ENABLED)
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import type { NavLink } from 'src/types'
+import type { ComponentProps } from 'astro/types'
+import Hero from '@components/hero.astro'
 
-interface Props {
+interface Props extends ComponentProps<typeof Layout> {
   bio: GameraPlayerBio
   page: 'overview' | 'stats' | 'game-log' | 'matches' | 'splits' | 'bio'
-  meta?: Metadata
   league: LeagueParam
-  query?: string
-  analytics?: AnalyticsPageviewProperties
 }
 
-const { bio, meta, query, league, analytics = {}, page: pageType } = Astro.props
+const {
+  bio,
+  meta,
+  query,
+  league,
+  page,
+  parameters,
+  analytics = {},
+} = Astro.props
 
 const domain = leagueToDomain(league)
 const teamUrl = bio.team ? getUrlForEntity(bio.team.entity) : ''
@@ -48,14 +50,14 @@ const playerPath = getUrlForEntity({
   display: bio.usedName,
 })
 
-const links = [
-  { text: 'Overview', href: playerPath, page: 'overview' },
-  { text: 'Stats', href: `${playerPath}/career-stats`, page: 'stats' },
+const links: NavLink[] = [
+  { text: 'Overview', href: playerPath, param: 'overview' },
+  { text: 'Stats', href: `${playerPath}/career-stats`, param: 'stats' },
   league === 'fc'
-    ? { text: 'Matches', href: `${playerPath}/matches`, page: 'matches' }
-    : { text: 'Games', href: `${playerPath}/game-log`, page: 'game-log' },
-  { text: 'Splits', href: `${playerPath}/splits`, page: 'splits' },
-  { text: 'Bio', href: `${playerPath}/bio`, page: 'bio' },
+    ? { text: 'Matches', param: 'matches' }
+    : { text: 'Games', param: 'game-log' },
+  { text: 'Splits', param: 'splits' },
+  { text: 'Bio', param: 'bio' },
 ]
 
 const title = `${bio.usedName} - ${bio.team?.name || bio.domain} ${
@@ -80,6 +82,23 @@ const twitter = {
     type: 'twitter',
   }),
 }
+
+const preferredDomain = domain.toLowerCase()
+const shareUrl = meta?.canonical?.url
+  ? Astro.url.origin + meta.canonical.url
+  : Astro.url.href
+
+const navProps: ComponentProps<typeof Nav> = {
+  teamColors: true,
+  links: links,
+  selected: page,
+  href: (p) => `${playerPath}/${p}`,
+}
+
+const share = {
+  type: 'profile',
+  url: shareUrl,
+}
 ---
 
 <Layout
@@ -97,185 +116,31 @@ const twitter = {
   analytics={{
     query,
     is_search: true,
-    page_domain:
-      domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
+    page_domain: preferredDomain as AnalyticsPageviewProperties['page_domain'],
     page_type: 'player',
     disposition: bio.disposition,
     ...analytics,
   }}
+  {preferredDomain}
+  {query}
+  {share}
 >
-  <Header
-    preferredDomain={domain.toLowerCase()}
-    {query}
-    share={{
-      type: 'profile',
-      url: meta?.canonical?.url
-        ? Astro.url.origin + meta.canonical.url
-        : Astro.url.href,
-    }}
+  <Hero
+    content={bio.usedName}
+    imageUrl={bustImageUrl}
+    imageAlt={bustImageAlt}
+    affiliation={bio.team?.nickname || bio.team?.name}
+    affiliationUrl={teamUrl}
+    {navProps}
+    {parameters}
+    {share}
+    renderAdBanner
   />
-  <Container class="mb-2.5 bg-team-primary text-team-secondary">
-    <div class="flex flex-col md:flex-row relative">
-      <div class="flex-1 mt-5 mb-7">
-        <div
-          class="flex flex-col md:flex-row md:flex-wrap items-center gap-x-3 mb-2"
-        >
-          <h2 class="text-5xl font-semibold text-center md:text-left">
-            {bio.usedName}
-          </h2>
-        </div>
-        <div class="whitespace-nowrap text-center md:text-left">
-          {
-            league !== 'fc' ? (
-              <Fragment>
-                {bio.heightFeetInches && (
-                  <>
-                    <span>
-                      {bio.heightFeetInches}, {bio.weightLbs} lbs
-                    </span>
-                    <span class="last:hidden" set:text=" • " />
-                  </>
-                )}
-                {teamUrl ? (
-                  <a
-                    class="text-inherit underline"
-                    href={teamUrl}
-                    set:text={bio.team?.nickname || bio.team?.name}
-                  />
-                ) : (
-                  <>{bio.team?.nickname || bio.team?.name}</>
-                )}
-                <span class="last:hidden" set:text=" • " />
-                {bio.position && (
-                  <>
-                    <span>
-                      {`${bio.jerseyNumber ? '#' + bio.jerseyNumber : ''} ${
-                        bio.position
-                      }`}
-                    </span>
-                    <span class="last:hidden" set:text=" • " />
-                  </>
-                )}
-              </Fragment>
-            ) : (
-              <Fragment>
-                {bio.position && (
-                  <>
-                    <span>{`${bio.position} ${
-                      bio.jerseyNumber ? '#' + bio.jerseyNumber : ''
-                    } `}</span>
-                    <span class="last:hidden" set:text=" • " />
-                  </>
-                )}
-                {teamUrl ? (
-                  <a
-                    class="text-inherit underline"
-                    href={teamUrl}
-                    set:text={bio.team?.nickname || bio.team?.name}
-                  />
-                ) : (
-                  <>{bio.team?.nickname || bio.team?.name}</>
-                )}
-                <span class="last:hidden" set:text=" • " />
-                {bio.nationality && (
-                  <>
-                    <span>{bio.nationality}</span>
-                    <span class="last:hidden" set:text=" • " />
-                  </>
-                )}
-                {bio.age && (
-                  <>
-                    <span>{bio.age} years</span>
-                    <span class="last:hidden" set:text=" • " />
-                  </>
-                )}
-              </Fragment>
-            )
-          }
-        </div>
-        <div class="hidden md:block mt-6">
-          <div class="text-center w-fit">
-            <div class="flex gap-5 mb-1 justify-center">
-              {
-                bio.statsSummary?.stats?.map((stat) => (
-                  <div>
-                    <p class="uppercase">{stat.label}</p>
-                    <p class="text-3xl">{stat.value}</p>
-                  </div>
-                ))
-              }
-            </div>
-            <p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-              {bio.statsSummary?.statsScope}
-            </p>
-          </div>
-        </div>
-      </div>
-      <Image
-        bio-cy-illustration
-        class="object-contain object-bottom self-center md:self-end h-44 md:h-52 md:max-w-[300px]"
-        src={bustImageUrl}
-        alt={bustImageAlt}
-        width={750}
-        height={750}
-        loading="eager"
-      />
-      <div
-        class="md:hidden flex flex-col items-center absolute right-0 bottom-2.5 space-y-2.5"
-      >
-        <TwitterShare shareUrl={Astro.url.href} />
-        <AnswerShare
-          onlyIcon
-          url={meta?.canonical?.url
-            ? Astro.url.origin + meta.canonical.url
-            : Astro.url.href}
-        />
-      </div>
-    </div>
-  </Container>
-  <div class="h-[50px] md:h-[90px] mb-1.5 flex justify-center items-center">
-    <AditudeAdBanner client:only="svelte" />
-  </div>
-  <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
-    <div class="text-center w-fit">
-      <div class="flex gap-5 mb-1 justify-center">
-        {
-          bio.statsSummary?.stats?.map((stat) => (
-            <div>
-              <p class="uppercase">{stat.label}</p>
-              <p class="text-3xl">{stat.value}</p>
-            </div>
-          ))
-        }
-      </div><p class="text-[0.8rem] uppercase tracking-[0.07rem]">
-        {bio.statsSummary?.statsScope}
-      </p>
-    </div>
-  </div>
-  <Container>
-    <div class="flex flex-nowrap overflow-auto mb-5 space-x-5">
-      {
-        links.map(({ href, text, page }) => (
-          <a
-            aria-current={page === pageType ? 'page' : undefined}
-            class:list={{
-              'text-3xl font-semibold shrink-0': true,
-              'text-team-primary active': page === pageType,
-              'text-black': page !== pageType,
-            }}
-            {href}
-          >
-            {text}
-          </a>
-        ))
-      }
-    </div>
-    <slot />
-    <Explore {league} additionalQuestions={bio.additionalQuestions} />
-    {
-      ANSWER_CARDS_ENABLED && (
-        <AnswerCards {league} teamId={bio.team?.entity.id.split('/')[0]} />
-      )
-    }
-  </Container>
+  <slot />
+  <Explore {league} additionalQuestions={bio.additionalQuestions} />
+  {
+    ANSWER_CARDS_ENABLED && (
+      <AnswerCards {domain} teamId={bio.team?.entity.id.split('/')[0]} />
+    )
+  }
 </Layout>

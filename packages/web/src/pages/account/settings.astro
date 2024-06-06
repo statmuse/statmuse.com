@@ -1,5 +1,5 @@
 ---
-import AccountLayout from './_layout.astro'
+import Layout from '@layouts/base.astro'
 import * as User from '@statmuse/core/user'
 import {
   createBillingSession,
@@ -11,6 +11,7 @@ import * as Session from '@lib/session'
 import { Caching } from '@lib/caching'
 import { Config } from 'sst/node/config'
 import contacts from '@sendgrid/client'
+import Hero from '@components/hero.astro'
 
 contacts.setApiKey(Config.SENDGRID_API_KEY)
 
@@ -90,16 +91,37 @@ const manageAccountUrl =
       }).then((s) => s.url)
 ---
 
-<AccountLayout {meta} prefixPath="/account/settings">
+<Layout
+  {meta}
+  colors={{ foreground: '#fff', background: '#00c1d8' }}
+  renderRightColumn={false}
+>
+  <Hero
+    content="Manage your account."
+    navProps={{
+      href: () => '',
+      selected: 'history',
+      links: [
+        {
+          text: 'History',
+          param: 'history',
+          href: '/account/history',
+        },
+        {
+          text: 'Settings',
+          param: 'settings',
+          href: '/account/settings',
+        },
+      ],
+    }}
+  />
   <main>
     <div class="divide-y divide-black/5">
       <div
         class="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8"
       >
         <div>
-          <h2 class="text-base font-semibold leading-7 text-black">
-            Basic Info
-          </h2>
+          <h2 class="text-base font-bold leading-7 text-black">Basic Info</h2>
           <p class="mt-1 text-sm leading-6 text-gray-400">
             Update your email address and... ok, just your email address.
           </p>
@@ -135,10 +157,10 @@ const manageAccountUrl =
                 <button
                   disabled=""
                   type="button"
-                  class="rounded-md bg-black/10 px-3 py-2 text-sm font-semibold text-black/40 shadow-sm hover:bg-black/20 pointer-events-none"
+                  class="rounded-md bg-black/10 px-3 py-2 text-sm font-bold text-black/40 shadow-sm hover:bg-black/20 pointer-events-none"
                 >
                   Choose (soon!)
-                </button><p class="mt-2 text-xs leading-5 text-gray-400">
+                </button><p class="mt-2 text-sm leading-5 text-gray-400">
                   JPG or PNG. 5MB max.
                 </p>
               </div>
@@ -175,7 +197,7 @@ const manageAccountUrl =
           <div class="mt-8 flex">
             <button
               type="submit"
-              class="w-16 rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:opacity-50 disabled:pointer-events-none"
+              class="w-16 rounded-md bg-indigo-500 px-3 py-2 text-sm font-bold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:opacity-50 disabled:pointer-events-none"
             >
               Save
             </button>
@@ -186,7 +208,7 @@ const manageAccountUrl =
         class="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8"
       >
         <div>
-          <h2 class="text-base font-semibold leading-7 text-black">
+          <h2 class="text-base font-bold leading-7 text-black">
             Manage billing
           </h2>
           <p class="mt-1 text-sm leading-6 text-gray-400">
@@ -196,7 +218,7 @@ const manageAccountUrl =
         <div class="items-start md:col-span-2">
           <a
             href={manageAccountUrl}
-            class="w-48 block text-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:opacity-50 disabled:pointer-events-none no-underline hover:no-underline"
+            class="w-48 block text-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-bold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:opacity-50 disabled:pointer-events-none no-underline hover:no-underline"
           >
             Manage billing
           </a>
@@ -209,7 +231,7 @@ const manageAccountUrl =
         class="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8"
       >
         <div>
-          <h2 class="text-base font-semibold leading-7 text-black">
+          <h2 class="text-base font-bold leading-7 text-black">
             Delete account
           </h2>
           <p class="mt-1 text-sm leading-6 text-gray-400">
@@ -232,7 +254,7 @@ const manageAccountUrl =
       </form>
     </div>
   </main>
-</AccountLayout>
+</Layout>
 
 <script>
   document.addEventListener('astro:page-load', () => {

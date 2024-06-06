@@ -3,6 +3,7 @@ import { defineMiddleware, sequence } from 'astro:middleware'
 import * as User from '@statmuse/core/user'
 import * as Visitor from '@statmuse/core/visitor'
 import { contentSecurityPolicy } from './csp'
+import { getTrendingData } from '@lib/trending'
 
 export const logging = defineMiddleware(async (context, next) => {
   const req = context.request
@@ -145,4 +146,16 @@ export const headers = defineMiddleware(async (_context, next) => {
   return response
 })
 
-export const onRequest = sequence(logging, session, cleanup, headers)
+export const trending = defineMiddleware(async (context, next) => {
+  const league = context.params.league
+    ? context.params.league
+    : /^\/money\/?/.test(context.url.pathname)
+    ? 'money'
+    : undefined
+
+  const trendingData = await getTrendingData(league ? { league } : undefined)
+  context.locals.trendingData = trendingData
+  return next()
+})
+
+export const onRequest = sequence(logging, session, trending, cleanup, headers)

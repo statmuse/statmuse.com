@@ -29,4 +29,4 @@ const getImageUrl = (src: string | { answer: Answer }) => {
 const src = getImageUrl(Astro.props.src)
 ---
 
-{src ? <AstroImage {...Astro.props} {src} /> : <div />}
+{src ? <AstroImage {...Astro.props} {src} densities={[1, 2, 3]} /> : <div />}

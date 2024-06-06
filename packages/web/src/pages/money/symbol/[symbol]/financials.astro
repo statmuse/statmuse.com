@@ -4,9 +4,6 @@ import MoneyLayout from '@layouts/money.astro'
 import { Caching } from '@lib/caching'
 import { getAssetProfile } from '@lib/kanedama'
 import { NOT_FOUND_404 } from '@lib/response'
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
-dayjs.extend(relativeTime)
 
 const { symbol } = Astro.params
 if (!symbol) return NOT_FOUND_404
@@ -26,13 +23,13 @@ const meta = {
 Caching.swr(Astro)
 ---
 
-<MoneyLayout {meta} {profile}>
+<MoneyLayout {meta} {profile} page="financials">
   <div>
     <div>
       {
         quarterlyFinancials ? (
           <div class="mb-5">
-            <h3 class="font-semibold text-team-primary mb-0.5">
+            <h3 class="font-bold text-team-primary mb-0.5">
               Quarterly Financials
             </h3>
             <Grid client:load data={quarterlyFinancials} />
@@ -42,7 +39,7 @@ Caching.swr(Astro)
       {
         annualFinancials ? (
           <div class="mb-5">
-            <h3 class="font-semibold text-team-primary mb-0.5">
+            <h3 class="font-bold text-team-primary mb-0.5">
               Annual Financials
             </h3>
             <Grid client:load data={annualFinancials} />
@@ -52,7 +49,7 @@ Caching.swr(Astro)
       {
         earningsCalls ? (
           <div class="mb-5">
-            <h3 class="font-semibold text-team-primary mb-0.5">
+            <h3 class="font-bold text-team-primary mb-0.5">
               {earningsCalls.name}
             </h3>
             <Grid client:load data={earningsCalls} />

@@ -1,17 +1,11 @@
 ---
 import MoneyBaseLayout from '@layouts/money-base.astro'
 import Error from '@layouts/error.astro'
-import Header from '@components/header.astro'
 import Footer from '@components/footer.astro'
 import Hero from '@components/hero.astro'
 import Visuals from '@components/visuals-money.astro'
-import Container from '@components/container.astro'
 import Explore from '@components/explore.astro'
-import {
-  type KanedamaDefaultResponse,
-  handleResponse,
-  tokensToText,
-} from '@statmuse/core/kanedama'
+import { handleResponse, tokensToText } from '@statmuse/core/kanedama'
 import { ask, getHeroProps } from '@lib/kanedama'
 import { clean, createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import { title } from '@lib/meta'
@@ -21,7 +15,6 @@ import * as Link from '@statmuse/core/link'
 import { NOT_FOUND_404 } from '@lib/response'
 
 const canQuery = await Enforcer.canQueryFinance(Astro.locals)
-
 if (!canQuery) {
   return Astro.redirect('/auth/signup?limit')
 }
@@ -39,9 +32,9 @@ let query = isLegacyParam(question)
   ? parseLegacyParam(Astro.url.pathname)
   : question.replaceAll('-', ' ')
 
-const response = (await ask({ query }, Astro)) as
-  | KanedamaDefaultResponse
-  | undefined
+const askResponse = await ask({ query }, Astro)
+if ('redirect' in askResponse) return Astro.redirect(askResponse.redirect)
+const response = askResponse.response
 if (!response) return NOT_FOUND_404
 
 const { subject, redirectUrl, conversationToken } = handleResponse(response)
@@ -54,7 +47,6 @@ query = clean(
 )
 
 const heroProps = getHeroProps({ imageAlt: query, response })
-
 const code = await Link.financeAskShortCode(query)
 
 const meta =
@@ -83,10 +75,20 @@ const meta =
       }
     : {}
 
+const share = {
+  type: 'ask',
+  shortCode: code?.short_code,
+  query,
+  domain: 'money',
+}
+
+console.log('share: ', share)
+
 Caching.swr(Astro)
 ---
 
 <Error
+  money
   render={response.type === 'error'}
   status={422}
   message={tokensToText(response.visual.summary.answer)}
@@ -109,32 +111,16 @@ Caching.swr(Astro)
       contentReference: response.visual.contentReference,
       subject: response.visual.summary.subject,
     }}
+    {query}
+    {conversationToken}
+    {share}
   >
-    <Header
-      money
-      {query}
-      {conversationToken}
-      share={{
-        type: 'ask',
-        shortCode: code?.short_code,
-        url: Astro.url.origin + createAskPath({ domain: 'money', query }),
-      }}
-    />
-    {
-      heroProps ? (
-        <Hero
-          {...heroProps}
-          shareUrl={`${process.env.SHORT_LINK_URL}e/${code?.short_code}`}
-        />
-      ) : null
-    }
+    {heroProps ? <Hero {...heroProps} {share} renderAdBanner /> : null}
     <Visuals {response} {conversationToken} />
-    <Container>
-      <Explore
-        league="money"
-        additionalQuestions={response.visual.additionalQuestions}
-      />
-    </Container>
+    <Explore
+      league="money"
+      additionalQuestions={response.visual.additionalQuestions}
+    />
     <Footer />
   </MoneyBaseLayout>
 </Error>

@@ -10,9 +10,7 @@ import robotsTxt from 'astro-robots-txt'
 export default defineConfig({
   site: 'https://www.statmuse.com',
   integrations: [
-    tailwind({
-      applyBaseStyles: false,
-    }),
+    tailwind({ applyBaseStyles: false }),
     react(),
     svelte({
       preprocess: [vitePreprocess(), preprocessMeltUI()],
@@ -54,7 +52,7 @@ export default defineConfig({
   },
   adapter: aws({
     responseMode: 'buffer',
-    serverRoutes: ['ask', 'money/ask', 'fantasy/ask', 'auth/*', 'account/*'],
+    serverRoutes: ['ask', 'money/ask', 'auth/*', 'account/*'],
   }),
   vite: {
     optimizeDeps: ['sst'],
@@ -89,5 +87,10 @@ export default defineConfig({
     '/account': '/account/history',
     '/signin': '/auth/signin',
     '/signup': '/auth/signup',
+    '/fantasy': '/nfl',
+    '/fantasy/ask': '/nfl/ask',
+    '/fantasy/ask/[question]': '/nfl/ask/[question]',
+    '/fantasy/questions': '/nfl/questions',
+    '/ask/fantasy/[question]': '/nfl/ask/[question]',
   },
 })

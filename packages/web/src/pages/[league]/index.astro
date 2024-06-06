@@ -1,11 +1,29 @@
 ---
 import HomeLayout from '@layouts/home.astro'
+import HomeContent from '@components/home/home-content.astro'
 import { Caching } from '@lib/caching'
 import { createAskPath } from '@statmuse/core/path'
 import { NOT_FOUND_404 } from '@lib/response'
-import { type LeagueParam } from '@lib/params'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
+import { listLatestMusings, type LatestMusing } from '@statmuse/core/musing'
+import {
+  homeLeadersByDomain,
+  homeRankingsByDomain,
+  homeBettingByDomain,
+} from '@lib/related-content'
+import { find } from 'lodash-es'
+import { getStandings } from '@lib/standings'
+import type { GameraPlayerProfileResponse } from '@statmuse/core/gamera'
+import { getPlayerProfile } from '@lib/player'
+import type { TrendingItem } from 'src/types'
+import type {
+  PlayerLeadersResponse,
+  TeamRankingsResponse,
+} from '@lib/related-content'
+import type { GetStandingsResponse } from '@lib/standings'
+import { getTeamSeasonBio } from '@lib/team'
 
-const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fantasy', 'fc']
+const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
   return NOT_FOUND_404
 
@@ -169,8 +187,11 @@ const nflExamples = [
   ],
   [
     'Odds',
-    ['NFL odds', 'Who are the favorites this week?', 'Chiefs spread'].map((q) =>
-      createAskPath({ domain: 'nfl', query: q }),
+    ['NFL odds', 'Who are the favorites this week?', 'Chiefs spread'].map(
+      (q) => ({
+        query: q,
+        path: createAskPath({ domain: 'nfl', query: q }),
+      }),
     ),
   ],
   [
@@ -444,70 +465,13 @@ const pgaExamples = [
   ],
 ]
 
-const fantasyExamples = [
-  [
-    'Player Outlooks & Projections',
-    [
-      'What is your projection for Justin Jefferson?',
-      'What is your outlook for Christian McCaffrey this week?',
-      'Where do you rank Joe Burrow?',
-      'Tell me about Russell Wilson.',
-      'Should I start Jonathan Taylor?',
-      'Should I sit Mike Williams?',
-      "What's the deal with Mark Andrews?",
-      'Who is the top-ranked quarterback?',
-      'Who will be the best fantasy wide receiver this week?',
-      'How will the Rams defense do this week?',
-    ].map((q) => ({
-      query: q,
-      path: createAskPath({ domain: 'fantasy', query: q }),
-    })),
-  ],
-  [
-    'Player Comparisons',
-    [
-      'Alvin Kamara or Nick Chubb?',
-      "Ja'Marr Chase, Cooper Kupp or Tyreek Hill?",
-      'Who had more fantasy points last season? Chubb or Saquon?',
-      'Should I go with the Ravens defense or the Colts defense?',
-      'Justin Herbert or Joe Burrow?',
-      'How about Josh Allen or Jalen Hurts?',
-      'Christian McCaffrey, Austin Ekeler fantasy points last 3 seasons.',
-      'Who has more fantasy points per game in their career? Stefon Diggs or AJ Brown?',
-      'Waddle or Tyreek?',
-      'Kittle or Waller?',
-    ].map((q) => ({
-      query: q,
-      path: createAskPath({ domain: 'fantasy', query: q }),
-    })),
-  ],
-  [
-    'Player & Team Fantasy Recaps',
-    [
-      'Patrick Mahomes vs Chargers.',
-      'Who scored the most fantasy points last season?',
-      'Which running back averaged the most fantasy points per game last season?',
-      'Which QB had the most DraftKings points last year?',
-      'Who has the most fantasy points per game in a season?',
-      "How many fantasy points per game is Ja'Marr Chase averaging this season?",
-      'Which team defense has scored the fewest fantasy points last year?',
-      'How did Tyreek Hill do?',
-      'Which rookie has the most fantasy points per game this season?',
-      'Which TE is leading in PPR this season?',
-    ].map((q) => ({
-      query: q,
-      path: createAskPath({ domain: 'fantasy', query: q }),
-    })),
-  ],
-]
-
 const eplExamples = [
   [
     'Scores',
     [
-      'Did Arsenal win?',
+      'Arsenal record vs the Big 6 this season',
       'What was the score of the last Man United vs Man City match?',
-      'What happened in the Newcastle match?',
+      'What was the score of the last Manchester derby?',
     ].map((q) => ({
       query: q,
       path: createAskPath({ domain: 'fc', query: q }),
@@ -590,64 +554,125 @@ const examples = {
   nhl: nhlExamples as ExampleSet[],
   pga: pgaExamples as ExampleSet[],
   fc: eplExamples as ExampleSet[],
-  fantasy: fantasyExamples as ExampleSet[],
   money: eplExamples as ExampleSet[],
 }
 
 const meta = {
-  title: `${
-    league === 'fantasy'
-      ? 'Fantasy Football'
-      : league === 'fc'
-      ? 'Premier League'
-      : league.toUpperCase()
-  } Stats`,
+  title: `${league === 'fc' ? 'Premier League' : league.toUpperCase()} Stats`,
   description:
-    league === 'fantasy'
-      ? 'Instant answers to your fantasy football questions. Stats, projections, comparisons, outlooks, recaps and more — just ask.'
-      : league === 'fc' || league === 'pga'
+    league === 'fc' || league === 'pga'
       ? `Instant answers to your ${
           league === 'pga' ? league.toUpperCase() : 'Premier League'
         } questions. Stats, scores, bios, records and more — just ask.`
       : `Instant answers to your ${league.toUpperCase()} questions. Stats, scores, bios, records, odds and more — just ask.`,
   facebook: {
     imageUrl:
-      league === 'fantasy'
-        ? `${Astro.url.origin}/images/sm-fantasy-meta-banner.jpg`
-        : league === 'fc'
+      league === 'fc'
         ? `${Astro.url.origin}/images/sm-fc-meta-banner.jpg`
         : undefined,
   },
   twitter: {
     imageUrl:
-      league === 'fantasy'
-        ? `${Astro.url.origin}/images/sm-fantasy-meta-banner.jpg`
-        : league === 'fc'
+      league === 'fc'
         ? `${Astro.url.origin}/images/sm-fc-meta-banner.jpg`
         : undefined,
   },
+}
+
+const domain = leagueToDomain(league)
+
+let musings: LatestMusing[] | undefined
+let leaders: PlayerLeadersResponse
+let rankings: TeamRankingsResponse | undefined
+let trendingSearches: TrendingItem['datasets'][number] | undefined
+let trendingPlayers: TrendingItem['datasets'][number] | undefined
+let trendingTeams: TrendingItem['datasets'][number] | undefined
+let betting: TeamRankingsResponse | undefined
+let standings: GetStandingsResponse
+let profile: GameraPlayerProfileResponse | undefined
+let trendingData: TrendingItem | undefined
+
+if (domain !== 'PGA') {
+  ;[musings, leaders, rankings, betting, standings] = await Promise.all([
+    listLatestMusings(domain),
+    homeLeadersByDomain({ context: Astro, domain }),
+    homeRankingsByDomain({ context: Astro, domain }),
+    homeBettingByDomain({ context: Astro, domain }),
+    getStandings({ context: Astro, domain }),
+  ])
+
+  if (rankings) {
+    const teams = await Promise.all(
+      rankings?.map(
+        (r) =>
+          r &&
+          getTeamSeasonBio({
+            context: Astro,
+            domain: r.teams[0].entity.domain,
+            team: r.teams[0].entity.id,
+            year: r.teams[0].entity.id,
+          }),
+      ),
+    )
+
+    for (const index in teams) {
+      const team = teams[index]
+      const rank = rankings[index]
+      if (team && rank) {
+        rank.images = team.teamRepresentatives.map((r) => r.url)
+      }
+    }
+  }
+
+  if (betting) {
+    const teams = await Promise.all(
+      betting?.map(
+        (r) =>
+          r &&
+          getTeamSeasonBio({
+            context: Astro,
+            domain: r.teams[0].entity.domain,
+            team: r.teams[0].entity.id,
+            year: r.teams[0].entity.id,
+          }),
+      ),
+    )
+    for (const index in teams) {
+      const team = teams[index]
+      const bet = betting[index]
+      if (team && bet) {
+        bet.images = team.teamRepresentatives.map((r) => r.url)
+      }
+    }
+  }
+
+  trendingData = Astro.locals.trendingData
+  trendingSearches = find(trendingData?.datasets, { name: 'Searches' })
+  trendingPlayers = find(trendingData?.datasets, { name: 'Players' })
+  trendingTeams = find(trendingData?.datasets, { name: 'Teams' })
+
+  for (const player of trendingPlayers?.items.slice(0, 10) ?? []) {
+    const playerSlug = player.uri.split('/')[3]
+    profile = await getPlayerProfile(Astro, domain, playerSlug)
+    if (profile?.recentGames) break
+  }
 }
 
 Caching.swr(Astro)
 ---
 
 <HomeLayout {meta} {league}>
-  <div class="divide-y divide-[#e4e4e4]">
-    {
-      examples[league || 'nba'].map(([title, queries]) => (
-        <div class="py-4">
-          <h2 class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] my-3">
-            {title}
-          </h2>
-          <ul>
-            {queries.map(({ query, path }) => (
-              <li class="my-3">
-                <a href={path}>{query}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))
-    }
-  </div>
+  <HomeContent
+    {domain}
+    {musings}
+    {profile}
+    {leaders}
+    {rankings}
+    {betting}
+    {standings}
+    {trendingPlayers}
+    {trendingTeams}
+    {trendingSearches}
+    examples={examples[league ?? 'nba']}
+  />
 </HomeLayout>

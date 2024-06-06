@@ -129,9 +129,7 @@ if (orientation === 'bottom' || orientation === 'top') {
   y2 = sign * innerTickSize
   dy = sign < 0 ? '0em' : '.71em'
   textAnchor = 'middle'
-  d = `M${range[0]}, ${sign * outerTickSize}V0H${range[1]}V${
-    sign * outerTickSize
-  }`
+  d = `M${range[0]}, ${sign * 0}V0H${range[1]}V${sign * 0}`
 } else {
   transform = 'translate(0, {})'
   x = sign * tickSpacing
@@ -164,11 +162,11 @@ if (orientation === 'bottom' || orientation === 'top') {
 
       return (
         <g transform={translate}>
-          <line x2={x2} y2={y2} stroke="#aaa" />
           <text
             x={x}
             y={y}
             dy={dy}
+            class="fill-current"
             text-anchor={textAnchor}
             style={{ fontSize: 12.6 }}
             transform={`rotate(${angle ? '-45' : '0'})`}
@@ -188,7 +186,7 @@ if (orientation === 'bottom' || orientation === 'top') {
       )
     })
   }
-  <path {d} fill="none" stroke="#aaa"></path>
+  <path {d} fill="none" class="stroke-gray-6"></path>
   <text
     text-anchor="end"
     x={orientation === 'top' || orientation === 'bottom' ? width : undefined}

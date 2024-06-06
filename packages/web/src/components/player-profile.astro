@@ -1,17 +1,21 @@
 ---
 import PlayerLayout from '@layouts/player.astro'
-import Grid from '@components/grid.svelte'
-import PlayerGallery from '@components/gallery.astro'
+import Panel from '@components/panel.astro'
+import Image from '@components/image.astro'
 import {
   tokensToText,
   tokensToHtml,
   getUrlForEntity,
+  getDefaultBustImageUrl,
+  type GameraGrid,
 } from '@statmuse/core/gamera'
 import { getPlayerProfile, getPositionName } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
 import { NOT_FOUND_404 } from '@lib/response'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import { age, formatDate } from '@statmuse/core/time'
+import EntityLink from './entity-link.astro'
 
 interface Props {
   league: LeagueParam
@@ -31,7 +35,12 @@ const domain = leagueToDomain(leagueParam)
 const profile = await getPlayerProfile(Astro, domain, player)
 if (!profile) return NOT_FOUND_404
 
-const { bio, stats, recentGames, nextGame, fantasy } = profile
+const { bio, stats, nextGame } = profile
+const recentGames = profile.recentGames
+  ? 'grid' in profile.recentGames
+    ? profile.recentGames
+    : { grid: profile.recentGames }
+  : undefined
 
 const isNextGameHome =
   profile.bio.team?.abbreviation === nextGame?.homeTeam.abbreviation
@@ -44,6 +53,11 @@ const playerPath = getUrlForEntity({
   display: bio.usedName,
 })
 
+const bustImageUrl = bio.bustImageUrl || getDefaultBustImageUrl(domain)
+const bustImageAlt = bio.bustImageUrl?.includes('silhouette')
+  ? `Illustrated silhouette of a player wearing the ${bio.team?.name} uniform`
+  : `Illustration of ${bio.usedName} wearing the ${bio.team?.name} uniform`
+
 const position = getPositionName(bio)
 const title = `${bio.usedName} - ${bio.team?.name || bio.domain} ${
   position || 'Player'
@@ -54,111 +68,1026 @@ const keywords = `${getLeagueKeywords(domain)} ${
 } career stats statistics`
 const canonical = { url: playerPath, rewrite: true }
 const meta = { title, description, keywords, canonical }
+const league = domain.toLowerCase() === 'epl' ? 'fc' : leagueParam
+
+const facts: { label: string; value: string }[] = []
+
+if (bio.position) facts.push({ label: 'Position', value: bio.position })
+if (bio.jerseyNumber)
+  facts.push({ label: 'Number', value: '#' + bio.jerseyNumber })
+if (bio.birthdate)
+  facts.push({
+    label: formatDate(bio.birthdate, 'MMM D, YYYY'),
+    value: age(bio.birthdate) + ' years',
+  })
+if (league === 'fc') {
+  if (bio.heightCentimeters)
+    facts.push({ label: 'Height', value: bio.heightCentimeters })
+  if (bio.preferredFoot)
+    facts.push({ label: 'Preferred foot', value: bio.preferredFoot })
+  if (bio.nationality) facts.push({ label: 'Country', value: bio.nationality })
+} else {
+  if (bio.heightFeetInches)
+    facts.push({ label: 'Height', value: bio.heightFeetInches })
+  if (bio.weightLbs)
+    facts.push({ label: 'Weight', value: bio.weightLbs + ' lbs' })
+  if (bio.experience) facts.push({ label: 'Experience', value: bio.experience })
+}
+if (bio.awards) {
+  const awards: { label: string; years: number }[] = []
+
+  const getAward = (name: string, label?: string) => {
+    const award = bio.awards.find((a) => a.name === name)
+    if (award?.years.length) {
+      const existing = awards.find((a) => a.label === (label ?? name))
+      if (existing) existing.years += award.years.length
+      else awards.push({ label: label ?? name, years: award.years.length })
+    }
+  }
+
+  switch (league) {
+    case 'nba':
+      getAward('NBA Champion', 'NBA Champ')
+      getAward('MVP')
+      getAward('Finals MVP')
+      getAward('Defensive Player Of The Year', 'DPOY')
+      getAward('Rookie Of The Year', 'ROY')
+      getAward('Sixth Man Of The Year', '6MOY')
+      getAward('Most Improved Player', 'MIP')
+      getAward('All-Star')
+      getAward('All-NBA 1st Team', 'All-NBA')
+      getAward('All-NBA 2nd Team', 'All-NBA')
+      getAward('All-NBA 3rd Team', 'All-NBA')
+      getAward('All-Defense 1st Team', 'All-Defense')
+      getAward('All-Defense 2nd Team', 'All-Defense')
+      getAward('All-Rookie 1st Team', 'All-Rookie')
+      getAward('All-Rookie 2nd Team', 'All-Rookie')
+      break
+    case 'nfl':
+      getAward('NFL Champion', 'NFL Champ')
+      getAward('MVP')
+      getAward('Super Bowl MVP', 'SB MVP')
+      getAward('Offensive Player Of The Year', 'OPOY')
+      getAward('Defensive Player Of The Year', 'DPOY')
+      getAward('Offensive Rookie Of The Year', 'OROY')
+      getAward('Defensive Rookie Of The Year', 'DROY')
+      getAward('Comeback Player Of The Year', 'CPOY')
+      getAward('Man Of The Year')
+      getAward('Pro Bowl')
+      getAward('All-Pro 1st Team', 'All-Pro')
+      getAward('All-Pro 2nd Team', 'All-Pro')
+      getAward('All-Rookie 1st Team', 'All-Rookie')
+      getAward('All-Rookie 2nd Team', 'All-Rookie')
+      break
+    case 'mlb':
+      getAward('World Series Champion', 'WS Champ')
+      getAward('AL MVP')
+      getAward('NL MVP')
+      getAward('ALCS MVP')
+      getAward('NLCS MVP')
+      getAward('WS MVP')
+      getAward('AL Cy Young Award', 'AL CY')
+      getAward('NL Cy Young Award', 'NL CY')
+      getAward('AL Rookie Of The Year', 'AL ROY')
+      getAward('NL Rookie Of The Year', 'NL ROY')
+      getAward('AL Comeback Player Of The Year', 'AL CPOY')
+      getAward('NL Comeback Player Of The Year', 'NL CPOY')
+      getAward('AL Gold Glove')
+      getAward('NL Gold Glove')
+      getAward('AL Silver Slugger')
+      getAward('NL Silver Slugger')
+      break
+    case 'nhl':
+      getAward('Stanley Cup', 'SC Champ')
+      getAward('Hart Trophy', 'Hart')
+      getAward('Conn Smythe Trophy', 'Conn Smythe')
+      getAward('Calder Trophy', 'Calder')
+      getAward('Norris Trophy', 'Norris')
+      getAward('Vezina Trophy', 'Vezina')
+      getAward('Selke Trophy', 'Selke')
+      getAward('Lady Byng Trophy', 'Lady Byng')
+      break
+  }
+
+  if (awards.length > 1) {
+    facts.push(
+      ...awards
+        .slice(0, 3)
+        .map((a) => ({ label: a.label, value: `${a.years}x` })),
+    )
+  }
+}
+
+const nextGameOpponnent = isNextGameHome
+  ? nextGame?.awayTeam
+  : nextGame?.homeTeam
+
+type Row = GameraGrid['rows'][number]
+type Stat =
+  | string
+  | string[]
+  | { label: string; value: (v: Row) => string }
+  | undefined
+
+const formatNumber = (value: unknown) =>
+  (typeof value === 'number'
+    ? value.toFixed(1).replace('.0', '')
+    : (value as string)) ?? '-'
+const formatPercentage = (value: number) =>
+  isNaN(value) ? '0%' : `${formatNumber(value)}%`
+
+const calculateStat = (stat: Stat, row: Row | undefined) => ({
+  key:
+    typeof stat === 'string'
+      ? stat
+      : Array.isArray(stat)
+      ? stat[0]
+      : stat?.label,
+  value:
+    (row === undefined
+      ? undefined
+      : typeof stat === 'string'
+      ? row[stat]?.display
+      : Array.isArray(stat)
+      ? row[stat[1]]?.display
+      : formatNumber(stat?.value(row))) || '-',
+})
+
+const normalizeNflPosition = (position: string) => {
+  switch (position) {
+    case 'QB':
+    case 'RB':
+    case 'WR':
+    case 'K':
+    case 'P':
+    case 'OL':
+      return position
+    case 'TE':
+      return 'WR'
+    default:
+      return 'DEF'
+  }
+}
+
+const normalizedPosition =
+  league === 'nfl' ? normalizeNflPosition(bio.position) : bio.position
+
+type League = Exclude<LeagueParam, 'money' | 'pga'>
+
+const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
+  fc: {
+    FW: [
+      ['Goals', 'G'],
+      ['Assists', 'A'],
+      'xG',
+      'xA',
+      ['Matches', 'M'],
+      ['Starts', 'START'],
+      ['Shots', 'SH'],
+      ['On Target', 'SOT'],
+    ],
+    MF: [
+      ['Goals', 'G'],
+      ['Assists', 'A'],
+      'xG',
+      'xA',
+      ['Matches', 'M'],
+      ['Starts', 'START'],
+      'BCC',
+      ['Pass%', 'PASS%'],
+    ],
+    DF: [
+      ['Goals', 'G'],
+      ['Assists', 'A'],
+      {
+        label: 'Duel W-L',
+        value: (v) => `${v['DUEL-W'].display}-${v['DUEL-L'].display}`,
+      },
+      {
+        label: 'Aerial W-L',
+        value: (v) => `${v['AER-W'].display}-${v['AER-L'].display}`,
+      },
+      ['Matches', 'M'],
+      ['Starts', 'START'],
+      ['Tackles Made', 'TKL'],
+      ['Clearances', 'CLR'],
+    ],
+    GK: [
+      ['Clean Sheets', 'CS'],
+      ['Goals Conceded', 'GC'],
+      ['Saves', 'SV'],
+      ['Matches', 'M'],
+      ['Recoveries', 'REC'],
+      ['Penalty Saves', 'SV-PK'],
+    ],
+  },
+  nba: ['PPG', 'RPG', 'APG', 'SPG', 'BPG', 'MPG', 'FG%', '3P%', 'FT%', 'TS%'],
+  nfl: {
+    QB: [
+      {
+        label: 'Comp Pct',
+        value: (v) =>
+          formatPercentage(
+            ((v.CMP.value as number) / (v.ATT.value as number)) * 100,
+          ),
+      },
+      ['Pass Yds', 'YDS'],
+      ['Pass TD', 'TD'],
+      {
+        label: 'Yds/Pass',
+        value: (v) =>
+          formatNumber((v.YDS.value as number) / (v.ATT.value as number)),
+      },
+      ['Rating', 'RATE'],
+      ['Games', 'GP'],
+      ['Rush Yds', 'RUSHYDS'],
+      ['Rush TD', 'RUSHTD'],
+      ['Int', 'INT'],
+      ['Sacked', 'SCK'],
+    ],
+    RB: [
+      ['Att', 'ATT-ATT'],
+      ['Rush Yds', 'RUSHYDS'],
+      ['Rush TD', 'RUSHTD'],
+      ['Yds/Rush', 'YPC-YPC'],
+      ['Games', 'GP'],
+      ['Tot Yds', 'YDS-TOT YDS'],
+      ['Total TD', 'TD-TOT TD'],
+      ['FUM (L)', 'LOST'],
+    ],
+    WR: [
+      ['Rec', 'REC-REC'],
+      ['Rec Yds', 'RECYDS'],
+      ['Rec TD', 'RECTD'],
+      ['Games', 'GP'],
+      ['Yds/Rec', 'RECAVG'],
+      ['Targets', 'TRG-TRG'],
+    ],
+    DEF: [
+      ['Sacks', 'SCK'],
+      ['TFL', 'TFL'],
+      ['Int', 'INT'],
+      'FF',
+      ['Games', 'GP'],
+      ['Tackles', 'TKL'],
+      ['Pass Def', 'PDEF'],
+      {
+        label: 'TD',
+        value: (v) => `${v['FR TD'].value + v['INT TD-TD'].value}`,
+      },
+    ],
+    OL: [
+      ['Games', 'GP'],
+      ['Starts', 'GS'],
+    ],
+    K: [
+      'FGM',
+      'FGA',
+      'FG%',
+      ['Long', ''],
+      'XPM',
+      'XPA',
+      'XP%',
+      ['Games', 'GP'],
+    ],
+    P: [
+      ['Punts', 'PUNT'],
+      ['Yards', 'YDS'],
+      ['Avg', 'AVG'],
+      ['Games', 'GP'],
+      ['Long', 'LNG'],
+      ['Blocked', 'BLK'],
+    ],
+  },
+  mlb: {
+    DEFAULT: ['HR', 'RBI', 'AVG', 'OBP', 'SLG', 'AB', 'R', 'H', 'BB', 'SB'],
+    P: [
+      { label: 'Record', value: (v) => `${v.W.value}-${v.L.value}` },
+      'ERA',
+      'SO',
+      'BB',
+      'WHIP',
+      'IP',
+      'G',
+      'GS',
+      'SV',
+      {
+        label: 'K/9',
+        value: (v) =>
+          formatNumber(((v.SO.value as number) / (v.IP.value as number)) * 9),
+      },
+    ],
+  },
+  nhl: {
+    DEFAULT: [
+      ['Goals', 'G'],
+      ['Assists', 'A'],
+      ['Points', 'P'],
+      '+/-',
+      ['Shot %', 'S%'],
+      ['Games', 'GP'],
+      'PPG',
+      'PPA',
+      'PIM',
+      ['SOG', 'SHG'],
+    ],
+    D: [
+      ['Goals', 'G'],
+      ['Assists', 'A'],
+      ['Points', 'P'],
+      '+/-',
+      ['Shot %', 'S%'],
+      ['Games', 'GP'],
+      'HIT',
+      'BLK',
+      'TKA',
+      'PIM',
+    ],
+    G: [
+      'GP',
+      'GS',
+      ['Wins', 'W'],
+      ['Losses', 'L'],
+      'OTL',
+      'SHO',
+      'GAA',
+      ['Save %', 'Sv%'],
+      ['Saves', 'Sv'],
+      ['Minutes', 'MIN'],
+    ],
+  },
+}
+
+const statPanels = stats?.grid.rows
+  .slice(0, 2)
+  .map((r) => r[stats?.grid.columns[0].rowItemKey].display)
+const seasonLeagueColumns =
+  league === 'pga' || league === 'money' ? [] : seasonStatColumns[league]
+const seasonLeagueStats = Array.isArray(seasonLeagueColumns)
+  ? seasonLeagueColumns
+  : seasonLeagueColumns[normalizedPosition] ?? seasonLeagueColumns['DEFAULT']
+const seasonPanels = statPanels.map((title, index) => ({
+  title,
+  stats: seasonLeagueStats?.map((stat) =>
+    calculateStat(stat, stats?.grid.rows[index]),
+  ),
+}))
+
+console.log('stats', JSON.stringify(stats?.grid.rows, undefined, 2))
+
+const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
+  fc: {
+    DEFAULT: [
+      'MIN',
+      'G',
+      'A',
+      'xG',
+      'xA',
+      {
+        label: 'Shot %',
+        value: (v) =>
+          `${v.SOT?.value}/${v.SH?.value} (${formatPercentage(
+            ((v.SOT?.value as number) / (v.SH?.value as number)) * 100,
+          )})`,
+      },
+      {
+        label: 'Pass %',
+        value: (v) =>
+          `${v.PASS.value}/${v['PASS-ATT'].value} (${v['PASS%'].display}%)`,
+      },
+      'BCM',
+      'BCC',
+      ['Key Pass', 'PASS-KEY'],
+      ['Touches (Opp Box)', 'TCH-BOX'],
+      {
+        label: 'Duel W-L',
+        value: (v) => `${v['DUEL-W'].display}-${v['DUEL-L'].display}`,
+      },
+      {
+        label: 'Aerial W-L',
+        value: (v) => `${v['AER-W'].display}-${v['AER-L'].display}`,
+      },
+      ['Tackle Made', 'TKL'],
+      ['Clearance', 'CLR'],
+      ['Foul', 'FOUL'],
+      ['Fouled', 'FOULED'],
+      ['Offside', 'OFF'],
+      'YC',
+      'RC',
+    ],
+    GK: [
+      'MIN',
+      'GC',
+      'SV',
+      ['PK SV', 'SV-PK'],
+      'REC',
+      ['Error Led To Shot', 'ERR-SH'],
+      ['Error Led To Goal', 'ERR-G'],
+      ['Long Pass', 'PASS-LNG'],
+      'YC',
+      'RC',
+    ],
+  },
+  nba: [
+    'MIN',
+    'PTS',
+    {
+      label: 'REB (O)',
+      value: (v) =>
+        `${(v?.DREB?.value as number) + (v?.OREB?.value as number)} (${
+          v?.OREB?.value
+        })`,
+    },
+    'AST',
+    'STL',
+    'BLK',
+    '+/-',
+    'TOV',
+    'PF',
+    { label: 'FG', value: (v) => `${v?.FGM?.value}/${v?.FGA?.value}` },
+    { label: '3P', value: (v) => `${v['3PM']?.value}/${v['3PA']?.value}` },
+    { label: 'FT', value: (v) => `${v?.FTM?.value}/${v?.FTA?.value}` },
+    'TS%',
+  ],
+  nfl: {
+    QB: [
+      ['Comp', 'CMP'],
+      ['Att', 'ATT'],
+      {
+        label: 'Pct',
+        value: (v) =>
+          formatPercentage(
+            ((v.CMP.value as number) / (v.ATT.value as number)) * 100,
+          ),
+      },
+      ['Yds', 'YDS'],
+      ['Avg', 'AVG'],
+      'TD',
+      ['Int', 'INT'],
+      ['Sacked', 'SCK'],
+      ['Long', 'LNG'],
+      ['Rating', 'RATE'],
+      ['Tot Yds', 'TOTALYDS-TOT YDS'],
+      ['Tot TD', 'TOTALTD-TOT TD'],
+      ['Fum (L)', 'LOST'],
+    ],
+    RB: [
+      ['Att', 'ATT-ATT'],
+      ['Rush Yds', 'RUSHYDS'],
+      ['Avg', 'YPC-YPC'],
+      ['TD', 'RUSHTD'],
+      ['Long', 'RUSHLNG'],
+      ['Rec', 'REC-REC'],
+      ['Rec Yds', 'RECYDS'],
+      ['Rec TD', 'RECTD'],
+      ['Tot Yds', 'YDS-TOT YDS'],
+      ['Tot TD', 'TD-TOT TD'],
+      ['Fum (L)', 'LOST'],
+    ],
+    WR: [
+      ['Rec', 'REC-REC'],
+      ['Trg', 'TRG-TRG'],
+      ['Yds', 'RECYDS'],
+      ['Avg', 'RECAVG'],
+      ['TD', 'RECTD'],
+      ['Long', 'RECLNG'],
+      ['Tot Yds', 'YDS-TOT YDS'],
+      ['Tot TD', 'TD-TOT TD'],
+      ['Fum (L)', 'LOST'],
+    ],
+    DEF: [
+      ['Comb Tkl', 'COMB'],
+      ['Solo Tkl', 'TKL'],
+      ['Ast Tkl', 'AST'],
+      ['TFL', 'TFL'],
+      ['Sacks', 'SCK'],
+      ['FF', 'FF'],
+      ['Int', 'INT'],
+      ['Pass Def', 'PDEF'],
+      // {
+      //   label: 'TD',
+      //   value: (v) => `${v['FR TD'].value + v['INT TD-TD'].value}`,
+      // },
+    ],
+    OL: [],
+    K: [
+      'FGM',
+      'FGA',
+      'FG 1-19',
+      'FG 20-29',
+      'FG 30-39',
+      'FG 40-49',
+      'FG 50+',
+      'XPM',
+      'XPA',
+    ],
+    P: [
+      ['Punts', 'PUNT'],
+      ['Yds', 'YDS'],
+      ['Avg', 'AVG'],
+      ['Long', 'LNG'],
+      ['Blocked', 'BLK'],
+    ],
+  },
+  mlb: {
+    DEFAULT: [
+      'AB',
+      'R',
+      'H',
+      '2B',
+      '3B',
+      'HR',
+      'RBI',
+      'AVG',
+      'OBP',
+      'SLG',
+      'OPS',
+      'BB',
+      'HBP',
+      'SO',
+      'SB',
+      'CS',
+    ],
+    P: [
+      {
+        label: 'W/L',
+        value: (v) => (v.W.value === 1 ? 'W' : v.L.value === 1 ? 'L' : 'ND'),
+      },
+      'ERA',
+      'SO',
+      'GS',
+      'CG',
+      'SHO',
+      'SV',
+      'IP',
+      'H',
+      'ER',
+      'R',
+      'HR',
+      'BB',
+      'HBP',
+      ['Game Score', 'GSc'],
+    ],
+  },
+  nhl: {
+    DEFAULT: [
+      'G',
+      'A',
+      'P',
+      '+/-',
+      'PIM',
+      'PPG',
+      'PPA',
+      'SHG',
+      'SHA',
+      'S',
+      'S%',
+      'FOW',
+      'FO',
+      'FOW%',
+      'HIT',
+      'BLK',
+      'TKA',
+      'GVA',
+      'TOI',
+    ],
+    D: [
+      'G',
+      'A',
+      'P',
+      '+/-',
+      'PIM',
+      'PPG',
+      'PPA',
+      'SHG',
+      'SHA',
+      'HIT',
+      'BLK',
+      'TKA',
+      'GVA',
+      'S',
+      'S%',
+      'TOI',
+    ],
+    G: [
+      'W',
+      'L',
+      'OTL',
+      'SA',
+      ['SV', 'Sv'],
+      ['SV%', 'Sv%'],
+      'GA',
+      'GAA',
+      'SHO',
+      'MIN',
+    ],
+  },
+}
+
+const lastGameLeagueColumns =
+  league === 'pga' || league === 'money' ? [] : lastGameStatColumns[league]
+const lastGameStats = Array.isArray(lastGameLeagueColumns)
+  ? lastGameLeagueColumns
+  : lastGameLeagueColumns[normalizedPosition] ??
+    lastGameLeagueColumns['DEFAULT']
+const lastGame = recentGames?.grid.rows[0]
+const lastGameStats_ = lastGame
+  ? lastGameStats?.map((stat) =>
+      calculateStat(stat, recentGames.grid.rows[0]),
+    ) ?? []
+  : []
+
+console.log('lastGame', JSON.stringify(lastGame, undefined, 2))
+
+const nextGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
+  fc: {
+    DEFAULT: ['M', 'START', 'G', 'A'],
+    GK: ['M', 'START', 'CS', 'GC'],
+  },
+  nba: ['PPG', 'RPG', 'APG', 'TS%'],
+  nfl: {
+    QB: [['GMS', 'GP'], 'YDS', 'TD', 'INT'],
+    RB: [
+      ['GMS', 'GP'],
+      ['ATT', 'ATT-ATT'],
+      ['YDS', 'RUSHYDS'],
+      ['TD', 'RUSHTD'],
+    ],
+    WR: [
+      ['GMS', 'GP'],
+      ['REC', 'REC-REC'],
+      ['YDS', 'RECYDS'],
+      ['TD', 'RECTD'],
+    ],
+    DEF: [
+      ['GMS', 'GP'],
+      ['SCK', 'SCK'],
+      ['TFL', 'TFL'],
+      ['INT', 'INT'],
+    ],
+    OL: [
+      ['Record', ''], // TODO: find this
+    ],
+    K: [
+      ['GMS', 'GP'],
+      'FGM',
+      ['Long', ''], // TODO: find this
+    ],
+    P: [
+      ['GMS', 'GP'],
+      ['Punts', 'PUNT'],
+      ['Avg', 'AVG'],
+      ['Long', 'LNG'],
+    ],
+  },
+  mlb: {
+    DEFAULT: [['GMS', 'G'], 'HR', 'RBI', 'AVG'],
+    P: [
+      { label: 'Record', value: (v) => `${v.W.value}-${v.L.value}` },
+      'ERA',
+      'SO',
+      'BB',
+    ],
+  },
+  nhl: {
+    DEFAULT: ['GP', 'G', 'A', '+/-'],
+    G: [
+      'GP',
+      {
+        label: 'W-L-OTL',
+        value: (v) => `${v.W.value}-${v.L.value}-${v.OTL.value}`,
+      },
+      'GAA',
+      ['SV%', 'Sv%'],
+    ],
+  },
+}
+
+const nextGameLeagueColumns =
+  league === 'pga' || league === 'money' ? [] : nextGameStatColumns[league]
+const nextGameStats = Array.isArray(nextGameLeagueColumns)
+  ? nextGameLeagueColumns
+  : nextGameLeagueColumns[normalizedPosition] ??
+    nextGameLeagueColumns['DEFAULT']
+const nextGameData = {
+  stats: nextGame?.grid
+    ? nextGameStats?.map((stat) => {
+        return calculateStat(stat, nextGame?.grid.rows.at(-1))
+      }) ?? []
+    : [],
+}
+// console.log("nextGame", JSON.stringify(nextGame, undefined, 2))
+
+const gamesStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
+  fc: {
+    DEFAULT: ['MIN', 'G', 'A', 'YC'],
+    GK: ['MIN', 'GC', 'SV', 'YC'],
+  },
+  nba: ['PTS', 'REB', 'AST', '3PM'],
+  nfl: {
+    QB: ['YDS', 'TD', 'INT', 'RATE'],
+    RB: [
+      ['ATT', 'ATT-ATT'],
+      ['YDS', 'RUSHYDS'],
+      ['TD', 'RUSHTD'],
+      ['TOT TD', 'TD-TOT TD'],
+    ],
+    WR: [
+      ['REC', 'REC-REC'],
+      ['TRG', 'TRG-TRG'],
+      ['YDS', 'RECYDS'],
+      ['TD', 'RECTD'],
+    ],
+    DEF: ['SCK', 'TFL', 'INT', 'FF'],
+    OL: [['Starts', 'GS']],
+    K: [
+      { label: 'FG', value: (v) => `${v.FGM.value}-${v.FGA.value}` },
+      { label: 'XP', value: (v) => `${v.XPM.value}-${v.XPA.value}` },
+      ['Long', ''], // TODO: find this
+    ],
+    P: [
+      ['Punts', 'PUNT'],
+      ['Avg', 'AVG'],
+      ['Long', 'LNG'],
+    ],
+  },
+  mlb: {
+    DEFAULT: ['AB', 'H', 'HR', 'RBI'],
+    P: ['IP', 'ERA', 'SO', 'BB'],
+  },
+  nhl: {
+    DEFAULT: ['G', 'A', 'P', '+/-'],
+    G: [
+      '',
+      {
+        label: 'W-L-OTL',
+        value: (v) => `${v.W.value}-${v.L.value}-${v.OTL.value}`,
+      },
+      'GAA',
+      ['SV%', 'Sv%'],
+    ],
+  },
+}
+
+const gamesLeagueColumns =
+  league === 'pga' || league === 'money' ? [] : gamesStatColumns[league]
+const gamesStats = Array.isArray(gamesLeagueColumns)
+  ? gamesLeagueColumns
+  : gamesLeagueColumns[normalizedPosition] ?? gamesLeagueColumns['DEFAULT']
+const games = recentGames?.grid.rows.map((r, index) => ({
+  game: r,
+  stats:
+    gamesStats?.map((stat) =>
+      calculateStat(stat, recentGames.grid.rows[index]),
+    ) ?? [],
+}))
+// console.log('recentGames', JSON.stringify(recentGames, undefined, 2))
 ---
 
-<PlayerLayout
-  {bio}
-  {meta}
-  league={domain.toLowerCase() === 'epl' ? 'fc' : leagueParam}
-  {query}
-  {analytics}
-  page="overview"
->
-  <div>
-    <div class="mb-5 leading-snug">
-      <p set:html={summary} />
-    </div>
-    <div class="mb-5">
+<PlayerLayout {bio} {meta} {league} {query} {analytics} page="overview">
+  <div class="space-y-3 gap-3 justify-center lg:columns-2">
+    <Panel
+      team
+      class:list={{
+        'grid grid-cols-3 gap-3 py-3 leading-snug items-center': true,
+      }}
+    >
       {
-        nextGame?.grid && (
-          <div class="mb-5">
-            <h3 class="font-semibold text-team-primary mb-0.5">{`Next Game ${
-              isNextGameHome ? 'vs' : '@'
-            } ${
-              isNextGameHome
-                ? nextGame.awayTeam.abbreviation
-                : nextGame.homeTeam.abbreviation
-            }`}</h3>
-            <Grid client:load data={nextGame.grid} />
-          </div>
-        )
-      }
-      {
-        stats?.grid && (
-          <div class="mb-5">
-            <div class="flex justify-between mb-0.5">
-              <h3 class="font-semibold text-team-primary">{stats.grid.name}</h3>
-              <a href={`${playerPath}/career-stats`}>See all</a>
+        facts.map(({ label, value }) => (
+          <div class="flex flex-col items-center">
+            <div class="whitespace-nowrap">{value}</div>
+            <div class="font-light text-sm opacity-80 whitespace-nowrap">
+              {label}
             </div>
-            <Grid client:load data={stats.grid} />
           </div>
-        )
+        ))
       }
-      {
-        recentGames?.grid && (
-          <div class="mb-5">
-            <div class="flex justify-between mb-0.5">
-              <h3 class="font-semibold text-team-primary">
-                {recentGames.grid.name}
-              </h3>
-              <a
-                href={
-                  domain.toLowerCase() === 'epl'
-                    ? `${playerPath}/matches`
-                    : `${playerPath}/game-log`
-                }
-              >
-                See all
-              </a>
-            </div>
-            <Grid
-              client:load
-              data={recentGames.grid}
-              columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
+    </Panel>
+    {
+      seasonPanels.map((panel, index) => (
+        <Panel
+          team={index === 0}
+          title={panel.title}
+          href={playerPath + '/career-stats'}
+        >
+          <div
+            class:list={{
+              'grid grid-cols-2 gap-3 py-3 leading-snug items-center': true,
+              'grid-cols-5': panel.stats?.length === 10,
+              'grid-cols-4': panel.stats?.length === 8,
+              'grid-cols-3': panel.stats?.length === 6,
+            }}
+          >
+            {panel.stats?.map(({ key, value }) => (
+              <div class="flex flex-col items-center">
+                <div class="whitespace-nowrap">{formatNumber(value)}</div>
+                <div class="font-light text-sm opacity-80 whitespace-nowrap">
+                  {key}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      ))
+    }
+    <Panel title="Summary">
+      <div class="leading-snug">
+        <p set:html={summary} />
+      </div>
+    </Panel>
+    {
+      lastGame && lastGameStats_?.length ? (
+        <Panel title="Latest Performance" entity={lastGame.SCORE.entity}>
+          <div class="flex items-center justify-stretch gap-1 border-b border-gray-6 dark:border-gray-4 -mx-3 px-3">
+            <Image
+              class:list={{
+                'select-none': true,
+                'object-contain object-bottom': true,
+              }}
+              alt={bustImageAlt}
+              src={bustImageUrl}
+              width={100}
+              height={100}
+              loading="eager"
             />
-          </div>
-        )
-      }
-      {
-        recentGames?.columns && recentGames?.rows && (
-          <div class="mb-5">
-            <div class="flex justify-between mb-0.5">
-              <h3 class="font-semibold text-team-primary">
-                {recentGames.name}
-              </h3>
-              <a
-                href={
-                  domain.toLowerCase() === 'epl'
-                    ? `${playerPath}/matches`
-                    : `${playerPath}/game-log`
-                }
-              >
-                See all
-              </a>
+            <div class="">
+              <p class="whitespace-nowrap">{bio.usedName}</p>
+              <div class="flex items-center justify-between gap-2 text-sm text-gray-5">
+                <EntityLink
+                  entity={lastGame.SCORE.entity}
+                  class="whitespace-nowrap text-inherit"
+                >
+                  {formatDate(lastGame.DATE.value as string, 'MMM DD')}
+                </EntityLink>
+                <EntityLink
+                  entity={lastGame.OPP.entity}
+                  class="flex gap-1 items-center text-inherit"
+                >
+                  <p class="whitespace-nowrap">
+                    {lastGame.ALIGNMENT.display.replace('@', 'at')}
+                  </p>
+                  <div class="flex gap-1 items-center">
+                    {lastGame.OPP.imageUrl ? (
+                      <Image
+                        class:list={{
+                          'h-4 max-w-4': true,
+                          'select-none': true,
+                          'object-contain object-center': true,
+                        }}
+                        alt={lastGame.OPP.display}
+                        src={lastGame.OPP.imageUrl}
+                        width={16}
+                        height={16}
+                        loading="eager"
+                      />
+                    ) : null}
+                    <p class="whitespace-nowrap">{lastGame.OPP.display}</p>
+                  </div>
+                </EntityLink>
+                <EntityLink
+                  class="whitespace-nowrap text-inherit"
+                  entity={lastGame.SCORE.entity}
+                >
+                  {lastGame.SCORE.display}
+                </EntityLink>
+              </div>
             </div>
-            <Grid
-              client:load
-              data={recentGames}
-              columnStyles={{ DATE: 'text-left', SCORE: 'text-left' }}
-            />
           </div>
-        )
-      }
-      {
-        fantasy?.grid && (
-          <div class="mb-5">
-            <h3 class="font-semibold text-team-primary mb-0.5">
-              {fantasy.grid.name}
-            </h3>
-            <Grid client:load data={fantasy.grid} />
+          <div
+            class:list={{
+              'flex flex-wrap gap-3 py-3 leading-snug items-center': true,
+              // 'grid-cols-5 @xs:grid-cols-7': league !== 'fc',
+              // 'grid-cols-2 @xs:grid-cols-4': league === 'fc',
+            }}
+          >
+            {lastGameStats_?.map(({ key, value }) => (
+              <div class="flex flex-col items-center">
+                <div class="whitespace-nowrap">{formatNumber(value)}</div>
+                <div class="font-light text-sm opacity-80 whitespace-nowrap">
+                  {key}
+                </div>
+              </div>
+            ))}
           </div>
-        )
-      }
-      {
-        bio.bustImageUrlGallery.length ? (
-          <PlayerGallery images={bio.bustImageUrlGallery} class="mb-5" />
-        ) : null
-      }
-    </div>
+        </Panel>
+      ) : null
+    }
+    {
+      games ? (
+        <Panel title="Games" href={playerPath + '/game-log'}>
+          <ol class="flex flex-col gap-2">
+            {nextGame ? (
+              <li class="-mx-3 px-3 border-b border-gray-6 dark:border-gray-4">
+                <div class="grid grid-cols-4 gap-2 justify-stretch items-end pb-2.5">
+                  <div>
+                    <p class="text-sm text-gray-5">Next</p>
+                    <EntityLink
+                      entity={nextGameOpponnent.entity}
+                      class="flex gap-1 items-center -mt-0.5 text-inherit"
+                    >
+                      <p class="whitespace-nowrap">
+                        {isNextGameHome ? 'vs' : 'at'}
+                      </p>
+                      <Image
+                        class:list={{
+                          'h-4 max-w-4': true,
+                          'select-none': true,
+                          'object-contain object-center': true,
+                        }}
+                        alt={nextGameOpponnent?.name}
+                        src={nextGameOpponnent?.logoImageUrl}
+                        width={16}
+                        height={16}
+                        loading="eager"
+                      />
+                      <p class="whitespace-nowrap">
+                        {nextGameOpponnent.abbreviation}
+                      </p>
+                    </EntityLink>
+                  </div>
+                  <div class="col-span-3 grid grid-cols-5 gap-1">
+                    <div class="whitespace-nowrap text-gray-5">
+                      <p class="text-sm">CAREER</p>
+                      <p>{`${isNextGameHome ? 'vs' : 'at'} ${
+                        nextGameOpponnent.abbreviation
+                      }`}</p>
+                    </div>
+                    {nextGameData.stats?.map((stat) => (
+                      <div class="text-gray-5 text-center">
+                        <p class="text-sm">{stat.key}</p>
+                        <p class="">{stat.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </li>
+            ) : null}
+            {games.map(({ game, stats }, index) => (
+              <li
+                class:list={{
+                  '-mx-3 px-3 border-gray-6 dark:border-gray-4': true,
+                  'border-b': index !== games.length - 1,
+                }}
+              >
+                <div
+                  class:list={{
+                    'grid grid-cols-4 gap-2 justify-stretch items-end py-2.5': true,
+                    'pt-0': index === 0,
+                  }}
+                >
+                  <div>
+                    <EntityLink
+                      entity={game.SCORE.entity}
+                      class="text-sm text-gray-5 whitespace-nowrap"
+                    >
+                      {formatDate(game.DATE.display, 'ddd, MMM DD')}
+                    </EntityLink>
+                    <EntityLink
+                      entity={game.OPP.entity}
+                      class="flex gap-1 items-center -mt-0.5 text-inherit"
+                    >
+                      <p class="whitespace-nowrap">
+                        {game.ALIGNMENT.display.replace('@', 'at')}
+                      </p>
+                      {game.OPP.imageUrl ? (
+                        <Image
+                          class:list={{
+                            'h-4 max-w-4': true,
+                            'select-none': true,
+                            'object-contain object-center': true,
+                          }}
+                          alt={game.OPP.display}
+                          src={game.OPP.imageUrl}
+                          width={16}
+                          height={16}
+                          loading="eager"
+                        />
+                      ) : null}
+                      <p class="whitespace-nowrap">{game.OPP.display}</p>
+                    </EntityLink>
+                  </div>
+                  <EntityLink
+                    entity={game.SCORE.entity}
+                    class="whitespace-nowrap text-right text-inherit"
+                  >
+                    {game.SCORE.display}
+                  </EntityLink>
+                  <div class="col-span-2 grid grid-cols-4 gap-1 text-center">
+                    {stats?.map((stat) => (
+                      <div>
+                        <p class="text-sm text-gray-5 whitespace-nowrap">
+                          {stat.key}
+                        </p>
+                        <p class="">{stat.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </Panel>
+      ) : null
+    }
   </div>
 </PlayerLayout>

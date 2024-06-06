@@ -1,5 +1,5 @@
 ---
-import AccountLayout from './_layout.astro'
+import Layout from '@layouts/base.astro'
 import { getUserAsks, getFinanceUserAsks } from '@statmuse/core/ask'
 import { ASK_LIMIT } from '@statmuse/core/ask'
 import { formatDate } from '@statmuse/core/time'
@@ -13,6 +13,7 @@ import {
   paginate,
 } from '@lib/asks'
 import { Caching } from '@lib/caching'
+import Hero from '@components/hero.astro'
 
 // export const prerender = true
 
@@ -45,7 +46,30 @@ if (overflow && (searchParams.p || searchParams.page === 'last')) {
 const paginationOptions = paginate(asks, searchParams, overflow)
 ---
 
-<AccountLayout {meta} prefixPath="/account/history">
+<Layout
+  {meta}
+  colors={{ foreground: '#fff', background: '#00c1d8' }}
+  renderRightColumn={false}
+>
+  <Hero
+    content="Manage your account."
+    navProps={{
+      href: () => '',
+      selected: 'history',
+      links: [
+        {
+          text: 'History',
+          param: 'history',
+          href: '/account/history',
+        },
+        {
+          text: 'Settings',
+          param: 'settings',
+          href: '/account/settings',
+        },
+      ],
+    }}
+  />
   <div style="display: flex; gap: 10px; margin-top: 20px;">
     <a
       class={`flex items-center justify-center min-w-[80px] border border-secondary rounded-md hover:no-underline hover:text-white hover:bg-secondary p-[5px] ${
@@ -67,7 +91,7 @@ const paginationOptions = paginate(asks, searchParams, overflow)
     </a>
   </div>
   <section>
-    <h2 class="text-2xl font-semibold my-5">History</h2>
+    <h2 class="text-2xl font-bold my-5">History</h2>
     <div class="space-y-5">
       {
         asks.map((ask, i) => (
@@ -91,7 +115,7 @@ const paginationOptions = paginate(asks, searchParams, overflow)
               </a>
             </div>
             <div class="flex-1 flex flex-col">
-              <h3 class="text-lg font-semibold">
+              <h3 class="text-xl font-bold">
                 <a href={askPath(ask)}>{ask.query}</a>
               </h3>
               <div class="italic opacity-50">
@@ -157,4 +181,4 @@ const paginationOptions = paginate(asks, searchParams, overflow)
       </a>
     </li>
   </ul>
-</AccountLayout>
+</Layout>

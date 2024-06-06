@@ -1,17 +1,20 @@
 ---
-import Layout from '@layouts/main.astro'
-import Header from '@components/header.astro'
-import Container from '@components/container.astro'
+import Layout from '@layouts/base.astro'
 import Image from '@components/image.astro'
 import { Caching } from '@lib/caching'
 import { Config } from 'sst/node/config'
+import Panel from '@components/panel.astro'
 import * as User from '@statmuse/core/user'
 import { sendSigninEmail } from '@lib/mailer'
 import contacts from '@sendgrid/client'
 import Botpoison from '@botpoison/node'
 
+const { public: botpoisonPublicKey, secret: botpoisonSecretKey } = JSON.parse(
+  Config.BOTPOISON,
+)
+
 const botpoison = new Botpoison({
-  secretKey: Config.BOTPOISON_SECRET_KEY,
+  secretKey: botpoisonSecretKey,
 })
 
 contacts.setApiKey(Config.SENDGRID_API_KEY)
@@ -67,65 +70,60 @@ const meta = {
 }
 ---
 
-<Layout {meta} enableAdBanner={false}>
-  <Header />
-  <Container class="px-[30px] py-[5px]">
-    <div
-      class="w-full max-w-md bg-white rounded-lg border border-[#e4e4e4] mx-auto mb-5 pt-8 px-8 pb-44 relative text-center overflow-hidden"
-    >
-      <div>
-        <form method="post">
-          <input
-            class="w-full px-3 py-2.5 text-lg text-[#55595c] rounded bg-white border mb-7 outline-none"
-            name="email"
-            type="email"
-            placeholder="Email"
-            value=""
-          />
-          <input type="hidden" name="client_id" value="web" />
-          <input
-            type="hidden"
-            name="redirect_uri"
-            value={Astro.url.origin + '/auth/callback'}
-          />
-          <input type="hidden" name="response_type" value="code" />
-          <input type="hidden" name="provider" value="email" />
-          <input
-            type="hidden"
-            name="challenge"
-            data-botpoison-public-key={Config.BOTPOISON_PUBLIC_KEY}
-            value=""
-          />
-          <button
-            class="w-full text-lg mb-7 p-3 border-0 rounded text-white bg-[#42a5f5] hover:bg-[#1976d2] disabled:bg-[#cfd8dc]"
-            type="submit"
-          >
-            Email me a link to sign in
-          </button>
-        </form>
-        <div>
-          <p class="text-black/60">
-            Don't have an account? <a href="/auth/signup">Sign up</a>
-          </p>
-        </div>
-        <p
-          class="text-xs text-[#777]"
-          style="margin-top: 23px; margin-bottom: 15px;"
+<Layout {meta} enableAdBanner={false} renderRightColumn={false}>
+  <Panel class="w-full max-w-md pt-8 pb-44 text-center overflow-hidden mx-auto">
+    <div>
+      <form method="post">
+        <input
+          class="w-full px-3 py-2.5 text-xl text-[#55595c] rounded-2xl bg-white border mb-7 outline-none"
+          name="email"
+          type="email"
+          placeholder="Email"
+          value=""
+        />
+        <input type="hidden" name="client_id" value="web" />
+        <input
+          type="hidden"
+          name="redirect_uri"
+          value={Astro.url.origin + '/auth/callback'}
+        />
+        <input
+          type="hidden"
+          name="challenge"
+          data-botpoison-public-key={botpoisonPublicKey}
+          value=""
+        />
+        <input type="hidden" name="response_type" value="code" />
+        <input type="hidden" name="provider" value="email" />
+        <button
+          class="w-full text-xl mb-7 p-3 border-0 rounded-2xl text-white bg-[#42a5f5] hover:bg-[#1976d2] disabled:bg-[#cfd8dc]"
+          type="submit"
         >
-          By using StatMuse, you agree to our <a href="/terms">
-            terms of service
-          </a><br />and <a href="/privacy">privacy policy</a>.
+          Email me a link to sign in
+        </button>
+      </form>
+      <div>
+        <p class="text-[#777]">
+          Don't have an account? <a href="/auth/signup">Sign up</a>
         </p>
       </div>
-      <Image
-        class="absolute bottom-0 left-0 w-full"
-        src="https://cdn.statmuse.com/app/images/signup-players.png"
-        alt="StatMuse+"
-        width={900}
-        height={400}
-      />
+      <p
+        class="text-sm text-[#777]"
+        style="margin-top: 23px; margin-bottom: 15px;"
+      >
+        By using StatMuse, you agree to our <a href="/terms">
+          terms of service
+        </a><br />and <a href="/privacy">privacy policy</a>.
+      </p>
     </div>
-  </Container>
+    <Image
+      class="absolute bottom-0 left-0 w-full"
+      src="https://cdn.statmuse.com/app/images/signup-players.png"
+      alt="StatMuse+"
+      width={300}
+      height={133}
+    />
+  </Panel>
 </Layout>
 <script>
   import Botpoison from '@botpoison/browser'

@@ -1,73 +1,180 @@
 ---
-import { marked } from 'marked'
-import Container from '@components/container.astro'
-import Image from '@components/image.astro'
 import type { HeroProps } from '@lib/props'
-import AnswerShare from './answer-share.astro'
-import AnswerAudio from './answer-audio.astro'
-import TwitterShare from '@components/icons/twitter.astro'
+import Nav from '@components/nav.astro'
+import type { ComponentProps } from 'astro/types'
+import type { GameraParameter } from '@statmuse/core/gamera'
+import Panel from '@components/panel.astro'
+import { marked } from 'marked'
+import Image from '@components/image.astro'
+import GridDropdown from '@components/grid-dropdown.astro'
+import Share from '@components/share/index.svelte'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
-interface Props extends HeroProps {}
+interface Props extends HeroProps {
+  navProps?: ComponentProps<typeof Nav>
+  parameters?: Record<string, GameraParameter>
+  class?: string
+  renderAdBanner?: boolean
+}
 
-const answered = Astro.props.answered
-const markdown = Astro.props.markdown ?? false
-const shareUrl = Astro.props.shareUrl
-const content = markdown
-  ? marked(Astro.props.content, {
+const {
+  affiliation,
+  affiliationUrl,
+  markdown,
+  html,
+  content,
+  imageAlt,
+  imageUrl,
+  url,
+  navProps,
+  parameters,
+  share,
+  renderAdBanner = false,
+} = Astro.props
+
+const markdownOrHtml = markdown || html
+const nlg = markdown
+  ? marked(content, {
       gfm: true,
       breaks: true,
       mangle: false,
       headerIds: false,
     })
-  : Astro.props.content
+  : content
 ---
 
-<Container class="mb-2.5 bg-team-primary text-team-secondary">
-  <div class="flex flex-col md:flex-row pt-4 md:pt-6 relative">
-    <div class="flex-1 flex flex-col justify-between text-center md:text-left">
-      {
-        answered ? (
-          <span class="italic opacity-50 saturate-0">Answered {answered}</span>
-        ) : null
-      }
-      <h1
-        data-cy-nlg
+<Panel
+  team
+  class:list={{
+    'rounded-none border-0 md:rounded-2xl md:border': true,
+    '-mx-3 pb-2 pt-4 px-3 @lg/main:py-3 @lg/main:px-5 md:mx-0 whitespace-nowrap': true,
+    'flex flex-col-reverse gap-3 @lg/main:flex-row': true,
+    [Astro.props.class ?? '']: !!Astro.props.class,
+  }}
+>
+  <slot name="hero" />
+  {
+    imageUrl ? (
+      <Image
         class:list={{
-          'font-semibold text-xl md:text-2xl md:leading-snug lg:text-[1.75rem] xl:text-3xl xl:leading-snug my-auto': true,
-          '[&>p]:my-[1em] [&>ul]:my-[1em] [&>p>a]:underline [&>p>a]:text-team-secondary':
-            markdown,
+          'h-32 @lg/main:max-w-[200px]': true,
+          'mt-2 -mb-2 @lg/main:mt-0 @lg/main:-mb-3 @lg/main:-ml-2': true,
+          'self-center @lg/main:self-end select-none': true,
+          'object-contain object-bottom': true,
         }}
-        set:html={markdown ? content : undefined}
-      >
-        {
-          !markdown ? (
-            <p
-              class="my-[1em] [&>a]:underline [&>a]:text-team-secondary"
-              set:html={content}
-            />
-          ) : null
-        }
-      </h1>
-    </div>
+        alt={imageAlt ?? content}
+        src={imageUrl}
+        width={200}
+        height={200}
+        loading="eager"
+      />
+    ) : null
+  }
+  <div
+    class="flex flex-col justify-between @lg/main:items-start @lg/main:-mb-3"
+  >
     {
-      Astro.props.imageUrl ? (
-        <Image
-          class="h-44 md:h-52 self-center md:self-end mt-2 md:mt-0 md:pl-6 md:pr-1.5 select-none object-contain object-bottom md:max-w-[350px]"
-          alt={Astro.props.imageAlt ?? null}
-          src={Astro.props.imageUrl}
-          width={750}
-          height={750}
-          loading="eager"
-        />
-      ) : null
+      markdownOrHtml ? (
+        <div
+          class:list={{
+            'flex-1 flex flex-col justify-between text-center @lg/main:text-left': true,
+          }}
+        >
+          <h1
+            class:list={{
+              'font-bold text-xl leading-snug my-auto text-pretty': true,
+              // '@lg/main:text-2xl lg:text-[1.33rem] xl:text-2xl': true,
+              '[&>p]:my-[1em] [&>ul]:my-[1em] [&>p>a]:underline [&>p>a]:text-team-secondary': true,
+            }}
+            set:html={markdown ? nlg : undefined}
+          >
+            {html ? (
+              <span
+                class="my-[1em] [&>a]:underline [&>a]:text-team-secondary whitespace-pre-wrap text-pretty"
+                set:html={nlg}
+              />
+            ) : null}
+          </h1>
+        </div>
+      ) : (
+        <div
+          class:list={{
+            'mx-auto @lg/main:mx-0 @lg/main:flex @lg/main:gap-3 @lg/main:items-center @lg/main:mt-5': true,
+            'mb-5 mt-5': !imageUrl,
+          }}
+        >
+          <h1 class="text-2xl leading-none font-bold text-center @lg/main:text-left text-pretty">
+            {url ? (
+              <a
+                class="text-current"
+                href={url.href}
+                title={url.title}
+                data-cy-team-name-link
+              >
+                {content}
+              </a>
+            ) : (
+              content
+            )}
+          </h1>
+          {affiliation ? (
+            <div
+              class:list={{
+                'flex flex-1 items-center text-center': true,
+                'py-0.5 px-2.5 absolute left-3 bottom-3': true,
+                '@lg/main:relative @lg/main:left-auto @lg/main:bottom-auto': true,
+                'bg-team-secondary text-team-primary rounded-2xl': true,
+              }}
+            >
+              {affiliationUrl ? (
+                <a
+                  class="text-inherit no-underline hover:no-underline"
+                  href={affiliationUrl}
+                  set:text={affiliation}
+                />
+              ) : (
+                <>{affiliation}</>
+              )}
+            </div>
+          ) : null}
+        </div>
+      )
     }
-
-    <div
-      class="md:hidden flex flex-col items-center absolute right-0 bottom-2.5 space-y-2.5"
-    >
-      {shareUrl && <TwitterShare {shareUrl} />}
-      {shareUrl && <AnswerShare onlyIcon url={shareUrl} />}
-      {Astro.props.audioUrl && <AnswerAudio src={Astro.props.audioUrl} />}
-    </div>
+    {navProps ? <Nav class="hidden @lg/main:flex" hero {...navProps} /> : null}
   </div>
-</Container>
+  {
+    share ? (
+      <div
+        class:list={{
+          'absolute right-3 bottom-3 @lg/main:top-3 @lg/main:bottom-auto px-2 py-1': true,
+          'rounded-2xl bg-team-secondary text-team-primary': true,
+        }}
+      >
+        <Share client:load {share} />
+      </div>
+    ) : null
+  }
+  {
+    parameters && (
+      <GridDropdown
+        class="hidden @2xl/main:flex w-52 absolute right-3 bottom-3"
+        {parameters}
+      />
+    )
+  }
+</Panel>
+{
+  renderAdBanner ? (
+    <div class="md:hidden h-[50px] md:h-[90px] flex justify-center items-center">
+      <AditudeAdBanner
+        client:only="svelte"
+        divId="pb-slot-anchor"
+        slotId="pb-slot-anchor"
+        placeholderClass="w-[320px] md:w-[728px] h-[50px] md:h-[90px]"
+        onlyMobile
+      />
+    </div>
+  ) : null
+}
+{navProps ? <Nav class="@lg/main:hidden" {...navProps} /> : null}
+{parameters && <GridDropdown class="flex @2xl/main:hidden" {parameters} />}

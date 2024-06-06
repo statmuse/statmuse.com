@@ -1,55 +1,64 @@
 ---
 import ElephantIcon from '@components/icons/elephant.astro'
-import HamburgerIcon from '@components/icons/hamburger.astro'
-import CloseIcon from '@components/icons/x.astro'
 import Logo from '@components/logo.astro'
 import MenuLinks from '@components/menu-links.astro'
+import Icon from '@components/icon.svelte'
 
 interface Props {
   showElephant?: boolean
+  class?: string | null
 }
 
 const { showElephant } = Astro.props
 ---
 
-<input id="menu" type="checkbox" class="hidden peer" />
-{
-  showElephant && (
-    <label for="menu">
-      <ElephantIcon class="block relative w-[38px] h-[38px] cursor-pointer mr-2 md:hidden" />
-    </label>
-  )
-}
-<label for="menu">
-  <HamburgerIcon
-    class={`${
-      showElephant ? 'hidden md:block' : 'block'
-    } w-[25px] h-[25px] relative cursor-pointer fill-team-secondary mr-2 md:mr-0`}
-  />
-</label>
-<div class="hidden peer-checked:block">
-  <label for="menu">
-    <div
-      class="absolute top-0 left-0 w-screen h-screen bg-white opacity-80 z-[5]"
-    >
-    </div>
-  </label>
-  <a
-    href="/"
-    class="absolute top-[15px] left-1/2 -translate-x-1/2 md:top-[22px] md:left-[65px] md:transform-none [--team-primary-color:initial] [--team-secondary-color:initial] z-10"
-  >
-    <Logo class="w-[150px] fill-black" />
-  </a>
-  <div
-    class="absolute top-0 left-0 h-screen w-3/4 md:w-[237px] bg-[#f9f9f9] z-[5]"
-  >
-    <div class="flex items-center h-[55px] md:h-[70px] px-3 md:px-5">
+<div class:list={{ [Astro.props.class ?? '']: !!Astro.props.class }}>
+  <input id="menu" type="checkbox" class="hidden peer" />
+  {
+    showElephant && (
       <label for="menu">
-        <CloseIcon
-          class="block w-5 h-5 cursor-pointer relative ml-1 md:ml-0.5"
-        />
+        <ElephantIcon class="block relative w-[38px] h-[38px] cursor-pointer md:hidden" />
       </label>
+    )
+  }
+  <label for="menu">
+    <Icon
+      name="hamburger"
+      class:list={{
+        'w-[25px] h-[25px] mr-3 md:mr-0': true,
+        'relative cursor-pointer text-team-secondary dark:text-team-secondary-dark md:text-inherit dark:md:text-inherit': true,
+        'hidden md:block': showElephant,
+        block: !showElephant,
+      }}
+    />
+  </label>
+  <div class="hidden peer-checked:block bg-gray-6 dark:bg-gray-2">
+    <label for="menu">
+      <div
+        class="absolute top-0 left-0 w-screen h-screen bg-gray-6/80 dark:bg-gray-4/80 z-[5]"
+      >
+      </div>
+    </label>
+    <div
+      class="fixed inset-0 md:w-[240px] z-40 bg-gray-7 dark:bg-gray-2 overflow-y-auto"
+    >
+      <div
+        class="sticky top-0 bg-gray-7 dark:bg-gray-2 flex items-center h-[62px] px-3 md:px-5 z-50"
+      >
+        <label for="menu">
+          <Icon
+            name="x"
+            class="block w-5 h-5 cursor-pointer relative ml-1 md:ml-0.5"
+          />
+        </label>
+        <a
+          href="/"
+          class="absolute top-[15px] left-1/2 -translate-x-1/2 md:top-[18.5px] md:left-[65px] md:transform-none [--team-primary-color:initial] [--team-secondary-color:initial] z-50"
+        >
+          <Logo class="w-[150px] fill-black" />
+        </a>
+      </div>
+      <MenuLinks id="dropdown" class="p-3 w-[220px]" />
     </div>
-    <MenuLinks />
   </div>
 </div>

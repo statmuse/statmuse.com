@@ -1,0 +1,85 @@
+---
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import Grid from '@components/grid.svelte'
+import type {
+  ScoresResponse,
+  ScheduleTeam,
+  GameraGrid,
+} from '@statmuse/core/gamera'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
+interface Props {
+  title?: string
+  data: ScoresResponse
+}
+
+const data = Astro.props.data
+const title = Astro.props.title
+
+const teams = data.teams.reduce(
+  (result, team) => ({
+    ...result,
+    [team.teamId]: team,
+  }),
+  {} as Record<number, ScheduleTeam>,
+)
+
+const games = data.games.slice(0, 5)
+
+const columns = [
+  { rowItemKey: 'DATE', title: 'DATE', type: 'date' },
+  { rowItemKey: 'TEAM', title: 'MATCHUP', type: 'string' },
+  { rowItemKey: 'ALIGNMENT', title: '', type: 'string' },
+  { rowItemKey: 'OPP', title: '', type: 'time' },
+  { rowItemKey: 'SCORE', title: 'SCORE', type: 'string' },
+]
+const grid: GameraGrid = {
+  columns,
+  rows: games.map((g) => {
+    const awayTeam = teams[g.awayTeam.teamId]
+    const homeTeam = teams[g.homeTeam.teamId]
+    return {
+      DATE: {
+        value: g.gameDate,
+        display: dayjs(g.gameDate).tz('America/New_York').format('ddd M/D'),
+      },
+      TEAM: {
+        value: awayTeam.abbreviation,
+        display: awayTeam.abbreviation,
+        imageUrl: awayTeam.logoImageUrl,
+        entity: awayTeam.entity,
+      },
+      ALIGNMENT: {
+        value: '@',
+        display: '@',
+      },
+      OPP: {
+        value: homeTeam.abbreviation,
+        display: homeTeam.abbreviation,
+        imageUrl: homeTeam.logoImageUrl,
+        entity: homeTeam.entity,
+      },
+      SCORE: {
+        value: g.awayTeam.score,
+        display: `${g.awayTeam.score}-${g.homeTeam.score}`,
+        entity: {
+          display: `${dayjs(g.gameDate)
+            .tz('America/New_York')
+            .format('M/D/YYYY')} ${awayTeam.abbreviation} @ ${
+            homeTeam.abbreviation
+          }`,
+          domain: homeTeam.entity.domain,
+          type: 'game',
+          id: g.id.toString(),
+        },
+      },
+    }
+  }),
+}
+---
+
+<Grid {title} data={grid} columnStyles={{ DATE: 'text-left' }} />

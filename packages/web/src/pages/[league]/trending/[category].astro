@@ -1,17 +1,17 @@
 ---
 import TrendingComponent from '@components/trending.astro'
 import { Caching } from '@lib/caching'
-import { categories, type Category } from "src/types"
+import { categories, type Category } from 'src/types'
 import { NOT_FOUND_404 } from '@lib/response'
 import type { LeagueParam } from '@lib/params'
 
-const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fantasy', 'fc']
+const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
   return NOT_FOUND_404
 
 const league = Astro.params.league as LeagueParam
-const category = Astro.params.category as Category 
+const category = Astro.params.category as Category
 
 if (!categories.includes(category as Category)) {
   return Astro.redirect(`/${league}/trending`)
@@ -20,4 +20,4 @@ if (!categories.includes(category as Category)) {
 Caching.swr(Astro)
 ---
 
-<TrendingComponent league={league} selected={league} {category} />
+<TrendingComponent {league} selected={league} {category} />

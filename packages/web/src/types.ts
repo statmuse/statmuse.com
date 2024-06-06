@@ -41,3 +41,9 @@ export interface TrendingListItem {
   foreground: string
   count: number
 }
+
+export interface NavLink {
+  text: string
+  param: string
+  href?: string
+}

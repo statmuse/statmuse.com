@@ -4,9 +4,6 @@ import MoneyLayout from '@layouts/money.astro'
 import { Caching } from '@lib/caching'
 import { getAssetProfile } from '@lib/kanedama'
 import { NOT_FOUND_404 } from '@lib/response'
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
-dayjs.extend(relativeTime)
 
 const { symbol } = Astro.params
 if (!symbol) return NOT_FOUND_404
@@ -24,7 +21,7 @@ const meta = {
 Caching.swr(Astro)
 ---
 
-<MoneyLayout {meta} {profile}>
+<MoneyLayout {meta} {profile} page="stats">
   <div>
     <div
       class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-x-5 mb-5"
@@ -33,7 +30,7 @@ Caching.swr(Astro)
         {
           priceHistory ? (
             <div class="mb-5">
-              <h3 class="font-semibold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
+              <h3 class="font-bold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
                 {priceHistory.name}
               </h3>
               <Grid
@@ -48,7 +45,7 @@ Caching.swr(Astro)
         {
           shareStats ? (
             <div class="mb-5">
-              <h3 class="font-semibold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
+              <h3 class="font-bold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
                 {shareStats.name}
               </h3>
               <Grid head={false} padding="" data={shareStats} />
@@ -58,7 +55,7 @@ Caching.swr(Astro)
         {
           shortStats ? (
             <div class="mb-5">
-              <h3 class="font-semibold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
+              <h3 class="font-bold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
                 {shortStats.name}
               </h3>
               <Grid head={false} padding="" data={shortStats} />
@@ -70,7 +67,7 @@ Caching.swr(Astro)
         {
           valuation ? (
             <div class="mb-5">
-              <h3 class="font-semibold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
+              <h3 class="font-bold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
                 {valuation.name}
               </h3>
               <Grid head={false} padding="" data={valuation} />

@@ -1,7 +1,5 @@
 ---
-import Layout from '@layouts/main.astro'
-import Header from '@components/header.astro'
-import Hero from '@components/hero.astro'
+import Layout from '@layouts/base.astro'
 import Visuals from '@components/visuals.astro'
 import { getMusingByIdOrFriendlyId } from '@statmuse/core/musing'
 import { rgbToHex } from '@statmuse/core/color'
@@ -11,11 +9,12 @@ import { imageForgeUrl } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { Caching } from '@lib/caching'
 import { NOT_FOUND_404 } from '@lib/response'
-import Container from '@components/container.astro'
 import Explore from '@components/explore.astro'
 import AnswerCards from '@components/answer-cards.astro'
-import { ANSWER_CARDS_ENABLED } from "src/config"
+import { ANSWER_CARDS_ENABLED } from 'src/config'
 import type { LeagueParam } from '@lib/params'
+import type { GameraDomain } from '@statmuse/core/gamera'
+import Hero from '@components/hero.astro'
 
 const id = Astro.params.id as string
 const musing = await getMusingByIdOrFriendlyId(id).executeTakeFirst()
@@ -33,6 +32,7 @@ const background = musing.background_rgba
   : undefined
 
 const heroProps = getHeroProps({ imageAlt: query, musing })
+console.log('heroProps', heroProps)
 
 const meta = {
   title: title(query),
@@ -59,6 +59,13 @@ const meta = {
 
 const contentReference = musing.answer.visual.contentReference
 
+const share = {
+  type: 'musing',
+  domain: musing.domain.toLowerCase(),
+  shortCode: musing.short_code,
+  query,
+}
+
 Caching.swr(Astro)
 ---
 
@@ -71,42 +78,29 @@ Caching.swr(Astro)
       musing.domain.toLowerCase() as AnalyticsPageviewProperties['page_domain'],
     query,
   }}
+  {query}
+  {conversationToken}
+  {preferredDomain}
+  {share}
 >
-  <Header
-    {query}
-    {conversationToken}
-    {preferredDomain}
-    share={{
-      type: 'musing',
-      query,
-      domain: preferredDomain,
-      shortCode: musing.short_code,
-    }}
-    audioUrl={musing.audio_answer_url || undefined}
+  {heroProps ? <Hero {...heroProps} {share} /> : null}
+  <Visuals response={musing.answer} />
+  <Explore
+    league={musing.domain === 'EPL' ? 'fc' : preferredDomain}
+    additionalQuestions={musing.answer.visual.additionalQuestions}
   />
   {
-    heroProps ? (
-      <Hero
-        {...heroProps}
-        shareUrl={`${process.env.SHORT_LINK_URL}e/${musing.short_code}`}
+    ANSWER_CARDS_ENABLED ? (
+      <AnswerCards
+        domain={musing.domain as GameraDomain}
+        teamId={
+          contentReference?.questionTags?.teamIds.length > 0
+            ? contentReference?.questionTags?.teamIds[0]
+            : contentReference?.answerTags?.teamIds.length > 0
+            ? contentReference?.answerTags?.teamIds[0]
+            : undefined
+        }
       />
     ) : null
   }
-  <Visuals response={musing.answer} />
-  <Container>
-    <Explore
-      league={musing.domain === 'EPL' ? 'fc' : preferredDomain}
-      additionalQuestions={musing.answer.visual.additionalQuestions}
-    />
-  </Container>
-  { ANSWER_CARDS_ENABLED ? <Container>
-    <AnswerCards
-      league={musing.domain === 'EPL' ? 'fc' : (preferredDomain as LeagueParam)}
-      teamId={contentReference?.questionTags?.teamIds.length > 0
-        ? contentReference?.questionTags?.teamIds[0]
-        : contentReference?.answerTags?.teamIds.length > 0
-        ? contentReference?.answerTags?.teamIds[0]
-        : undefined}
-    />
-  </Container> : null}
 </Layout>

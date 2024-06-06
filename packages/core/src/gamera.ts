@@ -224,7 +224,9 @@ export const getDefaultTeamLogoUrl = (domain: GameraDomain) => {
   }
 }
 
-export const getUrlForEntity = (entity: GameraEntity) => {
+export const getUrlForEntity = (entity: GameraEntity | undefined) => {
+  if (!entity) return ''
+
   const { display, domain, type, parameters, id } = entity
   const league = domain.toUpperCase() === 'EPL' ? 'fc' : domain.toLowerCase()
   const isPga = domain.toUpperCase() === 'PGA'
@@ -526,9 +528,11 @@ export interface GameraPlayerProfileResponse {
   stats: {
     grid: GameraGrid
   }
-  recentGames: {
-    grid: GameraGrid
-  }
+  recentGames:
+    | {
+        grid: GameraGrid
+      }
+    | GameraGrid
   fantasy?: {
     grid: GameraGrid
   }
@@ -1388,7 +1392,12 @@ export type Detail =
   | NbaShotsDetail
 
 export interface PlayerInfo {
+  id: number
+  usedName: string
+  firstName: string
+  lastName: string
   entity: GameraEntity
+  stat?: string
   imageUrl: string
   colors: {
     backgroundColor: string
@@ -1507,8 +1516,8 @@ export interface StandingsMlb extends StandingsBase {
 
 export interface StandingsNba extends StandingsBase {
   rank: {
-    conference: string
-    division: string
+    conference: number
+    division: number
   }
   stats: {
     gamesBehind: {

@@ -1,7 +1,5 @@
 ---
 import Grid from '@components/grid.svelte'
-import Chart from '@components/chart.astro'
-import Container from '@components/container.astro'
 import MlbStandings from '@components/mlb-standings.astro'
 import NbaStandings from '@components/nba-standings.astro'
 import NflStandings from '@components/nfl-standings.astro'
@@ -20,6 +18,7 @@ interface Props {
   response: GameraResponse
   query?: string
   conversationToken?: string
+  class?: string | null
 }
 
 const query = Astro.props.query
@@ -50,12 +49,17 @@ const details =
     : undefined
 ---
 
-<Container>
+<div
+  class:list={{
+    'flex flex-col gap-3': true,
+    [Astro.props.class ?? '']: !!Astro.props.class,
+  }}
+>
   {
     response.type === 'nlgPromptForMoreInfoVisualChoicesOptional' ? (
       <div class="h-screen w-full flex flex-col justify-center items-center">
         <h1
-          class="text-3xl my-5 font-semibold"
+          class="text-3xl my-5 font-bold"
           set:html={tokensToHtml(response.visual.summary.answer)}
         />
         <div class="w-full flex flex-col sm:flex-row sm:justify-center my-5 gap-2">
@@ -83,7 +87,7 @@ const details =
               />
               <button
                 data-cy-choice-btn
-                class="w-full text-xl border-2 border-black rounded-md cursor-pointer p-7"
+                class="w-full text-2xl border-2 border-black rounded-md cursor-pointer p-7"
                 type="submit"
               >
                 {choice.display}
@@ -96,10 +100,8 @@ const details =
   }
   {
     showSummary && details && (
-      <div class="text-sm md:text-base text-[#333] mb-2.5">
-        <h5 class="text-[0.8rem] text-[#969ca1] uppercase tracking-[0.07rem] inline">
-          Interpreted as:
-        </h5>
+      <div class="text-sm text-gray-5">
+        <h5 class="inline">Interpreted as:</h5>
         <Fragment set:html={summary} />
       </div>
     )
@@ -111,60 +113,6 @@ const details =
           case 'stats':
             return (
               <Fragment>
-                {(() => {
-                  const columnCharts = detail.columnCharts.filter(
-                    (c) => c.categories.length > 5,
-                  )
-
-                  if (columnCharts.length > 1)
-                    return (
-                      <div role="tablist">
-                        <div class="flex">
-                          {columnCharts.map((c, i) => (
-                            <label
-                              role="tab"
-                              class:list={[
-                                'flex-1 h-12 flex items-center justify-center cursor-pointer text-secondary border-b-2',
-                                {
-                                  'border-transparent': i !== 0,
-                                  'border-secondary': i === 0,
-                                },
-                              ]}
-                              for={c.name}
-                            >
-                              {c.name}
-                            </label>
-                          ))}
-                        </div>
-                        {columnCharts.map((chart, i) => (
-                          <div role="tabpanel">
-                            <input
-                              id={chart.name}
-                              name="tabs"
-                              type="radio"
-                              class="peer hidden"
-                              checked={i === 0}
-                            />
-                            <Chart
-                              class="hidden peer-checked:block"
-                              model={chart}
-                              totalWidth={1495}
-                              isSuperlative={response.visual.isSuperlative}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    )
-
-                  if (columnCharts.length === 1)
-                    return (
-                      <Chart
-                        model={columnCharts[0]}
-                        totalWidth={1495}
-                        isSuperlative={response.visual.isSuperlative}
-                      />
-                    )
-                })()}
                 {detail.grids.map((grid) => (
                   <div class="flex-1 overflow-x-auto">
                     <Grid
@@ -243,7 +191,7 @@ const details =
   }
   {
     response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && details ? (
-      <div class="my-2.5">
+      <div class="">
         {response.visual.disclaimers?.map((d) => (
           <div class="text-sm italic font-light" set:html={d} />
         ))}
@@ -258,7 +206,7 @@ const details =
         </div>
       )
   }
-</Container>
+</div>
 <script>
   document.addEventListener('astro:page-load', () => {
     document.querySelectorAll('label[role="tab"]').forEach((elem) => {

@@ -1,5 +1,4 @@
 ---
-import Container from '@components/container.astro'
 import AssetPriceReturnsChart from '@components/asset-price-chart.astro'
 import AssetPriceGrid from '@components/asset-price-grid.astro'
 import CategoricalColumnChart from '@components/categorical-column-chart.astro'
@@ -41,12 +40,12 @@ const details =
     : undefined
 ---
 
-<Container>
+<Fragment>
   {
     response.type === 'nlgPromptForMoreInfoVisualChoicesOptional' ? (
       <div class="h-screen w-full flex flex-col justify-center items-center">
         <h1
-          class="text-3xl my-5 font-semibold"
+          class="text-3xl my-5 font-bold"
           set:html={tokensToHtml(response.visual.summary.answer)}
         />
         <div class="w-full flex flex-col sm:flex-row sm:justify-center my-5 gap-2">
@@ -74,7 +73,7 @@ const details =
               />
               <button
                 data-cy-choice-btn
-                class="w-full text-xl border-2 border-black rounded-md cursor-pointer p-7"
+                class="w-full text-2xl border-2 border-black rounded-md cursor-pointer p-7"
                 type="submit"
               >
                 {choice.display}
@@ -195,14 +194,12 @@ const details =
             )
           case 'genericGrids':
             return detail.grids.map((grid) => (
-              <div>
-                <Grid
-                  client:load
-                  data={grid}
-                  columnStyles={{ DATE: 'text-left' }}
-                  limitRows
-                />
-              </div>
+              <Grid
+                client:load
+                data={grid}
+                columnStyles={{ DATE: 'text-left' }}
+                limitRows
+              />
             ))
           case 'charts':
             return detail.charts.map((chart) => {
@@ -230,4 +227,4 @@ const details =
       </div>
     ) : null
   }
-</Container>
+</Fragment>

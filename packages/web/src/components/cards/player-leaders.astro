@@ -1,0 +1,562 @@
+---
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import PlayerCardComponent from '@components/cards/player.astro'
+import type {
+  GameraDomain,
+  PlayerCardResponse,
+  PlayerCard,
+} from '@statmuse/core/gamera'
+import { createAskPath } from '@statmuse/core/path'
+
+interface Props {
+  domain: GameraDomain
+  response?: PlayerCardResponse
+  mlbBatting?: boolean
+  mlbPitching?: boolean
+  adSlot?: {
+    divId: string
+    slotId: string
+  }
+}
+
+const { domain, response, mlbBatting, mlbPitching, adSlot } = Astro.props
+
+if (!response || response.cards.length === 0) return undefined
+
+const filterPlayerCards = (card: PlayerCard) =>
+  [
+    // NBA Player
+    'mostPointsPerGame',
+    'mostReboundsPerGame',
+    'mostAssistsPerGame',
+    'mostStealsPerGame',
+    'mostBlocksPerGame',
+    'mostThreePointersMadePerGame',
+    'bestTrueShootingPercentage',
+    // NFL Player
+    'mostPassingYards',
+    'mostRushingYards',
+    'mostReceivingYards',
+    'mostPassingTouchdowns',
+    'mostRushingTouchdowns',
+    'mostReceivingTouchdowns',
+    'bestQuarterbackRating',
+    'mostDefensiveSacks',
+    // NHL Player
+    'mostGoals',
+    'mostAssists',
+    'mostPoints',
+    'bestPlusMinus',
+    'bestGoalsAgainstAverage',
+    // MLB Player
+    'mostBattingHomeRuns',
+    'mostBattingRunsBattedIn',
+    'bestBattingAverage',
+    'mostBattingHits',
+    'mostBattingRuns',
+    'bestBattingOnBasePercentage',
+    'bestBattingSluggingPercentage',
+    'mostBattingStolenBases',
+    // EPL Player
+    'mostGoals',
+    'mostAssists',
+    'mostShotsOnTarget',
+    'mostBigChancesCreated',
+    'mostCleanSheets',
+  ].includes(card.stat)
+
+const filterMlbPitchingCards = (card: PlayerCard) =>
+  [
+    'mostPitchingWins',
+    'mostPitchingStrikeouts',
+    'bestPitchingEarnedRunAverage',
+    'bestPitchingWalksPlusHitsPerInning',
+    'mostPitchingStrikeoutsPer9Innings',
+    'bestPitchingStrikeoutToWalkRatio',
+    'leastPitchingWalksAllowed',
+  ].includes(card.stat)
+
+const cardTitle = (stat: string, season: string) => {
+  let title: string
+  const playoffs = season === 'postseason' ? 'Playoffs ' : ''
+  switch (stat) {
+    // NBA Player
+    case 'mostPointsPerGame':
+      title = 'PPG Leaders'
+      break
+    case 'mostReboundsPerGame':
+      title = 'RPG Leaders'
+      break
+    case 'mostAssistsPerGame':
+      title = 'APG Leaders'
+      break
+    case 'mostStealsPerGame':
+      title = 'SPG Leaders'
+      break
+    case 'mostBlocksPerGame':
+      title = 'BPG Leaders'
+      break
+    case 'mostThreePointersMadePerGame':
+      title = '3PM Leaders'
+      break
+    case 'bestTrueShootingPercentage':
+      title = 'TS% Leaders'
+      break
+    // NFL Player
+    case 'mostPassingYards':
+      title = 'Pass Yards Leaders'
+      break
+    case 'mostRushingYards':
+      title = 'Rush Yards Leaders'
+      break
+    case 'mostReceivingYards':
+      title = 'Rec Yards Leaders'
+      break
+    case 'mostPassingTouchdowns':
+      title = 'Pass TD Leaders'
+      break
+    case 'mostRushingTouchdowns':
+      title = 'Rush TD Leaders'
+      break
+    case 'mostReceivingTouchdowns':
+      title = 'Rec TD Leaders'
+      break
+    case 'bestQuarterbackRating':
+      title = 'QB Rating Leaders'
+      break
+    case 'mostDefensiveSacks':
+      title = 'Sack Leaders'
+      break
+    // NHL Player
+    case 'mostGoals':
+      title = 'Goals Leaders'
+      break
+    case 'mostAssists':
+      title = 'Assists Leaders'
+      break
+    case 'mostPoints':
+      title = 'Points Leaders'
+      break
+    case 'bestPlusMinus':
+      title = '+/- Leaders'
+      break
+    case 'bestGoalsAgainstAverage':
+      title = 'Goals Against Leaders'
+      break
+    // MLB Team
+    case 'mostBattingHomeRuns':
+      title = 'HR Leaders'
+      break
+    case 'mostBattingRunsBattedIn':
+      title = 'RBI Leaders'
+      break
+    case 'bestBattingAverage':
+      title = 'Batting Average Leaders'
+      break
+    case 'mostBattingHits':
+      title = 'Hit Leaders'
+      break
+    case 'mostBattingRuns':
+      title = 'Run Leaders'
+      break
+    case 'bestBattingOnBasePercentage':
+      title = 'OBP Leaders'
+      break
+    case 'bestBattingSluggingPercentage':
+      title = 'SLG Leaders'
+      break
+    case 'mostBattingStolenBases':
+      title = 'SB Leaders'
+      break
+    case 'mostPitchingWins':
+      title = 'Win Leaders'
+      break
+    case 'mostPitchingStrikeouts':
+      title = 'Strikeout Leaders'
+      break
+    case 'bestPitchingEarnedRunAverage':
+      title = 'ERA Leaders'
+      break
+    case 'bestPitchingWalksPlusHitsPerInning':
+      title = 'WHIP Leaders'
+      break
+    case 'mostPitchingStrikeoutsPer9Innings':
+      title = 'K/9 Leaders'
+      break
+    case 'bestPitchingStrikeoutToWalkRatio':
+      title = 'K/BB Leaders'
+      break
+    case 'leastPitchingWalksAllowed':
+      title = 'Walk Leaders'
+      break
+    // EPL Player
+    case 'mostGoals':
+      title = 'Goals Leaders'
+      break
+    case 'mostAssists':
+      title = 'Assists Leaders'
+      break
+    case 'mostShotsOnTarget':
+      title = 'Shots on Target Leaders'
+      break
+    case 'mostBigChancesCreated':
+      title = 'Big Chances Created Leaders'
+      break
+    case 'mostCleanSheets':
+      title = 'Clean Sheets Leaders'
+      break
+    default:
+      title = stat
+  }
+
+  return `${playoffs}${title}`
+}
+
+const askLink = (
+  stat: string,
+  league: string,
+  season: string,
+  year: string,
+) => {
+  const postseason = season === 'postseason' ? ' postseason' : ''
+  switch (stat) {
+    // NBA Player
+    case 'mostPointsPerGame':
+      return createAskPath({
+        domain: league,
+        query: `ppg leaders ${year}${postseason}`,
+      })
+    case 'mostReboundsPerGame':
+      return createAskPath({
+        domain: league,
+        query: `rpg leaders ${year}${postseason}`,
+      })
+    case 'mostAssistsPerGame':
+      return createAskPath({
+        domain: league,
+        query: `apg leaders ${year}${postseason}`,
+      })
+    case 'mostStealsPerGame':
+      return createAskPath({
+        domain: league,
+        query: `spg leaders ${year}${postseason}`,
+      })
+    case 'mostBlocksPerGame':
+      return createAskPath({
+        domain: league,
+        query: `bpg leaders ${year}${postseason}`,
+      })
+    case 'mostThreePointersMadePerGame':
+      return createAskPath({
+        domain: league,
+        query: `3pm leaders ${year}${postseason}`,
+      })
+    case 'bestTrueShootingPercentage':
+      return createAskPath({
+        domain: league,
+        query: `ts% leaders ${year}${postseason}`,
+      })
+    case 'mostFanDuelPoints':
+      return createAskPath({
+        domain: league,
+        query: `most fanduel points ${year}`,
+      })
+    case 'mostDraftKingsPoints':
+      return createAskPath({
+        domain: league,
+        query: `most draftkings points ${year}`,
+      })
+    case 'mostFanDuelPointsPerMinute':
+      return createAskPath({
+        domain: league,
+        query: `most fanduel points per minute ${year} minimum 20 min minimum 10 mpg`,
+      })
+    case 'mostDraftKingsPointsPerMinute':
+      return createAskPath({
+        domain: league,
+        query: `most draftkings points per minute ${year} minimum 20 min minimum 10 mpg`,
+      })
+    case 'bestUsagePercentage':
+      return createAskPath({ domain: league, query: `usage% leaders ${year}` })
+    case 'mostMinutesPerGame':
+      return createAskPath({ domain: league, query: `mpg leaders ${year}` })
+    // NFL Player
+    case 'mostPassingYards':
+      return createAskPath({
+        domain: league,
+        query: `pass yards leaders ${year}${postseason}`,
+      })
+    case 'mostRushingYards':
+      return createAskPath({
+        domain: league,
+        query: `rush yards leaders ${year}${postseason}`,
+      })
+    case 'mostReceivingYards':
+      return createAskPath({
+        domain: league,
+        query: `rec yards leaders ${year}${postseason}`,
+      })
+    case 'mostPassingTouchdowns':
+      return createAskPath({
+        domain: league,
+        query: `pass td leaders ${year}${postseason}`,
+      })
+    case 'mostRushingTouchdowns':
+      return createAskPath({
+        domain: league,
+        query: `rush td leaders ${year}${postseason}`,
+      })
+    case 'mostReceivingTouchdowns':
+      return createAskPath({
+        domain: league,
+        query: `rec td leaders ${year}${postseason}`,
+      })
+    case 'bestQuarterbackRating':
+      return createAskPath({
+        domain: league,
+        query: `qb rating leaders ${year}${postseason}`,
+      })
+    case 'mostDefensiveSacks':
+      return createAskPath({
+        domain: league,
+        query: `sack leaders ${year}${postseason}`,
+      })
+    case 'mostQuarterbackFantasyPoints':
+      return createAskPath({
+        domain: league,
+        query: `most fantasy points by a qb ${year}`,
+      })
+    case 'mostRunningBackFantasyPoints':
+      return createAskPath({
+        domain: league,
+        query: `most fantasy points by a rb ${year}`,
+      })
+    case 'mostWideReceiverFantasyPoints':
+      return createAskPath({
+        domain: league,
+        query: `most fantasy points by a wr ${year}`,
+      })
+    case 'mostTightEndFantasyPoints':
+      return createAskPath({
+        domain: league,
+        query: `most fantasy points by a te ${year}`,
+      })
+    case 'mostKickerFantasyPoints':
+      return createAskPath({
+        domain: league,
+        query: `most fantasy points by a kicker ${year}`,
+      })
+    // NHL Player
+    case 'mostGoals':
+      return createAskPath({
+        domain: league,
+        query: `goal leaders ${year}${postseason}`,
+      })
+    case 'mostAssists':
+      return createAskPath({
+        domain: league,
+        query: `assist leaders ${year}${postseason}`,
+      })
+    case 'mostPoints':
+      return createAskPath({
+        domain: league,
+        query: `points leaders ${year}${postseason}`,
+      })
+    case 'bestPlusMinus':
+      return createAskPath({
+        domain: league,
+        query: `+/- leaders ${year}${postseason}`,
+      })
+    case 'bestGoalsAgainstAverage':
+      return createAskPath({
+        domain: league,
+        query: `gaa leaders ${year}${postseason}`,
+      })
+    // MLB Player
+    case 'mostBattingHomeRuns':
+      return createAskPath({
+        domain: league,
+        query: `hr leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'mostBattingRunsBattedIn':
+      return createAskPath({
+        domain: league,
+        query: `rbi leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'bestBattingAverage':
+      return createAskPath({
+        domain: league,
+        query: `batting average leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'mostBattingHits':
+      return createAskPath({
+        domain: league,
+        query: `hit leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'mostBattingRuns':
+      return createAskPath({
+        domain: league,
+        query: `runs scored leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'bestBattingOnBasePercentage':
+      return createAskPath({
+        domain: league,
+        query: `obp leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'bestBattingSluggingPercentage':
+      return createAskPath({
+        domain: league,
+        query: `slg leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'mostBattingStolenBases':
+      return createAskPath({
+        domain: league,
+        query: `stolen base leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'mostPitchingWins':
+      return createAskPath({
+        domain: league,
+        query: `pitching wins leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'mostPitchingStrikeouts':
+      return createAskPath({
+        domain: league,
+        query: `pitching strikeout leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'bestPitchingEarnedRunAverage':
+      return createAskPath({
+        domain: league,
+        query: `era leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'bestPitchingWalksPlusHitsPerInning':
+      return createAskPath({
+        domain: league,
+        query: `whip leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'mostPitchingStrikeoutsPer9Innings':
+      return createAskPath({
+        domain: league,
+        query: `strikeouts per 9 leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'bestPitchingStrikeoutToWalkRatio':
+      return createAskPath({
+        domain: league,
+        query: `K/BB leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'leastPitchingWalksAllowed':
+      return createAskPath({
+        domain: league,
+        query: `least walks allowed ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    // EPL Player
+    case 'mostGoals':
+      return createAskPath({
+        domain: league,
+        query: `goal leaders ${year}${postseason}`,
+      })
+    case 'mostAssists':
+      return createAskPath({
+        domain: league,
+        query: `assist leaders ${year}${postseason}`,
+      })
+    case 'mostShotsOnTarget':
+      return createAskPath({
+        domain: league,
+        query: `shots on target leaders ${year}${postseason}`,
+      })
+    case 'mostBigChancesCreated':
+      return createAskPath({
+        domain: league,
+        query: `big chances created leaders ${year}${
+          season === 'postseason' ? ' postseason' : ''
+        }`,
+      })
+    case 'mostCleanSheets':
+      return createAskPath({
+        domain: league,
+        query: `clean sheet leaders ${year}${postseason}`,
+      })
+    default:
+      return stat
+  }
+}
+
+const domainDisplay = domain === 'EPL' ? 'PL' : domain
+const title = `${domainDisplay} ${response.seasonYearDisplay} ${
+  mlbBatting ? 'Batting ' : mlbPitching ? 'Pitching ' : ''
+}Leaders`
+
+const cards = response.cards
+  .filter(mlbPitching ? filterMlbPitchingCards : filterPlayerCards)
+  .filter((c) => c.players.length > 0)
+
+const league = domain === 'EPL' ? 'fc' : domain.toLowerCase()
+
+if (cards.length === 0) return undefined
+---
+
+<div>
+  <h2 class="text-xl font-bold mb-1.5">
+    {title}
+  </h2>
+  <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
+    {
+      cards.map((card) => (
+        <PlayerCardComponent
+          card={card}
+          title={cardTitle(card.stat, response.seasonType)}
+          href={askLink(
+            card.stat,
+            league,
+            response.seasonType,
+            response.seasonYearDisplay,
+          )}
+        />
+      ))
+    }
+  </div>
+</div>
+{
+  adSlot && (
+    <div class="w-fit mx-auto">
+      <AditudeAdBanner
+        client:only="svelte"
+        divId={adSlot.divId}
+        slotId={adSlot.slotId}
+        placeholderClass="w-[300px] h-[250px]"
+        onlyMobile
+        lazy
+      />
+    </div>
+  )
+}

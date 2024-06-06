@@ -1,5 +1,6 @@
 ---
 import TrendingListItem from '@components/trending-list-item.astro'
+import Panel from '@components/panel.astro'
 import { type TrendingListItem as Item } from 'src/types'
 
 interface Props {
@@ -14,29 +15,31 @@ const { items, prominent } = Astro.props
   {
     items?.length ? (
       <>
-        <ol class="list-none text-gray-700 space-y-3 sm:space-y-0 sm:gap-3 sm:flex sm:flex-wrap sm:justify-center">
+        <ol class="list-none space-y-3 gap-3 justify-center sm:gap-3 md:columns-2 lg:columns-3">
           {items.map((item, index) => (
-            <TrendingListItem
-              class="bg-gray-8 rounded-3xl overflow-clip border border-gray-6 sm:w-[360px]"
-              numbered={false}
-              {item}
-              {index}
-              {prominent}
-            />
+            <Panel class="break-inside-avoid-column">
+              <TrendingListItem
+                class="-my-2 -mx-2.5"
+                numbered={false}
+                {item}
+                {index}
+                {prominent}
+              />
+            </Panel>
           ))}
         </ol>
       </>
     ) : (
-      <div class="bg-white rounded-3xl border border-gray-200 overflow-clip sm:w-[360px] m-auto">
+      <Panel class="sm:w-[360px] m-auto">
         <div class="h-96">
-          <div class="h-full w-full flex justify-center items-center text-center text-gray-400">
+          <div class="h-full w-full flex justify-center items-center text-center text-opacity-65">
             <div>
               <p>Gathering data</p>
               <p>Check back later</p>
             </div>
           </div>
         </div>
-      </div>
+      </Panel>
     )
   }
 </div>

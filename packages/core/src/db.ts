@@ -179,7 +179,7 @@ export const db = new Kysely<Database>({
       user: credentials.username || process.env.POSTGRES_USER,
       password: credentials.password || process.env.POSTGRES_PASSWORD,
       ssl: true,
-      connectionTimeoutMillis: 3000,
+      connectionTimeoutMillis: 5000,
     }),
   }),
 })
@@ -193,7 +193,7 @@ export const dbReader = new Kysely<Database>({
       user: credentials.username || process.env.POSTGRES_USER,
       password: credentials.password || process.env.POSTGRES_PASSWORD,
       ssl: true,
-      connectionTimeoutMillis: 3000,
+      connectionTimeoutMillis: 5000,
     }),
   }),
 })

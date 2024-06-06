@@ -69,8 +69,8 @@ export const fromRequest = async (context: Session.Context) => {
     session?.type === 'visitor'
       ? session.properties.id
       : session?.type === 'user'
-      ? session.properties.visitorId
-      : undefined
+        ? session.properties.visitorId
+        : undefined
 
   const existing = visitorId ? await Visitor.get(visitorId) : undefined
   if (existing) return existing

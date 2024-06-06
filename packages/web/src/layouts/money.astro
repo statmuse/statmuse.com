@@ -1,26 +1,21 @@
 ---
 import MoneyBaseLayout from '@layouts/money-base.astro'
-import Header from '@components/header.astro'
-import Footer from '@components/footer.astro'
-import Image from '@components/image.astro'
-import Container from '@components/container.astro'
 import TradingviewTicker from '@components/tradingview-ticker.astro'
-import AnswerShare from '@components/answer-share.astro'
 import Explore from '@components/explore.astro'
-import type { Metadata } from '@lib/meta'
 import { getUrlForEntity, type AssetProfile } from '@statmuse/core/kanedama'
 import { imageForgeUrl } from '@statmuse/core/path'
 import { cdnBaseUrl } from '@statmuse/core/gamera'
-import type { AnalyticsPageviewProperties } from '@lib/analytics'
+import type { ComponentProps } from 'astro/types'
+import type Nav from '@components/nav.astro'
+import type { NavLink } from 'src/types'
+import Hero from '@components/hero.astro'
 
-interface Props {
+interface Props extends ComponentProps<typeof MoneyBaseLayout> {
   profile: AssetProfile
-  meta?: Metadata
-  query?: string
-  analytics?: AnalyticsPageviewProperties
+  page: 'overview' | 'stats' | 'financials' | 'news'
 }
 
-const { profile, meta, query, analytics = {} } = Astro.props
+const { profile, meta, query, page, analytics = {} } = Astro.props
 
 const assetPath = getUrlForEntity({
   type: 'assetProfile',
@@ -37,13 +32,6 @@ const colors = image
 
 const path = Astro.url.pathname
 const canonical = { url: Astro.url.pathname + Astro.url.search }
-
-const links = [
-  { text: 'Overview', href: assetPath },
-  { text: 'Stats', href: `${assetPath}/stats` },
-  { text: 'Financials', href: `${assetPath}/financials` },
-  { text: 'News', href: `${assetPath}/news` },
-]
 
 const title = `${
   profile.asset.canonicalName || profile.asset.officialName
@@ -67,6 +55,26 @@ const twitter = {
       type: 'twitter',
     }),
 }
+
+const links: NavLink[] = [
+  { text: 'Overview', href: assetPath, param: 'overview' },
+  { text: 'Stats', href: `${assetPath}/stats`, param: 'stats' },
+  { text: 'Financials', href: `${assetPath}/financials`, param: 'financials' },
+  { text: 'News', href: `${assetPath}/news`, param: 'news' },
+]
+const navProps: ComponentProps<typeof Nav> = {
+  teamColors: true,
+  links: links,
+  selected: page,
+  href: (p) => `${assetPath}/${p}`,
+}
+
+const share = {
+  type: 'profile',
+  url: meta?.canonical?.url
+    ? Astro.url.origin + meta.canonical.url
+    : Astro.url.href,
+}
 ---
 
 <MoneyBaseLayout
@@ -80,86 +88,23 @@ const twitter = {
     page_type: 'asset',
     ...analytics,
   }}
+  {query}
+  {share}
 >
-  <Header
-    money
-    {query}
-    share={{
-      type: 'profile',
-      url: meta?.canonical?.url
-        ? Astro.url.origin + meta.canonical.url
-        : Astro.url.href,
-    }}
-  />
-  <Container class="mb-5 bg-team-primary text-team-secondary">
-    <div
-      class="relative flex flex-col md:flex-row md:flex-wrap justify-center items-center md:items-stretch"
-    >
-      <div class="flex-1 mt-5 mb-7">
-        <h2 class="text-5xl font-semibold mb-2 text-center md:text-left">
-          {profile.asset.canonicalName}
-        </h2>
-        <div class="whitespace-nowrap text-center md:text-left">
-          <span>{profile.asset.symbol}</span>
-          <span class="last:hidden" set:text=" • " />
-
-          <span>{profile.asset.exchange}</span>
-          <span class="last:hidden" set:text=" • " />
-        </div>
-        <div
-          class="hidden md:block mt-6"
-          style="height: 94px; overflow: hidden;"
-        >
-          <TradingviewTicker {profile} />
-        </div>
+  <Hero
+    content={profile.asset.canonicalName}
+    imageUrl={bustImageUrl}
+    imageAlt={bustImageAlt}
+    {navProps}
+    {share}
+    renderAdBanner
+  >
+    <!-- <div slot="hero">
+      <div class="mt-6" style="height: 94px; overflow: hidden;">
+        <TradingviewTicker {profile} />
       </div>
-      {
-        bustImageUrl ? (
-          <Image
-            class="self-center md:self-end h-44 md:h-52 object-contain object-bottom overflow-visible md:max-w-[350px]"
-            src={bustImageUrl}
-            alt={bustImageAlt}
-            width={750}
-            height={750}
-            loading="eager"
-          />
-        ) : null
-      }
-      <div
-        class="md:hidden flex flex-col items-center absolute right-0 bottom-2.5 space-y-2.5"
-      >
-        <AnswerShare
-          onlyIcon
-          url={meta?.canonical?.url
-            ? Astro.url.origin + meta.canonical.url
-            : Astro.url.href}
-        />
-      </div>
-    </div>
-  </Container>
-  <div class="md:hidden w-fit mx-auto my-5 text-team-primary">
-    <TradingviewTicker {profile} />
-  </div>
-  <Container>
-    <div class="flex flex-nowrap overflow-auto mb-5 space-x-5">
-      {
-        links.map(({ href, text }) => (
-          <a
-            aria-current={href === path ? 'page' : undefined}
-            class:list={{
-              'text-3xl font-semibold shrink-0': true,
-              'text-team-primary active': href === path,
-              'text-black': href !== path,
-            }}
-            {href}
-          >
-            {text}
-          </a>
-        ))
-      }
-    </div>
-    <slot />
-    <Explore league="money" />
-  </Container>
-  <Footer />
+    </div> -->
+  </Hero>
+  <slot />
+  <Explore league="money" />
 </MoneyBaseLayout>

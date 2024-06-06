@@ -10,21 +10,13 @@ import type {
   NbaShotChart,
 } from '@statmuse/core/gamera'
 import { NOT_FOUND_404 } from '@lib/response'
+import { getColumnCharts, getIsSuperlative } from '@lib/gamera'
 
 const code = Astro.params.code as string
 
 const link = await getLink(code)
 if (!link || link.linkable_type !== 'question' || !link.is_successful)
   return NOT_FOUND_404
-
-const getColumnCharts = (answer: GameraResponse) => {
-  if (answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional')
-    return undefined
-  return answer.visual.detail?.reduce((out: GameraChart[] | undefined, d) => {
-    if (out !== undefined) return out
-    return d.type === 'stats' ? d.columnCharts : undefined
-  }, undefined)
-}
 
 const getShotcharts = (answer: GameraResponse) => {
   if (answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional')
@@ -33,11 +25,6 @@ const getShotcharts = (answer: GameraResponse) => {
     if (out !== undefined) return out
     return d.type === 'nbaShots' ? d.charts : undefined
   }, undefined)
-}
-
-const getIsSuperlative = (answer: GameraResponse) => {
-  if (answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional') return false
-  return answer.visual.isSuperlative
 }
 
 // Legacy Gamera Payloads
@@ -65,15 +52,7 @@ const isSuperlative: boolean =
   >
     <Logo class="w-[120px]" />
   </a>
-  {
-    charts && (
-      <Chart
-        model={charts[0]}
-        totalWidth={1495}
-        isSuperlative={isSuperlative}
-      />
-    )
-  }
+  {charts && <Chart model={charts[0]} {isSuperlative} />}
   {
     shotcharts && (
       <NbaShotchart client:load model={shotcharts[0]} widthAvailable={800} />

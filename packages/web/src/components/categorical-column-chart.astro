@@ -1,5 +1,6 @@
 ---
 import type { KanedamaCategoricalColumnChart } from '@statmuse/core/kanedama'
+import Panel from '@components/panel.astro'
 
 interface Props {
   chart: KanedamaCategoricalColumnChart
@@ -57,12 +58,11 @@ const options = {
 }
 ---
 
-<div
+<Panel
   id="categorical-column-chart"
   class="h-[400px] overflow-hidden"
   data-options={JSON.stringify(options)}
->
-</div>
+/>
 
 <script>
   import * as Highcharts from 'highcharts'

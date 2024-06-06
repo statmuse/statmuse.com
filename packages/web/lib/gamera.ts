@@ -1,9 +1,16 @@
-import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
+import {
+  type GameraResponse,
+  tokensToHtml,
+  type GameraChart,
+} from '@statmuse/core/gamera'
 import { relativeTimeFromDates } from '@statmuse/core/time'
 import type { Musing } from '@statmuse/core/musing'
 import type { HeroProps } from './props'
 import type { Context } from './session'
 import { Config } from 'sst/node/config'
+import { clarify } from '@lib/bedrock'
+import { translate, translateObject } from '@lib/translate'
+import { createAskPath } from '@statmuse/core/path'
 export const gameraApiUrl = import.meta.env.GAMERA_API_URL
 export const gameraApiKey = Config.GAMERA_API_KEY
 
@@ -27,16 +34,23 @@ export async function request<T>(
   }
 }
 
+type AskOptions = {
+  league?: string
+  query: string
+  conversationToken?: string
+  preferredDomain?: string
+  corrected?: boolean
+}
+
+type AskResponse =
+  | { response?: GameraResponse; lang?: string; dir?: string }
+  | { redirect: string }
+
 export async function ask(
-  options: {
-    league?: string
-    query: string
-    conversationToken?: string
-    preferredDomain?: string
-  },
+  options: AskOptions,
   context: Context,
-) {
-  const league = options.league
+): Promise<AskResponse> {
+  const league = options.league?.toLowerCase()
   const query = options.query
 
   const params: Record<string, string> = {
@@ -50,31 +64,122 @@ export async function ask(
     params['preferredDomain'] = options.preferredDomain
   }
 
-  return request<GameraResponse>(
+  let response = await request<GameraResponse>(
     context,
     `${league ? league + '/' : ''}answer`,
     params,
   )
-}
 
-export async function fantasyAsk(
-  options: {
-    query: string
-    conversationToken?: string
-  },
-  context: Context,
-) {
-  const query = options.query
+  if (
+    !options.corrected && // Don't correct if it's already been corrected
+    response?.type === 'error' &&
+    response?.disposition.responseType === 'not-understood'
+  ) {
+    try {
+      const correction = await clarify(query)
 
-  const params: Record<string, string> = {
-    input: query,
+      // if (correction.domain === 'money') {
+      //   const url = createAskPath(correction)
+      //   return { redirect: url }
+      // }
+
+      // if (correction.lang !== 'en') {
+      //   const englishQuery = await translate({
+      //     text: query,
+      //     from: correction.lang,
+      //     to: 'en',
+      //   })
+      //
+      //   if (!englishQuery.text) return { response }
+      //
+      //   const englishResponse = await ask(
+      //     {
+      //       query: englishQuery.text,
+      //       league:
+      //         correction.domain === 'unknown' ? undefined : correction.domain,
+      //       corrected: true,
+      //     },
+      //     context,
+      //   )
+      //   if ('redirect' in englishResponse) return englishResponse
+      //
+      //   const gameraResponse = englishResponse.response
+      //   if (!gameraResponse) return { response }
+      //
+      //   if (
+      //     gameraResponse.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
+      //   ) {
+      //     gameraResponse.visual = await translateObject(
+      //       gameraResponse.visual,
+      //       'en',
+      //       correction.lang,
+      //       [
+      //         'summaryTokens.*.text',
+      //         'summary.answer.*.text',
+      //         'additionalQuestions.*.text',
+      //         'detail.*.columnCharts.*.categories.*.nameLines.*',
+      //         {
+      //           key: 'detail.*.grids.*.columns.*.title',
+      //           excluded: [
+      //             // 'NAME',
+      //             // 'SEASON',
+      //             'TM',
+      //             'GP',
+      //             'PTS',
+      //             'MPG',
+      //             'PPG',
+      //             'RPG',
+      //             'APG',
+      //             'SPG',
+      //             'BPG',
+      //             'TPG',
+      //             'FGM',
+      //             'FGA',
+      //             'FG%',
+      //             '3PM',
+      //             '3PA',
+      //             '3P%',
+      //             'FTM',
+      //             'FTA',
+      //             'FT%',
+      //             'MIN',
+      //             'REB',
+      //             'AST',
+      //             'STL',
+      //             'BLK',
+      //             'TOV',
+      //             'PF',
+      //             '+/-',
+      //           ],
+      //         },
+      //         'detail.*.grids.*.rows.*.NAME.display',
+      //         'detail.*.grids.*.rows.*.NAME.entity.display',
+      //       ],
+      //     )
+      //   }
+      //   return {
+      //     response: gameraResponse,
+      //     lang: correction.lang,
+      //     dir: correction.dir,
+      //   }
+      // }
+
+      return ask(
+        {
+          ...options,
+          query: correction.query,
+          // league: correction.domain === 'unknown' ? undefined : correction.domain,
+          corrected: true,
+        },
+        context,
+      )
+    } catch (error) {
+      console.error('Error using Bedrock to cleanup input', error)
+      return { response }
+    }
   }
 
-  if (options.conversationToken) {
-    params['conversationToken'] = options.conversationToken
-  }
-
-  return request<GameraResponse>(context, 'nfl/fantasy/answer', params)
+  return { response }
 }
 
 export const getGameraHeaders = (context: Context) => {
@@ -118,7 +223,7 @@ export function getHeroProps(props: {
   imageAlt: string
 }): HeroProps | undefined {
   const answer = props.response ?? props.musing?.answer
-  if (!answer) throw new Error('Must provide either data or musing')
+  if (!answer) throw new Error('Must provide either response or musing')
 
   const musing = props.musing
 
@@ -132,7 +237,7 @@ export function getHeroProps(props: {
     ? musing.text_markdown ?? (musing.text_plain as string)
     : tokensToHtml(answer.visual.summary.answer ?? answer.visual.summaryTokens)
   const imageUrl = musing
-    ? musing.image_url ?? undefined
+    ? musing.image_url ?? answer.visual.summary.subject.imageUrl
     : answer.visual.summary.subject.imageUrl
   const answered = musing ? relativeTimeFromDates(musing.publish_at) : undefined
   const imageAlt = props.imageAlt
@@ -144,9 +249,24 @@ export function getHeroProps(props: {
   return {
     content,
     markdown: !!musing,
+    html: !musing,
     imageUrl,
     imageAlt,
     answered,
     audioUrl,
   }
+}
+
+export const getColumnCharts = (answer: GameraResponse) => {
+  if (answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional')
+    return undefined
+  return answer.visual.detail?.reduce((out: GameraChart[] | undefined, d) => {
+    if (out !== undefined) return out
+    return d.type === 'stats' ? d.columnCharts : undefined
+  }, undefined)
+}
+
+export const getIsSuperlative = (answer: GameraResponse) => {
+  if (answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional') return false
+  return answer.visual.isSuperlative
 }

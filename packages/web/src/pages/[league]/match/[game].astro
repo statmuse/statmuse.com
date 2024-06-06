@@ -1,6 +1,5 @@
 ---
-import Layout from '@layouts/main.astro'
-import Header from '@components/header.astro'
+import Layout from '@layouts/base.astro'
 import { Caching } from '@lib/caching'
 import { getGame } from '@lib/game'
 import { NOT_FOUND_404 } from '@lib/response'
@@ -9,7 +8,6 @@ import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { imageForgeUrl } from '@statmuse/core/path'
 import { tokensToText } from '@statmuse/core/gamera'
 import EplBoxscore from '@components/epl/boxscore.astro'
-import Container from '@components/container.astro'
 import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
 import { formatDate } from '@statmuse/core/time'
@@ -27,11 +25,19 @@ if (data.type === 'error') return NOT_FOUND_404
 const subject = data.visual.summary.subject
 const preferredDomain = domain.toLowerCase()
 
-const [ detail ] = data.visual.detail
-const winner = detail.homeTeam.score < detail.awayTeam.score ? detail.awayTeam : detail.homeTeam
-const loser = detail.homeTeam.score < detail.awayTeam.score ? detail.homeTeam : detail.awayTeam
-const formattedDate = formatDate(new Date(detail.gameDate), "MMM DD, YYYY")
-const title = `${winner.shortName ?? winner.name} ${winner.score}-${loser.score} ${loser.shortName ?? loser.name} (${formattedDate}) Box Score`
+const [detail] = data.visual.detail
+const winner =
+  detail.homeTeam.score < detail.awayTeam.score
+    ? detail.awayTeam
+    : detail.homeTeam
+const loser =
+  detail.homeTeam.score < detail.awayTeam.score
+    ? detail.homeTeam
+    : detail.awayTeam
+const formattedDate = formatDate(new Date(detail.gameDate), 'MMM DD, YYYY')
+const title = `${winner.shortName ?? winner.name} ${winner.score}-${
+  loser.score
+} ${loser.shortName ?? loser.name} (${formattedDate}) Box Score`
 
 const meta = {
   title,
@@ -66,14 +72,8 @@ Caching.swr(Astro)
     page_domain: preferredDomain as AnalyticsPageviewProperties['page_domain'],
     page_type: 'game',
   }}
+  {preferredDomain}
 >
-  <Header {preferredDomain} share={{ url: Astro.url.href }} />
   <EplBoxscore {data} />
-  {
-    ANSWER_CARDS_ENABLED && (
-      <Container>
-        <AnswerCards league="fc" {teamId} />
-      </Container>
-    )
-  }
+  {ANSWER_CARDS_ENABLED && <AnswerCards domain="EPL" {teamId} />}
 </Layout>

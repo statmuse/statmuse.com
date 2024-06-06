@@ -1,0 +1,67 @@
+---
+import type { GameraDomain } from '@statmuse/core/gamera'
+import StandingsCard from '@components/cards/standings-card.astro'
+import { getStandings } from '@lib/standings'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+
+interface Props {
+  domain: GameraDomain
+  response?: Awaited<ReturnType<typeof getStandings>>
+  adSlot?: {
+    divId: string
+    slotId: string
+  }
+}
+
+const { domain, response, adSlot } = Astro.props
+
+if (!response || !response.teams) return undefined
+
+const display = `${
+  domain === 'NBA' ? 'Conference' : domain === 'EPL' ? '' : 'Division'
+} ${domain === 'EPL' ? 'Table' : 'Standings'}`
+const domainDisplay = domain === 'EPL' ? 'PL' : domain
+const title = `${domainDisplay} ${response.seasonYearDisplay} ${display}`
+
+const group = domain !== 'NBA' && domain !== 'EPL' ? 'division' : undefined
+
+const limit =
+  domain === 'NBA'
+    ? 6
+    : domain === 'EPL'
+    ? 6
+    : domain === 'NFL'
+    ? 2
+    : domain === 'NHL'
+    ? 3
+    : domain === 'MLB'
+    ? 2
+    : undefined
+---
+
+<div>
+  <h2 class="text-xl font-bold mb-1.5">
+    {title}
+  </h2>
+  <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
+    {
+      Object.entries(response.teams).map(([_, teams]) => (
+        <StandingsCard {teams} {domain} {group} {limit} />
+      ))
+    }
+  </div>
+</div>
+{
+  adSlot && (
+    <div class="w-fit mx-auto">
+      <AditudeAdBanner
+        client:only="svelte"
+        divId={adSlot.divId}
+        slotId={adSlot.slotId}
+        placeholderClass="w-[300px] h-[250px]"
+        onlyMobile
+        lazy
+      />
+    </div>
+  )
+}

@@ -16,7 +16,7 @@
   >
     <p class="leading-6 flex-1 sm:flex-initial">
       <span class="text-white text-center">
-        <strong class="font-semibold">StatMuse+</strong>
+        <strong class="font-bold">StatMuse+</strong>
         &nbsp;&nbsp;Get our new premium offering&nbsp;
       </span>
     </p>

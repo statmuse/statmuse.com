@@ -4,15 +4,15 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { throttle, uniqBy } from 'lodash-es'
-  import { session } from '@lib/session-store'
+  import { session } from '@lib/stores'
   import type { AskDocument } from '@statmuse/core/elastic'
   import { isMobileTest } from '@lib/useragent'
+  import Icon from '@components/icon.svelte'
 
   export let query: string = ''
   export let conversationToken: string = ''
   export let preferredDomain: string = ''
   export let money: boolean
-  export let fantasy: boolean
 
   let timestamp: string = new Date().toISOString()
   let sections: {
@@ -21,20 +21,20 @@
   }[] = []
   let sectionIdx: number | undefined
   let suggestionIdx: number | undefined
-  let input: HTMLTextAreaElement
+  let input: HTMLInputElement
   let shadowInput: HTMLTextAreaElement
   let spacer: HTMLElement
   let form: HTMLFormElement
   let clickedItem = false
   let inFocus = false
 
+  let expand: boolean = false
+
   if (preferredDomain === 'fc') preferredDomain = 'epl'
 
-  const action = money ? '/money/ask' : fantasy ? '/fantasy/ask' : '/ask'
+  const action = money ? '/money/ask' : '/ask'
   const placeholder = money
     ? 'Search stocks, FX or bitcoin'
-    : fantasy
-    ? 'Search fantasy projections or points'
     : preferredDomain === 'epl'
     ? 'Search players, clubs or stats'
     : 'Search players, stats or odds'
@@ -187,152 +187,231 @@
     }
   }
 
-  onMount(() => {
-    if (!isMobileTest(navigator.userAgent)) {
-      input.focus()
+  const disableScroll = () => {
+    // Save the current scroll position:
+    if (isMobileTest(navigator.userAgent)) {
+      document.body.style.top = `-${window.scrollY}px`
+      document.body.style.position = 'fixed'
+      document.body.style.width = '100%'
     }
+  }
+
+  const enableScroll = () => {
+    if (isMobileTest(navigator.userAgent)) {
+      const scrollY = document.body.style.top
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      window.scrollTo(0, parseInt(scrollY || '0') * -1)
+    }
+  }
+
+  onMount(() => {
     shadowInput.value = query
-    spacer.style.height = shadowInput.scrollHeight + 2 + 'px'
-    input.style.height = shadowInput.scrollHeight + 2 + 'px'
   })
 
   $: open = sections.findIndex((s) => s.suggestions.length > 0) > -1
   $: userId = $session?.type === 'user' ? $session.properties.id : undefined
   $: {
+    if (expand && input) {
+      input.focus()
+    }
+  }
+  $: {
     if (shadowInput && input) {
       shadowInput.value = query
+      shadowInput.style.width = getComputedStyle(input).width
       input.style.height = shadowInput.scrollHeight + 2 + 'px'
-      spacer.style.height = shadowInput.scrollHeight + 2 + 'px'
+    }
+    if (spacer) {
+      spacer.style.height = shadowInput.scrollHeight + 4 + 'px'
     }
   }
 </script>
 
-<form bind:this={form} class="relative" {action} method="post">
-  <div bind:this={spacer} style="height: 46px !important;" />
-  <div
-    role="combobox"
-    aria-haspopup="listbox"
-    aria-owns="ask-bar-suggestions"
-    aria-expanded={open}
-    class="absolute top-0 w-full border border-black rounded-lg hover:shadow-md overflow-hidden"
-    class:border-primary={inFocus}
-    class:ring-1={inFocus}
-    class:ring-primary={inFocus}
-  >
-    <div class="relative group">
-      <textarea
-        class="appearance-none outline-none resize-none block w-full border-y border-transparent p-2.5 peer"
-        class:pr-[70px]={query}
+<form
+  bind:this={form}
+  class={`${$$props.class} max-w-2xl md:relative`}
+  {action}
+  method="post"
+>
+  {#if !expand}
+    <div
+      class="relative group flex bg-gray-8 dark:bg-gray-3 items-center px-2 border border-gray-6 dark:border-transparent rounded-2xl overflow-hidden"
+    >
+      <input
+        class="dark:bg-gray-3 grow appearance-none outline-none resize-none block border-y border-transparent px-2 py-1 peer truncate"
         autocomplete="off"
         aria-autocomplete="list"
         name="question[query]"
         {placeholder}
         required
         enterkeyhint="search"
-        style="height: 46px !important;"
-        bind:this={input}
         bind:value={query}
-        on:click={() => {
-          sectionIdx = suggestionIdx = undefined
-          loadSuggestions(input.value)
-        }}
-        on:input={() => {
-          sectionIdx = suggestionIdx = undefined
-          loadSuggestions(input.value)
-        }}
-        on:keydown={inputKeydown}
-        on:blur={() => {
-          if (clickedItem) {
-            input.focus()
-            clickedItem = false
-            return
-          }
-          sectionIdx = suggestionIdx = undefined
-          sections = []
-          inFocus = false
-        }}
-        on:focus={() => (inFocus = true)}
-      />
-      <img
-        class="w-5 h-5 absolute right-[46px] bottom-3 object-contain cursor-pointer"
-        class:hidden={query.length === 0}
-        src="/icons/icon-x.svg"
-        alt="clear input"
-        on:click={() => {
-          query = ''
-          input.focus()
+        on:focus={(e) => {
+          expand = true
+          loadSuggestions(e.target.value)
+          disableScroll()
         }}
       />
-      <input
-        type="submit"
-        class="absolute bottom-3 right-2.5 block w-5 h-5 cursor-pointer bg-[url('/icons/icon-search.svg')] bg-contain bg-no-repeat bg-scroll bg-center group-hover:bg-[url('/icons/icon-search-blue.svg')] peer-focus:bg-[url('/icons/icon-search-blue.svg')]"
-        value=""
-        aria-label="Search"
-      />
+      {#if query.length > 0}
+        <button
+          on:click={() => {
+            expand = true
+            query = ''
+            disableScroll()
+          }}
+        >
+          <Icon name="x" class="w-4 h-4 mr-1" />
+        </button>
+      {:else}
+        <Icon name="search" class="w-5 h-5 text-teal mr-1" />
+      {/if}
     </div>
+  {/if}
+  {#if expand}
+    <div bind:this={spacer} style="height: 36px !important;" />
     <div
-      id="ask-bar-suggestions"
-      role="listbox"
-      class:hidden={!open}
-      class="w-full px-2 bg-white"
+      role="combobox"
+      aria-haspopup="listbox"
+      aria-owns="ask-bar-suggestions"
+      aria-expanded={open}
+      class="absolute top-0 left-0 w-screen h-screen bg-white dark:bg-gray-3 md:w-full md:h-auto md:border md:rounded-2xl overflow-hidden"
+      class:border-primary={inFocus}
+      class:border-gray-6={!inFocus}
+      class:dark:border-transparent={!inFocus}
+      class:ring-1={inFocus}
+      class:ring-primary={inFocus}
     >
-      {#each sections as section, i (section.type)}
-        {#if section.suggestions.length > 0}
-          <ul role="listbox" class="py-0.5 border-t border-t-slate-400">
-            {#each section.suggestions as suggestion, j (suggestion)}
-              <li
-                class="py-1.5 px-1 cursor-pointer flex items-center"
-                class:bg-[#eee]={i === sectionIdx && j === suggestionIdx}
-                role="option"
-                aria-selected={i === sectionIdx && j === suggestionIdx}
-                on:click={() => {
-                  input.value = suggestion.display
-                  submitForm()
-                }}
-                on:mousedown={() => (clickedItem = true)}
-                on:mouseenter={() => {
-                  sectionIdx = i
-                  suggestionIdx = j
-                }}
-                on:mouseleave={() => {
-                  sectionIdx = suggestionIdx = undefined
-                }}
-              >
-                {#if section.type === 'history'}
-                  <span
-                    class="suggestion-history-icon w-6 h-6 mr-2.5 shrink-0"
-                  />
-                  <span>{suggestion.display}</span>
-                {:else if section.type === 'example' && suggestion.league}
-                  <span
-                    class={`suggestion-${suggestion.league.toLowerCase()}-icon w-6 h-6 mr-2.5 shrink-0`}
-                  />
-                  <span>{suggestion.display}</span>
-                {:else if suggestion.type === 'player'}
-                  <span
-                    class="w-7 h-7 mr-2.5 shrink-0"
-                    style={`background: #c5c9cc url(/_image?href=${suggestion.image_url}&w=100&h=100&f=webp) no-repeat center top/145%;`}
-                  />
-                  <span>{suggestion.display}</span>
-                {:else if suggestion.type === 'team'}
-                  <span
-                    class="w-7 h-7 mr-2.5 shrink-0"
-                    style={`background: #c5c9cc url(/_image?href=${suggestion.image_url}&w=100&h=100&f=webp) no-repeat center / contain;`}
-                  />
-                  <span>{suggestion.display}</span>
-                {:else}
-                  <span
-                    class="suggestion-example-icon w-6 h-6 mr-2.5 shrink-0"
-                  />
-                  <span>{suggestion.display}</span>
-                {/if}
-              </li>
-            {/each}
-          </ul>
+      <div
+        class="relative group flex bg-gray-8 dark:bg-gray-3 items-center px-2"
+      >
+        <button
+          class="md:hidden"
+          on:click={() => {
+            enableScroll()
+            expand = false
+          }}
+        >
+          <Icon name="back" class="w-4 h-4 mr-1" />
+        </button>
+        <textarea
+          class="dark:bg-gray-3 grow appearance-none outline-none resize-none block border-y border-transparent px-2 py-2.5 md:py-1 peer"
+          autocomplete="off"
+          aria-autocomplete="list"
+          name="question[query]"
+          required
+          enterkeyhint="search"
+          {placeholder}
+          bind:this={input}
+          bind:value={query}
+          on:click={() => {
+            sectionIdx = suggestionIdx = undefined
+            loadSuggestions(input.value)
+          }}
+          on:input={() => {
+            sectionIdx = suggestionIdx = undefined
+            loadSuggestions(input.value)
+          }}
+          on:keydown={inputKeydown}
+          on:blur={() => {
+            if (clickedItem) {
+              input.focus()
+              clickedItem = false
+              return
+            }
+
+            if (!isMobileTest(navigator.userAgent)) {
+              sectionIdx = suggestionIdx = undefined
+              sections = []
+              inFocus = false
+            }
+          }}
+          on:focus={() => (inFocus = true)}
+        />
+        {#if query.length > 0}
+          <button
+            on:click={() => {
+              query = ''
+              input.focus()
+            }}
+          >
+            <Icon name="x" class="w-4 h-4 mr-1" />
+          </button>
+        {:else}
+          <Icon name="search" class="w-5 h-5 text-teal mr-1" />
         {/if}
-      {/each}
+      </div>
+      <div
+        id="ask-bar-suggestions"
+        role="listbox"
+        class:hidden={!open}
+        class="w-full px-2 bg-gray-8 dark:bg-gray-3"
+      >
+        {#each sections as section, i (section.type)}
+          {#if section.suggestions.length > 0}
+            <ul role="listbox" class="py-0.5 border-t border-t-slate-400">
+              {#each section.suggestions as suggestion, j (suggestion)}
+                <li
+                  class="py-1.5 px-1 cursor-pointer flex items-center"
+                  class:bg-gray-7={i === sectionIdx && j === suggestionIdx}
+                  class:dark:bg-gray-2={i === sectionIdx && j === suggestionIdx}
+                  role="option"
+                  aria-selected={i === sectionIdx && j === suggestionIdx}
+                  on:click={() => {
+                    input.value = suggestion.display
+                    submitForm()
+                  }}
+                  on:mousedown={() => (clickedItem = true)}
+                  on:mouseenter={() => {
+                    sectionIdx = i
+                    suggestionIdx = j
+                  }}
+                  on:mouseleave={() => {
+                    sectionIdx = suggestionIdx = undefined
+                  }}
+                >
+                  {#if section.type === 'history'}
+                    <Icon
+                      name="history"
+                      class="w-6 h-6 mr-2.5 shrink-0 text-[#a7a9ac] dark:text-white"
+                    />
+                    <span>{suggestion.display}</span>
+                  {:else if section.type === 'example' && suggestion.league}
+                    <Icon
+                      name={suggestion.league.toLowerCase() === 'epl'
+                        ? 'fc'
+                        : suggestion.league.toLowerCase()}
+                      class="w-6 h-6 mr-2.5 shrink-0 text-[#a7a9ac] dark:text-white block object-cover"
+                    />
+                    <span>{suggestion.display}</span>
+                  {:else if suggestion.type === 'player'}
+                    <span
+                      class="w-7 h-7 mr-2.5 shrink-0"
+                      style={`background: #c5c9cc url(/_image?href=${suggestion.image_url}&w=100&h=100&f=webp) no-repeat center top/145%;`}
+                    />
+                    <span>{suggestion.display}</span>
+                  {:else if suggestion.type === 'team'}
+                    <span
+                      class="w-7 h-7 mr-2.5 shrink-0"
+                      style={`background: #c5c9cc url(/_image?href=${suggestion.image_url}&w=100&h=100&f=webp) no-repeat center / contain;`}
+                    />
+                    <span>{suggestion.display}</span>
+                  {:else}
+                    <Icon
+                      name="search"
+                      class="w-6 h-6 mr-2.5 shrink-0 text-[#a7a9ac] dark:text-white block object-cover"
+                    />
+                    <span>{suggestion.display}</span>
+                  {/if}
+                </li>
+              {/each}
+            </ul>
+          {/if}
+        {/each}
+      </div>
     </div>
-  </div>
+  {/if}
   <input
     name="question[preferred_domain]"
     type="hidden"
@@ -345,14 +424,14 @@
   />
   <textarea
     bind:this={shadowInput}
-    class="appearance-none outline-none resize-none block w-full border-y p-2.5"
-    class:pr-[70px]={query}
+    class="appearance-none outline-none resize-none block border-y px-2 py-2.5 md:py-1"
     style:height="0px"
     style:min-height="0px"
     style:max-height="none"
     style:visibility="hidden"
     style:overflow="hidden"
     style:position="absolute"
+    style:left="0"
     style:z-index="-1000"
     tabindex="-1"
     aria-hidden="true"

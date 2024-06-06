@@ -1,6 +1,5 @@
 ---
 import Grid from '@components/grid.svelte'
-import GridDropdown from '@components/grid-dropdown.astro'
 import PlayerLayout from '@layouts/player.astro'
 import { tokensToText } from '@statmuse/core/gamera'
 import { getPlayerBio, getPlayerStats } from '@lib/player'
@@ -50,23 +49,16 @@ const meta = { title, description, keywords }
 Caching.swr(Astro)
 ---
 
-<PlayerLayout {league} {bio} {meta} page="stats">
-  <div>
-    {
-      grids &&
-        grids.map((grid) => (
-          <div class="mb-5">
-            <div class="flex justify-between mb-0.5">
-              <h3 class="font-semibold text-team-primary">{grid.name}</h3>
-              {parameters && <GridDropdown {parameters} />}
-            </div>
-            <Grid
-              client:load
-              data={grid}
-              columnStyles={{ SEASON: 'text-left' }}
-            />
-          </div>
-        ))
-    }
-  </div>
+<PlayerLayout {league} {bio} {meta} page="stats" {parameters}>
+  {
+    grids &&
+      grids.map((grid) => (
+        <Grid
+          title={grid.name}
+          client:load
+          data={grid}
+          columnStyles={{ SEASON: 'text-left' }}
+        />
+      ))
+  }
 </PlayerLayout>

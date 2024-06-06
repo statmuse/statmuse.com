@@ -1,8 +1,10 @@
 import type { Config } from 'tailwindcss'
 import defaultTheme from 'tailwindcss/defaultTheme'
+import containerQueries from '@tailwindcss/container-queries'
 
 export default {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+  darkMode: 'selector',
   theme: {
     screens: {
       sm: '480px',
@@ -11,12 +13,20 @@ export default {
       xl: '1280px',
     },
     extend: {
+      fontSize: {
+        sm: '0.77rem',
+        base: '1rem',
+        xl: '1.23rem',
+        '2xl': '2rem',
+      },
       colors: {
         primary: '#00c1d8',
         secondary: '#0086ff',
         black: '#333333',
         'team-primary': 'var(--team-primary-color, #fff)',
+        'team-primary-dark-bg': 'var(--team-primary-color, #151516)',
         'team-secondary': 'var(--team-secondary-color, #333)',
+        'team-secondary-dark': 'var(--team-secondary-color, #fff)',
         'team-secondary-sm-default': 'var(--team-secondary-color, #00c1d8)',
         gray: {
           1: '#333333',
@@ -34,14 +44,10 @@ export default {
         red: '#dd3636',
       },
       fontFamily: {
-        sans: [
-          'canada-type-gibson',
-          'canada-type-gibson-fallback',
-          ...defaultTheme.fontFamily.sans,
-        ],
+        sans: ['calibre', 'calibre-fallback', ...defaultTheme.fontFamily.sans],
         mono: ['"Courier New"', ...defaultTheme.fontFamily.mono],
       },
     },
   },
-  plugins: [],
+  plugins: [containerQueries],
 } satisfies Config

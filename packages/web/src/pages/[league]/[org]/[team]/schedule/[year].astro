@@ -1,0 +1,89 @@
+---
+import TeamLayout from '@layouts/team.astro'
+import Grid from '@components/grid.svelte'
+import { getUrlForEntity } from '@statmuse/core/gamera'
+import {
+  getTeamSeasonBio,
+  getTeamSeasonGameResults,
+  getTeamSeasonSchedule,
+} from '@lib/team'
+import { getLeagueKeywords } from '@lib/meta'
+import { Caching } from '@lib/caching'
+import { NOT_FOUND_404 } from '@lib/response'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
+
+const league = Astro.params.league as LeagueParam
+const team = Astro.params.team
+const year = Astro.params.year
+const org = Astro.params.org
+if (!team || !league || !year || !org) return NOT_FOUND_404
+if (org !== 'team' && org !== 'club') return NOT_FOUND_404
+const schedule = league === 'fc' ? 'fixtures' : 'schedule'
+const scheduleDisplay = league === 'fc' ? 'Fixtures' : 'Schedule & Results'
+
+const domain = leagueToDomain(league)
+const bio = await getTeamSeasonBio({ context: Astro, domain, team, year })
+const gameResults = await getTeamSeasonGameResults({
+  context: Astro,
+  domain,
+  team,
+  year,
+})
+const seasonSchedule = await getTeamSeasonSchedule({
+  context: Astro,
+  domain,
+  team,
+  year,
+})
+
+if (!bio || !gameResults) return NOT_FOUND_404
+
+const title = `${bio.name} ${year} ${scheduleDisplay}`
+const description = `The ${year} ${bio.name} ${scheduleDisplay.toLowerCase()} for the ${domain} regular season and playoffs`
+const keywords = `${getLeagueKeywords(domain)} ${year} ${
+  bio.name
+} ${org} ${schedule} results stats statistics`
+const canonical = {
+  url: `${getUrlForEntity({
+    type: 'teamSeason',
+    domain,
+    id: bio.teamId.toString(),
+    display: bio.name,
+  })}/${schedule}/${year}`,
+  rewrite: true,
+}
+const meta = { title, description, keywords, canonical }
+
+Caching.swr(Astro)
+---
+
+<TeamLayout {bio} {meta} page="schedule">
+  {
+    seasonSchedule?.grid && seasonSchedule.grid.columns.length > 0 && (
+      <Grid
+        title={seasonSchedule.grid.name}
+        data={seasonSchedule.grid}
+        fullWidth={false}
+        columnStyles={{
+          DATE: 'text-left w-20',
+          default: 'w-20',
+        }}
+      />
+    )
+  }
+  {
+    gameResults?.grids &&
+      gameResults.grids.map((data) => (
+        <Grid
+          title={data.name}
+          {data}
+          fullWidth={false}
+          columnStyles={{
+            DATE: 'text-left w-20',
+            SCORE: 'text-left w-20',
+            default: 'w-20',
+          }}
+        />
+      ))
+  }
+</TeamLayout>
