@@ -2,11 +2,17 @@
   import { session } from '@lib/stores'
   import { onMount } from 'svelte'
   import Panel from '@components/panel.svelte'
+  import { isMobileTest } from '@lib/useragent'
+
   export let league: string
+  export let onlyMobile = false
 
   let container: HTMLElement
   let video: HTMLElement
   let observer: IntersectionObserver
+
+  const isMobile = isMobileTest(navigator.userAgent)
+  const shouldRender = onlyMobile ? isMobile : true
 
   onMount(() => {
     return () => {
@@ -49,7 +55,7 @@
     ($session?.type === 'visitor' && !$session?.properties.bot)
 </script>
 
-{#if isNotSubscriber}
+{#if isNotSubscriber && shouldRender}
   {#if import.meta.env.PROD}
     <div
       bind:this={container}
