@@ -3,9 +3,9 @@ import Layout from '@layouts/base.astro'
 import Image from '@components/image.astro'
 import type { PlayerGalleryItem } from '@lib/player'
 import { type GameraDomain, getUrlForEntity } from '@statmuse/core/gamera'
-import StnVideo from '@components/stn-video.svelte'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import Hero from '@components/hero.astro'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 interface Props {
   domain?: GameraDomain
@@ -80,11 +80,12 @@ const meta = {
       ],
     }}
   />
-  <div>
-    <StnVideo
+  <div class="h-[50px] md:h-[90px] flex justify-center items-center">
+    <AditudeAdBanner
       client:only="svelte"
-      class="w-full md:w-[425px] mx-auto mt-4"
-      domain={domain?.toLowerCase()}
+      divId="pb-slot-anchor"
+      slotId="pb-slot-anchor"
+      placeholderClass="w-[320px] md:w-[728px] h-[50px] md:h-[90px]"
     />
   </div>
   <div class="flex justify-start md:justify-center py-4 overflow-auto">
