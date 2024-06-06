@@ -6,6 +6,7 @@ import NewsletterSignup from '@components/newsletter-signup.astro'
 import type { LeagueParam } from '@lib/params'
 import type { NavLink } from 'src/types'
 import type { ComponentProps } from 'astro/types'
+import Nav from '@components/nav.astro'
 
 interface Props extends ComponentProps<typeof BaseLayout> {
   league?: LeagueParam | 'All'
@@ -25,6 +26,11 @@ const links: NavLink[] = [
 ]
 
 const Layout = league === 'money' ? MoneyBaseLayout : BaseLayout
+const navProps = {
+  links,
+  selected: league.toLowerCase(),
+  href: (league) => `/${league}`,
+}
 ---
 
 <Layout
@@ -45,12 +51,8 @@ const Layout = league === 'money' ? MoneyBaseLayout : BaseLayout
     : league === 'All'
     ? undefined
     : league}
-  navProps={{
-    links,
-    selected: league.toLowerCase(),
-    href: (league) => `/${league}`,
-  }}
 >
+  <Nav class="lg:hidden" {...navProps} />
   <slot />
   <NewsletterSignup />
 </Layout>
