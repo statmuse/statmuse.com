@@ -23,7 +23,7 @@ const builder = createSessionBuilder<{
     subscriptionStatus?: string
   }
 }>()
-const SESSION_COOKIE =
+export const SESSION_COOKIE =
   import.meta.env.PUBLIC_STAGE === 'production'
     ? 'sm_session'
     : `sm_session-${import.meta.env.PUBLIC_STAGE}`
@@ -55,6 +55,23 @@ export const create = async (context: Context) => {
   try {
     const visitor = await fromRequest(context)
     if (context.locals) context.locals.visitor = visitor
+    const token = builder.create('visitor', {
+      id: visitor.id,
+      bot: visitor.is_bot,
+      cookieStatus: visitor.cookie_status,
+      origin: visitor.origin_name,
+    })
+    set(context, token)
+    return builder.verify(token)
+  } catch (error) {
+    console.error(error)
+    const publicSession = builder.create('public', {})
+    return builder.verify(publicSession)
+  }
+}
+
+export const createVisitorSession = (context: Context, visitor: VisitorT) => {
+  try {
     const token = builder.create('visitor', {
       id: visitor.id,
       bot: visitor.is_bot,

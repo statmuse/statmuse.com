@@ -2,8 +2,8 @@ import * as Session from '@lib/session'
 import { defineMiddleware, sequence } from 'astro:middleware'
 import * as User from '@statmuse/core/user'
 import * as Visitor from '@statmuse/core/visitor'
-import { contentSecurityPolicy } from './csp'
 import { getTrendingData } from '@lib/trending'
+import { verifyLegacySession } from '@lib/jwt-builder'
 
 export const logging = defineMiddleware(async (context, next) => {
   const req = context.request
@@ -11,10 +11,59 @@ export const logging = defineMiddleware(async (context, next) => {
   return next()
 })
 
+export const migrateSession = defineMiddleware(async (context, next) => {
+  const token = context.cookies.get(Session.SESSION_COOKIE)?.value
+  if (!token) return next()
+  try {
+    const legacySession = verifyLegacySession(token) as ReturnType<
+      typeof Session.verify
+    >
+
+    let visitor: Visitor.Visitor | undefined
+    let user: User.User | undefined
+
+    const visitorId =
+      legacySession.type === 'visitor'
+        ? legacySession.properties.id
+        : legacySession.type === 'user'
+        ? legacySession.properties.visitorId
+        : undefined
+
+    if (visitorId) {
+      visitor = await Visitor.get(visitorId)
+      if (visitor) context.locals.visitor = visitor
+    }
+
+    const userId =
+      legacySession.type === 'user' ? legacySession.properties.id : undefined
+    if (userId) {
+      user = await User.get(userId)
+      if (user) context.locals.user = user
+    }
+
+    if (legacySession.type === 'visitor' && visitor) {
+      const session = Session.createVisitorSession(context, visitor)
+      context.locals.session = session
+    }
+
+    if (legacySession.type === 'user' && user) {
+      const session = Session.createUserSession(context, user)
+      context.locals.session = session
+    }
+
+    return next()
+  } catch (_e) {
+    return next()
+  }
+})
+
 export const session = defineMiddleware(async (context, next) => {
   if (context.url.pathname.startsWith('/_image')) {
     return next()
   }
+
+  if (context.locals.session && (context.locals.user || context.locals.visitor))
+    return next()
 
   const locals = context.locals
   let session = Session.get(context)
@@ -158,4 +207,11 @@ export const trending = defineMiddleware(async (context, next) => {
   return next()
 })
 
-export const onRequest = sequence(logging, session, trending, cleanup, headers)
+export const onRequest = sequence(
+  logging,
+  migrateSession,
+  session,
+  trending,
+  cleanup,
+  headers,
+)
