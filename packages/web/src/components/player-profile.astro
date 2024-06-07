@@ -339,7 +339,7 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       'FGM',
       'FGA',
       'FG%',
-      ['Long', ''],
+      ['Long', 'LNG'],
       'XPM',
       'XPA',
       'XP%',
@@ -459,11 +459,7 @@ const nextGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
     OL: [
       ['Record', ''], // TODO: find this
     ],
-    K: [
-      ['GMS', 'GP'],
-      'FGM',
-      ['Long', ''], // TODO: find this
-    ],
+    K: [['GMS', 'GP'], 'FGM', ['Long', 'LNG']],
     P: [
       ['GMS', 'GP'],
       ['Punts', 'PUNT'],
@@ -534,7 +530,7 @@ const gamesStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
     K: [
       { label: 'FG', value: (v) => `${v.FGM.value}-${v.FGA.value}` },
       { label: 'XP', value: (v) => `${v.XPM.value}-${v.XPA.value}` },
-      ['Long', ''], // TODO: find this
+      ['Long', 'LNG'],
     ],
     P: [
       ['Punts', 'PUNT'],

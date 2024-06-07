@@ -94,21 +94,36 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       'xG',
       'xA',
       {
-        label: 'Shot %',
+        label: 'Shot%',
         value: (v) =>
           `${v.SOT?.value}/${v.SH?.value} (${formatPercentage(
             ((v.SOT?.value as number) / (v.SH?.value as number)) * 100,
           )})`,
       },
       {
-        label: 'Pass %',
+        label: 'Pass%',
         value: (v) =>
           `${v.PASS.value}/${v['PASS-ATT'].value} (${v['PASS%'].display}%)`,
       },
+      // {
+      //   label: 'Dribble%',
+      //   value: (v) =>
+      //     `${v.DRIB?.value}/${v['DRIB-ATT']?.value} (${formatPercentage(
+      //       ((v.DRIB?.value as number) / (v['DRIB-ATT']?.value as number)) *
+      //         100,
+      //     )})`,
+      // },
+      // {
+      //   label: 'Cross%',
+      //   value: (v) =>
+      //     `${v.CRS?.value}/${v['CRS-ATT']?.value} (${formatPercentage(
+      //       ((v.CRS?.value as number) / (v['CRS-ATT']?.value as number)) * 100,
+      //     )})`,
+      // },
       'BCM',
       'BCC',
       ['Key Pass', 'PASS-KEY'],
-      ['Touches (Opp Box)', 'TCH-BOX'],
+      ['Touches\n(Opp Box)', 'TCH-BOX'],
       {
         label: 'Duel W-L',
         value: (v) => `${v['DUEL-W'].display}-${v['DUEL-L'].display}`,
@@ -117,7 +132,7 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
         label: 'Aerial W-L',
         value: (v) => `${v['AER-W'].display}-${v['AER-L'].display}`,
       },
-      ['Tackle Made', 'TKL'],
+      ['Tackle\nMade', 'TKL'],
       ['Clearance', 'CLR'],
       ['Foul', 'FOUL'],
       ['Fouled', 'FOULED'],
@@ -418,7 +433,7 @@ const bustImageAlt = bio.bustImageUrl?.includes('silhouette')
       </div>
       <div
         class:list={{
-          'flex flex-wrap gap-3 py-3 leading-snug items-center': true,
+          'flex flex-wrap gap-3 py-3 leading-snug items-start': true,
           // 'grid-cols-5 @xs:grid-cols-7': league !== 'fc',
           // 'grid-cols-2 @xs:grid-cols-4': league === 'fc',
         }}
@@ -426,7 +441,7 @@ const bustImageAlt = bio.bustImageUrl?.includes('silhouette')
         {lastGameStats_?.map(({ key, value }) => (
           <div class="flex flex-col items-center">
             <div class="whitespace-nowrap">{formatNumber(value)}</div>
-            <div class="font-light text-sm opacity-80 whitespace-nowrap">
+            <div class="font-light text-sm opacity-80 whitespace-pre text-center">
               {key}
             </div>
           </div>
