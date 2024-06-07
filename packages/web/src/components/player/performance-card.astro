@@ -5,6 +5,7 @@ import Panel from '@components/panel.astro'
 import {
   getDefaultBustImageUrl,
   type GameraDomain,
+  type GameraEntity,
   type GameraGrid,
   type GameraPlayerBio,
 } from '@statmuse/core/gamera'
@@ -33,6 +34,15 @@ const formatPercentage = (value: number) =>
   isNaN(value) ? '0%' : `${formatNumber(value)}%`
 
 const { bio, domain } = Astro.props
+
+const isPlayerProfilePage = Astro.url.pathname.includes('/player/')
+const entity: GameraEntity = {
+  type: 'player',
+  id: bio.playerId.toString(),
+  domain: bio.domain,
+  display: bio.usedName,
+}
+
 const league = domain === 'EPL' ? 'fc' : (domain.toLowerCase() as LeagueParam)
 const recentGames = Astro.props.recentGames
   ? 'grid' in Astro.props.recentGames
@@ -345,7 +355,12 @@ const bustImageAlt = bio.bustImageUrl?.includes('silhouette')
 
 {
   lastGame && lastGameStats_?.length ? (
-    <Panel title="Trending Performance">
+    <Panel
+      title={
+        isPlayerProfilePage ? 'Latest Performance' : 'Trending Performance'
+      }
+      entity={isPlayerProfilePage ? lastGame.SCORE.entity : entity}
+    >
       <div class="flex items-center justify-stretch gap-1 border-b border-gray-6 dark:border-gray-4 -mx-3 px-3">
         <Image
           class:list={{
