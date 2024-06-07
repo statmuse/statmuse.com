@@ -19,6 +19,7 @@ import WithSubscription from '@components/with-subscription.svelte'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import Panel from '@components/panel.astro'
 import StnVideo from '@components/stn-video.svelte'
+import SelectableStandings from '@components/home/selectable-standings.svelte'
 
 type ExampleSet = [string, { query: string; path: string }[]]
 
@@ -29,7 +30,7 @@ interface Props {
   leaders?: PlayerLeadersResponse
   rankings?: TeamRankingsResponse
   betting?: TeamRankingsResponse
-  standings?: GetStandingsResponse
+  standings?: GetStandingsResponse | [GetStandingsResponse]
   trendingPlayers?: TrendingItem['datasets'][number]
   trendingTeams?: TrendingItem['datasets'][number]
   trendingSearches?: TrendingItem['datasets'][number]
@@ -125,7 +126,58 @@ const {
                   recentGames={profile.recentGames}
                 />
               )}
-              {standings && <Standings {standings} domain={standings.domain} />}
+              {Array.isArray(standings) ? (
+                <SelectableStandings
+                  client:load
+                  options={standings.map((s) => ({
+                    value: s?.domain.toLowerCase(),
+                    label: s?.domain === 'EPL' ? 'Premier League' : s?.domain,
+                  }))}
+                >
+                  {standings[0] && (
+                    <Standings
+                      class="!border-none"
+                      standings={standings[0]}
+                      domain="EPL"
+                      slot="epl"
+                    />
+                  )}
+                  {standings[1] && (
+                    <Standings
+                      class="!border-none"
+                      standings={standings[1]}
+                      domain="NBA"
+                      slot="nba"
+                    />
+                  )}
+                  {standings[2] && (
+                    <Standings
+                      class="!border-none"
+                      standings={standings[2]}
+                      domain="NFL"
+                      slot="nfl"
+                    />
+                  )}
+                  {standings[3] && (
+                    <Standings
+                      class="!border-none"
+                      standings={standings[3]}
+                      domain="NHL"
+                      slot="nhl"
+                    />
+                  )}
+                  {standings[4] && (
+                    <Standings
+                      class="!border-none"
+                      standings={standings[4]}
+                      domain="MLB"
+                      slot="mlb"
+                    />
+                  )}
+                </SelectableStandings>
+              ) : (
+                standings && <Standings {standings} domain={standings.domain} />
+              )}
               <StnVideo
                 client:only="svelte"
                 class="w-full mt-3"

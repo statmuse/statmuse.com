@@ -9,6 +9,7 @@ interface Props {
   standings: {
     teams: Dictionary<StandingsTeam[]>
   }
+  class?: string
 }
 
 const { domain, standings } = Astro.props
@@ -27,7 +28,7 @@ const tabTitle = (name: string, domain: GameraDomain) => {
 }
 ---
 
-<Panel class="group !py-0 relative">
+<Panel class={`group !py-0 relative ${Astro.props.class}`}>
   {
     Object.entries(standings.teams).length > 1 && (
       <div class="flex font-semibold text-center -mx-3">
