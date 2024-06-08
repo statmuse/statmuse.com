@@ -117,7 +117,17 @@ const details =
                   <div class="flex-1 overflow-x-auto">
                     <Grid
                       client:load
-                      data={grid}
+                      data={{
+                        ...grid,
+                        columns: [
+                          { rowItemKey: 'RANK', title: '', type: 'number' },
+                          ...grid.columns,
+                        ],
+                        rows: grid.rows.map((r, i) => ({
+                          ...r,
+                          RANK: { display: `${i + 1}`, value: i },
+                        })),
+                      }}
                       columnStyles={{
                         RESULT: 'text-left',
                       }}
@@ -133,7 +143,17 @@ const details =
               <div class="flex-1 overflow-x-auto">
                 <Grid
                   client:load
-                  data={grid}
+                  data={{
+                    ...grid,
+                    columns: [
+                      { rowItemKey: 'RANK', title: '', type: 'number' },
+                      ...grid.columns,
+                    ],
+                    rows: grid.rows.map((r, i) => ({
+                      ...r,
+                      RANK: { display: `${i + 1}`, value: i },
+                    })),
+                  }}
                   columnStyles={{
                     RESULT: 'text-left',
                   }}
