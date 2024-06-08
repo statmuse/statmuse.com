@@ -51,11 +51,6 @@ const props = Astro.props
 const getColumns = (name?: string) => {
   let columns = [
     {
-      rowItemKey: 'rank',
-      title: '',
-      type: 'number',
-    },
-    {
       rowItemKey: 'name',
       title: name ?? 'Team',
       type: 'string',
@@ -147,6 +142,17 @@ const getColumns = (name?: string) => {
         title: 'PTS',
         type: 'number',
       },
+    ]
+  }
+
+  if (props.domain === 'NBA' || props.domain === 'EPL') {
+    columns = [
+      {
+        rowItemKey: 'rank',
+        title: '',
+        type: 'number',
+      },
+      ...columns,
     ]
   }
 
