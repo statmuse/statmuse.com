@@ -80,14 +80,14 @@ const {
               id="musing"
             />
             {musings && (
-              <div class="space-y-3">
+              <div class="flex flex-col gap-3">
                 {musings.map(async (musing, i) =>
                   i % 5 === 0 && i > 0 ? (
                     <Fragment>
                       {i / 5 === 1 ? (
                         <StnVideo
                           client:only="svelte"
-                          class="w-full mt-3"
+                          class="w-full"
                           domain={domain?.toLowerCase()}
                         />
                       ) : (
@@ -95,8 +95,8 @@ const {
                           client:only="svelte"
                           divId={`home-musing-${i}`}
                           slotId={`pb-slot-incontent-${i / 5 - 1}`}
-                          class="mt-3 mx-auto"
-                          placeholderClass="w-[300px] h-[250px] mt-3 mx-auto"
+                          class="mx-auto"
+                          placeholderClass="w-[300px] h-[250px] mx-auto"
                           onlyMobile
                           lazy
                         />
@@ -118,7 +118,7 @@ const {
               id="stat"
               checked
             />
-            <div class="space-y-3">
+            <div class="flex flex-col gap-3">
               {profile && (
                 <PlayerPerformanceCard
                   domain={profile.bio.domain}
@@ -180,7 +180,7 @@ const {
               )}
               <StnVideo
                 client:only="svelte"
-                class="w-full mt-3"
+                class="w-full"
                 domain={domain?.toLowerCase()}
                 onlyMobile
               />
@@ -219,8 +219,8 @@ const {
                 client:only="svelte"
                 divId="home-stats-2"
                 slotId="pb-slot-incontent-1"
-                class="mt-3 mx-auto"
-                placeholderClass="w-[300px] h-[250px] mt-3 mx-auto"
+                class="mx-auto"
+                placeholderClass="w-[300px] h-[250px] mx-auto"
                 onlyMobile
                 lazy
               />
@@ -290,8 +290,8 @@ const {
                 client:only="svelte"
                 divId="home-stats-3"
                 slotId="pb-slot-incontent-2"
-                class="mt-3 mx-auto"
-                placeholderClass="w-[300px] h-[250px] mt-3 mx-auto"
+                class="mx-auto"
+                placeholderClass="w-[300px] h-[250px] mx-auto"
                 onlyMobile
                 lazy
               />
