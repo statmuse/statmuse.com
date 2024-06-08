@@ -3,6 +3,7 @@
   import { onMount } from 'svelte'
   import Panel from '@components/panel.svelte'
   import { isMobileTest } from '@lib/useragent'
+  import { throttle } from 'lodash-es'
 
   export let league: string
   export let onlyMobile = false
@@ -16,6 +17,9 @@
 
   onMount(() => {
     return () => {
+      if (container) {
+        document.removeEventListener('scroll', handleScroll)
+      }
       if (observer) {
         observer.unobserve(container)
       }
@@ -24,6 +28,24 @@
       }
     }
   })
+
+  const getVerticalOffset = (element: HTMLElement | null) => {
+    let verticalPosition = 0
+    while (element) {
+      verticalPosition += element.offsetTop
+      element = element.offsetParent as HTMLElement | null
+    }
+    return verticalPosition
+  }
+
+  const handleScroll = throttle(() => {
+    const offset = getVerticalOffset(container)
+    if (window.scrollY + window.innerHeight < offset - 50) {
+      container.style.setProperty('transform', 'scale(0,0)', 'important')
+    } else {
+      container.style.setProperty('transform', 'none', 'important')
+    }
+  }, 300)
 
   $: if ('IntersectionObserver' in window && container) {
     const options = {
@@ -47,6 +69,10 @@
     observer = new IntersectionObserver(callback, options)
 
     observer.observe(container)
+  }
+
+  $: if (container) {
+    document.addEventListener('scroll', handleScroll)
   }
 
   $: isNotSubscriber =
@@ -128,10 +154,12 @@
       {/if}
     </div>
   {:else}
-    <Panel
-      class={`${$$props.class} aspect-video flex items-center justify-center`}
-    >
-      Video Player
-    </Panel>
+    <div bind:this={container}>
+      <Panel
+        class={`${$$props.class} aspect-video flex items-center justify-center`}
+      >
+        Video Player
+      </Panel>
+    </div>
   {/if}
 {/if}
