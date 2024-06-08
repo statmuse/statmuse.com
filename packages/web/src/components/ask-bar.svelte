@@ -2,7 +2,7 @@
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <!-- svelte-ignore a11y-role-has-required-aria-props -->
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onMount, afterUpdate } from 'svelte'
   import { throttle, uniqBy } from 'lodash-es'
   import { session } from '@lib/stores'
   import type { AskDocument } from '@statmuse/core/elastic'
@@ -13,6 +13,7 @@
   export let conversationToken: string = ''
   export let preferredDomain: string = ''
   export let money: boolean
+  export let autoFocus = false
 
   let timestamp: string = new Date().toISOString()
   let sections: {
@@ -27,7 +28,6 @@
   let form: HTMLFormElement
   let clickedItem = false
   let inFocus = false
-
   let expand: boolean = false
 
   if (preferredDomain === 'fc') preferredDomain = 'epl'
@@ -208,6 +208,9 @@
 
   onMount(() => {
     shadowInput.value = query
+    if (autoFocus && !isMobileTest(navigator.userAgent)) {
+      expand = true
+    }
   })
 
   $: open = sections.findIndex((s) => s.suggestions.length > 0) > -1

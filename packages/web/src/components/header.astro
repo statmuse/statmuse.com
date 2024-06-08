@@ -35,10 +35,21 @@ const preferredDomain = Astro.props.preferredDomain ?? ''
     <div class="flex-1 justify-start">
       <AskBar
         client:load
+        class="xl:ml-[15px]"
         {query}
         {conversationToken}
         {preferredDomain}
         money={Astro.props.money}
+        autoFocus={[
+          '/',
+          '/nba',
+          '/nfl',
+          '/nhl',
+          '/mlb',
+          '/pga',
+          '/fc',
+          '/money',
+        ].includes(Astro.url.pathname)}
       />
     </div>
   </div>
