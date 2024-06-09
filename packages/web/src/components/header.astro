@@ -19,23 +19,22 @@ const preferredDomain = Astro.props.preferredDomain ?? ''
 <div
   class:list={{
     'flex gap-3 items-center relative': true,
-    'min-h-[62px] z-[100]': true,
+    'min-h-[62px] py-[11px] z-[100]': true,
     'md:bg-gray-7 dark:md:bg-gray-2 bg-team-primary dark:bg-team-primary-dark-bg sticky top-0': true,
     '-mx-3 px-3 md:px-0 md:mx-0': true,
     '': false,
   }}
 >
-  <div class="flex xl:w-[190px] xl:justify-center shrink-0">
+  <div class="flex xl:w-[210px] xl:justify-center shrink-0">
     <DropdownMenu showElephant class="xl:hidden" />
     <a href={Astro.props.money ? '/money' : '/'} class="hidden md:block">
       <Logo class="w-[150px] mx-5" />
     </a>
   </div>
-  <div class="col-start-2 col-span-1 flex grow">
+  <div class="flex grow">
     <div class="flex-1 justify-start">
       <AskBar
         client:load
-        class="xl:ml-[15px]"
         {query}
         {conversationToken}
         {preferredDomain}
