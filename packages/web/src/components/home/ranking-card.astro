@@ -31,7 +31,7 @@ const { title, sections } = Astro.props
     {
       sections?.map((section) => (
         <div class="-mx-3 pt-2 px-3">
-          <p class="text-sm text-gray-5">{section.title}</p>
+          <p class="text-sm text-gray-5 mb-0.5">{section.title}</p>
           <div class="flex">
             <div class="flex-1">
               {section.items.map((item, index) => (

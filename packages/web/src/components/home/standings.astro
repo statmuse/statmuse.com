@@ -31,16 +31,16 @@ const tabTitle = (name: string, domain: GameraDomain) => {
 <Panel class={`group !py-0 relative ${Astro.props.class}`}>
   {
     Object.entries(standings.teams).length > 1 && (
-      <div class="flex font-semibold text-center -mx-3">
+      <div class="flex text-center -mx-3">
         {Object.entries(standings.teams).map(([name, _teams], index) => (
           <label
             for={`standings-${index}`}
             class:list={[
               'flex-1 py-2 text-gray-5 bg-gray-6 dark:bg-gray-4 hover:cursor-pointer',
               {
-                'group-has-[#standings-0:checked]:bg-gray-8 dark:group-has-[#standings-0:checked]:bg-gray-3 group-has-[#standings-0:checked]:text-inherit':
+                'group-has-[#standings-0:checked]:bg-gray-8 dark:group-has-[#standings-0:checked]:bg-gray-3 group-has-[#standings-0:checked]:text-inherit group-has-[#standings-0:checked]:font-semibold':
                   index === 0,
-                'group-has-[#standings-1:checked]:bg-gray-8 dark:group-has-[#standings-1:checked]:bg-gray-3 group-has-[#standings-1:checked]:text-inherit':
+                'group-has-[#standings-1:checked]:bg-gray-8 dark:group-has-[#standings-1:checked]:bg-gray-3 group-has-[#standings-1:checked]:text-inherit group-has-[#standings-1:checked]:font-semibold':
                   index === 1,
               },
             ]}
