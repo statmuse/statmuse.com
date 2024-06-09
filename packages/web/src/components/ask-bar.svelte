@@ -349,14 +349,17 @@
         id="ask-bar-suggestions"
         role="listbox"
         class:hidden={!open}
-        class="w-full px-2 bg-gray-8 dark:bg-gray-3"
+        class="w-full bg-gray-8 dark:bg-gray-3"
       >
         {#each sections as section, i (section.type)}
           {#if section.suggestions.length > 0}
-            <ul role="listbox" class="py-0.5 border-t border-t-slate-400">
+            <ul
+              role="listbox"
+              class="py-0.5 border-t border-t-gray-6 dark:border-t-gray-4"
+            >
               {#each section.suggestions as suggestion, j (suggestion)}
                 <li
-                  class="py-1.5 px-1 cursor-pointer flex items-center"
+                  class="py-1.5 px-2 cursor-pointer flex items-center"
                   class:bg-gray-7={i === sectionIdx && j === suggestionIdx}
                   class:dark:bg-gray-2={i === sectionIdx && j === suggestionIdx}
                   role="option"
