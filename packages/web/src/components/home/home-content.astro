@@ -58,17 +58,23 @@ const league = Astro.params.league
   {
     domain !== 'PGA' ? (
       <>
-        <div class="bg-gray-6 dark:bg-gray-4 text-gray-5 dark:text-inherit flex lg:hidden font-semibold text-center mb-3 rounded-full relative overflow-clip">
-          <div class="absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 group-has-[#stat:checked]:translate-x-0 group-has-[#musing:checked]:translate-x-full transition-transform ease-out" />
+        <div class="bg-gray-8 dark:bg-gray-3 text-inherit border border-gray-6 dark:border-gray-3 flex lg:hidden text-center mb-3 rounded-full relative overflow-clip">
+          <div class="absolute h-full w-1/2 bg-teal dark:bg-gray-7 rounded-full left-0 group-has-[#stat:checked]:translate-x-0 group-has-[#musing:checked]:translate-x-full transition-transform ease-out" />
           <label
             for="stat"
-            class="flex-1 py-1 hover:cursor-pointer group-has-[#stat:checked]:text-gray-3 relative"
+            class:list={{
+              'flex-1 py-1 hover:cursor-pointer relative': true,
+              'dark:group-has-[#stat:checked]:text-gray-3 group-has-[#stat:checked]:text-gray-8 group-has-[#stat:checked]:font-semibold': true,
+            }}
           >
             Stats
           </label>
           <label
             for="musing"
-            class="flex-1 py-1 hover:cursor-pointer group-has-[#musing:checked]:text-gray-3 relative"
+            class:list={{
+              'flex-1 py-1 hover:cursor-pointer relative': true,
+              'dark:group-has-[#musing:checked]:text-gray-3 group-has-[#musing:checked]:text-gray-8 group-has-[#musing:checked]:font-semibold': true,
+            }}
           >
             Musings
           </label>
