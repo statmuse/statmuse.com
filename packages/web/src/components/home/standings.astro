@@ -2,7 +2,8 @@
 import StandingsCard from '@components/cards/standings-card.astro'
 import Panel from '@components/panel.astro'
 import type { GameraDomain, StandingsTeam } from '@statmuse/core/gamera'
-import type { Dictionary } from 'lodash'
+import { type Dictionary } from 'lodash'
+import { orderBy } from 'lodash-es'
 
 interface Props {
   domain: GameraDomain
@@ -32,42 +33,46 @@ const tabTitle = (name: string, domain: GameraDomain) => {
   {
     Object.entries(standings.teams).length > 1 && (
       <div class="flex text-center -mx-3">
-        {Object.entries(standings.teams).map(([name, _teams], index) => (
-          <label
-            for={`standings-${index}`}
-            class:list={[
-              'flex-1 py-2 text-gray-5 bg-gray-6 dark:bg-gray-4 hover:cursor-pointer',
-              {
-                'group-has-[#standings-0:checked]:bg-gray-8 dark:group-has-[#standings-0:checked]:bg-gray-3 group-has-[#standings-0:checked]:text-inherit group-has-[#standings-0:checked]:font-semibold':
-                  index === 0,
-                'group-has-[#standings-1:checked]:bg-gray-8 dark:group-has-[#standings-1:checked]:bg-gray-3 group-has-[#standings-1:checked]:text-inherit group-has-[#standings-1:checked]:font-semibold':
-                  index === 1,
-              },
-            ]}
-          >
-            {tabTitle(name, domain)}
-          </label>
-        ))}
+        {orderBy(Object.entries(standings.teams), '0').map(
+          ([name, _teams], index) => (
+            <label
+              for={`standings-${index}`}
+              class:list={[
+                'flex-1 py-2 text-gray-5 bg-gray-6 dark:bg-gray-4 hover:cursor-pointer',
+                {
+                  'group-has-[#standings-0:checked]:bg-gray-8 dark:group-has-[#standings-0:checked]:bg-gray-3 group-has-[#standings-0:checked]:text-inherit group-has-[#standings-0:checked]:font-semibold':
+                    index === 0,
+                  'group-has-[#standings-1:checked]:bg-gray-8 dark:group-has-[#standings-1:checked]:bg-gray-3 group-has-[#standings-1:checked]:text-inherit group-has-[#standings-1:checked]:font-semibold':
+                    index === 1,
+                },
+              ]}
+            >
+              {tabTitle(name, domain)}
+            </label>
+          ),
+        )}
       </div>
     )
   }
   {
-    Object.entries(standings.teams).map(([_name, teams], index) => (
-      <div class="-mx-3">
-        <input
-          class="absolute top-0 opacity-0 peer"
-          type="radio"
-          name="standings"
-          id={`standings-${index}`}
-          checked={index === 0}
-        />
-        <StandingsCard
-          class="pt-0 hidden peer-checked:block w-full !border-none"
-          {teams}
-          {domain}
-          {group}
-        />
-      </div>
-    ))
+    orderBy(Object.entries(standings.teams), '0').map(
+      ([_name, teams], index) => (
+        <div class="-mx-3">
+          <input
+            class="absolute top-0 opacity-0 peer"
+            type="radio"
+            name="standings"
+            id={`standings-${index}`}
+            checked={index === 0}
+          />
+          <StandingsCard
+            class="pt-0 hidden peer-checked:block w-full !border-none"
+            {teams}
+            {domain}
+            {group}
+          />
+        </div>
+      ),
+    )
   }
 </Panel>

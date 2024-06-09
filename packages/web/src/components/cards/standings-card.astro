@@ -11,7 +11,7 @@ import type {
   StandingsEpl,
   StandingsTeam,
 } from '@statmuse/core/gamera'
-import { groupBy } from 'lodash-es'
+import { groupBy, orderBy } from 'lodash-es'
 
 type PanelProps = ComponentProps<typeof Panel>
 
@@ -277,7 +277,7 @@ const mapToGrid = (teams: Props['teams'], conference?: string): GameraGrid => {
     .sort((a, b) => a.rank.value - b.rank.value)
     .slice(0, limit)
 
-  return { columns, rows }
+  return { columns, rows, name: conference }
 }
 
 const firstTeam = props.teams[0]
@@ -292,6 +292,22 @@ const grids = props.group
         firstTeam.conference?.name ?? firstTeam.league?.name,
       ),
     ]
+
+const orderMlbDivisions = (x: GameraGrid) => {
+  return {
+    'AL East': 0,
+    'AL Central': 1,
+    'AL West': 2,
+    'NL East': 0,
+    'NL Central': 1,
+    'NL West': 2,
+  }[x.name ?? '']
+}
 ---
 
-<Grid {...props} data={grids} columnStyles={{ rank: 'w-2' }} textInherit />
+<Grid
+  {...props}
+  data={orderBy(grids, props.domain !== 'MLB' ? 'name' : orderMlbDivisions)}
+  columnStyles={{ rank: 'w-2' }}
+  textInherit
+/>
