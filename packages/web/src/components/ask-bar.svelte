@@ -2,7 +2,7 @@
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <!-- svelte-ignore a11y-role-has-required-aria-props -->
 <script lang="ts">
-  import { onMount, afterUpdate } from 'svelte'
+  import { onMount } from 'svelte'
   import { throttle, uniqBy } from 'lodash-es'
   import { session } from '@lib/stores'
   import type { AskDocument } from '@statmuse/core/elastic'
