@@ -25,11 +25,12 @@ interface Props {
 const { title, sections } = Astro.props
 ---
 
-<Panel {title} class="!pb-0">
+<Panel class="!pb-0">
+  <h3 class="font-bold">{title}</h3>
   <div class="divide-y divide-gray-6 dark:divide-gray-4">
     {
       sections?.map((section) => (
-        <div class="-mx-3 px-3">
+        <div class="-mx-3 pt-2 px-3">
           <p class="text-sm text-gray-5">{section.title}</p>
           <div class="flex">
             <div class="flex-1">
