@@ -3,7 +3,7 @@
 <!-- svelte-ignore a11y-invalid-attribute -->
 <script lang="ts">
   import type { ComponentProps } from 'svelte'
-  import { orderBy, some, upperCase } from 'lodash-es'
+  import { orderBy, some } from 'lodash-es'
   import { session } from '@lib/stores'
   import type { GameraGrid } from '@statmuse/core/gamera'
   import EntityLink from '@components/entity-link.svelte'
@@ -33,6 +33,7 @@
   export let entity: PanelProps['entity'] = undefined
   export let classes: string | undefined = undefined
   export { classes as class }
+  export let textInherit = false
 
   const styles = Object.assign(
     { ALIGNMENT: 'w-2', SEASON: 'text-center' },
@@ -227,7 +228,7 @@
                   class:left-0={col.sticky}
                   class:bg-gray-8={col.sticky}
                   class:dark:bg-gray-3={col.sticky}
-                  class:bg-team-primary={sortKey === col.rowItemKey}
+                  class:!bg-team-primary={sortKey === col.rowItemKey}
                   class:text-team-secondary={sortKey === col.rowItemKey}
                   on:click={onClickSort(col.rowItemKey)}
                 >
@@ -271,6 +272,8 @@
                       {entity}
                       class={rowHighlight || sortKey === col.rowItemKey
                         ? 'text-team-secondary'
+                        : textInherit
+                        ? 'text-inherit'
                         : ''}
                     >
                       {#if col.rowItemKey === 'IMAGE'}
