@@ -94,16 +94,33 @@ const analyticsProperties = Object.assign(
   analytics,
 )
 
+const league = Astro.params.league
+
 const trendingData = Astro.locals.trendingData
 const trending = money
   ? [
-      find(trendingData?.datasets, { name: 'Stocks' }),
-      find(trendingData?.datasets, { name: 'Searches' }),
+      {
+        items: find(trendingData?.datasets, { name: 'Stocks' }),
+        href: '/money/trending/stocks',
+      },
+      {
+        items: find(trendingData?.datasets, { name: 'Searches' }),
+        href: '/money/trending/searches',
+      },
     ]
   : [
-      find(trendingData?.datasets, { name: 'Players' }),
-      find(trendingData?.datasets, { name: 'Teams' }),
-      find(trendingData?.datasets, { name: 'Searches' }),
+      {
+        items: find(trendingData?.datasets, { name: 'Players' }),
+        href: league ? `/${league}/trending/players` : '/trending/players',
+      },
+      {
+        items: find(trendingData?.datasets, { name: 'Teams' }),
+        href: league ? `/${league}/trending/teams` : '/trending/teams',
+      },
+      {
+        items: find(trendingData?.datasets, { name: 'Searches' }),
+        href: league ? `/${league}/trending/searches` : '/trending/searches',
+      },
     ]
 
 const canonicalUrl = meta?.canonical
@@ -303,10 +320,11 @@ const canonicalUrl = meta?.canonical
                 <div class="space-y-3">
                   {trending.map(
                     (trend) =>
-                      trend && (
+                      trend.items && (
                         <TrendingList
-                          title={`Trending ${trend.name}`}
-                          items={trend.items}
+                          title={`Trending ${trend.items.name}`}
+                          items={trend.items.items}
+                          href={trend.href}
                           smallImage
                         />
                       ),

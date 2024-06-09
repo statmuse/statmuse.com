@@ -8,17 +8,20 @@ interface Props {
   items: Item[]
   title: string
   moreUrl?: string
+  href?: string
   eager?: boolean
   prominent?: boolean
   class?: string | null
   smallImage?: boolean
 }
 
-const { items, title, eager, moreUrl, prominent, smallImage } = Astro.props
+const { items, title, eager, moreUrl, prominent, smallImage, href } =
+  Astro.props
 ---
 
 <Panel
   {title}
+  {href}
   class:list={{
     [Astro.props.class ?? '']: !!Astro.props.class,
     'pb-0': !moreUrl,

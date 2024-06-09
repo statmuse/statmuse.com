@@ -50,6 +50,8 @@ const {
   trendingSearches,
   examples,
 } = Astro.props
+
+const league = Astro.params.league
 ---
 
 <div class="group">
@@ -247,18 +249,33 @@ const {
                       {trendingPlayers && (
                         <TrendingList
                           title={`Trending ${trendingPlayers.name}`}
+                          href={
+                            league
+                              ? `/${league}/trending/players`
+                              : '/trending/players'
+                          }
                           items={trendingPlayers.items}
                         />
                       )}
                       {trendingTeams && (
                         <TrendingList
                           title={`Trending ${trendingTeams.name}`}
+                          href={
+                            league
+                              ? `/${league}/trending/teams`
+                              : '/trending/teams'
+                          }
                           items={trendingTeams.items}
                         />
                       )}
                       {trendingSearches && (
                         <TrendingList
                           title={`Trending ${trendingSearches.name}`}
+                          href={
+                            league
+                              ? `/${league}/trending/searches`
+                              : '/trending/searches'
+                          }
                           items={trendingSearches.items}
                         />
                       )}
@@ -268,18 +285,33 @@ const {
                     {trendingPlayers && (
                       <TrendingList
                         title={`Trending ${trendingPlayers.name}`}
+                        href={
+                          league
+                            ? `/${league}/trending/players`
+                            : '/trending/players'
+                        }
                         items={trendingPlayers.items}
                       />
                     )}
                     {trendingTeams && (
                       <TrendingList
                         title={`Trending ${trendingTeams.name}`}
+                        href={
+                          league
+                            ? `/${league}/trending/teams`
+                            : '/trending/teams'
+                        }
                         items={trendingTeams.items}
                       />
                     )}
                     {trendingSearches && (
                       <TrendingList
                         title={`Trending ${trendingSearches.name}`}
+                        href={
+                          league
+                            ? `/${league}/trending/searches`
+                            : '/trending/searches'
+                        }
                         items={trendingSearches.items}
                       />
                     )}
