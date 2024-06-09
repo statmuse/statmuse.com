@@ -2,18 +2,33 @@
 import type { StandingsDetail } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
 import Standings from '@components/standings.astro'
+import { orderBy } from 'lodash-es'
 
 interface Props extends HTMLAttributes<'div'> {
   detail: StandingsDetail
 }
 
+const orderMlbDivisions = (x: StandingsDetail['standings'][number]) => {
+  return {
+    'AL/East': 0,
+    'AL/Central': 1,
+    'AL/West': 2,
+    'NL/East': 0,
+    'NL/Central': 1,
+    'NL/West': 2,
+  }[x.group ?? '']
+}
+
 const detail = Astro.props.detail
-const alStandings = detail.standings
-  .filter((x) => x.group.includes('AL'))
-  .sort((a, b) => a.group.localeCompare(b.group))
-const nlStandings = detail.standings
-  .filter((x) => x.group.includes('NL'))
-  .sort((a, b) => a.group.localeCompare(b.group))
+const alStandings = orderBy(
+  detail.standings.filter((x) => x.group.includes('AL')),
+  orderMlbDivisions,
+)
+
+const nlStandings = orderBy(
+  detail.standings.filter((x) => x.group.includes('NL')),
+  orderMlbDivisions,
+)
 const groups = [
   { name: 'AL', standings: alStandings },
   { name: 'NL', standings: nlStandings },

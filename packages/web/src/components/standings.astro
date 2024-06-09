@@ -41,11 +41,9 @@ function addImageToGrid(grid: GameraGrid): GameraGrid {
         {groups.map((group) => (
           <TabPanel title={group.name}>
             {group.standings.map((x) => (
-              <div class="my-4">
-                <h3 class="font-bold text-team-primary mb-0.5">
-                  {x.grid.name}
-                </h3>
+              <div class="my-3">
                 <Grid
+                  title={x.grid.name}
                   stickyColumns={['TEAM']}
                   columnStyles={{ TEAM: 'w-28' }}
                   data={addImageToGrid(x.grid)}
