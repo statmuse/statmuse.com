@@ -267,6 +267,7 @@
                       sortKey === col.rowItemKey}
                     class:text-team-secondary={rowHighlight ||
                       sortKey === col.rowItemKey}
+                    class:text-gray-5={col.rowItemKey === 'RANK'}
                   >
                     <EntityLink
                       {entity}

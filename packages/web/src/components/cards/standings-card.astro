@@ -148,7 +148,7 @@ const getColumns = (name?: string) => {
   if (props.domain === 'NBA' || props.domain === 'EPL') {
     columns = [
       {
-        rowItemKey: 'rank',
+        rowItemKey: 'RANK',
         title: '',
         type: 'number',
       },
@@ -162,12 +162,12 @@ const getColumns = (name?: string) => {
 const getRow = (
   team: (typeof props)['teams'][number],
 ): GameraGrid['rows'][number] & {
-  rank: { display: string; value: number }
+  RANK: { display: string; value: number }
 } => {
   if (props.domain === 'NBA') {
     const nbaTeam = team as StandingsNba
     return {
-      rank: {
+      RANK: {
         display: nbaTeam.rank[props.group ?? 'conference'] + '',
         value: nbaTeam.rank[props.group ?? 'conference'],
       },
@@ -187,7 +187,7 @@ const getRow = (
   if (props.domain === 'MLB') {
     const mlbTeam = team as StandingsMlb
     return {
-      rank: {
+      RANK: {
         display: mlbTeam.rank[props.group ?? 'league'] + '',
         value: mlbTeam.rank[props.group ?? 'league'],
       },
@@ -207,7 +207,7 @@ const getRow = (
   if (props.domain === 'NFL') {
     const nflTeam = team as StandingsNfl
     return {
-      rank: {
+      RANK: {
         display: nflTeam.rank[props.group ?? 'conference'] + '',
         value: nflTeam.rank[props.group ?? 'conference'],
       },
@@ -227,7 +227,7 @@ const getRow = (
   if (props.domain === 'NHL') {
     const nhlTeam = team as StandingsNhl
     return {
-      rank: {
+      RANK: {
         display: nhlTeam.rank[props.group ?? 'conference'] + '',
         value: nhlTeam.rank[props.group ?? 'conference'],
       },
@@ -248,7 +248,7 @@ const getRow = (
   if (props.domain === 'EPL') {
     const eplTeam = team as StandingsEpl
     return {
-      rank: {
+      RANK: {
         display: eplTeam.rank.league + '',
         value: eplTeam.rank.league,
       },
@@ -274,7 +274,7 @@ const mapToGrid = (teams: Props['teams'], conference?: string): GameraGrid => {
 
   const rows = teams
     .map((team) => getRow(team))
-    .sort((a, b) => a.rank.value - b.rank.value)
+    .sort((a, b) => a.RANK.value - b.RANK.value)
     .slice(0, limit)
 
   return { columns, rows, name: conference }
@@ -308,6 +308,6 @@ const orderMlbDivisions = (x: GameraGrid) => {
 <Grid
   {...props}
   data={orderBy(grids, props.domain !== 'MLB' ? 'name' : orderMlbDivisions)}
-  columnStyles={{ rank: 'w-2' }}
+  columnStyles={{ RANK: 'w-2' }}
   textInherit
 />
