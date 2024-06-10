@@ -51,9 +51,9 @@
         }`
       : 'Choose an option'}
     {#if $open}
-      <Icon name="dropdown-up" class="w-5 h-5" />
+      <Icon name="dropdown-up" class="w-4 h-4" />
     {:else}
-      <Icon name="dropdown" class="w-5 h-5" />
+      <Icon name="dropdown" class="w-4 h-4" />
     {/if}
   </button>
   {#if $open}
