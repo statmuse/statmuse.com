@@ -26,7 +26,23 @@ const getImageUrl = (src: string | { answer: Answer }) => {
   return url
 }
 
+const multiplier = 3
 const src = getImageUrl(Astro.props.src)
+const width =
+  typeof Astro.props.width === 'string'
+    ? Number.parseInt(Astro.props.width || '0')
+    : Astro.props.width || 0
 ---
 
-{src ? <AstroImage {...Astro.props} {src} densities={[1, 2, 3]} /> : <div />}
+{
+  src ? (
+    <AstroImage
+      widths={[width * multiplier]}
+      sizes={`${width * multiplier}px`}
+      {...Astro.props}
+      {src}
+    />
+  ) : (
+    <div />
+  )
+}

@@ -31,18 +31,22 @@
     return url
   }
 
+  const multiplier = 3
   const imageUrl = getImageUrl(source)
   const encoded = imageUrl ? encodeURIComponent(imageUrl) : undefined
   const src = imageUrl
-    ? `/_image?href=${encoded}&f=webp&w=${width}&h=${height}`
+    ? `/_image?href=${encoded}&f=webp&w=${width * multiplier}&h=${
+        height * multiplier
+      }`
     : undefined
-  const srcset = `/_image?href=${encoded}&w=${width}&h=${height}&f=webp 1x, /_image?href=${encoded}&w=${
-    width * 2
-  }&f=webp 2x, /_image?href=${encoded}&w=${width * 3}&f=webp 3x`
+  const srcset = `/_image?href=${encoded}&w=${width * multiplier}&h=${
+    height * multiplier
+  }&f=webp ${width * multiplier}px`
+  const sizes = `${width * multiplier}px`
 </script>
 
 {#if source}
-  <img {src} {srcset} {alt} {width} {height} {...$$restProps} />
+  <img {src} {srcset} {sizes} {alt} {width} {height} {...$$restProps} />
 {:else}
   <div />
 {/if}
