@@ -30,10 +30,10 @@ const { title, sections } = Astro.props
   <div class="divide-y divide-gray-6 dark:divide-gray-4">
     {
       sections?.map((section) => (
-        <div class="-mx-3 pt-2 px-3">
-          <p class="text-sm text-gray-5 mb-0.5">{section.title}</p>
+        <div class="-mx-3 py-2 px-3">
           <div class="flex">
             <div class="flex-1">
+              <p class="text-sm text-gray-5 mb-0.5">{section.title}</p>
               {section.items.map((item, index) => (
                 <div
                   class="flex"
@@ -43,7 +43,7 @@ const { title, sections } = Astro.props
                     <span
                       class:list={{
                         'px-2 rounded-2xl text-white': index === 0,
-                        'ml-1': index !== 0,
+                        'ml-2': index !== 0,
                       }}
                       style={
                         index === 0
@@ -61,7 +61,7 @@ const { title, sections } = Astro.props
               ))}
             </div>
             {Array.isArray(section.images) ? (
-              <div class="relative h-[90px] flex items-end">
+              <div class="relative h-[90px] self-end flex items-end -mb-2">
                 {section.images.map((url, index) => (
                   <Image
                     class:list={[
@@ -84,7 +84,7 @@ const { title, sections } = Astro.props
               </div>
             ) : (
               <Image
-                class="h-[90px] max-w-[120px] select-none object-contain object-bottom"
+                class="h-[90px] max-w-[120px] select-none self-end object-contain object-bottom -mb-2"
                 alt={section.items[0]?.display}
                 src={section.items[0]?.imageUrl}
                 width={180}
