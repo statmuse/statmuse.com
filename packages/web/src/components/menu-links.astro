@@ -167,6 +167,7 @@ const menuLinks = [
                         'md:flex-initial': true,
                         'hover:text-teal hover:no-underline': true,
                         '!text-teal': currentUrl?.test(Astro.url.pathname),
+                        'font-semibold': currentUrl?.test(Astro.url.pathname),
                         [classes ?? '']: !!classes,
                       }}
                     >
