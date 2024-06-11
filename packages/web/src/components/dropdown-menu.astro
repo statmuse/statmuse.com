@@ -3,6 +3,7 @@ import ElephantIcon from '@components/icons/elephant.astro'
 import Logo from '@components/logo.astro'
 import MenuLinks from '@components/menu-links.astro'
 import Icon from '@components/icon.svelte'
+import ThemeSwitch from './theme-switch.svelte'
 
 interface Props {
   showElephant?: boolean
@@ -57,6 +58,9 @@ const { showElephant } = Astro.props
         >
           <Logo class="w-[150px] fill-black" />
         </a>
+        <div class="absolute top-[15px] right-3 md:hidden">
+          <ThemeSwitch client:load />
+        </div>
       </div>
       <MenuLinks id="dropdown" class="p-3 w-[220px]" />
     </div>
