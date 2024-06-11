@@ -13,9 +13,10 @@ import { getLeagueKeywords } from '@lib/meta'
 import { NOT_FOUND_404 } from '@lib/response'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
-import { age, formatDate } from '@statmuse/core/time'
+import { formatDate } from '@statmuse/core/time'
 import EntityLink from './entity-link.astro'
-import PlayerPerformanceCard from './player/performance-card.astro'
+import PlayerPerformanceCard from '@components/player/performance-card.astro'
+import BioPanel from '@components/player/bio-panel.astro'
 
 interface Props {
   league: LeagueParam
@@ -64,114 +65,6 @@ const keywords = `${getLeagueKeywords(domain)} ${
 const canonical = { url: playerPath, rewrite: true }
 const meta = { title, description, keywords, canonical }
 const league = domain.toLowerCase() === 'epl' ? 'fc' : leagueParam
-
-const facts: { label: string; value: string }[] = []
-
-if (bio.position) facts.push({ label: 'Position', value: bio.position })
-if (bio.jerseyNumber)
-  facts.push({ label: 'Number', value: '#' + bio.jerseyNumber })
-if (bio.birthdate)
-  facts.push({
-    label: formatDate(bio.birthdate, 'MMM D, YYYY'),
-    value: age(bio.birthdate) + ' years',
-  })
-if (league === 'fc') {
-  if (bio.heightCentimeters)
-    facts.push({ label: 'Height', value: bio.heightCentimeters })
-  if (bio.preferredFoot)
-    facts.push({ label: 'Preferred foot', value: bio.preferredFoot })
-  if (bio.nationality) facts.push({ label: 'Country', value: bio.nationality })
-} else {
-  if (bio.heightFeetInches)
-    facts.push({ label: 'Height', value: bio.heightFeetInches })
-  if (bio.weightLbs)
-    facts.push({ label: 'Weight', value: bio.weightLbs + ' lbs' })
-  if (bio.experience) facts.push({ label: 'Experience', value: bio.experience })
-}
-if (bio.awards) {
-  const awards: { label: string; years: number }[] = []
-
-  const getAward = (name: string, label?: string) => {
-    const award = bio.awards.find((a) => a.name === name)
-    if (award?.years.length) {
-      const existing = awards.find((a) => a.label === (label ?? name))
-      if (existing) existing.years += award.years.length
-      else awards.push({ label: label ?? name, years: award.years.length })
-    }
-  }
-
-  switch (league) {
-    case 'nba':
-      getAward('NBA Champion', 'NBA Champ')
-      getAward('MVP')
-      getAward('Finals MVP')
-      getAward('Defensive Player Of The Year', 'DPOY')
-      getAward('Rookie Of The Year', 'ROY')
-      getAward('Sixth Man Of The Year', '6MOY')
-      getAward('Most Improved Player', 'MIP')
-      getAward('All-Star')
-      getAward('All-NBA 1st Team', 'All-NBA')
-      getAward('All-NBA 2nd Team', 'All-NBA')
-      getAward('All-NBA 3rd Team', 'All-NBA')
-      getAward('All-Defense 1st Team', 'All-Defense')
-      getAward('All-Defense 2nd Team', 'All-Defense')
-      getAward('All-Rookie 1st Team', 'All-Rookie')
-      getAward('All-Rookie 2nd Team', 'All-Rookie')
-      break
-    case 'nfl':
-      getAward('NFL Champion', 'NFL Champ')
-      getAward('MVP')
-      getAward('Super Bowl MVP', 'SB MVP')
-      getAward('Offensive Player Of The Year', 'OPOY')
-      getAward('Defensive Player Of The Year', 'DPOY')
-      getAward('Offensive Rookie Of The Year', 'OROY')
-      getAward('Defensive Rookie Of The Year', 'DROY')
-      getAward('Comeback Player Of The Year', 'CPOY')
-      getAward('Man Of The Year')
-      getAward('Pro Bowl')
-      getAward('All-Pro 1st Team', 'All-Pro')
-      getAward('All-Pro 2nd Team', 'All-Pro')
-      getAward('All-Rookie 1st Team', 'All-Rookie')
-      getAward('All-Rookie 2nd Team', 'All-Rookie')
-      break
-    case 'mlb':
-      getAward('World Series Champion', 'WS Champ')
-      getAward('AL MVP')
-      getAward('NL MVP')
-      getAward('ALCS MVP')
-      getAward('NLCS MVP')
-      getAward('WS MVP')
-      getAward('AL Cy Young Award', 'AL CY')
-      getAward('NL Cy Young Award', 'NL CY')
-      getAward('AL Rookie Of The Year', 'AL ROY')
-      getAward('NL Rookie Of The Year', 'NL ROY')
-      getAward('AL Comeback Player Of The Year', 'AL CPOY')
-      getAward('NL Comeback Player Of The Year', 'NL CPOY')
-      getAward('AL Gold Glove')
-      getAward('NL Gold Glove')
-      getAward('AL Silver Slugger')
-      getAward('NL Silver Slugger')
-      break
-    case 'nhl':
-      getAward('Stanley Cup', 'SC Champ')
-      getAward('Hart Trophy', 'Hart')
-      getAward('Conn Smythe Trophy', 'Conn Smythe')
-      getAward('Calder Trophy', 'Calder')
-      getAward('Norris Trophy', 'Norris')
-      getAward('Vezina Trophy', 'Vezina')
-      getAward('Selke Trophy', 'Selke')
-      getAward('Lady Byng Trophy', 'Lady Byng')
-      break
-  }
-
-  if (awards.length > 1) {
-    facts.push(
-      ...awards
-        .slice(0, 3)
-        .map((a) => ({ label: a.label, value: `${a.years}x` })),
-    )
-  }
-}
 
 const nextGameOpponnent = isNextGameHome
   ? nextGame?.awayTeam
@@ -413,6 +306,18 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   },
 }
 
+// console.log(
+//   'rows',
+//   stats?.grid.rows.map((r) => r[stats?.grid.columns[0].rowItemKey].display),
+// )
+// const seasonStatFirstTwo = stats?.grid.rows.slice(0, 2)
+// const inactive = !!seasonStatFirstTwo?.find((r) =>
+//   r[stats?.grid.columns[0].rowItemKey].display.includes('Career'),
+// )
+// console.log('inactive', inactive)
+// const statPanelStartIndex = inactive ? -2 : 0
+// const statPanelEndIndex = inactive ? stats?.grid.rows.length : 2
+
 const statPanels = stats?.grid.rows
   .slice(0, 2)
   .map((r) => r[stats?.grid.columns[0].rowItemKey].display)
@@ -428,7 +333,7 @@ const seasonPanels = statPanels.map((title, index) => ({
   ),
 }))
 
-console.log('stats', JSON.stringify(stats?.grid.rows, undefined, 2))
+// console.log('stats', JSON.stringify(stats?.grid.rows, undefined, 2))
 
 const nextGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   fc: {
@@ -573,23 +478,7 @@ const games = recentGames?.grid.rows.map((r, index) => ({
 
 <PlayerLayout {bio} {meta} {league} {query} {analytics} page="overview">
   <div class="space-y-3 gap-3 justify-center lg:columns-2">
-    <Panel
-      team
-      class:list={{
-        'grid grid-cols-3 gap-3 py-3 leading-snug items-center': true,
-      }}
-    >
-      {
-        facts.map(({ label, value }) => (
-          <div class="flex flex-col items-center">
-            <div class="whitespace-nowrap">{value}</div>
-            <div class="font-light text-sm opacity-80 whitespace-nowrap">
-              {label}
-            </div>
-          </div>
-        ))
-      }
-    </Panel>
+    <BioPanel {bio} {domain} />
     {
       seasonPanels.map((panel, index) => (
         <Panel

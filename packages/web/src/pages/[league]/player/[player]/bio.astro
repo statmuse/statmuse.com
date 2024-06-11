@@ -8,6 +8,7 @@ import { Caching } from '@lib/caching'
 import { NOT_FOUND_404 } from '@lib/response'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import Panel from '@components/panel.astro'
+import BioPanel from '@components/player/bio-panel.astro'
 
 const league = Astro.params.league as LeagueParam
 const player = Astro.params.player
@@ -29,116 +30,30 @@ Caching.swr(Astro)
 ---
 
 <PlayerLayout {league} {bio} {meta} page="bio">
+  {bio && <BioPanel team={false} expanded {bio} {domain} />}
+  {
+    bio && bio.awards && bio.awards.length > 0 && (
+      <Panel title="Awards">
+        <div class="flex flex-col gap-2">
+          {bio.awards.map((award) => (
+            <div class="leading-tight">
+              <div class="whitespace-nowrap">
+                {award.years.length > 1
+                  ? `${award.years.length}x ${award.name}`
+                  : award.name}
+              </div>
+              <div class="font-light text-sm text-gray-5">
+                {award.years.join(', ')}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+    )
+  }
   <Panel title="Summary">
     <div class="leading-snug">
       <p set:html={summary} />
     </div>
   </Panel>
-  {
-    bio && league !== 'fc' && (
-      <Panel title="Facts">
-        <table class="border-collapse leading-tight">
-          <tbody>
-            {bio.birthdate && (
-              <tr>
-                <td>Born:</td>
-                <td class="pl-4">
-                  {birthdate}
-                  {bio.age && ` (age ${bio.age})`}
-                </td>
-              </tr>
-            )}
-            {bio.birthplace && (
-              <tr>
-                <td>Birth Place:</td>
-                <td class="pl-4">{bio.birthplace}</td>
-              </tr>
-            )}
-            {bio.drafted && (
-              <tr>
-                <td>Drafted:</td>
-                <td class="pl-4">{bio.drafted}</td>
-              </tr>
-            )}
-            {bio.college && (
-              <tr>
-                <td>College:</td>
-                <td class="pl-4">{bio.college}</td>
-              </tr>
-            )}
-            {bio.experience && (
-              <tr>
-                <td>Experience:</td>
-                <td class="pl-4">{bio.experience}</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </Panel>
-    )
-  }
-  {
-    bio && league === 'fc' && (
-      <Panel title="Facts">
-        <table class="border-collapse leading-tight">
-          <tbody>
-            {bio.position && (
-              <tr>
-                <td>Position:</td>
-                <td class="pl-4">{bio.position}</td>
-              </tr>
-            )}
-            {bio.nationality && (
-              <tr>
-                <td>Nationality:</td>
-                <td class="pl-4">{bio.nationality}</td>
-              </tr>
-            )}
-            {bio.birthdate && (
-              <tr>
-                <td>Born:</td>
-                <td class="pl-4">
-                  {birthdate}
-                  {bio.age && ` (age ${bio.age})`}
-                </td>
-              </tr>
-            )}
-            {bio.heightCentimeters && (
-              <tr>
-                <td>Height:</td>
-                <td class="pl-4">{bio.heightCentimeters}</td>
-              </tr>
-            )}
-            {bio.weightKgs && (
-              <tr>
-                <td>Weight:</td>
-                <td class="pl-4">{bio.weightKgs} kg</td>
-              </tr>
-            )}
-            {bio.preferredFoot && (
-              <tr>
-                <td>Preferred Foot:</td>
-                <td class="pl-4">{bio.preferredFoot}</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </Panel>
-    )
-  }
-  {
-    bio && bio.awards && bio.awards.length > 0 && (
-      <Panel title="Awards" class="leading-tight">
-        <ul class="list-disc list-inside">
-          {bio.awards.map((award) => (
-            <li>
-              {award.years.length > 1 ? `${award.years.length}x ` : ''}
-              {award.name}
-              {` (${award.years.join(', ')})`}
-            </li>
-          ))}
-        </ul>
-      </Panel>
-    )
-  }
 </PlayerLayout>

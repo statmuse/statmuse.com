@@ -1,0 +1,166 @@
+---
+import Panel from '@components/panel.astro'
+import type { LeagueParam } from '@lib/params'
+import type { GameraDomain, GameraPlayerBio } from '@statmuse/core/gamera'
+import { age, formatDate } from '@statmuse/core/time'
+import type { ComponentProps } from 'astro/types'
+
+interface Props extends Pick<ComponentProps<typeof Panel>, 'team'> {
+  bio: GameraPlayerBio
+  domain: GameraDomain
+  expanded?: boolean
+}
+
+const { bio, domain, expanded, ...panelProps } = Astro.props
+const league = (
+  domain.toLowerCase() === 'epl' ? 'fc' : domain.toLowerCase()
+) as LeagueParam
+
+const facts: { label: string; value: string }[] = []
+if (bio.position) facts.push({ label: 'Position', value: bio.position })
+if (bio.jerseyNumber)
+  facts.push({ label: 'Number', value: '#' + bio.jerseyNumber })
+if (bio.birthdate)
+  facts.push({
+    label: formatDate(bio.birthdate, 'MMM D, YYYY'),
+    value: age(bio.birthdate) + ' years',
+  })
+if (league === 'fc') {
+  if (bio.heightCentimeters)
+    facts.push({ label: 'Height', value: bio.heightCentimeters })
+  if (bio.preferredFoot)
+    facts.push({ label: 'Preferred foot', value: bio.preferredFoot })
+  if (bio.nationality) facts.push({ label: 'Country', value: bio.nationality })
+} else {
+  if (bio.heightFeetInches)
+    facts.push({ label: 'Height', value: bio.heightFeetInches })
+  if (bio.weightLbs)
+    facts.push({ label: 'Weight', value: bio.weightLbs + ' lbs' })
+  if (expanded) {
+    if (bio.birthplace) {
+      facts.push({ label: 'Birthplace', value: bio.birthplace })
+    }
+    if (bio.drafted) {
+      const [year, ...rest] = bio.drafted.split(' ')
+      facts.push({
+        label: `${year} Draft`,
+        value: rest.join(' ').split(' by ')[0].replace('Pick ', '#'),
+      })
+    }
+    if (bio.college) {
+      facts.push({ label: 'College', value: bio.college })
+    }
+  }
+  if (bio.experience) facts.push({ label: 'Experience', value: bio.experience })
+}
+
+if (bio.awards && !expanded) {
+  const awards: { label: string; years: number }[] = []
+
+  const getAward = (name: string, label?: string) => {
+    const award = bio.awards.find((a) => a.name === name)
+    if (award?.years.length) {
+      const existing = awards.find((a) => a.label === (label ?? name))
+      if (existing) existing.years += award.years.length
+      else awards.push({ label: label ?? name, years: award.years.length })
+    }
+  }
+
+  switch (league) {
+    case 'nba':
+      getAward('NBA Champion', 'NBA Champ')
+      getAward('MVP')
+      getAward('Finals MVP')
+      getAward('Defensive Player Of The Year', 'DPOY')
+      getAward('Rookie Of The Year', 'ROY')
+      getAward('Sixth Man Of The Year', '6MOY')
+      getAward('Most Improved Player', 'MIP')
+      getAward('All-Star')
+      getAward('All-NBA 1st Team', 'All-NBA')
+      getAward('All-NBA 2nd Team', 'All-NBA')
+      getAward('All-NBA 3rd Team', 'All-NBA')
+      getAward('All-Defense 1st Team', 'All-Defense')
+      getAward('All-Defense 2nd Team', 'All-Defense')
+      getAward('All-Rookie 1st Team', 'All-Rookie')
+      getAward('All-Rookie 2nd Team', 'All-Rookie')
+      break
+    case 'nfl':
+      getAward('NFL Champion', 'NFL Champ')
+      getAward('MVP')
+      getAward('Super Bowl MVP', 'SB MVP')
+      getAward('Offensive Player Of The Year', 'OPOY')
+      getAward('Defensive Player Of The Year', 'DPOY')
+      getAward('Offensive Rookie Of The Year', 'OROY')
+      getAward('Defensive Rookie Of The Year', 'DROY')
+      getAward('Comeback Player Of The Year', 'CPOY')
+      getAward('Man Of The Year')
+      getAward('Pro Bowl')
+      getAward('All-Pro 1st Team', 'All-Pro')
+      getAward('All-Pro 2nd Team', 'All-Pro')
+      getAward('All-Rookie 1st Team', 'All-Rookie')
+      getAward('All-Rookie 2nd Team', 'All-Rookie')
+      break
+    case 'mlb':
+      getAward('World Series Champion', 'WS Champ')
+      getAward('AL MVP')
+      getAward('NL MVP')
+      getAward('ALCS MVP')
+      getAward('NLCS MVP')
+      getAward('WS MVP')
+      getAward('AL Cy Young Award', 'AL CY')
+      getAward('NL Cy Young Award', 'NL CY')
+      getAward('AL Rookie Of The Year', 'AL ROY')
+      getAward('NL Rookie Of The Year', 'NL ROY')
+      getAward('AL Comeback Player Of The Year', 'AL CPOY')
+      getAward('NL Comeback Player Of The Year', 'NL CPOY')
+      getAward('AL Gold Glove')
+      getAward('NL Gold Glove')
+      getAward('AL Silver Slugger')
+      getAward('NL Silver Slugger')
+      break
+    case 'nhl':
+      getAward('Stanley Cup', 'SC Champ')
+      getAward('Hart Trophy', 'Hart')
+      getAward('Conn Smythe Trophy', 'Conn Smythe')
+      getAward('Calder Trophy', 'Calder')
+      getAward('Norris Trophy', 'Norris')
+      getAward('Vezina Trophy', 'Vezina')
+      getAward('Selke Trophy', 'Selke')
+      getAward('Lady Byng Trophy', 'Lady Byng')
+      break
+  }
+
+  if (awards.length > 1) {
+    facts.push(
+      ...awards
+        .slice(0, 3)
+        .map((a) => ({ label: a.label, value: `${a.years}x` })),
+    )
+  }
+}
+---
+
+<Panel
+  team
+  class:list={{
+    'grid grid-cols-3 gap-3 py-3 leading-snug items-center': true,
+  }}
+  {...panelProps}
+>
+  {
+    facts.map(({ label, value }) => (
+      <div class="flex flex-col items-center">
+        <div class="whitespace-nowrap">{value}</div>
+        <div
+          class:list={{
+            'font-light text-sm whitespace-nowrap': true,
+            'opacity-80': panelProps.team === undefined,
+            'text-gray-5': panelProps.team === false,
+          }}
+        >
+          {label}
+        </div>
+      </div>
+    ))
+  }
+</Panel>
