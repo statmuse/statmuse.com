@@ -196,6 +196,10 @@ export const headers = defineMiddleware(async (_context, next) => {
 })
 
 export const trending = defineMiddleware(async (context, next) => {
+  if (context.url.pathname.startsWith('/_image')) {
+    return next()
+  }
+
   const league = context.params.league
     ? context.params.league
     : /^\/money\/?/.test(context.url.pathname)
