@@ -327,6 +327,7 @@ export type GameraToken = {
 
 export type GameraEntity = {
   display: string
+  shortDisplay?: string
   domain: GameraDomain
   type: 'player' | 'teamFranchise' | 'teamSeason' | 'game' | 'player-ask'
   id: string

@@ -332,7 +332,15 @@
                           <div>{score}</div>
                         </div>
                       {:else}
-                        {display}
+                        <span
+                          class:hidden={entity?.shortDisplay}
+                          class:md:block={entity?.shortDisplay}
+                        >
+                          {display}
+                        </span>
+                        {#if entity?.shortDisplay}
+                          <span class="md:hidden">{entity?.shortDisplay}</span>
+                        {/if}
                       {/if}
                     </EntityLink>
                   </td>
