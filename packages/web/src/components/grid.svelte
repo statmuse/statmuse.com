@@ -210,7 +210,7 @@
   class={`${classes} pb-0 ${!fullWidth ? 'md:w-fit' : ''}`}
 >
   <div class="relative overflow-x-auto no-scrollbar -mx-3">
-    <table class="text-[15px] whitespace-nowrap" class:w-full={fullWidth}>
+    <table class="whitespace-nowrap" class:w-full={fullWidth}>
       {#each grids as grid}
         {@const { columns, rows, aggregations } = grid}
         {#if head}
@@ -252,7 +252,7 @@
                     class={`${applyStyles(col)} ${padding} ${
                       imageUrl ? 'w-2' : ''
                     } ${rankingColor(row[columns[0].rowItemKey], display)}`}
-                    class:py-1={!imageUrl}
+                    class:py-2.5={!imageUrl}
                     class:pl-3={index === 0}
                     class:pr-3={index === columns.length - 1}
                     class:sticky={col.sticky}
@@ -338,7 +338,7 @@
                   {#if row[col.rowItemKey]}
                     {@const { display } = row[col.rowItemKey]}
                     <td
-                      class={`${applyStyles(col)} ${padding} py-1`}
+                      class={`${applyStyles(col)} ${padding} py-2.5`}
                       class:sticky={col.sticky}
                       class:left-0={col.sticky}
                       class:pl-3={index === 0}
