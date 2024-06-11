@@ -38,7 +38,13 @@ if (league === 'fc') {
     facts.push({ label: 'Weight', value: bio.weightLbs + ' lbs' })
   if (expanded) {
     if (bio.birthplace) {
-      facts.push({ label: 'Birthplace', value: bio.birthplace })
+      const hasCity = bio.birthplace.includes(',')
+      if (hasCity) {
+        const [city, country] = bio.birthplace.split(', ')
+        facts.push({ label: country, value: city })
+      } else {
+        facts.push({ label: 'Birthplace', value: bio.birthplace })
+      }
     }
     if (bio.drafted) {
       const [year, ...rest] = bio.drafted.split(' ')
