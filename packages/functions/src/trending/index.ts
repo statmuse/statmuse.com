@@ -592,14 +592,7 @@ async function update(
       prominent: true,
       items: teams
         .map((t) => ({
-          title:
-            (t.name.market
-              ? `${t.name.market} ${t.name.nickname}`
-              : t.name.nickname ?? t.name.name) ?? t.name.abbreviation,
-          html:
-            (t.name.market
-              ? `${t.name.market}<br>${t.name.nickname}`
-              : t.name.nickname ?? t.name.name) ?? t.name.abbreviation,
+          title: t.name.nickname ?? t.name.name ?? t.name.abbreviation,
           images: t.reps?.length ? t.reps.map((r) => r.image) : [t.image],
           uri: t.uri,
           background: t.background,
