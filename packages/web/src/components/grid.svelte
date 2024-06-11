@@ -174,6 +174,13 @@
     return false
   }
 
+  for (const col of grids[0].columns) {
+    if (col.tags?.isReferencedInQuestion) {
+      sortOrder = 'desc'
+      sortKey = col.rowItemKey
+    }
+  }
+
   $: {
     if (limitRows) {
       if (
@@ -197,7 +204,11 @@
     if (sortKey) {
       grids = grids.map((grid) => ({
         ...grid,
-        rows: orderBy(grid.rows, `${sortKey}.value`, sortOrder),
+        rows: orderBy(
+          grid.rows,
+          [`${sortKey}.value`, `DATE.value`, `NAME.value`],
+          [sortOrder, 'desc', 'desc'],
+        ),
       }))
     }
   }
@@ -333,7 +344,7 @@
           {/each}
           {#if aggregations}
             {#each aggregations as row (row)}
-              <tr class="text-sm font-bold">
+              <tr>
                 {#each columns as col, index (row[col.rowItemKey])}
                   {#if row[col.rowItemKey]}
                     {@const { display } = row[col.rowItemKey]}

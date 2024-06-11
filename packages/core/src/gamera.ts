@@ -391,6 +391,9 @@ export interface GameraGrid {
     rowItemKey: string
     title: string
     type: string
+    tags?: {
+      isReferencedInQuestion?: boolean
+    }
   }[]
   rows: Record<
     string,
