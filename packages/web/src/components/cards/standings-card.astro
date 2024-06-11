@@ -308,6 +308,17 @@ const orderMlbDivisions = (x: GameraGrid) => {
 <Grid
   {...props}
   data={orderBy(grids, props.domain !== 'MLB' ? 'name' : orderMlbDivisions)}
-  columnStyles={{ RANK: 'w-2' }}
+  columnStyles={{
+    RANK: 'w-2',
+    winPercent: 'w-2',
+    gamesBehind: 'w-2',
+    wins: 'w-2',
+    losses: 'w-2',
+    ties: 'w-2',
+    draws: 'w-2',
+    overtimeLosses: 'w-2',
+    points: 'w-2',
+    goalDifferential: 'w-2',
+  }}
   textInherit
 />

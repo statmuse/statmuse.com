@@ -139,8 +139,14 @@ const league = Astro.params.league
                   client:load
                   options={standings.map((s) => ({
                     value: s?.domain.toLowerCase(),
-                    label: s?.domain === 'EPL' ? 'Premier League' : s?.domain,
+                    label: s?.domain === 'EPL' ? 'PL' : s?.domain,
                   }))}
+                  toggle={{
+                    nba: ['East', 'West'],
+                    nfl: ['AFC', 'NFC'],
+                    nhl: ['East', 'West'],
+                    mlb: ['AL', 'NL'],
+                  }}
                 >
                   {standings[0] && (
                     <Standings
@@ -148,6 +154,7 @@ const league = Astro.params.league
                       standings={standings[0]}
                       domain="EPL"
                       slot="epl"
+                      tabs={false}
                     />
                   )}
                   {standings[1] && (
@@ -156,6 +163,7 @@ const league = Astro.params.league
                       standings={standings[1]}
                       domain="NBA"
                       slot="nba"
+                      tabs={false}
                     />
                   )}
                   {standings[2] && (
@@ -164,6 +172,7 @@ const league = Astro.params.league
                       standings={standings[2]}
                       domain="NFL"
                       slot="nfl"
+                      tabs={false}
                     />
                   )}
                   {standings[3] && (
@@ -172,6 +181,7 @@ const league = Astro.params.league
                       standings={standings[3]}
                       domain="NHL"
                       slot="nhl"
+                      tabs={false}
                     />
                   )}
                   {standings[4] && (
@@ -180,6 +190,7 @@ const league = Astro.params.league
                       standings={standings[4]}
                       domain="MLB"
                       slot="mlb"
+                      tabs={false}
                     />
                   )}
                 </SelectableStandings>

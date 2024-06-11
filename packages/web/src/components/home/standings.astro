@@ -11,9 +11,10 @@ interface Props {
     teams: Dictionary<StandingsTeam[]>
   }
   class?: string
+  tabs?: boolean
 }
 
-const { domain, standings } = Astro.props
+const { domain, standings, tabs = true } = Astro.props
 
 const group = domain !== 'NBA' && domain !== 'EPL' ? 'division' : undefined
 
@@ -31,14 +32,14 @@ const tabTitle = (name: string, domain: GameraDomain) => {
 
 <Panel class={`group !py-0 relative ${Astro.props.class}`}>
   {
-    Object.entries(standings.teams).length > 1 && (
-      <div class="flex text-center -mx-3">
+    tabs && Object.entries(standings.teams).length > 1 && (
+      <div class="flex -mx-3">
         {orderBy(Object.entries(standings.teams), '0').map(
           ([name, _teams], index) => (
             <label
               for={`standings-${index}`}
               class:list={[
-                'flex-1 py-2 text-gray-5 bg-gray-6 dark:bg-gray-4 hover:cursor-pointer',
+                'flex-1 px-3 py-2 pb-1 text-gray-5 bg-gray-6 dark:bg-gray-4 hover:cursor-pointer',
                 {
                   'group-has-[#standings-0:checked]:bg-gray-8 dark:group-has-[#standings-0:checked]:bg-gray-3 group-has-[#standings-0:checked]:text-inherit group-has-[#standings-0:checked]:font-semibold':
                     index === 0,
