@@ -4,8 +4,7 @@ import { ask } from '@lib/gamera'
 import { upsert } from '@statmuse/core/ask'
 import * as Enforcer from '@lib/enforcer'
 import { NOT_FOUND_404 } from '@lib/response'
-import { createSlug } from '@statmuse/core/path'
-import { tokensToHtml } from '@statmuse/core/gamera'
+import { createAskPath } from '@statmuse/core/path'
 import Panel from '@components/panel.astro'
 
 let query: string | null | undefined = Astro.url.searchParams.get('q')
@@ -55,10 +54,10 @@ const domain =
     : response?.visual?.domain?.toLowerCase()
 
 if (queryClarificationFor)
-  return Astro.redirect(`/${domain}/ask/${createSlug(queryClarificationFor)}`)
+  return Astro.redirect(createAskPath({ domain, query: queryClarificationFor }))
 
 if (response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional')
-  return Astro.redirect(`/${domain}/ask/${createSlug(query)}`)
+  return Astro.redirect(createAskPath({ domain, query }))
 ---
 
 <Layout
