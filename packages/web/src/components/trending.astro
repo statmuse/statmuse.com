@@ -102,20 +102,66 @@ const backUrl =
         category ? (
           <a
             href={backUrl}
-            class="@lg/main:hidden absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-8 cursor-pointer rounded-full md:p-3 hover:bg-gray-8 hover:text-teal"
+            class="absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-8 cursor-pointer rounded-full p-3 hover:bg-gray-8 hover:text-teal"
           >
             <Back class="w-5 aspect-square" />
           </a>
         ) : null
       }
+      <div class="w-14 hidden @lg/main:block"></div>
+      <div class="hidden @2xl/main:flex gap-3 absolute right-3 bottom-3">
+        <Select
+          client:load
+          class="md:w-[200px]"
+          hideLabel
+          label="Timeframe"
+          param="timeframe"
+          initial={Astro.url.searchParams.get('timeframe')}
+          options={[
+            { label: 'Last 24 Hours', value: 'last24Hours' },
+            { label: 'Last 7 Days', value: 'last7Days' },
+            { label: 'Last 30 Days', value: 'last30Days' },
+            { label: 'This Year', value: 'thisYear' },
+          ]}
+        />
+        <Select
+          client:load
+          class="md:w-[200px]"
+          hideLabel
+          label="Location"
+          param="country"
+          initial={Astro.url.searchParams.get('country')}
+          options={[
+            { label: 'Global', value: 'global' },
+            { label: 'United States', value: 'US' },
+            { label: 'France', value: 'FR' },
+            { label: 'Finland', value: 'FI' },
+            { label: 'Canada', value: 'CA' },
+            { label: 'Netherlands', value: 'NL' },
+            { label: 'Philippines', value: 'PH' },
+            { label: 'Australia', value: 'AU' },
+            { label: 'Ireland', value: 'IE' },
+            { label: 'United Kingdom', value: 'GB' },
+            { label: 'Germany', value: 'DE' },
+            { label: 'Brazil', value: 'BR' },
+            { label: 'Mexico', value: 'MX' },
+            { label: 'India', value: 'IN' },
+            { label: 'Italy', value: 'IT' },
+            { label: 'Singapore', value: 'SG' },
+            { label: 'Japan', value: 'JP' },
+            { label: 'New Zealand', value: 'NZ' },
+            { label: 'Poland', value: 'PL' },
+            { label: 'Spain', value: 'ES' },
+            { label: 'Sweden', value: 'SE' },
+          ]}
+        />
+      </div>
     </Fragment>
   </Hero>
-  <div
-    class="grid grid-cols-2 gap-3 md:grid-cols-none md:flex md:justify-center"
-  >
+  <div class="@2xl/main:hidden flex">
     <Select
       client:load
-      class="md:w-[200px]"
+      class="flex-1"
       hideLabel
       label="Timeframe"
       param="timeframe"
@@ -129,7 +175,7 @@ const backUrl =
     />
     <Select
       client:load
-      class="md:w-[200px]"
+      class="flex-1"
       hideLabel
       label="Location"
       param="country"
