@@ -28,6 +28,7 @@ const { links, selected, href, teamColors, hero: pillBelow } = Astro.props
             class:list={{
               'whitespace-nowrap': true,
               'text-team-secondary hover:no-underline': true,
+              'font-semibold': selected === link.param,
             }}
             href={link.href ?? href(link.param)}
             set:html={link.text}
