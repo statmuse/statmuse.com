@@ -103,6 +103,7 @@ const nlg = markdown
             'mb-5 mt-5': !imageUrl,
           }}
         >
+          <slot name="back" />
           <h1 class="text-2xl leading-none font-bold text-center @lg/main:text-left text-pretty">
             {url ? (
               <a

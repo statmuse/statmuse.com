@@ -97,18 +97,18 @@ const backUrl =
       href: (l) => `/${l}/trending${categoryPath}${Astro.url.search}`,
     }}
   >
+    {
+      category ? (
+        <a
+          slot="back"
+          href={backUrl}
+          class="text-gray-8 cursor-pointer rounded-full p-1.5 pl-0 -mb-1 @lg/main:static absolute left-0"
+        >
+          <Back class="w-5 aspect-square" />
+        </a>
+      ) : null
+    }
     <Fragment slot="hero">
-      {
-        category ? (
-          <a
-            href={backUrl}
-            class="absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-8 cursor-pointer rounded-full p-3 hover:bg-gray-8 hover:text-teal"
-          >
-            <Back class="w-5 aspect-square" />
-          </a>
-        ) : null
-      }
-      <div class="w-14 hidden @lg/main:block"></div>
       <div class="hidden @2xl/main:flex gap-3 absolute right-3 bottom-3">
         <Select
           client:load
