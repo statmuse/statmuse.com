@@ -66,7 +66,7 @@
         {#each options as league}
           <p
             use:melt={$option(league)}
-            class="data-[highlighted]:bg-gray-7 data-[highlighted]:dark:bg-gray-2 px-3 cursor-pointer"
+            class="data-[highlighted]:bg-gray-7 data-[highlighted]:dark:bg-gray-2 px-3 py-0.5 cursor-pointer"
           >
             {league.label}
           </p>
