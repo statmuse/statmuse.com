@@ -297,6 +297,7 @@ const orderMlbDivisions = (x: GameraGrid) => {
 <Grid
   {...props}
   data={orderBy(grids, props.domain !== 'MLB' ? 'name' : orderMlbDivisions)}
+  padding={props.domain === 'EPL' ? 'px-1.5' : 'px-2'}
   columnStyles={{
     winPercent: 'w-2',
     gamesBehind: 'w-2',

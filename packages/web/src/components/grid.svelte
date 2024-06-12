@@ -386,18 +386,25 @@
           <tbody>
             {#each Array(3) as _row}
               <tr class="border-t border-[#c7c8ca]/30">
+                {#if rankColumn}
+                  <td class="w-2 pl-3 text-gray-5">
+                    <div class="flex items-center h-[22px]">
+                      <div class="bg-[#c7c8ca]/30 w-full h-5 rounded-md" />
+                    </div>
+                  </td>
+                {/if}
                 {#each columns as col, index}
                   <td
-                    class={`${textAlign(col)} ${padding} py-1`}
+                    class={`${textAlign(col)} ${padding} py-2.5`}
                     class:sticky={col.sticky}
-                    class:pl-3={index === 0}
+                    class:pl-3={index === 0 && !rankColumn}
                     class:pr-3={index === columns.length - 1}
                     class:left-0={col.sticky}
                     class:bg-gray-8={col.sticky}
                     class:dark:bg-gray-3={col.sticky}
                   >
                     {#if col.rowItemKey === 'IMAGE'}
-                      <div class="flex items-center h-[22px]">
+                      <div class="flex items-center justify-center h-[22px]">
                         <div class="bg-[#c7c8ca]/30 h-5 w-5 rounded-full" />
                       </div>
                     {:else if col.hasImage}
