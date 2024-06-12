@@ -34,6 +34,7 @@
   export let classes: string | undefined = undefined
   export { classes as class }
   export let textInherit = false
+  export let rankColumn = false
 
   const styles = Object.assign(
     { ALIGNMENT: 'w-2', SEASON: 'text-center' },
@@ -207,7 +208,7 @@
         rows: orderBy(
           grid.rows,
           [`${sortKey}.value`, `DATE.value`, `NAME.value`],
-          [sortOrder, 'desc', 'desc'],
+          [sortOrder, 'desc', 'asc'],
         ),
       }))
     }
@@ -227,13 +228,16 @@
         {#if head}
           <thead>
             <tr class="text-sm">
+              {#if rankColumn}
+                <th class="pl-3" />
+              {/if}
               {#each columns as col, index (col.rowItemKey)}
                 <th
                   class={`cursor-pointer font-normal p-1.5 text-gray-5 ${applyStyles(
                     col,
                   )}`}
                   class:pl-8={col.hasImage}
-                  class:pl-3={index === 0}
+                  class:pl-3={index === 0 && !rankColumn}
                   class:pr-3={index === columns.length - 1}
                   class:sticky={col.sticky}
                   class:left-0={col.sticky}
@@ -250,12 +254,15 @@
           </thead>
         {/if}
         <tbody class="divide-y divide-gray-6 dark:divide-gray-4 leading-[22px]">
-          {#each rows as row (row)}
+          {#each rows as row, rowIndex (row)}
             {@const rowHighlight = shouldApplyRowHighlight(
               row[columns[0].rowItemKey],
               highlight,
             )}
             <tr>
+              {#if rankColumn}
+                <td class="w-2 pl-3 text-gray-5">{rowIndex + 1}</td>
+              {/if}
               {#each columns as col, index (row[col.rowItemKey])}
                 {#if row[col.rowItemKey]}
                   {@const { display, imageUrl, entity } = row[col.rowItemKey]}
@@ -264,7 +271,7 @@
                       imageUrl ? 'w-2' : ''
                     } ${rankingColor(row[columns[0].rowItemKey], display)}`}
                     class:py-2.5={!imageUrl}
-                    class:pl-3={index === 0}
+                    class:pl-3={index === 0 && !rankColumn}
                     class:pr-3={index === columns.length - 1}
                     class:sticky={col.sticky}
                     class:left-0={col.sticky}

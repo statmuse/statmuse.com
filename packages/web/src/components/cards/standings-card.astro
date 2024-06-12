@@ -145,17 +145,6 @@ const getColumns = (name?: string) => {
     ]
   }
 
-  if (props.domain === 'NBA' || props.domain === 'EPL') {
-    columns = [
-      {
-        rowItemKey: 'RANK',
-        title: '',
-        type: 'number',
-      },
-      ...columns,
-    ]
-  }
-
   return columns
 }
 
@@ -309,7 +298,6 @@ const orderMlbDivisions = (x: GameraGrid) => {
   {...props}
   data={orderBy(grids, props.domain !== 'MLB' ? 'name' : orderMlbDivisions)}
   columnStyles={{
-    RANK: 'w-2',
     winPercent: 'w-2',
     gamesBehind: 'w-2',
     wins: 'w-2',
@@ -321,4 +309,5 @@ const orderMlbDivisions = (x: GameraGrid) => {
     goalDifferential: 'w-2',
   }}
   textInherit
+  rankColumn={props.domain === 'NBA' || props.domain === 'EPL'}
 />

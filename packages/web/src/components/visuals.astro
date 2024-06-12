@@ -117,22 +117,13 @@ const details =
                   <div class="flex-1 overflow-x-auto">
                     <Grid
                       client:load
-                      data={{
-                        ...grid,
-                        columns: [
-                          { rowItemKey: 'RANK', title: '', type: 'number' },
-                          ...grid.columns,
-                        ],
-                        rows: grid.rows.map((r, i) => ({
-                          ...r,
-                          RANK: { display: `${i + 1}`, value: i },
-                        })),
-                      }}
+                      data={grid}
                       columnStyles={{
                         RESULT: 'text-left',
                       }}
                       stickyColumns={['NAME', 'TEAM', 'PLAYER']}
                       limitRows
+                      rankColumn
                     />
                   </div>
                 ))}
@@ -143,22 +134,13 @@ const details =
               <div class="flex-1 overflow-x-auto">
                 <Grid
                   client:load
-                  data={{
-                    ...grid,
-                    columns: [
-                      { rowItemKey: 'RANK', title: '', type: 'number' },
-                      ...grid.columns,
-                    ],
-                    rows: grid.rows.map((r, i) => ({
-                      ...r,
-                      RANK: { display: `${i + 1}`, value: i },
-                    })),
-                  }}
+                  data={grid}
                   columnStyles={{
                     RESULT: 'text-left',
                   }}
                   stickyColumns={['NAME', 'TEAM', 'PLAYER']}
                   limitRows
+                  rankColumn
                 />
               </div>
             ))
