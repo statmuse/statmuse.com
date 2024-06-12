@@ -1,7 +1,6 @@
 ---
 import PlayerLayout from '@layouts/player.astro'
 import Grid from '@components/grid.svelte'
-import GridDropdown from '@components/grid-dropdown.astro'
 import { getPlayerBio, getPlayerGameLog } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
@@ -38,23 +37,15 @@ const meta = { title, description, keywords }
 Caching.swr(Astro)
 ---
 
-<PlayerLayout {league} {bio} {meta} page="matches">
-  <div>
-    {
-      grids &&
-        grids.map((grid) => (
-          <div class="mb-5">
-            <div class="flex justify-between mb-0.5">
-              <h3 class="font-bold text-team-primary">{grid.name}</h3>
-              {parameters && <GridDropdown {parameters} />}
-            </div>
-            <Grid
-              client:load
-              data={grid}
-              columnStyles={{ DATE: 'text-left w-20', SCORE: 'text-left' }}
-            />
-          </div>
-        ))
-    }
-  </div>
+<PlayerLayout {league} {bio} {meta} page="matches" {parameters}>
+  {
+    grids &&
+      grids.map((grid) => (
+        <Grid
+          client:load
+          data={grid}
+          columnStyles={{ DATE: 'text-left w-20', SCORE: 'text-left' }}
+        />
+      ))
+  }
 </PlayerLayout>
