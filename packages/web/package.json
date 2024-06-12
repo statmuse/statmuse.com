@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "sst bind astro dev",
-    "start": "astro dev",
+    "start": "sst bind astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
