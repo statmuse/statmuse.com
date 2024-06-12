@@ -225,8 +225,7 @@ const canonicalUrl = meta?.canonical
         font-family: 'calibre';
         src:
           url('/fonts/calibre.woff2') format('woff2-variations'),
-          url('/fonts/calibre.woff') format('woff-variations'),
-          url('/fonts/calibre.otf') format('opentype-variations');
+          url('/fonts/calibre.woff') format('woff-variations');
         font-display: swap;
         font-style: normal;
         font-weight: 100 900;
@@ -299,7 +298,12 @@ const canonicalUrl = meta?.canonical
   >
     <Header {preferredDomain} {query} {conversationToken} {money} />
     <div
-      class="grid md:grid-cols-[1fr_300px] xl:grid-cols-[auto_1fr_300px] h-full gap-3 -mt-3 md:mt-0 [--top-spacing:74px]"
+      class:list={{
+        'grid h-full gap-3 -mt-3 md:mt-0 [--top-spacing:74px]': true,
+        'md:grid-cols-[1fr_300px] xl:grid-cols-[auto_1fr_300px]':
+          renderRightColumn,
+        'xl:grid-cols-[auto_1fr]': !renderRightColumn,
+      }}
     >
       <MenuLinks
         id="base"
