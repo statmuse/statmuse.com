@@ -9,6 +9,7 @@
   import EntityLink from '@components/entity-link.svelte'
   import Image from '@components/image.svelte'
   import Panel from '@components/panel.svelte'
+  import Icon from '@components/icon.svelte'
   type PanelProps = ComponentProps<Panel>
 
   const freeRowLimit = 25
@@ -463,13 +464,13 @@
     </div>
   {/if}
   {#if limitRows && grids[0].allRows.length > freeRowLimit && $session?.type === 'user' && $session.properties.subscriptionStatus === 'active'}
-    <div class="border-y border-[#c7c8ca] py-1 mt-0.5" on:click={onClickExpand}>
+    <div
+      class="border-y border-gray-6 dark:border-gray-4 py-1 mt-0.5"
+      on:click={onClickExpand}
+    >
       <a href="#" class="text-primary flex items-center justify-center gap-2">
         Show {expand ? 'less' : 'more'}
-        <span
-          class="w-[18px] h-[18px] bg-primary bg-[url('/icons/arrow.svg')] bg-[length:85%] bg-center rounded-full"
-          class:rotate-180={!expand}
-        ></span>
+        <Icon name="dropdown" class={`w-4 h-4 ${expand ? 'rotate-180' : ''}`} />
       </a>
     </div>
   {/if}
