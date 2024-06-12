@@ -208,8 +208,8 @@
         ...grid,
         rows: orderBy(
           grid.rows,
-          [`${sortKey}.value`, `DATE.value`, `NAME.value`],
-          [sortOrder, 'desc', 'asc'],
+          [`${sortKey}.value`, `DATE.value`, `SEASON.value`, `NAME.value`],
+          [sortOrder, 'desc', 'desc', 'asc'],
         ),
       }))
     }
@@ -341,12 +341,14 @@
                         </div>
                       {:else}
                         <span
-                          class:hidden={entity?.shortDisplay}
-                          class:md:block={entity?.shortDisplay}
+                          class:hidden={entity?.shortDisplay &&
+                            col.rowItemKey === 'NAME'}
+                          class:md:block={entity?.shortDisplay &&
+                            col.rowItemKey === 'NAME'}
                         >
                           {display}
                         </span>
-                        {#if entity?.shortDisplay}
+                        {#if entity?.shortDisplay && col.rowItemKey === 'NAME'}
                           <span class="md:hidden">{entity?.shortDisplay}</span>
                         {/if}
                       {/if}
@@ -361,6 +363,9 @@
           {#if aggregations}
             {#each aggregations as row (row)}
               <tr>
+                {#if rankColumn}
+                  <td class="w-2 pl-3 text-gray-5"></td>
+                {/if}
                 {#each columns as col, index (row[col.rowItemKey])}
                   {#if row[col.rowItemKey]}
                     {@const { display } = row[col.rowItemKey]}
@@ -368,7 +373,7 @@
                       class={`${applyStyles(col)} ${padding} py-2.5`}
                       class:sticky={col.sticky}
                       class:left-0={col.sticky}
-                      class:pl-3={index === 0}
+                      class:pl-3={index === 0 && !rankColumn}
                       class:pr-3={index === columns.length - 1}
                       class:bg-gray-8={col.sticky}
                       class:dark:bg-gray-3={col.sticky}
