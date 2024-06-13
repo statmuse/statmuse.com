@@ -131,8 +131,12 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       'xA',
       ['Matches', 'M'],
       ['Starts', 'START'],
-      ['Shots', 'SH'],
-      ['On Target', 'SOT'],
+      {
+        label: 'Conv%',
+        value: (v) =>
+          formatPercentage((v.SH.value as number) / (v.G.value as number)),
+      },
+      ['Dribble%', 'DRIB-PCT'],
     ],
     MF: [
       ['Goals', 'G'],
@@ -157,8 +161,8 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       },
       ['Matches', 'M'],
       ['Starts', 'START'],
-      ['Tackles Made', 'TKL'],
       ['Clearances', 'CLR'],
+      ['Dribbled Past', 'DRIB-PAST'],
     ],
     GK: [
       ['Clean Sheets', 'CS'],
@@ -201,7 +205,10 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       ['Games', 'GP'],
       ['Tot Yds', 'YDS-TOT YDS'],
       ['Total TD', 'TD-TOT TD'],
-      ['FUM (L)', 'LOST'],
+      {
+        label: 'Fum (L)',
+        value: (v) => `${v['FUM'].value} (${v['LOST'].value})`,
+      },
     ],
     WR: [
       ['Rec', 'REC-REC'],
@@ -287,7 +294,7 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       ['Shot %', 'S%'],
       ['Games', 'GP'],
       'HIT',
-      'BLK',
+      ['BKS', 'BLK'],
       'TKA',
       'PIM',
     ],

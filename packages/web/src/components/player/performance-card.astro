@@ -22,7 +22,11 @@ type League = Exclude<LeagueParam, 'money' | 'pga'>
 type Stat =
   | string
   | string[]
-  | { label: string; value: (v: Row) => string }
+  | {
+      label: string
+      value?: ((v: Row) => string) | string
+      hideIfZero?: boolean
+    }
   | undefined
 type Row = GameraGrid['rows'][number]
 
@@ -64,7 +68,11 @@ const calculateStat = (stat: Stat, row: Row | undefined) => ({
       ? row[stat]?.display
       : Array.isArray(stat)
       ? row[stat[1]]?.display
-      : formatNumber(stat?.value(row))) || '-',
+      : formatNumber(
+          typeof stat?.value === 'string'
+            ? row[stat?.value].display
+            : stat?.value?.(row) ?? row[stat?.label!].display,
+        )) || '-',
 })
 
 const normalizeNflPosition = (position: string) => {
@@ -91,8 +99,8 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       'MIN',
       'G',
       'A',
-      'xG',
-      'xA',
+      { label: 'xG', hideIfZero: true },
+      { label: 'xA', hideIfZero: true },
       {
         label: 'Shot%',
         value: (v) =>
@@ -104,41 +112,50 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
         label: 'Pass%',
         value: (v) =>
           `${v.PASS.value}/${v['PASS-ATT'].value} (${v['PASS%'].display}%)`,
+        hideIfZero: true,
       },
-      // {
-      //   label: 'Dribble%',
-      //   value: (v) =>
-      //     `${v.DRIB?.value}/${v['DRIB-ATT']?.value} (${formatPercentage(
-      //       ((v.DRIB?.value as number) / (v['DRIB-ATT']?.value as number)) *
-      //         100,
-      //     )})`,
-      // },
+      {
+        label: 'Dribble%',
+        value: (v) =>
+          `${v.DRIB?.value}/${v['DRIB-ATT']?.value} (${formatPercentage(
+            ((v.DRIB?.value as number) / (v['DRIB-ATT']?.value as number)) *
+              100,
+          )})`,
+        hideIfZero: true,
+      },
       // {
       //   label: 'Cross%',
       //   value: (v) =>
       //     `${v.CRS?.value}/${v['CRS-ATT']?.value} (${formatPercentage(
       //       ((v.CRS?.value as number) / (v['CRS-ATT']?.value as number)) * 100,
       //     )})`,
+      //    hideIfZero: true,
       // },
-      'BCM',
-      'BCC',
-      ['Key Pass', 'PASS-KEY'],
-      ['Touches\n(Opp Box)', 'TCH-BOX'],
+      { label: 'BCM', hideIfZero: true },
+      { label: 'BCC', hideIfZero: true },
+      { label: 'Chance\nCreated', value: 'CC', hideIfZero: true },
+      { label: 'Pass\nInto Box', value: 'PASS-INTO-BOX', hideIfZero: true },
+      { label: 'Touches\n(In Box)', value: 'TCH-BOX', hideIfZero: true },
+      { label: 'Poss\nLost', value: 'POSS-L', hideIfZero: true },
       {
-        label: 'Duel W-L',
+        label: 'Duel\nW-L',
         value: (v) => `${v['DUEL-W'].display}-${v['DUEL-L'].display}`,
+        hideIfZero: true,
       },
       {
-        label: 'Aerial W-L',
+        label: 'Aerial\nW-L',
         value: (v) => `${v['AER-W'].display}-${v['AER-L'].display}`,
+        hideIfZero: true,
       },
-      ['Tackle\nMade', 'TKL'],
-      ['Clearance', 'CLR'],
-      ['Foul', 'FOUL'],
-      ['Fouled', 'FOULED'],
-      ['Offside', 'OFF'],
-      'YC',
-      'RC',
+      { label: 'Def\nAction', value: 'DEF-ACT', hideIfZero: true },
+      { label: 'Tackle\nMade', value: 'TKL', hideIfZero: true },
+      { label: 'Dribbled\nPast', value: 'DRIB-PAST', hideIfZero: true },
+      { label: 'Clearance', value: 'CLR', hideIfZero: true },
+      { label: 'Foul', value: 'FOUL', hideIfZero: true },
+      { label: 'Fouled', value: 'FOULED', hideIfZero: true },
+      { label: 'Offside', value: 'OFF', hideIfZero: true },
+      ['Yellow Card', 'YC'],
+      ['Red Card', 'RC'],
     ],
     GK: [
       'MIN',
@@ -194,7 +211,10 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       ['Rating', 'RATE'],
       ['Tot Yds', 'TOTALYDS-TOT YDS'],
       ['Tot TD', 'TOTALTD-TOT TD'],
-      ['Fum (L)', 'LOST'],
+      {
+        label: 'Fum (L)',
+        value: (v) => `${v['FUM'].value} (${v['LOST'].value})`,
+      },
     ],
     RB: [
       ['Att', 'ATT-ATT'],
@@ -207,7 +227,10 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       ['Rec TD', 'RECTD'],
       ['Tot Yds', 'YDS-TOT YDS'],
       ['Tot TD', 'TD-TOT TD'],
-      ['Fum (L)', 'LOST'],
+      {
+        label: 'Fum (L)',
+        value: (v) => `${v['FUM'].value} (${v['LOST'].value})`,
+      },
     ],
     WR: [
       ['Rec', 'REC-REC'],
@@ -218,7 +241,10 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       ['Long', 'RECLNG'],
       ['Tot Yds', 'YDS-TOT YDS'],
       ['Tot TD', 'TD-TOT TD'],
-      ['Fum (L)', 'LOST'],
+      {
+        label: 'Fum (L)',
+        value: (v) => `${v['FUM'].value} (${v['LOST'].value})`,
+      },
     ],
     DEF: [
       ['Comb Tkl', 'COMB'],
@@ -263,10 +289,6 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       '3B',
       'HR',
       'RBI',
-      'AVG',
-      'OBP',
-      'SLG',
-      'OPS',
       'BB',
       'HBP',
       'SO',
@@ -311,7 +333,7 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       'FO',
       'FOW%',
       'HIT',
-      'BLK',
+      ['BKS', 'BLK'],
       'TKA',
       'GVA',
       'TOI',
@@ -327,7 +349,7 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       'SHG',
       'SHA',
       'HIT',
-      'BLK',
+      ['BKS', 'BLK'],
       'TKA',
       'GVA',
       'S',
@@ -357,10 +379,29 @@ const lastGameStats = Array.isArray(lastGameLeagueColumns)
     lastGameLeagueColumns['DEFAULT']
 const lastGame = recentGames?.grid.rows[0]
 const lastGameStats_ = lastGame
-  ? lastGameStats?.map((stat) =>
-      calculateStat(stat, recentGames.grid.rows[0]),
-    ) ?? []
+  ? (lastGameStats
+      ?.map((stat) => {
+        const calculated = calculateStat(stat, recentGames.grid.rows[0])
+        if (
+          (calculated.value.match(/^0*\.?0*%?$/) ||
+            calculated.value === '0-0' ||
+            calculated.value.startsWith('0/0') ||
+            calculated.value.includes('(0%)')) &&
+          typeof stat === 'object' &&
+          'hideIfZero' in stat &&
+          stat.hideIfZero
+        ) {
+          return undefined
+        }
+        return calculated
+      })
+      .filter(Boolean) as {
+      key: string | undefined
+      value: string
+    }[]) ?? []
   : []
+
+console.log('recentGames', recentGames?.grid.columns)
 
 const bustImageUrl = bio.bustImageUrl || getDefaultBustImageUrl(domain)
 const bustImageAlt = bio.bustImageUrl?.includes('silhouette')
