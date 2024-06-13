@@ -52,6 +52,7 @@ const representatives = item.images.map((i) => ({ url: i }))
         'relative flex items-end': true,
         'pt-3': numbered,
         'pt-1': !numbered,
+        'mr-2.5': representatives.length > 1,
       }}
     >
       {
@@ -78,9 +79,15 @@ const representatives = item.images.map((i) => ({ url: i }))
                 'h-[75px] max-w-[100px]': !smallImage,
                 'h-[60px] max-w-[80px]': smallImage,
                 'select-none object-contain object-bottom': true,
-                'absolute left-0 bottom-0 -translate-x-[40px]': index === 0,
+                'absolute left-0 bottom-0 -translate-x-[40px]':
+                  index === 0 && !smallImage,
+                'absolute left-0 bottom-0 -translate-x-[32px]':
+                  index === 0 && smallImage,
                 'relative z-[1]': index === 1,
-                'absolute right-0 bottom-0 translate-x-[40px]': index === 2,
+                'absolute right-0 bottom-0 translate-x-[40px]':
+                  index === 2 && !smallImage,
+                'absolute right-0 bottom-0 translate-x-[32px]':
+                  index === 2 && smallImage,
               }}
               alt={representative.entity?.display ?? ''}
               src={representative.url}

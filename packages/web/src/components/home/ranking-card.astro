@@ -61,7 +61,7 @@ const { title, sections } = Astro.props
               ))}
             </div>
             {Array.isArray(section.images) ? (
-              <div class="relative h-[90px] self-end flex items-end -mb-2">
+              <div class="relative h-[90px] self-end flex items-end -mb-2 mr-2.5">
                 {section.images.map((url, index) => (
                   <Image
                     class:list={[
