@@ -261,7 +261,7 @@ const representatives = isTeam
   colors={{
     foregroundColor: bio.colors?.foregroundColor,
     backgroundColor:
-      representatives.length === 0
+      representatives.length === 0 && domain !== 'NFL'
         ? hexToHSL(bio.colors?.backgroundColor ?? '#00c1d8')
         : bio.colors?.backgroundColor,
   }}
@@ -308,7 +308,9 @@ const representatives = isTeam
         representatives={isTeam
           ? bio.teamRepresentatives
           : bio.franchiseRepresentatives}
-        fallback={bio.logoImageUrl || getDefaultTeamLogoUrl(domain)}
+        fallback={domain === 'NFL'
+          ? ''
+          : bio.logoImageUrl || getDefaultTeamLogoUrl(domain)}
         alt={`Logo for the${isTeam ? ' ' + bio.season.name : ''} ${bio.name}`}
       />
       {
