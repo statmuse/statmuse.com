@@ -7,6 +7,7 @@ import {
   getUrlForEntity,
   type GameraEntity,
   type GameraTeamSeasonBio,
+  type GameraResponse,
 } from '@statmuse/core/gamera'
 import * as Context from '@statmuse/core/context'
 import * as Ask from '@statmuse/core/ask'
@@ -35,6 +36,9 @@ const athenaClient = new AthenaExpress<Query>(athenaProps)
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({}), {
   marshallOptions: { removeUndefinedValues: true },
 })
+
+const stage = process.env.SST_STAGE as string
+const isProduction = stage === 'production'
 
 declare module 'sst/node/job' {
   export interface JobTypes {
@@ -400,8 +404,8 @@ async function update(
           leagueName === 'fc' ? c.name === 'epl' : c.name === leagueName,
         )?.id
 
-        const ask = await Ask.get({ context_id, query })
-        const response = ask?.answer
+        let { answer: response } = (await Ask.get({ context_id, query })) || {}
+        if (!response && !isProduction) response = await ask({ league, query })
         if (!response || response.type === 'error') return
 
         const subject = response.visual?.summary?.subject
@@ -842,6 +846,36 @@ async function handleDailyUpdate() {
         await update(timeframe, league, country)
       }
     }
+  }
+}
+
+async function ask(options: {
+  league: League
+  query: string
+  conversationToken?: string
+  preferredDomain?: string
+}) {
+  const league = options.league === 'FC' ? 'epl' : options.league
+  const query = options.query
+  const params: Record<string, string> = {
+    input: query,
+  }
+  if (options.conversationToken) {
+    params['conversationToken'] = options.conversationToken
+  }
+  if (options.preferredDomain) {
+    params['preferredDomain'] = options.preferredDomain
+  }
+  const path = `${league ? league.toLowerCase() + '/' : ''}answer`
+  const requestUrl = `${gameraApiUrl}${path}?${new URLSearchParams(
+    params as Record<string, string>,
+  ).toString()}`
+  try {
+    const response = await fetch(requestUrl, { headers })
+    return response.json() as Promise<GameraResponse>
+  } catch (error) {
+    console.error(error)
+    return undefined
   }
 }
 

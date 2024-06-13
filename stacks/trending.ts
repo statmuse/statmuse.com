@@ -6,6 +6,7 @@ import { Secrets } from './secrets'
 
 export function Trending({ stack }: StackContext) {
   const isProd = stack.stage === 'production'
+  const isStaging = stack.stage === 'staging'
   const { vpc, rdsCredentialsSecret } = use(Imports)
   const { lambdaSecurityGroup, environment } = use(API)
   const secrets = use(Secrets)
@@ -15,7 +16,7 @@ export function Trending({ stack }: StackContext) {
     fields: { pk: 'string', sk: 'string' },
   })
 
-  if (isProd) {
+  if (isProd || isStaging) {
     const job = new Job(stack, 'trending', {
       architecture: 'arm_64',
       runtime: 'nodejs18.x',
