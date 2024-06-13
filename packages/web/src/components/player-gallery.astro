@@ -44,8 +44,8 @@ const colors = {
 const meta = {
   title:
     domain !== 'All'
-      ? `${domain === 'EPL' ? 'Premier League' : domain} Player Gallery`
-      : 'Player Gallery',
+      ? `${domain === 'EPL' ? 'Premier League' : domain} Gallery`
+      : 'Gallery',
   description: `Browse the largest gallery of ${
     domain !== 'All' ? `${domain === 'EPL' ? 'Premier League' : domain} ` : ''
   }player illustrations in the world.`,
@@ -65,7 +65,7 @@ const meta = {
   renderRightColumn={false}
 >
   <Hero
-    content="Player Gallery"
+    content="Gallery"
     navProps={{
       href: () => '',
       selected: domain,
@@ -76,7 +76,7 @@ const meta = {
         { text: 'NHL', param: 'NHL', href: '/nhl/players' },
         { text: 'MLB', param: 'MLB', href: '/mlb/players' },
         { text: 'PGA', param: 'PGA', href: '/pga/players' },
-        { text: 'Premier League', param: 'EPL', href: '/fc/players' },
+        { text: 'FC', param: 'EPL', href: '/fc/players' },
       ],
     }}
   />
@@ -116,12 +116,12 @@ const meta = {
                 })}
               >
                 <div
-                  class="h-28 w-28 md:h-44 md:w-44 m-0.5 md:m-1.5 rounded-2xl flex justify-center overflow-hidden relative"
+                  class="h-28 w-28 md:h-44 md:w-44 m-0.5 md:m-1.5 rounded-2xl flex justify-center overflow-clip relative"
                   style={`background: ${firstPlayer.background_color_hex};`}
                 >
                   <Image
                     data-cy-illustration
-                    class="h-full mt-1.5 md:mt-2.5 object-cover"
+                    class="h-full w-full mt-1.5 md:mt-2.5 object-cover"
                     alt={firstPlayer.used_name}
                     src={firstPlayer.bust_image_url!}
                     width={120}
@@ -151,12 +151,12 @@ const meta = {
                   })}
                 >
                   <div
-                    class="h-28 w-28 md:h-44 md:w-44 m-0.5 md:m-1.5 rounded-2xl flex justify-center overflow-hidden relative"
+                    class="h-28 w-28 md:h-44 md:w-44 m-0.5 md:m-1.5 rounded-2xl flex justify-center overflow-clip relative"
                     style={`background: ${player.background_color_hex};`}
                   >
                     <Image
                       data-cy-illustration
-                      class="h-full mt-1.5 md:mt-2.5 object-cover"
+                      class="h-full w-full mt-1.5 md:mt-2.5 object-cover"
                       alt={player.used_name}
                       src={player.bust_image_url!}
                       width={120}
