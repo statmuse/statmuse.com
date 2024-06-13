@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createDropdownMenu, melt } from '@melt-ui/svelte'
   import { fly } from 'svelte/transition'
-  import Panel from '@components/panel.svelte'
+  import Icon from '@components/icon.svelte'
 
   const {
     elements: { trigger, menu, item },
@@ -13,21 +13,11 @@
 
 <button
   type="button"
-  class="flex h-[36px] aspect-square items-center justify-center rounded-full bg-gray-8 text-sm focus:outline-none focus:ring-2 focus:ring-team-secondary-sm-default focus:ring-offset-2"
+  class="flex h-[36px] aspect-square items-center justify-center rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-team-secondary-sm-default focus:ring-offset-2"
   use:melt={$trigger}
   aria-label="Open user menu"
 >
-  <span class="inline-block h-8 w-8 overflow-hidden rounded-full bg-gray-6">
-    <svg
-      class="h-full w-full text-gray-5"
-      fill="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"
-      ></path>
-    </svg>
-  </span>
+  <Icon name="profile" class="w-7 h-7" />
   <span class="sr-only">Open User Menu</span>
 </button>
 
