@@ -1,13 +1,11 @@
 ---
 import TrendingListItem from '@components/trending-list-item.astro'
 import Panel from '@components/panel.astro'
-import Icon from '@components/icon.svelte'
 import { type TrendingListItem as Item } from 'src/types'
 
 interface Props {
   items: Item[]
   title: string
-  moreUrl?: string
   href?: string
   eager?: boolean
   prominent?: boolean
@@ -15,37 +13,17 @@ interface Props {
   smallImage?: boolean
 }
 
-const { items, title, eager, moreUrl, prominent, smallImage, href } =
-  Astro.props
+const { items, title, eager, prominent, smallImage, href } = Astro.props
 ---
 
-<Panel
-  {title}
-  {href}
-  class:list={{
-    [Astro.props.class ?? '']: !!Astro.props.class,
-    'pb-0': !moreUrl,
-  }}
->
+<Panel {title} {href} class="pb-0">
   {
     items?.length ? (
-      <>
-        <ol class="-mx-3 mt-1 list-none divide-y divide-gray-6 dark:divide-gray-4">
-          {items.slice(0, 5).map((item, index) => (
-            <TrendingListItem {item} {index} {prominent} {eager} {smallImage} />
-          ))}
-          {items.length > 5 && moreUrl && (
-            <li class="pt-3 pb-1">
-              <a
-                href={moreUrl}
-                class="flex items-center justify-center gap-2 text-gray-5"
-              >
-                See more <Icon name="dropdown" class="w-4 h-4" />
-              </a>
-            </li>
-          )}
-        </ol>
-      </>
+      <ol class="-mx-3 mt-1 list-none divide-y divide-gray-6 dark:divide-gray-4">
+        {items.slice(0, 5).map((item, index) => (
+          <TrendingListItem {item} {index} {prominent} {eager} {smallImage} />
+        ))}
+      </ol>
     ) : (
       <div class="h-96">
         <div class="h-full w-full flex justify-center items-center text-center text-opacity-65">
