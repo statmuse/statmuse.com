@@ -29,6 +29,7 @@
   let clickedItem = false
   let inFocus = false
   let expand: boolean = false
+  let isMobile = false // initialize
 
   if (preferredDomain === 'fc') preferredDomain = 'epl'
 
@@ -207,6 +208,7 @@
   }
 
   onMount(() => {
+    isMobile = isMobileTest(navigator.userAgent)
     shadowInput.value = query
     if (autoFocus && !isMobileTest(navigator.userAgent)) {
       expand = true
@@ -234,7 +236,7 @@
 
 <form
   bind:this={form}
-  class={`${$$props.class} max-w-2xl md:relative`}
+  class={`${$$props.class} max-w-2xl ${isMobile ? 'md:relative' : 'relative'}`}
   {action}
   method="post"
 >
@@ -279,7 +281,11 @@
       aria-haspopup="listbox"
       aria-owns="ask-bar-suggestions"
       aria-expanded={open}
-      class="absolute top-0 left-0 w-screen h-screen bg-white dark:bg-gray-3 md:w-full md:h-auto md:border md:rounded-2xl overflow-hidden"
+      class={`absolute top-0 left-0 bg-white dark:bg-gray-3  overflow-hidden ${
+        isMobile
+          ? 'w-screen h-screen md:w-full md:h-auto md:border md:rounded-2xl'
+          : 'w-full h-auto border rounded-2xl'
+      }`}
       class:border-primary={inFocus}
       class:border-gray-6={!inFocus}
       class:dark:border-transparent={!inFocus}
@@ -289,17 +295,21 @@
       <div
         class="relative group flex bg-gray-8 dark:bg-gray-3 items-center px-2"
       >
-        <button
-          class="md:hidden"
-          on:click={() => {
-            enableScroll()
-            expand = false
-          }}
-        >
-          <Icon name="back" class="w-4 h-4 mr-1" />
-        </button>
+        {#if isMobile}
+          <button
+            class="md:hidden"
+            on:click={() => {
+              enableScroll()
+              expand = false
+            }}
+          >
+            <Icon name="back" class="w-4 h-4 mr-1" />
+          </button>
+        {/if}
         <textarea
-          class="dark:bg-gray-3 grow appearance-none outline-none resize-none block border-y border-transparent px-2 py-2.5 md:py-1 peer"
+          class={`dark:bg-gray-3 grow appearance-none outline-none resize-none block border-y border-transparent px-2 ${
+            isMobile ? 'py-2.5 md:py:1' : 'py-1'
+          } peer`}
           autocomplete="off"
           aria-autocomplete="list"
           name="question[query]"
@@ -430,7 +440,9 @@
   />
   <textarea
     bind:this={shadowInput}
-    class="appearance-none outline-none resize-none block border-y px-2 py-2.5 md:py-1"
+    class={`appearance-none outline-none resize-none block border-y px-2 ${
+      isMobile ? 'py-2.5 md:py-1' : 'py-1'
+    }`}
     style:height="0px"
     style:min-height="0px"
     style:max-height="none"
