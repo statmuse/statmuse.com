@@ -117,6 +117,7 @@ type Player = {
   image: string
   background: string
   foreground: string
+  lastAppearanceDate?: string
 }
 
 type Team = {
@@ -193,6 +194,7 @@ async function populatePlayers() {
       image: gp.bustImageUrl,
       background: gp.colors?.backgroundColor,
       foreground: gp.colors?.foregroundColor,
+      lastAppearanceDate: gp.lastAppearanceDate,
     }))
 
     leaguePlayers[league] = players
@@ -960,6 +962,7 @@ type GameraPlayer = {
     backgroundColor: string
   }
   bustImageUrl: string
+  lastAppearanceDate?: string
 }
 
 type GameraPlayers = {
