@@ -34,23 +34,15 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
 <>
   {
     representatives.length === 0 && (
-      <div
-        class:list={{
-          '!h-32 w-52 flex items-center justify-center': true,
-          '!my-3 md:!my-0 md:!-mb-3': true,
-          [Astro.props.class ?? '']: !!Astro.props.class,
-        }}
-      >
-        <Image
-          data-cy-illustration
-          class="md:h-[150%] md:w-[150%] object-cover object-bottom md:object-right"
-          alt={alt}
-          src={fallback}
-          width={250}
-          height={250}
-          loading="eager"
-        />
-      </div>
+      <Image
+        data-cy-illustration
+        class="h-[158px] max-w-[250px] object-contain @lg/main:object-[80%_center] mx-auto @lg/main:mx-0 @lg/main:-ml-[70px] -my-2 @lg/main:-my-3"
+        alt={alt}
+        src={fallback}
+        width={250}
+        height={250}
+        loading="eager"
+      />
     )
   }
   {
