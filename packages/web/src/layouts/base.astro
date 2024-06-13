@@ -321,7 +321,9 @@ const canonicalUrl = meta?.canonical
                     (trend) =>
                       trend.items && (
                         <TrendingList
-                          title={`Trending ${trend.items.name}`}
+                          title={`Trending ${
+                            league ? `${league.toUpperCase()} ` : ''
+                          }${trend.items.name}`}
                           items={trend.items.items}
                           href={trend.href}
                           smallImage

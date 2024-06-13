@@ -265,7 +265,13 @@ const league = Astro.params.league
                     <div class="space-y-3 md:hidden">
                       {trendingPlayers && (
                         <TrendingList
-                          title={`Trending ${trendingPlayers.name}`}
+                          title={`Trending ${
+                            domain === 'EPL'
+                              ? 'FC '
+                              : domain
+                              ? `${domain} `
+                              : ''
+                          }${trendingPlayers.name}`}
                           href={
                             league
                               ? `/${league}/trending/players`
@@ -276,7 +282,13 @@ const league = Astro.params.league
                       )}
                       {trendingTeams && (
                         <TrendingList
-                          title={`Trending ${trendingTeams.name}`}
+                          title={`Trending ${
+                            domain === 'EPL'
+                              ? 'FC '
+                              : domain
+                              ? `${domain} `
+                              : ''
+                          }${trendingTeams.name}`}
                           href={
                             league
                               ? `/${league}/trending/teams`
@@ -287,7 +299,13 @@ const league = Astro.params.league
                       )}
                       {trendingSearches && (
                         <TrendingList
-                          title={`Trending ${trendingSearches.name}`}
+                          title={`Trending ${
+                            domain === 'EPL'
+                              ? 'FC '
+                              : domain
+                              ? `${domain} `
+                              : ''
+                          }${trendingSearches.name}`}
                           href={
                             league
                               ? `/${league}/trending/searches`
@@ -301,7 +319,9 @@ const league = Astro.params.league
                   <div class="space-y-3">
                     {trendingPlayers && (
                       <TrendingList
-                        title={`Trending ${trendingPlayers.name}`}
+                        title={`Trending ${
+                          domain === 'EPL' ? 'FC ' : domain ? `${domain} ` : ''
+                        }${trendingPlayers.name}`}
                         href={
                           league
                             ? `/${league}/trending/players`
@@ -312,7 +332,9 @@ const league = Astro.params.league
                     )}
                     {trendingTeams && (
                       <TrendingList
-                        title={`Trending ${trendingTeams.name}`}
+                        title={`Trending ${
+                          domain === 'EPL' ? 'FC ' : domain ? `${domain} ` : ''
+                        }${trendingTeams.name}`}
                         href={
                           league
                             ? `/${league}/trending/teams`
@@ -323,7 +345,9 @@ const league = Astro.params.league
                     )}
                     {trendingSearches && (
                       <TrendingList
-                        title={`Trending ${trendingSearches.name}`}
+                        title={`Trending ${
+                          domain === 'EPL' ? 'FC ' : domain ? `${domain} ` : ''
+                        }${trendingSearches.name}`}
                         href={
                           league
                             ? `/${league}/trending/searches`
