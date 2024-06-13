@@ -651,7 +651,16 @@ if (domain !== 'PGA') {
   trendingPlayers = find(trendingData?.datasets, { name: 'Players' })
   trendingTeams = find(trendingData?.datasets, { name: 'Teams' })
 
+  const oneWeekAgo = new Date()
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+
   for (const player of trendingPlayers?.items.slice(0, 10) ?? []) {
+    if (
+      !player.latestAppearanceDate ||
+      new Date(player.latestAppearanceDate) < oneWeekAgo
+    )
+      continue
+
     const playerSlug = player.uri.split('/')[3]
     profile = await getPlayerProfile(Astro, domain, playerSlug)
     if (profile?.recentGames) break
