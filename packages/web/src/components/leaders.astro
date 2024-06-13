@@ -30,8 +30,8 @@ const Wrapper = firstLeader?.galleryImage.entity ? 'a' : 'div'
             }
             class:list={{
               'flex flex-col justify-between w-32 text-center rounded-lg overflow-hidden hover:no-underline': true,
+              'bg-team-primary text-team-secondary': true,
             }}
-            style={`background-color: ${leader.galleryImage.colors.backgroundColor}; color: ${leader.galleryImage.colors.foregroundColor};`}
           >
             <div class="mt-4 mb-3">
               <p style="line-height: 1.2;">{leader.stat.label}</p>
