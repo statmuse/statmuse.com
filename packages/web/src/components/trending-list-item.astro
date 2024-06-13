@@ -25,8 +25,6 @@ const representatives = item.images.map((i) => ({ url: i }))
     class:list={{
       flex: true,
       'items-center text-inherit overflow-clip pr-3': true,
-      'pt-3': numbered,
-      'pt-1': !numbered,
     }}
   >
     <div
@@ -52,6 +50,8 @@ const representatives = item.images.map((i) => ({ url: i }))
     <div
       class:list={{
         'relative flex items-end': true,
+        'pt-3': numbered,
+        'pt-1': !numbered,
       }}
     >
       {
