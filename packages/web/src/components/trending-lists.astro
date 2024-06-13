@@ -16,7 +16,7 @@ const { item } = Astro.props
       <TrendingList
         title={`Trending ${dataset.name}`}
         items={dataset.items}
-        moreUrl={`${Astro.url.pathname}/${dataset.key}${Astro.url.search}`}
+        href={`${Astro.url.pathname}/${dataset.key}${Astro.url.search}`}
         prominent={dataset.prominent}
         eager={index < 3}
         class:list={{

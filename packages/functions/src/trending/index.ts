@@ -586,6 +586,7 @@ async function update(
           background: p.background,
           foreground: p.foreground,
           count: p.count,
+          lastAppearanceDate: p.lastAppearanceDate,
         }))
         .slice(0, STORE),
     })
