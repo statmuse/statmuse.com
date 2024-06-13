@@ -222,9 +222,18 @@ const trendingSearches = find(trending?.datasets, { name: 'Searches' })
 const trendingPlayers = find(trending?.datasets, { name: 'Players' })
 const trendingTeams = find(trending?.datasets, { name: 'Teams' })
 
+const oneWeekAgo = new Date()
+oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+
 let profile: GameraPlayerProfileResponse | undefined
 let domain: GameraDomain | undefined
 for (const player of trendingPlayers?.items.slice(0, 10) ?? []) {
+  if (
+    !player.latestAppearanceDate ||
+    new Date(player.latestAppearanceDate) < oneWeekAgo
+  )
+    continue
+
   const playerSlug = player.uri.split('/')[3]
   const league = player.uri.split('/')[1] as LeagueParam
   domain = leagueToDomain(league)

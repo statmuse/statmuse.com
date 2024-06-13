@@ -40,6 +40,7 @@ export interface TrendingListItem {
   background: string
   foreground: string
   count: number
+  latestAppearanceDate?: string
 }
 
 export interface NavLink {
