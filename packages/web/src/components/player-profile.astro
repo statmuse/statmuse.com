@@ -77,12 +77,12 @@ type Stat =
   | { label: string; value: (v: Row) => string }
   | undefined
 
-const formatNumber = (value: unknown) =>
+const formatNumber = (value: unknown, decimalPlaces = 1) =>
   (typeof value === 'number'
-    ? value.toFixed(1).replace('.0', '')
+    ? value.toFixed(decimalPlaces).replace('.0', '')
     : (value as string)) ?? '-'
-const formatPercentage = (value: number) =>
-  isNaN(value) ? '0%' : `${formatNumber(value)}%`
+const formatPercentage = (value: number, includeDecimals = true) =>
+  isNaN(value) ? '0%' : `${formatNumber(value, includeDecimals ? 1 : 0)}%`
 
 const calculateStat = (stat: Stat, row: Row | undefined) => ({
   key:
@@ -134,9 +134,15 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       {
         label: 'Conv%',
         value: (v) =>
-          formatPercentage((v.SH.value as number) / (v.G.value as number)),
+          formatPercentage(
+            (v.SH.value as number) / (v.G.value as number),
+            false,
+          ),
       },
-      ['Dribble%', 'DRIB-PCT'],
+      {
+        label: 'Dribble%',
+        value: (v) => formatPercentage(v['DRIB%'].value as number, false),
+      },
     ],
     MF: [
       ['Goals', 'G'],
@@ -146,7 +152,10 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       ['Matches', 'M'],
       ['Starts', 'START'],
       'BCC',
-      ['Pass%', 'PASS%'],
+      {
+        label: 'Pass%',
+        value: (v) => formatPercentage(v['PASS%'].value as number, false),
+      },
     ],
     DF: [
       ['Goals', 'G'],
@@ -228,7 +237,8 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       ['Pass Def', 'PDEF'],
       {
         label: 'TD',
-        value: (v) => `${v['FR TD'].value + v['INT TD-TD'].value}`,
+        value: (v) =>
+          `${(v['FR TD'].value as number) + (v['INT TD-TD'].value as number)}`,
       },
     ],
     OL: [

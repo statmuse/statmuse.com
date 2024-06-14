@@ -30,12 +30,12 @@ type Stat =
   | undefined
 type Row = GameraGrid['rows'][number]
 
-const formatNumber = (value: unknown) =>
+const formatNumber = (value: unknown, decimalPlaces = 1) =>
   (typeof value === 'number'
-    ? value.toFixed(1).replace('.0', '')
+    ? value.toFixed(decimalPlaces).replace('.0', '')
     : (value as string)) ?? '-'
-const formatPercentage = (value: number) =>
-  isNaN(value) ? '0%' : `${formatNumber(value)}%`
+const formatPercentage = (value: number, includeDecimals = true) =>
+  isNaN(value) ? '0%' : `${formatNumber(value, includeDecimals ? 1 : 0)}%`
 
 const { bio, domain } = Astro.props
 
@@ -106,12 +106,16 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
         value: (v) =>
           `${v.SOT?.value}/${v.SH?.value} (${formatPercentage(
             ((v.SOT?.value as number) / (v.SH?.value as number)) * 100,
+            false,
           )})`,
       },
       {
         label: 'Pass%',
         value: (v) =>
-          `${v.PASS.value}/${v['PASS-ATT'].value} (${v['PASS%'].display}%)`,
+          `${v.PASS.value}/${v['PASS-ATT'].value} (${formatPercentage(
+            v['PASS%'].value as number,
+            false,
+          )})`,
         hideIfZero: true,
       },
       {
@@ -120,6 +124,7 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
           `${v.DRIB?.value}/${v['DRIB-ATT']?.value} (${formatPercentage(
             ((v.DRIB?.value as number) / (v['DRIB-ATT']?.value as number)) *
               100,
+            false,
           )})`,
         hideIfZero: true,
       },
@@ -128,7 +133,7 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       //   value: (v) =>
       //     `${v.CRS?.value}/${v['CRS-ATT']?.value} (${formatPercentage(
       //       ((v.CRS?.value as number) / (v['CRS-ATT']?.value as number)) * 100,
-      //     )})`,
+      //     ), false})`,
       //    hideIfZero: true,
       // },
       { label: 'BCM', hideIfZero: true },
@@ -154,8 +159,8 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       { label: 'Foul', value: 'FOUL', hideIfZero: true },
       { label: 'Fouled', value: 'FOULED', hideIfZero: true },
       { label: 'Offside', value: 'OFF', hideIfZero: true },
-      ['Yellow Card', 'YC'],
-      ['Red Card', 'RC'],
+      ['Yellow\nCard', 'YC'],
+      ['Red\nCard', 'RC'],
     ],
     GK: [
       'MIN',
@@ -166,8 +171,8 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       ['Error Led To Shot', 'ERR-SH'],
       ['Error Led To Goal', 'ERR-G'],
       ['Long Pass', 'PASS-LNG'],
-      ['Yellow Card', 'YC'],
-      ['Red Card', 'RC'],
+      ['Yellow\nCard', 'YC'],
+      ['Red\nCard', 'RC'],
     ],
   },
   nba: [
@@ -401,7 +406,7 @@ const lastGameStats_ = lastGame
     }[]) ?? []
   : []
 
-console.log('recentGames', recentGames?.grid.columns)
+// console.log('recentGames', recentGames?.grid.columns)
 
 const bustImageUrl = bio.bustImageUrl || getDefaultBustImageUrl(domain)
 const bustImageAlt = bio.bustImageUrl?.includes('silhouette')
