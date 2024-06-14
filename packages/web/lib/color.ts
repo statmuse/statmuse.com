@@ -50,5 +50,5 @@ export const hexToHSL = (hex: string, darken?: number) => {
   // darken by 20%
   if (darken) l -= l * darken
 
-  return `hsl(${h} ${s} ${l})`
+  return `hsl(${h} ${s}% ${l}%)`
 }
