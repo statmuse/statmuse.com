@@ -19,7 +19,7 @@ const { items, prominent } = Astro.props
           {items.map((item, index) => (
             <Panel class="break-inside-avoid-column">
               <TrendingListItem
-                class="-my-2 -mx-2.5"
+                class="-my-2 -mx-2.5 min-h-[94px] flex items-center"
                 numbered={false}
                 {item}
                 {index}
