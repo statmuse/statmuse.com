@@ -93,16 +93,28 @@ const league = Astro.params.league
                   i % 5 === 0 && i > 0 ? (
                     <Fragment>
                       {i / 5 === 1 ? (
-                        <StnVideo
-                          client:only="svelte"
-                          class="w-full"
-                          domain={domain?.toLowerCase()}
-                        />
+                        <Fragment>
+                          <StnVideo
+                            client:only="svelte"
+                            class="w-full"
+                            domain={domain?.toLowerCase()}
+                            onlyDesktop
+                          />
+                          <AditudeAdBanner
+                            client:only="svelte"
+                            divId={`home-musing-${i}`}
+                            slotId={`pb-slot-incontent-${(i / 5) % 5}`}
+                            class="mx-auto"
+                            placeholderClass="w-[300px] h-[250px] mx-auto"
+                            onlyMobile
+                            lazy
+                          />
+                        </Fragment>
                       ) : (
                         <AditudeAdBanner
                           client:only="svelte"
                           divId={`home-musing-${i}`}
-                          slotId={`pb-slot-incontent-${i / 5 - 1}`}
+                          slotId={`pb-slot-incontent-${(i / 5) % 5}`}
                           class="mx-auto"
                           placeholderClass="w-[300px] h-[250px] mx-auto"
                           onlyMobile

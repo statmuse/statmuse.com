@@ -7,13 +7,14 @@
 
   export let league: string
   export let onlyMobile = false
+  export let onlyDesktop = false
 
   let container: HTMLElement
   let video: HTMLElement
   let observer: IntersectionObserver
 
   const isMobile = isMobileTest(navigator.userAgent)
-  const shouldRender = onlyMobile ? isMobile : true
+  const shouldRender = onlyMobile ? isMobile : onlyDesktop ? !isMobile : true
 
   onMount(() => {
     return () => {
