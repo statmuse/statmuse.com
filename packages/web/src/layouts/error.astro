@@ -3,15 +3,19 @@ import Layout from '@layouts/base.astro'
 import sample from 'lodash/sample'
 import type { ComponentProps } from 'astro/types'
 import Hero from '@components/hero.astro'
+import TrendingCategory from '@components/trending-category.astro'
+import type { GameraDomain } from '@statmuse/core/gamera'
 
 interface Props extends ComponentProps<typeof Layout> {
   status?: number
   render: boolean
   message: string
+  domain?: GameraDomain | 'money'
   image?: {
     url: string
     alt: string
   }
+  trending?: boolean
 }
 
 const images = [
@@ -38,6 +42,8 @@ const {
   image = sample(images),
   enableAdBanner,
   analytics = {},
+  domain,
+  trending,
 } = Astro.props
 
 if (render) {
@@ -57,6 +63,7 @@ if (render) {
         ...analytics,
         page_type: 'error',
       }}
+      renderRightColumn={false}
     >
       <Hero
         content={message}
@@ -64,6 +71,7 @@ if (render) {
         imageAlt={image?.alt}
         html
       />
+      {trending && <TrendingCategory category="searches" {domain} />}
     </Layout>
   ) : (
     <slot />

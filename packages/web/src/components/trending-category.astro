@@ -1,0 +1,20 @@
+---
+import { getTrendingData } from '@lib/trending'
+import type { GameraDomain } from '@statmuse/core/gamera'
+import TrendingMore from '@components/trending-more.astro'
+
+interface Props {
+  domain?: GameraDomain | 'money'
+  category: 'searches' | 'players' | 'teams'
+}
+
+const { domain, category } = Astro.props
+
+const league = domain === 'EPL' ? 'fc' : domain?.toLowerCase()
+
+const data = await getTrendingData(league ? { league } : {})
+
+const dataset = data?.datasets?.find((d) => d.key === category)
+---
+
+{dataset && <TrendingMore items={dataset.items} />}
