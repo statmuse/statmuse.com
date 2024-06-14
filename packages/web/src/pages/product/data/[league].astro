@@ -1440,27 +1440,22 @@ Caching.swr(Astro)
     >
       {coverage.map((item) => <li>{item}</li>)}
       <li>
-        <p class="inline-block mr-[0.45em]">Real-time scores and stats</p>
-        <img
-          class="inline-block h-[20px] object-contain"
-          alt={poweredBy === 'sportsradar'
-            ? 'Sportradar'
-            : poweredBy === 'data-sports-group'
-            ? 'Data Sports Group'
-            : ''}
-          src={poweredBy === 'sportsradar'
-            ? 'https://developer.sportradar.com/files/powered-by-sportradar-1000w.png'
-            : poweredBy === 'data-sports-group'
-            ? '/affiliations/data-sports-group.png'
-            : ''}
-        />
+        <p class="inline-block">Real-time scores and stats</p>
+        {poweredBy === 'sportsradar' && <span>powered by Sportradar</span>}
         {
           poweredBy === 'data-sports-group' && (
-            <img
-              class="inline-block h-[15px] object-contain"
-              alt="Statsbomb"
-              src="/affiliations/statsbomb.svg"
-            />
+            <>
+              <img
+                class="inline-block h-[20px] object-contain ml-[0.45em]"
+                alt="Data Sports Group"
+                src="/affiliations/data-sports-group.png"
+              />
+              <img
+                class="inline-block h-[15px] object-contain"
+                alt="Statsbomb"
+                src="/affiliations/statsbomb.svg"
+              />
+            </>
           )
         }
       </li>
