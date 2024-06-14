@@ -180,6 +180,7 @@
     if (col.tags?.isReferencedInQuestion) {
       sortOrder = 'desc'
       sortKey = col.rowItemKey
+      break
     }
   }
 
