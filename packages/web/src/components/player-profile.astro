@@ -323,9 +323,9 @@ const active = bio.isActive
 const statPanelStartIndex = active ? 0 : league === 'fc' ? -1 : -2
 const statPanelEndIndex = active ? 2 : stats?.grid.rows.length
 
-const statPanels = stats?.grid.rows
-  .slice(statPanelStartIndex, statPanelEndIndex)
-  .map((r) => r[stats?.grid.columns[0].rowItemKey].display)
+const rows = stats?.grid.rows.slice(statPanelStartIndex, statPanelEndIndex)
+
+const statPanels = rows.map((r) => r[stats?.grid.columns[0].rowItemKey].display)
 const seasonLeagueColumns =
   league === 'pga' || league === 'money' ? [] : seasonStatColumns[league]
 const seasonLeagueStats = Array.isArray(seasonLeagueColumns)
@@ -333,12 +333,10 @@ const seasonLeagueStats = Array.isArray(seasonLeagueColumns)
   : seasonLeagueColumns[normalizedPosition] ?? seasonLeagueColumns['DEFAULT']
 const seasonPanels = statPanels.map((title, index) => ({
   title,
-  stats: seasonLeagueStats?.map((stat) =>
-    calculateStat(stat, stats?.grid.rows[index]),
-  ),
+  stats: seasonLeagueStats?.map((stat) => calculateStat(stat, rows[index])),
 }))
 
-console.log('stats', JSON.stringify(stats?.grid.rows, undefined, 2))
+// console.log('stats', JSON.stringify(stats?.grid.rows, undefined, 2))
 
 const nextGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   fc: {
