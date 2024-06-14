@@ -304,7 +304,7 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       ['Shot %', 'S%'],
       ['Games', 'GP'],
       'HIT',
-      ['BKS', 'BLK'],
+      'BKS',
       'TKA',
       'PIM',
     ],
@@ -316,8 +316,8 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       'OTL',
       'SHO',
       'GAA',
-      ['Save %', 'Sv%'],
-      ['Saves', 'Sv'],
+      ['Save%', 'SV%'],
+      ['Saves', 'SV'],
       ['Minutes', 'MIN'],
     ],
   },
@@ -407,7 +407,7 @@ const nextGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
         value: (v) => `${v.W.value}-${v.L.value}-${v.OTL.value}`,
       },
       'GAA',
-      ['SV%', 'Sv%'],
+      ['SV%', 'SV%'],
     ],
   },
 }
@@ -462,18 +462,17 @@ const gamesStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   },
   mlb: {
     DEFAULT: ['AB', 'H', 'HR', 'RBI'],
-    P: ['IP', 'ERA', 'SO', 'BB'],
+    P: ['IP', 'ER', 'SO', 'BB'],
   },
   nhl: {
     DEFAULT: ['G', 'A', 'P', '+/-'],
     G: [
-      '',
       {
         label: 'W-L-OTL',
         value: (v) => `${v.W.value}-${v.L.value}-${v.OTL.value}`,
       },
       'GAA',
-      ['SV%', 'Sv%'],
+      ['SV%', 'SV%'],
     ],
   },
 }
@@ -579,8 +578,8 @@ const games = recentGames?.grid.rows.map((r, index) => ({
                     </div>
                     {nextGameData.stats?.map((stat) => (
                       <div class="text-gray-5 text-center">
-                        <p class="text-sm">{stat.key}</p>
-                        <p class="">{stat.value}</p>
+                        <p class="text-sm whitespace-nowrap">{stat.key}</p>
+                        <p class="whitespace-nowrap">{stat.value}</p>
                       </div>
                     ))}
                   </div>
@@ -639,11 +638,13 @@ const games = recentGames?.grid.rows.map((r, index) => ({
                   </EntityLink>
                   <div class="col-span-2 grid grid-cols-4 gap-1 text-center">
                     {stats?.map((stat) => (
-                      <div>
+                      <div
+                        class:list={{ 'col-span-2': stat.key === 'W-L-OTL' }}
+                      >
                         <p class="text-sm text-gray-5 whitespace-nowrap">
                           {stat.key}
                         </p>
-                        <p class="">{stat.value}</p>
+                        <p class="whitespace-nowrap">{stat.value}</p>
                       </div>
                     ))}
                   </div>
