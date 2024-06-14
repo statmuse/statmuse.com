@@ -11,11 +11,7 @@ const { league, additionalQuestions } = Astro.props
 ---
 
 <div class="flex flex-wrap gap-3">
-  <StnVideo
-    client:only="svelte"
-    class="flex-1 min-w-full md:min-w-[401px]"
-    {league}
-  />
+  <StnVideo client:load class="flex-1 min-w-full md:min-w-[401px]" {league} />
   {
     additionalQuestions ? (
       <Panel

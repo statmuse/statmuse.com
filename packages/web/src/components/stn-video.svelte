@@ -13,10 +13,17 @@
   let video: HTMLElement
   let observer: IntersectionObserver
 
-  const isMobile = isMobileTest(navigator.userAgent)
-  const shouldRender = onlyMobile ? isMobile : onlyDesktop ? !isMobile : true
+  let isMobile: boolean
+  let shouldRender: boolean
 
   onMount(() => {
+    isMobile = isMobileTest(navigator.userAgent)
+    shouldRender = onlyMobile ? isMobile : onlyDesktop ? !isMobile : true
+
+    if (container) {
+      document.addEventListener('scroll', handleScroll)
+    }
+
     return () => {
       if (container) {
         document.removeEventListener('scroll', handleScroll)
@@ -48,7 +55,12 @@
     }
   }, 300)
 
-  $: if ('IntersectionObserver' in window && container) {
+  $: isNotSubscriber =
+    ($session?.type === 'user' &&
+      $session?.properties.subscriptionStatus !== 'active') ||
+    ($session?.type === 'visitor' && !$session?.properties.bot)
+
+  $: if (isNotSubscriber && container && 'IntersectionObserver' in window) {
     const options = {
       root: null,
       rootMargin: '0px',
@@ -71,23 +83,15 @@
 
     observer.observe(container)
   }
-
-  $: if (container) {
-    document.addEventListener('scroll', handleScroll)
-  }
-
-  $: isNotSubscriber =
-    ($session?.type === 'user' &&
-      $session?.properties.subscriptionStatus !== 'active') ||
-    ($session?.type === 'visitor' && !$session?.properties.bot)
 </script>
 
-{#if isNotSubscriber && shouldRender}
-  {#if import.meta.env.PROD}
-    <div
-      bind:this={container}
-      class={`${$$props.class} overflow-hidden rounded-2xl`}
-    >
+<div
+  bind:this={container}
+  class={`${$$props.class} aspect-video overflow-clip rounded-2xl`}
+  class:hidden={$session !== undefined && (!shouldRender || !isNotSubscriber)}
+>
+  {#if isNotSubscriber && shouldRender}
+    {#if import.meta.env.PROD}
       {#if league === 'nba'}
         <div
           bind:this={video}
@@ -153,14 +157,10 @@
           data-astro-exec
         ></script>
       {/if}
-    </div>
-  {:else}
-    <div bind:this={container}>
-      <Panel
-        class={`${$$props.class} aspect-video flex items-center justify-center`}
-      >
+    {:else}
+      <Panel class="flex items-center justify-center h-full">
         Video Player
       </Panel>
-    </div>
+    {/if}
   {/if}
-{/if}
+</div>
