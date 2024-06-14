@@ -292,7 +292,7 @@ const canonicalUrl = meta?.canonical
     <Header {preferredDomain} {query} {conversationToken} {money} />
     <div
       class:list={{
-        'grid h-full gap-3 -mt-3 md:mt-0 [--top-spacing:74px]': true,
+        'grid grid-rows-1 gap-3 -mt-3 md:mt-0 [--top-spacing:74px] flex-1': true,
         'md:grid-cols-[1fr_300px] xl:grid-cols-[auto_1fr_300px]':
           renderRightColumn,
         'xl:grid-cols-[auto_1fr]': !renderRightColumn,
@@ -304,7 +304,7 @@ const canonicalUrl = meta?.canonical
       />
       <div
         class:list={{
-          '@container/main min-w-0 flex-1': true,
+          '@container/main min-w-0': true,
           'flex flex-col gap-3': true,
           [Astro.props.class ?? '']: !!Astro.props.class,
         }}
