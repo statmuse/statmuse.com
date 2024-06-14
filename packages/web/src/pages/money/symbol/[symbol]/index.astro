@@ -51,7 +51,7 @@ Caching.swr(Astro)
   <div>
     <div class="mb-5">
       <div class="flex justify-between mb-0.5">
-        <h3 class="font-bold text-team-primary">Price &amp; Volume</h3>
+        <h3 class="font-semibold text-team-primary">Price &amp; Volume</h3>
       </div>
       <article id="tradingview-chart">
         <TradingviewChart {profile} />
@@ -65,7 +65,7 @@ Caching.swr(Astro)
           stats ? (
             <div class="mb-5">
               <div class="flex justify-between mb-0.5 border-b border-[#c7c8ca]">
-                <h3 class="font-bold text-team-primary">{stats.name}</h3>
+                <h3 class="font-semibold text-team-primary">{stats.name}</h3>
                 <a href={statsPath} set:text="See more" />
               </div>
               <Grid head={false} padding="" data={stats} />
@@ -76,7 +76,7 @@ Caching.swr(Astro)
           financials ? (
             <div class="mb-5">
               <div class="flex justify-between mb-0.5 border-b border-[#c7c8ca]">
-                <h3 class="font-bold text-team-primary">
+                <h3 class="font-semibold text-team-primary">
                   {financials.name}
                 </h3>
                 <a href={financialsPath} set:text="See more" />
@@ -91,7 +91,7 @@ Caching.swr(Astro)
           news && news.length ? (
             <div class="mb-5">
               <div class="flex justify-between mb-0.5 border-b border-[#c7c8ca]">
-                <h3 class="font-bold text-team-primary">News</h3>
+                <h3 class="font-semibold text-team-primary">News</h3>
                 <a href={newsPath}>See more</a>
               </div>
               <div class="divide-y divide-[#c7c8ca]">
@@ -114,7 +114,7 @@ Caching.swr(Astro)
         {
           companyProfile ? (
             <div class="mb-5">
-              <h3 class="font-bold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
+              <h3 class="font-semibold text-team-primary mb-0.5 border-b border-[#c7c8ca]">
                 About
               </h3>
               <Grid head={false} padding="" data={companyProfile} />

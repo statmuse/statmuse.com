@@ -62,7 +62,7 @@
   </label>
   <button
     class={`flex h-8 items-center justify-between 
-           font-bold border border-gray-6 dark:border-none dark:bg-gray-3
+           font-semibold border border-gray-6 dark:border-none dark:bg-gray-3
            px-3 rounded-3xl whitespace-nowrap truncate`}
     class:bg-gray-6={$open}
     class:bg-gray-8={!$open}

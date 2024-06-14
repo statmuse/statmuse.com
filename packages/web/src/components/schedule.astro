@@ -65,7 +65,7 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
                         <p
                           class:list={{
                             'flex-1': true,
-                            'font-bold':
+                            'font-semibold':
                               game.awayTeam.score! > game.homeTeam.score!,
                           }}
                         >
@@ -75,7 +75,7 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
                         </p>
                         <p
                           class:list={{
-                            'font-bold':
+                            'font-semibold':
                               game.awayTeam.score! > game.homeTeam.score!,
                           }}
                         >
@@ -95,7 +95,7 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
                         <p
                           class:list={{
                             'flex-1': true,
-                            'font-bold':
+                            'font-semibold':
                               game.homeTeam.score! > game.awayTeam.score!,
                           }}
                         >
@@ -105,7 +105,7 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
                         </p>
                         <p
                           class:list={{
-                            'font-bold':
+                            'font-semibold':
                               game.homeTeam.score! > game.awayTeam.score!,
                           }}
                         >
@@ -114,7 +114,7 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
                       </div>
                     </div>
                     <div class="w-28 text-center border-l border-gray-6 dark:border-gray-4 ml-5 mt-2.5">
-                      <p class="my-0.5 first:font-bold">
+                      <p class="my-0.5 first:font-semibold">
                         <EntityLink entity={game.entity}>
                           {game.completedGameStatus ?? 'Final'}
                         </EntityLink>
@@ -169,7 +169,7 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
                     </div>
                     <div class="w-28 text-center border-l border-gray-6 dark:border-gray-4 ml-5 mt-2.5">
                       {game.status?.split(', ').map((s) => (
-                        <p class="my-0.5 first:font-bold">{s}</p>
+                        <p class="my-0.5 first:font-semibold">{s}</p>
                       ))}
                     </div>
                   </div>

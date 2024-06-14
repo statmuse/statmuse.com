@@ -31,7 +31,7 @@ const tabs = Astro.props.titles.map((tab) => ({
           class:list={{
             'tab relative flex-1 text-center': true,
             'text-team-secondary bg-team-primary': !Astro.props.secondary,
-            'font-bold text-sm md:text-base': Astro.props.secondary,
+            'font-semibold text-sm md:text-base': Astro.props.secondary,
           }}
         >
           <input
@@ -50,7 +50,7 @@ const tabs = Astro.props.titles.map((tab) => ({
           <label
             class:list={{
               'block py-3 w-full h-full cursor-pointer': true,
-              'peer-checked:font-bold': !Astro.props.secondary,
+              'peer-checked:font-semibold': !Astro.props.secondary,
               'bg-white text-team-primary peer-checked:bg-team-primary peer-checked:text-team-secondary':
                 Astro.props.secondary,
             }}

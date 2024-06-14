@@ -105,7 +105,7 @@ const meta = { title, description, keywords, canonical }
       scoresAndSchedule && (
         <div>
           <div class="flex justify-between mb-0.5">
-            <h3 class="font-bold text-team-primary">
+            <h3 class="font-semibold text-team-primary">
               {scoresAndSchedule.name}
             </h3>
             <a href={`${schedule}/${year}`}>See schedule</a>
@@ -131,7 +131,7 @@ const meta = { title, description, keywords, canonical }
     {
       standings && (
         <div>
-          <h3 class="font-bold text-team-primary mb-0.5">
+          <h3 class="font-semibold text-team-primary mb-0.5">
             {standings.name}
           </h3>
           <Grid client:load data={standings} />
@@ -145,7 +145,7 @@ const meta = { title, description, keywords, canonical }
         stats.map((data) => (
           <div class="mb-5">
             <div class="flex justify-between mb-0.5">
-              <h3 class="font-bold text-team-primary">{data.name}</h3>
+              <h3 class="font-semibold text-team-primary">{data.name}</h3>
               <a href={`stats/${year}`}>See stats</a>
             </div>
             <Grid client:load data={data} />
@@ -154,7 +154,7 @@ const meta = { title, description, keywords, canonical }
       ) : (
         <div class="mb-5">
           <div class="flex justify-between mb-0.5">
-            <h3 class="font-bold text-team-primary">{stats.name}</h3>
+            <h3 class="font-semibold text-team-primary">{stats.name}</h3>
             <a href={`stats/${year}`}>See stats</a>
           </div>
           <Grid client:load data={stats} />

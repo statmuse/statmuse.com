@@ -170,11 +170,11 @@ input {
     font-size: 2rem;
     line-height: 1.2;
 
-    @apply font-bold;
+    @apply font-semibold;
   }
 
   &-sub-header {
-    @apply font-bold;
+    @apply font-semibold;
     @apply text-xl;
 
     line-height: 1;

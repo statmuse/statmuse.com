@@ -124,7 +124,7 @@
           on:click={copyToClipboard}
         />
         <span
-          class="absolute top-1/2 right-4 -translate-y-1/2 text-primary font-bold text-sm"
+          class="absolute top-1/2 right-4 -translate-y-1/2 text-primary font-semibold text-sm"
         >
           {copied ? 'COPIED' : 'COPY'}
         </span>

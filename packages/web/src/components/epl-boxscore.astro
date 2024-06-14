@@ -44,7 +44,7 @@ const periods = Object.entries(groupBy(plays, (p) => p.period))
 ---
 
 <div class="w-full max-w-3xl mx-auto text-[#333]">
-  <h3 class="font-bold bg-[#e4f2ff] rounded-sm px-3 py-2 w-fit mb-4">
+  <h3 class="font-semibold bg-[#e4f2ff] rounded-sm px-3 py-2 w-fit mb-4">
     Final
   </h3>
   <div>
@@ -63,17 +63,17 @@ const periods = Object.entries(groupBy(plays, (p) => p.period))
         {
           homeTeamUrl ? (
             <a title={homeTeam.name} href={homeTeamUrl}>
-              <h1 class="font-bold text-2xl md:text-3xl">
+              <h1 class="font-semibold text-2xl md:text-3xl">
                 {homeTeam.name}
               </h1>
             </a>
           ) : (
-            <h1 class="font-bold text-2xl md:text-3xl">{homeTeam.name}</h1>
+            <h1 class="font-semibold text-2xl md:text-3xl">{homeTeam.name}</h1>
           )
         }
-        <p class="font-bold md:text-2xl">{homeTeam.record}</p>
+        <p class="font-semibold md:text-2xl">{homeTeam.record}</p>
       </div>
-      <h2 class="font-bold text-5xl">{homeTeam.score}</h2>
+      <h2 class="font-semibold text-5xl">{homeTeam.score}</h2>
     </div>
     <div class="flex items-center mb-6">
       <a title={awayTeam.name} href={awayTeamUrl}>
@@ -90,17 +90,17 @@ const periods = Object.entries(groupBy(plays, (p) => p.period))
         {
           awayTeamUrl ? (
             <a title={awayTeam.name} href={awayTeamUrl}>
-              <h1 class="font-bold text-2xl md:text-3xl">
+              <h1 class="font-semibold text-2xl md:text-3xl">
                 {awayTeam.name}
               </h1>
             </a>
           ) : (
-            <h1 class="font-bold text-2xl md:text-3xl">{awayTeam.name}</h1>
+            <h1 class="font-semibold text-2xl md:text-3xl">{awayTeam.name}</h1>
           )
         }
-        <p class="font-bold md:text-2xl">{awayTeam.record}</p>
+        <p class="font-semibold md:text-2xl">{awayTeam.record}</p>
       </div>
-      <h2 class="font-bold text-5xl">{awayTeam.score}</h2>
+      <h2 class="font-semibold text-5xl">{awayTeam.score}</h2>
     </div>
   </div>
 
@@ -195,16 +195,16 @@ const periods = Object.entries(groupBy(plays, (p) => p.period))
       <TabPanel title="Team Stats">
         <div class="flex">
           <p
-            class="flex-1 p-2.5 border-b border-[#e4e4e4] font-bold whitespace-nowrap overflow-hidden text-ellipsis"
+            class="flex-1 p-2.5 border-b border-[#e4e4e4] font-semibold whitespace-nowrap overflow-hidden text-ellipsis"
           >
           </p>
           <p
-            class="w-[85px] sm:w-24 py-2.5 text-center font-bold border-b border-[#e4e4e4] whitespace-nowrap overflow-hidden text-ellipsis"
+            class="w-[85px] sm:w-24 py-2.5 text-center font-semibold border-b border-[#e4e4e4] whitespace-nowrap overflow-hidden text-ellipsis"
           >
             {homeTeam.shortName || homeTeam.name}
           </p>
           <p
-            class="w-[85px] sm:w-24 py-2.5 text-center font-bold border-b border-[#e4e4e4] whitespace-nowrap overflow-hidden text-ellipsis"
+            class="w-[85px] sm:w-24 py-2.5 text-center font-semibold border-b border-[#e4e4e4] whitespace-nowrap overflow-hidden text-ellipsis"
           >
             {awayTeam.shortName || awayTeam.name}
           </p>
@@ -291,7 +291,7 @@ const periods = Object.entries(groupBy(plays, (p) => p.period))
             {
               boxScoreData.playerDetail.homeTeam.grids.map((grid) => (
                 <div>
-                  <h3 class="font-bold text-team-primary mb-0.5">
+                  <h3 class="font-semibold text-team-primary mb-0.5">
                     {grid.name}
                   </h3>
                   <Grid data={grid} />
@@ -303,7 +303,7 @@ const periods = Object.entries(groupBy(plays, (p) => p.period))
             {
               boxScoreData.playerDetail.awayTeam.grids.map((grid) => (
                 <div>
-                  <h3 class="font-bold text-team-primary mb-0.5">
+                  <h3 class="font-semibold text-team-primary mb-0.5">
                     {grid.name}
                   </h3>
                   <Grid data={grid} />

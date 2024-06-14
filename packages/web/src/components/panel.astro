@@ -51,7 +51,7 @@ const foregroundHex = foreground
     entity ? (
       <EntityLink
         {entity}
-        class="font-bold mb-2 text-inherit block flex justify-between items-center"
+        class="font-semibold mb-2 text-inherit block flex justify-between items-center"
       >
         {title}
         <Icon class="w-4 h-4" name="next" />
@@ -59,13 +59,13 @@ const foregroundHex = foreground
     ) : href ? (
       <a
         {href}
-        class="font-bold mb-2 text-inherit no-underline block flex justify-between items-center"
+        class="font-semibold mb-2 text-inherit no-underline block flex justify-between items-center"
       >
         {title}
         <Icon class="w-4 h-4" name="next" />
       </a>
     ) : title ? (
-      <h3 class="font-bold mb-2">{title}</h3>
+      <h3 class="font-semibold mb-2">{title}</h3>
     ) : null
   }
   <slot />

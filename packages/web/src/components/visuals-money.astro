@@ -45,7 +45,7 @@ const details =
     response.type === 'nlgPromptForMoreInfoVisualChoicesOptional' ? (
       <div class="h-screen w-full flex flex-col justify-center items-center">
         <h1
-          class="text-3xl my-5 font-bold"
+          class="text-3xl my-5 font-semibold"
           set:html={tokensToHtml(response.visual.summary.answer)}
         />
         <div class="w-full flex flex-col sm:flex-row sm:justify-center my-5 gap-2">
