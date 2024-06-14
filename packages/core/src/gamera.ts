@@ -384,6 +384,7 @@ export interface GameraPlayerBio {
     resultsType: string
     intent: string
   }
+  isActive?: boolean
 }
 
 export interface GameraGrid {

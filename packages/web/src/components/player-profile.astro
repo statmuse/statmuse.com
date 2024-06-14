@@ -323,20 +323,12 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   },
 }
 
-// console.log(
-//   'rows',
-//   stats?.grid.rows.map((r) => r[stats?.grid.columns[0].rowItemKey].display),
-// )
-// const seasonStatFirstTwo = stats?.grid.rows.slice(0, 2)
-// const inactive = !!seasonStatFirstTwo?.find((r) =>
-//   r[stats?.grid.columns[0].rowItemKey].display.includes('Career'),
-// )
-// console.log('inactive', inactive)
-// const statPanelStartIndex = inactive ? -2 : 0
-// const statPanelEndIndex = inactive ? stats?.grid.rows.length : 2
+const active = bio.isActive
+const statPanelStartIndex = active ? 0 : league === 'fc' ? -1 : -2
+const statPanelEndIndex = active ? 2 : stats?.grid.rows.length
 
 const statPanels = stats?.grid.rows
-  .slice(0, 2)
+  .slice(statPanelStartIndex, statPanelEndIndex)
   .map((r) => r[stats?.grid.columns[0].rowItemKey].display)
 const seasonLeagueColumns =
   league === 'pga' || league === 'money' ? [] : seasonStatColumns[league]
