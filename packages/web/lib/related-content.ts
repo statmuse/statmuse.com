@@ -92,6 +92,7 @@ export const homeLeadersByDomain = async (props: {
   if (leaders) {
     return playerMapByDomain[props.domain].map((x) => ({
       ...x,
+      seasonType: leaders.seasonType,
       players: find(leaders.cards, { stat: x.stat })?.players ?? [],
     }))
   }
@@ -148,6 +149,7 @@ export const homeRankingsByDomain = async (props: {
   if (leaders) {
     return teamMapByDomain[props.domain].map((x) => ({
       ...x,
+      seasonType: leaders.seasonType,
       teams: find(leaders.cards, { stat: x.stat })?.teams.slice(0, 3) ?? [],
     }))
   }
@@ -158,6 +160,7 @@ export type TeamRankingsResponse = {
   stat: string
   title: string
   images?: string[]
+  seasonType: string
 }[]
 
 const bettingMapByDomain: Record<

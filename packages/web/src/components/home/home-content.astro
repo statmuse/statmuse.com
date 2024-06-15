@@ -217,7 +217,11 @@ const league = Astro.params.league
               />
               {leaders && (
                 <RankingCard
-                  title="League Leaders"
+                  title={`League ${
+                    domain && leaders[0].seasonType === 'postseason'
+                      ? 'Playoff '
+                      : ''
+                  }Leaders`}
                   sections={leaders.map((leader) => ({
                     title: leader.title,
                     items: leader.players.map((player) => ({
@@ -232,7 +236,11 @@ const league = Astro.params.league
               )}
               {rankings && (
                 <RankingCard
-                  title="League Rankings"
+                  title={`League ${
+                    domain && rankings[0].seasonType === 'postseason'
+                      ? 'Playoff '
+                      : ''
+                  }Rankings`}
                   sections={rankings.map((ranking) => ({
                     title: ranking.title,
                     images: ranking.images,

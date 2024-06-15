@@ -30,7 +30,7 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
       getPlayerCards({ context: Astro, domain: 'NBA' }).then(
         (x) =>
           x && {
-            title: 'NBA PPG',
+            title: `NBA ${x.seasonType === 'postseason' ? 'Playoff ' : ''}PPG`,
             players:
               find(x.cards, { stat: 'mostPointsPerGame' })?.players.slice(
                 0,
@@ -41,7 +41,9 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
       getPlayerCards({ context: Astro, domain: 'NFL' }).then(
         (x) =>
           x && {
-            title: 'NFL Total TD',
+            title: `NFL ${
+              x.seasonType === 'postseason' ? 'Playoff ' : ''
+            }Total TD`,
             players:
               find(x.cards, { stat: 'mostTotalTouchdowns' })?.players.slice(
                 0,
@@ -52,7 +54,9 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
       getPlayerCards({ context: Astro, domain: 'MLB' }).then(
         (x) =>
           x && {
-            title: 'MLB Home Runs',
+            title: `MLB ${
+              x.seasonType === 'postseason' ? 'Playoff ' : ''
+            }Home Runs`,
             players:
               find(x.cards, { stat: 'mostBattingHomeRuns' })?.players.slice(
                 0,
@@ -63,7 +67,9 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
       getPlayerCards({ context: Astro, domain: 'NHL' }).then(
         (x) =>
           x && {
-            title: 'NHL Goals',
+            title: `NHL ${
+              x.seasonType === 'postseason' ? 'Playoff ' : ''
+            }Goals`,
             players:
               find(x.cards, { stat: 'mostGoals' })?.players.slice(0, 3) ?? [],
           },
@@ -84,7 +90,9 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
       getTeamCards({ context: Astro, domain: 'NBA' }).then(
         (x) =>
           x && {
-            title: 'NBA Offensive Rating',
+            title: `NBA ${
+              x.seasonType === 'postseason' ? 'Playoff ' : ''
+            }Offensive Rating`,
             teams:
               find(x.cards, { stat: 'bestOffensiveRating' })?.teams.slice(
                 0,
@@ -95,7 +103,9 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
       getTeamCards({ context: Astro, domain: 'NFL' }).then(
         (x) =>
           x && {
-            title: 'NFL Yards Per Game',
+            title: `NFL ${
+              x.seasonType === 'postseason' ? 'Playoff ' : ''
+            }Yards Per Game`,
             teams:
               find(x.cards, { stat: 'mostTotalYardsPerGame' })?.teams.slice(
                 0,
@@ -106,7 +116,9 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
       getTeamCards({ context: Astro, domain: 'MLB' }).then(
         (x) =>
           x && {
-            title: 'MLB Home Runs',
+            title: `MLB ${
+              x.seasonType === 'postseason' ? 'Playoff ' : ''
+            }Home Runs`,
             teams:
               find(x.cards, { stat: 'mostBattingHomeRuns' })?.teams.slice(
                 0,
@@ -117,7 +129,9 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
       getTeamCards({ context: Astro, domain: 'NHL' }).then(
         (x) =>
           x && {
-            title: 'NHL Goals Per Game',
+            title: `NHL ${
+              x.seasonType === 'postseason' ? 'Playoff ' : ''
+            }Goals Per Game`,
             teams:
               find(x.cards, { stat: 'mostGoalsPerGame' })?.teams.slice(0, 3) ??
               [],
