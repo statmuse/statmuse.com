@@ -54,7 +54,10 @@ const { title, sections } = Astro.props
                       {item.stat}
                     </span>
                   </div>
-                  <EntityLink entity={item.entity} class="text-inherit">
+                  <EntityLink
+                    entity={{ ...item.entity, parameters: undefined }}
+                    class="text-inherit"
+                  >
                     {item.display}
                   </EntityLink>
                 </div>
