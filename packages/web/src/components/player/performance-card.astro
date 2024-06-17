@@ -436,7 +436,13 @@ const bustImageAlt = bio.bustImageUrl?.includes('silhouette')
           loading="eager"
         />
         <div class="">
-          <p class="whitespace-nowrap">{bio.usedName}</p>
+          {isPlayerProfilePage ? (
+            <p class="whitespace-nowrap">{bio.usedName}</p>
+          ) : (
+            <EntityLink class="whitespace-nowrap text-inherit" {entity}>
+              {bio.usedName}
+            </EntityLink>
+          )}
           <div class="flex items-center justify-between gap-2 text-sm text-gray-5">
             <EntityLink
               entity={lastGame.SCORE.entity}
