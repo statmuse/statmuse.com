@@ -26,6 +26,8 @@ export default {
         'team-primary': 'var(--team-primary-color, #fff)',
         'team-primary-bg': 'var(--team-primary-color, #f7f7f7)',
         'team-primary-dark-bg': 'var(--team-primary-color, #151516)',
+        'team-primary-panel-bg': 'var(--team-primary-color, #ffffff)',
+        'team-primary-panel-dark-bg': 'var(--team-primary-color, #202124)',
         'team-secondary': 'var(--team-secondary-color, #333)',
         'team-secondary-dark': 'var(--team-secondary-color, #fff)',
         'team-secondary-sm-default': 'var(--team-secondary-color, #00c1d8)',

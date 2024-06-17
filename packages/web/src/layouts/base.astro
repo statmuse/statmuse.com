@@ -16,6 +16,7 @@ import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import WithSubscription from '@components/with-subscription.svelte'
 import { find } from 'lodash-es'
 import TrendingList from '@components/trending-list.astro'
+import Panel from '@components/panel.astro'
 
 interface Props extends ComponentProps<typeof Header> {
   meta?: Metadata
@@ -304,53 +305,77 @@ const canonicalUrl = meta?.canonical
       />
       <div
         class:list={{
-          '@container/main min-w-0': true,
-          'flex flex-col gap-3': true,
+          '@container/main min-w-0 relative': true,
           [Astro.props.class ?? '']: !!Astro.props.class,
         }}
       >
-        <slot />
+        <div class="content flex flex-col gap-3">
+          <slot />
+        </div>
+        <div class="loading hidden absolute inset-0 z-50">
+          <div class="flex flex-col gap-3">
+            <Panel
+              team
+              class:list={{
+                'rounded-none border-0 md:rounded-2xl bg-gray-7 h-[265.5px] @lg/main:h-[166.5px] md:h-[258.5px] lg:h-[159.5px]': true,
+                '-mx-3 pb-2 pt-4 px-3 @lg/main:py-3 @lg/main:px-5 md:mx-0 whitespace-nowrap': true,
+                'flex flex-col-reverse gap-3 @lg/main:flex-row md:animate-pulse': true,
+              }}
+            />
+            <Panel class="rounded-2xl border bg-inherit animate-pulse h-48" />
+            <Panel class="rounded-2xl border bg-inherit animate-pulse h-32" />
+            <Panel class="rounded-2xl border bg-inherit animate-pulse h-32" />
+          </div>
+        </div>
       </div>
       {
         renderRightColumn && (
-          <div class="hidden md:block w-[300px] shrink-0 *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full">
-            <WithSubscription client:only="svelte">
-              <Fragment slot="subscribed">
-                <div class="space-y-3">
-                  {trending.map(
-                    (trend) =>
-                      trend.items && (
-                        <TrendingList
-                          title={`Trending ${
-                            league ? `${league.toUpperCase()} ` : ''
-                          }${trend.items.name}`}
-                          items={trend.items.items}
-                          href={trend.href}
-                          smallImage
-                        />
-                      ),
-                  )}
-                </div>
-              </Fragment>
-              <div class="space-y-3 h-full">
-                <AditudeAdBanner
-                  client:only="svelte"
-                  divId="pb-slot-square-1"
-                  slotId="pb-slot-square-1"
-                  placeholderClass="w-[300px] h-[250px]"
-                  onlyDesktop
-                />
-                <div class="sticky top-[--top-spacing]">
+          <div class="hidden relative md:block w-[300px] shrink-0 *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full">
+            <div class="content">
+              <WithSubscription client:only="svelte">
+                <Fragment slot="subscribed">
+                  <div class="space-y-3">
+                    {trending.map(
+                      (trend) =>
+                        trend.items && (
+                          <TrendingList
+                            title={`Trending ${
+                              league ? `${league.toUpperCase()} ` : ''
+                            }${trend.items.name}`}
+                            items={trend.items.items}
+                            href={trend.href}
+                            smallImage
+                          />
+                        ),
+                    )}
+                  </div>
+                </Fragment>
+                <div class="space-y-3 h-full">
                   <AditudeAdBanner
                     client:only="svelte"
-                    divId="pb-slot-right-2"
-                    slotId="pb-slot-right-2"
-                    placeholderClass="w-[300px] h-[600px]"
+                    divId="pb-slot-square-1"
+                    slotId="pb-slot-square-1"
+                    placeholderClass="w-[300px] h-[250px]"
                     onlyDesktop
                   />
+                  <div class="sticky top-[--top-spacing]">
+                    <AditudeAdBanner
+                      client:only="svelte"
+                      divId="pb-slot-right-2"
+                      slotId="pb-slot-right-2"
+                      placeholderClass="w-[300px] h-[600px]"
+                      onlyDesktop
+                    />
+                  </div>
                 </div>
+              </WithSubscription>
+            </div>
+            <div class="loading hidden animate-pulse absolute inset-0 z-50">
+              <div class="flex flex-col gap-3">
+                <Panel class="rounded-2xl border bg-inherit h-32" />
+                <Panel class="rounded-2xl border bg-inherit h-96" />
               </div>
-            </WithSubscription>
+            </div>
           </div>
         )
       }
@@ -512,6 +537,15 @@ const canonicalUrl = meta?.canonical
         },
         { once: true },
       )
+
+      document.addEventListener('astro:before-preparation', () => {
+        document
+          .querySelectorAll('.loading')
+          .forEach((e) => e?.classList.remove('hidden'))
+        document
+          .querySelectorAll('.content')
+          .forEach((e) => e?.classList.add('invisible'))
+      })
     </script>
   </body>
 </html>
