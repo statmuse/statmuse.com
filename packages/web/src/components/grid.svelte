@@ -176,14 +176,6 @@
     return false
   }
 
-  for (const col of grids[0].columns) {
-    if (col.tags?.isReferencedInQuestion) {
-      sortOrder = 'desc'
-      sortKey = col.rowItemKey
-      break
-    }
-  }
-
   $: {
     if (limitRows) {
       if (
@@ -245,8 +237,10 @@
                   class:left-0={col.sticky}
                   class:bg-gray-8={col.sticky}
                   class:dark:bg-gray-3={col.sticky}
-                  class:!bg-team-primary={sortKey === col.rowItemKey}
-                  class:text-team-secondary={sortKey === col.rowItemKey}
+                  class:!bg-team-primary={sortKey === col.rowItemKey ||
+                    (!sortKey && col.tags?.isReferencedInQuestion)}
+                  class:text-team-secondary={sortKey === col.rowItemKey ||
+                    (!sortKey && col.tags?.isReferencedInQuestion)}
                   on:click={onClickSort(col.rowItemKey)}
                 >
                   {col.title}
@@ -284,14 +278,18 @@
                       !(sortKey === col.rowItemKey) &&
                       !rowHighlight}
                     class:bg-team-primary={rowHighlight ||
-                      sortKey === col.rowItemKey}
+                      sortKey === col.rowItemKey ||
+                      (!sortKey && col.tags?.isReferencedInQuestion)}
                     class:text-team-secondary={rowHighlight ||
-                      sortKey === col.rowItemKey}
+                      sortKey === col.rowItemKey ||
+                      (!sortKey && col.tags?.isReferencedInQuestion)}
                     class:text-gray-5={col.rowItemKey === 'RANK'}
                   >
                     <EntityLink
                       {entity}
-                      class={rowHighlight || sortKey === col.rowItemKey
+                      class={rowHighlight ||
+                      sortKey === col.rowItemKey ||
+                      (!sortKey && col.tags?.isReferencedInQuestion)
                         ? 'text-team-secondary'
                         : textInherit
                         ? 'text-inherit'
