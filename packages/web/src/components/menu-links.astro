@@ -167,7 +167,6 @@ const menuLinks = [
                         'md:flex-initial': true,
                         'hover:text-teal hover:no-underline': true,
                         '!text-teal': currentUrl?.test(Astro.url.pathname),
-                        'font-semibold': currentUrl?.test(Astro.url.pathname),
                         [classes ?? '']: !!classes,
                       }}
                     >
@@ -211,7 +210,7 @@ const menuLinks = [
                               'flex flex-1 items-center gap-3 text-inherit': true,
                               'md:flex-initial': true,
                               'hover:text-teal hover:no-underline': true,
-                              '!text-teal font-semibold': currentUrl?.test(
+                              '!text-teal': currentUrl?.test(
                                 Astro.url.pathname,
                               ),
                               [classes ?? '']: !!classes,

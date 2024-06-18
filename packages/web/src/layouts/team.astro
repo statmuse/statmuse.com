@@ -63,8 +63,6 @@ const currentSeason = isTeam
 const parts = currentSeason?.entity.id.split('/') || []
 let yearId: string | undefined = parts[1]
 
-console.log(bio)
-
 if (isFranchise) {
   const latestSeason = await getTeamFranchiseLatestSeason({
     context: Astro,
