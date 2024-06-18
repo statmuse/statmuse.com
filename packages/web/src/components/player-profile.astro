@@ -325,13 +325,15 @@ const statPanelEndIndex = active ? 2 : stats?.grid.rows.length
 
 const rows = stats?.grid.rows.slice(statPanelStartIndex, statPanelEndIndex)
 
-const statPanels = rows.map((r) => r[stats?.grid.columns[0].rowItemKey].display)
+const statPanels = rows?.map(
+  (r) => r[stats?.grid.columns[0].rowItemKey].display,
+)
 const seasonLeagueColumns =
   league === 'pga' || league === 'money' ? [] : seasonStatColumns[league]
 const seasonLeagueStats = Array.isArray(seasonLeagueColumns)
   ? seasonLeagueColumns
   : seasonLeagueColumns[normalizedPosition] ?? seasonLeagueColumns['DEFAULT']
-const seasonPanels = statPanels.map((title, index) => ({
+const seasonPanels = statPanels?.map((title, index) => ({
   title,
   stats: seasonLeagueStats?.map((stat) => calculateStat(stat, rows[index])),
 }))
@@ -477,7 +479,7 @@ const games = recentGames?.grid.rows.map((r, index) => ({
   <div class="space-y-3 gap-3 justify-center lg:columns-2">
     <BioPanel {bio} {domain} />
     {
-      seasonPanels.map((panel, index) => (
+      seasonPanels?.map((panel, index) => (
         <Panel
           team={index === 0}
           title={panel.title}
@@ -503,11 +505,15 @@ const games = recentGames?.grid.rows.map((r, index) => ({
         </Panel>
       ))
     }
-    <Panel title="Summary">
-      <div class="leading-snug">
-        <p set:html={summary} />
-      </div>
-    </Panel>
+    {
+      summary ? (
+        <Panel title="Summary">
+          <div class="leading-snug">
+            <p set:html={summary} />
+          </div>
+        </Panel>
+      ) : null
+    }
     {
       profile ? (
         <PlayerPerformanceCard
