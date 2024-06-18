@@ -11,7 +11,7 @@
   export let options: SelectOption<string>[]
   export let toggle: Record<string, string[]>
 
-  const defaultSelected = options[0]
+  const defaultSelected = options[4]
   let selectedValue: string = defaultSelected.value
 
   const handleChange: CreateSelectProps<string>['onSelectedChange'] = ({
