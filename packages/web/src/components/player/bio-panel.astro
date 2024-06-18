@@ -21,10 +21,17 @@ if (bio.position) facts.push({ label: 'Position', value: bio.position })
 if (bio.jerseyNumber)
   facts.push({ label: 'Number', value: '#' + bio.jerseyNumber })
 if (bio.birthdate)
-  facts.push({
-    label: formatDate(bio.birthdate, 'MMM D, YYYY'),
-    value: age(bio.birthdate) + ' years',
-  })
+  if (bio.isActive) {
+    facts.push({
+      label: formatDate(bio.birthdate, 'MMM D, YYYY'),
+      value: age(bio.birthdate) + ' years',
+    })
+  } else {
+    facts.push({
+      label: 'Birthdate',
+      value: formatDate(bio.birthdate, 'MMM D, YYYY'),
+    })
+  }
 if (league === 'fc') {
   if (bio.heightCentimeters)
     facts.push({ label: 'Height', value: bio.heightCentimeters })
