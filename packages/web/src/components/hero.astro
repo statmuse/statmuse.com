@@ -70,9 +70,7 @@ const nlg = markdown
       />
     ) : null
   }
-  <div
-    class="flex flex-col justify-between @lg/main:items-start @lg/main:-mb-3"
-  >
+  <div class="flex flex-col justify-between @lg/main:items-start">
     {
       markdownOrHtml ? (
         <div
@@ -141,7 +139,11 @@ const nlg = markdown
         </div>
       )
     }
-    {navProps ? <Nav class="hidden @lg/main:flex" hero {...navProps} /> : null}
+    {
+      navProps ? (
+        <Nav class="hidden @lg/main:flex @lg/main:-mb-3" hero {...navProps} />
+      ) : null
+    }
   </div>
   {
     share ? (

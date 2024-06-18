@@ -8,9 +8,9 @@ import { Caching } from '@lib/caching'
 // export const prerender = true
 
 const affiliations = [
-  { logo: Astro.url.origin + '/affiliations/nflpa.png', alt: 'nflpa' },
-  { logo: Astro.url.origin + '/affiliations/google.svg', alt: 'google' },
   { logo: Astro.url.origin + '/affiliations/disney.png', alt: 'disney' },
+  { logo: Astro.url.origin + '/affiliations/google.svg', alt: 'google' },
+  { logo: Astro.url.origin + '/affiliations/nflpa.png', alt: 'nflpa' },
 ]
 
 Caching.swr(Astro)
@@ -19,7 +19,7 @@ const stats = [
   { key: 'Brand Impressions', value: '2B+' },
   { key: 'Web Pageviews', value: '200M+' },
   { key: 'Unique Users', value: '25M+' },
-  { key: 'Muse Network Followers', value: '1.5M+' },
+  { key: 'MuseNetwork Followers', value: '1.5M+' },
 ]
 ---
 
