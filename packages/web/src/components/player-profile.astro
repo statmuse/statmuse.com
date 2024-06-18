@@ -82,7 +82,7 @@ const formatNumber = (value: unknown, decimalPlaces = 1) =>
     ? value.toFixed(decimalPlaces).replace('.0', '')
     : (value as string)) ?? '-'
 const formatPercentage = (value: number, includeDecimals = true) =>
-  isNaN(value) ? '0%' : `${formatNumber(value, includeDecimals ? 1 : 0)}%`
+  isNaN(value) ? '-' : `${formatNumber(value, includeDecimals ? 1 : 0)}%`
 
 const calculateStat = (stat: Stat, row: Row | undefined) => ({
   key:
