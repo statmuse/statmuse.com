@@ -38,8 +38,8 @@ const toggleTitle = (name: string, domain: GameraDomain) => {
           domain === 'EPL' ? 'Table' : 'Standings'
         }`}</h3>
         {Object.entries(standings.teams).length > 1 && (
-          <div class="w-fit bg-gray-8 dark:bg-gray-4 text-inherit dark:text-gray-5 border border-gray-6 dark:border-gray-3 flex text-center rounded-full relative overflow-clip">
-            <div class="absolute h-full w-1/2 bg-teal dark:bg-gray-7 rounded-full left-0 group-has-[#standings-0:checked]:translate-x-0 group-has-[#standings-1:checked]:translate-x-full transition-transform ease-out" />
+          <div class="w-fit bg-gray-6 dark:bg-gray-4 text-gray-5 border border-gray-6 dark:border-gray-3 flex text-center rounded-full relative overflow-clip">
+            <div class="absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 group-has-[#standings-0:checked]:translate-x-0 group-has-[#standings-1:checked]:translate-x-full transition-transform ease-out" />
             {orderBy(Object.entries(standings.teams), '0').map(
               ([name, _teams], index) => (
                 <label
@@ -47,9 +47,9 @@ const toggleTitle = (name: string, domain: GameraDomain) => {
                   class:list={[
                     'py-1 w-12 relative',
                     {
-                      'group-has-[#standings-0:checked]:text-gray-8 dark:group-has-[#standings-0:checked]:text-gray-2':
+                      'group-has-[#standings-0:checked]:text-gray-2':
                         index === 0,
-                      'group-has-[#standings-1:checked]:text-gray-8 dark:group-has-[#standings-1:checked]:text-gray-2':
+                      'group-has-[#standings-1:checked]:text-gray-2':
                         index === 1,
                     },
                   ]}

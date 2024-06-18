@@ -75,19 +75,17 @@
     {/if}
     {#if toggleOptions}
       <div
-        class="bg-gray-8 dark:bg-gray-4 text-inherit dark:text-gray-5 border border-gray-6 dark:border-gray-3 flex text-center rounded-full relative overflow-clip mr-3"
+        class="bg-gray-6 dark:bg-gray-4 text-gray-5 border border-gray-6 dark:border-gray-3 flex text-center rounded-full relative overflow-clip mr-3"
       >
         <div
-          class="absolute h-full w-1/2 bg-teal dark:bg-gray-7 rounded-full left-0 group-has-[#standings-0:checked]:translate-x-0 group-has-[#standings-1:checked]:translate-x-full transition-transform ease-out"
+          class="absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 group-has-[#standings-0:checked]:translate-x-0 group-has-[#standings-1:checked]:translate-x-full transition-transform ease-out"
         />
         {#each toggleOptions as option, i}
           <label
             for={`standings-${i}`}
             class="py-1 w-12 relative"
-            class:group-has-[#standings-0:checked]:text-gray-8={i == 0}
-            class:dark:group-has-[#standings-0:checked]:text-gray-2={i == 0}
-            class:group-has-[#standings-1:checked]:text-gray-8={i == 1}
-            class:dark:group-has-[#standings-1:checked]:text-gray-2={i == 1}
+            class:group-has-[#standings-0:checked]:text-gray-2={i == 0}
+            class:group-has-[#standings-1:checked]:text-gray-2={i == 1}
           >
             {option}
           </label>
