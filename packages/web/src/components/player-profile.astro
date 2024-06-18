@@ -8,7 +8,7 @@ import {
   getUrlForEntity,
   type GameraGrid,
 } from '@statmuse/core/gamera'
-import { getPlayerProfile, getPositionName } from '@lib/player'
+import { getPlayerProfile, getPlayerSplits, getPositionName } from '@lib/player'
 import { getLeagueKeywords } from '@lib/meta'
 import { NOT_FOUND_404 } from '@lib/response'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
@@ -66,7 +66,7 @@ const canonical = { url: playerPath, rewrite: true }
 const meta = { title, description, keywords, canonical }
 const league = domain.toLowerCase() === 'epl' ? 'fc' : leagueParam
 
-const nextGameOpponnent = isNextGameHome
+const nextGameOpponent = isNextGameHome
   ? nextGame?.awayTeam
   : nextGame?.homeTeam
 
@@ -290,7 +290,7 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       'PPG',
       'PPA',
       'PIM',
-      ['SOG', 'SHG'],
+      'S',
     ],
     D: [
       ['Goals', 'G'],
@@ -343,40 +343,18 @@ const nextGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
     DEFAULT: ['M', 'START', 'G', 'A'],
     GK: ['M', 'START', 'CS', 'GC'],
   },
-  nba: ['PPG', 'RPG', 'APG', 'TS%'],
+  nba: ['G', 'PPG', 'RPG', 'APG'],
   nfl: {
-    QB: [['GMS', 'GP'], 'YDS', 'TD', 'INT'],
-    RB: [
-      ['GMS', 'GP'],
-      ['ATT', 'ATT-ATT'],
-      ['YDS', 'RUSHYDS'],
-      ['TD', 'RUSHTD'],
-    ],
-    WR: [
-      ['GMS', 'GP'],
-      ['REC', 'REC-REC'],
-      ['YDS', 'RECYDS'],
-      ['TD', 'RECTD'],
-    ],
-    DEF: [
-      ['GMS', 'GP'],
-      ['SCK', 'SCK'],
-      ['TFL', 'TFL'],
-      ['INT', 'INT'],
-    ],
-    OL: [
-      ['Record', ''], // TODO: find this
-    ],
-    K: [['GMS', 'GP'], 'FGM', ['Long', 'LNG']],
-    P: [
-      ['GMS', 'GP'],
-      ['Punts', 'PUNT'],
-      ['Avg', 'AVG'],
-      ['Long', 'LNG'],
-    ],
+    QB: ['G', 'YDS', 'TD', 'INT'],
+    RB: ['G', ['ATT', 'ATT-ATT'], ['YDS', 'RUSHYDS'], ['TD', 'RUSHTD']],
+    WR: ['G', ['REC', 'REC-REC'], ['YDS', 'RECYDS'], ['TD', 'RECTD']],
+    DEF: ['G', ['SCK', 'SCK'], ['TFL', 'TFL'], ['INT', 'INT']],
+    OL: [['Starts', 'GS']],
+    K: ['G', 'FGM', ['Long', 'LNG']],
+    P: ['G', ['Punts', 'PUNT'], ['Avg', 'AVG'], ['Long', 'LNG']],
   },
   mlb: {
-    DEFAULT: [['GMS', 'G'], 'HR', 'RBI', 'AVG'],
+    DEFAULT: ['G', 'HR', 'RBI', 'AVG'],
     P: [
       { label: 'Record', value: (v) => `${v.W.value}-${v.L.value}` },
       'ERA',
@@ -398,6 +376,23 @@ const nextGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   },
 }
 
+const splits = await getPlayerSplits({
+  context: Astro,
+  domain,
+  player,
+  params: { seasonYear: '0' },
+})
+const opponentGrid = splits?.grids.find((grid) => grid.name === 'Opponent')
+const nextGameOpponentSplits = opponentGrid?.rows.find(
+  (r) =>
+    r.SPLIT.entity?.id.split('/')[0] ===
+    nextGameOpponent?.entity?.id.split('/')[0],
+)
+// console.log(
+//   'nextGameOpponentSplits',
+//   JSON.stringify(nextGameOpponentSplits, undefined, 2),
+// )
+
 const nextGameLeagueColumns =
   league === 'pga' || league === 'money' ? [] : nextGameStatColumns[league]
 const nextGameStats = Array.isArray(nextGameLeagueColumns)
@@ -405,9 +400,9 @@ const nextGameStats = Array.isArray(nextGameLeagueColumns)
   : nextGameLeagueColumns[normalizedPosition] ??
     nextGameLeagueColumns['DEFAULT']
 const nextGameData = {
-  stats: nextGame?.grid
+  stats: nextGameOpponentSplits
     ? nextGameStats?.map((stat) => {
-        return calculateStat(stat, nextGame?.grid.rows.at(-1))
+        return calculateStat(stat, nextGameOpponentSplits)
       }) ?? []
     : [],
 }
@@ -532,7 +527,7 @@ const games = recentGames?.grid.rows.map((r, index) => ({
                   <div>
                     <p class="text-sm text-gray-5">Next</p>
                     <EntityLink
-                      entity={nextGameOpponnent.entity}
+                      entity={nextGameOpponent.entity}
                       class="flex gap-1 items-center -mt-0.5 text-inherit"
                     >
                       <p class="whitespace-nowrap">
@@ -544,14 +539,14 @@ const games = recentGames?.grid.rows.map((r, index) => ({
                           'select-none': true,
                           'object-contain object-center': true,
                         }}
-                        alt={nextGameOpponnent?.name}
-                        src={nextGameOpponnent?.logoImageUrl}
+                        alt={nextGameOpponent?.name}
+                        src={nextGameOpponent?.logoImageUrl}
                         width={16}
                         height={16}
                         loading="eager"
                       />
                       <p class="whitespace-nowrap">
-                        {nextGameOpponnent.abbreviation}
+                        {nextGameOpponent.abbreviation}
                       </p>
                     </EntityLink>
                   </div>
@@ -559,7 +554,7 @@ const games = recentGames?.grid.rows.map((r, index) => ({
                     <div class="whitespace-nowrap text-gray-5">
                       <p class="text-sm">CAREER</p>
                       <p>{`${isNextGameHome ? 'vs' : 'at'} ${
-                        nextGameOpponnent.abbreviation
+                        nextGameOpponent.abbreviation
                       }`}</p>
                     </div>
                     {nextGameData.stats?.map((stat) => (
