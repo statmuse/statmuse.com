@@ -1,6 +1,7 @@
 <script lang="ts">
   export let name: keyof typeof icons
   export let focusable: string | number | null | undefined = undefined
+  export let fill: string
 
   const style =
     'fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;'
@@ -8,6 +9,9 @@
     about: `<g><rect x="13.7" y="5.6" style="${style}" width="4.1" height="18.4"/><path style="${style}" d="M24.3,18.5c0.9-0.3,1.6-0.7,2.2-1.4c-0.8,0.2-1.6,0.4-2.4,0.4c-0.5,0-1,0-1.4,0v-3v-2.4c0-2.7-2.2-4.9-4.9-4.9 v9.6c0.9,0,1.5,0.7,1.5,1.5v2.2c0,1.8,1.5,3.3,3.3,3.3h2.4v-2.4h-0.9c-0.8,0-1.5-0.7-1.5-1.5v-1.3C23.2,18.7,23.8,18.7,24.3,18.5z" /><rect x="9.5" y="9.8" style="${style}" width="4.1" height="14.2"/><path style="${style}" d="M5.4,12.8v5.5l0,0c0,0.5-0.3,1.1-0.8,1.6c-0.5,0.5-1.1,0.8-1.6,0.8c0.7,0.7,1.8,0.7,2.4,0v3.2h4.1V8.7 C7.3,8.7,5.4,10.5,5.4,12.8z"/></g>`,
     'all-home': `<g style="${style}"><path d="m10.1 17.1h9.3v9.3h-9.3z"/><path d="m3 14.8v11.7h23.5v-11.7l-11.7-11.8z"/></g>`,
     back: `<g><line style="${style}" x1="26.5" y1="14.8" x2="3" y2="14.8"/><polyline style="${style}" points="14.7,26.5 3,14.8 14.7,3"/></g>`,
+    beta: `<g style="fill: ${
+      fill ? fill : 'currentColor'
+    };"><path d="m21.3 15.2h1.5l-.8-1.7z"/><path d="m7.3 15.2h-1.3v1.2h1.4c.5 0 .8-.2.8-.6 0-.4-.3-.6-.9-.6z"/><path d="m7.9 13.7c0-.4-.3-.6-.8-.6h-1.1v1.1h1.1c.5 0 .8-.2.8-.6z"/><path d="m22.6 7.8h-15.7c-3.8 0-6.9 3.1-6.9 7s3.1 6.9 6.9 6.9h15.6c3.8 0 6.9-3.1 6.9-6.9s-3.1-6.9-6.9-6.9zm-13.3 8.2c0 1-.8 1.4-2 1.4h-1.9c-.3 0-.6-.3-.6-.6v-4.1c0-.3.3-.6.6-.6h1.9c.6 0 1.1.2 1.4.5.2.2.4.5.4.9 0 .6-.3.9-.7 1.2.6.2 1 .6 1 1.3zm4.6 1.4h-3c-.3 0-.6-.3-.6-.6v-4.1c0-.3.3-.6.6-.6h2.9c.3 0 .5.2.5.5s-.2.5-.5.5h-2.3v1.1h2c.3 0 .5.2.5.5s-.2.5-.5.5h-2v1.1h2.4c.3 0 .5.2.5.5s-.2.5-.5.5zm5.1-4.2h-1.1v3.7c0 .3-.3.6-.6.6s-.6-.3-.6-.6v-3.7h-1.1c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h3.4c.3 0 .5.2.5.5s-.2.5-.5.5zm5.1 4.2c-.3 0-.5-.2-.6-.4l-.4-.8h-2.3l-.4.9c0 .2-.3.4-.5.4s-.5-.2-.5-.5 0-.2 0-.2l1.8-4.1c.1-.3.4-.5.7-.5.3 0 .5.2.7.5l1.8 4.1v.2c0 .3-.2.6-.5.6z"/></g>`,
     next: `<polyline style="${style}" points="10.6 6.5 18.9 14.8 10.7 23" />`,
     blog: `<g><rect x="3" y="3" style="${style}" width="23.5" height="23.5"/><g><g><line style="${style}" x1="7.7" y1="8.1" x2="21.8" y2="8.1"/></g><g><line style="${style}" x1="7.7" y1="12.5" x2="17.7" y2="12.5"/></g><g><line style="${style}" x1="7.7" y1="17" x2="21.8" y2="17"/></g><g><line style="${style}" x1="7.7" y1="21.4" x2="17.7" y2="21.4"/></g></g></g>`,
     dropdown: `<path d="m6.5 10.6 8.2 8.3 8.3-8.3" style="${style}" />`,

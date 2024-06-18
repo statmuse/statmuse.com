@@ -54,13 +54,14 @@ const menuLinks = [
       icon: 'pga',
       url: '/pga',
       currentUrl: new RegExp('^/pga$'),
+      beta: true,
     },
     {
       text: 'Money',
       icon: 'money',
       url: '/money',
-      classes: '!text-orange',
       currentUrl: new RegExp('^/money$'),
+      beta: true,
     },
   ],
   [
@@ -155,7 +156,16 @@ const menuLinks = [
       <Panel>
         <ul class="space-y-2 group/submenu">
           {links.map(
-            ({ icon, text, url, external, currentUrl, classes, subLinks }) => (
+            ({
+              icon,
+              text,
+              url,
+              external,
+              currentUrl,
+              classes,
+              subLinks,
+              beta,
+            }) => (
               <>
                 <li>
                   {!subLinks ? (
@@ -172,6 +182,13 @@ const menuLinks = [
                     >
                       <Icon name={icon} class="block w-5 h-5 object-cover" />
                       {text}
+                      {beta && (
+                        <Icon
+                          name="beta"
+                          fill={text === 'Money' ? '#EFA125' : '#00C1D8'}
+                          class="block h-6 object-cover"
+                        />
+                      )}
                     </a>
                   ) : (
                     <label
