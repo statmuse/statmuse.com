@@ -125,18 +125,7 @@ Caching.swr(Astro)
 ---
 
 <HomeLayout league="money">
-  <Panel class="!px-0 !py-0 overflow-clip">
-    <iframe
-      class="w-full aspect-video"
-      src="https://player.vimeo.com/video/554757123"
-      width="100%"
-      frameborder="0"
-      allow="autoplay; fullscreen"
-      allowfullscreen
-    >
-    </iframe>
-  </Panel>
-  <div class="gap-3 space-y-3 columns-2xs lg:min-w-[48rem]">
+  <div class="gap-3 space-y-3 columns-2xs">
     {
       examples.map(([title, queries]) => (
         <Panel {title} class="break-inside-avoid-column">
