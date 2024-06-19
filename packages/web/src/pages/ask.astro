@@ -61,7 +61,7 @@ if (response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional')
 ---
 
 <Layout
-  class="items-center justify-center py-10 md:py-0 md:justify-start md:mt-24"
+  class="py-10 md:pt-24"
   analytics={{
     is_search: true,
     page_type: 'prompt',
@@ -73,7 +73,7 @@ if (response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional')
   conversationToken={response.conversation.token}
   renderRightColumn={false}
 >
-  <div class="text-center min-w-44">
+  <div class="text-center min-w-44 mx-auto">
     <h1 class="mb-5">For which league?</h1>
     <div class="w-full flex flex-col gap-2">
       {
@@ -92,7 +92,6 @@ if (response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional')
                 name="question[query]"
                 required=""
                 type="hidden"
-                value={choice.input}
               />
               <input
                 id="question_query_clarification_for"
