@@ -331,45 +331,43 @@ const canonicalUrl = meta?.canonical
       {
         renderRightColumn && (
           <div class="hidden relative md:block w-[300px] shrink-0 *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full">
-            <div class="content">
-              <WithSubscription client:only="svelte">
-                <Fragment slot="subscribed">
-                  <div class="space-y-3">
-                    {trending.map(
-                      (trend) =>
-                        trend.items && (
-                          <TrendingList
-                            title={`Trending ${
-                              league ? `${league.toUpperCase()} ` : ''
-                            }${trend.items.name}`}
-                            items={trend.items.items}
-                            href={trend.href}
-                            smallImage
-                          />
-                        ),
-                    )}
-                  </div>
-                </Fragment>
-                <div class="space-y-3 h-full">
+            <WithSubscription client:only="svelte">
+              <Fragment slot="subscribed">
+                <div class="content space-y-3">
+                  {trending.map(
+                    (trend) =>
+                      trend.items && (
+                        <TrendingList
+                          title={`Trending ${
+                            league ? `${league.toUpperCase()} ` : ''
+                          }${trend.items.name}`}
+                          items={trend.items.items}
+                          href={trend.href}
+                          smallImage
+                        />
+                      ),
+                  )}
+                </div>
+              </Fragment>
+              <div class="content space-y-3 h-full">
+                <AditudeAdBanner
+                  client:only="svelte"
+                  divId="pb-slot-square-1"
+                  slotId="pb-slot-square-1"
+                  placeholderClass="w-[300px] h-[250px]"
+                  onlyDesktop
+                />
+                <div class="sticky top-[--top-spacing]">
                   <AditudeAdBanner
                     client:only="svelte"
-                    divId="pb-slot-square-1"
-                    slotId="pb-slot-square-1"
-                    placeholderClass="w-[300px] h-[250px]"
+                    divId="pb-slot-right-2"
+                    slotId="pb-slot-right-2"
+                    placeholderClass="w-[300px] h-[600px]"
                     onlyDesktop
                   />
-                  <div class="sticky top-[--top-spacing]">
-                    <AditudeAdBanner
-                      client:only="svelte"
-                      divId="pb-slot-right-2"
-                      slotId="pb-slot-right-2"
-                      placeholderClass="w-[300px] h-[600px]"
-                      onlyDesktop
-                    />
-                  </div>
                 </div>
-              </WithSubscription>
-            </div>
+              </div>
+            </WithSubscription>
             <div class="loading hidden animate-pulse absolute inset-0 z-50">
               <div class="flex flex-col gap-3">
                 <Panel class="rounded-2xl border bg-inherit h-32" />
