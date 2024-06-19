@@ -12,6 +12,10 @@ export const logging = defineMiddleware(async (context, next) => {
 })
 
 export const migrateSession = defineMiddleware(async (context, next) => {
+  if (context.url.pathname.startsWith('/_image')) {
+    return next()
+  }
+
   const token = context.cookies.get(Session.SESSION_COOKIE)?.value
   if (!token) return next()
   try {
