@@ -507,7 +507,7 @@ const games = recentGames?.grid.rows.map((r, index) => ({
     }
     {
       summary ? (
-        <Panel title="Summary">
+        <Panel title="Summary" class="hidden lg:block">
           <div class="leading-snug">
             <p set:html={summary} />
           </div>
@@ -639,6 +639,15 @@ const games = recentGames?.grid.rows.map((r, index) => ({
               </li>
             ))}
           </ol>
+        </Panel>
+      ) : null
+    }
+    {
+      summary ? (
+        <Panel title="Summary" class="lg:hidden">
+          <div class="leading-snug">
+            <p set:html={summary} />
+          </div>
         </Panel>
       ) : null
     }
