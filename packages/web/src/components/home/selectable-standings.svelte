@@ -83,7 +83,7 @@
         {#each toggleOptions as option, i}
           <label
             for={`standings-${i}`}
-            class="py-1 w-12 relative"
+            class="py-1 w-12 relative cursor-pointer"
             class:group-has-[#standings-0:checked]:text-gray-2={i == 0}
             class:group-has-[#standings-1:checked]:text-gray-2={i == 1}
           >
