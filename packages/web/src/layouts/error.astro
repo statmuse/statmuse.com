@@ -20,15 +20,15 @@ interface Props extends ComponentProps<typeof Layout> {
 
 const images = [
   {
-    url: 'https://cdn.statmuse.com/app/images/error/angry-lebron.png',
+    url: Astro.url.origin + '/error/angry-lebron.png',
     alt: 'Illustration of Lebron James with angry expression',
   },
   {
-    url: 'https://cdn.statmuse.com/app/images/error/confused-jr-smith.png',
+    url: Astro.url.origin + '/error/confused-jr-smith.png',
     alt: 'Illustration of J.R. Smith with confused expression',
   },
   {
-    url: 'https://cdn.statmuse.com/app/images/error/crying-jordan.png',
+    url: Astro.url.origin + '/error/crying-jordan.png',
     alt: 'Illustration of Michael Jordan, crying',
   },
 ]
