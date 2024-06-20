@@ -61,7 +61,7 @@
 
 <!-- animated switch version -->
 <button
-  class="rounded-2xl bg-gray-8 dark:bg-gray-3 border border-gray-6 dark:border-none
+  class="rounded-2xl bg-gray-6 dark:bg-gray-3 border border-gray-6 dark:border-none
          relative inline-flex flex-shrink-0 h-6 w-12 cursor-pointer items-center
          focus:ring-gray-5 ring-offset-gray-8 dark:ring-offset-gray-3
          transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2
