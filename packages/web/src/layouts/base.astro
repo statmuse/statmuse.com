@@ -294,13 +294,13 @@ const canonicalUrl = meta?.canonical
       'text-gray-2 dark:text-gray-7 bg-gray-7 dark:bg-gray-2 text-pretty': true,
       'has-[#menu:checked]:overflow-y-scroll has-[#menu:checked]:fixed': true,
       'has-[#menu:checked]:w-full has-[#menu:checked]:h-full': true,
-      'max-w-7xl min-h-screen mx-auto px-3 md:px-5 flex flex-col gap-3': true,
+      'max-w-7xl min-h-screen mx-auto px-3 md:px-5 flex flex-col': true,
     }}
   >
     <Header {preferredDomain} {query} {conversationToken} {money} />
     <div
       class:list={{
-        'grid grid-rows-1 gap-3 -mt-3 md:mt-0 [--top-spacing:74px] flex-1': true,
+        'grid grid-rows-1 gap-3 [--top-spacing:62px] flex-1': true,
         'md:grid-cols-[1fr_300px] xl:grid-cols-[auto_1fr_300px]':
           renderRightColumn,
         'xl:grid-cols-[auto_1fr]': !renderRightColumn,
