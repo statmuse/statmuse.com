@@ -2,6 +2,7 @@
 import TrendingListItem from '@components/trending-list-item.astro'
 import Panel from '@components/panel.astro'
 import { type TrendingListItem as Item } from 'src/types'
+import Icon from '@components/icon.svelte'
 
 interface Props {
   items: Item[]
@@ -11,9 +12,11 @@ interface Props {
   prominent?: boolean
   class?: string | null
   smallImage?: boolean
+  seeMore?: boolean
 }
 
-const { items, title, eager, prominent, smallImage, href } = Astro.props
+const { items, title, eager, prominent, smallImage, href, seeMore } =
+  Astro.props
 ---
 
 <Panel {title} {href} class="pb-0">
@@ -23,6 +26,16 @@ const { items, title, eager, prominent, smallImage, href } = Astro.props
         {items.slice(0, 5).map((item, index) => (
           <TrendingListItem {item} {index} {prominent} {eager} {smallImage} />
         ))}
+        {items.length > 5 && seeMore && href && (
+          <li class="py-3 md:hidden">
+            <a
+              {href}
+              class="flex items-center justify-center gap-2 text-gray-5"
+            >
+              See more <Icon name="next" class="w-4 h-4" />
+            </a>
+          </li>
+        )}
       </ol>
     ) : (
       <div class="h-96">
