@@ -469,7 +469,7 @@
   {/if}
   {#if limitRows && grids[0].allRows.length > freeRowLimit && $session?.type === 'user' && $session.properties.subscriptionStatus === 'active'}
     <div
-      class="border-y border-gray-6 dark:border-gray-4 py-1 mt-0.5"
+      class="border-t border-gray-6 dark:border-gray-4 py-1 mt-0.5 -mx-3"
       on:click={onClickExpand}
     >
       <a href="#" class="text-primary flex items-center justify-center gap-2">
