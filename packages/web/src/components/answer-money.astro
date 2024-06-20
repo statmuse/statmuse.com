@@ -85,7 +85,11 @@ const share = {
   {conversationToken}
   {share}
 >
-  {heroProps ? <Hero {...heroProps} {share} renderAdBanner /> : null}
+  {
+    heroProps ? (
+      <Hero class="@lg/hero:pr-11" {...heroProps} {share} renderAdBanner />
+    ) : null
+  }
   <Visuals response={answer} {conversationToken} />
   {
     answer.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && (
