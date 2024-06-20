@@ -35,11 +35,15 @@
   function setMode(value: boolean) {
     dark = value
 
+    const metaColorScheme = document.querySelector('meta[name="color-scheme"]')
+
     // update page styling
     if (dark) {
       document.documentElement.classList.add('dark')
+      metaColorScheme?.setAttribute('content', 'dark')
     } else {
       document.documentElement.classList.remove('dark')
+      metaColorScheme?.setAttribute('content', 'light')
     }
 
     // store the theme as a local override

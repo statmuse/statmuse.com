@@ -133,16 +133,24 @@ const canonicalUrl = meta?.canonical
 
 <html lang="en">
   <head>
+    <meta name="color-scheme" content="dark light" />
+
     <script is:inline>
       function setTheme(document) {
+        const metaColorScheme = document.querySelector(
+          'meta[name="color-scheme"]',
+        )
+
         if (
           localStorage.theme === 'dark' ||
           (!('theme' in localStorage) &&
             window.matchMedia('(prefers-color-scheme: dark)').matches)
         ) {
           document.documentElement.classList.add('dark')
+          metaColorScheme.setAttribute('content', 'dark')
         } else {
           document.documentElement.classList.remove('dark')
+          metaColorScheme.setAttribute('content', 'light')
         }
       }
 
@@ -160,7 +168,6 @@ const canonicalUrl = meta?.canonical
       )
     }
     <meta charset="utf-8" />
-    <meta name="color-scheme" content="light only" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="generator" content={Astro.generator} />

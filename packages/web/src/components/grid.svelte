@@ -215,7 +215,7 @@
   {entity}
   class={`${classes} pb-0 ${!fullWidth ? 'md:w-fit' : ''}`}
 >
-  <div class="relative overflow-x-auto no-scrollbar -mx-3">
+  <div class="relative overflow-x-auto -mx-3">
     <table class="whitespace-nowrap" class:w-full={fullWidth}>
       {#each grids as grid}
         {@const { columns, rows, aggregations } = grid}
