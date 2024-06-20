@@ -42,14 +42,14 @@ const representatives = item.images.map((i) => ({ url: i }))
       }
       <p
         class:list={{
-          'self-center leading-5 text-pretty': true,
+          'self-center leading-5 text-pretty py-2': true,
         }}
         set:html={item.title}
       />
     </div>
     <div
       class:list={{
-        'relative flex items-end': true,
+        'relative flex items-end self-end': true,
         'pt-3': numbered,
         'pt-1': !numbered,
         'mr-2.5': representatives.length > 1,
