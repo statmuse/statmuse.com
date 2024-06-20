@@ -312,18 +312,18 @@ const canonicalUrl = meta?.canonical
       />
       <div
         class:list={{
-          '@container/main min-w-0 h-full': true,
+          'min-w-0 h-full': true,
           [Astro.props.class ?? '']: !!Astro.props.class,
         }}
       >
-        <div class="loading hidden inset-0 z-50">
+        <div class="@container/skeleton loading hidden inset-0 z-50">
           <div class="flex flex-col gap-3">
             <Panel
               team
               class:list={{
-                'rounded-none border-0 md:rounded-2xl bg-gray-7 h-[265.5px] @lg/main:h-[166.5px] md:h-[258.5px] lg:h-[159.5px]': true,
-                '-mx-3 pb-2 pt-4 px-3 @lg/main:py-3 @lg/main:px-5 md:mx-0 whitespace-nowrap': true,
-                'flex flex-col-reverse gap-3 @lg/main:flex-row md:animate-pulse': true,
+                'rounded-none border-0 md:rounded-2xl bg-gray-7 h-[265.5px] @lg/skeleton:h-[166.5px] md:h-[258.5px] lg:h-[159.5px]': true,
+                '-mx-3 pb-2 pt-4 px-3 @lg/skeleton:py-3 @lg/skeleton:px-5 md:mx-0 whitespace-nowrap': true,
+                'flex flex-col-reverse gap-3 @lg/skeleton:flex-row md:animate-pulse': true,
               }}
             />
             <Panel class="rounded-2xl border bg-inherit animate-pulse h-48" />
