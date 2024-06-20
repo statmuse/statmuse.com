@@ -30,30 +30,32 @@ Caching.swr(Astro)
 ---
 
 <PlayerLayout {league} {bio} {meta} page="bio">
-  {bio && <BioPanel team={false} expanded {bio} {domain} />}
-  {
-    bio && bio.awards && bio.awards.length > 0 && (
-      <Panel title="Awards">
-        <div class="flex flex-col gap-2">
-          {bio.awards.map((award) => (
-            <div class="leading-tight">
-              <div class="whitespace-nowrap">
-                {award.years.length > 1
-                  ? `${award.years.length}x ${award.name}`
-                  : award.name}
+  <div class="space-y-3 gap-3 justify-center lg:columns-2">
+    {bio && <BioPanel team={false} expanded {bio} {domain} />}
+    {
+      bio && bio.awards && bio.awards.length > 0 && (
+        <Panel title="Awards">
+          <div class="flex flex-col gap-2">
+            {bio.awards.map((award) => (
+              <div class="leading-tight">
+                <div class="whitespace-nowrap">
+                  {award.years.length > 1
+                    ? `${award.years.length}x ${award.name}`
+                    : award.name}
+                </div>
+                <div class="font-light text-sm text-gray-5">
+                  {award.years.join(', ')}
+                </div>
               </div>
-              <div class="font-light text-sm text-gray-5">
-                {award.years.join(', ')}
-              </div>
-            </div>
-          ))}
-        </div>
-      </Panel>
-    )
-  }
-  <Panel title="Summary">
-    <div class="leading-snug">
-      <p set:html={summary} />
-    </div>
-  </Panel>
+            ))}
+          </div>
+        </Panel>
+      )
+    }
+    <Panel title="Summary">
+      <div class="leading-snug">
+        <p set:html={summary} />
+      </div>
+    </Panel>
+  </div>
 </PlayerLayout>
