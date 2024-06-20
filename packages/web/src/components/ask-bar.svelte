@@ -403,13 +403,13 @@
                     <span>{suggestion.display}</span>
                   {:else if suggestion.type === 'player'}
                     <span
-                      class="w-7 h-7 mr-2.5 shrink-0"
+                      class="w-7 h-7 mr-2.5 shrink-0 rounded"
                       style={`background: #c5c9cc url(/_image?href=${suggestion.image_url}&w=100&h=100&f=webp) no-repeat center top/145%;`}
                     />
                     <span>{suggestion.display}</span>
                   {:else if suggestion.type === 'team'}
                     <span
-                      class="w-7 h-7 mr-2.5 shrink-0"
+                      class="w-7 h-7 mr-2.5 shrink-0 rounded"
                       style={`background: #c5c9cc url(/_image?href=${suggestion.image_url}&w=100&h=100&f=webp) no-repeat center / contain;`}
                     />
                     <span>{suggestion.display}</span>
