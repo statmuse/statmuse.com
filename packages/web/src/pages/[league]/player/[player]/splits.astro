@@ -21,7 +21,7 @@ if (!splits || !bio) return NOT_FOUND_404
 const { grids, parameters } = splits
 const leagueKeywords = getLeagueKeywords(domain)
 const seasonYear = Astro.url.searchParams.get('seasonYear')
-const year = seasonYear ? ` ${seasonYear}` : ''
+const year = seasonYear && seasonYear !== '0' ? ` ${seasonYear}` : ''
 
 const title = [bio.usedName, year?.trim(), 'Splits']
   .filter((w) => !!w)
