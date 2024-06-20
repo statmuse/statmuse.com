@@ -84,8 +84,10 @@ const stats = [
         {
           stats.map(({ key, value }) => (
             <div class="flex flex-col items-center">
-              <div class="whitespace-nowrap">{value}</div>
-              <div class="font-light text-sm opacity-80 text-center">{key}</div>
+              <div class="whitespace-nowrap mb-[2px]">{value}</div>
+              <div class="font-light text-sm opacity-80 text-center leading-[1.1] ">
+                {key}
+              </div>
             </div>
           ))
         }
