@@ -215,13 +215,18 @@
     }
   })
 
-  $: open = sections.findIndex((s) => s.suggestions.length > 0) > -1
-  $: userId = $session?.type === 'user' ? $session.properties.id : undefined
+  $: {
+    if (userId && !isMobileTest(navigator.userAgent)) {
+      expand = true
+    }
+  }
   $: {
     if (expand && input) {
       input.focus()
     }
   }
+  $: open = sections.findIndex((s) => s.suggestions.length > 0) > -1
+  $: userId = $session?.type === 'user' ? $session.properties.id : undefined
   $: {
     if (shadowInput && input) {
       shadowInput.value = query
