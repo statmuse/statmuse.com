@@ -7,7 +7,6 @@ import {
   type GameraEntity,
   tokensToText,
 } from '@statmuse/core/gamera'
-import Goal from '@components/icons/goal.astro'
 import Substitution from '@components/icons/substitution.astro'
 import SoccerLineup from '@components/soccer-lineup.astro'
 import SubArrow from '@components/icons/sub-arrow.astro'
@@ -15,6 +14,7 @@ import EntityLink from '@components/entity-link.astro'
 import dayjs from 'dayjs'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import Panel from '@components/panel.astro'
+import Icon from '@components/icon.svelte'
 
 interface Props {
   data: GameraEplBoxScore
@@ -202,7 +202,7 @@ const playerEntityMap = [
 const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
 ---
 
-<Panel team class="">
+<Panel team class="rounded-none md:rounded-2xl -mx-3 md:mx-0 border-none">
   <div class="flex gap-2 md:gap-8 md:items-center justify-center">
     <div
       class="flex-1 flex flex-col-reverse md:flex-row gap-1 md:gap-4 items-center justify-end"
@@ -279,7 +279,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
               }`}</p>
             ))}
           </div>
-          <Goal class="w-5 shrink-0 mx-4 md:mx-24" color="#000" />
+          <Icon name="fc" class="w-5 shrink-0 mx-4 md:mx-24" />
           <div class="flex-1 mx-0.5">
             {awayGoals.map((play) => (
               <p class="text-sm">{`${lastName(play.playerName)} ${play.minute}${
@@ -345,7 +345,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
         { text: 'Stats', href: '#stats' },
       ].map(({ href, text }, index) => (
         <a
-          class={`text-black text-3xl font-semibold shrink-0 hover:text-team-primary ${
+          class={`text-inherit text-3xl font-semibold shrink-0 hover:text-team-primary ${
             index === 0 ? 'text-team-primary' : ''
           }`}
           {href}
@@ -355,8 +355,8 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
       ))
     }
   </div>
-  <div class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 mb-5">
-    <div>
+  <div class="flex flex-wrap gap-3 mb-5">
+    <div class="flex-1 basis-[300px]">
       <div id="timeline" class="relative -top-[65px]"></div>
       <p class="font-semibold text-[#b8b8b8]">Timeline</p>
       <div
@@ -439,9 +439,12 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                   ) : play.eventType === 'goal' ||
                     play.eventType === 'penalty_goal' ||
                     play.eventType === 'own_goal' ? (
-                    <Goal
-                      class="w-5 mx-2 shrink-0"
-                      color={play.eventType === 'own_goal' ? '#ed1c24' : '#000'}
+                    <Icon
+                      name="fc"
+                      class={
+                        'w-5 mx-2 shrink-0 ' +
+                        (play.eventType === 'own_goal' ? 'text-[#ed1c24]' : '')
+                      }
                     />
                   ) : play.eventType === 'substitution' ? (
                     <Substitution class="w-5 mx-2 shrink-0" />
@@ -533,7 +536,9 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
         }
       </div>
     </div>
-    <div>
+    <div
+      class="flex-1 basis-[300px] shrink-0 overflow-clip sm:overflow-visible -mx-3 sm:mx-0"
+    >
       <div id="lineups" class="relative -top-[65px]"></div>
       <p class="font-semibold text-[#b8b8b8]">Lineups</p>
       {
@@ -631,8 +636,9 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                           {homeTeamGoals
                             .filter((p) => p === player.entity.display)
                             .map((_, i) => (
-                              <Goal
-                                class="w-4 h-4 ml-0.5 shrink-0 rounded-full bg-white"
+                              <Icon
+                                name="fc"
+                                class="w-4 h-4 ml-0.5 shrink-0 rounded-full bg-white text-gray-2"
                                 style={
                                   i > 0
                                     ? `position: absolute; top: 0; left: ${
@@ -640,7 +646,6 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                                       }px`
                                     : ''
                                 }
-                                color="#000"
                               />
                             ))}
                         </div>
@@ -698,8 +703,9 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                           {awayTeamGoals
                             .filter((p) => p === player.entity.display)
                             .map((_, i) => (
-                              <Goal
-                                class="w-4 h-4 ml-0.5 shrink-0 rounded-full bg-white"
+                              <Icon
+                                name="fc"
+                                class="w-4 h-4 ml-0.5 shrink-0 rounded-full bg-white text-gray-2"
                                 style={
                                   i > 0
                                     ? `position: absolute; top: 0; right: ${
@@ -803,7 +809,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                           }
                         })()}
                         {homeTeamGoals.includes(player.entity.display) && (
-                          <Goal class="w-4 h-4 ml-0.5 shrink-0" color="#000" />
+                          <Icon name="fc" class="w-4 h-4 ml-0.5 shrink-0" />
                         )}
                       </>
                     </div>
@@ -848,7 +854,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                           }
                         })()}
                         {awayTeamGoals.includes(player.entity.display) && (
-                          <Goal class="w-4 h-4 mr-0.5 shrink-0" color="#000" />
+                          <Icon name="fc" class="w-4 h-4 mr-0.5 shrink-0" />
                         )}
                       </>
                     </div>
@@ -890,7 +896,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                         }
                       })()}
                       {homeTeamGoals.includes(player.entity.display) && (
-                        <Goal class="w-4 h-4 ml-0.5 shrink-0" color="#000" />
+                        <Icon name="fc" class="w-4 h-4 ml-0.5 shrink-0" />
                       )}
                     </>
                   </div>
@@ -941,7 +947,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
                         }
                       })()}
                       {awayTeamGoals.includes(player.entity.display) && (
-                        <Goal class="w-4 h-4 mr-0.5 shrink-0" color="#000" />
+                        <Icon name="fc" class="w-4 h-4 mr-0.5 shrink-0" />
                       )}
                     </>
                   </div>
@@ -967,7 +973,7 @@ const lastName = (name: string) => name.split(' ')[name.split(' ').length - 1]
         )
       }
     </div>
-    <div>
+    <div class="flex-1 basis-[300px]">
       <div id="stats" class="relative -top-[65px]"></div>
       <p class="font-semibold text-[#b8b8b8]">Stats</p>
       <div
