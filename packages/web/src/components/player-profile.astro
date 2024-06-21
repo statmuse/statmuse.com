@@ -481,6 +481,9 @@ const games = recentGames?.grid.rows.map((r, index) => ({
     {
       seasonPanels?.map((panel, index) => (
         <Panel
+          class:list={{
+            'border-0': index === 0,
+          }}
           team={index === 0}
           title={panel.title}
           href={playerPath + '/career-stats'}

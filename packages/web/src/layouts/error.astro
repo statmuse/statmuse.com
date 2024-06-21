@@ -19,10 +19,10 @@ interface Props extends ComponentProps<typeof Layout> {
 }
 
 const images = [
-  {
-    url: Astro.url.origin + '/error/angry-lebron.png',
-    alt: 'Illustration of Lebron James with angry expression',
-  },
+  // {
+  //   url: Astro.url.origin + '/error/angry-lebron.png',
+  //   alt: 'Illustration of Lebron James with angry expression',
+  // },
   {
     url: Astro.url.origin + '/error/confused-jr-smith.png',
     alt: 'Illustration of J.R. Smith with confused expression',
@@ -55,7 +55,7 @@ if (render) {
   render ? (
     <Layout
       {...Astro.props}
-      colors={{ foreground: '#fff', background: '#0086ff' }}
+      colors={{ foreground: '#fff', background: '#DD3636' }}
       {enableAdBanner}
       {money}
       {query}
