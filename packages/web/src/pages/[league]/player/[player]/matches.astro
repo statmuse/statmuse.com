@@ -42,6 +42,7 @@ Caching.swr(Astro)
     grids &&
       grids.map((grid) => (
         <Grid
+          title={grid.name}
           client:load
           data={grid}
           columnStyles={{ DATE: 'text-left w-20', SCORE: 'text-left' }}
