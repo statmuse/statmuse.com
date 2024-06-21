@@ -43,8 +43,9 @@ const { links, selected, href, teamColors, hero: pillBelow } = Astro.props
         <a
           class:list={{
             'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
-            'hover:no-underline hover:text-gray-8 hover:bg-teal': !teamColors,
-            'hover:no-underline hover:text-team-secondary hover:bg-team-primary':
+            'hover:no-underline md:hover:text-gray-8 md:hover:bg-teal':
+              !teamColors,
+            'hover:no-underline md:hover:text-team-secondary md:hover:bg-team-primary':
               teamColors,
             'bg-teal text-gray-8 border-teal':
               !teamColors && selected === link.param,
