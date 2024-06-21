@@ -518,7 +518,7 @@ const games = recentGames?.grid.rows.map((r, index) => ({
       ) : null
     }
     {
-      profile ? (
+      profile && bio.isActive ? (
         <PlayerPerformanceCard
           domain={profile.bio.domain}
           bio={profile.bio}
