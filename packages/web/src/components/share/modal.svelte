@@ -76,8 +76,32 @@
         alt="close"
         on:click={onClickClose}
       />
-      <p class="mb-4">Share a link to this question</p>
+      <p class="mb-4">Share this search</p>
       <div class="flex">
+        <div style:text-align="center" style:font-size="14px">
+          <a
+            href={'https://twitter.com/share?' +
+              new URLSearchParams({ url: shareLink }).toString()}
+            class="flex items-center justify-center w-16 h-16 my-1 mx-2.5 rounded-full"
+            style:background="#000"
+            target="_blank"
+            rel="noopener noreferrer"
+            on:click={onClickTracking}
+          >
+            <svg
+              role="img"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-7 h-7 fill-white"
+            >
+              <title>X</title>
+              <path
+                d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"
+              ></path>
+            </svg>
+          </a>
+          X
+        </div>
         <div style:text-align="center" style:font-size="14px">
           <a
             href={'https://www.facebook.com/sharer/sharer.php?' +
@@ -96,32 +120,13 @@
           </a>
           Facebook
         </div>
-        <div style:text-align="center" style:font-size="14px">
-          <a
-            href={'https://twitter.com/share?' +
-              new URLSearchParams({ url: shareLink }).toString()}
-            class="flex items-center justify-center w-16 h-16 my-1 mx-2.5 rounded-full"
-            style:background="#1DA1F2"
-            target="_blank"
-            rel="noopener noreferrer"
-            on:click={onClickTracking}
-          >
-            <img
-              src="/share-icons/twitter-light.svg"
-              class="w-7 h-7 object-contain"
-              alt="Twitter"
-            />
-          </a>
-          Twitter
-        </div>
       </div>
-      <div class="relative my-5 cursor-pointer">
+      <div class="relative my-5 cursor-pointer" on:click={copyToClipboard}>
         <input
           class="w-full h-[42px] dark:bg-gray-3 border border-gray-6 dark:border-transparent rounded-2xl outline-none cursor-pointer px-4 pr-[70px] text-sm overflow-auto"
           type="text"
           value={shareLink}
           readonly
-          on:click={copyToClipboard}
         />
         <span
           class="absolute top-1/2 right-4 -translate-y-1/2 text-primary font-semibold text-sm"
