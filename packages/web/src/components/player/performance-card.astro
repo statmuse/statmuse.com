@@ -128,14 +128,18 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
           )})`,
         hideIfZero: true,
       },
-      // {
-      //   label: 'Cross%',
-      //   value: (v) =>
-      //     `${v.CRS?.value}/${v['CRS-ATT']?.value} (${formatPercentage(
-      //       ((v.CRS?.value as number) / (v['CRS-ATT']?.value as number)) * 100,
-      //     ), false})`,
-      //    hideIfZero: true,
-      // },
+      {
+        label: 'Cross%',
+        value: (v) =>
+          `${v.CRS?.value}/${v['CRS-ATT']?.value} (${
+            (formatPercentage(
+              ((v.CRS?.value as number) / (v['CRS-ATT']?.value as number)) *
+                100,
+            ),
+            false)
+          })`,
+        hideIfZero: true,
+      },
       { label: 'BCM', hideIfZero: true },
       { label: 'BCC', hideIfZero: true },
       { label: 'Chance\nCreated', value: 'CC', hideIfZero: true },
