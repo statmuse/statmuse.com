@@ -140,7 +140,11 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       { label: 'BCC', hideIfZero: true },
       { label: 'Chance\nCreated', value: 'CC', hideIfZero: true },
       { label: 'Pass\nInto Box', value: 'PASS-INTO-BOX', hideIfZero: true },
-      { label: 'Touches\n(In Box)', value: 'TCH-BOX', hideIfZero: true },
+      {
+        label: 'Touches\n(In Box)',
+        value: (v) => `${v?.TCH?.display} (${v?.['TCH-BOX']?.display})`,
+        hideIfZero: true,
+      },
       { label: 'Poss\nLost', value: 'POSS-L', hideIfZero: true },
       {
         label: 'Duel\nW-L',
