@@ -299,6 +299,7 @@ const canonicalUrl = meta?.canonical
   >
     <Header {preferredDomain} {query} {conversationToken} {money} />
     <div
+      data-content
       class:list={{
         'grid grid-rows-1 gap-3 [--top-spacing:62px] flex-1': true,
         'md:grid-cols-[1fr_300px] xl:grid-cols-[auto_1fr_300px]':
@@ -337,7 +338,10 @@ const canonicalUrl = meta?.canonical
       </div>
       {
         renderRightColumn && (
-          <div class="hidden relative md:block w-[300px] shrink-0 *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full">
+          <div
+            data-right-column
+            class="hidden relative md:block w-[300px] shrink-0 *:h-full [&_astro-island]:block [&_astro-slot]:block [&_astro-slot]:h-full"
+          >
             <WithSubscription client:only="svelte">
               <Fragment slot="subscribed">
                 <div class="content space-y-3">
@@ -550,6 +554,50 @@ const canonicalUrl = meta?.canonical
         document
           .querySelectorAll('.content')
           .forEach((e) => e?.classList.add('invisible'))
+      })
+
+      //
+      document.addEventListener(
+        'astro:page-load',
+        () => {
+          sessionStore.subscribe((session) => {
+            if (session && session.type === 'user') {
+              const content = document.querySelector(
+                '.md\\:grid-cols-\\[1fr_300px\\][data-content]',
+              )
+              const rightCol = document.querySelector('[data-right-column]')
+
+              if (content) {
+                content.classList.add('lg:grid-cols-[1fr_300px]')
+                content.classList.remove('md:grid-cols-[1fr_300px]')
+              }
+              if (rightCol) {
+                rightCol.classList.add('lg:block')
+                rightCol.classList.remove('md:block')
+              }
+            }
+          })
+        },
+        { once: true },
+      )
+
+      document.addEventListener('astro:after-swap', () => {
+        const session = sessionStore.get()
+        if (session && session.type === 'user') {
+          const content = document.querySelector(
+            '.md\\:grid-cols-\\[1fr_300px\\][data-content]',
+          )
+          const rightCol = document.querySelector('[data-right-column]')
+
+          if (content) {
+            content.classList.add('lg:grid-cols-[1fr_300px]')
+            content.classList.remove('md:grid-cols-[1fr_300px]')
+          }
+          if (rightCol) {
+            rightCol.classList.add('lg:block')
+            rightCol.classList.remove('md:block')
+          }
+        }
       })
     </script>
   </body>
