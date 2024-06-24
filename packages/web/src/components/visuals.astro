@@ -116,6 +116,7 @@ const details =
                 {detail.grids.map((grid) => (
                   <div class="flex-1 overflow-x-auto">
                     <Grid
+                      name={grid.name}
                       client:load
                       data={grid}
                       columnStyles={{
@@ -133,6 +134,7 @@ const details =
             return detail.grids.map((grid) => (
               <div class="flex-1 overflow-x-auto">
                 <Grid
+                  name={grid.name}
                   client:load
                   data={grid}
                   columnStyles={{
