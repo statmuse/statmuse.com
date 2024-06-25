@@ -23,6 +23,8 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
         (x) =>
           x && {
             title: 'PL Goals',
+            domain: 'EPL',
+            query: `goal leaders ${x.seasonYearDisplay}`,
             players:
               find(x.cards, { stat: 'mostGoals' })?.players.slice(0, 3) ?? [],
           },
@@ -31,6 +33,10 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
         (x) =>
           x && {
             title: `NBA ${x.seasonType === 'postseason' ? 'Playoff ' : ''}PPG`,
+            domain: 'NBA',
+            query: `ppg leaders ${x.seasonYearDisplay}${
+              x.seasonType === 'postseason' ? ' postseason' : ''
+            }`,
             players:
               find(x.cards, { stat: 'mostPointsPerGame' })?.players.slice(
                 0,
@@ -44,6 +50,10 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
             title: `NFL ${
               x.seasonType === 'postseason' ? 'Playoff ' : ''
             }Total TD`,
+            domain: 'NFL',
+            query: `touchdown leaders ${x.seasonYearDisplay}${
+              x.seasonType === 'postseason' ? ' postseason' : ''
+            }`,
             players:
               find(x.cards, { stat: 'mostTotalTouchdowns' })?.players.slice(
                 0,
@@ -57,6 +67,10 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
             title: `MLB ${
               x.seasonType === 'postseason' ? 'Playoff ' : ''
             }Home Runs`,
+            domain: 'MLB',
+            query: `hr leaders ${x.seasonYearDisplay}${
+              x.seasonType === 'postseason' ? ' postseason' : ''
+            }`,
             players:
               find(x.cards, { stat: 'mostBattingHomeRuns' })?.players.slice(
                 0,
@@ -70,6 +84,10 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
             title: `NHL ${
               x.seasonType === 'postseason' ? 'Playoff ' : ''
             }Points`,
+            domain: 'NHL',
+            query: `goal leaders ${x.seasonYearDisplay}${
+              x.seasonType === 'postseason' ? ' postseason' : ''
+            }`,
             players:
               find(x.cards, { stat: 'mostPoints' })?.players.slice(0, 3) ?? [],
           },
@@ -80,6 +98,10 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
         (x) =>
           x && {
             title: 'PL Goal Difference',
+            domain: 'EPL',
+            query: `highest goal difference by a team ${x.seasonYearDisplay}${
+              x.seasonType === 'postseason' ? ' postseason' : ''
+            }`,
             teams:
               find(x.cards, { stat: 'bestGoalDifferential' })?.teams.slice(
                 0,
@@ -93,6 +115,10 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
             title: `NBA ${
               x.seasonType === 'postseason' ? 'Playoff ' : ''
             }Offensive Rating`,
+            domain: 'NBA',
+            query: `team ortg rankings ${x.seasonYearDisplay}${
+              x.seasonType === 'postseason' ? ' postseason' : ''
+            }`,
             teams:
               find(x.cards, { stat: 'bestOffensiveRating' })?.teams.slice(
                 0,
@@ -106,6 +132,10 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
             title: `NFL ${
               x.seasonType === 'postseason' ? 'Playoff ' : ''
             }Yards Per Game`,
+            domain: 'NFL',
+            query: `team total yards per game rankings ${x.seasonYearDisplay}${
+              x.seasonType === 'postseason' ? ' postseason' : ''
+            }`,
             teams:
               find(x.cards, { stat: 'mostTotalYardsPerGame' })?.teams.slice(
                 0,
@@ -119,6 +149,10 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
             title: `MLB ${
               x.seasonType === 'postseason' ? 'Playoff ' : ''
             }Home Runs`,
+            domain: 'MLB',
+            query: `teams with the most hr ${x.seasonYearDisplay}${
+              x.seasonType === 'postseason' ? ' postseason' : ''
+            }`,
             teams:
               find(x.cards, { stat: 'mostBattingHomeRuns' })?.teams.slice(
                 0,
@@ -132,6 +166,10 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
             title: `NHL ${
               x.seasonType === 'postseason' ? 'Playoff ' : ''
             }Goals Per Game`,
+            domain: 'NHL',
+            query: `most goals per game by a team ${x.seasonYearDisplay}${
+              x.seasonType === 'postseason' ? ' postseason' : ''
+            }`,
             teams:
               find(x.cards, { stat: 'mostGoalsPerGame' })?.teams.slice(0, 3) ??
               [],
@@ -143,6 +181,10 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
         (x) =>
           x && {
             title: 'NBA Spread Trends',
+            domain: 'NBA',
+            query: `best record against the spread ${x.seasonYearDisplay}${
+              x.seasonType === 'postseason' ? ' postseason' : ''
+            }`,
             teams:
               find(x.cards, {
                 stat: 'bestRecordAgainstTheSpread',
@@ -153,6 +195,10 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
         (x) =>
           x && {
             title: 'NFL Spread Trends',
+            domain: 'NFL',
+            query: `best record against the spread ${x.seasonYearDisplay}${
+              x.seasonType === 'postseason' ? ' postseason' : ''
+            }`,
             teams:
               find(x.cards, {
                 stat: 'bestRecordAgainstTheSpread',
@@ -163,6 +209,10 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
         (x) =>
           x && {
             title: 'MLB Run Line Trends',
+            domain: 'MLB',
+            query: `best record against the run line ${x.seasonYearDisplay}${
+              x.seasonType === 'postseason' ? ' postseason' : ''
+            }`,
             teams:
               find(x.cards, {
                 stat: 'bestRecordAgainstTheSpread',
@@ -173,6 +223,10 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
         (x) =>
           x && {
             title: 'NHL Puck Line Trends',
+            domain: 'NHL',
+            query: `best record against the puck line ${x.seasonYearDisplay}${
+              x.seasonType === 'postseason' ? ' postseason' : ''
+            }`,
             teams:
               find(x.cards, {
                 stat: 'bestRecordAgainstTheSpread',

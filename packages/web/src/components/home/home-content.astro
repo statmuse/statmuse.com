@@ -224,6 +224,8 @@ const league = Astro.params.league
                   }
                   sections={leaders.map((leader) => ({
                     title: leader.title,
+                    domain: leader.domain,
+                    query: leader.query,
                     items: leader.players.map((player) => ({
                       display: player.usedName,
                       stat: player.statDisplayValue,
@@ -243,6 +245,8 @@ const league = Astro.params.league
                   }
                   sections={rankings.map((ranking) => ({
                     title: ranking.title,
+                    domain: ranking.domain,
+                    query: ranking.query,
                     images: ranking.images,
                     items: ranking.teams.map((team) => ({
                       display: team.nickname,
@@ -268,6 +272,8 @@ const league = Astro.params.league
                   title="Betting Trends"
                   sections={betting.map((section) => ({
                     title: section.title,
+                    domain: section.domain,
+                    query: section.query,
                     images: section.images,
                     items: section.teams.map((team) => ({
                       display: team.nickname,
