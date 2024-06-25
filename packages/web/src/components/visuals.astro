@@ -116,7 +116,7 @@ const details =
                 {detail.grids.map((grid) => (
                   <div class="flex-1 overflow-x-auto">
                     <Grid
-                      name={grid.name}
+                      title={grid.name !== 'all' ? grid.name : undefined}
                       client:load
                       data={grid}
                       columnStyles={{
@@ -134,7 +134,7 @@ const details =
             return detail.grids.map((grid) => (
               <div class="flex-1 overflow-x-auto">
                 <Grid
-                  name={grid.name}
+                  title={grid.name !== 'all' ? grid.name : undefined}
                   client:load
                   data={grid}
                   columnStyles={{
