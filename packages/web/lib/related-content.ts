@@ -51,7 +51,7 @@ const playerMapByDomain: Record<
     { stat: 'mostPointsPerGame', title: 'PPG', query: 'ppg leaders' },
     { stat: 'mostReboundsPerGame', title: 'RPG', query: 'rpg leaders' },
     { stat: 'mostAssistsPerGame', title: 'APG', query: 'apg leaders' },
-    { stat: 'mostThreePointsMade', title: '3PM', query: '3pm leaders' },
+    { stat: 'mostThreePointsMade', title: '3PM', query: 'most 3pm' },
     { stat: 'bestTrueShootingPercentage', title: 'TS%', query: 'ts% leaders' },
   ],
   NFL: [
@@ -221,7 +221,11 @@ const teamMapByDomain: Record<
       title: 'Penalty Kill%',
       query: 'best pk% by a team',
     },
-    { stat: 'bestShootingPlusSavePercentage', title: 'PDO', query: '' },
+    {
+      stat: 'bestShootingPlusSavePercentage',
+      title: 'PDO',
+      query: 'highest pdo by a team',
+    },
   ],
   MLB: [
     {
@@ -247,7 +251,7 @@ const teamMapByDomain: Record<
     {
       stat: 'mostPitchingStrikeouts',
       title: 'Strikeouts',
-      query: 'teams with the most strikouts',
+      query: 'teams with the most pitching strikouts',
     },
   ],
   EPL: [
@@ -367,9 +371,7 @@ export const homeBettingByDomain = async (props: {
     return bettingMapByDomain[props.domain].map((x) => ({
       ...x,
       domain: props.domain,
-      query: `${x.query} ${leaders.seasonYearDisplay}${
-        leaders.seasonType === 'postseason' ? ' postseason' : ''
-      }`,
+      query: `${x.query} ${leaders.seasonYearDisplay}`,
       teams: find(leaders.cards, { stat: x.stat })?.teams.slice(0, 3) ?? [],
     }))
   }

@@ -85,7 +85,7 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
               x.seasonType === 'postseason' ? 'Playoff ' : ''
             }Points`,
             domain: 'NHL',
-            query: `goal leaders ${x.seasonYearDisplay}${
+            query: `points leaders ${x.seasonYearDisplay}${
               x.seasonType === 'postseason' ? ' postseason' : ''
             }`,
             players:
@@ -182,9 +182,7 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
           x && {
             title: 'NBA Spread Trends',
             domain: 'NBA',
-            query: `best record against the spread ${x.seasonYearDisplay}${
-              x.seasonType === 'postseason' ? ' postseason' : ''
-            }`,
+            query: `best record against the spread ${x.seasonYearDisplay}`,
             teams:
               find(x.cards, {
                 stat: 'bestRecordAgainstTheSpread',
@@ -196,9 +194,7 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
           x && {
             title: 'NFL Spread Trends',
             domain: 'NFL',
-            query: `best record against the spread ${x.seasonYearDisplay}${
-              x.seasonType === 'postseason' ? ' postseason' : ''
-            }`,
+            query: `best record against the spread ${x.seasonYearDisplay}`,
             teams:
               find(x.cards, {
                 stat: 'bestRecordAgainstTheSpread',
@@ -210,9 +206,7 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
           x && {
             title: 'MLB Run Line Trends',
             domain: 'MLB',
-            query: `best record against the run line ${x.seasonYearDisplay}${
-              x.seasonType === 'postseason' ? ' postseason' : ''
-            }`,
+            query: `best record against the run line ${x.seasonYearDisplay}`,
             teams:
               find(x.cards, {
                 stat: 'bestRecordAgainstTheSpread',
@@ -224,9 +218,7 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
           x && {
             title: 'NHL Puck Line Trends',
             domain: 'NHL',
-            query: `best record against the puck line ${x.seasonYearDisplay}${
-              x.seasonType === 'postseason' ? ' postseason' : ''
-            }`,
+            query: `best record against the puck line ${x.seasonYearDisplay}`,
             teams:
               find(x.cards, {
                 stat: 'bestRecordAgainstTheSpread',
