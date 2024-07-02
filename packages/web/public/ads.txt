@@ -326,6 +326,7 @@ contextweb.com, 561516, RESELLER, 89ff185a4c4e857c
 triplelift.com, 12503, RESELLER, 6c33edb13117fd86
 video.unrulymedia.com, 2439829435, DIRECT
 loopme.com,11575,RESELLER,6c8d5f95897a5a3b
+adyoulike.com, 1f301d3bcd723f5c372070bdfd142940, RESELLER
 
 #AMX
 amxrtb.com, 105199651, RESELLER
@@ -463,6 +464,11 @@ sharethrough.com, 23830661, DIRECT, d53b998a7bd4ecd2
 sharethrough.com, AgltJqgT, RESELLER, d53b998a7bd4ecd2
 smartadserver.com, 4872, RESELLER, 060d053dcf45cbf3
 onetag.com, 753930a353d6990, DIRECT
+improvedigital.com , 2434, RESELLER
+insticator.com, a4be8543-c8b1-4f3a-a4c0-73cfbdc3b652, DIRECT, b3511ffcafb23a32 #Insticator_Version_748
+sonobi.com, da6df59178, RESELLER, d1a215d9eb5aee9e
+amxrtb.com, 105199420, DIRECT
+adyoulike.com, 1f301d3bcd723f5c372070bdfd142940, RESELLER
 
 # Index Exchange
 indexexchange.com, 208425, DIRECT, 50b1c356f2c5c8fc
@@ -537,6 +543,13 @@ admixer.net, eacb57fd-226f-481c-9d2e-77df6a29bead, RESELLER
 risecodes.com, 653b9491697a4200010b373e, DIRECT
 admanmedia.com, 2162, DIRECT
 visiblemeasures.com, 1004, DIRECT
+nextmillennium.io, 15956, DIRECT, 65bd090fa4a1e3d6
+admagnetix.io, 201013, DIRECT
+appnexus.com, 15799, DIRECT, f5ab79cb980f11d1
+indexexchange.com, 207985, RESELLER, 50b1c356f2c5c8fc
+rubiconproject.com, 26296, RESELLER, 0bfd66d529a55807
+pubmatic.com, 164400, RESELLER, 5d62403b186f2ace
+openx.com, 540224251, DIRECT, 6a698e2ec38604c6
 
 #Amazon
 aps.amazon.com,4e8fb3b2-1c6c-42d6-890c-e5a6718315a3,DIRECT
@@ -609,7 +622,7 @@ contact=adops@aditude.io
 aditude.io, 198, DIRECT
 
 # OptiEngage
-optidigital.com,p290,DIRECT
+optidigital.com,p290,RESELLER
 pubmatic.com,158939,RESELLER,5d62403b186f2ace
 rubiconproject.com,20336,RESELLER,0bfd66d529a55807
 smartadserver.com,3379,RESELLER,060d053dcf45cbf3
