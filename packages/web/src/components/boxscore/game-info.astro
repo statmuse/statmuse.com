@@ -1,0 +1,52 @@
+---
+import Panel from '@components/panel.astro'
+import type { MLBGameDataResponse } from '@lib/boxscores/mlb'
+import { find } from 'lodash-es'
+
+interface Props {
+  venue: MLBGameDataResponse['venue']
+  weather: MLBGameDataResponse['weather']
+  officials: MLBGameDataResponse['officials']
+}
+
+const { venue, weather, officials } = Astro.props
+---
+
+<Panel title="Game Info">
+  <div>
+    <p>{venue.name}</p>
+    <p class="text-sm text-gray-5">{venue.location}</p>
+  </div>
+  {
+    weather && (
+      <div class="flex gap-3">
+        <p>{weather.temperatureFahrenheit}°</p>
+        <p class="">
+          {`${weather.wind.speedMph} mph ${weather.wind.direction}`}
+        </p>
+      </div>
+    )
+  }
+  <div>
+    <p>
+      <span class="text-gray-5">Home Plate:</span>{' '}{
+        find(officials, { assignment: 'homePlate' })?.fullName
+      }
+    </p>
+    <p>
+      <span class="text-gray-5">First Base:</span>{' '}{
+        find(officials, { assignment: 'firstBase' })?.fullName
+      }
+    </p>
+    <p>
+      <span class="text-gray-5">Second Base:</span>{' '}{
+        find(officials, { assignment: 'secondBase' })?.fullName
+      }
+    </p>
+    <p>
+      <span class="text-gray-5">Third Base:</span>{' '}{
+        find(officials, { assignment: 'thirdBase' })?.fullName
+      }
+    </p>
+  </div>
+</Panel>

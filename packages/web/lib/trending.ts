@@ -7,6 +7,8 @@ const db = DynamoDBDocumentClient.from(new DynamoDBClient({}), {
   marshallOptions: { removeUndefinedValues: true },
 })
 
+// console.log('dynamo table name: ', Table['imported-table'].tableName)
+
 export const getTrendingData = async (props?: {
   league?: string
   timeframe?: string
@@ -22,7 +24,7 @@ export const getTrendingData = async (props?: {
 
   const data = await db.send(
     new QueryCommand({
-      TableName: Table['trending-table'].tableName,
+      TableName: Table['imported-table'].tableName,
       KeyConditionExpression: 'pk = :pk',
       ExpressionAttributeValues: { ':pk': pk },
       ScanIndexForward: false,

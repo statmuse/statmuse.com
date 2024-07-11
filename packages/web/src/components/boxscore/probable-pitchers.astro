@@ -1,0 +1,176 @@
+---
+import Image from '@components/image.astro'
+import Panel from '@components/panel.astro'
+import { type MLBGameDataResponse } from '@lib/boxscores/mlb'
+import { hexToHSL } from '@lib/color'
+import { getPlayerBio, getPlayerStats } from '@lib/player'
+import { find } from 'lodash-es'
+
+interface Props {
+  awayTeamModel: MLBGameDataResponse['awayTeam']
+  homeTeamModel: MLBGameDataResponse['homeTeam']
+}
+
+const { awayTeamModel, homeTeamModel } = Astro.props
+
+const homePitcherId =
+  homeTeamModel.probablePitcher.playerId ??
+  find(homeTeamModel.players, { lineup: { pitchingSequence: 1 } })
+
+const awayPitcherId =
+  awayTeamModel.probablePitcher.playerId ??
+  find(awayTeamModel.players, { lineup: { pitchingSequence: 1 } })
+
+const [homePlayerStats, awayPlayerStats, homePitcherBio, awayPitcherBio] =
+  await Promise.all([
+    getPlayerStats({
+      context: Astro,
+      domain: 'MLB',
+      player: `player-${homePitcherId}`,
+      params: {},
+    }),
+    getPlayerStats({
+      context: Astro,
+      domain: 'MLB',
+      player: `player-${awayPitcherId}`,
+      params: {},
+    }),
+    getPlayerBio(Astro, 'MLB', `player-${homePitcherId}`),
+    getPlayerBio(Astro, 'MLB', `player-${awayPitcherId}`),
+  ])
+
+const homePitcherStats = find(homePlayerStats?.grids, {
+  name: 'Regular Season',
+})?.rows.slice(-1)[0]
+const awayPitcherStats = find(awayPlayerStats?.grids, {
+  name: 'Regular Season',
+})?.rows.slice(-1)[0]
+
+type StatRow = typeof homePitcherStats
+
+const stats = [
+  {
+    key: 'W',
+    metric: 'W-L',
+    display: (stat: StatRow) => `${stat?.W.display}-${stat?.L.display}`,
+    compare: (a: StatRow, b: StatRow) => a?.W.value > b?.W.value,
+  },
+  {
+    key: 'ERA',
+    compare: (a: StatRow, b: StatRow) => a?.ERA.value < b?.ERA.value,
+  },
+  { key: 'SO', compare: (a: StatRow, b: StatRow) => a?.SO.value > b?.SO.value },
+  { key: 'BB', compare: (a: StatRow, b: StatRow) => a?.BB.value < b?.BB.value },
+  {
+    key: 'WHIP',
+    compare: (a: StatRow, b: StatRow) => a?.WHIP.value < b?.WHIP.value,
+  },
+  { key: 'H', compare: (a: StatRow, b: StatRow) => a?.H.value < b?.H.value },
+  { key: 'HR', compare: (a: StatRow, b: StatRow) => a?.HR.value < b?.HR.value },
+  { key: 'IP', compare: (a: StatRow, b: StatRow) => a?.IP.value > b?.IP.value },
+]
+
+const homeTeam = homePitcherBio?.team
+const awayTeam = awayPitcherBio?.team
+---
+
+{
+  homePitcherId && awayPitcherId && (
+    <Panel class="!p-0">
+      <div class="relative flex justify-center py-2">
+        <div class="flex gap-1 absolute left-3 top-2">
+          <Image
+            src={awayTeam?.logoImageUrl ?? ''}
+            alt={awayTeam?.name ?? ''}
+            width={60}
+            height={60}
+            class="w-6 h-6 object-contain"
+          />
+          {awayTeam?.abbreviation}
+        </div>
+
+        <h3 class="font-semibold">Probable Pitchers</h3>
+
+        <div class="flex gap-1 absolute right-3 top-2">
+          {homeTeam?.abbreviation}
+          <Image
+            src={homeTeam?.logoImageUrl ?? ''}
+            alt={homeTeam?.name ?? ''}
+            width={60}
+            height={60}
+            class="w-6 h-6 object-contain"
+          />
+        </div>
+      </div>
+      <div class="flex justify-between px-3 border-b border-gray-6 dark:border-gray-4">
+        <Image
+          src={awayPitcherBio?.bustImageUrl ?? ''}
+          alt={awayPitcherBio?.usedName ?? ''}
+          width={120}
+          height={90}
+          class="h-[90px] max-w-[120px] object-contain object-bottom"
+        />
+        <Image
+          src={homePitcherBio?.bustImageUrl ?? ''}
+          alt={homePitcherBio?.usedName ?? ''}
+          width={120}
+          height={90}
+          class="h-[90px] max-w-[120px] object-contain object-bottom"
+        />
+      </div>
+      <div class="divide-y divide-gray-6 dark:divide-gray-4 *:px-1 *:py-1">
+        <div class="flex justify-between !px-3">
+          <div>
+            <p class="font-semibold">{awayPitcherBio?.usedName}</p>
+            <p class="text-[16px] text-gray-5">{`${awayPitcherBio?.position} #${awayPitcherBio?.jerseyNumber}`}</p>
+          </div>
+          <div class="text-right">
+            <p class="font-semibold">{homePitcherBio?.usedName}</p>
+            <p class="text-[16px] text-gray-5">{`${homePitcherBio?.position} #${homePitcherBio?.jerseyNumber}`}</p>
+          </div>
+        </div>
+        {stats.map((stat) => (
+          <div class="flex justify-center relative">
+            <p
+              class="absolute top-1 left-1 px-2 rounded-2xl"
+              style={
+                stat.compare(awayPitcherStats, homePitcherStats)
+                  ? {
+                      background: hexToHSL(
+                        awayTeam?.colors.backgroundColor ?? '',
+                        0.2,
+                      ),
+                      color: awayTeam?.colors.foregroundColor,
+                    }
+                  : {}
+              }
+            >
+              {stat.display
+                ? stat.display(awayPitcherStats)
+                : awayPitcherStats[stat.key]?.display}
+            </p>
+            <p class="text-gray-5">{stat.metric ?? stat.key}</p>
+            <p
+              class="absolute top-1 right-1 px-2 rounded-2xl"
+              style={
+                stat.compare(homePitcherStats, awayPitcherStats)
+                  ? {
+                      background: hexToHSL(
+                        homeTeam?.colors.backgroundColor ?? '',
+                        0.2,
+                      ),
+                      color: homeTeam?.colors.foregroundColor,
+                    }
+                  : {}
+              }
+            >
+              {stat.display
+                ? stat.display(homePitcherStats)
+                : homePitcherStats[stat.key]?.display}
+            </p>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  )
+}

@@ -1474,21 +1474,18 @@ export interface StandingsBase {
     }
     entity: GameraEntity
   }
-  conference?: {
-    name: string
-  }
-  league?: {
-    name: string
-  }
-  division: {
-    name: string
-  }
 }
 
 export interface StandingsMlb extends StandingsBase {
   rank: {
     league: number
     division: number
+  }
+  league: {
+    name: string
+  }
+  division: {
+    name: string
   }
   clinchedAbbrev: string
   stats: {
@@ -1526,6 +1523,12 @@ export interface StandingsNba extends StandingsBase {
     conference: number
     division: number
   }
+  conference: {
+    name: string
+  }
+  division: {
+    name: string
+  }
   stats: {
     gamesBehind: {
       league: {
@@ -1562,6 +1565,12 @@ export interface StandingsNhl extends StandingsBase {
     division: number
     league: number
   }
+  conference: {
+    name: string
+  }
+  division: {
+    name: string
+  }
   stats: {
     points: {
       value: number
@@ -1595,6 +1604,12 @@ export interface StandingsNfl extends StandingsBase {
     conference: number
     division: number
     league: number
+  }
+  conference: {
+    name: string
+  }
+  division: {
+    name: string
   }
   stats: {
     wins: {
@@ -1671,6 +1686,7 @@ export interface ScheduleTeam {
 }
 
 export interface ScheduleGame {
+  gameId: number
   homeTeamId: number
   awayTeamId: number
   gameTimestamp: string

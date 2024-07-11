@@ -1,0 +1,173 @@
+---
+import Image from '@components/image.astro'
+import Panel from '@components/panel.astro'
+import Timestamp from '@components/timestamp.svelte'
+import type { MLBGameDataResponse } from '@lib/boxscores/mlb'
+import { parseGameId } from '@lib/parse'
+import type { ScheduleGame, ScoreGame } from '@statmuse/core/gamera'
+import { findIndex, takeWhile, takeRightWhile, find } from 'lodash-es'
+
+interface Props {
+  teams: MLBGameDataResponse['teams']
+  finalGames?: ScoreGame[]
+  scheduledGames?: ScheduleGame[]
+}
+
+const { teams, finalGames, scheduledGames } = Astro.props
+const { game } = Astro.params
+const gameId = Number.parseInt(parseGameId(game!))
+
+type Game = ScoreGame | ScheduleGame
+
+const isScoreGame = (game: Game): game is ScoreGame =>
+  'id' in (game as ScoreGame)
+
+const allGames: Game[] = [
+  ...(finalGames?.sort((a, b) => a.gameDate.localeCompare(b.gameDate)) ?? []),
+  ...(scheduledGames ?? []),
+]
+
+let games: Game[] = []
+
+let gameIndex = findIndex(allGames, (g) =>
+  isScoreGame(g) ? g.id === gameId : g.gameId === gameId,
+)
+if (gameIndex !== -1) {
+  const game = allGames[gameIndex]
+  const awayTeamId = isScoreGame(game) ? game.awayTeam.teamId : game.awayTeamId
+  const homeTeamId = isScoreGame(game) ? game.homeTeam.teamId : game.homeTeamId
+
+  const sameTeams = (g: Game) => {
+    if (isScoreGame(g)) {
+      return (
+        (g.awayTeam.teamId === awayTeamId ||
+          g.awayTeam.teamId === homeTeamId) &&
+        (g.homeTeam.teamId === awayTeamId || g.homeTeam.teamId === homeTeamId)
+      )
+    } else {
+      return (
+        (g.awayTeamId === awayTeamId || g.awayTeamId === homeTeamId) &&
+        (g.homeTeamId === awayTeamId || g.homeTeamId === homeTeamId)
+      )
+    }
+  }
+
+  const beforeGames = takeRightWhile(allGames.slice(0, gameIndex), sameTeams)
+  const afterGames = takeWhile(allGames.slice(gameIndex), sameTeams)
+
+  games = games.concat(beforeGames).concat(afterGames)
+}
+---
+
+<Panel class="pb-0" title="Current Series">
+  <div class="divide-y divide-gray-6 dark:divide-gray-4">
+    {
+      games.map((game, index) => {
+        const awayTeamId = isScoreGame(game)
+          ? game.awayTeam.teamId
+          : game.awayTeamId
+        const homeTeamId = isScoreGame(game)
+          ? game.homeTeam.teamId
+          : game.homeTeamId
+
+        const awayTeam = find(teams, { teamId: awayTeamId })
+        const homeTeam = find(teams, { teamId: homeTeamId })
+
+        if (isScoreGame(game)) {
+          return (
+            <div class="flex gap-3 py-2">
+              <div class="flex-1">
+                <div
+                  class:list={{
+                    'flex justify-between py-0.5': true,
+                    'font-semibold': game.awayTeam.gameResult === 'win',
+                  }}
+                >
+                  <div class="flex gap-1">
+                    <Image
+                      src={awayTeam?.logoImageUrl ?? ''}
+                      alt={awayTeam?.name ?? ''}
+                      width={60}
+                      height={60}
+                      class="w-5 h-5 object-contain"
+                    />
+                    <p>{awayTeam?.nickname}</p>
+                  </div>
+                  <p>{game.awayTeam.score}</p>
+                </div>
+                <div
+                  class:list={{
+                    'flex justify-between py-0.5': true,
+                    'font-semibold': game.homeTeam.gameResult === 'win',
+                  }}
+                >
+                  <div class="flex gap-1">
+                    <Image
+                      src={homeTeam?.logoImageUrl ?? ''}
+                      alt={homeTeam?.name ?? ''}
+                      width={60}
+                      height={60}
+                      class="w-5 h-5 object-contain"
+                    />
+                    <p>{homeTeam?.nickname}</p>
+                  </div>
+                  <p>{game.homeTeam.score}</p>
+                </div>
+              </div>
+              <div class="w-16 flex items-center justify-end text-right text-sm text-gray-5">
+                <div>
+                  <p>Game {index + 1}</p>
+                  <p>Final</p>
+                </div>
+              </div>
+            </div>
+          )
+        } else {
+          return (
+            <div class="flex gap-3 py-2">
+              <div class="flex-1">
+                <div class="flex gap-1 py-0.5">
+                  <Image
+                    src={awayTeam?.logoImageUrl ?? ''}
+                    alt={awayTeam?.name ?? ''}
+                    width={60}
+                    height={60}
+                    class="w-5 h-5 object-contain"
+                  />
+                  <p>{awayTeam?.nickname}</p>
+                </div>
+                <div class="flex gap-1 py-0.5">
+                  <Image
+                    src={homeTeam?.logoImageUrl ?? ''}
+                    alt={homeTeam?.name ?? ''}
+                    width={60}
+                    height={60}
+                    class="w-5 h-5 object-contain"
+                  />
+                  <p>{homeTeam?.nickname}</p>
+                </div>
+              </div>
+              <div class="flex items-center justify-end text-right text-sm">
+                <div>
+                  <p>Game {index + 1}</p>
+                  <p>
+                    <Timestamp
+                      client:only="svelte"
+                      timestamp={game.gameTimestamp}
+                    />
+                  </p>
+                </div>
+              </div>
+              <div class="w-16 flex items-center justify-end text-right text-sm text-gray-5">
+                <p>
+                  {homeTeam?.abbreviation}{' '}
+                  {game.odds?.sportsbooks[0].homeTeam.spreadOdds.display}
+                </p>
+              </div>
+            </div>
+          )
+        }
+      })
+    }
+  </div>
+</Panel>

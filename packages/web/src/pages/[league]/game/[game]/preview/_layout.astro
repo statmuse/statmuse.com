@@ -1,0 +1,230 @@
+---
+import Base from '@layouts/base.astro'
+import Image from '@components/image.astro'
+import Share from '@components/share/index.svelte'
+import type { MLBGameDataResponse } from '@lib/boxscores/mlb'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import Timestamp from '@components/timestamp.svelte'
+import { hexToHSL } from '@lib/color'
+import type { ScoresResponse } from '@statmuse/core/gamera'
+
+interface Props {
+  network: string
+  timestamp: string
+  awayTeam?: NonNullable<MLBGameDataResponse['teams']>[number]
+  homeTeam?: NonNullable<MLBGameDataResponse['teams']>[number]
+  awayScores?: ScoresResponse
+  homeScores?: ScoresResponse
+}
+
+const getTeamFromGameResult = (
+  teamId: number,
+  game?: ScoresResponse['games'][number],
+) => {
+  return game?.awayTeam.teamId === teamId
+    ? game.awayTeam
+    : game?.homeTeam.teamId === teamId
+    ? game.homeTeam
+    : undefined
+}
+
+const { timestamp, network, awayTeam, homeTeam, awayScores, homeScores } =
+  Astro.props
+
+const { league, game } = Astro.params
+
+const awayTeamRecord = getTeamFromGameResult(
+  awayTeam?.teamId,
+  awayScores?.games[0],
+)?.record
+const homeTeamRecord = getTeamFromGameResult(
+  homeTeam?.teamId,
+  homeScores?.games[0],
+)?.record
+
+const awayTeamRecordLast5 = awayScores?.games.slice(0, 5).reduce(
+  (record, game) => {
+    if (!record) return record
+
+    const team = getTeamFromGameResult(awayTeam?.teamId, game)
+
+    if (team?.gameResult === 'win') {
+      return {
+        ...record,
+        wins: record.wins + 1,
+      }
+    }
+
+    if (team?.gameResult === 'loss') {
+      return {
+        ...record,
+        losses: record.losses + 1,
+      }
+    }
+  },
+  awayTeam?.teamId ? { wins: 0, losses: 0 } : undefined,
+)
+
+const homeTeamRecordLast5 = homeScores?.games.slice(0, 5).reduce(
+  (record, game) => {
+    if (!record) return record
+
+    const team = getTeamFromGameResult(homeTeam?.teamId, game)
+
+    if (team?.gameResult === 'win') {
+      return {
+        ...record,
+        wins: record.wins + 1,
+      }
+    }
+
+    if (team?.gameResult === 'loss') {
+      return {
+        ...record,
+        losses: record.losses + 1,
+      }
+    }
+  },
+  homeTeam?.teamId ? { wins: 0, losses: 0 } : undefined,
+)
+
+const boxscorePreviewPath = ({
+  league,
+  game,
+  team,
+}: {
+  league?: string
+  game?: string
+  team?: NonNullable<MLBGameDataResponse['teams']>[number]
+}) =>
+  `/${league}/game/${game}/preview` +
+  (team
+    ? `/${team.name?.toLowerCase().split(' ').join('-')}-${team.teamId}`
+    : '')
+
+const navlinks = [
+  {
+    href: boxscorePreviewPath({ league, game }),
+    text: 'Game',
+  },
+  {
+    href: boxscorePreviewPath({ league, game, team: awayTeam }),
+    text: awayTeam?.nickname,
+    team: awayTeam,
+  },
+  {
+    href: boxscorePreviewPath({ league, game, team: homeTeam }),
+    text: homeTeam?.nickname,
+    team: homeTeam,
+  },
+]
+---
+
+<Base headerClass="!bg-gray-6 dark:!bg-gray-4" renderRightColumn={false}>
+  <div class="-mx-3">
+    <div
+      class="h-[45px] flex bg-gray-6 dark:bg-gray-4 px-3 py-2 justify-center relative"
+    >
+      <p class="absolute left-3 top-2">{network}</p>
+      <Timestamp client:only="svelte" {timestamp} />
+      <div class="absolute right-3 top-2">
+        <Share />
+      </div>
+    </div>
+    <div class="flex h-20 overflow-clip">
+      <div
+        class="flex-1 flex relative justify-end text-right"
+        style={{
+          background: hexToHSL(awayTeam?.colors?.backgroundColor ?? '', 0.2),
+          color: awayTeam?.colors?.foregroundColor,
+        }}
+      >
+        <Image
+          src={awayTeam?.logoImageUrl ?? ''}
+          alt={awayTeam?.name ?? ''}
+          width={140}
+          height={140}
+          class="absolute left-0 h-full object-contain -translate-x-1/2"
+        />
+        <div class="px-1.5 flex flex-col justify-center">
+          <h4 class="font-semibold">{awayTeam?.nickname}</h4>
+          {
+            awayTeamRecord && (
+              <p class="text-[16px]">{`${awayTeamRecord.wins}-${awayTeamRecord.losses}`}</p>
+            )
+          }
+          {
+            awayTeamRecordLast5 && (
+              <p class="text-[16px]">{`${awayTeamRecordLast5.wins}-${awayTeamRecordLast5.losses} in Last 5`}</p>
+            )
+          }
+        </div>
+      </div>
+      <div
+        class="flex-1 flex relative"
+        style={{
+          background: hexToHSL(homeTeam?.colors?.backgroundColor ?? '', 0.2),
+          color: homeTeam?.colors?.foregroundColor,
+        }}
+      >
+        <Image
+          src={homeTeam?.logoImageUrl ?? ''}
+          alt={homeTeam?.name ?? ''}
+          width={140}
+          height={140}
+          class="absolute right-0 h-full object-contain translate-x-1/2"
+        />
+        <div class="px-1.5 flex flex-col justify-center">
+          <h4 class="text-lg font-semibold">{homeTeam?.nickname}</h4>
+          {
+            homeTeamRecord && (
+              <p class="text-[16px]">{`${homeTeamRecord.wins}-${homeTeamRecord.losses}`}</p>
+            )
+          }
+          {
+            homeTeamRecordLast5 && (
+              <p class="text-[16px]">{`${homeTeamRecordLast5.wins}-${homeTeamRecordLast5.losses} in Last 5`}</p>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="md:hidden h-[50px] md:h-[90px] flex justify-center items-center">
+    <AditudeAdBanner
+      client:only="svelte"
+      divId="pb-slot-anchor"
+      slotId="pb-slot-anchor"
+      placeholderClass="w-[320px] md:w-[728px] h-[50px] md:h-[90px]"
+      onlyMobile
+    />
+  </div>
+  <nav class="flex gap-1.5 overflow-x-scroll no-scrollbar px-3 -mx-3">
+    {
+      navlinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={{
+            'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
+            'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
+            'border-gray-6 dark:border-gray-3': true,
+            '!bg-gray-7 !text-gray-2': !link.team && !Astro.params.team,
+          }}
+          style={{
+            background:
+              link.team && link.href === Astro.url.pathname
+                ? link.team.colors.backgroundColor
+                : '',
+            color:
+              link.team && link.href === Astro.url.pathname
+                ? link.team.colors.foregroundColor
+                : '',
+          }}
+        >
+          {link.text}
+        </a>
+      ))
+    }
+  </nav>
+  <slot />
+</Base>

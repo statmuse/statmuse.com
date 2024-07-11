@@ -1,0 +1,47 @@
+---
+import PreviewLayout from './_layout.astro'
+import MLBPlayerLeaders from './_components/mlb-player-leaders.astro'
+import { getGameData } from '@lib/boxscores/mlb'
+import { parseGameId, parseTeamId } from '@lib/parse'
+import { NOT_FOUND_404 } from '@lib/response'
+import { find } from 'lodash-es'
+import { getGames, getSchedule } from '@lib/game'
+
+const { league, game, team } = Astro.params
+const gameId = '229615' //parseGameId(game ?? '')
+const teamId = parseTeamId(team!)
+
+const gameData = await getGameData({
+  context: Astro,
+  gameId,
+  statKeySet: ['pitchingStandard', 'battingStandard'],
+})
+
+if (!gameData) return NOT_FOUND_404
+
+const {
+  teams,
+  awayTeam: awayTeamModel,
+  homeTeam: homeTeamModel,
+  // weather,
+  // officials,
+  // venue,
+  // players,
+  networkName,
+  gameTimestamp,
+} = gameData
+
+// const [homeTeamScores, awayTeamScores] = await Promise.all([ getGames({  }) ])
+
+const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
+const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
+---
+
+<PreviewLayout
+  network={networkName}
+  timestamp={gameTimestamp}
+  {awayTeam}
+  {homeTeam}
+>
+  <MLBPlayerLeaders />
+</PreviewLayout>

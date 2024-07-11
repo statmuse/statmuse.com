@@ -1,0 +1,121 @@
+---
+import PreviewLayout from './_layout.astro'
+import { getGameData, getInjuries } from '@lib/boxscores/mlb'
+import { parseGameId } from '@lib/parse'
+import { NOT_FOUND_404 } from '@lib/response'
+import { find } from 'lodash-es'
+import GameInfo from '@components/boxscore/game-info.astro'
+import ProbablePitchers from '@components/boxscore/probable-pitchers.astro'
+import TeamStats from '@components/boxscore/team-stats.astro'
+import Injuries from '@components/boxscore/injuries.astro'
+import Schedule from '@components/boxscore/schedule.astro'
+import Standings from '@components/boxscore/standings.astro'
+import LastGames from '@components/boxscore/last-games.astro'
+import { getGames, getSchedule } from '@lib/game'
+import { getTeamSeasonStats } from '@lib/team'
+import { getStandingsRaw } from '@lib/standings'
+
+const { league, game } = Astro.params
+const gameId = parseGameId(game ?? '')
+
+const gameData = await getGameData({
+  context: Astro,
+  gameId,
+  statKeySet: ['pitchingStandard', 'battingStandard'],
+})
+
+if (!gameData) return NOT_FOUND_404
+
+const {
+  teams,
+  awayTeam: awayTeamModel,
+  homeTeam: homeTeamModel,
+  weather,
+  officials,
+  venue,
+  players,
+  networkName,
+  gameTimestamp,
+} = gameData
+
+const [
+  homeScores,
+  awayScores,
+  awaySchedule,
+  homeTeamSeasonStats,
+  awayTeamSeasonStats,
+  injuries,
+  standings,
+] = await Promise.all([
+  getGames({ context: Astro, domain: 'mlb', teamId: homeTeamModel.teamId }),
+  getGames({ context: Astro, domain: 'mlb', teamId: awayTeamModel.teamId }),
+  getSchedule({ context: Astro, domain: 'mlb', teamId: awayTeamModel.teamId }),
+  getTeamSeasonStats({
+    context: Astro,
+    domain: 'MLB',
+    team: `team-${homeTeamModel.teamId}`,
+    year: gameData.seasonYearDisplay ?? '',
+    params: {},
+  }),
+  getTeamSeasonStats({
+    context: Astro,
+    domain: 'MLB',
+    team: `team-${awayTeamModel.teamId}`,
+    year: gameData.seasonYearDisplay ?? '',
+    params: {},
+  }),
+  getInjuries({ context: Astro }),
+  getStandingsRaw({ context: Astro, domain: 'mlb' }),
+])
+
+const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
+const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
+
+const awayTeamInjuries = find(
+  injuries?.teams,
+  (t) => t.team.teamId === awayTeamModel.teamId,
+)
+const homeTeamInjuries = find(
+  injuries?.teams,
+  (t) => t.team.teamId === homeTeamModel.teamId,
+)
+---
+
+<PreviewLayout
+  network={networkName}
+  timestamp={gameTimestamp}
+  {awayTeam}
+  {awayScores}
+  {homeTeam}
+  {homeScores}
+>
+  <ProbablePitchers {players} {teams} {awayTeamModel} {homeTeamModel} />
+  <TeamStats
+    {awayTeam}
+    {homeTeam}
+    {homeTeamSeasonStats}
+    {awayTeamSeasonStats}
+    {teams}
+    {awayTeamModel}
+    {homeTeamModel}
+  />
+  <Injuries {awayTeamInjuries} {homeTeamInjuries} />
+  <Schedule
+    {teams}
+    finalGames={awayScores?.games}
+    scheduledGames={awaySchedule?.games}
+  />
+  <Standings
+    {standings}
+    awayTeamId={awayTeamModel.teamId}
+    homeTeamId={homeTeamModel.teamId}
+  />
+  <LastGames
+    {teams}
+    {awayTeamModel}
+    {homeTeamModel}
+    awayTeamResults={awayScores}
+    homeTeamResults={homeScores}
+  />
+  <GameInfo {venue} {weather} {officials} />
+</PreviewLayout>

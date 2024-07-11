@@ -1,0 +1,87 @@
+---
+import Panel from '@components/panel.astro'
+import type { StandingsResponse } from '@statmuse/core/gamera'
+import { find, filter } from 'lodash-es'
+import { mapStandingsToGrid } from '@lib/standings'
+import type { StandingsMlb } from '@statmuse/core/gamera'
+import Grid from '@components/grid.svelte'
+
+interface Props {
+  standings?: StandingsResponse
+  awayTeamId: number
+  homeTeamId: number
+}
+
+const { standings, awayTeamId, homeTeamId } = Astro.props
+
+const teams = standings?.teams as StandingsMlb[]
+
+const awayTeam = find(teams, { team: { teamId: awayTeamId } })
+const awayDivision = awayTeam?.division.name
+const awayTeamStandings = filter(teams, { division: { name: awayDivision } })
+
+const awayTeamGrid = mapStandingsToGrid({
+  domain: 'MLB',
+  teams: awayTeamStandings,
+})
+
+const homeTeam = find(teams, { team: { teamId: homeTeamId } })
+const homeDivision = homeTeam?.division.name
+const homeTeamStandings = filter(teams, { division: { name: homeDivision } })
+
+const homeTeamGrid = mapStandingsToGrid({
+  domain: 'MLB',
+  teams: homeTeamStandings,
+})
+---
+
+<Panel class="!p-0 group">
+  <div class="mt-2 mb-1 px-3 flex items-center justify-between">
+    <h3 class="font-semibold mb-2">
+      <span class="hidden group-has-[#standings-away:checked]:inline">
+        {awayDivision}
+      </span><span class="hidden group-has-[#standings-home:checked]:inline">
+        {homeDivision}
+      </span> Standings
+    </h3>
+    <div
+      class="w-fit bg-gray-6 dark:bg-gray-4 text-gray-5 border border-gray-6 dark:border-gray-3 flex text-center rounded-full relative overflow-clip"
+    >
+      <div
+        class="absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 group-has-[#standings-away:checked]:translate-x-0 group-has-[#standings-home:checked]:translate-x-full transition-transform ease-out"
+      >
+      </div>
+      <label
+        for="standings-away"
+        class="py-1 w-12 relative cursor-pointer group-has-[#standings-away:checked]:text-gray-2"
+      >
+        {awayTeam?.team.abbreviation}
+      </label>
+      <label
+        for="standings-home"
+        class="py-1 w-12 relative cursor-pointer group-has-[#standings-home:checked]:text-gray-2"
+      >
+        {homeTeam?.team.abbreviation}
+      </label>
+    </div>
+  </div>
+  <div class="hidden has-[#standings-away:checked]:block">
+    <input
+      class="absolute top-0 opacity-0"
+      type="radio"
+      name="standings"
+      id="standings-away"
+      checked
+    />
+    <Grid class="!border-none" data={awayTeamGrid} textInherit />
+  </div>
+  <div class="hidden has-[#standings-home:checked]:block">
+    <input
+      class="absolute top-0 opacity-0"
+      type="radio"
+      name="standings"
+      id="standings-home"
+    />
+    <Grid class="!border-none" data={homeTeamGrid} textInherit />
+  </div>
+</Panel>

@@ -1,0 +1,100 @@
+---
+import Image from '@components/image.astro'
+import Panel from '@components/panel.astro'
+import type { TeamInjuryResponse } from '@lib/boxscores/mlb'
+import { zip } from 'lodash-es'
+
+interface Props {
+  awayTeamInjuries?: TeamInjuryResponse['teams'][number]
+  homeTeamInjuries?: TeamInjuryResponse['teams'][number]
+}
+
+const { awayTeamInjuries, homeTeamInjuries } = Astro.props
+
+const injuries = zip(awayTeamInjuries?.players, homeTeamInjuries?.players)
+
+const awayTeam = awayTeamInjuries?.team
+const homeTeam = homeTeamInjuries?.team
+
+const injuryDescription = (
+  injury: TeamInjuryResponse['teams'][number]['players'][number]['injuries'][number],
+) => {
+  let timeline
+  switch (injury.injuryStatus) {
+    case 'dayToDay':
+      timeline = 'Day-to-day'
+      break
+    case 'day7InjuredList':
+      timeline = '7-Day IL'
+      break
+    case 'day10InjuredList':
+      timeline = '10-Day IL'
+      break
+    case 'day15InjuredList':
+      timeline = '15-Day IL'
+      break
+    case 'day60InjuredList':
+      timeline = '60-Day IL'
+      break
+  }
+  return `${timeline} (${injury.description})`
+}
+---
+
+<Panel class="!p-0">
+  <div
+    class="relative flex justify-center py-2 border-b border-gray-6 dark:border-gray-4"
+  >
+    <div class="flex gap-1 absolute left-3 top-2">
+      <Image
+        src={awayTeam?.logoImageUrl ?? ''}
+        alt={awayTeam?.name ?? ''}
+        width={60}
+        height={60}
+        class="w-6 h-6 object-contain"
+      />
+      {awayTeam?.abbreviation}
+    </div>
+
+    <h3 class="font-semibold">Injuries</h3>
+
+    <div class="flex gap-1 absolute right-3 top-2">
+      {homeTeam?.abbreviation}
+      <Image
+        src={homeTeam?.logoImageUrl ?? ''}
+        alt={homeTeam?.name ?? ''}
+        width={60}
+        height={60}
+        class="w-6 h-6 object-contain"
+      />
+    </div>
+  </div>
+  <div class="divide-y divide-gray-6 dark:divide-gray-4 *:px-3 *:py-1">
+    {
+      injuries.map((injury) => (
+        <div class="flex justify-between">
+          <div>
+            {injury[0] && (
+              <>
+                <p>{injury[0]?.player.usedName}</p>
+                <p class="text-sm text-gray-5">
+                  {injuryDescription(injury[0].injuries[0])}
+                </p>
+              </>
+            )}
+          </div>
+          <div class="text-right">
+            {injury[1] && (
+              <>
+                <p>{injury[1]?.player.usedName}</p>
+                <p class="text-sm text-gray-5">
+                  {injuryDescription(injury[1].injuries[0])}
+                </p>
+              </>
+            )}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</Panel>

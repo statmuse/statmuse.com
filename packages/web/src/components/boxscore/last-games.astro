@@ -1,0 +1,191 @@
+---
+import Image from '@components/image.astro'
+import Panel from '@components/panel.astro'
+import { type MLBGameDataResponse } from '@lib/boxscores/mlb'
+import type { ScoresResponse, ScoreGame } from '@statmuse/core/gamera'
+import dayjs from 'dayjs'
+import { find, zip } from 'lodash-es'
+
+interface Props {
+  teams: MLBGameDataResponse['teams']
+  awayTeamModel: MLBGameDataResponse['awayTeam']
+  homeTeamModel: MLBGameDataResponse['homeTeam']
+  awayTeamResults?: ScoresResponse
+  homeTeamResults?: ScoresResponse
+}
+
+const {
+  teams,
+  awayTeamModel,
+  homeTeamModel,
+  awayTeamResults,
+  homeTeamResults,
+} = Astro.props
+
+const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
+
+const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
+
+const games = zip(
+  awayTeamResults?.games.slice(0, 5),
+  homeTeamResults?.games.slice(0, 5),
+)
+
+const getTeamResult = (teamId: number, game?: ScoreGame) =>
+  game?.homeTeam.teamId === teamId
+    ? game.homeTeam.gameResult
+    : game?.awayTeam.teamId === teamId
+    ? game.awayTeam.gameResult
+    : undefined
+
+const getOpponent = (
+  teamId: number,
+  game?: ScoreGame,
+  teams?: ScoresResponse['teams'],
+) => {
+  let visitorTeam
+  let opponent
+
+  if (teamId !== game?.awayTeam.teamId) {
+    opponent = game?.awayTeam.teamId
+    visitorTeam = false
+  }
+
+  if (teamId !== game?.homeTeam.teamId) {
+    opponent = game?.homeTeam.teamId
+    visitorTeam = true
+  }
+
+  const team = find(teams, { teamId: opponent })
+  return {
+    ...team,
+    visitorTeam,
+  }
+}
+---
+
+<Panel class="!p-0">
+  <div
+    class="relative flex justify-center py-2 border-b border-gray-6 dark:border-gray-4"
+  >
+    <div class="flex gap-1 absolute left-3 top-2">
+      <Image
+        src={awayTeam?.logoImageUrl ?? ''}
+        alt={awayTeam?.name ?? ''}
+        width={60}
+        height={60}
+        class="w-6 h-6 object-contain"
+      />
+      {awayTeam?.abbreviation}
+    </div>
+
+    <h3 class="font-semibold">Last 5</h3>
+
+    <div class="flex gap-1 absolute right-3 top-2">
+      {homeTeam?.abbreviation}
+      <Image
+        src={homeTeam?.logoImageUrl ?? ''}
+        alt={homeTeam?.name ?? ''}
+        width={60}
+        height={60}
+        class="w-6 h-6 object-contain"
+      />
+    </div>
+  </div>
+  <div class="divide-y divide-gray-6 dark:divide-gray-4 *:px-3 *:py-1">
+    {
+      games.map(([awayTeamScore, homeTeamScore]) => (
+        <div class="flex justify-between">
+          <div>
+            <p class="text-sm text-gray-5">
+              {dayjs(awayTeamScore?.gameDate).format('ddd, MMM D')}
+            </p>
+            <div class="flex gap-1">
+              <span
+                class:list={{
+                  'text-green':
+                    getTeamResult(awayTeamModel.teamId, awayTeamScore) ===
+                    'win',
+                  'text-red':
+                    getTeamResult(awayTeamModel.teamId, awayTeamScore) ===
+                    'loss',
+                }}
+              >
+                {`${
+                  getTeamResult(awayTeamModel.teamId, awayTeamScore) === 'win'
+                    ? 'W'
+                    : 'L'
+                } `}
+                {`${awayTeamScore?.awayTeam.score}-${awayTeamScore?.homeTeam.score}`}
+              </span>
+              {(() => {
+                const opponent = getOpponent(
+                  awayTeamModel.teamId,
+                  awayTeamScore,
+                  awayTeamResults?.teams,
+                )
+                return (
+                  <Fragment>
+                    <span>{opponent.visitorTeam ? 'vs' : 'at'}</span>
+                    <Image
+                      src={opponent?.logoImageUrl ?? ''}
+                      alt={opponent?.name ?? ''}
+                      width={60}
+                      height={60}
+                      class="w-6 h-6 object-contain"
+                    />
+                    {opponent?.abbreviation}
+                  </Fragment>
+                )
+              })()}
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-sm text-gray-5">
+              {dayjs(homeTeamScore?.gameDate).format('ddd, MMM D')}
+            </p>
+            <div class="flex gap-1">
+              <span
+                class:list={{
+                  'text-green':
+                    getTeamResult(homeTeamModel.teamId, homeTeamScore) ===
+                    'win',
+                  'text-red':
+                    getTeamResult(homeTeamModel.teamId, homeTeamScore) ===
+                    'loss',
+                }}
+              >
+                {`${
+                  getTeamResult(homeTeamModel.teamId, homeTeamScore) === 'win'
+                    ? 'W'
+                    : 'L'
+                } `}
+                {`${homeTeamScore?.awayTeam.score}-${homeTeamScore?.homeTeam.score}`}
+              </span>
+              {(() => {
+                const opponent = getOpponent(
+                  homeTeamModel.teamId,
+                  homeTeamScore,
+                  homeTeamResults?.teams,
+                )
+                return (
+                  <Fragment>
+                    <span>{opponent.visitorTeam ? 'vs' : 'at'}</span>
+                    <Image
+                      src={opponent?.logoImageUrl ?? ''}
+                      alt={opponent?.name ?? ''}
+                      width={60}
+                      height={60}
+                      class="w-6 h-6 object-contain"
+                    />
+                    {opponent?.abbreviation}
+                  </Fragment>
+                )
+              })()}
+            </div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</Panel>
