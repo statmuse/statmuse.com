@@ -136,7 +136,7 @@
         'bg-gray-8 dark:bg-gray-3',
         '-mb-[1px]',
         'mt-2',
-        'mx-auto',
+        // 'mx-auto',
         'overflow-visible',
         imageUrl.includes('silhouette') ? 'opacity-50' : '',
       ]

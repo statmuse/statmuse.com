@@ -5,10 +5,12 @@ import { getGameData } from '@lib/boxscores/mlb'
 import { parseGameId, parseTeamId } from '@lib/parse'
 import { NOT_FOUND_404 } from '@lib/response'
 import { find } from 'lodash-es'
-import { getGames, getSchedule } from '@lib/game'
+import { getTeamSeasonPlayerStats } from '@lib/team'
+import Grid from '@components/grid.svelte'
+import { getGames } from '@lib/game'
 
 const { league, game, team } = Astro.params
-const gameId = '229615' //parseGameId(game ?? '')
+const gameId = parseGameId(game ?? '')
 const teamId = parseTeamId(team!)
 
 const gameData = await getGameData({
@@ -29,9 +31,48 @@ const {
   // players,
   networkName,
   gameTimestamp,
+  players,
 } = gameData
 
-// const [homeTeamScores, awayTeamScores] = await Promise.all([ getGames({  }) ])
+const teamModel =
+  teamId === awayTeamModel.teamId.toString() ? awayTeamModel : homeTeamModel
+
+const [homeScores, awayScores, playerStats] = await Promise.all([
+  getGames({ context: Astro, domain: 'mlb', teamId: homeTeamModel.teamId }),
+  getGames({ context: Astro, domain: 'mlb', teamId: awayTeamModel.teamId }),
+  getTeamSeasonPlayerStats({
+    context: Astro,
+    domain: 'MLB',
+    team: `team-${teamId}`,
+    year: gameData.seasonYearDisplay ?? '',
+    params: {},
+  }),
+])
+
+const battingStats = find(playerStats?.grids, {
+  name: 'Regular Season Batting Stats',
+})
+const pitchingStats = find(playerStats?.grids, {
+  name: 'Regular Season Pitching Stats',
+})
+
+const playerMap = players?.reduce(
+  (acc, player) => {
+    return {
+      ...acc,
+      [player.id]: player,
+    }
+  },
+  {} as Record<number, (typeof players)[0]>,
+)
+
+const batters = teamModel.players?.filter(
+  (p) => p.lineup.battingOrder && p.lineup.battingOrderSequence === 1,
+)
+
+const pitchers = teamModel.players?.filter(
+  (p) => p.lineup.pitchingSequence === 1,
+)
 
 const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
 const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
@@ -41,7 +82,77 @@ const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
   network={networkName}
   timestamp={gameTimestamp}
   {awayTeam}
+  {awayScores}
   {homeTeam}
+  {homeScores}
 >
-  <MLBPlayerLeaders />
+  {
+    battingStats && batters && (
+      <Grid
+        client:load
+        data={{
+          ...battingStats,
+          columns: battingStats.columns.map((col) =>
+            col.rowItemKey === 'PLAYER' ? { ...col, title: 'Lineup' } : col,
+          ),
+          rows: batters.map((batter) => {
+            const player = playerMap[batter.playerId]
+            return find(battingStats.rows, {
+              PLAYER: { display: player.usedName },
+            })
+          }),
+        }}
+        stickyColumns={['PLAYER']}
+      />
+    )
+  }
+  {
+    pitchingStats && pitchers && (
+      <Grid
+        client:load
+        data={{
+          ...pitchingStats,
+          columns: pitchingStats.columns.map((col) =>
+            col.rowItemKey === 'PLAYER' ? { ...col, title: 'Starter' } : col,
+          ),
+          rows: pitchers.map((pitcher) => {
+            const player = playerMap[pitcher.playerId]
+            return find(pitchingStats.rows, {
+              PLAYER: { display: player.usedName },
+            })
+          }),
+        }}
+        stickyColumns={['PLAYER']}
+      />
+    )
+  }
+  <MLBPlayerLeaders {teamId} />
+  {
+    battingStats && !batters && (
+      <Grid
+        client:load
+        data={{
+          ...battingStats,
+          columns: battingStats.columns.map((col) =>
+            col.rowItemKey === 'PLAYER' ? { ...col, title: 'Batters' } : col,
+          ),
+        }}
+        stickyColumns={['PLAYER']}
+      />
+    )
+  }
+  {
+    pitchingStats && !pitchers && (
+      <Grid
+        client:load
+        data={{
+          ...pitchingStats,
+          columns: pitchingStats.columns.map((col) =>
+            col.rowItemKey === 'PLAYER' ? { ...col, title: 'Pitchers' } : col,
+          ),
+        }}
+        stickyColumns={['PLAYER']}
+      />
+    )
+  }
 </PreviewLayout>
