@@ -100,7 +100,7 @@ const getOpponent = (
             <p class="text-sm text-gray-5">
               {dayjs(awayTeamScore?.gameDate).format('ddd, MMM D')}
             </p>
-            <div class="flex gap-1">
+            <div class="flex gap-1 items-center">
               <span
                 class:list={{
                   'text-green':
@@ -132,7 +132,7 @@ const getOpponent = (
                       alt={opponent?.name ?? ''}
                       width={60}
                       height={60}
-                      class="w-6 h-6 object-contain"
+                      class="w-5 h-5 object-contain"
                     />
                     {opponent?.abbreviation}
                   </Fragment>
@@ -144,7 +144,7 @@ const getOpponent = (
             <p class="text-sm text-gray-5">
               {dayjs(homeTeamScore?.gameDate).format('ddd, MMM D')}
             </p>
-            <div class="flex gap-1">
+            <div class="flex gap-1 items-center">
               <span
                 class:list={{
                   'text-green':
@@ -176,7 +176,7 @@ const getOpponent = (
                       alt={opponent?.name ?? ''}
                       width={60}
                       height={60}
-                      class="w-6 h-6 object-contain"
+                      class="w-5 h-5 object-contain"
                     />
                     {opponent?.abbreviation}
                   </Fragment>

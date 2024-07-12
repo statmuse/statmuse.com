@@ -83,7 +83,7 @@ if (gameIndex !== -1) {
                     'font-semibold': game.awayTeam.gameResult === 'win',
                   }}
                 >
-                  <div class="flex gap-1">
+                  <div class="flex gap-1 items-center">
                     <Image
                       src={awayTeam?.logoImageUrl ?? ''}
                       alt={awayTeam?.name ?? ''}
@@ -101,7 +101,7 @@ if (gameIndex !== -1) {
                     'font-semibold': game.homeTeam.gameResult === 'win',
                   }}
                 >
-                  <div class="flex gap-1">
+                  <div class="flex gap-1 items-center">
                     <Image
                       src={homeTeam?.logoImageUrl ?? ''}
                       alt={homeTeam?.name ?? ''}
