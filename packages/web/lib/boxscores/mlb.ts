@@ -98,7 +98,7 @@ interface TeamGameModel {
       stats?: StatModel
     }[]
   }
-  probablePitcher: {
+  probablePitcher?: {
     playerId: number
   }
   lineScore?: {

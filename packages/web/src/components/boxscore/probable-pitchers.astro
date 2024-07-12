@@ -14,29 +14,37 @@ interface Props {
 const { awayTeamModel, homeTeamModel } = Astro.props
 
 const homePitcherId =
-  homeTeamModel.probablePitcher.playerId ??
-  find(homeTeamModel.players, { lineup: { pitchingSequence: 1 } })
+  homeTeamModel.probablePitcher?.playerId ??
+  find(homeTeamModel.players, { lineup: { pitchingSequence: 1 } })?.playerId
 
 const awayPitcherId =
-  awayTeamModel.probablePitcher.playerId ??
-  find(awayTeamModel.players, { lineup: { pitchingSequence: 1 } })
+  awayTeamModel?.probablePitcher?.playerId ??
+  find(awayTeamModel.players, { lineup: { pitchingSequence: 1 } })?.playerId
 
 const [homePlayerStats, awayPlayerStats, homePitcherBio, awayPitcherBio] =
   await Promise.all([
-    getPlayerStats({
-      context: Astro,
-      domain: 'MLB',
-      player: `player-${homePitcherId}`,
-      params: {},
-    }),
-    getPlayerStats({
-      context: Astro,
-      domain: 'MLB',
-      player: `player-${awayPitcherId}`,
-      params: {},
-    }),
-    getPlayerBio(Astro, 'MLB', `player-${homePitcherId}`),
-    getPlayerBio(Astro, 'MLB', `player-${awayPitcherId}`),
+    homePitcherId
+      ? getPlayerStats({
+          context: Astro,
+          domain: 'MLB',
+          player: `player-${homePitcherId}`,
+          params: {},
+        })
+      : undefined,
+    awayPitcherId
+      ? getPlayerStats({
+          context: Astro,
+          domain: 'MLB',
+          player: `player-${awayPitcherId}`,
+          params: {},
+        })
+      : undefined,
+    homePitcherId
+      ? getPlayerBio(Astro, 'MLB', `player-${homePitcherId}`)
+      : undefined,
+    awayPitcherId
+      ? getPlayerBio(Astro, 'MLB', `player-${awayPitcherId}`)
+      : undefined,
   ])
 
 const homePitcherStats = find(homePlayerStats?.grids, {
@@ -52,7 +60,8 @@ const stats = [
   {
     key: 'W',
     metric: 'W-L',
-    display: (stat: StatRow) => `${stat?.W.display}-${stat?.L.display}`,
+    display: (stat: StatRow) =>
+      stat ? `${stat?.W.display}-${stat?.L.display}` : '',
     compare: (a: StatRow, b: StatRow) => a?.W.value > b?.W.value,
   },
   {
@@ -75,7 +84,7 @@ const awayTeam = awayPitcherBio?.team
 ---
 
 {
-  homePitcherId && awayPitcherId && (
+  (homePitcherId || awayPitcherId) && (
     <Panel class="!p-0">
       <div class="relative flex justify-center py-2">
         <div class="flex gap-1 absolute left-3 top-2">
@@ -121,12 +130,16 @@ const awayTeam = awayPitcherBio?.team
       <div class="divide-y divide-gray-6 dark:divide-gray-4 *:px-1 *:py-1">
         <div class="flex justify-between !px-3">
           <div>
-            <p class="font-semibold">{awayPitcherBio?.usedName}</p>
-            <p class="text-[16px] text-gray-5">{`${awayPitcherBio?.position} #${awayPitcherBio?.jerseyNumber}`}</p>
+            <p class="font-semibold">{awayPitcherBio?.usedName ?? 'TBD'}</p>
+            {awayPitcherBio && (
+              <p class="text-[16px] text-gray-5">{`${awayPitcherBio.position} #${awayPitcherBio.jerseyNumber}`}</p>
+            )}
           </div>
           <div class="text-right">
-            <p class="font-semibold">{homePitcherBio?.usedName}</p>
-            <p class="text-[16px] text-gray-5">{`${homePitcherBio?.position} #${homePitcherBio?.jerseyNumber}`}</p>
+            <p class="font-semibold">{homePitcherBio?.usedName ?? 'TBD'}</p>
+            {homePitcherBio && (
+              <p class="text-[16px] text-gray-5">{`${homePitcherBio?.position} #${homePitcherBio?.jerseyNumber}`}</p>
+            )}
           </div>
         </div>
         {stats.map((stat) => (
@@ -147,7 +160,7 @@ const awayTeam = awayPitcherBio?.team
             >
               {stat.display
                 ? stat.display(awayPitcherStats)
-                : awayPitcherStats[stat.key]?.display}
+                : awayPitcherStats && awayPitcherStats[stat.key]?.display}
             </p>
             <p class="text-gray-5">{stat.metric ?? stat.key}</p>
             <p
@@ -166,7 +179,7 @@ const awayTeam = awayPitcherBio?.team
             >
               {stat.display
                 ? stat.display(homePitcherStats)
-                : homePitcherStats[stat.key]?.display}
+                : homePitcherStats && homePitcherStats[stat.key]?.display}
             </p>
           </div>
         ))}

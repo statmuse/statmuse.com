@@ -80,7 +80,7 @@ export const getTeamSeasonPlayerStats = async (props: {
   domain: GameraDomain
   team: string
   year: string
-  params: URLSearchParams
+  params: Record<string, string> | URLSearchParams
 }) => {
   try {
     const teamId = parseTeamId(props.team)
