@@ -1,7 +1,7 @@
 ---
 import Grid from '@components/grid.svelte'
 import {
-  type GameraNhlBoxScore,
+  type GameraAnswerNhlBoxScore,
   type NhlHistoricalBoxScore,
   getUrlForEntity,
 } from '@statmuse/core/gamera'
@@ -14,7 +14,7 @@ import Image from '@components/image.astro'
 import Panel from './panel.astro'
 
 interface Props extends HTMLAttributes<'div'> {
-  data?: GameraNhlBoxScore
+  data?: GameraAnswerNhlBoxScore
   detail?: NhlHistoricalBoxScore
 }
 

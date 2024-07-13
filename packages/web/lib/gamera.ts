@@ -1,7 +1,14 @@
 import {
+  type EplHistoricalBoxScore,
+  type GameraAnswerEplBoxScore,
   type GameraResponse,
-  tokensToHtml,
   type GameraChart,
+  type PlayerProfileDetail,
+  type TeamProfileDetail,
+  tokensToHtml,
+  tokensToText,
+  getUrlForEntity,
+  parameterize,
 } from '@statmuse/core/gamera'
 import { relativeTimeFromDates } from '@statmuse/core/time'
 import type { Musing } from '@statmuse/core/musing'
@@ -64,7 +71,7 @@ export async function ask(
     params['preferredDomain'] = options.preferredDomain
   }
 
-  let response = await request<GameraResponse>(
+  const response = await request<GameraResponse>(
     context,
     `${league ? league + '/' : ''}answer`,
     params,
@@ -241,10 +248,6 @@ export function getHeroProps(props: {
     : answer.visual.summary.subject.imageUrl
   const answered = musing ? relativeTimeFromDates(musing.publish_at) : undefined
   const imageAlt = props.imageAlt
-  const audioUrl =
-    props.musing?.audio_answer_url ||
-    answer.visual.summary.narrator?.answerWithIntroAudioUrl ||
-    answer.visual.summary.narrator?.answerAudioUrl
 
   return {
     content,
@@ -253,7 +256,6 @@ export function getHeroProps(props: {
     imageUrl,
     imageAlt,
     answered,
-    audioUrl,
   }
 }
 
@@ -269,4 +271,103 @@ export const getColumnCharts = (answer: GameraResponse) => {
 export const getIsSuperlative = (answer: GameraResponse) => {
   if (answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional') return false
   return answer.visual.isSuperlative
+}
+
+export function handleResponse(response: GameraResponse) {
+  const subject = response.visual.summary.subject
+  const conversationToken = response.conversation.token
+  if (response.type === 'nlgPromptForMoreInfoVisualChoicesOptional') {
+    return { subject, conversationToken }
+  }
+
+  let redirectUrl = ''
+  const playerProfile = response.visual.detail?.find(
+    (d) => d.type === 'playerProfile',
+  ) as PlayerProfileDetail
+  if (playerProfile) {
+    redirectUrl = getUrlForEntity(playerProfile.entity)
+  }
+
+  const teamProfile = response.visual.detail?.find(
+    (d) => d.type === 'teamProfile',
+  ) as TeamProfileDetail
+  if (teamProfile) {
+    redirectUrl = getUrlForEntity(teamProfile.entity)
+  }
+
+  return {
+    subject,
+    redirectUrl,
+    conversationToken,
+  }
+}
+
+export function handleAskResponseFromPost(response: GameraResponse) {
+  const query = tokensToText(
+    response.visual.summaryTokens?.filter((t) => t.type !== 'inferred'),
+  ).toLowerCase()
+
+  if (response.type === 'nlgPromptForMoreInfoVisualChoicesOptional') {
+    return { query }
+  }
+
+  const playerProfile = response.visual.detail?.find(
+    (d) => d.type === 'playerProfile',
+  ) as PlayerProfileDetail
+
+  if (playerProfile) {
+    if (playerProfile.entity.domain === 'PGA') {
+      return {
+        query: `${playerProfile.entity.display} career stats`,
+      }
+    }
+    return {
+      query,
+      type: playerProfile.entity.type,
+      player: `${parameterize(playerProfile.entity.display)}-${
+        playerProfile.entity.id
+      }`,
+      league: playerProfile.entity.domain,
+    }
+  }
+
+  const teamProfile = response.visual.detail?.find(
+    (d) => d.type === 'teamProfile',
+  ) as TeamProfileDetail
+
+  if (teamProfile && teamProfile.entity.type === 'teamSeason') {
+    const [teamId, year] = teamProfile.entity.id.split('/')
+    return {
+      query,
+      type: teamProfile.entity.type,
+      team: `${parameterize(teamProfile.entity.display)}-${teamId}`,
+      year,
+      league: teamProfile.entity.domain,
+    }
+  }
+
+  if (teamProfile && teamProfile.entity.type === 'teamFranchise') {
+    return {
+      query,
+      type: teamProfile.entity.type,
+      team: `${parameterize(teamProfile.entity.display)}-${
+        teamProfile.entity.id
+      }`,
+      league: teamProfile.entity.domain,
+    }
+  }
+
+  const eplBoxscore = response.visual.detail?.find(
+    (d) => d.type === 'eplHistoricalBoxScore',
+  ) as EplHistoricalBoxScore
+
+  if (eplBoxscore) {
+    return {
+      query,
+      type: eplBoxscore.type,
+      data: response as GameraAnswerEplBoxScore,
+    }
+  }
+
+  return { query }
 }

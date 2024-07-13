@@ -1,22 +1,22 @@
 import type {
-  GameraEplBoxScore,
-  GameraMlbBoxScore,
-  GameraNbaBoxScore,
-  GameraNflBoxScore,
-  GameraNhlBoxScore,
+  GameraAnswerEplBoxScore,
+  GameraAnswerMlbBoxScore,
+  GameraAnswerNbaBoxScore,
+  GameraAnswerNflBoxScore,
+  GameraAnswerNhlBoxScore,
   ScheduleResponse,
-  ScoresResponse,
+  GameResultsResponse,
 } from '@statmuse/core/gamera'
 import { parseGameId } from '@lib/parse'
 import { request } from '@lib/gamera'
 import type { Context } from '@lib/session'
 
 interface Response {
-  NBA: GameraNbaBoxScore
-  NFL: GameraNflBoxScore
-  MLB: GameraMlbBoxScore
-  NHL: GameraNhlBoxScore
-  EPL: GameraEplBoxScore
+  NBA: GameraAnswerNbaBoxScore
+  NFL: GameraAnswerNflBoxScore
+  MLB: GameraAnswerMlbBoxScore
+  NHL: GameraAnswerNhlBoxScore
+  EPL: GameraAnswerEplBoxScore
   PGA: never
 }
 
@@ -54,7 +54,7 @@ export const getGames = async (props: {
     const { domain, context, ...params } = props
     const league = domain.toLowerCase()
     const path = `${league}/games/v2`
-    const data = await request<ScoresResponse>(context, path, params)
+    const data = await request<GameResultsResponse>(context, path, params)
     return data
   } catch (error) {
     console.error(error)

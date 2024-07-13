@@ -1,11 +1,6 @@
 import { request } from '@lib/gamera'
-import type { GameraToken, GameraEntity } from '@statmuse/core/gamera'
+import type { GameraToken, GameraEntity, Value } from '@statmuse/core/gamera'
 import type { Context } from '@lib/session'
-
-type Value = {
-  value: number
-  display?: string
-}
 
 type GameStatus =
   | 'scheduled'
@@ -47,31 +42,31 @@ interface PlayerGameModel {
 }
 
 interface StatModel {
-  'Pitching-EarnedRunAverage'?: Value
-  'Pitching-EarnedRuns'?: Value
-  'Pitching-GamesPitched'?: Value
-  'Pitching-HitBatsmen'?: Value
-  'Pitching-Hits'?: Value
-  'Pitching-HomeRuns'?: Value
-  'Pitching-InningsPitched'?: Value
-  'Pitching-Runs'?: Value
-  'Pitching-Strikeouts'?: Value
-  'Pitching-Walks'?: Value
-  'Batting-AtBats'?: Value
-  'Batting-BattingAverage'?: Value
-  'Batting-CaughtStealing'?: Value
-  'Batting-Doubles'?: Value
-  'Batting-HitByPitches'?: Value
-  'Batting-Hits'?: Value
-  'Batting-HomeRuns'?: Value
-  'Batting-OnBasePercentage'?: Value
-  'Batting-Runs'?: Value
-  'Batting-RunsBattedIn'?: Value
-  'Batting-SluggingPercentage'?: Value
-  'Batting-StolenBases'?: Value
-  'Batting-Strikeouts'?: Value
-  'Batting-Triples'?: Value
-  'Batting-Walks'?: Value
+  'Pitching-EarnedRunAverage'?: Value<number>
+  'Pitching-EarnedRuns'?: Value<number>
+  'Pitching-GamesPitched'?: Value<number>
+  'Pitching-HitBatsmen'?: Value<number>
+  'Pitching-Hits'?: Value<number>
+  'Pitching-HomeRuns'?: Value<number>
+  'Pitching-InningsPitched'?: Value<number>
+  'Pitching-Runs'?: Value<number>
+  'Pitching-Strikeouts'?: Value<number>
+  'Pitching-Walks'?: Value<number>
+  'Batting-AtBats'?: Value<number>
+  'Batting-BattingAverage'?: Value<number>
+  'Batting-CaughtStealing'?: Value<number>
+  'Batting-Doubles'?: Value<number>
+  'Batting-HitByPitches'?: Value<number>
+  'Batting-Hits'?: Value<number>
+  'Batting-HomeRuns'?: Value<number>
+  'Batting-OnBasePercentage'?: Value<number>
+  'Batting-Runs'?: Value<number>
+  'Batting-RunsBattedIn'?: Value<number>
+  'Batting-SluggingPercentage'?: Value<number>
+  'Batting-StolenBases'?: Value<number>
+  'Batting-Strikeouts'?: Value<number>
+  'Batting-Triples'?: Value<number>
+  'Batting-Walks'?: Value<number>
 }
 
 export const getStatDisplayValue = (
@@ -149,15 +144,15 @@ interface Player {
 }
 
 type TeamLine = {
-  spread: Value
-  moneyline: Value
+  spread: Value<number>
+  moneyline: Value<number>
 }
 
 interface SportsbookLine {
   id: 'consensus' | 'draftKings' | 'fanDuel' | 'mgm' | 'williamHill'
   homeTeam: TeamLine
   awayTeam: TeamLine
-  overUnder: Value
+  overUnder: Value<number>
 }
 
 interface BettingOdds {

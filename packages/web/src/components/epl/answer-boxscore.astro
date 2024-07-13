@@ -4,14 +4,17 @@ import AnswerCards from '@components/answer-cards.astro'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
 import Explore from '@components/explore.astro'
 import EplBoxscore from '@components/epl/boxscore.astro'
-import { tokensToText, type GameraEplBoxScore } from '@statmuse/core/gamera'
+import {
+  tokensToText,
+  type GameraAnswerEplBoxScore,
+} from '@statmuse/core/gamera'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import { clean, title, description } from '@lib/meta'
 import { createAskPath, imageForgeUrl } from '@statmuse/core/path'
 import * as Link from '@statmuse/core/link'
 
 interface Props {
-  data: GameraEplBoxScore
+  data: GameraAnswerEplBoxScore
   analytics: AnalyticsPageviewProperties
 }
 
@@ -77,8 +80,6 @@ const code = await Link.askShortCode(query, preferredDomain || '')
   {query}
   {conversationToken}
   {preferredDomain}
-  audioUrl={data.visual.summary.narrator?.answerWithIntroAudioUrl ||
-    data.visual.summary.narrator?.answerAudioUrl}
 >
   <EplBoxscore {data} />
   <Explore league="fc" additionalQuestions={data.visual.additionalQuestions} />
@@ -87,10 +88,10 @@ const code = await Link.askShortCode(query, preferredDomain || '')
       <AnswerCards
         domain="EPL"
         teamId={
-          contentReference.questionTags?.teamIds.length > 0
-            ? contentReference.questionTags?.teamIds[0]
-            : contentReference.answerTags?.teamIds.length > 0
-            ? contentReference.answerTags?.teamIds[0]
+          contentReference?.questionTags?.teamIds.length > 0
+            ? contentReference?.questionTags?.teamIds[0]
+            : contentReference?.answerTags?.teamIds.length > 0
+            ? contentReference?.answerTags?.teamIds[0]
             : undefined
         }
       />

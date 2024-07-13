@@ -2,7 +2,7 @@
 import { getPlayerCards, getTeamCards } from '@lib/related-content'
 import type {
   PlayerCardResponse,
-  ScoresResponse,
+  GameResultsResponse,
   ScheduleResponse,
   TeamCardResponse,
   GameraDomain,
@@ -28,7 +28,7 @@ let playerCardsResp: PlayerCardResponse | undefined
 let teamCardsResp: TeamCardResponse | undefined
 let standingsResp: Awaited<ReturnType<typeof getStandings>> | undefined
 let scheduleResp: ScheduleResponse | undefined
-let scoresResp: ScoresResponse | undefined
+let scoresResp: GameResultsResponse | undefined
 
 const allowedDomains = ['NBA', 'NFL', 'NHL', 'EPL', 'MLB']
 

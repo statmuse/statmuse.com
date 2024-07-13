@@ -6,14 +6,11 @@ import AnswerEplBoxscore from '@components/epl/answer-boxscore.astro'
 import PlayerProfile from '@components/player-profile.astro'
 import TeamFranchiseProfile from '@components/team-franchise-profile.astro'
 import TeamSeasonProfile from '@components/team-season-profile.astro'
-import {
-  handleAskResponseFromPost,
-  tokensToText,
-  type GameraResponse,
-} from '@statmuse/core/gamera'
+import { tokensToText, type GameraResponse } from '@statmuse/core/gamera'
 import { clean } from '@statmuse/core/path'
 import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import type { LeagueParam } from '@lib/params'
+import { handleAskResponseFromPost } from '@lib/gamera'
 
 interface Props {
   data: GameraResponse

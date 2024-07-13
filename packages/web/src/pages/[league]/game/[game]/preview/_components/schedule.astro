@@ -4,12 +4,12 @@ import Panel from '@components/panel.astro'
 import Timestamp from '@components/timestamp.svelte'
 import type { MLBGameDataResponse } from '@lib/boxscores/mlb'
 import { parseGameId } from '@lib/parse'
-import type { ScheduleGame, ScoreGame } from '@statmuse/core/gamera'
+import type { ScheduleGame, GameResult } from '@statmuse/core/gamera'
 import { findIndex, takeWhile, takeRightWhile, find } from 'lodash-es'
 
 interface Props {
   teams: MLBGameDataResponse['teams']
-  finalGames?: ScoreGame[]
+  finalGames?: GameResult[]
   scheduledGames?: ScheduleGame[]
 }
 
@@ -17,10 +17,10 @@ const { teams, finalGames, scheduledGames } = Astro.props
 const { game } = Astro.params
 const gameId = Number.parseInt(parseGameId(game!))
 
-type Game = ScoreGame | ScheduleGame
+type Game = GameResult | ScheduleGame
 
-const isScoreGame = (game: Game): game is ScoreGame =>
-  'id' in (game as ScoreGame)
+const isGameResult = (game: Game): game is GameResult =>
+  'id' in (game as GameResult)
 
 const allGames: Game[] = [
   ...(finalGames?.sort((a, b) => a.gameDate.localeCompare(b.gameDate)) ?? []),
@@ -30,15 +30,15 @@ const allGames: Game[] = [
 let games: Game[] = []
 
 let gameIndex = findIndex(allGames, (g) =>
-  isScoreGame(g) ? g.id === gameId : g.gameId === gameId,
+  isGameResult(g) ? g.id === gameId : g.gameId === gameId,
 )
 if (gameIndex !== -1) {
   const game = allGames[gameIndex]
-  const awayTeamId = isScoreGame(game) ? game.awayTeam.teamId : game.awayTeamId
-  const homeTeamId = isScoreGame(game) ? game.homeTeam.teamId : game.homeTeamId
+  const awayTeamId = isGameResult(game) ? game.awayTeam.teamId : game.awayTeamId
+  const homeTeamId = isGameResult(game) ? game.homeTeam.teamId : game.homeTeamId
 
   const sameTeams = (g: Game) => {
-    if (isScoreGame(g)) {
+    if (isGameResult(g)) {
       return (
         (g.awayTeam.teamId === awayTeamId ||
           g.awayTeam.teamId === homeTeamId) &&
@@ -63,17 +63,17 @@ if (gameIndex !== -1) {
   <div class="divide-y divide-gray-6 dark:divide-gray-4">
     {
       games.map((game, index) => {
-        const awayTeamId = isScoreGame(game)
+        const awayTeamId = isGameResult(game)
           ? game.awayTeam.teamId
           : game.awayTeamId
-        const homeTeamId = isScoreGame(game)
+        const homeTeamId = isGameResult(game)
           ? game.homeTeam.teamId
           : game.homeTeamId
 
         const awayTeam = find(teams, { teamId: awayTeamId })
         const homeTeam = find(teams, { teamId: homeTeamId })
 
-        if (isScoreGame(game)) {
+        if (isGameResult(game)) {
           return (
             <div class="flex gap-3 py-2">
               <div class="flex-1">

@@ -15,7 +15,6 @@ import type { AnalyticsPageviewProperties } from '@lib/analytics'
 import * as Link from '@statmuse/core/link'
 import { ANSWER_CARDS_ENABLED } from 'src/config'
 import type { LeagueParam } from '@lib/params'
-import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import Hero from '@components/hero.astro'
 
 interface Props {
@@ -81,7 +80,6 @@ const pageType = (
   return 'ask'
 }
 
-const shareUrl = `${process.env.SHORT_LINK_URL}e/${code?.short_code}`
 const league = domain === 'EPL' ? 'fc' : (preferredDomain as LeagueParam)
 
 const [questionTeamId] = contentReference?.questionTags?.teamIds ?? []
@@ -89,7 +87,7 @@ const [answerTeamId] = contentReference?.answerTags?.teamIds ?? []
 const teamId = questionTeamId ?? answerTeamId
 
 const share = {
-  type: 'ask',
+  type: 'ask' as const,
   query,
   domain: preferredDomain,
   shortCode: code?.short_code,

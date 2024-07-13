@@ -39,7 +39,9 @@ const seasonSchedule = await getTeamSeasonSchedule({
 if (!bio || !gameResults) return NOT_FOUND_404
 
 const title = `${bio.name} ${year} ${scheduleDisplay}`
-const description = `The ${year} ${bio.name} ${scheduleDisplay.toLowerCase()} for the ${domain} regular season and playoffs`
+const description = `The ${year} ${
+  bio.name
+} ${scheduleDisplay.toLowerCase()} for the ${domain} regular season and playoffs`
 const keywords = `${getLeagueKeywords(domain)} ${year} ${
   bio.name
 } ${org} ${schedule} results stats statistics`

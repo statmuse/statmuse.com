@@ -2,7 +2,7 @@
 import Image from '@components/image.astro'
 import Panel from '@components/panel.astro'
 import { type MLBGameDataResponse } from '@lib/boxscores/mlb'
-import type { ScoresResponse, ScoreGame } from '@statmuse/core/gamera'
+import type { GameResultsResponse, GameResult } from '@statmuse/core/gamera'
 import dayjs from 'dayjs'
 import { find, zip } from 'lodash-es'
 
@@ -10,8 +10,8 @@ interface Props {
   teams: MLBGameDataResponse['teams']
   awayTeamModel: MLBGameDataResponse['awayTeam']
   homeTeamModel: MLBGameDataResponse['homeTeam']
-  awayTeamResults?: ScoresResponse
-  homeTeamResults?: ScoresResponse
+  awayTeamResults?: GameResultsResponse
+  homeTeamResults?: GameResultsResponse
 }
 
 const {
@@ -31,7 +31,7 @@ const games = zip(
   homeTeamResults?.games.slice(0, 5),
 )
 
-const getTeamResult = (teamId: number, game?: ScoreGame) =>
+const getTeamResult = (teamId: number, game?: GameResult) =>
   game?.homeTeam.teamId === teamId
     ? game.homeTeam.gameResult
     : game?.awayTeam.teamId === teamId
@@ -40,8 +40,8 @@ const getTeamResult = (teamId: number, game?: ScoreGame) =>
 
 const getOpponent = (
   teamId: number,
-  game?: ScoreGame,
-  teams?: ScoresResponse['teams'],
+  game?: GameResult,
+  teams?: GameResultsResponse['teams'],
 ) => {
   let visitorTeam
   let opponent
