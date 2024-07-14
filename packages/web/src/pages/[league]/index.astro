@@ -7,21 +7,19 @@ import { NOT_FOUND_404 } from '@lib/response'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import { listLatestMusings, type LatestMusing } from '@statmuse/core/musing'
 import {
+  type GetStandingsResponse,
+  type PlayerLeadersResponse,
+  type TeamRankingsResponse,
+  getPlayerProfile,
+  getStandings,
+  getTeamSeasonBio,
   homeLeadersByDomain,
   homeRankingsByDomain,
   homeBettingByDomain,
-} from '@lib/related-content'
+} from '@lib/gamera'
 import { find } from 'lodash-es'
-import { getStandings } from '@lib/standings'
 import type { GameraPlayerProfileResponse } from '@statmuse/core/gamera'
-import { getPlayerProfile } from '@lib/player'
 import type { TrendingItem } from 'src/types'
-import type {
-  PlayerLeadersResponse,
-  TeamRankingsResponse,
-} from '@lib/related-content'
-import type { GetStandingsResponse } from '@lib/standings'
-import { getTeamSeasonBio } from '@lib/team'
 
 const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))

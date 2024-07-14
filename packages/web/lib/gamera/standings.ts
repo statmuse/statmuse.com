@@ -8,7 +8,7 @@ import type {
   StandingsEpl,
   GameraGrid,
 } from '@statmuse/core/gamera'
-import { request } from '@lib/gamera'
+import { request } from '@lib/gamera/base'
 import type { Context } from '@lib/session'
 import { groupBy } from 'lodash-es'
 

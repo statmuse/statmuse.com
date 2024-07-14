@@ -2,17 +2,19 @@
 import Base from '@layouts/base.astro'
 import Image from '@components/image.astro'
 import Share from '@components/share/index.svelte'
-import type { MLBGameDataResponse } from '@lib/boxscores/mlb'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import Timestamp from '@components/timestamp.svelte'
 import { hexToHSL } from '@lib/color'
-import type { GameResultsResponse } from '@statmuse/core/gamera'
+import type {
+  GameResultsResponse,
+  MlbGameDataResponse,
+} from '@statmuse/core/gamera'
 
 interface Props {
   network: string
   timestamp: string
-  awayTeam?: NonNullable<MLBGameDataResponse['teams']>[number]
-  homeTeam?: NonNullable<MLBGameDataResponse['teams']>[number]
+  awayTeam?: NonNullable<MlbGameDataResponse['teams']>[number]
+  homeTeam?: NonNullable<MlbGameDataResponse['teams']>[number]
   awayScores?: GameResultsResponse
   homeScores?: GameResultsResponse
 }
@@ -95,7 +97,7 @@ const boxscorePreviewPath = ({
 }: {
   league?: string
   game?: string
-  team?: NonNullable<MLBGameDataResponse['teams']>[number]
+  team?: NonNullable<MlbGameDataResponse['teams']>[number]
 }) =>
   `/${league}/game/${game}/preview` +
   (team

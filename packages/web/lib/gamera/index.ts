@@ -1,5 +1,4 @@
-export * from './answer'
-export * from './base'
+export * from './ask'
 export * from './games'
 export * from './injuries'
 export * from './players'

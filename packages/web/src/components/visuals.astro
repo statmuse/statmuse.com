@@ -12,41 +12,33 @@ import NhlBoxscore from '@components/nhl-boxscore.astro'
 import EplBoxscore from '@components/epl-boxscore.astro'
 import Schedule from '@components/schedule.astro'
 import NbaShotChart from '@components/nba-shotchart'
-import { type GameraResponse, tokensToHtml } from '@statmuse/core/gamera'
+import { type GameraDefaultResponse, tokensToHtml } from '@statmuse/core/gamera'
 
 interface Props {
-  response: GameraResponse
+  response: GameraDefaultResponse
   query?: string
   conversationToken?: string
   class?: string | null
 }
-
-const query = Astro.props.query
-const conversationToken = Astro.props.conversationToken
 
 const response = Astro.props.response
 const summary = tokensToHtml(response.visual.summaryTokens)
 const showSummary = !!response.visual.summaryTokens?.find(
   (t) => t.type === 'inferred',
 )
-const ignoreGenericGrids =
-  response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' &&
-  response.visual.detail?.find(
-    (d) =>
-      d.type === 'standings' ||
-      d.type === 'schedule' ||
-      d.type === 'mlbHistoricalBoxScore' ||
-      d.type === 'nbaHistoricalBoxScore' ||
-      d.type === 'nflHistoricalBoxScore' ||
-      d.type === 'nhlHistoricalBoxScore' ||
-      d.type === 'eplHistoricalBoxScore',
-  )
-const details =
-  response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional'
-    ? response.visual.detail?.filter((d) =>
-        ignoreGenericGrids ? d.type !== 'genericGrids' : true,
-      )
-    : undefined
+const ignoreGenericGrids = response.visual.detail?.find(
+  (d) =>
+    d.type === 'standings' ||
+    d.type === 'schedule' ||
+    d.type === 'mlbHistoricalBoxScore' ||
+    d.type === 'nbaHistoricalBoxScore' ||
+    d.type === 'nflHistoricalBoxScore' ||
+    d.type === 'nhlHistoricalBoxScore' ||
+    d.type === 'eplHistoricalBoxScore',
+)
+const details = response.visual.detail?.filter((d) =>
+  ignoreGenericGrids ? d.type !== 'genericGrids' : true,
+)
 ---
 
 <div
@@ -56,49 +48,6 @@ const details =
   }}
 >
   {
-    response.type === 'nlgPromptForMoreInfoVisualChoicesOptional' ? (
-      <div class="h-screen w-full flex flex-col justify-center items-center">
-        <h1
-          class="text-3xl my-5 font-semibold"
-          set:html={tokensToHtml(response.visual.summary.answer)}
-        />
-        <div class="w-full flex flex-col sm:flex-row sm:justify-center my-5 gap-2">
-          {response.visual.choices.map((choice) => (
-            <form action="/ask" method="post">
-              <input name="_method" type="hidden" value="POST" />
-              <input
-                id="question_conversation_token"
-                name="question[conversation_token]"
-                type="hidden"
-                value={conversationToken}
-              />
-              <input
-                id="question_query"
-                name="question[query]"
-                required=""
-                type="hidden"
-                value={choice.input}
-              />
-              <input
-                id="question_query_clarification_for"
-                name="question[query_clarification_for]"
-                type="hidden"
-                value={query}
-              />
-              <button
-                data-cy-choice-btn
-                class="w-full text-2xl border-2 border-black rounded-md cursor-pointer p-7"
-                type="submit"
-              >
-                {choice.display}
-              </button>
-            </form>
-          ))}
-        </div>
-      </div>
-    ) : null
-  }
-  {
     showSummary && details && (
       <div class="text-sm text-gray-5">
         <h5 class="inline">Interpreted as:</h5>
@@ -107,94 +56,93 @@ const details =
     )
   }
   {
-    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' &&
-      details?.map((detail) => {
-        switch (detail.type) {
-          case 'stats':
-            return (
-              <Fragment>
-                {detail.grids.map((grid) => (
-                  <div class="flex-1 overflow-x-auto">
-                    <Grid
-                      title={grid.name !== 'all' ? grid.name : undefined}
-                      client:load
-                      data={grid}
-                      columnStyles={{
-                        RESULT: 'text-left',
-                      }}
-                      stickyColumns={['NAME', 'TEAM', 'PLAYER']}
-                      limitRows
-                      rankColumn
-                    />
-                  </div>
-                ))}
-              </Fragment>
-            )
-          case 'genericGrids':
-            return detail.grids.map((grid) => (
-              <div class="flex-1 overflow-x-auto">
-                <Grid
-                  title={grid.name !== 'all' ? grid.name : undefined}
-                  client:load
-                  data={grid}
-                  columnStyles={{
-                    RESULT: 'text-left',
-                  }}
-                  stickyColumns={['NAME', 'TEAM', 'PLAYER']}
-                  limitRows
-                  rankColumn
-                />
-              </div>
-            ))
-          case 'standings':
-            switch (response.visual.domain) {
-              case 'MLB':
-                return <MlbStandings {detail} />
-              case 'NBA':
-                return <NbaStandings {detail} />
-              case 'NFL':
-                return <NflStandings {detail} />
-              case 'NHL':
-                return <NhlStandings {detail} />
-              case 'EPL':
-                return (
-                  <Standings
-                    groups={[{ name: 'FC', standings: detail.standings }]}
-                    highlight={detail.topic?.team}
+    details?.map((detail) => {
+      switch (detail.type) {
+        case 'stats':
+          return (
+            <Fragment>
+              {detail.grids.map((grid) => (
+                <div class="flex-1 overflow-x-auto">
+                  <Grid
+                    title={grid.name !== 'all' ? grid.name : undefined}
+                    client:load
+                    data={grid}
+                    columnStyles={{
+                      RESULT: 'text-left',
+                    }}
+                    stickyColumns={['NAME', 'TEAM', 'PLAYER']}
+                    limitRows
+                    rankColumn
                   />
-                )
-              default:
-                return null
-            }
-          case 'schedule':
-            return <Schedule league={response.visual.domain ?? ''} {detail} />
-          case 'mlbHistoricalBoxScore':
-            return <MlbBoxscore {detail} />
-          case 'nbaHistoricalBoxScore':
-            return <NbaBoxscore {detail} />
-          case 'nflHistoricalBoxScore':
-            return <NflBoxscore {detail} />
-          case 'nhlHistoricalBoxScore':
-            return <NhlBoxscore {detail} />
-          case 'eplHistoricalBoxScore':
-            return <EplBoxscore {detail} />
-          case 'nbaShots':
-            return (
-              <div>
-                <NbaShotChart
-                  client:load
-                  model={detail.charts[0]}
-                  widthAvailable={800}
+                </div>
+              ))}
+            </Fragment>
+          )
+        case 'genericGrids':
+          return detail.grids.map((grid) => (
+            <div class="flex-1 overflow-x-auto">
+              <Grid
+                title={grid.name !== 'all' ? grid.name : undefined}
+                client:load
+                data={grid}
+                columnStyles={{
+                  RESULT: 'text-left',
+                }}
+                stickyColumns={['NAME', 'TEAM', 'PLAYER']}
+                limitRows
+                rankColumn
+              />
+            </div>
+          ))
+        case 'standings':
+          switch (response.visual.domain) {
+            case 'MLB':
+              return <MlbStandings {detail} />
+            case 'NBA':
+              return <NbaStandings {detail} />
+            case 'NFL':
+              return <NflStandings {detail} />
+            case 'NHL':
+              return <NhlStandings {detail} />
+            case 'EPL':
+              return (
+                <Standings
+                  groups={[{ name: 'FC', standings: detail.standings }]}
+                  highlight={detail.topic?.team}
                 />
-              </div>
-            )
-          default:
-            return null
-        }
-      })
+              )
+            default:
+              return null
+          }
+        case 'schedule':
+          return <Schedule league={response.visual.domain ?? ''} {detail} />
+        case 'mlbHistoricalBoxScore':
+          return <MlbBoxscore {detail} />
+        case 'nbaHistoricalBoxScore':
+          return <NbaBoxscore {detail} />
+        case 'nflHistoricalBoxScore':
+          return <NflBoxscore {detail} />
+        case 'nhlHistoricalBoxScore':
+          return <NhlBoxscore {detail} />
+        case 'eplHistoricalBoxScore':
+          return <EplBoxscore {detail} />
+        case 'nbaShots':
+          return (
+            <div>
+              <NbaShotChart
+                client:load
+                model={detail.charts[0]}
+                widthAvailable={800}
+              />
+            </div>
+          )
+        default:
+          return null
+      }
+    })
   }
   {
-    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' && details ? (
+    details ? (
       <div class="">
         {response.visual.disclaimers?.map((d) => (
           <div class="text-sm italic font-light" set:html={d} />
@@ -203,12 +151,11 @@ const details =
     ) : null
   }
   {
-    response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' &&
-      details === undefined && (
-        <div style="font-size: 16px; color: rgb(189, 189, 189); text-align: center; display: flex; justify-content: center; align-items: center; width: 100%; height: 250px;">
-          No chart or data table available
-        </div>
-      )
+    details === undefined && (
+      <div style="font-size: 16px; color: rgb(189, 189, 189); text-align: center; display: flex; justify-content: center; align-items: center; width: 100%; height: 250px;">
+        No chart or data table available
+      </div>
+    )
   }
 </div>
 <script>

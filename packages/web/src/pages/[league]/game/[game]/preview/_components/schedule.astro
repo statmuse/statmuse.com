@@ -2,13 +2,16 @@
 import Image from '@components/image.astro'
 import Panel from '@components/panel.astro'
 import Timestamp from '@components/timestamp.svelte'
-import type { MLBGameDataResponse } from '@lib/boxscores/mlb'
 import { parseGameId } from '@lib/parse'
-import type { ScheduleGame, GameResult } from '@statmuse/core/gamera'
+import type {
+  MlbGameDataResponse,
+  ScheduleGame,
+  GameResult,
+} from '@statmuse/core/gamera'
 import { findIndex, takeWhile, takeRightWhile, find } from 'lodash-es'
 
 interface Props {
-  teams: MLBGameDataResponse['teams']
+  teams: MlbGameDataResponse['teams']
   finalGames?: GameResult[]
   scheduledGames?: ScheduleGame[]
 }

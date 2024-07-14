@@ -1,7 +1,7 @@
 ---
 import PlayerGallery from '@components/player-gallery.astro'
 import { Caching } from '@lib/caching'
-import { getPlayerGalleryList } from '@lib/player'
+import { getPlayerGalleryList } from '@lib/gamera'
 
 const players = await getPlayerGalleryList()
 Caching.swr(Astro)

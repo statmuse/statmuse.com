@@ -1,15 +1,15 @@
 ---
 import Image from '@components/image.astro'
 import Panel from '@components/panel.astro'
-import { type MLBGameDataResponse } from '@lib/boxscores/mlb'
+import { type MlbGameDataResponse } from '@lib/boxscores/mlb'
 import type { GameResultsResponse, GameResult } from '@statmuse/core/gamera'
 import dayjs from 'dayjs'
 import { find, zip } from 'lodash-es'
 
 interface Props {
-  teams: MLBGameDataResponse['teams']
-  awayTeamModel: MLBGameDataResponse['awayTeam']
-  homeTeamModel: MLBGameDataResponse['homeTeam']
+  teams: MlbGameDataResponse['teams']
+  awayTeamModel: MlbGameDataResponse['awayTeam']
+  homeTeamModel: MlbGameDataResponse['homeTeam']
   awayTeamResults?: GameResultsResponse
   homeTeamResults?: GameResultsResponse
 }

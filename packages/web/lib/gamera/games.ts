@@ -4,11 +4,11 @@ import type {
   GameraAnswerNbaBoxScore,
   GameraAnswerNflBoxScore,
   GameraAnswerNhlBoxScore,
-  ScheduleResponse,
+  MlbGameDataResponse,
   GameResultsResponse,
 } from '@statmuse/core/gamera'
 import { parseGameId } from '@lib/parse'
-import { request } from '@lib/gamera'
+import { request } from '@lib/gamera/base'
 import type { Context } from '@lib/session'
 
 interface Response {
@@ -62,16 +62,21 @@ export const getGames = async (props: {
   }
 }
 
-export const getSchedule = async (props: {
+type StatKey = 'pitchingStandard' | 'battingStandard'
+
+export const getGameData = async (props: {
   context: Context
-  domain: string
-  teamId?: string | number
+  gameId: string | number
+  statKeySet: StatKey[]
 }) => {
   try {
-    const { domain, context, ...params } = props
-    const league = domain.toLowerCase()
-    const path = `${league}/schedule`
-    const data = await request<ScheduleResponse>(context, path, params)
+    const { gameId, context, statKeySet } = props
+    const path = `mlb/games/${gameId}`
+    const data = await request<MlbGameDataResponse>(
+      context,
+      path,
+      new URLSearchParams(statKeySet.map((key) => ['statKeySet', key])),
+    )
     return data
   } catch (error) {
     console.error(error)

@@ -1,5 +1,11 @@
 ---
-import { getPlayerCards, getTeamCards } from '@lib/related-content'
+import {
+  getGames,
+  getPlayerCards,
+  getSchedule,
+  getStandings,
+  getTeamCards,
+} from '@lib/gamera'
 import type {
   PlayerCardResponse,
   GameResultsResponse,
@@ -7,8 +13,6 @@ import type {
   TeamCardResponse,
   GameraDomain,
 } from '@statmuse/core/gamera'
-import { getStandings } from '@lib/standings'
-import { getGames, getSchedule } from '@lib/game'
 import PlayerLeaders from '@components/cards/player-leaders.astro'
 import FantasyLeaders from './cards/fantasy-leaders.astro'
 import TeamRankings from './cards/team-rankings.astro'

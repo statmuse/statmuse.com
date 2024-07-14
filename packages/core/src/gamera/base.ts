@@ -1,5 +1,5 @@
 export interface Colors {
-  backgrounColor: string
+  backgroundColor: string
   foregroundColor: string
 }
 

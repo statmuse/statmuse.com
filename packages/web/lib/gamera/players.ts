@@ -6,8 +6,8 @@ import type {
   GameraPlayerSplits,
   GameraPlayerStats,
 } from '@statmuse/core/gamera'
-import { parsePlayerId } from './parse'
-import { request } from '@lib/gamera'
+import { parsePlayerId } from '../parse'
+import { request } from '@lib/gamera/base'
 import { dbReader } from '@statmuse/core/db'
 import type { Context } from '@lib/session'
 import { orderBy } from 'lodash-es'

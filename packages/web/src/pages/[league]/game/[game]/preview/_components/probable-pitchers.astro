@@ -1,14 +1,14 @@
 ---
 import Image from '@components/image.astro'
 import Panel from '@components/panel.astro'
-import { type MLBGameDataResponse } from '@lib/boxscores/mlb'
+import { type MlbGameDataResponse } from '@lib/boxscores/mlb'
 import { hexToHSL } from '@lib/color'
-import { getPlayerBio, getPlayerStats } from '@lib/player'
+import { getPlayerBio, getPlayerStats } from '@lib/gamera'
 import { find } from 'lodash-es'
 
 interface Props {
-  awayTeamModel: MLBGameDataResponse['awayTeam']
-  homeTeamModel: MLBGameDataResponse['homeTeam']
+  awayTeamModel: MlbGameDataResponse['awayTeam']
+  homeTeamModel: MlbGameDataResponse['homeTeam']
 }
 
 const { awayTeamModel, homeTeamModel } = Astro.props
