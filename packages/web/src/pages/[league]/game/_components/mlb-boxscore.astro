@@ -1,15 +1,15 @@
 ---
-import PreviewLayout from './_layout.astro'
+import PreviewLayout from './layout.astro'
 import { parseGameId } from '@lib/parse'
 import { NOT_FOUND_404 } from '@lib/response'
 import { find } from 'lodash-es'
-import GameInfo from './_components/game-info.astro'
-import ProbablePitchers from './_components/probable-pitchers.astro'
-import TeamStats from './_components/team-stats.astro'
-import Injuries from './_components/injuries.astro'
-import Schedule from './_components/schedule.astro'
-import Standings from './_components/standings.astro'
-import LastGames from './_components/last-games.astro'
+import GameInfo from './game-info.astro'
+import ProbablePitchers from './probable-pitchers.astro'
+import TeamStats from './team-stats.astro'
+import Injuries from './injuries.astro'
+import Schedule from './schedule.astro'
+import Standings from './standings.astro'
+import LastGames from './last-games.astro'
 import {
   getGameData,
   getGames,

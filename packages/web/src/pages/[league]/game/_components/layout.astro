@@ -99,9 +99,9 @@ const boxscorePreviewPath = ({
   game?: string
   team?: NonNullable<MlbGameDataResponse['teams']>[number]
 }) =>
-  `/${league}/game/${game}/preview` +
+  `/${league}/game/${game}` +
   (team
-    ? `/${team.name?.toLowerCase().split(' ').join('-')}-${team.teamId}`
+    ? `/${team.nickname?.toLowerCase().split(' ').join('-')}-${team.teamId}`
     : '')
 
 const navlinks = [
