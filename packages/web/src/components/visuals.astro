@@ -9,10 +9,14 @@ import Standings from '@components/standings.astro'
 import NbaBoxscore from '@components/nba-boxscore.astro'
 import NflBoxscore from '@components/nfl-boxscore.astro'
 import NhlBoxscore from '@components/nhl-boxscore.astro'
-import EplBoxscore from '@components/epl-boxscore.astro'
+import EplBoxscore from '@components/epl/boxscore.astro'
 import Schedule from '@components/schedule.astro'
 import NbaShotChart from '@components/nba-shotchart'
-import { type GameraDefaultResponse, tokensToHtml } from '@statmuse/core/gamera'
+import {
+  type GameraDefaultResponse,
+  type GameraAnswerEplBoxScore,
+  tokensToHtml,
+} from '@statmuse/core/gamera'
 
 interface Props {
   response: GameraDefaultResponse
@@ -125,7 +129,7 @@ const details = response.visual.detail?.filter((d) =>
         case 'nhlHistoricalBoxScore':
           return <NhlBoxscore {detail} />
         case 'eplHistoricalBoxScore':
-          return <EplBoxscore {detail} />
+          return <EplBoxscore data={response as GameraAnswerEplBoxScore} />
         case 'nbaShots':
           return (
             <div>
