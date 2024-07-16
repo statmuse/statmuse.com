@@ -244,3 +244,173 @@ export interface MlbGameDataResponse {
   odds?: BettingOdds
   summary?: GameraToken[]
 }
+
+type Coordinates = {
+  x: number
+  y: number
+}
+
+interface HitData {
+  hardness?: 'soft' | 'medium' | 'hard'
+  trajectory?:
+    | 'buntGrounder'
+    | 'buntPopup'
+    | 'buntLineDrive'
+    | 'flyBall'
+    | 'groundBall'
+    | 'lineDrive'
+    | 'popup'
+  coordinates?: Coordinates
+}
+
+interface PitchData {
+  pitchType?:
+    | 'fastball'
+    | 'sinker'
+    | 'cutter'
+    | 'curveball'
+    | 'slider'
+    | 'changeup'
+    | 'knuckleball'
+    | 'splitter'
+    | 'screwball'
+    | 'forkball'
+    | 'eephus'
+    | 'intentionalBall'
+    | 'pitchOut'
+  zone?: number
+  speed?: number
+  coordinates?: Coordinates
+}
+
+interface PitchCount {
+  balls: number
+  strikes: number
+  outs: number
+}
+
+interface Runner {
+  outcomeType:
+    | 'steal'
+    | 'caughtStealing'
+    | 'pickoff'
+    | 'otherAdvance'
+    | 'otherOut'
+  playerId: number
+  startingBase: number
+  description?: GameraToken[]
+  isOut: boolean
+}
+
+interface PitchFlags {
+  isAtBatOver: boolean
+  isHit: boolean
+  isBunt: boolean
+  isWildPitch: boolean
+  isPassedBall: boolean
+  isDoublePlay: boolean
+  isTriplePlay: boolean
+}
+
+interface PitchAtBatEvent {
+  type: 'pitch'
+  pitchData?: PitchData
+  hitData?: HitData
+  count: PitchCount
+  runners?: Runner[]
+  outcomeType:
+    | 'catcherInterference'
+    | 'hitterInterference'
+    | 'fieldersChoice'
+    | 'outOfBattersBox'
+    | 'outOnAppeal'
+    | 'rulingPending'
+    | 'single'
+    | 'double'
+    | 'triple'
+    | 'homeRun'
+    | 'hitByPitch'
+    | 'balk'
+    | 'intentionalWalk'
+    | 'foul'
+    | 'reachedOnError'
+    | 'enforcedBall'
+    | 'enforcedStrike'
+    | 'ball'
+    | 'dirtBall'
+    | 'intentionalBall'
+    | 'pitchout'
+    | 'strikeSwinging'
+    | 'strikeLooking'
+    | 'sacrificeBunt'
+    | 'sacrificeFly'
+    | 'flyOut'
+    | 'groundOut'
+    | 'lineOut'
+    | 'popOut'
+  flags: PitchFlags
+}
+
+interface StealAtBatEvent {
+  type: 'steal'
+  count: PitchCount
+  runners?: Runner[]
+}
+
+interface LineupChangeAtBatEvent {
+  type: 'lineup'
+  playerId: number
+  teamId: number
+  order?: number
+  position: Position
+  description?: GameraToken[]
+}
+
+type AtBatEvent = PitchAtBatEvent | StealAtBatEvent | LineupChangeAtBatEvent
+
+interface InningAtBatEvent {
+  pitcher: { playerId: string; handedness: 'right' | 'left' }
+  batter: { playerId: string; handedness: 'right' | 'left' }
+  events: AtBatEvent[]
+  description?: GameraToken[]
+  type: 'atBat'
+}
+
+interface InningLineupChangeEvent {
+  playerId: number
+  teamId: number
+  order?: number
+  position: Position
+  description?: GameraToken[]
+  type: 'lineup'
+}
+
+interface InningDesignatedRunnerEvent {
+  playerId: number
+  description?: GameraToken[]
+  type: 'designatedRunner'
+}
+
+type InningEvent =
+  | InningAtBatEvent
+  | InningLineupChangeEvent
+  | InningDesignatedRunnerEvent
+
+interface InningHalf {
+  half: 'top' | 'bottom'
+  events: InningEvent[]
+}
+
+export interface InningPlayByPlay {
+  number: number
+  halves: InningHalf[]
+}
+
+export interface MlbPlayByPlayResponse {
+  gameId: number
+  gameTimestamp: string
+  gameStatus: GameStatus
+  homeTeam: Pick<GameraTeamReference, 'teamId'>
+  awayTeam: Pick<GameraTeamReference, 'teamId'>
+  innings: InningPlayByPlay[]
+}

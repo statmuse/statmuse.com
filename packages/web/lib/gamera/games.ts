@@ -6,6 +6,7 @@ import type {
   GameraAnswerNhlBoxScore,
   MlbGameDataResponse,
   GameResultsResponse,
+  MlbPlayByPlayResponse,
 } from '@statmuse/core/gamera'
 import { parseGameId } from '@lib/parse'
 import { request } from '@lib/gamera/base'
@@ -77,6 +78,21 @@ export const getGameData = async (props: {
       path,
       new URLSearchParams(statKeySet.map((key) => ['statKeySet', key])),
     )
+    return data
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
+}
+
+export const getPlayByPlay = async (props: {
+  context: Context
+  gameId: string | number
+}) => {
+  try {
+    const { gameId, context } = props
+    const path = `mlb/games/${gameId}/playByPlay`
+    const data = await request<MlbPlayByPlayResponse>(context, path)
     return data
   } catch (error) {
     console.error(error)
