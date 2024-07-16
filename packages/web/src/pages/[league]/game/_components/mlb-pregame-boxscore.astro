@@ -1,0 +1,118 @@
+---
+import Layout from './layout.astro'
+import { find } from 'lodash-es'
+import GameInfo from './game-info.astro'
+import ProbablePitchers from './probable-pitchers.astro'
+import TeamStats from './team-stats.astro'
+import Injuries from './injuries.astro'
+import Schedule from './schedule.astro'
+import Standings from './standings.astro'
+import LastGames from './last-games.astro'
+import {
+  getGames,
+  getInjuries,
+  getSchedule,
+  getStandingsRaw,
+  getTeamSeasonStats,
+} from '@lib/gamera'
+import type { MlbGameDataResponse } from '@statmuse/core/gamera'
+
+interface Props {
+  gameData: MlbGameDataResponse
+}
+
+const { gameData } = Astro.props
+
+const {
+  teams,
+  awayTeam: awayTeamModel,
+  homeTeam: homeTeamModel,
+  weather,
+  officials,
+  venue,
+  players,
+  networkName,
+  gameTimestamp,
+} = gameData
+
+const [
+  homeScores,
+  awayScores,
+  awaySchedule,
+  homeTeamSeasonStats,
+  awayTeamSeasonStats,
+  injuries,
+  standings,
+] = await Promise.all([
+  getGames({ context: Astro, domain: 'mlb', teamId: homeTeamModel.teamId }),
+  getGames({ context: Astro, domain: 'mlb', teamId: awayTeamModel.teamId }),
+  getSchedule({ context: Astro, domain: 'mlb', teamId: awayTeamModel.teamId }),
+  getTeamSeasonStats({
+    context: Astro,
+    domain: 'MLB',
+    team: `team-${homeTeamModel.teamId}`,
+    year: gameData.seasonYearDisplay ?? '',
+    params: {},
+  }),
+  getTeamSeasonStats({
+    context: Astro,
+    domain: 'MLB',
+    team: `team-${awayTeamModel.teamId}`,
+    year: gameData.seasonYearDisplay ?? '',
+    params: {},
+  }),
+  getInjuries({ context: Astro }),
+  getStandingsRaw({ context: Astro, domain: 'mlb' }),
+])
+
+const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
+const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
+
+const awayTeamInjuries = find(
+  injuries?.teams,
+  (t) => t.team.teamId === awayTeamModel.teamId,
+)
+const homeTeamInjuries = find(
+  injuries?.teams,
+  (t) => t.team.teamId === homeTeamModel.teamId,
+)
+---
+
+<Layout
+  network={networkName}
+  timestamp={gameTimestamp}
+  {awayTeam}
+  {awayScores}
+  {homeTeam}
+  {homeScores}
+>
+  <ProbablePitchers {players} {teams} {awayTeamModel} {homeTeamModel} />
+  <TeamStats
+    {awayTeam}
+    {homeTeam}
+    {homeTeamSeasonStats}
+    {awayTeamSeasonStats}
+    {teams}
+    {awayTeamModel}
+    {homeTeamModel}
+  />
+  <Injuries {awayTeamInjuries} {homeTeamInjuries} />
+  <Schedule
+    {teams}
+    finalGames={awayScores?.games}
+    scheduledGames={awaySchedule?.games}
+  />
+  <Standings
+    {standings}
+    awayTeamId={awayTeamModel.teamId}
+    homeTeamId={homeTeamModel.teamId}
+  />
+  <LastGames
+    {teams}
+    {awayTeamModel}
+    {homeTeamModel}
+    awayTeamResults={awayScores}
+    homeTeamResults={homeScores}
+  />
+  <GameInfo {venue} {weather} {officials} />
+</Layout>

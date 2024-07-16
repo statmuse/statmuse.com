@@ -1,23 +1,9 @@
 ---
-import PreviewLayout from './layout.astro'
+import MlbPregameBoxscore from './mlb-pregame-boxscore.astro'
+import MlbLivegameBoxscore from './mlb-livegame-boxscore.astro'
 import { parseGameId } from '@lib/parse'
 import { NOT_FOUND_404 } from '@lib/response'
-import { find } from 'lodash-es'
-import GameInfo from './game-info.astro'
-import ProbablePitchers from './probable-pitchers.astro'
-import TeamStats from './team-stats.astro'
-import Injuries from './injuries.astro'
-import Schedule from './schedule.astro'
-import Standings from './standings.astro'
-import LastGames from './last-games.astro'
-import {
-  getGameData,
-  getGames,
-  getInjuries,
-  getSchedule,
-  getStandingsRaw,
-  getTeamSeasonStats,
-} from '@lib/gamera'
+import { getGameData } from '@lib/gamera'
 
 const { league, game } = Astro.params
 const gameId = parseGameId(game ?? '')
@@ -29,97 +15,15 @@ const gameData = await getGameData({
 })
 
 if (!gameData) return NOT_FOUND_404
-
-const {
-  teams,
-  awayTeam: awayTeamModel,
-  homeTeam: homeTeamModel,
-  weather,
-  officials,
-  venue,
-  players,
-  networkName,
-  gameTimestamp,
-} = gameData
-
-const [
-  homeScores,
-  awayScores,
-  awaySchedule,
-  homeTeamSeasonStats,
-  awayTeamSeasonStats,
-  injuries,
-  standings,
-] = await Promise.all([
-  getGames({ context: Astro, domain: 'mlb', teamId: homeTeamModel.teamId }),
-  getGames({ context: Astro, domain: 'mlb', teamId: awayTeamModel.teamId }),
-  getSchedule({ context: Astro, domain: 'mlb', teamId: awayTeamModel.teamId }),
-  getTeamSeasonStats({
-    context: Astro,
-    domain: 'MLB',
-    team: `team-${homeTeamModel.teamId}`,
-    year: gameData.seasonYearDisplay ?? '',
-    params: {},
-  }),
-  getTeamSeasonStats({
-    context: Astro,
-    domain: 'MLB',
-    team: `team-${awayTeamModel.teamId}`,
-    year: gameData.seasonYearDisplay ?? '',
-    params: {},
-  }),
-  getInjuries({ context: Astro }),
-  getStandingsRaw({ context: Astro, domain: 'mlb' }),
-])
-
-const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
-const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
-
-const awayTeamInjuries = find(
-  injuries?.teams,
-  (t) => t.team.teamId === awayTeamModel.teamId,
-)
-const homeTeamInjuries = find(
-  injuries?.teams,
-  (t) => t.team.teamId === homeTeamModel.teamId,
-)
 ---
 
-<PreviewLayout
-  network={networkName}
-  timestamp={gameTimestamp}
-  {awayTeam}
-  {awayScores}
-  {homeTeam}
-  {homeScores}
->
-  <ProbablePitchers {players} {teams} {awayTeamModel} {homeTeamModel} />
-  <TeamStats
-    {awayTeam}
-    {homeTeam}
-    {homeTeamSeasonStats}
-    {awayTeamSeasonStats}
-    {teams}
-    {awayTeamModel}
-    {homeTeamModel}
-  />
-  <Injuries {awayTeamInjuries} {homeTeamInjuries} />
-  <Schedule
-    {teams}
-    finalGames={awayScores?.games}
-    scheduledGames={awaySchedule?.games}
-  />
-  <Standings
-    {standings}
-    awayTeamId={awayTeamModel.teamId}
-    homeTeamId={homeTeamModel.teamId}
-  />
-  <LastGames
-    {teams}
-    {awayTeamModel}
-    {homeTeamModel}
-    awayTeamResults={awayScores}
-    homeTeamResults={homeScores}
-  />
-  <GameInfo {venue} {weather} {officials} />
-</PreviewLayout>
+{
+  (function () {
+    switch ('inProgress') {
+      case 'scheduled':
+        return <MlbPregameBoxscore {gameData} />
+      case 'inProgress':
+        return <MlbLivegameBoxscore {gameData} />
+    }
+  })()
+}

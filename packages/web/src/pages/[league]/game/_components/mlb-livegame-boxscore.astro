@@ -1,0 +1,43 @@
+---
+import { getGames } from '@lib/gamera'
+import Layout from './layout.astro'
+import type { MlbGameDataResponse } from '@statmuse/core/gamera'
+import { find } from 'lodash-es'
+import GameInfo from './game-info.astro'
+
+interface Props {
+  gameData: MlbGameDataResponse
+}
+
+const { gameData } = Astro.props
+
+const {
+  gameTimestamp,
+  networkName,
+  awayTeam: awayTeamModel,
+  homeTeam: homeTeamModel,
+  teams,
+  venue,
+  weather,
+  officials,
+} = gameData
+
+const [homeScores, awayScores] = await Promise.all([
+  getGames({ context: Astro, domain: 'mlb', teamId: homeTeamModel.teamId }),
+  getGames({ context: Astro, domain: 'mlb', teamId: awayTeamModel.teamId }),
+])
+
+const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
+const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
+---
+
+<Layout
+  network={networkName}
+  timestamp={gameTimestamp}
+  {awayTeam}
+  {awayScores}
+  {homeTeam}
+  {homeScores}
+>
+  <GameInfo {venue} {weather} {officials} />
+</Layout>
