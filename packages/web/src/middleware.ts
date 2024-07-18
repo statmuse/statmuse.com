@@ -13,20 +13,22 @@ export const logging = defineMiddleware(async (context, next) => {
 
 export const platform = defineMiddleware(async (context, next) => {
   const platform = (context.request.headers.get("x-statmuse-platform") ?? 
-     context.cookies.get("statmuse-platform")?.value) as "web" | "native"
+     context.cookies.get("statmuse-platform")?.value ?? "web") as "web" | "native"
 
   context.locals.platform = platform
 
-  const nextYear = new Date()
-  nextYear.setDate(nextYear.getDate() + 365)
+  if (platform === "native") {
+    const nextYear = new Date()
+    nextYear.setDate(nextYear.getDate() + 365)
 
-  const local = context.url.hostname === 'localhost'
-  context.cookies.set("statmuse-platform", platform, {
-    path: '/',
-    domain: local ? undefined : 'statmuse.com',
-    expires: nextYear,
-    maxAge: 31536000,
-  })
+    const local = context.url.hostname === 'localhost'
+    context.cookies.set("statmuse-platform", platform, {
+      path: '/',
+      domain: local ? undefined : 'statmuse.com',
+      expires: nextYear,
+      maxAge: 31536000,
+    })
+  }
 
   return next()
 })
