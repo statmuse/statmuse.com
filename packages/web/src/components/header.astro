@@ -25,34 +25,36 @@ const preferredDomain = Astro.props.preferredDomain ?? ''
     '': false,
   }}
 >
-  <div class="flex xl:w-[210px] xl:justify-center shrink-0">
-    <DropdownMenu showElephant class="xl:hidden" />
-    <a href={Astro.props.money ? '/money' : '/'} class="hidden md:block">
-      <Logo class="w-[150px] mx-5" />
-    </a>
-  </div>
-  <div class="flex grow">
-    <div class="flex-1 justify-start">
-      <AskBar
-        client:load
-        {query}
-        {conversationToken}
-        {preferredDomain}
-        money={Astro.props.money}
-        autoFocus={[
-          '/',
-          '/nba',
-          '/nfl',
-          '/nhl',
-          '/mlb',
-          '/pga',
-          '/fc',
-          '/money',
-        ].includes(Astro.url.pathname)}
-      />
+  {Astro.locals.platform === "web" && <Fragment>
+    <div class="flex xl:w-[210px] xl:justify-center shrink-0">
+      <DropdownMenu showElephant class="xl:hidden" />
+      <a href={Astro.props.money ? '/money' : '/'} class="hidden md:block">
+        <Logo class="w-[150px] mx-5" />
+      </a>
     </div>
-  </div>
-  <div class="justify-end hidden md:flex min-w-[140px]">
-    <AuthMenu client:load />
-  </div>
+    <div class="flex grow">
+      <div class="flex-1 justify-start">
+        <AskBar
+          client:load
+          {query}
+          {conversationToken}
+          {preferredDomain}
+          money={Astro.props.money}
+          autoFocus={[
+            '/',
+            '/nba',
+            '/nfl',
+            '/nhl',
+            '/mlb',
+            '/pga',
+            '/fc',
+            '/money',
+          ].includes(Astro.url.pathname)}
+        />
+      </div>
+    </div>
+    <div class="justify-end hidden md:flex min-w-[140px]">
+      <AuthMenu client:load />
+    </div>
+  </Fragment> }
 </div>

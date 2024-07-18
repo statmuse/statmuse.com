@@ -11,7 +11,29 @@ export const logging = defineMiddleware(async (context, next) => {
   return next()
 })
 
+export const platform = defineMiddleware(async (context, next) => {
+  const platform = (context.request.headers.get("x-statmuse-platform") ?? 
+     context.cookies.get("statmuse-platform")?.value) as "web" | "native"
+
+  context.locals.platform = platform
+
+  const nextYear = new Date()
+  nextYear.setDate(nextYear.getDate() + 365)
+
+  const local = context.url.hostname === 'localhost'
+  context.cookies.set("statmuse-platform", platform, {
+    path: '/',
+    domain: local ? undefined : 'statmuse.com',
+    expires: nextYear,
+    maxAge: 31536000,
+  })
+
+  return next()
+})
+
 export const migrateSession = defineMiddleware(async (context, next) => {
+  if (context.locals.platform === "native") return next()
+
   if (context.url.pathname.startsWith('/_image')) {
     return next()
   }
@@ -218,8 +240,10 @@ export const trending = defineMiddleware(async (context, next) => {
   return next()
 })
 
+
 export const onRequest = sequence(
   logging,
+  platform,
   migrateSession,
   session,
   trending,
