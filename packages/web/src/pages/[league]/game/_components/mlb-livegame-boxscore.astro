@@ -5,6 +5,7 @@ import type { MlbGameDataResponse } from '@statmuse/core/gamera'
 import { find } from 'lodash-es'
 import GameInfo from './game-info.astro'
 import Matchup from './matchup.svelte'
+import PitchByPitch from './pitch-by-pitch.svelte'
 
 interface Props {
   gameData: MlbGameDataResponse
@@ -41,5 +42,6 @@ const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
   {homeScores}
 >
   <Matchup client:load {awayTeam} {homeTeam} />
+  <PitchByPitch client:load />
   <GameInfo {venue} {weather} {officials} />
 </Layout>
