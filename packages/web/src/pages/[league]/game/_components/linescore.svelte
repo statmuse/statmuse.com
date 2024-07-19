@@ -1,7 +1,10 @@
 <script lang="ts">
   import Panel from '@components/panel.svelte'
+  import Icon from '@components/icon.svelte'
   import Image from '@components/image.svelte'
   import type { GameraTeamReference } from '@statmuse/core/gamera'
+  import AtBatCount from './at-bat-count.svelte'
+  import OutsIndicator from './outs-indicator.svelte'
 
   export let homeTeam: GameraTeamReference
   export let awayTeam: GameraTeamReference
@@ -66,6 +69,23 @@
           <p>{inning[2] !== undefined ? inning[2] : ''}</p>
         </div>
       {/each}
+    </div>
+  </div>
+  <div
+    class="px-3 py-2 flex items-center justify-between border-t border-gray-6 dark:border-gray-4"
+  >
+    <div>
+      <p class="text-gray-5 text-sm">Batting</p>
+      <p>A. Judge</p>
+    </div>
+    <div class="flex items-center gap-2.5">
+      <AtBatCount indicator />
+      <Icon name="baseball-diamond" class="w-9" fillSecondBase />
+      <OutsIndicator vertical />
+    </div>
+    <div class="text-right">
+      <p class="text-gray-5 text-sm">Pitching</p>
+      <p>P. Skenes</p>
     </div>
   </div>
 </Panel>
