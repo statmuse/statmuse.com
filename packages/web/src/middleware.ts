@@ -12,6 +12,10 @@ export const logging = defineMiddleware(async (context, next) => {
 })
 
 export const platform = defineMiddleware(async (context, next) => {
+  if (context.url.pathname.startsWith('/_image')) {
+    return next()
+  }
+
   const platform = (context.request.headers.get("x-statmuse-platform") ?? 
      context.cookies.get("statmuse-platform")?.value ?? "web") as "web" | "native"
 
