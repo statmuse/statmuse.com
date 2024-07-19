@@ -1,6 +1,6 @@
 ---
 import Answer from '@components/answer.astro'
-import { handleResponse } from '@lib/gamera'
+import { handleResponse } from '@statmuse/core/gamera'
 import { ask } from '@lib/gamera'
 import { Caching } from '@lib/caching'
 import * as Enforcer from '@lib/enforcer'
@@ -24,7 +24,7 @@ if ('redirect' in askResponse) return Astro.redirect(askResponse.redirect)
 const response = askResponse.response
 if (!response) return NOT_FOUND_404
 
-const { redirectUrl } = await handleResponse(Astro, response)
+const { redirectUrl } = handleResponse(response)
 if (redirectUrl) return Astro.redirect(encodeURI(redirectUrl))
 
 Caching.swr(Astro)

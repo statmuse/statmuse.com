@@ -1,5 +1,34 @@
 export const cdnBaseUrl = 'https://cdn.statmuse.com'
 
+export function handleResponse(response: GameraResponse) {
+  const subject = response.visual.summary.subject
+  const conversationToken = response.conversation.token
+  if (response.type === 'nlgPromptForMoreInfoVisualChoicesOptional') {
+    return { subject, conversationToken }
+  }
+
+  let redirectUrl = ''
+  const playerProfile = response.visual.detail?.find(
+    (d) => d.type === 'playerProfile',
+  ) as PlayerProfileDetail
+  if (playerProfile) {
+    redirectUrl = getUrlForEntity(playerProfile.entity)
+  }
+
+  const teamProfile = response.visual.detail?.find(
+    (d) => d.type === 'teamProfile',
+  ) as TeamProfileDetail
+  if (teamProfile) {
+    redirectUrl = getUrlForEntity(teamProfile.entity)
+  }
+
+  return {
+    subject,
+    redirectUrl,
+    conversationToken,
+  }
+}
+
 export function handleAskResponseFromPost(response: GameraResponse) {
   const query = tokensToText(
     response.visual.summaryTokens?.filter((t) => t.type !== 'inferred'),

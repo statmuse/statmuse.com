@@ -1,10 +1,7 @@
 import {
-  type PlayerProfileDetail,
-  type TeamProfileDetail,
   type GameraResponse,
   tokensToHtml,
   type GameraChart,
-  getUrlForEntity,
 } from '@statmuse/core/gamera'
 import { relativeTimeFromDates } from '@statmuse/core/time'
 import type { Musing } from '@statmuse/core/musing'
@@ -14,7 +11,6 @@ import { Config } from 'sst/node/config'
 import { clarify } from '@lib/bedrock'
 import { translate, translateObject } from '@lib/translate'
 import { createAskPath } from '@statmuse/core/path'
-import { getTeamFranchiseLatestSeason } from './team'
 export const gameraApiUrl = import.meta.env.GAMERA_API_URL
 export const gameraApiKey = Config.GAMERA_API_KEY
 
@@ -273,42 +269,4 @@ export const getColumnCharts = (answer: GameraResponse) => {
 export const getIsSuperlative = (answer: GameraResponse) => {
   if (answer.type === 'nlgPromptForMoreInfoVisualChoicesOptional') return false
   return answer.visual.isSuperlative
-}
-
-export async function handleResponse(
-  context: Context,
-  response: GameraResponse,
-) {
-  const subject = response.visual.summary.subject
-  const conversationToken = response.conversation.token
-  if (response.type === 'nlgPromptForMoreInfoVisualChoicesOptional') {
-    return { subject, conversationToken }
-  }
-
-  let redirectUrl = ''
-  const playerProfile = response.visual.detail?.find(
-    (d) => d.type === 'playerProfile',
-  ) as PlayerProfileDetail
-  if (playerProfile) {
-    redirectUrl = getUrlForEntity(playerProfile.entity)
-  }
-
-  const teamProfile = response.visual.detail?.find(
-    (d) => d.type === 'teamProfile',
-  ) as TeamProfileDetail
-  if (teamProfile) {
-    const team = await getTeamFranchiseLatestSeason({
-      context,
-      domain: response.visual.domain!,
-      teamId: teamProfile.entity.id.split('/')[0],
-    })
-
-    redirectUrl = getUrlForEntity(team?.entity)
-  }
-
-  return {
-    subject,
-    redirectUrl,
-    conversationToken,
-  }
 }
