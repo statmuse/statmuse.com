@@ -1,7 +1,10 @@
 <script lang="ts">
   export let name: keyof typeof icons
   export let focusable: string | number | null | undefined = undefined
-  export let fill: string
+  export let fill: string | undefined = undefined
+  export let fillFirstBase: boolean | undefined = undefined
+  export let fillSecondBase: boolean | undefined = undefined
+  export let fillThirdBase: boolean | undefined = undefined
 
   const style =
     'fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;'
@@ -9,6 +12,20 @@
     about: `<g><rect x="13.7" y="5.6" style="${style}" width="4.1" height="18.4"/><path style="${style}" d="M24.3,18.5c0.9-0.3,1.6-0.7,2.2-1.4c-0.8,0.2-1.6,0.4-2.4,0.4c-0.5,0-1,0-1.4,0v-3v-2.4c0-2.7-2.2-4.9-4.9-4.9 v9.6c0.9,0,1.5,0.7,1.5,1.5v2.2c0,1.8,1.5,3.3,3.3,3.3h2.4v-2.4h-0.9c-0.8,0-1.5-0.7-1.5-1.5v-1.3C23.2,18.7,23.8,18.7,24.3,18.5z" /><rect x="9.5" y="9.8" style="${style}" width="4.1" height="14.2"/><path style="${style}" d="M5.4,12.8v5.5l0,0c0,0.5-0.3,1.1-0.8,1.6c-0.5,0.5-1.1,0.8-1.6,0.8c0.7,0.7,1.8,0.7,2.4,0v3.2h4.1V8.7 C7.3,8.7,5.4,10.5,5.4,12.8z"/></g>`,
     'all-home': `<g style="${style}"><path d="m10.1 17.1h9.3v9.3h-9.3z"/><path d="m3 14.8v11.7h23.5v-11.7l-11.7-11.8z"/></g>`,
     back: `<g><line style="${style}" x1="26.5" y1="14.8" x2="3" y2="14.8"/><polyline style="${style}" points="14.7,26.5 3,14.8 14.7,3"/></g>`,
+    'baseball-diamond': `<g style="${style}"><g stroke-width="1"><path fill="${
+      fillThirdBase ? 'currentColor' : ''
+    }" d="m4.4 15.1h6.5v6.5h-6.5z" transform="matrix(.70710678 -.70710678 .70710678 .70710678 -10.7 10.7)"/><path fill="${
+      fillSecondBase ? 'currentColor' : ''
+    }" d="m11.5 7.9h6.5v6.5h-6.5z" transform="matrix(.70710678 -.70710678 .70710678 .70710678 -3.6 13.7)"/><path fill="${
+      fillFirstBase ? 'currentColor' : ''
+    }" d="m18.7 15.1h6.5v6.5h-6.5z" transform="matrix(.70710678 -.70710678 .70710678 .70710678 -6.5 20.9)"/></g></g>`,
+    'baseball-diamond-sm': `<g style="${style}"><path fill="${
+      fillThirdBase ? 'currentColor' : ''
+    }" d="m4.4 15.1h6.5v6.5h-6.5z" transform="matrix(.70710678 -.70710678 .70710678 .70710678 -10.7 10.7)"/><path fill="${
+      fillSecondBase ? 'currentColor' : ''
+    }" d="m11.5 7.9h6.5v6.5h-6.5z" transform="matrix(.70710678 -.70710678 .70710678 .70710678 -3.6 13.7)"/><path fill="${
+      fillFirstBase ? 'currentColor' : ''
+    }" d="m18.7 15.1h6.5v6.5h-6.5z" transform="matrix(.70710678 -.70710678 .70710678 .70710678 -6.5 20.9)"/></g>`,
     beta: `<g style="fill: ${
       fill ? fill : 'currentColor'
     };"><path d="m6.9 13.4c0-.5-.3-.8-1-.8h-1.1v1.5h1.1c.7 0 1-.3 1-.8z"/><path d="m6.1 15.2h-1.3v1.6h1.3c.6 0 1-.3 1-.8s-.3-.8-1-.8z"/><path d="m22.6 7.8h-15.7c-3.8 0-6.9 3.1-6.9 7s3.1 6.9 6.9 6.9h15.6c3.8 0 6.9-3.1 6.9-6.9s-3.1-6.9-6.9-6.9zm-16.4 10.2h-2.7v-6.5h2.5c1.4 0 2.2.6 2.2 1.8s-.4 1.2-.9 1.4c.6.2 1.1.8 1.1 1.5 0 1.2-.8 1.9-2.2 1.9zm7.7-5.3h-3.1v1.4h2.8v1.2h-2.8v1.6h3.1v1.2h-4.4v-6.5h4.4v1.2zm4.1 5.3h-1.4v-5.4h-2.1v-1.2h5.6v1.2h-2.1zm6.6 0-.6-1.6h-2.5l-.6 1.6h-1.4l2.5-6.5h1.4l2.5 6.5h-1.4z"/><path d="m22 15.3h1.6l-.8-2.2z"/></g>`,
