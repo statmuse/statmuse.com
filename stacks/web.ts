@@ -15,6 +15,7 @@ import {
   AllowedMethods,
   CacheCookieBehavior,
   CacheHeaderBehavior,
+  CacheQueryStringBehavior,
   CachePolicy,
   CachedMethods,
   Endpoint,
@@ -168,6 +169,7 @@ export function Web({ stack }: StackContext) {
         defaultBehavior: {
           realtimeLogConfig,
           cachePolicy: new CachePolicy(stack, 'DistributionCachePolicy', {
+            queryStringBehavior: CacheQueryStringBehavior.all(),
             headerBehavior: CacheHeaderBehavior.allowList(
               'x-statmuse-platform',
             ),
