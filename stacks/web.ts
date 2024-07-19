@@ -13,6 +13,8 @@ import { AnalyticsProxy } from './analytics-proxy'
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins'
 import {
   AllowedMethods,
+  CacheCookieBehavior,
+  CacheHeaderBehavior,
   CachePolicy,
   CachedMethods,
   Endpoint,
@@ -163,7 +165,15 @@ export function Web({ stack }: StackContext) {
         layers: [layer],
       },
       distribution: {
-        defaultBehavior: { realtimeLogConfig },
+        defaultBehavior: {
+          realtimeLogConfig,
+          cachePolicy: new CachePolicy(stack, 'DistributionCachePolicy', {
+            headerBehavior: CacheHeaderBehavior.allowList(
+              'x-statmuse-platform',
+            ),
+            cookieBehavior: CacheCookieBehavior.allowList('statmuse-platform'),
+          }),
+        },
         webAclId: isProd
           ? 'arn:aws:wafv2:us-east-1:723112830140:global/webacl/statmuse-com-acl/e2ab5696-ad18-4946-a192-f534187ce9b5'
           : undefined,
