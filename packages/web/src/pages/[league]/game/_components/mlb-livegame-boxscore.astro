@@ -7,6 +7,7 @@ import GameInfo from './game-info.astro'
 import Matchup from './matchup.svelte'
 import PitchByPitch from './pitch-by-pitch.svelte'
 import Linescore from './linescore.svelte'
+import PlayByPlay from './play-by-play.svelte'
 
 interface Props {
   gameData: MlbGameDataResponse
@@ -45,5 +46,6 @@ const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
   <Matchup client:load {awayTeam} {homeTeam} />
   <PitchByPitch client:load />
   <Linescore client:load {awayTeam} {homeTeam} />
+  <PlayByPlay />
   <GameInfo {venue} {weather} {officials} />
 </Layout>
