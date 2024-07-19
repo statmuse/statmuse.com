@@ -14,7 +14,7 @@ import { Config } from 'sst/node/config'
 import { clarify } from '@lib/bedrock'
 import { translate, translateObject } from '@lib/translate'
 import { createAskPath } from '@statmuse/core/path'
-import { getTeamFranchiseLatestSeason } from './team'
+import { getTeamFranchiseLatestSeason, getTeamSeasonOverview } from './team'
 export const gameraApiUrl = import.meta.env.GAMERA_API_URL
 export const gameraApiKey = Config.GAMERA_API_KEY
 
@@ -297,13 +297,24 @@ export async function handleResponse(
     (d) => d.type === 'teamProfile',
   ) as TeamProfileDetail
   if (teamProfile) {
-    const team = await getTeamFranchiseLatestSeason({
+    const teamOverview = await getTeamSeasonOverview({
       context,
-      domain: response.visual.domain!,
-      teamId: teamProfile.entity.id.split('/')[0],
+      domain: teamProfile.entity.domain,
+      team: teamProfile.entity.id,
+      year: teamProfile.entity.id,
     })
 
-    redirectUrl = getUrlForEntity(team?.entity)
+    if (teamOverview?.bio.hasStats) {
+      redirectUrl = getUrlForEntity(teamProfile.entity)
+    } else {
+      const team = await getTeamFranchiseLatestSeason({
+        context,
+        domain: teamProfile.entity.domain,
+        teamId: teamProfile.entity.id.split('/')[0],
+      })
+
+      redirectUrl = getUrlForEntity(team?.entity)
+    }
   }
 
   return {
