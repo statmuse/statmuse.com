@@ -1,7 +1,10 @@
 <script lang="ts">
   import Panel from '@components/panel.svelte'
+  import Icon from '@components/icon.svelte'
   import Image from '@components/image.svelte'
   import type { GameraTeamReference } from '@statmuse/core/gamera'
+  import OutsIndicator from './outs-indicator.svelte'
+  import AtBatCount from './at-bat-count.svelte'
 
   export let homeTeam: GameraTeamReference
   export let awayTeam: GameraTeamReference
@@ -9,46 +12,52 @@
 </script>
 
 <Panel class="!p-0">
-  <div class="flex justify-between px-3 py-2">
-    <div class="flex gap-1">
-      <Image
-        src={awayTeam?.logoImageUrl ?? ''}
-        alt={awayTeam?.name ?? ''}
-        width={60}
-        height={60}
-        class="w-6 h-6 object-contain"
-      />
-      Batting
-    </div>
-
-    <div class="flex gap-1">
-      Pitching
-      <Image
-        src={homeTeam?.logoImageUrl ?? ''}
-        alt={homeTeam?.name ?? ''}
-        width={60}
-        height={60}
-        class="w-6 h-6 object-contain"
-      />
-    </div>
-  </div>
   <div
     class="flex justify-between px-3 border-b border-gray-6 dark:border-gray-4"
   >
-    <Image
-      src="https://cdn.statmuse.com/img/mlb/players/new-york-yankees-aaron-judge2022-min--6erpzlwb.png"
-      alt="aaron judege"
-      width={120}
-      height={90}
-      class="h-[75px] max-w-[10 0px] object-contain object-left-bottom"
-    />
-    <Image
-      src="https://cdn.statmuse.com/img/mlb/players/new-york-yankees-aaron-judge2022-min--6erpzlwb.png"
-      alt="aaron judege"
-      width={120}
-      height={90}
-      class="h-[75px] max-w-[10 0px] object-contain object-right-bottom"
-    />
+    <div>
+      <div class="flex gap-1 py-2">
+        <Image
+          src={awayTeam?.logoImageUrl ?? ''}
+          alt={awayTeam?.name ?? ''}
+          width={60}
+          height={60}
+          class="w-6 h-6 object-contain"
+        />
+        Batting
+      </div>
+      <Image
+        src="https://cdn.statmuse.com/img/mlb/players/new-york-yankees-aaron-judge2022-min--6erpzlwb.png"
+        alt="aaron judege"
+        width={120}
+        height={90}
+        class="h-[75px] max-w-[10 0px] object-contain object-left-bottom"
+      />
+    </div>
+    <div class="pt-2 flex flex-col items-center">
+      <Icon name="baseball-diamond" class="w-14 -mt-1" fillSecondBase />
+      <OutsIndicator class="mb-1" />
+      <AtBatCount />
+    </div>
+    <div>
+      <div class="flex gap-1 justify-end py-2">
+        Pitching
+        <Image
+          src={homeTeam?.logoImageUrl ?? ''}
+          alt={homeTeam?.name ?? ''}
+          width={60}
+          height={60}
+          class="w-6 h-6 object-contain"
+        />
+      </div>
+      <Image
+        src="https://cdn.statmuse.com/img/mlb/players/new-york-yankees-aaron-judge2022-min--6erpzlwb.png"
+        alt="aaron judege"
+        width={120}
+        height={90}
+        class="h-[75px] max-w-[10 0px] object-contain object-right-bottom"
+      />
+    </div>
   </div>
   <div class="flex justify-between px-3 py-2">
     <div>
