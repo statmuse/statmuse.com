@@ -88,4 +88,5 @@
   on:click
 >
   {@html displayIcon}
+  <slot />
 </svg>
