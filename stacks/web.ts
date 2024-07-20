@@ -36,6 +36,7 @@ import { StreamMode } from 'aws-cdk-lib/aws-kinesis'
 import { Trending } from './trending'
 import { ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53'
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets'
+import { Duration } from 'aws-cdk-lib/core'
 
 export function Web({ stack }: StackContext) {
   const dns = use(DNS)
@@ -174,6 +175,9 @@ export function Web({ stack }: StackContext) {
               'x-statmuse-platform',
             ),
             cookieBehavior: CacheCookieBehavior.allowList('statmuse-platform'),
+            defaultTtl: Duration.days(1),
+            enableAcceptEncodingGzip: true,
+            enableAcceptEncodingBrotli: true,
           }),
         },
         webAclId: isProd
