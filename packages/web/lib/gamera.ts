@@ -27,10 +27,13 @@ export async function request<T>(
     params as Record<string, string>,
   ).toString()}`
 
+  console.log('request.1', { requestUrl })
+
   try {
     const response = await fetch(requestUrl, {
       headers: getGameraHeaders(context),
     })
+    console.log('request.2', { response })
     return response.json() as Promise<T>
   } catch (error) {
     console.error(error)
@@ -74,6 +77,8 @@ export async function ask(
     params,
   )
 
+  console.log('ask.1', { response })
+
   if (
     !options.corrected && // Don't correct if it's already been corrected
     response?.type === 'error' &&
@@ -81,6 +86,7 @@ export async function ask(
   ) {
     try {
       const correction = await clarify(query)
+      console.log('ask.2', { correction })
 
       // if (correction.domain === 'money') {
       //   const url = createAskPath(correction)
@@ -183,6 +189,7 @@ export async function ask(
     }
   }
 
+  console.log('ask.3', { response })
   return { response }
 }
 
