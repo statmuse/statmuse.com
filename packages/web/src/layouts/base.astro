@@ -426,7 +426,11 @@ const canonicalUrl = meta?.canonical
       import { session as sessionStore, isNativeMobile } from '@lib/stores'
       import { maybeRewriteUrl } from '@lib/client'
 
-      isNativeMobile.set(document.body.dataset.platform === 'native')
+      try {
+        isNativeMobile?.set(document.body.dataset?.platform === 'native')
+      } catch (e) {
+        console.error(e)
+      }
 
       // set page targeting for GAM
       const eventProps = getPageviewProps(document)
