@@ -279,8 +279,10 @@ export async function handleResponse(
   context: Context,
   response: GameraResponse,
 ) {
-  const subject = response.visual.summary.subject
-  const conversationToken = response.conversation.token
+  const subject = response.visual?.summary?.subject
+  const conversationToken = response.conversation?.token
+  if (!subject) console.log({ response })
+
   if (response.type === 'nlgPromptForMoreInfoVisualChoicesOptional') {
     return { subject, conversationToken }
   }
