@@ -44,7 +44,6 @@ export const migrateSession = defineMiddleware(async (context, next) => {
   }
 
   const token = context.cookies.get(Session.SESSION_COOKIE)?.value
-  console.log('migrateSession.1', { token })
   if (!token) return next()
 
   try {
@@ -74,18 +73,14 @@ export const migrateSession = defineMiddleware(async (context, next) => {
       if (user) context.locals.user = user
     }
 
-    console.log('migrateSession.2', { visitorId, userId, legacySession })
-
     if (legacySession.type === 'visitor' && visitor) {
       const session = Session.createVisitorSession(context, visitor)
       context.locals.session = session
-      console.log('migrateSession.3', { session })
     }
 
     if (legacySession.type === 'user' && user) {
       const session = Session.createUserSession(context, user)
       context.locals.session = session
-      console.log('migrateSession.4', { session })
     }
 
     return next()
@@ -99,25 +94,20 @@ export const session = defineMiddleware(async (context, next) => {
     return next()
   }
 
-  console.log('session.1')
-
   if (
     context.locals.session &&
     (context.locals.user || context.locals.visitor)
   ) {
-    console.log('session.2', { locals: context.locals })
     return next()
   }
 
   const locals = context.locals
   let session = Session.get(context)
 
-  console.log('session.3', { session })
   if (!session || session.type === 'public')
     session = await Session.create(context)
 
   locals.session = session
-  console.log('session.3', { locals })
 
   if (!locals.visitor) {
     const visitorId =
@@ -148,7 +138,6 @@ export const session = defineMiddleware(async (context, next) => {
     session.properties.subscriptionStatus !==
       locals.user.stripe_subscription_status
   ) {
-    console.log('session.4', { session })
     Session.update(context, {
       subscriptionStatus: locals.user.stripe_subscription_status,
     })

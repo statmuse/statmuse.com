@@ -166,20 +166,16 @@ export function Web({ stack }: StackContext) {
         securityGroups: [api.lambdaSecurityGroup],
         layers: [layer],
       },
+      serverCachePolicy: new CachePolicy(stack, 'DistributionCachePolicy', {
+        queryStringBehavior: CacheQueryStringBehavior.all(),
+        headerBehavior: CacheHeaderBehavior.allowList('x-statmuse-platform'),
+        cookieBehavior: CacheCookieBehavior.allowList('statmuse-platform'),
+        defaultTtl: Duration.days(0),
+        enableAcceptEncodingGzip: true,
+        enableAcceptEncodingBrotli: true,
+      }),
       distribution: {
-        defaultBehavior: {
-          realtimeLogConfig,
-          cachePolicy: new CachePolicy(stack, 'DistributionCachePolicy', {
-            queryStringBehavior: CacheQueryStringBehavior.all(),
-            headerBehavior: CacheHeaderBehavior.allowList(
-              'x-statmuse-platform',
-            ),
-            cookieBehavior: CacheCookieBehavior.allowList('statmuse-platform'),
-            defaultTtl: Duration.days(1),
-            enableAcceptEncodingGzip: true,
-            enableAcceptEncodingBrotli: true,
-          }),
-        },
+        defaultBehavior: { realtimeLogConfig },
         webAclId: isProd
           ? 'arn:aws:wafv2:us-east-1:723112830140:global/webacl/statmuse-com-acl/e2ab5696-ad18-4946-a192-f534187ce9b5'
           : undefined,
