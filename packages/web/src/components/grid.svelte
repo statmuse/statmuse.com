@@ -5,7 +5,7 @@
   import type { ComponentProps } from 'svelte'
   import { orderBy, some } from 'lodash-es'
   import { session } from '@lib/stores'
-  import type { GameraGrid } from '@statmuse/core/gamera'
+  import type { GameraGrid, Colors } from '@statmuse/core/gamera'
   import EntityLink from '@components/entity-link.svelte'
   import Image from '@components/image.svelte'
   import Panel from '@components/panel.svelte'
@@ -28,7 +28,7 @@
   export let padding = 'px-2'
   export let head = true
   export let rankingRange = [10, 20]
-  export let highlight: string | undefined = undefined
+  export let highlight: Record<string, Colors> | undefined = undefined
   export let title: PanelProps['title'] = undefined
   export let href: PanelProps['href'] = undefined
   export let entity: PanelProps['entity'] = undefined
@@ -169,11 +169,14 @@
     return ''
   }
 
-  const shouldApplyRowHighlight = (row: RowItem, highlight?: string) => {
-    if (highlight) {
-      return highlight === row.value
+  const shouldApplyRowHighlight = (
+    row: RowItem,
+    highlight?: Record<string, Colors>,
+  ) => {
+    if (highlight && highlight[row.value as string]) {
+      return highlight[row.value as string]
     }
-    return false
+    return undefined
   }
 
   $: {
@@ -251,7 +254,7 @@
         {/if}
         <tbody class="divide-y divide-gray-6 dark:divide-gray-4 leading-[22px]">
           {#each rows as row, rowIndex (row)}
-            {@const rowHighlight = shouldApplyRowHighlight(
+            {@const highlightColors = shouldApplyRowHighlight(
               row[columns[0].rowItemKey],
               highlight,
             )}
@@ -272,23 +275,20 @@
                     class:sticky={col.sticky}
                     class:left-0={col.sticky}
                     class:bg-gray-8={col.sticky &&
-                      !(sortKey === col.rowItemKey) &&
-                      !rowHighlight}
+                      !(sortKey === col.rowItemKey)}
                     class:dark:bg-gray-3={col.sticky &&
-                      !(sortKey === col.rowItemKey) &&
-                      !rowHighlight}
-                    class:bg-team-primary={rowHighlight ||
-                      sortKey === col.rowItemKey ||
+                      !(sortKey === col.rowItemKey)}
+                    class:bg-team-primary={sortKey === col.rowItemKey ||
                       (!sortKey && col.tags?.isReferencedInQuestion)}
-                    class:text-team-secondary={rowHighlight ||
-                      sortKey === col.rowItemKey ||
+                    class:text-team-secondary={sortKey === col.rowItemKey ||
                       (!sortKey && col.tags?.isReferencedInQuestion)}
                     class:text-gray-5={col.rowItemKey === 'RANK'}
+                    style:background={highlightColors?.backgroundColor}
+                    style:color={highlightColors?.foregroundColor}
                   >
                     <EntityLink
                       {entity}
-                      class={rowHighlight ||
-                      sortKey === col.rowItemKey ||
+                      class={sortKey === col.rowItemKey ||
                       (!sortKey && col.tags?.isReferencedInQuestion)
                         ? 'text-team-secondary'
                         : textInherit

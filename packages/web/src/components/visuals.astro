@@ -101,18 +101,53 @@ const details = response.visual.detail?.filter((d) =>
         case 'standings':
           switch (response.visual.domain) {
             case 'MLB':
-              return <MlbStandings {detail} />
+              return (
+                <MlbStandings
+                  {detail}
+                  highlight={{
+                    [detail.topic?.team ?? '']:
+                      response.visual.summary.subject.colors,
+                  }}
+                />
+              )
             case 'NBA':
-              return <NbaStandings {detail} />
+              return (
+                <NbaStandings
+                  {detail}
+                  highlight={{
+                    [detail.topic?.team ?? '']:
+                      response.visual.summary.subject.colors,
+                  }}
+                />
+              )
             case 'NFL':
-              return <NflStandings {detail} />
+              return (
+                <NflStandings
+                  {detail}
+                  highlight={{
+                    [detail.topic?.team ?? '']:
+                      response.visual.summary.subject.colors,
+                  }}
+                />
+              )
             case 'NHL':
-              return <NhlStandings {detail} />
+              return (
+                <NhlStandings
+                  {detail}
+                  highlight={{
+                    [detail.topic?.team ?? '']:
+                      response.visual.summary.subject.colors,
+                  }}
+                />
+              )
             case 'EPL':
               return (
                 <Standings
                   groups={[{ name: 'FC', standings: detail.standings }]}
-                  highlight={detail.topic?.team}
+                  highlight={{
+                    [detail.topic?.team ?? '']:
+                      response.visual.summary.subject.colors,
+                  }}
                 />
               )
             default:

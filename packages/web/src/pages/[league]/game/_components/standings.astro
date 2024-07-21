@@ -77,19 +77,18 @@ const homeTeamGrid = mapStandingsToGrid({
   </div>
   {
     awayDivision === homeDivision ? (
-      <Grid class="!border-none" data={awayTeamGrid} textInherit />
+      <Grid
+        class="!border-none"
+        data={awayTeamGrid}
+        highlight={{
+          [awayTeam?.team.nickname ?? '']: awayTeam?.team.colors,
+          [homeTeam?.team.nickname ?? '']: homeTeam?.team.colors,
+        }}
+        textInherit
+      />
     ) : (
       <Fragment>
-        <div
-          class="hidden has-[#standings-away:checked]:block"
-          style={{
-            '--team-primary-color': hexToHSL(
-              awayTeam?.team.colors.backgroundColor ?? '',
-              0.2,
-            ),
-            '--team-secondary-color': awayTeam?.team.colors.foregroundColor,
-          }}
-        >
+        <div class="hidden has-[#standings-away:checked]:block">
           <input
             class="absolute top-0 opacity-0"
             type="radio"
@@ -100,20 +99,13 @@ const homeTeamGrid = mapStandingsToGrid({
           <Grid
             class="!border-none"
             data={awayTeamGrid}
-            highlight={awayTeam?.team.nickname}
+            highlight={{
+              [awayTeam?.team.nickname ?? '']: awayTeam?.team.colors,
+            }}
             textInherit
           />
         </div>
-        <div
-          class="hidden has-[#standings-home:checked]:block"
-          style={{
-            '--team-primary-color': hexToHSL(
-              homeTeam?.team.colors.backgroundColor ?? '',
-              0.2,
-            ),
-            '--team-secondary-color': homeTeam?.team.colors.foregroundColor,
-          }}
-        >
+        <div class="hidden has-[#standings-home:checked]:block">
           <input
             class="absolute top-0 opacity-0"
             type="radio"
@@ -123,7 +115,9 @@ const homeTeamGrid = mapStandingsToGrid({
           <Grid
             class="!border-none"
             data={homeTeamGrid}
-            highlight={homeTeam?.team.nickname}
+            highlight={{
+              [homeTeam?.team.nickname ?? '']: homeTeam?.team.colors,
+            }}
             textInherit
           />
         </div>

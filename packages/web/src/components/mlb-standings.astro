@@ -1,11 +1,12 @@
 ---
-import type { StandingsDetail } from '@statmuse/core/gamera'
+import type { StandingsDetail, SubjectColors } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
 import Standings from '@components/standings.astro'
 import { orderBy } from 'lodash-es'
 
 interface Props extends HTMLAttributes<'div'> {
   detail: StandingsDetail
+  highlight?: Record<string, SubjectColors>
 }
 
 const orderMlbDivisions = (x: StandingsDetail['standings'][number]) => {
@@ -40,4 +41,4 @@ if (
   groups.reverse()
 ---
 
-<Standings {groups} highlight={detail.topic?.team} />
+<Standings {groups} highlight={Astro.props.highlight} />
