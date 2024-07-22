@@ -264,7 +264,8 @@
               {/if}
               {#each columns as col, index (row[col.rowItemKey])}
                 {#if row[col.rowItemKey]}
-                  {@const { display, imageUrl, entity } = row[col.rowItemKey]}
+                  {@const { display, imageUrl, entity, position, injured } =
+                    row[col.rowItemKey]}
                   <td
                     class={`${applyStyles(col)} ${padding} ${
                       imageUrl ? 'w-2' : ''
@@ -339,17 +340,31 @@
                           <div>{score}</div>
                         </div>
                       {:else}
-                        <span
-                          class:hidden={entity?.shortDisplay &&
-                            col.rowItemKey === 'NAME'}
-                          class:md:block={entity?.shortDisplay &&
-                            col.rowItemKey === 'NAME'}
-                        >
-                          {display}
-                        </span>
-                        {#if entity?.shortDisplay && col.rowItemKey === 'NAME'}
-                          <span class="md:hidden">{entity?.shortDisplay}</span>
-                        {/if}
+                        <div class="flex items-center">
+                          <span
+                            class:hidden={entity?.shortDisplay &&
+                              (col.rowItemKey === 'NAME' ||
+                                col.rowItemKey === 'PLAYER')}
+                            class:md:block={entity?.shortDisplay &&
+                              (col.rowItemKey === 'NAME' ||
+                                col.rowItemKey === 'PLAYER')}
+                          >
+                            {display}
+                          </span>
+                          {#if entity?.shortDisplay && (col.rowItemKey === 'NAME' || col.rowItemKey === 'PLAYER')}
+                            <span class="md:hidden">
+                              {entity?.shortDisplay}
+                            </span>
+                          {/if}
+                          {#if position}
+                            <span class="text-gray-5 text-sm ml-1">
+                              {position}
+                            </span>
+                          {/if}
+                          {#if injured}
+                            <Icon name="injury" class="w-4 ml-1" />
+                          {/if}
+                        </div>
                       {/if}
                     </EntityLink>
                   </td>
