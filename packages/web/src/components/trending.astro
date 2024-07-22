@@ -84,7 +84,10 @@ const backUrl =
         : (selected?.toLowerCase() as AnalyticsPageviewProperties['page_domain']),
   }}
   meta={{ title }}
-  colors={{ foreground: colors.gray['8'], background: colors.teal }}
+  colors={{
+    foreground: colors.gray['8'],
+    background: Astro.locals.platform === 'web' ? colors.teal : undefined,
+  }}
   money={selected === 'money'}
   preferredDomain={selected}
   renderRightColumn={false}
