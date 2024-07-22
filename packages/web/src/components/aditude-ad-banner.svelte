@@ -24,7 +24,13 @@
   }
 
   const isMobile = isMobileTest(navigator.userAgent)
-  const shouldRender = isNativeMobile ? false : onlyMobile ? isMobile : onlyDesktop ? !isMobile : true
+  const shouldRender = $isNativeMobile
+    ? false
+    : onlyMobile
+    ? isMobile
+    : onlyDesktop
+    ? !isMobile
+    : true
 
   let container: HTMLElement
   let observer: IntersectionObserver
