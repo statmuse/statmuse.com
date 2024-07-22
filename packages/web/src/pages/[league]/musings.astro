@@ -1,0 +1,27 @@
+---
+import MobileLayout from '@layouts/mobile.astro'
+import { listLatestMusings } from '@statmuse/core/musing'
+import { Caching } from '@lib/caching'
+import MusingsCard from '@components/home/musings-card.astro'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
+
+const league = Astro.params.league as LeagueParam
+const domain = leagueToDomain(league)
+const musings = await listLatestMusings(domain, 100)
+
+Caching.swr(Astro)
+---
+
+<MobileLayout {league} page="musings">
+  <div class="flex-1 mb-5">
+    {
+      musings && (
+        <div class="flex flex-col gap-3">
+          {musings.map(async (musing, i) => (
+            <MusingsCard {musing} index={i} />
+          ))}
+        </div>
+      )
+    }
+  </div>
+</MobileLayout>

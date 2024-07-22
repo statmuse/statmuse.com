@@ -1,0 +1,280 @@
+---
+import MobileLayout from '@layouts/mobile.astro'
+import { Caching } from '@lib/caching'
+import { find } from 'lodash-es'
+import { examples as _examples } from '@lib/examples'
+import {
+  homeBettingByDomain,
+  homeLeadersByDomain,
+  homeRankingsByDomain,
+  type PlayerLeadersResponse,
+  type TeamRankingsResponse,
+} from '@lib/related-content'
+import { getPlayerProfile } from '@lib/player'
+import type { GameraPlayerProfileResponse } from '@statmuse/core/gamera'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
+import { getTeamSeasonBio } from '@lib/team'
+import { getStandings, type GetStandingsResponse } from '@lib/standings'
+
+import PlayerPerformanceCard from '@components/player/performance-card.astro'
+import RankingCard from '@components/home/ranking-card.astro'
+import Standings from '@components/home/standings.astro'
+import Panel from '@components/panel.astro'
+import SelectableStandings from '@components/home/selectable-standings.svelte'
+
+const league = Astro.params.league as LeagueParam
+const domain = leagueToDomain(league)
+
+let leaders: PlayerLeadersResponse
+let rankings: TeamRankingsResponse | undefined
+let betting: TeamRankingsResponse | undefined
+let standings: GetStandingsResponse
+let profile: GameraPlayerProfileResponse | undefined
+
+if (domain !== 'PGA' && league !== 'money') {
+  ;[leaders, rankings, betting, standings] = await Promise.all([
+    homeLeadersByDomain({ context: Astro, domain }),
+    homeRankingsByDomain({ context: Astro, domain }),
+    homeBettingByDomain({ context: Astro, domain }),
+    getStandings({ context: Astro, domain }),
+  ])
+
+  if (rankings) {
+    const teams = await Promise.all(
+      rankings?.map(
+        (r) =>
+          r &&
+          getTeamSeasonBio({
+            context: Astro,
+            domain: r.teams[0].entity.domain,
+            team: r.teams[0].entity.id,
+            year: r.teams[0].entity.id,
+          }),
+      ),
+    )
+
+    for (const index in teams) {
+      const team = teams[index]
+      const rank = rankings[index]
+      if (team && rank) {
+        rank.images = team.teamRepresentatives.map((r) => r.url)
+      }
+    }
+  }
+
+  if (betting) {
+    const teams = await Promise.all(
+      betting?.map(
+        (r) =>
+          r &&
+          getTeamSeasonBio({
+            context: Astro,
+            domain: r.teams[0].entity.domain,
+            team: r.teams[0].entity.id,
+            year: r.teams[0].entity.id,
+          }),
+      ),
+    )
+    for (const index in teams) {
+      const team = teams[index]
+      const bet = betting[index]
+      if (team && bet) {
+        bet.images = team.teamRepresentatives.map((r) => r.url)
+      }
+    }
+  }
+
+  const trendingData = Astro.locals.trendingData
+  const trendingPlayers = find(trendingData?.datasets, { name: 'Players' })
+  let profile: GameraPlayerProfileResponse | undefined
+
+  const oneWeekAgo = new Date()
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+
+  for (const player of trendingPlayers?.items.slice(0, 10) ?? []) {
+    if (
+      !player.latestAppearanceDate ||
+      new Date(player.latestAppearanceDate) < oneWeekAgo
+    )
+      continue
+
+    const playerSlug = player.uri.split('/')[3]
+    profile = await getPlayerProfile(Astro, domain, playerSlug)
+    if (profile?.recentGames) break
+  }
+}
+
+const examples = _examples[league]
+
+Caching.swr(Astro)
+---
+
+<MobileLayout {league} page="stats">
+  <div class="flex-1 overflow-clip mb-5">
+    <div class="flex flex-col gap-3">
+      {
+        profile && (
+          <PlayerPerformanceCard
+            domain={profile.bio.domain}
+            bio={profile.bio}
+            recentGames={profile.recentGames}
+          />
+        )
+      }
+      {
+        Array.isArray(standings) ? (
+          <SelectableStandings
+            client:load
+            options={standings.map((s) => ({
+              value: s?.domain.toLowerCase(),
+              label: s?.domain === 'EPL' ? 'PL' : s?.domain,
+            }))}
+            toggle={{
+              nba: ['East', 'West'],
+              nfl: ['AFC', 'NFC'],
+              nhl: ['East', 'West'],
+              mlb: ['AL', 'NL'],
+            }}
+          >
+            {standings[0] && (
+              <Standings
+                class="!border-none"
+                standings={standings[0]}
+                domain="EPL"
+                slot="epl"
+                toggle={false}
+              />
+            )}
+            {standings[1] && (
+              <Standings
+                class="!border-none"
+                standings={standings[1]}
+                domain="NBA"
+                slot="nba"
+                toggle={false}
+              />
+            )}
+            {standings[2] && (
+              <Standings
+                class="!border-none"
+                standings={standings[2]}
+                domain="NFL"
+                slot="nfl"
+                toggle={false}
+              />
+            )}
+            {standings[3] && (
+              <Standings
+                class="!border-none"
+                standings={standings[3]}
+                domain="NHL"
+                slot="nhl"
+                toggle={false}
+              />
+            )}
+            {standings[4] && (
+              <Standings
+                class="!border-none"
+                standings={standings[4]}
+                domain="MLB"
+                slot="mlb"
+                toggle={false}
+              />
+            )}
+          </SelectableStandings>
+        ) : (
+          standings && <Standings {standings} domain={standings.domain} />
+        )
+      }
+      {
+        leaders && (
+          <RankingCard
+            title={
+              domain && leaders[0].seasonType === 'postseason'
+                ? 'Playoff Leaders'
+                : 'League Leaders'
+            }
+            sections={leaders.map((leader) => ({
+              title: leader.title,
+              domain: leader.domain,
+              query: leader.query,
+              items: leader.players.map((player) => ({
+                display: player.usedName,
+                stat: player.statDisplayValue,
+                imageUrl: player.imageUrl,
+                entity: player.entity,
+                colors: player.colors,
+              })),
+            }))}
+          />
+        )
+      }
+      {
+        rankings && (
+          <RankingCard
+            title={
+              domain && rankings[0].seasonType === 'postseason'
+                ? 'Playoff Rankings'
+                : 'League Rankings'
+            }
+            sections={rankings.map((ranking) => ({
+              title: ranking.title,
+              domain: ranking.domain,
+              query: ranking.query,
+              images: ranking.images,
+              items: ranking.teams.map((team) => ({
+                display: team.nickname,
+                stat: team.statDisplayValue,
+                imageUrl: team.logoImageUrl,
+                entity: team.entity,
+                colors: team.colors,
+              })),
+            }))}
+          />
+        )
+      }
+      {
+        betting && (
+          <RankingCard
+            title="Betting Trends"
+            sections={betting.map((section) => ({
+              title: section.title,
+              domain: section.domain,
+              query: section.query,
+              images: section.images,
+              items: section.teams.map((team) => ({
+                display: team.nickname,
+                stat: team.statDisplayValue,
+                imageUrl: team.logoImageUrl,
+                entity: team.entity,
+                colors: team.colors,
+              })),
+            }))}
+          />
+        )
+      }
+      {
+        examples && (
+          <Panel title="Example Questions">
+            <div class="divide-y divide-gray-6 dark:divide-gray-4">
+              {examples.map(([title, queries]) => (
+                <div class="-mx-3 px-3">
+                  <p class="text-sm text-gray-5">{title}</p>
+                  <ul class="flex flex-col mb-2">
+                    {queries.map(({ query, path }) => (
+                      <li class="max-w-xs">
+                        <a href={path} class="text-pretty text-inherit">
+                          {query}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </Panel>
+        )
+      }
+    </div>
+  </div>
+</MobileLayout>

@@ -393,7 +393,7 @@ const canonicalUrl = meta?.canonical
         )
       }
     </div>
-    <Footer />
+    {Astro.locals.platform === 'web' && <Footer />}
     {
       Astro.locals.platform === 'web' && (
         <CookieConsent
