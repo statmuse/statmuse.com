@@ -20,9 +20,8 @@ const preferredDomain = Astro.props.preferredDomain ?? ''
   class:list={{
     'flex gap-3 items-center relative': true,
     'min-h-[62px] py-[11px] z-[100]': true,
+    'bg-team-primary-bg dark:bg-team-primary-dark-bg': true,
     'md:bg-gray-7 dark:md:bg-gray-2 sticky top-0': true,
-    'bg-team-primary-bg dark:bg-team-primary-dark-bg':
-      Astro.locals.platform === 'web',
     '-mx-3 px-3 md:px-0 md:mx-0': true,
     '': false,
   }}

@@ -84,85 +84,80 @@ const backUrl =
         : (selected?.toLowerCase() as AnalyticsPageviewProperties['page_domain']),
   }}
   meta={{ title }}
-  colors={{
-    foreground: colors.gray['8'],
-    background: Astro.locals.platform === 'web' ? colors.teal : undefined,
-  }}
+  colors={{ foreground: colors.gray['8'], background: colors.teal }}
   money={selected === 'money'}
   preferredDomain={selected}
   renderRightColumn={false}
 >
-  {
-    Astro.locals.platform === 'web' && (
-      <Hero
-        content={title}
-        navProps={{
-          links,
-          selected,
-          href: (l) => `/${l}/trending${categoryPath}${Astro.url.search}`,
-        }}
-      >
-        {category ? (
-          <a
-            slot="back"
-            href={backUrl}
-            class="text-gray-8 cursor-pointer rounded-full p-1.5 pl-0 -mb-1 @lg/hero:static absolute left-3"
-          >
-            <Back class="w-5 aspect-square" />
-          </a>
-        ) : null}
-        <Fragment slot="hero">
-          <div class="hidden @2xl/hero:flex gap-3 absolute right-3 bottom-3">
-            <Select
-              client:load
-              class="md:w-[200px]"
-              hideLabel
-              label="Timeframe"
-              param="timeframe"
-              initial={Astro.url.searchParams.get('timeframe')}
-              options={[
-                { label: 'Last 24 Hours', value: 'last24Hours' },
-                { label: 'Last 7 Days', value: 'last7Days' },
-                { label: 'Last 30 Days', value: 'last30Days' },
-                { label: 'This Year', value: 'thisYear' },
-              ]}
-            />
-            <Select
-              client:load
-              class="md:w-[200px]"
-              hideLabel
-              label="Location"
-              param="country"
-              initial={Astro.url.searchParams.get('country')}
-              options={[
-                { label: 'Global', value: 'global' },
-                { label: 'United States', value: 'US' },
-                { label: 'France', value: 'FR' },
-                { label: 'Finland', value: 'FI' },
-                { label: 'Canada', value: 'CA' },
-                { label: 'Netherlands', value: 'NL' },
-                { label: 'Philippines', value: 'PH' },
-                { label: 'Australia', value: 'AU' },
-                { label: 'Ireland', value: 'IE' },
-                { label: 'United Kingdom', value: 'GB' },
-                { label: 'Germany', value: 'DE' },
-                { label: 'Brazil', value: 'BR' },
-                { label: 'Mexico', value: 'MX' },
-                { label: 'India', value: 'IN' },
-                { label: 'Italy', value: 'IT' },
-                { label: 'Singapore', value: 'SG' },
-                { label: 'Japan', value: 'JP' },
-                { label: 'New Zealand', value: 'NZ' },
-                { label: 'Poland', value: 'PL' },
-                { label: 'Spain', value: 'ES' },
-                { label: 'Sweden', value: 'SE' },
-              ]}
-            />
-          </div>
-        </Fragment>
-      </Hero>
-    )
-  }
+  <Hero
+    content={title}
+    navProps={{
+      links,
+      selected,
+      href: (l) => `/${l}/trending${categoryPath}${Astro.url.search}`,
+    }}
+  >
+    {
+      category ? (
+        <a
+          slot="back"
+          href={backUrl}
+          class="text-gray-8 cursor-pointer rounded-full p-1.5 pl-0 -mb-1 @lg/hero:static absolute left-3"
+        >
+          <Back class="w-5 aspect-square" />
+        </a>
+      ) : null
+    }
+    <Fragment slot="hero">
+      <div class="hidden @2xl/hero:flex gap-3 absolute right-3 bottom-3">
+        <Select
+          client:load
+          class="md:w-[200px]"
+          hideLabel
+          label="Timeframe"
+          param="timeframe"
+          initial={Astro.url.searchParams.get('timeframe')}
+          options={[
+            { label: 'Last 24 Hours', value: 'last24Hours' },
+            { label: 'Last 7 Days', value: 'last7Days' },
+            { label: 'Last 30 Days', value: 'last30Days' },
+            { label: 'This Year', value: 'thisYear' },
+          ]}
+        />
+        <Select
+          client:load
+          class="md:w-[200px]"
+          hideLabel
+          label="Location"
+          param="country"
+          initial={Astro.url.searchParams.get('country')}
+          options={[
+            { label: 'Global', value: 'global' },
+            { label: 'United States', value: 'US' },
+            { label: 'France', value: 'FR' },
+            { label: 'Finland', value: 'FI' },
+            { label: 'Canada', value: 'CA' },
+            { label: 'Netherlands', value: 'NL' },
+            { label: 'Philippines', value: 'PH' },
+            { label: 'Australia', value: 'AU' },
+            { label: 'Ireland', value: 'IE' },
+            { label: 'United Kingdom', value: 'GB' },
+            { label: 'Germany', value: 'DE' },
+            { label: 'Brazil', value: 'BR' },
+            { label: 'Mexico', value: 'MX' },
+            { label: 'India', value: 'IN' },
+            { label: 'Italy', value: 'IT' },
+            { label: 'Singapore', value: 'SG' },
+            { label: 'Japan', value: 'JP' },
+            { label: 'New Zealand', value: 'NZ' },
+            { label: 'Poland', value: 'PL' },
+            { label: 'Spain', value: 'ES' },
+            { label: 'Sweden', value: 'SE' },
+          ]}
+        />
+      </div>
+    </Fragment>
+  </Hero>
   <div class="@container/hero">
     <div class="@2xl/hero:hidden flex gap-3">
       <Select
