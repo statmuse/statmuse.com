@@ -211,7 +211,7 @@ const canonicalUrl = meta?.canonical
         />
       )
     }
-    <ViewTransitions />
+    {Astro.locals.platform === "web" && <ViewTransitions />}
     <link
       href="https://www.statmuse.com/opensearch.xml"
       rel="search"
