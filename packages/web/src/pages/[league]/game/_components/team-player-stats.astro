@@ -1,0 +1,114 @@
+---
+import type {
+  MlbGameDataResponse,
+  GameraTeamSeasonPlayerStats,
+} from '@statmuse/core/gamera'
+import MlbPlayerLeaders from './mlb-player-leaders.astro'
+import Grid from '@components/grid.svelte'
+import { find } from 'lodash-es'
+
+interface Props {
+  teamModel: MlbGameDataResponse['homeTeam']
+  teamPlayerStats?: GameraTeamSeasonPlayerStats
+  players: MlbGameDataResponse['players']
+}
+
+const { teamModel, teamPlayerStats, players } = Astro.props
+
+const battingStats = find(teamPlayerStats?.grids, {
+  name: 'Regular Season Batting Stats',
+})
+const pitchingStats = find(teamPlayerStats?.grids, {
+  name: 'Regular Season Pitching Stats',
+})
+
+const batters = teamModel.players?.filter(
+  (p) => p.lineup.battingOrder && p.lineup.battingOrderSequence === 1,
+)
+
+const pitchers = teamModel.players?.filter(
+  (p) => p.lineup.pitchingSequence === 1,
+)
+
+const playerMap = players?.reduce(
+  (acc, player) => {
+    return {
+      ...acc,
+      [player.id]: player,
+    }
+  },
+  {} as Record<number, (typeof players)[0]>,
+)
+---
+
+<Fragment>
+  {
+    battingStats && batters && (
+      <Grid
+        client:load
+        data={{
+          ...battingStats,
+          columns: battingStats.columns.map((col) =>
+            col.rowItemKey === 'PLAYER' ? { ...col, title: 'Lineup' } : col,
+          ),
+          rows: batters.map((batter) => {
+            const player = playerMap[batter.playerId]
+            return find(battingStats.rows, {
+              PLAYER: { display: player.usedName, entity: player.entity },
+            })
+          }),
+        }}
+        stickyColumns={['PLAYER']}
+      />
+    )
+  }
+  {
+    pitchingStats && pitchers && (
+      <Grid
+        client:load
+        data={{
+          ...pitchingStats,
+          columns: pitchingStats.columns.map((col) =>
+            col.rowItemKey === 'PLAYER' ? { ...col, title: 'Starter' } : col,
+          ),
+          rows: pitchers.map((pitcher) => {
+            const player = playerMap[pitcher.playerId]
+            return find(pitchingStats.rows, {
+              PLAYER: { display: player.usedName, entity: player.entity },
+            })
+          }),
+        }}
+        stickyColumns={['PLAYER']}
+      />
+    )
+  }
+  <MlbPlayerLeaders teamId={teamModel.teamId} />
+  {
+    battingStats && !batters && (
+      <Grid
+        client:load
+        data={{
+          ...battingStats,
+          columns: battingStats.columns.map((col) =>
+            col.rowItemKey === 'PLAYER' ? { ...col, title: 'Batters' } : col,
+          ),
+        }}
+        stickyColumns={['PLAYER']}
+      />
+    )
+  }
+  {
+    pitchingStats && !pitchers && (
+      <Grid
+        client:load
+        data={{
+          ...pitchingStats,
+          columns: pitchingStats.columns.map((col) =>
+            col.rowItemKey === 'PLAYER' ? { ...col, title: 'Pitchers' } : col,
+          ),
+        }}
+        stickyColumns={['PLAYER']}
+      />
+    )
+  }
+</Fragment>
