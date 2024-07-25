@@ -14,8 +14,12 @@ import {
   getSchedule,
   getStandingsRaw,
   getTeamSeasonStats,
+  getTeamSeasonPlayerStats,
 } from '@lib/gamera'
 import type { MlbGameDataResponse } from '@statmuse/core/gamera'
+import Tabs from './tabs.astro'
+import TabPanel from './tab-panel.astro'
+import TeamPlayerStats from './team-player-stats.astro'
 
 interface Props {
   gameData: MlbGameDataResponse
@@ -43,6 +47,8 @@ const [
   awayTeamSeasonStats,
   injuries,
   standings,
+  awayTeamPlayerStats,
+  homeTeamPlayerStats,
 ] = await Promise.all([
   getGames({ context: Astro, domain: 'mlb', teamId: homeTeamModel.teamId }),
   getGames({ context: Astro, domain: 'mlb', teamId: awayTeamModel.teamId }),
@@ -63,6 +69,20 @@ const [
   }),
   getInjuries({ context: Astro }),
   getStandingsRaw({ context: Astro, domain: 'mlb' }),
+  getTeamSeasonPlayerStats({
+    context: Astro,
+    domain: 'MLB',
+    team: `team-${awayTeamModel.teamId}`,
+    year: gameData.seasonYearDisplay ?? '',
+    params: {},
+  }),
+  getTeamSeasonPlayerStats({
+    context: Astro,
+    domain: 'MLB',
+    team: `team-${homeTeamModel.teamId}`,
+    year: gameData.seasonYearDisplay ?? '',
+    params: {},
+  }),
 ])
 
 const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
@@ -86,33 +106,107 @@ const homeTeamInjuries = find(
   {homeTeam}
   {homeScores}
 >
-  <ProbablePitchers {players} {teams} {awayTeamModel} {homeTeamModel} />
-  <TeamStats
-    {awayTeam}
-    {homeTeam}
-    {homeTeamSeasonStats}
-    {awayTeamSeasonStats}
-    {teams}
-    {awayTeamModel}
-    {homeTeamModel}
-  />
-  <Injuries {awayTeamInjuries} {homeTeamInjuries} />
-  <Schedule
-    {teams}
-    finalGames={awayScores?.games}
-    scheduledGames={awaySchedule?.games}
-  />
-  <Standings
-    {standings}
-    awayTeamId={awayTeamModel.teamId}
-    homeTeamId={homeTeamModel.teamId}
-  />
-  <LastGames
-    {teams}
-    {awayTeamModel}
-    {homeTeamModel}
-    awayTeamResults={awayScores}
-    homeTeamResults={homeScores}
-  />
-  <GameInfo {venue} {weather} {officials} />
+  <Tabs>
+    <div class="flex gap-1.5 my-2" slot="tab-list">
+      <label
+        class:list={{
+          'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
+          'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
+          'border-gray-6 dark:border-gray-3': true,
+          'group-has-[#game:checked]:bg-gray-7 group-has-[#game:checked]:text-gray-2': true,
+        }}
+        for="game"
+      >
+        Game
+      </label>
+      <label
+        class:list={{
+          'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
+          'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
+          'border-gray-6 dark:border-gray-3': true,
+          'group-has-[#away:checked]:bg-team-primary group-has-[#away:checked]:text-team-secondary': true,
+        }}
+        style={{
+          '--team-primary-color': awayTeam?.colors.backgroundColor,
+          '--team-secondary-color': awayTeam?.colors.foregroundColor,
+        }}
+        for="away"
+      >
+        {awayTeam?.nickname}
+      </label>
+      <label
+        class:list={{
+          'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
+          'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
+          'border-gray-6 dark:border-gray-3': true,
+          'group-has-[#home:checked]:bg-team-primary group-has-[#home:checked]:text-team-secondary': true,
+        }}
+        style={{
+          '--team-primary-color': homeTeam?.colors.backgroundColor,
+          '--team-secondary-color': homeTeam?.colors.foregroundColor,
+        }}
+        for="home"
+      >
+        {homeTeam?.nickname}
+      </label>
+    </div>
+    <TabPanel
+      name="boxscore"
+      id="game"
+      class="hidden has-[#game:checked]:flex flex-col gap-3"
+      checked
+    >
+      <ProbablePitchers {players} {teams} {awayTeamModel} {homeTeamModel} />
+      <TeamStats
+        {awayTeam}
+        {homeTeam}
+        {homeTeamSeasonStats}
+        {awayTeamSeasonStats}
+        {teams}
+        {awayTeamModel}
+        {homeTeamModel}
+      />
+      <Injuries {awayTeamInjuries} {homeTeamInjuries} />
+      <Schedule
+        {teams}
+        finalGames={awayScores?.games}
+        scheduledGames={awaySchedule?.games}
+      />
+      <Standings
+        {standings}
+        awayTeamId={awayTeamModel.teamId}
+        homeTeamId={homeTeamModel.teamId}
+      />
+      <LastGames
+        {teams}
+        {awayTeamModel}
+        {homeTeamModel}
+        awayTeamResults={awayScores}
+        homeTeamResults={homeScores}
+      />
+      <GameInfo {venue} {weather} {officials} />
+    </TabPanel>
+    <TabPanel
+      name="boxscore"
+      id="away"
+      class="hidden has-[#away:checked]:flex flex-col gap-3"
+    >
+      <TeamPlayerStats
+        {players}
+        teamModel={awayTeamModel}
+        teamPlayerStats={awayTeamPlayerStats}
+      />
+    </TabPanel>
+    <TabPanel
+      name="boxscore"
+      id="home"
+      class="hidden has-[#home:checked]:flex flex-col gap-3"
+    >
+      <TeamPlayerStats
+        {players}
+        teamModel={homeTeamModel}
+        teamPlayerStats={homeTeamPlayerStats}
+      />
+    </TabPanel>
+  </Tabs>
 </Layout>
