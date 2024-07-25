@@ -1,0 +1,12 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+type Props = HTMLAttributes<'div'>
+
+const { class: classes, ...rest } = Astro.props
+---
+
+<div class:list={['group', classes]} {...rest}>
+  <slot name="tab-list" />
+  <slot />
+</div>
