@@ -8,6 +8,7 @@ import Matchup from './matchup.svelte'
 import PitchByPitch from './pitch-by-pitch.svelte'
 import Linescore from './linescore.svelte'
 import PlayByPlay from './play-by-play.svelte'
+import LivegameHero from './livegame-hero.astro'
 
 interface Props {
   gameData: MlbGameDataResponse
@@ -16,7 +17,6 @@ interface Props {
 const { gameData } = Astro.props
 
 const {
-  gameTimestamp,
   networkName,
   awayTeam: awayTeamModel,
   homeTeam: homeTeamModel,
@@ -35,17 +35,20 @@ const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
 const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
 ---
 
-<Layout
-  network={networkName}
-  timestamp={gameTimestamp}
-  {awayTeam}
-  {awayScores}
-  {homeTeam}
-  {homeScores}
->
-  <Matchup client:load {awayTeam} {homeTeam} />
-  <PitchByPitch client:load />
-  <Linescore client:load {awayTeam} {homeTeam} />
-  <PlayByPlay />
-  <GameInfo {venue} {weather} {officials} />
+<Layout {awayTeam} {homeTeam}>
+  <LivegameHero
+    slot="hero"
+    network={networkName}
+    {awayTeam}
+    {awayScores}
+    {homeTeam}
+    {homeScores}
+  />
+  <Fragment slot="game">
+    <Matchup client:load {awayTeam} {homeTeam} />
+    <PitchByPitch client:load />
+    <Linescore client:load {awayTeam} {homeTeam} />
+    <PlayByPlay />
+    <GameInfo {venue} {weather} {officials} />
+  </Fragment>
 </Layout>
