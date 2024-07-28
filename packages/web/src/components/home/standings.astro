@@ -6,7 +6,7 @@ import { type Dictionary } from 'lodash'
 import { orderBy } from 'lodash-es'
 
 interface Props {
-  domain: GameraDomain
+  domain: Exclude<GameraDomain, 'PGA'>
   standings: {
     teams: Dictionary<StandingsTeam[]>
   }
@@ -26,6 +26,10 @@ const toggleTitle = (name: string, domain: GameraDomain) => {
       return 'West'
     }
   }
+  if (domain === 'EPL') {
+    if (name === 'epl') return 'PL'
+    if (name === 'lal') return 'LaL'
+  }
   return name
 }
 ---
@@ -34,7 +38,7 @@ const toggleTitle = (name: string, domain: GameraDomain) => {
   {
     toggle && (
       <div class="mt-2 mb-1 flex items-center justify-between">
-        <h3 class="font-semibold">{`${domain === 'EPL' ? 'PL' : domain} ${
+        <h3 class="font-semibold">{`${domain === 'EPL' ? 'FC' : domain} ${
           domain === 'EPL' ? 'Table' : 'Standings'
         }`}</h3>
         {Object.entries(standings.teams).length > 1 && (

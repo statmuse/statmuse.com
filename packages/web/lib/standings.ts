@@ -18,7 +18,7 @@ export const getStandings = async (props: {
         domain: props.domain as GameraDomain,
         teams:
           league === 'epl'
-            ? { all: data.teams }
+            ? groupBy(data.teams, 'league')
             : groupBy(
                 data.teams,
                 league === 'mlb' ? 'league.name' : 'conference.name',

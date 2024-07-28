@@ -151,13 +151,14 @@ const league = Astro.params.league
                   client:load
                   options={standings.map((s) => ({
                     value: s?.domain.toLowerCase(),
-                    label: s?.domain === 'EPL' ? 'PL' : s?.domain,
+                    label: s?.domain === 'EPL' ? 'FC' : s?.domain,
                   }))}
                   toggle={{
                     nba: ['East', 'West'],
                     nfl: ['AFC', 'NFC'],
                     nhl: ['East', 'West'],
                     mlb: ['AL', 'NL'],
+                    epl: ['PL', 'LaL'],
                   }}
                 >
                   {standings[0] && (
