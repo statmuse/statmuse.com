@@ -28,7 +28,7 @@ const toggleTitle = (name: string, domain: GameraDomain) => {
   }
   if (domain === 'EPL') {
     if (name === 'epl') return 'PL'
-    if (name === 'lal') return 'LaL'
+    if (name === 'lal') return 'LaLiga'
   }
   return name
 }
@@ -38,7 +38,7 @@ const toggleTitle = (name: string, domain: GameraDomain) => {
   {
     toggle && (
       <div class="mt-2 mb-1 flex items-center justify-between">
-        <h3 class="font-semibold">{`${domain === 'EPL' ? 'FC' : domain} ${
+        <h3 class="font-semibold">{`${domain === 'EPL' ? 'League' : domain} ${
           domain === 'EPL' ? 'Table' : 'Standings'
         }`}</h3>
         {Object.entries(standings.teams).length > 1 && (

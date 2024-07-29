@@ -158,7 +158,7 @@ const league = Astro.params.league
                     nfl: ['AFC', 'NFC'],
                     nhl: ['East', 'West'],
                     mlb: ['AL', 'NL'],
-                    epl: ['PL', 'LaL'],
+                    epl: ['PL', 'LaLiga'],
                   }}
                 >
                   {standings[0] && (
@@ -227,7 +227,7 @@ const league = Astro.params.league
                   }
                   toggleOptions={
                     leaders.length > 1 && domain === 'EPL'
-                      ? ['PL', 'LaL']
+                      ? ['PL', 'LaLiga']
                       : undefined
                   }
                   leaders
@@ -258,7 +258,7 @@ const league = Astro.params.league
                   }
                   toggleOptions={
                     rankings.length > 1 && domain === 'EPL'
-                      ? ['PL', 'LaL']
+                      ? ['PL', 'LaLiga']
                       : undefined
                   }
                   rankings

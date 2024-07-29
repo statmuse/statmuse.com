@@ -50,7 +50,9 @@
       class="font-semibold w-40 px-3 text-left flex justify-between items-center"
     >
       {$selectedLabel
-        ? `${$selectedLabel} ${$selectedLabel === 'FC' ? 'Table' : 'Standings'}`
+        ? `${$selectedLabel === 'FC' ? 'League' : $selectedLabel} ${
+            $selectedLabel === 'FC' ? 'Table' : 'Standings'
+          }`
         : 'Choose an option'}
       {#if $open}
         <Icon name="dropdown-up" class="w-4 h-4" />
