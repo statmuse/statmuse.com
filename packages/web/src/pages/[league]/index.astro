@@ -32,7 +32,7 @@ const league = Astro.params.league as LeagueParam
 const domain = leagueToDomain(league)
 
 const meta = {
-  title: `${league === 'fc' ? 'Premier League' : league.toUpperCase()} Stats`,
+  title: `${league === 'fc' ? 'FC' : league.toUpperCase()} Stats`,
   description:
     league === 'fc' || league === 'pga'
       ? `Instant answers to your ${

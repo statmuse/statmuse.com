@@ -44,10 +44,12 @@ const colors = {
 const meta = {
   title:
     domain !== 'All'
-      ? `${domain === 'EPL' ? 'Premier League' : domain} Gallery`
+      ? `${domain === 'EPL' ? 'FC' : domain} Gallery`
       : 'Gallery',
   description: `Browse the largest gallery of ${
-    domain !== 'All' ? `${domain === 'EPL' ? 'Premier League' : domain} ` : ''
+    domain !== 'All'
+      ? `${domain === 'EPL' ? 'Premier League and LaLiga' : domain} `
+      : ''
   }player illustrations in the world.`,
 }
 ---
