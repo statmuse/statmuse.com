@@ -56,6 +56,8 @@ const meta = {
 let musings: LatestMusing[] | undefined
 let leaders: PlayerLeadersResponse
 let rankings: TeamRankingsResponse | undefined
+let laligaLeaders: PlayerLeadersResponse
+let laligaRankings: TeamRankingsResponse | undefined
 let trendingSearches: TrendingItem['datasets'][number] | undefined
 let trendingPlayers: TrendingItem['datasets'][number] | undefined
 let trendingTeams: TrendingItem['datasets'][number] | undefined
@@ -67,11 +69,28 @@ let trendingData: TrendingItem | undefined
 if (domain !== 'PGA') {
   ;[musings, leaders, rankings, betting, standings] = await Promise.all([
     listLatestMusings(domain),
-    homeLeadersByDomain({ context: Astro, domain }),
-    homeRankingsByDomain({ context: Astro, domain }),
+    homeLeadersByDomain({
+      context: Astro,
+      domain,
+      ...(league === 'fc' ? { league: 'epl' } : {}),
+    }),
+    homeRankingsByDomain({
+      context: Astro,
+      domain,
+      ...(league === 'fc' ? { league: 'epl' } : {}),
+    }),
     homeBettingByDomain({ context: Astro, domain }),
     getStandings({ context: Astro, domain }),
   ])
+
+  if (league === 'fc') {
+    ;[laligaLeaders, laligaRankings] = await Promise.all([
+      homeLeadersByDomain({ context: Astro, domain, league: 'lal' }),
+      homeRankingsByDomain({ context: Astro, domain, league: 'lal' }),
+    ])
+
+    console.log(laligaLeaders)
+  }
 
   if (rankings) {
     const teams = await Promise.all(
@@ -147,8 +166,16 @@ Caching.swr(Astro)
     {domain}
     {musings}
     {profile}
-    {leaders}
-    {rankings}
+    leaders={laligaLeaders && leaders
+      ? [leaders, laligaLeaders]
+      : leaders
+      ? [leaders]
+      : undefined}
+    rankings={laligaRankings && rankings
+      ? [rankings, laligaRankings]
+      : rankings
+      ? [rankings]
+      : undefined}
     {betting}
     {standings}
     {trendingPlayers}

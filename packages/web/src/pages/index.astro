@@ -309,10 +309,10 @@ Caching.swr(Astro)
     {musings}
     {profile}
     leaders={playerCards.filter((x) => x).length > 0
-      ? playerCards.filter((x) => x)
+      ? [playerCards.filter((x) => x)]
       : undefined}
     rankings={teamCards.filter((x) => x).length > 0
-      ? teamCards.filter((x) => x)
+      ? [teamCards.filter((x) => x)]
       : undefined}
     betting={bettingCards.filter((x) => x).length > 0
       ? bettingCards.filter((x) => x)

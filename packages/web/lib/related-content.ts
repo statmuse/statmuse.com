@@ -131,6 +131,7 @@ const playerMapByDomain: Record<
 export const homeLeadersByDomain = async (props: {
   context: Context
   domain: GameraDomain
+  league?: 'epl' | 'lal'
 }) => {
   const leaders = await getPlayerCards(props)
   if (leaders) {
@@ -282,6 +283,7 @@ const teamMapByDomain: Record<
 export const homeRankingsByDomain = async (props: {
   context: Context
   domain: GameraDomain
+  league?: 'epl' | 'lal'
 }) => {
   const leaders = await getTeamCards(props)
   if (leaders) {
