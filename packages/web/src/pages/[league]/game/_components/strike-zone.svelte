@@ -1,5 +1,6 @@
 <script lang="ts">
   import Icon from '@components/icon.svelte'
+  import { colorPlayOutcome, type PitchAtBatEvent } from '@statmuse/core/gamera'
 
   const mapXCoordinate = (x: number) => {
     let xPoint
@@ -21,15 +22,18 @@
     return ((-1 * y + 120) / 240) * 29.5
   }
 
-  const points = [
-    [60, 0],
-    [10, 40],
-    [120, 20],
-  ]
+  export let pitches: PitchAtBatEvent[]
 </script>
 
 <Icon name="baseball-strike-zone" {...$$restProps}>
-  {#each points as point}
-    <circle r="2" cx={mapXCoordinate(point[0])} cy={mapYCoordinate(point[1])} />
+  {#each pitches as pitch (pitch)}
+    {#if pitch.pitchData?.coordinates}
+      <circle
+        r="2"
+        class={colorPlayOutcome(pitch)}
+        cx={mapXCoordinate(pitch.pitchData?.coordinates?.x)}
+        cy={mapYCoordinate(pitch.pitchData?.coordinates?.y)}
+      />
+    {/if}
   {/each}
 </Icon>

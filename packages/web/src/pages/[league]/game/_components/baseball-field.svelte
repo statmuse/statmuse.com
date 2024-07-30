@@ -1,5 +1,6 @@
 <script lang="ts">
   import Icon from '@components/icon.svelte'
+  import type { Coordinates } from '@statmuse/core/gamera'
 
   const mapXCoordinate = (x: number) => {
     let xPoint
@@ -21,11 +22,13 @@
     return ((y - 65) / 155) * 29.5
   }
 
-  const points = [[100, 90]]
+  export let coordinate: Coordinates
 </script>
 
 <Icon name="baseball-field" {...$$restProps}>
-  {#each points as point}
-    <circle r="2" cx={mapXCoordinate(point[0])} cy={mapYCoordinate(point[1])} />
-  {/each}
+  <circle
+    r="2"
+    cx={mapXCoordinate(coordinate.x)}
+    cy={mapYCoordinate(coordinate.y)}
+  />
 </Icon>

@@ -312,7 +312,7 @@ interface PitchFlags {
   isTriplePlay: boolean
 }
 
-interface PitchAtBatEvent {
+export interface PitchAtBatEvent {
   type: 'pitch'
   pitchData?: PitchData
   hitData?: HitData
@@ -349,6 +349,25 @@ interface PitchAtBatEvent {
     | 'lineOut'
     | 'popOut'
   flags: PitchFlags
+}
+
+export const colorPlayOutcome = (pitch: PitchAtBatEvent) => {
+  switch (pitch.outcomeType) {
+    case 'ball':
+    case 'dirtBall':
+    case 'enforcedBall':
+    case 'intentionalBall':
+    case 'intentionalWalk':
+    case 'pitchout':
+      return 'fill-green bg-green'
+    case 'foul':
+    case 'enforcedStrike':
+    case 'strikeLooking':
+    case 'strikeSwinging':
+      return 'fill-red bg-red'
+    default:
+      return 'fill-blue bg-blue'
+  }
 }
 
 interface StealAtBatEvent {

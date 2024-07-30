@@ -1,8 +1,13 @@
 <script lang="ts">
-  // Realtime: inning and outs
+  export let outs
+  export let half
+  export let inning
 </script>
 
 <div class="flex gap-2">
-  <p>End 5</p>
-  <p>3 outs</p>
+  <p>
+    <span class="capitalize">{half}</span>
+    {inning}
+  </p>
+  <p>{outs} outs</p>
 </div>
