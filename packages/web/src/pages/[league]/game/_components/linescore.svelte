@@ -2,28 +2,38 @@
   import Panel from '@components/panel.svelte'
   import Icon from '@components/icon.svelte'
   import Image from '@components/image.svelte'
-  import type { GameraTeamReference } from '@statmuse/core/gamera'
+  import type {
+    GameraTeamReference,
+    TeamGameModel,
+  } from '@statmuse/core/gamera'
   import AtBatCount from './at-bat-count.svelte'
   import OutsIndicator from './outs-indicator.svelte'
+  import { max, range } from 'lodash-es'
 
-  export let homeTeam: GameraTeamReference
   export let awayTeam: GameraTeamReference
+  export let homeTeam: GameraTeamReference
+  export let awayTeamModel: TeamGameModel
+  export let homeTeamModel: TeamGameModel
+  export let displayMatchup: boolean = false
+  export let final: boolean = false
 
-  const innings = [
-    [1, 0, 0],
-    [2, 0, 1],
-    [3, 1, undefined],
-    [4, undefined, undefined],
-    [5, undefined, undefined],
-    [6, undefined, undefined],
-    [7, undefined, undefined],
-    [8, undefined, undefined],
-    [9, undefined, undefined],
-  ]
+  const maxInnings = max([
+    9,
+    awayTeamModel.lineScore?.length,
+    homeTeamModel.lineScore?.length,
+  ])
 
   const totals = [
-    ['R', 1, 1],
-    ['H', 2, 3],
+    [
+      'R',
+      awayTeamModel.stats?.stats['Batting-Runs']?.display,
+      homeTeamModel.stats?.stats['Batting-Runs']?.display,
+    ],
+    [
+      'H',
+      awayTeamModel.stats?.stats['Batting-Hits']?.display,
+      homeTeamModel.stats?.stats['Batting-Hits']?.display,
+    ],
     ['E', 0, 0],
   ]
 </script>
@@ -52,12 +62,23 @@
         {homeTeam.abbreviation}
       </div>
     </div>
-    <div class="flex-1 flex overflow-scroll no-scrollbar">
-      {#each innings as inning (inning)}
+    <div
+      class="flex-1 flex no-scrollbar overflow-scroll"
+      style="justify-content: safe end;"
+    >
+      {#each range(maxInnings ?? 9) as inning (inning)}
         <div class="text-gray-5 px-1.5">
-          <p>{inning[0]}</p>
-          <p>{inning[1] !== undefined ? inning[1] : ''}</p>
-          <p>{inning[2] !== undefined ? inning[2] : ''}</p>
+          <p>{inning + 1}</p>
+          <p>
+            {awayTeamModel?.lineScore[inning] !== undefined
+              ? awayTeamModel?.lineScore[inning].runs
+              : ''}
+          </p>
+          <p>
+            {homeTeamModel?.lineScore[inning] !== undefined
+              ? homeTeamModel?.lineScore[inning].runs
+              : ''}
+          </p>
         </div>
       {/each}
     </div>
@@ -65,27 +86,45 @@
       {#each totals as inning, index (inning)}
         <div class="px-1.5" class:text-gray-5={index !== 0}>
           <p>{inning[0]}</p>
-          <p>{inning[1] !== undefined ? inning[1] : ''}</p>
-          <p>{inning[2] !== undefined ? inning[2] : ''}</p>
+          <p
+            class={final && awayTeamModel.gameResult === 'win'
+              ? 'text-gray-2 dark:text-gray-7'
+              : ''}
+            class:font-semibold={awayTeamModel.gameResult === 'win' &&
+              index === 0}
+          >
+            {inning[1] !== undefined ? inning[1] : ''}
+          </p>
+          <p
+            class={final && homeTeamModel.gameResult === 'win'
+              ? 'text-gray-2 dark:text-gray-7'
+              : ''}
+            class:font-semibold={homeTeamModel.gameResult === 'win' &&
+              index === 0}
+          >
+            {inning[2] !== undefined ? inning[2] : ''}
+          </p>
         </div>
       {/each}
     </div>
   </div>
-  <div
-    class="px-3 py-2 flex items-center justify-between border-t border-gray-6 dark:border-gray-4"
-  >
-    <div>
-      <p class="text-gray-5 text-sm">Batting</p>
-      <p>A. Judge</p>
+  {#if displayMatchup}
+    <div
+      class="px-3 py-2 flex items-center justify-between border-t border-gray-6 dark:border-gray-4"
+    >
+      <div>
+        <p class="text-gray-5 text-sm">Batting</p>
+        <p>A. Judge</p>
+      </div>
+      <div class="flex items-center gap-2.5">
+        <AtBatCount indicator />
+        <Icon name="baseball-diamond" class="w-9" fillSecondBase />
+        <OutsIndicator vertical />
+      </div>
+      <div class="text-right">
+        <p class="text-gray-5 text-sm">Pitching</p>
+        <p>P. Skenes</p>
+      </div>
     </div>
-    <div class="flex items-center gap-2.5">
-      <AtBatCount indicator />
-      <Icon name="baseball-diamond" class="w-9" fillSecondBase />
-      <OutsIndicator vertical />
-    </div>
-    <div class="text-right">
-      <p class="text-gray-5 text-sm">Pitching</p>
-      <p>P. Skenes</p>
-    </div>
-  </div>
+  {/if}
 </Panel>

@@ -161,7 +161,7 @@ interface StatModel {
   'Batting-Walks'?: Value<number>
 }
 
-interface TeamGameModel {
+export interface TeamGameModel {
   teamId: number
   score: number
   record: {
