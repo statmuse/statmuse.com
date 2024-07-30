@@ -1,6 +1,7 @@
 ---
 import MlbPregameBoxscore from './mlb-pregame-boxscore.astro'
 import MlbLivegameBoxscore from './mlb-livegame-boxscore.astro'
+import MlbPostgameBoxscore from './mlb-postgame-boxscore.astro'
 import { parseGameId } from '@lib/parse'
 import { NOT_FOUND_404 } from '@lib/response'
 import { getGameData } from '@lib/gamera'
@@ -19,11 +20,14 @@ if (!gameData) return NOT_FOUND_404
 
 {
   (function () {
-    switch ('inProgress') {
+    switch (gameData.gameStatus) {
       case 'scheduled':
+      case 'delayed':
         return <MlbPregameBoxscore {gameData} />
       case 'inProgress':
-        return <MlbLivegameBoxscore {gameData} />
+        return <MlbLivegameBoxscore {gameData} {gameId} />
+      case 'completed':
+        return <MlbPostgameBoxscore {gameData} {gameId} />
     }
   })()
 }

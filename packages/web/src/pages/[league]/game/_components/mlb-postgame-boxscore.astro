@@ -1,0 +1,119 @@
+---
+import {
+  getGames,
+  getPlayByPlay,
+  getSchedule,
+  getStandingsRaw,
+} from '@lib/gamera'
+import Layout from './layout.astro'
+import type {
+  GameraPlayerReference,
+  MlbGameDataResponse,
+} from '@statmuse/core/gamera'
+import { find, orderBy } from 'lodash-es'
+import PostgameHero from './postgame-hero.astro'
+import GameInfo from './game-info.astro'
+import Schedule from './schedule.astro'
+import Standings from './standings.astro'
+import Linescore from './linescore.svelte'
+import PlayByPlay from './play-by-play.svelte'
+
+interface Props {
+  gameData: MlbGameDataResponse
+  gameId: string
+}
+
+const { gameData, gameId } = Astro.props
+
+const {
+  networkName,
+  awayTeam: awayTeamModel,
+  homeTeam: homeTeamModel,
+  teams,
+  venue,
+  weather,
+  officials,
+  players,
+  gameTimestamp,
+} = gameData
+
+const [homeScores, awayScores, awaySchedule, standings, playByPlay] =
+  await Promise.all([
+    getGames({ context: Astro, domain: 'mlb', teamId: homeTeamModel.teamId }),
+    getGames({ context: Astro, domain: 'mlb', teamId: awayTeamModel.teamId }),
+    getSchedule({
+      context: Astro,
+      domain: 'mlb',
+      teamId: awayTeamModel.teamId,
+    }),
+    getStandingsRaw({ context: Astro, domain: 'mlb' }),
+    getPlayByPlay({ context: Astro, gameId }),
+  ])
+
+const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
+const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
+
+const innings = playByPlay?.innings
+
+const playerMap = players?.reduce(
+  (acc, p) => ({ ...acc, [p.id]: p }),
+  {} as Record<number, GameraPlayerReference>,
+)
+---
+
+<Layout {awayTeam} {homeTeam} plays>
+  <PostgameHero
+    slot="hero"
+    network={networkName}
+    awayScore={awayTeamModel.score}
+    homeScore={homeTeamModel.score}
+    timestamp={gameTimestamp}
+    {awayTeam}
+    awayScores={awayScores && {
+      ...awayScores,
+      games: orderBy(awayScores.games, 'gameDate', 'desc'),
+    }}
+    {homeTeam}
+    homeScores={homeScores && {
+      ...homeScores,
+      games: orderBy(homeScores.games, 'gameDate', 'desc'),
+    }}
+  />
+  <Fragment slot="game">
+    <Linescore {awayTeam} {homeTeam} {awayTeamModel} {homeTeamModel} final />
+    <Schedule
+      {teams}
+      finalGames={awayScores?.games}
+      scheduledGames={awaySchedule?.games}
+    />
+    <Standings
+      {standings}
+      awayTeamId={awayTeamModel.teamId}
+      homeTeamId={homeTeamModel.teamId}
+    />
+    <GameInfo {venue} {weather} {officials} />
+  </Fragment>
+  <Fragment slot="plays">
+    {
+      innings?.map((inning) => {
+        const number = inning.number
+        const [topHalf, bottomHalf] = inning.halves
+
+        return (
+          <Fragment>
+            <PlayByPlay
+              inningTitle={`Top ${number}`}
+              inning={topHalf}
+              {playerMap}
+            />
+            <PlayByPlay
+              inningTitle={`Bottom ${number}`}
+              inning={bottomHalf}
+              {playerMap}
+            />
+          </Fragment>
+        )
+      })
+    }
+  </Fragment>
+</Layout>
