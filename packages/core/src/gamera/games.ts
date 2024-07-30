@@ -109,7 +109,7 @@ type SeasonPhase = {
   yearDisplay?: string
 }
 
-type Position =
+export type Position =
   | 'pitcher'
   | 'catcher'
   | 'firstBase'
@@ -123,10 +123,46 @@ type Position =
   | 'pinchHitter'
   | 'pinchRunner'
 
+export const formatMlbPosition = (
+  position: Position | Position[],
+  handedness: 'left' | 'right',
+) => {
+  const lastPosition = Array.isArray(position)
+    ? position[position.length - 1]
+    : position
+
+  switch (lastPosition) {
+    case 'catcher':
+      return 'C'
+    case 'firstBase':
+      return '1B'
+    case 'secondBase':
+      return '2B'
+    case 'thirdBase':
+      return '3B'
+    case 'shortStop':
+      return 'SS'
+    case 'leftField':
+      return 'LF'
+    case 'centerField':
+      return 'CF'
+    case 'rightField':
+      return 'RF'
+    case 'designatedHitter':
+      return 'DH'
+    case 'pinchHitter':
+      return 'PH'
+    case 'pinchRunner':
+      return 'PR'
+    case 'pitcher':
+      return `${handedness === 'right' ? 'RH' : 'LH'}P`
+  }
+}
+
 interface PlayerGameModel {
   playerId: number
   lineup: {
-    posistions?: Position[]
+    positions?: Position[]
     battingOrder: number
     battingOrderSequence: number
     pitchingSequence: number
@@ -245,7 +281,7 @@ export interface MlbGameDataResponse {
   summary?: GameraToken[]
 }
 
-type Coordinates = {
+export type Coordinates = {
   x: number
   y: number
 }
@@ -351,6 +387,50 @@ export interface PitchAtBatEvent {
   flags: PitchFlags
 }
 
+export const formatPlayOutcome = (pitch: PitchAtBatEvent) => {
+  switch (pitch.outcomeType) {
+    case 'ball':
+    case 'dirtBall':
+    case 'enforcedBall':
+    case 'intentionalBall':
+    case 'intentionalWalk':
+      return 'Walk'
+    case 'foul':
+    case 'enforcedStrike':
+    case 'strikeLooking':
+    case 'strikeSwinging':
+      return 'Strikout'
+    case 'single':
+      return 'Single'
+    case 'double':
+      return 'Double'
+    case 'triple':
+      return 'Triple'
+    case 'homeRun':
+      return 'Home Run'
+    case 'sacrificeBunt':
+      return 'Sacrifice Bunt'
+    case 'sacrificeFly':
+      return 'Sacrifice Fly'
+    case 'groundOut':
+      return 'Ground Out'
+    case 'lineOut':
+      return 'Line Out'
+    case 'flyOut':
+      return 'Fly Out'
+    case 'popOut':
+      return 'Pop Out'
+    case 'fieldersChoice':
+      return 'Forceout'
+    case 'hitByPitch':
+      return 'Hit By Pitch'
+    case 'reachedOnError':
+      return 'Reached On Error'
+    default:
+      return pitch.outcomeType
+  }
+}
+
 export const colorPlayOutcome = (pitch: PitchAtBatEvent) => {
   switch (pitch.outcomeType) {
     case 'ball':
@@ -387,9 +467,9 @@ interface LineupChangeAtBatEvent {
 
 type AtBatEvent = PitchAtBatEvent | StealAtBatEvent | LineupChangeAtBatEvent
 
-interface InningAtBatEvent {
-  pitcher: { playerId: string; handedness: 'right' | 'left' }
-  batter: { playerId: string; handedness: 'right' | 'left' }
+export interface InningAtBatEvent {
+  pitcher: { playerId: number; handedness: 'right' | 'left' }
+  batter: { playerId: number; handedness: 'right' | 'left' }
   events: AtBatEvent[]
   description?: GameraToken[]
   type: 'atBat'
@@ -415,7 +495,7 @@ type InningEvent =
   | InningLineupChangeEvent
   | InningDesignatedRunnerEvent
 
-interface InningHalf {
+export interface InningHalf {
   half: 'top' | 'bottom'
   events: InningEvent[]
 }
