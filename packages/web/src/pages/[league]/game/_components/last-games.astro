@@ -31,6 +31,8 @@ const games = zip(
   orderBy(homeTeamResults?.games, 'gameData', 'desc').slice(0, 5),
 )
 
+console.log(awayTeamResults)
+
 const getTeamResult = (teamId: number, game?: GameResult) =>
   game?.homeTeam.teamId === teamId
     ? game.homeTeam.gameResult
@@ -48,12 +50,12 @@ const getOpponent = (
 
   if (teamId !== game?.awayTeam.teamId) {
     opponent = game?.awayTeam.teamId
-    visitorTeam = false
+    visitorTeam = true
   }
 
   if (teamId !== game?.homeTeam.teamId) {
     opponent = game?.homeTeam.teamId
-    visitorTeam = true
+    visitorTeam = false
   }
 
   const team = find(teams, { teamId: opponent })
