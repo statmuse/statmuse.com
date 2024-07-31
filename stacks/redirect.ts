@@ -12,7 +12,7 @@ import { DNS } from './dns'
 export function RedirectMoney({ stack }: StackContext) {
   const { hostedZone, domain } = use(DNS)
 
-  if (stack.stage.startsWith('staging') || stack.stage === 'production') {
+  if (stack.stage === 'staging' || stack.stage === 'production') {
     // Define the Lambda@Edge function for redirection
     const redirectFunction = new lambda.Function(
       stack,
