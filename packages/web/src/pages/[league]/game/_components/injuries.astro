@@ -2,7 +2,10 @@
 import Icon from '@components/icon.svelte'
 import Image from '@components/image.astro'
 import Panel from '@components/panel.astro'
-import type { TeamInjuryResponse } from '@statmuse/core/gamera'
+import {
+  formatMlbPosition,
+  type TeamInjuryResponse,
+} from '@statmuse/core/gamera'
 import { zip } from 'lodash-es'
 
 interface Props {
@@ -77,7 +80,12 @@ const injuryDescription = (
           <div>
             {injury[0] && (
               <>
-                <p>{injury[0]?.player.usedName}</p>
+                <p>
+                  {injury[0]?.player.usedName}{' '}
+                  <span class="text-gray-5 text-sm">
+                    {formatMlbPosition(injury[0]?.position)}
+                  </span>
+                </p>
                 <p class="text-sm text-gray-5 flex gap-1.5 items-center">
                   <Icon name="injury" class="w-4 h-4" />
                   {injuryDescription(injury[0].injuries[0])}
@@ -88,7 +96,12 @@ const injuryDescription = (
           <div class="text-right">
             {injury[1] && (
               <>
-                <p>{injury[1]?.player.usedName}</p>
+                <p>
+                  <span class="text-gray-5 text-sm">
+                    {formatMlbPosition(injury[1]?.position)}
+                  </span>{' '}
+                  {injury[1]?.player.usedName}
+                </p>
                 <p class="text-sm text-gray-5 flex gap-1.5 items-center">
                   {injuryDescription(injury[1].injuries[0])}
                   <Icon name="injury" class="w-4 h-4" />

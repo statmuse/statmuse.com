@@ -126,7 +126,7 @@ export type Position =
 
 export const formatMlbPosition = (
   position: Position | Position[],
-  handedness: 'left' | 'right',
+  handedness?: 'left' | 'right',
 ) => {
   const lastPosition = Array.isArray(position)
     ? position[position.length - 1]
@@ -156,7 +156,7 @@ export const formatMlbPosition = (
     case 'pinchRunner':
       return 'PR'
     case 'pitcher':
-      return `${handedness === 'right' ? 'RH' : 'LH'}P`
+      return handedness ? `${handedness === 'right' ? 'RH' : 'LH'}P` : 'P'
   }
 }
 

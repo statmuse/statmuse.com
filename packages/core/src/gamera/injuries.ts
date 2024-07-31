@@ -1,4 +1,5 @@
 import type { GameraTeamReference, GameraPlayerReference } from './base'
+import type { Position } from './games'
 
 interface Injury {
   description: string
@@ -13,6 +14,7 @@ interface Injury {
 interface PlayerInjury {
   player: GameraPlayerReference
   injuries: Injury[]
+  position: Position
 }
 
 interface TeamInjury {
