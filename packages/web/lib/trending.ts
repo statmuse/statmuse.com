@@ -24,7 +24,7 @@ export const getTrendingData = async (props?: {
 
   const data = await db.send(
     new QueryCommand({
-      TableName: Table['imported-table'].tableName,
+      TableName: Table['trending-table'].tableName,
       KeyConditionExpression: 'pk = :pk',
       ExpressionAttributeValues: { ':pk': pk },
       ScanIndexForward: false,
