@@ -29,6 +29,7 @@ export interface GameraPlayerBio {
   drafted: string
   experience: string
   preferredFoot?: string
+  throwsHandedness?: 'right' | 'left'
   summaryNlg?: GameraToken[]
   awards: {
     name: string

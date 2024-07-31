@@ -2,7 +2,6 @@
 import Image from '@components/image.astro'
 import Panel from '@components/panel.astro'
 import { type MlbGameDataResponse } from '@statmuse/core/gamera'
-import { hexToHSL } from '@lib/color'
 import { getPlayerBio, getPlayerStats } from '@lib/gamera'
 import { find } from 'lodash-es'
 
@@ -13,13 +12,17 @@ interface Props {
 
 const { awayTeamModel, homeTeamModel } = Astro.props
 
-const homePitcherId =
-  homeTeamModel.probablePitcher?.playerId ??
-  find(homeTeamModel.players, { lineup: { pitchingSequence: 1 } })?.playerId
+const homeStartingId = find(homeTeamModel.players, {
+  lineup: { pitchingSequence: 1 },
+})?.playerId
 
-const awayPitcherId =
-  awayTeamModel?.probablePitcher?.playerId ??
-  find(awayTeamModel.players, { lineup: { pitchingSequence: 1 } })?.playerId
+const awayStartingId = find(homeTeamModel.players, {
+  lineup: { pitchingSequence: 1 },
+})?.playerId
+
+const homePitcherId = homeTeamModel.probablePitcher?.playerId ?? homeStartingId
+
+const awayPitcherId = awayTeamModel?.probablePitcher?.playerId ?? awayStartingId
 
 const [homePlayerStats, awayPlayerStats, homePitcherBio, awayPitcherBio] =
   await Promise.all([
@@ -98,7 +101,9 @@ const awayTeam = awayPitcherBio?.team
           {awayTeam?.abbreviation}
         </div>
 
-        <h3 class="font-semibold">Probable Pitchers</h3>
+        <h3 class="font-semibold">
+          {homeStartingId && awayStartingId ? 'Starting' : 'Probable'} Pitchers
+        </h3>
 
         <div class="flex gap-1 absolute right-3 top-2">
           {homeTeam?.abbreviation}
@@ -117,14 +122,14 @@ const awayTeam = awayPitcherBio?.team
           alt={awayPitcherBio?.usedName ?? ''}
           width={120}
           height={90}
-          class="h-[90px] max-w-[120px] object-contain object-bottom"
+          class="h-[90px] object-contain object-left"
         />
         <Image
           src={homePitcherBio?.bustImageUrl ?? ''}
           alt={homePitcherBio?.usedName ?? ''}
           width={120}
           height={90}
-          class="h-[90px] max-w-[120px] object-contain object-bottom"
+          class="h-[90px] object-contain object-right"
         />
       </div>
       <div class="divide-y divide-gray-6 dark:divide-gray-4 *:px-1 *:py-1">
@@ -132,13 +137,19 @@ const awayTeam = awayPitcherBio?.team
           <div>
             <p class="font-semibold">{awayPitcherBio?.usedName ?? 'TBD'}</p>
             {awayPitcherBio && (
-              <p class="text-[16px] text-gray-5">{`${awayPitcherBio.position} #${awayPitcherBio.jerseyNumber}`}</p>
+              <p class="text-[16px] text-gray-5">{`${
+                awayPitcherBio.throwsHandedness === 'right' ? 'RH' : 'LH'
+              }${awayPitcherBio.position} #${awayPitcherBio.jerseyNumber}`}</p>
             )}
           </div>
           <div class="text-right">
             <p class="font-semibold">{homePitcherBio?.usedName ?? 'TBD'}</p>
             {homePitcherBio && (
-              <p class="text-[16px] text-gray-5">{`${homePitcherBio?.position} #${homePitcherBio?.jerseyNumber}`}</p>
+              <p class="text-[16px] text-gray-5">{`${
+                homePitcherBio.throwsHandedness === 'right' ? 'RH' : 'LH'
+              }${homePitcherBio?.position} #${
+                homePitcherBio?.jerseyNumber
+              }`}</p>
             )}
           </div>
         </div>
@@ -149,10 +160,7 @@ const awayTeam = awayPitcherBio?.team
               style={
                 stat.compare(awayPitcherStats, homePitcherStats)
                   ? {
-                      background: hexToHSL(
-                        awayTeam?.colors.backgroundColor ?? '',
-                        0.2,
-                      ),
+                      background: awayTeam?.colors.backgroundColor,
                       color: awayTeam?.colors.foregroundColor,
                     }
                   : {}
@@ -168,10 +176,7 @@ const awayTeam = awayPitcherBio?.team
               style={
                 stat.compare(homePitcherStats, awayPitcherStats)
                   ? {
-                      background: hexToHSL(
-                        homeTeam?.colors.backgroundColor ?? '',
-                        0.2,
-                      ),
+                      background: homeTeam?.colors.backgroundColor,
                       color: homeTeam?.colors.foregroundColor,
                     }
                   : {}
