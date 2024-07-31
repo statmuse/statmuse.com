@@ -1,0 +1,95 @@
+---
+import Image from '@components/image.astro'
+import Panel from '@components/panel.astro'
+import type { GameraTeamReference, BettingOdds } from '@statmuse/core/gamera'
+import { find } from 'lodash-es'
+
+interface Props {
+  odds?: BettingOdds
+  awayTeam?: GameraTeamReference
+  homeTeam?: GameraTeamReference
+}
+
+const { odds, awayTeam, homeTeam } = Astro.props
+
+const consensusOdds = find(odds?.sportsbooks, { id: 'consensus' })
+---
+
+{
+  consensusOdds && (
+    <Panel title="Odds">
+      <div class="flex justify-between">
+        <div class="flex flex-col gap-1">
+          <div>
+            <Image
+              src={awayTeam?.logoImageUrl ?? ''}
+              alt={awayTeam?.name ?? ''}
+              width={60}
+              height={60}
+              class="w-5 h-5 object-contain mx-auto"
+            />
+            <p>{awayTeam?.abbreviation}</p>
+          </div>
+          <div>
+            <Image
+              src={homeTeam?.logoImageUrl ?? ''}
+              alt={homeTeam?.name ?? ''}
+              width={60}
+              height={60}
+              class="w-5 h-5 object-contain mx-auto"
+            />
+            <p>{homeTeam?.abbreviation}</p>
+          </div>
+        </div>
+        <div class="flex flex-col gap-3 text-center leading-tight">
+          <div>
+            <p>{consensusOdds.awayTeam.moneylineOpen.display}</p>
+            <p class="text-gray-5 text-sm">Open</p>
+          </div>
+          <div>
+            <p>u{consensusOdds.overUnderOpen.display}</p>
+            <p class="text-gray-5 text-sm">Open</p>
+          </div>
+        </div>
+        <div class="flex flex-col gap-3 text-center leading-tight">
+          <div>
+            <p>{consensusOdds.awayTeam.moneyline.display}</p>
+            <p class="text-gray-5 text-sm">ML</p>
+          </div>
+          <div>
+            <p>{consensusOdds.homeTeam.moneyline.display}</p>
+            <p class="text-gray-5 text-sm">ML</p>
+          </div>
+        </div>
+        <div class="flex flex-col gap-3 text-center leading-tight">
+          <div>
+            <p>o{consensusOdds.overUnder.display}</p>
+            <p class="text-gray-5 text-sm">
+              {consensusOdds.overUnderOddsOver.display}
+            </p>
+          </div>
+          <div>
+            <p>u{consensusOdds.overUnder.display}</p>
+            <p class="text-gray-5 text-sm">
+              {consensusOdds.overUnderOddsUnder.display}
+            </p>
+          </div>
+        </div>
+        <div class="flex flex-col gap-3 text-center leading-tight">
+          <div>
+            <p>{consensusOdds.awayTeam.spread.display}</p>
+            <p class="text-gray-5 text-sm">
+              {consensusOdds.awayTeam.spreadOdds.display}
+            </p>
+          </div>
+          <div>
+            <p>{consensusOdds.homeTeam.spread.display}</p>
+            <p class="text-gray-5 text-sm">
+              {consensusOdds.homeTeam.spreadOdds.display}
+            </p>
+          </div>
+        </div>
+      </div>
+    </Panel>
+  )
+}

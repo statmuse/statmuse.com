@@ -239,7 +239,9 @@ interface Official {
 
 type TeamLine = {
   spread: Value<number>
+  spreadOdds: Value<number>
   moneyline: Value<number>
+  moneylineOpen: Value<number>
 }
 
 interface SportsbookLine {
@@ -247,10 +249,13 @@ interface SportsbookLine {
   homeTeam: TeamLine
   awayTeam: TeamLine
   overUnder: Value<number>
+  overUnderOddsOver: Value<number>
+  overUnderOddsUnder: Value<number>
+  overUnderOpen: Value<number>
 }
 
-interface BettingOdds {
-  sportsbook?: SportsbookLine[]
+export interface BettingOdds {
+  sportsbooks?: SportsbookLine[]
 }
 
 export interface MlbGameDataResponse {

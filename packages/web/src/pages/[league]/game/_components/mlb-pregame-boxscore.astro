@@ -19,6 +19,7 @@ import {
 import type { MlbGameDataResponse } from '@statmuse/core/gamera'
 import TeamPlayerStats from './team-player-stats.astro'
 import PregameHero from './pregame-hero.astro'
+import Odds from './odds.astro'
 
 interface Props {
   gameData: MlbGameDataResponse
@@ -36,6 +37,7 @@ const {
   players,
   networkName,
   gameTimestamp,
+  odds,
 } = gameData
 
 const [
@@ -114,6 +116,7 @@ const homeTeamInjuries = find(
     }}
   />
   <Fragment slot="game">
+    <Odds {odds} {awayTeam} {homeTeam} />
     <ProbablePitchers {players} {teams} {awayTeamModel} {homeTeamModel} />
     <TeamStats
       {awayTeam}
