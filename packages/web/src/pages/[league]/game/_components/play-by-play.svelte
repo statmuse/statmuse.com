@@ -8,6 +8,7 @@
     colorPlayOutcome,
     formatPlayOutcome,
     tokensToText,
+    type Colors,
     type GameraPlayerReference,
     type InningHalf,
   } from '@statmuse/core/gamera'
@@ -19,19 +20,24 @@
 
   export let playerMap: Record<number, GameraPlayerReference> | undefined
 
+  export let colors: Colors | undefined
+
   // fill-blue bg-blue
 </script>
 
 <Panel
   class="!pb-0"
   title={inningTitle}
-  background={scoring ? '#003087' : undefined}
-  foreground={scoring ? '#fff' : undefined}
+  background={colors?.backgroundColor}
+  foreground={colors?.foregroundColor}
 >
   <div class="divide-y divide-gray-6 dark:divide-gray-4">
     {#each inning.events as event (event)}
       {#if event.type !== 'atBat'}
-        <div class="-mx-3 px-3">
+        <div
+          class="-mx-3 px-3"
+          style={colors ? `border-color: ${colors.foregroundColor}` : ''}
+        >
           <div class="flex mt-1">
             <div class="flex-1 space-y-1 pb-2 pt-1">
               <p>{tokensToText(event.description)}</p>
@@ -54,7 +60,10 @@
         {@const lineupEvents = filter(event.events, (e) => e.type === 'lineup')}
         {@const stealEvents = filter(event.events, (e) => e.type === 'steal')}
         {#each lineupEvents as lineupEvent (lineupEvent)}
-          <div class="-mx-3 px-3">
+          <div
+            class="-mx-3 px-3"
+            style={colors ? `border-color: ${colors.foregroundColor}` : ''}
+          >
             <div class="flex mt-1">
               <div class="flex-1 space-y-1 pb-2 pt-1">
                 <p>{tokensToText(lineupEvent.description)}</p>
@@ -78,7 +87,12 @@
           {#if stealEvent.runners}
             {#each stealEvent.runners as runner (runner)}
               {#if runner.outcomeType}
-                <div class="-mx-3 px-3">
+                <div
+                  class="-mx-3 px-3"
+                  style={colors
+                    ? `border-color: ${colors.foregroundColor}`
+                    : ''}
+                >
                   <div class="flex mt-1">
                     <div class="flex-1 space-y-1 pb-2 pt-1">
                       <p>{runner.outcomeType}</p>
@@ -103,7 +117,10 @@
           {/if}
         {/each}
         {#if event.description}
-          <div class="-mx-3 px-3">
+          <div
+            class="-mx-3 px-3"
+            style={colors ? `border-color: ${colors.foregroundColor}` : ''}
+          >
             <div class="flex mt-1">
               <div class="flex-1 space-y-1 pb-2 pt-1">
                 <p>{tokensToText(event.description)}</p>
@@ -117,6 +134,9 @@
                         class={`rounded-2xl px-2 ${colorPlayOutcome(
                           lastPitch,
                         )}`}
+                        style={colors
+                          ? `color: ${colors.backgroundColor}; background: ${colors.foregroundColor}`
+                          : ''}
                       >
                         {formatPlayOutcome(lastPitch)}
                       </div>

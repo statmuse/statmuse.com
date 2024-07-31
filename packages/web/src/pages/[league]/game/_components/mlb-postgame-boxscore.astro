@@ -6,11 +6,12 @@ import {
   getStandingsRaw,
 } from '@lib/gamera'
 import Layout from './layout.astro'
-import type {
-  GameraPlayerReference,
-  MlbGameDataResponse,
+import {
+  type GameraPlayerReference,
+  type MlbGameDataResponse,
+  filterScoringPlays,
 } from '@statmuse/core/gamera'
-import { find, orderBy } from 'lodash-es'
+import { filter, find, orderBy, some } from 'lodash-es'
 import PostgameHero from './postgame-hero.astro'
 import GameInfo from './game-info.astro'
 import Schedule from './schedule.astro'
@@ -59,6 +60,8 @@ const playerMap = players?.reduce(
   (acc, p) => ({ ...acc, [p.id]: p }),
   {} as Record<number, GameraPlayerReference>,
 )
+
+const scoringInnings = filterScoringPlays(innings)
 ---
 
 <Layout {awayTeam} {homeTeam} plays>
@@ -81,6 +84,34 @@ const playerMap = players?.reduce(
   />
   <Fragment slot="game">
     <Linescore {awayTeam} {homeTeam} {awayTeamModel} {homeTeamModel} final />
+    <Fragment>
+      {
+        scoringInnings?.map((inning) => {
+          const number = inning.number
+          const [topHalf, bottomHalf] = inning.halves
+          return (
+            <Fragment>
+              {topHalf.events.length > 0 && (
+                <PlayByPlay
+                  inningTitle={`Top ${number}`}
+                  inning={topHalf}
+                  {playerMap}
+                  colors={awayTeam?.colors}
+                />
+              )}
+              {bottomHalf.events.length > 0 && (
+                <PlayByPlay
+                  inningTitle={`Bottom ${number}`}
+                  inning={bottomHalf}
+                  {playerMap}
+                  colors={homeTeam?.colors}
+                />
+              )}
+            </Fragment>
+          )
+        })
+      }
+    </Fragment>
     <Schedule
       {teams}
       finalGames={awayScores?.games}
