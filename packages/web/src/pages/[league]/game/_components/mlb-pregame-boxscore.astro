@@ -1,6 +1,6 @@
 ---
 import Layout from './layout.astro'
-import { find } from 'lodash-es'
+import { find, orderBy } from 'lodash-es'
 import GameInfo from './game-info.astro'
 import ProbablePitchers from './probable-pitchers.astro'
 import TeamStats from './team-stats.astro'
@@ -103,9 +103,15 @@ const homeTeamInjuries = find(
     network={networkName}
     timestamp={gameTimestamp}
     {awayTeam}
-    {awayScores}
+    awayScores={awayScores && {
+      ...awayScores,
+      games: orderBy(awayScores.games, 'gameDate', 'desc'),
+    }}
     {homeTeam}
-    {awayTeam}
+    homeScores={homeScores && {
+      ...homeScores,
+      games: orderBy(homeScores.games, 'gameDate', 'desc'),
+    }}
   />
   <Fragment slot="game">
     <ProbablePitchers {players} {teams} {awayTeamModel} {homeTeamModel} />

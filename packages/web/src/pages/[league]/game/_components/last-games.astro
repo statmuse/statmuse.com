@@ -4,7 +4,7 @@ import Panel from '@components/panel.astro'
 import { type MlbGameDataResponse } from '@statmuse/core/gamera'
 import type { GameResultsResponse, GameResult } from '@statmuse/core/gamera'
 import dayjs from 'dayjs'
-import { find, zip } from 'lodash-es'
+import { find, orderBy, zip } from 'lodash-es'
 
 interface Props {
   teams: MlbGameDataResponse['teams']
@@ -27,8 +27,8 @@ const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
 const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
 
 const games = zip(
-  awayTeamResults?.games.slice(0, 5),
-  homeTeamResults?.games.slice(0, 5),
+  orderBy(awayTeamResults?.games, 'gameDate', 'desc').slice(0, 5),
+  orderBy(homeTeamResults?.games, 'gameData', 'desc').slice(0, 5),
 )
 
 const getTeamResult = (teamId: number, game?: GameResult) =>
