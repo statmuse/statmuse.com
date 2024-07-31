@@ -88,6 +88,7 @@ const { awayTeam, homeTeam, plays = false } = Astro.props
         type="radio"
         name="boxscore"
         id="game"
+        checked
       />
       <slot name="game" />
     </div>
@@ -117,7 +118,6 @@ const { awayTeam, homeTeam, plays = false } = Astro.props
             type="radio"
             name="boxscore"
             id="plays"
-            checked
           />
           <slot name="plays" />
         </div>

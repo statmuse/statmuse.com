@@ -14,6 +14,7 @@ import type {
   GameraGenericGridsDetail,
   Visual,
 } from './answer'
+import { some } from 'lodash-es'
 
 export interface NbaBoxScoreVisual extends Visual {
   domain: 'NBA'
@@ -334,6 +335,7 @@ interface Runner {
     | 'otherOut'
   playerId: number
   startingBase: number
+  endingBase: number
   description?: GameraToken[]
   isOut: boolean
 }
@@ -512,4 +514,35 @@ export interface MlbPlayByPlayResponse {
   homeTeam: Pick<GameraTeamReference, 'teamId'>
   awayTeam: Pick<GameraTeamReference, 'teamId'>
   innings: InningPlayByPlay[]
+}
+
+export const filterScoringPlays = (innings: InningPlayByPlay[]) => {
+  return innings.map((inning) => {
+    return {
+      ...inning,
+      halves: inning.halves.map((halfInning) => {
+        return {
+          ...halfInning,
+          events: halfInning.events
+            .filter((event) => event.type === 'atBat')
+            .flatMap((event) => {
+              const stealEvents = event.events.filter((e) => e.type === 'steal')
+              const scoringStealEvents = stealEvents.filter((e) =>
+                some(e.runners, (r) => r.endingBase === 4),
+              )
+
+              const pitchEvents = event.events.filter((e) => e.type === 'pitch')
+              const isScorintAtBat = some(pitchEvents, (e) =>
+                some(e.runners, (r) => r.endingBase === 4),
+              )
+
+              if (isScorintAtBat) {
+                return [...scoringStealEvents, event]
+              }
+              return [...scoringStealEvents]
+            }),
+        }
+      }),
+    }
+  })
 }

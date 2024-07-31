@@ -53,6 +53,9 @@ importers:
       kysely:
         specifier: ^0.25.0
         version: 0.25.0
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
       pg:
         specifier: ^8.11.0
         version: 8.11.1
@@ -66,6 +69,9 @@ importers:
       '@types/aws-lambda':
         specifier: ^8.10.119
         version: 8.10.119
+      '@types/lodash-es':
+        specifier: ^4.17.8
+        version: 4.17.8
       '@types/node':
         specifier: ^20.3.1
         version: 20.4.5
