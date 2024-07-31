@@ -116,10 +116,7 @@ const pitchingStats = [
             style={
               stat.compare(awayBattingStats, homeBattingStats)
                 ? {
-                    background: hexToHSL(
-                      awayTeam?.colors.backgroundColor ?? '',
-                      0.2,
-                    ),
+                    background: awayTeam?.colors.backgroundColor,
                     color: awayTeam?.colors.foregroundColor,
                   }
                 : {}
@@ -133,10 +130,7 @@ const pitchingStats = [
             style={
               stat.compare(homeBattingStats, awayBattingStats)
                 ? {
-                    background: hexToHSL(
-                      homeTeam?.colors.backgroundColor ?? '',
-                      0.2,
-                    ),
+                    background: homeTeam?.colors.backgroundColor,
                     color: homeTeam?.colors.foregroundColor,
                   }
                 : {}
@@ -155,10 +149,7 @@ const pitchingStats = [
             style={
               stat.compare(awayPitchingStats, homePitchingStats)
                 ? {
-                    background: hexToHSL(
-                      awayTeam?.colors.backgroundColor ?? '',
-                      0.2,
-                    ),
+                    background: awayTeam?.colors.backgroundColor,
                     color: awayTeam?.colors.foregroundColor,
                   }
                 : {}
@@ -172,10 +163,7 @@ const pitchingStats = [
             style={
               stat.compare(homePitchingStats, awayPitchingStats)
                 ? {
-                    background: hexToHSL(
-                      homeTeam?.colors.backgroundColor ?? '',
-                      0.2,
-                    ),
+                    background: homeTeam?.colors.backgroundColor,
                     color: homeTeam?.colors.foregroundColor,
                   }
                 : {}

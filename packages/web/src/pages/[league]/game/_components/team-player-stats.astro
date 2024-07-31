@@ -54,7 +54,7 @@ const playerMap = players?.reduce(
           rows: batters.map((batter) => {
             const player = playerMap[batter.playerId]
             return find(battingStats.rows, {
-              PLAYER: { display: player.usedName, entity: player.entity },
+              PLAYER: { display: player.usedName },
             })
           }),
         }}
@@ -74,7 +74,7 @@ const playerMap = players?.reduce(
           rows: pitchers.map((pitcher) => {
             const player = playerMap[pitcher.playerId]
             return find(pitchingStats.rows, {
-              PLAYER: { display: player.usedName, entity: player.entity },
+              PLAYER: { display: player.usedName },
             })
           }),
         }}
