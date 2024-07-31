@@ -35,30 +35,30 @@ const { venue, weather, officials } = Astro.props
         </div>
       )
     }
-    <div class="flex gap-1.5">
-      <Icon name="umpire" class="w-5 h-5 mt-0.5" />
-      <div>
-        <p>
-          <span class="text-gray-5">Home Plate:</span>{' '}{
-            find(officials, { assignment: 'homePlate' })?.fullName
-          }
-        </p>
-        <p>
-          <span class="text-gray-5">First Base:</span>{' '}{
-            find(officials, { assignment: 'firstBase' })?.fullName
-          }
-        </p>
-        <p>
-          <span class="text-gray-5">Second Base:</span>{' '}{
-            find(officials, { assignment: 'secondBase' })?.fullName
-          }
-        </p>
-        <p>
-          <span class="text-gray-5">Third Base:</span>{' '}{
-            find(officials, { assignment: 'thirdBase' })?.fullName
-          }
-        </p>
-      </div>
-    </div>
+    {
+      officials && officials.length > 0 && (
+        <div class="flex gap-1.5">
+          <Icon name="umpire" class="w-5 h-5 mt-0.5" />
+          <div>
+            <p>
+              <span class="text-gray-5">Home Plate:</span>{' '}
+              {find(officials, { assignment: 'homePlate' })?.fullName}
+            </p>
+            <p>
+              <span class="text-gray-5">First Base:</span>{' '}
+              {find(officials, { assignment: 'firstBase' })?.fullName}
+            </p>
+            <p>
+              <span class="text-gray-5">Second Base:</span>{' '}
+              {find(officials, { assignment: 'secondBase' })?.fullName}
+            </p>
+            <p>
+              <span class="text-gray-5">Third Base:</span>{' '}
+              {find(officials, { assignment: 'thirdBase' })?.fullName}
+            </p>
+          </div>
+        </div>
+      )
+    }
   </div>
 </Panel>
