@@ -41,6 +41,7 @@ export type AnalyticsPageviewProperties = {
     | 'standings'
     | 'trending'
     | 'team'
+    | 'mobile'
     | 'unknown'
   query?: string
   disposition?: Disposition

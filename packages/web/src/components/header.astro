@@ -23,40 +23,47 @@ const preferredDomain = Astro.props.preferredDomain ?? ''
     {
       'flex gap-3 items-center relative': true,
       'min-h-[62px] py-[11px] z-[100]': true,
-      'md:bg-gray-7 dark:md:bg-gray-2 bg-team-primary-bg dark:bg-team-primary-dark-bg sticky top-0': true,
+      'bg-team-primary-bg dark:bg-team-primary-dark-bg': true,
+      'md:bg-gray-7 dark:md:bg-gray-2 sticky top-0': true,
       '-mx-3 px-3 md:px-0 md:mx-0': true,
       '': false,
     },
   ]}
 >
-  <div class="flex xl:w-[210px] xl:justify-center shrink-0">
-    <DropdownMenu showElephant class="xl:hidden" />
-    <a href={Astro.props.money ? '/money' : '/'} class="hidden md:block">
-      <Logo class="w-[150px] mx-5" />
-    </a>
-  </div>
-  <div class="flex grow">
-    <div class="flex-1 justify-start">
-      <AskBar
-        client:load
-        {query}
-        {conversationToken}
-        {preferredDomain}
-        money={Astro.props.money}
-        autoFocus={[
-          '/',
-          '/nba',
-          '/nfl',
-          '/nhl',
-          '/mlb',
-          '/pga',
-          '/fc',
-          '/money',
-        ].includes(Astro.url.pathname)}
-      />
-    </div>
-  </div>
-  <div class="justify-end hidden md:flex min-w-[140px]">
-    <AuthMenu client:load />
-  </div>
+  {
+    Astro.locals.platform === 'web' && (
+      <Fragment>
+        <div class="flex xl:w-[210px] xl:justify-center shrink-0">
+          <DropdownMenu showElephant class="xl:hidden" />
+          <a href={Astro.props.money ? '/money' : '/'} class="hidden md:block">
+            <Logo class="w-[150px] mx-5" />
+          </a>
+        </div>
+        <div class="flex grow">
+          <div class="flex-1 justify-start">
+            <AskBar
+              client:load
+              {query}
+              {conversationToken}
+              {preferredDomain}
+              money={Astro.props.money}
+              autoFocus={[
+                '/',
+                '/nba',
+                '/nfl',
+                '/nhl',
+                '/mlb',
+                '/pga',
+                '/fc',
+                '/money',
+              ].includes(Astro.url.pathname)}
+            />
+          </div>
+        </div>
+        <div class="justify-end hidden md:flex min-w-[140px]">
+          <AuthMenu client:load />
+        </div>
+      </Fragment>
+    )
+  }
 </div>

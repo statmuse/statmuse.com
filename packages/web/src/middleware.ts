@@ -11,6 +11,33 @@ export const logging = defineMiddleware(async (context, next) => {
   return next()
 })
 
+export const platform = defineMiddleware(async (context, next) => {
+  if (context.url.pathname.startsWith('/_image')) {
+    return next()
+  }
+
+  const platform = (context.request.headers?.get('x-statmuse-platform') ??
+    context.cookies?.get('statmuse-platform')?.value ??
+    'web') as 'web' | 'native'
+
+  context.locals.platform = platform
+
+  if (platform === 'native') {
+    const nextYear = new Date()
+    nextYear.setDate(nextYear.getDate() + 365)
+
+    const local = context.url.hostname === 'localhost'
+    context.cookies.set('statmuse-platform', platform, {
+      path: '/',
+      domain: local ? undefined : 'statmuse.com',
+      expires: nextYear,
+      maxAge: 31536000,
+    })
+  }
+
+  return next()
+})
+
 export const migrateSession = defineMiddleware(async (context, next) => {
   if (context.url.pathname.startsWith('/_image')) {
     return next()
@@ -18,6 +45,7 @@ export const migrateSession = defineMiddleware(async (context, next) => {
 
   const token = context.cookies.get(Session.SESSION_COOKIE)?.value
   if (!token) return next()
+
   try {
     const legacySession = verifyLegacySession(token) as ReturnType<
       typeof Session.verify
@@ -66,8 +94,12 @@ export const session = defineMiddleware(async (context, next) => {
     return next()
   }
 
-  if (context.locals.session && (context.locals.user || context.locals.visitor))
+  if (
+    context.locals.session &&
+    (context.locals.user || context.locals.visitor)
+  ) {
     return next()
+  }
 
   const locals = context.locals
   let session = Session.get(context)
@@ -220,6 +252,7 @@ export const trending = defineMiddleware(async (context, next) => {
 
 export const onRequest = sequence(
   logging,
+  platform,
   migrateSession,
   session,
   trending,

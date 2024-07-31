@@ -168,7 +168,7 @@ const nlg = markdown
     }
   </Panel>
   {
-    renderAdBanner ? (
+    renderAdBanner && Astro.locals.platform === "web" ? (
       <div class="md:hidden h-[50px] md:h-[90px] flex justify-center items-center">
         <AditudeAdBanner
           client:only="svelte"

@@ -13,6 +13,9 @@ import { AnalyticsProxy } from './analytics-proxy'
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins'
 import {
   AllowedMethods,
+  CacheCookieBehavior,
+  CacheHeaderBehavior,
+  CacheQueryStringBehavior,
   CachePolicy,
   CachedMethods,
   Endpoint,
@@ -33,6 +36,7 @@ import { StreamMode } from 'aws-cdk-lib/aws-kinesis'
 import { Trending } from './trending'
 import { ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53'
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets'
+import { Duration } from 'aws-cdk-lib/core'
 
 export function Web({ stack }: StackContext) {
   const dns = use(DNS)
@@ -162,6 +166,14 @@ export function Web({ stack }: StackContext) {
         securityGroups: [api.lambdaSecurityGroup],
         layers: [layer],
       },
+      serverCachePolicy: new CachePolicy(stack, 'DistributionCachePolicy', {
+        queryStringBehavior: CacheQueryStringBehavior.all(),
+        headerBehavior: CacheHeaderBehavior.allowList('x-statmuse-platform'),
+        cookieBehavior: CacheCookieBehavior.allowList('statmuse-platform'),
+        defaultTtl: Duration.days(0),
+        enableAcceptEncodingGzip: true,
+        enableAcceptEncodingBrotli: true,
+      }),
       distribution: {
         defaultBehavior: { realtimeLogConfig },
         webAclId: isProd

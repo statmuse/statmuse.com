@@ -23,6 +23,7 @@ declare namespace App {
     visitor: import('@statmuse/core/visitor').Visitor
     user?: import('@statmuse/core/user').User
     subscribed: boolean
+    platform: "web" | "native"
     trendingData?: import('./types').TrendingItem
   }
 }

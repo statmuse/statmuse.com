@@ -284,11 +284,13 @@ const canonicalUrl = meta?.canonical
     }
   </head>
   <body
+    data-platform={Astro.locals.platform}
     class:list={{
       'text-gray-2 dark:text-gray-7 bg-gray-7 dark:bg-gray-2 text-pretty': true,
       'has-[#menu:checked]:overflow-y-scroll has-[#menu:checked]:fixed': true,
       'has-[#menu:checked]:w-full has-[#menu:checked]:h-full': true,
       'max-w-7xl min-h-screen mx-auto px-3 md:px-5 flex flex-col': true,
+      dark: Astro.locals.platform === 'native',
     }}
   >
     <Header
@@ -360,24 +362,26 @@ const canonicalUrl = meta?.canonical
                   )}
                 </div>
               </Fragment>
-              <div class="content space-y-3 h-full">
-                <AditudeAdBanner
-                  client:only="svelte"
-                  divId="pb-slot-square-1"
-                  slotId="pb-slot-square-1"
-                  placeholderClass="w-[300px] h-[250px]"
-                  onlyDesktop
-                />
-                <div class="sticky top-[--top-spacing]">
+              {Astro.locals.platform === 'web' && (
+                <div class="content space-y-3 h-full">
                   <AditudeAdBanner
                     client:only="svelte"
-                    divId="pb-slot-right-2"
-                    slotId="pb-slot-right-2"
-                    placeholderClass="w-[300px] h-[600px]"
+                    divId="pb-slot-square-1"
+                    slotId="pb-slot-square-1"
+                    placeholderClass="w-[300px] h-[250px]"
                     onlyDesktop
                   />
+                  <div class="sticky top-[--top-spacing]">
+                    <AditudeAdBanner
+                      client:only="svelte"
+                      divId="pb-slot-right-2"
+                      slotId="pb-slot-right-2"
+                      placeholderClass="w-[300px] h-[600px]"
+                      onlyDesktop
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
             </WithSubscription>
             <div class="loading hidden animate-pulse absolute inset-0 z-50">
               <div class="flex flex-col gap-3">
@@ -389,11 +393,18 @@ const canonicalUrl = meta?.canonical
         )
       }
     </div>
-    <Footer />
-    <CookieConsent client:only="svelte" transition:persist="cookie-banner" />
+    {Astro.locals.platform === 'web' && <Footer />}
+    {
+      Astro.locals.platform === 'web' && (
+        <CookieConsent
+          client:only="svelte"
+          transition:persist="cookie-banner"
+        />
+      )
+    }
     {share && <ShareModal client:load {...share} />}
     {
-      enableAdBanner && (
+      enableAdBanner && Astro.locals.platform === 'web' && (
         <CloseableContainer
           client:only="svelte"
           class="bg-gray-7/90 dark:bg-gray-2/90  fixed bottom-0 left-0 md:left-1/2 md:-translate-x-1/2 w-screen min-h-[50px] md:w-fit md:min-h-[90px] z-50 flex justify-center md:pr-5"
@@ -412,8 +423,10 @@ const canonicalUrl = meta?.canonical
       import { v4 as uuidv4 } from 'uuid'
       import { segment, getPageviewProps } from '@lib/analytics'
       import type { Session } from '@lib/session'
-      import { session as sessionStore } from '@lib/stores'
+      import { session as sessionStore, isNativeMobile } from '@lib/stores'
       import { maybeRewriteUrl } from '@lib/client'
+
+      isNativeMobile.set(document.body?.dataset?.platform === 'native')
 
       // set page targeting for GAM
       const eventProps = getPageviewProps(document)

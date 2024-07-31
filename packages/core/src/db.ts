@@ -33,6 +33,11 @@ import type { LinkTable } from './link'
 import type { MusingTable } from './musing'
 import type { QuestionTable } from './question'
 
+const stage = process.env.SST_STAGE as string
+const isProduction = stage === 'production'
+const isStaging = stage === 'staging'
+const isProductionOrStaging = isProduction || isStaging
+
 const secretsManager = new SecretsManagerClient({
   region: process.env.AWS_REGION || 'us-east-1',
 })
@@ -179,7 +184,7 @@ export const db = new Kysely<Database>({
       user: credentials.username || process.env.POSTGRES_USER,
       password: credentials.password || process.env.POSTGRES_PASSWORD,
       ssl: true,
-      connectionTimeoutMillis: 5000,
+      connectionTimeoutMillis: isProductionOrStaging ? 5000 : 15000,
     }),
   }),
 })
@@ -193,7 +198,7 @@ export const dbReader = new Kysely<Database>({
       user: credentials.username || process.env.POSTGRES_USER,
       password: credentials.password || process.env.POSTGRES_PASSWORD,
       ssl: true,
-      connectionTimeoutMillis: 5000,
+      connectionTimeoutMillis: isProductionOrStaging ? 5000 : 15000,
     }),
   }),
 })

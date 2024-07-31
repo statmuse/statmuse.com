@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { session } from '@lib/stores'
+  import { session, isNativeMobile } from '@lib/stores'
   import { isMobileTest } from '@lib/useragent'
   import { afterUpdate, onMount } from 'svelte'
   import Panel from '@components/panel.svelte'
@@ -24,7 +24,13 @@
   }
 
   const isMobile = isMobileTest(navigator.userAgent)
-  const shouldRender = onlyMobile ? isMobile : onlyDesktop ? !isMobile : true
+  const shouldRender = $isNativeMobile
+    ? false
+    : onlyMobile
+    ? isMobile
+    : onlyDesktop
+    ? !isMobile
+    : true
 
   let container: HTMLElement
   let observer: IntersectionObserver

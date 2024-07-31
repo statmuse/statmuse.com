@@ -116,8 +116,8 @@
   const applyStyles = (col: Column) => {
     const style =
       styles[col.rowItemKey] ||
-      styles[col.rowItemKey.toUpperCase()] ||
-      styles[col.rowItemKey.toLowerCase()] ||
+      styles[col.rowItemKey?.toUpperCase()] ||
+      styles[col.rowItemKey?.toLowerCase()] ||
       styles['default']
     if (/text\-(left|center|right)/.test(style)) {
       return style

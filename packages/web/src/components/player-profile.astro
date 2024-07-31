@@ -133,11 +133,11 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       ['Starts', 'START'],
       {
         label: 'Conv%',
-        value: (v) => formatPercentage(v['CONV%'].value as number, false),
+        value: (v) => formatPercentage(v['CONV%']?.value as number, false),
       },
       {
         label: 'Dribble%',
-        value: (v) => formatPercentage(v['DRIB%'].value as number, false),
+        value: (v) => formatPercentage(v['DRIB%']?.value as number, false),
       },
     ],
     MF: [
@@ -150,7 +150,7 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       'BCC',
       {
         label: 'Pass%',
-        value: (v) => formatPercentage(v['PASS%'].value as number, false),
+        value: (v) => formatPercentage(v['PASS%']?.value as number, false),
       },
     ],
     DF: [
@@ -185,7 +185,7 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
         label: 'Comp Pct',
         value: (v) =>
           formatPercentage(
-            ((v.CMP.value as number) / (v.ATT.value as number)) * 100,
+            ((v.CMP?.value as number) / (v.ATT?.value as number)) * 100,
           ),
       },
       ['Pass Yds', 'YDS'],
@@ -193,7 +193,7 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       {
         label: 'Yds/Pass',
         value: (v) =>
-          formatNumber((v.YDS.value as number) / (v.ATT.value as number)),
+          formatNumber((v.YDS?.value as number) / (v.ATT?.value as number)),
       },
       ['Rating', 'RATE'],
       ['Games', 'GP'],
@@ -212,7 +212,7 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       ['Total TD', 'TD-TOT TD'],
       {
         label: 'Fum (L)',
-        value: (v) => `${v['FUM'].value} (${v['LOST'].value})`,
+        value: (v) => `${v['FUM']?.value} (${v['LOST']?.value})`,
       },
     ],
     WR: [
@@ -234,7 +234,9 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       {
         label: 'TD',
         value: (v) =>
-          `${(v['FR TD'].value as number) + (v['INT TD-TD'].value as number)}`,
+          `${
+            (v['FR TD']?.value as number) + (v['INT TD-TD']?.value as number)
+          }`,
       },
     ],
     OL: [
@@ -263,7 +265,7 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   mlb: {
     DEFAULT: ['HR', 'RBI', 'AVG', 'OBP', 'SLG', 'AB', 'R', 'H', 'BB', 'SB'],
     P: [
-      { label: 'Record', value: (v) => `${v.W.value}-${v.L.value}` },
+      { label: 'Record', value: (v) => `${v.W?.value}-${v.L?.value}` },
       'ERA',
       'SO',
       'BB',
@@ -275,7 +277,7 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       {
         label: 'K/9',
         value: (v) =>
-          formatNumber(((v.SO.value as number) / (v.IP.value as number)) * 9),
+          formatNumber(((v.SO?.value as number) / (v.IP?.value as number)) * 9),
       },
     ],
   },
@@ -358,7 +360,7 @@ const nextGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   mlb: {
     DEFAULT: ['G', 'HR', 'RBI', 'AVG'],
     P: [
-      { label: 'Record', value: (v) => `${v.W.value}-${v.L.value}` },
+      { label: 'Record', value: (v) => `${v.W?.value}-${v.L?.value}` },
       'ERA',
       'SO',
       'BB',
@@ -370,7 +372,7 @@ const nextGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       'GP',
       {
         label: 'W-L-OTL',
-        value: (v) => `${v.W.value}-${v.L.value}-${v.OTL.value}`,
+        value: (v) => `${v.W?.value}-${v.L?.value}-${v.OTL?.value}`,
       },
       'GAA',
       ['SV%', 'SV%'],
@@ -433,8 +435,8 @@ const gamesStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
     DEF: ['SCK', 'TFL', 'INT', 'FF'],
     OL: [['Starts', 'GS']],
     K: [
-      { label: 'FG', value: (v) => `${v.FGM.value}-${v.FGA.value}` },
-      { label: 'XP', value: (v) => `${v.XPM.value}-${v.XPA.value}` },
+      { label: 'FG', value: (v) => `${v.FGM?.value}-${v.FGA?.value}` },
+      { label: 'XP', value: (v) => `${v.XPM?.value}-${v.XPA?.value}` },
       ['Long', 'LNG'],
     ],
     P: [
@@ -452,7 +454,7 @@ const gamesStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
     G: [
       {
         label: 'W-L-OTL',
-        value: (v) => `${v.W.value}-${v.L.value}-${v.OTL.value}`,
+        value: (v) => `${v.W?.value}-${v.L?.value}-${v.OTL?.value}`,
       },
       'GAA',
       ['SV%', 'SV%'],

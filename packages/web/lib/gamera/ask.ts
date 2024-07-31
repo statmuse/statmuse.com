@@ -16,6 +16,10 @@ import type { HeroProps } from '../props'
 import type { Context } from '../session'
 import { clarify } from '@lib/bedrock'
 import { request } from '@lib/gamera/base'
+import {
+  getTeamFranchiseLatestSeason,
+  getTeamSeasonOverview,
+} from '@lib/gamera/teams'
 
 type AskOptions = {
   league?: string
@@ -214,7 +218,10 @@ export const getIsSuperlative = (answer: GameraResponse) => {
   return answer.visual.isSuperlative
 }
 
-export function handleResponse(response: GameraResponse) {
+export async function handleResponse(
+  context: Context,
+  response: GameraResponse,
+) {
   const subject = response.visual.summary.subject
   const conversationToken = response.conversation.token
   if (response.type === 'nlgPromptForMoreInfoVisualChoicesOptional') {
@@ -233,7 +240,24 @@ export function handleResponse(response: GameraResponse) {
     (d) => d.type === 'teamProfile',
   ) as TeamProfileDetail
   if (teamProfile) {
-    redirectUrl = getUrlForEntity(teamProfile.entity)
+    const teamOverview = await getTeamSeasonOverview({
+      context,
+      domain: teamProfile.entity.domain,
+      team: teamProfile.entity.id,
+      year: teamProfile.entity.id,
+    })
+
+    if (teamOverview?.bio.hasStats) {
+      redirectUrl = getUrlForEntity(teamProfile.entity)
+    } else {
+      const team = await getTeamFranchiseLatestSeason({
+        context,
+        domain: teamProfile.entity.domain,
+        teamId: teamProfile.entity.id.split('/')[0],
+      })
+
+      redirectUrl = getUrlForEntity(team?.entity)
+    }
   }
 
   return {

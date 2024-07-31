@@ -42,7 +42,7 @@ export type Musing = InferResult<
   ReturnType<typeof getMusingByIdOrFriendlyId>
 >[number]
 
-export const listLatestMusings = (league?: GameraDomain) => {
+export const listLatestMusings = (league?: GameraDomain, limit = 20) => {
   let query = dbReader
     .selectFrom('musings')
     .innerJoin('links', 'links.musing_id', 'musings.id')
@@ -61,7 +61,7 @@ export const listLatestMusings = (league?: GameraDomain) => {
         eb.cmpr('musings.publish_at', '<=', new Date()),
       ]),
     )
-    .limit(20)
+    .limit(limit)
     .orderBy('musings.publish_at', 'desc')
     .selectAll('musings')
     .select('links.short_code')
@@ -70,7 +70,7 @@ export const listLatestMusings = (league?: GameraDomain) => {
 
 export type LatestMusing = Awaited<ReturnType<typeof listLatestMusings>>[number]
 
-export const listLatestHomeMusings = async () =>
+export const listLatestHomeMusings = async (limit = 25) =>
   dbReader
     .selectFrom((eb) =>
       eb
@@ -95,7 +95,7 @@ export const listLatestHomeMusings = async () =>
         )
         .as('musings_with_row'),
     )
-    .where('musings_with_row.row', '<=', 5)
+    .where('musings_with_row.row', '<=', limit / 5)
     .orderBy('musings_with_row.row')
     .orderBy(
       sql`
@@ -109,6 +109,6 @@ export const listLatestHomeMusings = async () =>
         END
       `,
     )
-    .limit(25)
+    .limit(limit)
     .selectAll()
     .execute()

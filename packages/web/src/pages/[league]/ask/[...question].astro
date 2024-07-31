@@ -39,7 +39,7 @@ if ('redirect' in askResponse) return Astro.redirect(askResponse.redirect)
 const answer = askResponse.response as GameraDefaultResponse
 if (!answer) return NOT_FOUND_404
 
-const { redirectUrl } = handleResponse(answer)
+const { redirectUrl } = await handleResponse(Astro, answer)
 if (redirectUrl) return Astro.redirect(encodeURI(redirectUrl))
 
 const conversationToken = answer.conversation.token
