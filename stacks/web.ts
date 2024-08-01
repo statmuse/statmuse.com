@@ -23,7 +23,6 @@ import {
   ResponseHeadersPolicy,
   ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront'
-import { Auth } from './auth'
 import { Secrets } from './secrets'
 import {
   Architecture,
@@ -41,7 +40,6 @@ import { Duration } from 'aws-cdk-lib/core'
 export function Web({ stack }: StackContext) {
   const dns = use(DNS)
   const api = use(API)
-  const auth = use(Auth)
   const imports = use(Imports)
   const secrets = use(Secrets)
   const analytics = use(AnalyticsProxy)
@@ -134,7 +132,6 @@ export function Web({ stack }: StackContext) {
     timeout: '12 seconds',
     memorySize: '1024 MB',
     bind: [
-      auth,
       api.api,
       secrets.BOTPOISON,
       secrets.JWT_SECRET,
@@ -150,12 +147,10 @@ export function Web({ stack }: StackContext) {
     ],
     environment: {
       ...api.environment,
-      PUBLIC_AUTH_URL: auth.url,
       PUBLIC_API_URL: api.api.customDomainUrl ?? api.api.url,
       PUBLIC_ANALYTICS_CDN_PROXY_URL: analytics.cdnUrl,
       PUBLIC_ANALYTICS_API_PROXY_URL: analytics.apiUrl,
       PUBLIC_STAGE: stack.stage,
-      AUTH_ID: auth.id,
     },
     // regional: { prefetchSecrets: true },
     nodejs: { install: ['pg'], esbuild: { external: ['pg-native', 'sharp'] } },
