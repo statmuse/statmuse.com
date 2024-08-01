@@ -2,16 +2,16 @@
 import MobileLayout from '@layouts/mobile.astro'
 import { Caching } from '@lib/caching'
 import { find } from 'lodash-es'
-import { getTeamCards } from '@lib/related-content'
-import { getPlayerCards } from '@lib/related-content'
-import { getPlayerProfile } from '@lib/player'
+import { getTeamCards } from '@lib/gamera'
+import { getPlayerCards } from '@lib/gamera'
+import { getPlayerProfile } from '@lib/gamera'
 import type {
   GameraDomain,
   GameraPlayerProfileResponse,
 } from '@statmuse/core/gamera'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
-import { getTeamSeasonBio } from '@lib/team'
-import { getStandings } from '@lib/standings'
+import { getTeamSeasonBio } from '@lib/gamera'
+import { getStandings } from '@lib/gamera'
 
 import PlayerPerformanceCard from '@components/player/performance-card.astro'
 import RankingCard from '@components/home/ranking-card.astro'

@@ -23,11 +23,11 @@ import pipe from 'lodash/fp/pipe'
 import reduce from 'lodash/fp/reduce'
 import update from 'lodash/fp/update'
 import type { SeriesOptionsType, SeriesTooltipOptionsObject } from 'highcharts'
-import { getGameraHeaders } from '@lib/gamera'
+import { getGameraHeaders } from '@lib/gamera/base'
 import type { Context } from './session'
 import { clarify } from '@lib/bedrock'
-import { createAskPath } from '@statmuse/core/path'
-import { translate, translateObject } from '@lib/translate'
+// import { createAskPath } from '@statmuse/core/path'
+// import { translate, translateObject } from '@lib/translate'
 
 export const kanedamaApiUrl = import.meta.env.KANEDAMA_API_URL
 
