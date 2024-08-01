@@ -82,7 +82,7 @@ export function Web({ stack }: StackContext) {
           timeout: '1 minute',
           memorySize: '256 MB',
           bind: [secrets.SEGMENT_WRITE_KEY],
-          // prefetchSecrets: true,
+          prefetchSecrets: true,
         },
         cdk: {
           eventSource: {
@@ -152,7 +152,7 @@ export function Web({ stack }: StackContext) {
       PUBLIC_ANALYTICS_API_PROXY_URL: analytics.apiUrl,
       PUBLIC_STAGE: stack.stage,
     },
-    // regional: { prefetchSecrets: true },
+    regional: { prefetchSecrets: true },
     nodejs: { install: ['pg'], esbuild: { external: ['pg-native', 'sharp'] } },
     cdk: {
       server: {
