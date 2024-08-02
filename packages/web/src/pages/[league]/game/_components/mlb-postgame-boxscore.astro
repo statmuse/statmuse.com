@@ -11,13 +11,15 @@ import {
   type MlbGameDataResponse,
   filterScoringPlays,
 } from '@statmuse/core/gamera'
-import { filter, find, orderBy, some } from 'lodash-es'
+import { find, orderBy } from 'lodash-es'
 import PostgameHero from './postgame-hero.astro'
 import GameInfo from './game-info.astro'
 import Schedule from './schedule.astro'
 import Standings from './standings.astro'
 import Linescore from './linescore.svelte'
 import PlayByPlay from './play-by-play.svelte'
+import BattingStats from './batting-stats.svelte'
+import PitchingStats from './pitching-stats.svelte'
 
 interface Props {
   gameData: MlbGameDataResponse
@@ -123,6 +125,30 @@ const scoringInnings = filterScoringPlays(innings)
       homeTeamId={homeTeamModel.teamId}
     />
     <GameInfo {venue} {weather} {officials} />
+  </Fragment>
+  <Fragment slot="away">
+    <BattingStats
+      {playerMap}
+      lineup={awayTeamModel.players}
+      splits={awayTeamModel.stats?.splits}
+    />
+    <PitchingStats
+      {playerMap}
+      lineup={awayTeamModel.players}
+      splits={awayTeamModel.stats?.splits}
+    />
+  </Fragment>
+  <Fragment slot="home">
+    <BattingStats
+      {playerMap}
+      lineup={homeTeamModel.players}
+      splits={homeTeamModel.stats?.splits}
+    />
+    <PitchingStats
+      {playerMap}
+      lineup={homeTeamModel.players}
+      splits={homeTeamModel.stats?.splits}
+    />
   </Fragment>
   <Fragment slot="plays">
     {
