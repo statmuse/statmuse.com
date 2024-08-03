@@ -2,13 +2,31 @@
   import Panel from '@components/panel.svelte'
   import Icon from '@components/icon.svelte'
   import Image from '@components/image.svelte'
-  import type { GameraTeamReference } from '@statmuse/core/gamera'
+  import {
+    type GameraTeamReference,
+    type GameraPlayerReference,
+    type Position,
+    formatMlbPosition,
+  } from '@statmuse/core/gamera'
   import OutsIndicator from './outs-indicator.svelte'
   import AtBatCount from './at-bat-count.svelte'
 
   export let homeTeam: GameraTeamReference
   export let awayTeam: GameraTeamReference
-  // https://cdn.statmuse.com/img/mlb/players/new-york-yankees-aaron-judge2022-min--6erpzlwb.png
+
+  export let awayPlayer: GameraPlayerReference & {
+    handedness: string
+    positions: Position[]
+  }
+  export let homePlayer: GameraPlayerReference & {
+    handedness: string
+    positions: Position[]
+  }
+
+  export let half: 'top' | 'bottom'
+  export let balls: number
+  export let strikes: number
+  export let outs: number
 </script>
 
 <Panel class="!p-0">
@@ -24,11 +42,11 @@
           height={60}
           class="w-6 h-6 object-contain"
         />
-        Batting
+        {half === 'top' ? 'Batting' : 'Pitching'}
       </div>
       <Image
-        src="https://cdn.statmuse.com/img/mlb/players/new-york-yankees-aaron-judge2022-min--6erpzlwb.png"
-        alt="aaron judege"
+        src={awayPlayer.imageUrl}
+        alt={awayPlayer.usedName ?? ''}
         width={120}
         height={90}
         class="h-[75px] max-w-[10 0px] object-contain object-left-bottom"
@@ -36,12 +54,12 @@
     </div>
     <div class="pt-2 flex flex-col items-center">
       <Icon name="baseball-diamond" class="w-14 -mt-1" fillSecondBase />
-      <OutsIndicator class="mb-1" />
-      <AtBatCount />
+      <OutsIndicator class="mb-1" {outs} />
+      <AtBatCount {balls} {strikes} />
     </div>
     <div>
       <div class="flex gap-1 justify-end py-2">
-        Pitching
+        {half === 'bottom' ? 'Batting' : 'Pitching'}
         <Image
           src={homeTeam?.logoImageUrl ?? ''}
           alt={homeTeam?.name ?? ''}
@@ -51,8 +69,8 @@
         />
       </div>
       <Image
-        src="https://cdn.statmuse.com/img/mlb/players/new-york-yankees-aaron-judge2022-min--6erpzlwb.png"
-        alt="aaron judege"
+        src={homePlayer.imageUrl}
+        alt={homePlayer.usedName ?? ''}
         width={120}
         height={90}
         class="h-[75px] max-w-[10 0px] object-contain object-right-bottom"
@@ -62,7 +80,10 @@
   <div class="flex justify-between px-3 py-2">
     <div>
       <p class="text-lg font-semibold leading-none">
-        A. Judge <span class="text-base font-normal text-gray-5">1B</span>
+        {awayPlayer.firstName?.slice(0, 1)}. {awayPlayer.lastName}
+        <span class="text-base font-normal text-gray-5">
+          {formatMlbPosition(awayPlayer.positions, awayPlayer.handedness)}
+        </span>
       </p>
       <div class="flex gap-1.5">
         <p>2-1</p>
@@ -76,7 +97,10 @@
     </div>
     <div class="text-right">
       <p class="text-lg font-semibold leading-none">
-        P. Skenes <span class="text-base font-normal text-gray-5">RHP</span>
+        {homePlayer.firstName?.slice(0, 1)}. {homePlayer.lastName}
+        <span class="text-base font-normal text-gray-5">
+          {formatMlbPosition(homePlayer.positions, homePlayer.handedness)}
+        </span>
       </p>
       <div class="flex gap-1.5">
         <p>

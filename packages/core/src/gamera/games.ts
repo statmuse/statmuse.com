@@ -160,7 +160,7 @@ export const formatMlbPosition = (
   }
 }
 
-interface PlayerGameModel {
+export interface PlayerGameModel {
   playerId: number
   lineup: {
     positions?: Position[]
@@ -170,7 +170,7 @@ interface PlayerGameModel {
   }
 }
 
-interface StatModel {
+export interface StatModel {
   'Pitching-EarnedRunAverage'?: Value<number>
   'Pitching-EarnedRuns'?: Value<number>
   'Pitching-GamesPitched'?: Value<number>

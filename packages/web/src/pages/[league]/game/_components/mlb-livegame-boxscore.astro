@@ -1,8 +1,12 @@
 ---
-import { getGames } from '@lib/gamera'
+import { getGames, getPlayByPlay } from '@lib/gamera'
 import Layout from './layout.astro'
-import type { MlbGameDataResponse } from '@statmuse/core/gamera'
-import { find } from 'lodash-es'
+import type {
+  InningAtBatEvent,
+  InningPlayByPlay,
+  MlbGameDataResponse,
+} from '@statmuse/core/gamera'
+import { find, orderBy } from 'lodash-es'
 import GameInfo from './game-info.astro'
 import Matchup from './matchup.svelte'
 import PitchByPitch from './pitch-by-pitch.svelte'
@@ -12,9 +16,10 @@ import LivegameHero from './livegame-hero.astro'
 
 interface Props {
   gameData: MlbGameDataResponse
+  gameId: string
 }
 
-const { gameData } = Astro.props
+const { gameData, gameId } = Astro.props
 
 const {
   networkName,
@@ -24,12 +29,115 @@ const {
   venue,
   weather,
   officials,
+  players,
 } = gameData
 
-const [homeScores, awayScores] = await Promise.all([
+const [homeScores, awayScores, playByPlay] = await Promise.all([
   getGames({ context: Astro, domain: 'mlb', teamId: homeTeamModel.teamId }),
   getGames({ context: Astro, domain: 'mlb', teamId: awayTeamModel.teamId }),
+  getPlayByPlay({ context: Astro, gameId }),
 ])
+
+const getLatestCount = (innings: InningPlayByPlay[]) => {
+  const latestInning = innings[innings.length - 1]
+
+  const bottomHalf = latestInning.halves[1]
+  const topHalf = latestInning.halves[0]
+
+  let atBatEvents: InningAtBatEvent[] = []
+
+  let half
+
+  if (bottomHalf.events.filter((p) => p.type === 'atBat').length > 0) {
+    atBatEvents = bottomHalf.events.filter((p) => p.type === 'atBat')
+    half = bottomHalf.half
+  } else if (topHalf.events.filter((p) => p.type === 'atBat').length > 0) {
+    atBatEvents = topHalf.events.filter((p) => p.type === 'atBat')
+    half = topHalf.half
+  }
+
+  const lastAtBatEvent = atBatEvents[atBatEvents.length - 1]
+
+  const pitchOrStealEvents = lastAtBatEvent.events.filter(
+    (e) => e.type === 'pitch' || e.type === 'steal',
+  )
+
+  const lastPitchOrCaughtStealing =
+    pitchOrStealEvents[pitchOrStealEvents.length - 1]
+
+  if (!lastPitchOrCaughtStealing) return { half, inning: latestInning.number }
+
+  return {
+    half:
+      half === 'top' && lastPitchOrCaughtStealing.count.outs === 3
+        ? ('mid' as const)
+        : half === 'bottom' && lastPitchOrCaughtStealing.count.outs === 3
+        ? ('end' as const)
+        : half,
+    inning: latestInning.number,
+    ...lastPitchOrCaughtStealing.count,
+  }
+}
+
+const getCurrentMatchup = (innings: InningPlayByPlay[]) => {
+  const latestInning = innings[innings.length - 1]
+
+  const bottomHalf = latestInning.halves[1]
+  const topHalf = latestInning.halves[0]
+
+  let atBatEvents: InningAtBatEvent[] = []
+
+  let half
+
+  if (bottomHalf.events.filter((p) => p.type === 'atBat').length > 0) {
+    atBatEvents = bottomHalf.events.filter((p) => p.type === 'atBat')
+    half = bottomHalf.half
+  } else if (topHalf.events.filter((p) => p.type === 'atBat').length > 0) {
+    atBatEvents = topHalf.events.filter((p) => p.type === 'atBat')
+    half = topHalf.half
+  }
+
+  const lastAtBatEvent = atBatEvents[atBatEvents.length - 1]
+
+  return {
+    half,
+    ...lastAtBatEvent,
+  }
+}
+
+type MatchUp = ReturnType<typeof getCurrentMatchup>
+
+const currentMatchUp = playByPlay
+  ? getCurrentMatchup(playByPlay.innings)
+  : undefined
+const latestCount = playByPlay ? getLatestCount(playByPlay.innings) : undefined
+
+const getPlayerMatchup = (
+  matchupInfo: MatchUp | undefined,
+  team: 'away' | 'home',
+) => {
+  const playerInfo =
+    team === 'away' && matchupInfo?.half === 'top'
+      ? matchupInfo?.batter
+      : team === 'home' && matchupInfo?.half === 'top'
+      ? matchupInfo?.pitcher
+      : team === 'away' && matchupInfo?.half === 'bottom'
+      ? matchupInfo?.pitcher
+      : matchupInfo?.batter
+
+  const player = find(players, { id: playerInfo?.playerId })
+
+  const teamModel = team === 'away' ? awayTeamModel : homeTeamModel
+
+  const positions = find(teamModel.players, { playerId: player?.id })?.lineup
+    .positions
+
+  return {
+    ...player,
+    handedness: playerInfo?.handedness,
+    positions,
+  }
+}
 
 const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
 const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
@@ -39,13 +147,29 @@ const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
   <LivegameHero
     slot="hero"
     network={networkName}
+    awayScore={awayTeamModel.score}
+    homeScore={homeTeamModel.score}
+    {latestCount}
     {awayTeam}
-    {awayScores}
+    awayScores={awayScores && {
+      ...awayScores,
+      games: orderBy(awayScores.games, 'gameDate', 'desc'),
+    }}
     {homeTeam}
-    {homeScores}
+    homeScores={homeScores && {
+      ...homeScores,
+      games: orderBy(homeScores.games, 'gameDate', 'desc'),
+    }}
   />
   <Fragment slot="game">
-    <Matchup client:load {awayTeam} {homeTeam} />
+    <Matchup
+      client:load
+      {awayTeam}
+      {homeTeam}
+      awayPlayer={getPlayerMatchup(currentMatchUp, 'away')}
+      homePlayer={getPlayerMatchup(currentMatchUp, 'home')}
+      {...latestCount}
+    />
     <PitchByPitch client:load />
     <Linescore client:load {awayTeam} {homeTeam} />
     <PlayByPlay />
