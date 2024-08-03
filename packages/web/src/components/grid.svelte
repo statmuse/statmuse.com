@@ -340,7 +340,9 @@
                           <div>{score}</div>
                         </div>
                       {:else}
-                        <div class="flex items-center">
+                        <div
+                          class={position || injured ? 'flex items-center' : ''}
+                        >
                           <span
                             class:hidden={entity?.shortDisplay &&
                               (col.rowItemKey === 'NAME' ||
