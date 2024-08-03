@@ -1,10 +1,12 @@
 ---
 import { getGames, getPlayByPlay } from '@lib/gamera'
 import Layout from './layout.astro'
-import type {
-  InningAtBatEvent,
-  InningPlayByPlay,
-  MlbGameDataResponse,
+import {
+  type InningAtBatEvent,
+  type InningPlayByPlay,
+  type MlbGameDataResponse,
+  type GameraPlayerReference,
+  filterScoringPlays,
 } from '@statmuse/core/gamera'
 import { find, orderBy } from 'lodash-es'
 import GameInfo from './game-info.astro'
@@ -37,6 +39,8 @@ const [homeScores, awayScores, playByPlay] = await Promise.all([
   getGames({ context: Astro, domain: 'mlb', teamId: awayTeamModel.teamId }),
   getPlayByPlay({ context: Astro, gameId }),
 ])
+
+const innings = playByPlay?.innings
 
 const getLatestCount = (innings: InningPlayByPlay[]) => {
   const latestInning = innings[innings.length - 1]
@@ -141,6 +145,13 @@ const getPlayerMatchup = (
 
 const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
 const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
+
+const playerMap = players?.reduce(
+  (acc, p) => ({ ...acc, [p.id]: p }),
+  {} as Record<number, GameraPlayerReference>,
+)
+
+const scoringInnings = filterScoringPlays(innings ?? [])
 ---
 
 <Layout {awayTeam} {homeTeam}>
@@ -171,8 +182,64 @@ const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
       {...latestCount}
     />
     <PitchByPitch client:load />
-    <Linescore client:load {awayTeam} {homeTeam} />
-    <PlayByPlay />
+    <Linescore
+      client:load
+      {awayTeam}
+      {homeTeam}
+      {awayTeamModel}
+      {homeTeamModel}
+    />
+    <Fragment>
+      {
+        scoringInnings?.map((inning) => {
+          const number = inning.number
+          const [topHalf, bottomHalf] = inning.halves
+          return (
+            <Fragment>
+              {topHalf.events.length > 0 && (
+                <PlayByPlay
+                  inningTitle={`Top ${number}`}
+                  inning={topHalf}
+                  {playerMap}
+                  colors={awayTeam?.colors}
+                />
+              )}
+              {bottomHalf.events.length > 0 && (
+                <PlayByPlay
+                  inningTitle={`Bottom ${number}`}
+                  inning={bottomHalf}
+                  {playerMap}
+                  colors={homeTeam?.colors}
+                />
+              )}
+            </Fragment>
+          )
+        })
+      }
+    </Fragment>
     <GameInfo {venue} {weather} {officials} />
+  </Fragment>
+  <Fragment slot="plays">
+    {
+      innings?.map((inning) => {
+        const number = inning.number
+        const [topHalf, bottomHalf] = inning.halves
+
+        return (
+          <Fragment>
+            <PlayByPlay
+              inningTitle={`Top ${number}`}
+              inning={topHalf}
+              {playerMap}
+            />
+            <PlayByPlay
+              inningTitle={`Bottom ${number}`}
+              inning={bottomHalf}
+              {playerMap}
+            />
+          </Fragment>
+        )
+      })
+    }
   </Fragment>
 </Layout>

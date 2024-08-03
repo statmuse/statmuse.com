@@ -6,10 +6,9 @@ import type { GameraTeamReference } from '@statmuse/core/gamera'
 interface Props {
   awayTeam?: GameraTeamReference
   homeTeam?: GameraTeamReference
-  plays?: boolean
 }
 
-const { awayTeam, homeTeam, plays = false } = Astro.props
+const { awayTeam, homeTeam } = Astro.props
 ---
 
 <Base headerClass="!bg-gray-6 dark:!bg-gray-4" renderRightColumn={false}>
@@ -24,7 +23,10 @@ const { awayTeam, homeTeam, plays = false } = Astro.props
     />
   </div>
   <div class:list={['group']}>
-    <div class="flex gap-1.5 my-2" slot="tab-list">
+    <div
+      class="flex gap-1.5 my-2 overflow-x-scroll no-scrollbar -mx-3 px-3"
+      slot="tab-list"
+    >
       <label
         class:list={{
           'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
@@ -67,7 +69,7 @@ const { awayTeam, homeTeam, plays = false } = Astro.props
         {homeTeam?.nickname}
       </label>
       {
-        plays && (
+        Astro.slots.has('plays') && (
           <label
             class:list={{
               'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
@@ -111,7 +113,7 @@ const { awayTeam, homeTeam, plays = false } = Astro.props
       <slot name="home" />
     </div>
     {
-      plays && (
+      Astro.slots.has('plays') && (
         <div class="hidden has-[#plays:checked]:flex flex-col gap-3">
           <input
             class="absolute opacity-0"
