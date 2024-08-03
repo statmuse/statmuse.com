@@ -15,6 +15,8 @@ import PitchByPitch from './pitch-by-pitch.svelte'
 import Linescore from './linescore.svelte'
 import PlayByPlay from './play-by-play.svelte'
 import LivegameHero from './livegame-hero.astro'
+import BattingStats from './batting-stats.svelte'
+import PitchingStats from './pitching-stats.svelte'
 
 interface Props {
   gameData: MlbGameDataResponse
@@ -218,6 +220,46 @@ const scoringInnings = filterScoringPlays(innings ?? [])
       }
     </Fragment>
     <GameInfo {venue} {weather} {officials} />
+  </Fragment>
+  <Fragment slot="away">
+    <Linescore
+      client:load
+      {awayTeam}
+      {homeTeam}
+      {awayTeamModel}
+      {homeTeamModel}
+      displayMatchup
+    />
+    <BattingStats
+      {playerMap}
+      lineup={awayTeamModel.players}
+      splits={awayTeamModel.stats?.splits}
+    />
+    <PitchingStats
+      {playerMap}
+      lineup={awayTeamModel.players}
+      splits={awayTeamModel.stats?.splits}
+    />
+  </Fragment>
+  <Fragment slot="home">
+    <Linescore
+      client:load
+      {awayTeam}
+      {homeTeam}
+      {awayTeamModel}
+      {homeTeamModel}
+      displayMatchup
+    />
+    <BattingStats
+      {playerMap}
+      lineup={homeTeamModel.players}
+      splits={homeTeamModel.stats?.splits}
+    />
+    <PitchingStats
+      {playerMap}
+      lineup={homeTeamModel.players}
+      splits={homeTeamModel.stats?.splits}
+    />
   </Fragment>
   <Fragment slot="plays">
     {
