@@ -138,7 +138,13 @@ export const homeLeadersByDomain = async (props: {
     return playerMapByDomain[props.domain].map((x) => ({
       ...x,
       domain: props.domain,
-      query: `${x.query} ${leaders.seasonYearDisplay}${
+      query: `${x.query}${
+        props.league === 'epl'
+          ? ' in premier league'
+          : props.league === 'lal'
+          ? ' in laliga'
+          : ''
+      } ${leaders.seasonYearDisplay}${
         leaders.seasonType === 'postseason' ? ' postseason' : ''
       }`,
       seasonType: leaders.seasonType,
@@ -290,7 +296,13 @@ export const homeRankingsByDomain = async (props: {
     return teamMapByDomain[props.domain].map((x) => ({
       ...x,
       domain: props.domain,
-      query: `${x.query} ${leaders.seasonYearDisplay}${
+      query: `${x.query}${
+        props.league === 'epl'
+          ? ' in premier league'
+          : props.league === 'lal'
+          ? ' in laliga'
+          : ''
+      } ${leaders.seasonYearDisplay}${
         leaders.seasonType === 'postseason' ? ' postseason' : ''
       }`,
       seasonType: leaders.seasonType,
