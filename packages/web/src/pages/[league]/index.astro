@@ -88,8 +88,6 @@ if (domain !== 'PGA') {
       homeLeadersByDomain({ context: Astro, domain, league: 'lal' }),
       homeRankingsByDomain({ context: Astro, domain, league: 'lal' }),
     ])
-
-    console.log(laligaLeaders)
   }
 
   if (rankings) {
@@ -109,6 +107,29 @@ if (domain !== 'PGA') {
     for (const index in teams) {
       const team = teams[index]
       const rank = rankings[index]
+      if (team && rank) {
+        rank.images = team.teamRepresentatives.map((r) => r.url)
+      }
+    }
+  }
+
+  if (laligaRankings) {
+    const teams = await Promise.all(
+      laligaRankings?.map(
+        (r) =>
+          r &&
+          getTeamSeasonBio({
+            context: Astro,
+            domain: r.teams[0].entity.domain,
+            team: r.teams[0].entity.id,
+            year: r.teams[0].entity.id,
+          }),
+      ),
+    )
+
+    for (const index in teams) {
+      const team = teams[index]
+      const rank = laligaRankings[index]
       if (team && rank) {
         rank.images = team.teamRepresentatives.map((r) => r.url)
       }
