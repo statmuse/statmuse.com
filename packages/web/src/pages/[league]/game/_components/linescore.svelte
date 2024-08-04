@@ -4,11 +4,13 @@
   import Image from '@components/image.svelte'
   import type {
     GameraTeamReference,
+    InningAtBatEvent,
+    Runner,
     TeamGameModel,
   } from '@statmuse/core/gamera'
   import AtBatCount from './at-bat-count.svelte'
   import OutsIndicator from './outs-indicator.svelte'
-  import { max, range } from 'lodash-es'
+  import { max, range, some } from 'lodash-es'
 
   export let awayTeam: GameraTeamReference
   export let homeTeam: GameraTeamReference
@@ -16,6 +18,13 @@
   export let homeTeamModel: TeamGameModel
   export let displayMatchup: boolean = false
   export let final: boolean = false
+
+  export let outs: number
+  export let balls: number
+  export let strikes: number
+  export let runners: Runner[]
+
+  export let atBat: InningAtBatEvent | undefined
 
   const maxInnings = max([
     9,
@@ -117,9 +126,20 @@
         <p>A. Judge</p>
       </div>
       <div class="flex items-center gap-2.5">
-        <AtBatCount indicator />
-        <Icon name="baseball-diamond" class="w-9" fillSecondBase />
-        <OutsIndicator vertical />
+        <AtBatCount
+          {balls}
+          {strikes}
+          pitches={atBat?.events.filter((e) => e.type === 'pitch') ?? []}
+          indicator
+        />
+        <Icon
+          name="baseball-diamond"
+          class="w-9"
+          fillFirstBase={some(runners, (r) => r.startingBase === 1)}
+          fillSecondBase={some(runners, (r) => r.startingBase === 2)}
+          fillThirdBase={some(runners, (r) => r.startingBase === 3)}
+        />
+        <OutsIndicator {outs} vertical />
       </div>
       <div class="text-right">
         <p class="text-gray-5 text-sm">Pitching</p>

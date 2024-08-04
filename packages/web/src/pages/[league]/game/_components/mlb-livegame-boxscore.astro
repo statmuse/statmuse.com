@@ -2,11 +2,15 @@
 import { getGames, getPlayByPlay } from '@lib/gamera'
 import Layout from './layout.astro'
 import {
-  type InningAtBatEvent,
-  type InningPlayByPlay,
   type MlbGameDataResponse,
   type GameraPlayerReference,
   filterScoringPlays,
+  getCurrentHalfInning,
+  getCurrentInningNumber,
+  getCurrentOuts,
+  getCurrentAtBat,
+  getCurrentAtBatCount,
+  getCurrentRunners,
 } from '@statmuse/core/gamera'
 import { find, orderBy } from 'lodash-es'
 import GameInfo from './game-info.astro'
@@ -44,107 +48,6 @@ const [homeScores, awayScores, playByPlay] = await Promise.all([
 
 const innings = playByPlay?.innings
 
-const getLatestCount = (innings: InningPlayByPlay[]) => {
-  const latestInning = innings[innings.length - 1]
-
-  const bottomHalf = latestInning.halves[1]
-  const topHalf = latestInning.halves[0]
-
-  let atBatEvents: InningAtBatEvent[] = []
-
-  let half
-
-  if (bottomHalf.events.filter((p) => p.type === 'atBat').length > 0) {
-    atBatEvents = bottomHalf.events.filter((p) => p.type === 'atBat')
-    half = bottomHalf.half
-  } else if (topHalf.events.filter((p) => p.type === 'atBat').length > 0) {
-    atBatEvents = topHalf.events.filter((p) => p.type === 'atBat')
-    half = topHalf.half
-  }
-
-  const lastAtBatEvent = atBatEvents[atBatEvents.length - 1]
-
-  const pitchOrStealEvents = lastAtBatEvent.events.filter(
-    (e) => e.type === 'pitch' || e.type === 'steal',
-  )
-
-  const lastPitchOrCaughtStealing =
-    pitchOrStealEvents[pitchOrStealEvents.length - 1]
-
-  if (!lastPitchOrCaughtStealing) return { half, inning: latestInning.number }
-
-  return {
-    half:
-      half === 'top' && lastPitchOrCaughtStealing.count.outs === 3
-        ? ('mid' as const)
-        : half === 'bottom' && lastPitchOrCaughtStealing.count.outs === 3
-        ? ('end' as const)
-        : half,
-    inning: latestInning.number,
-    ...lastPitchOrCaughtStealing.count,
-  }
-}
-
-const getCurrentMatchup = (innings: InningPlayByPlay[]) => {
-  const latestInning = innings[innings.length - 1]
-
-  const bottomHalf = latestInning.halves[1]
-  const topHalf = latestInning.halves[0]
-
-  let atBatEvents: InningAtBatEvent[] = []
-
-  let half
-
-  if (bottomHalf.events.filter((p) => p.type === 'atBat').length > 0) {
-    atBatEvents = bottomHalf.events.filter((p) => p.type === 'atBat')
-    half = bottomHalf.half
-  } else if (topHalf.events.filter((p) => p.type === 'atBat').length > 0) {
-    atBatEvents = topHalf.events.filter((p) => p.type === 'atBat')
-    half = topHalf.half
-  }
-
-  const lastAtBatEvent = atBatEvents[atBatEvents.length - 1]
-
-  return {
-    half,
-    ...lastAtBatEvent,
-  }
-}
-
-type MatchUp = ReturnType<typeof getCurrentMatchup>
-
-const currentMatchUp = playByPlay
-  ? getCurrentMatchup(playByPlay.innings)
-  : undefined
-const latestCount = playByPlay ? getLatestCount(playByPlay.innings) : undefined
-
-const getPlayerMatchup = (
-  matchupInfo: MatchUp | undefined,
-  team: 'away' | 'home',
-) => {
-  const playerInfo =
-    team === 'away' && matchupInfo?.half === 'top'
-      ? matchupInfo?.batter
-      : team === 'home' && matchupInfo?.half === 'top'
-      ? matchupInfo?.pitcher
-      : team === 'away' && matchupInfo?.half === 'bottom'
-      ? matchupInfo?.pitcher
-      : matchupInfo?.batter
-
-  const player = find(players, { id: playerInfo?.playerId })
-
-  const teamModel = team === 'away' ? awayTeamModel : homeTeamModel
-
-  const positions = find(teamModel.players, { playerId: player?.id })?.lineup
-    .positions
-
-  return {
-    ...player,
-    handedness: playerInfo?.handedness,
-    positions,
-  }
-}
-
 const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
 const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
 
@@ -154,6 +57,13 @@ const playerMap = players?.reduce(
 )
 
 const scoringInnings = filterScoringPlays(innings ?? [])
+
+const halfInning = getCurrentHalfInning(innings ?? [])
+const inning = getCurrentInningNumber(innings ?? [])
+const outs = getCurrentOuts(innings ?? [])
+const atBat = getCurrentAtBat(innings ?? [])
+const atBatCount = getCurrentAtBatCount(innings ?? [])
+const runners = getCurrentRunners(innings ?? [])
 ---
 
 <Layout {awayTeam} {homeTeam}>
@@ -162,7 +72,9 @@ const scoringInnings = filterScoringPlays(innings ?? [])
     network={networkName}
     awayScore={awayTeamModel.score}
     homeScore={homeTeamModel.score}
-    {latestCount}
+    {inning}
+    halfInning={halfInning?.half ?? 'top'}
+    {outs}
     {awayTeam}
     awayScores={awayScores && {
       ...awayScores,
@@ -179,11 +91,25 @@ const scoringInnings = filterScoringPlays(innings ?? [])
       client:load
       {awayTeam}
       {homeTeam}
-      awayPlayer={getPlayerMatchup(currentMatchUp, 'away')}
-      homePlayer={getPlayerMatchup(currentMatchUp, 'home')}
-      {...latestCount}
+      {awayTeamModel}
+      {homeTeamModel}
+      awayPlayer={playerMap?.[
+        halfInning?.half === 'top'
+          ? atBat?.batter.playerId ?? 0
+          : atBat?.pitcher.playerId ?? 0
+      ] ?? {}}
+      homePlayer={playerMap?.[
+        halfInning?.half === 'bottom'
+          ? atBat?.batter.playerId ?? 0
+          : atBat?.pitcher.playerId ?? 0
+      ] ?? {}}
+      halfInning={halfInning?.half ?? 'top'}
+      {outs}
+      balls={atBatCount.balls}
+      strikes={atBatCount.strikes}
+      {runners}
     />
-    <PitchByPitch client:load />
+    <PitchByPitch client:load {atBat} />
     <Linescore
       client:load
       {awayTeam}
@@ -228,6 +154,11 @@ const scoringInnings = filterScoringPlays(innings ?? [])
       {homeTeam}
       {awayTeamModel}
       {homeTeamModel}
+      {atBat}
+      {outs}
+      {runners}
+      balls={atBatCount.balls}
+      strikes={atBatCount.strikes}
       displayMatchup
     />
     <BattingStats
@@ -248,6 +179,11 @@ const scoringInnings = filterScoringPlays(innings ?? [])
       {homeTeam}
       {awayTeamModel}
       {homeTeamModel}
+      {atBat}
+      {outs}
+      {runners}
+      balls={atBatCount.balls}
+      strikes={atBatCount.strikes}
       displayMatchup
     />
     <BattingStats

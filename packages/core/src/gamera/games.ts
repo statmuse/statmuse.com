@@ -14,7 +14,7 @@ import type {
   GameraGenericGridsDetail,
   Visual,
 } from './answer'
-import { some } from 'lodash-es'
+import { findLast, some, last } from 'lodash-es'
 
 export interface NbaBoxScoreVisual extends Visual {
   domain: 'NBA'
@@ -331,7 +331,7 @@ interface PitchCount {
   outs: number
 }
 
-interface Runner {
+export interface Runner {
   outcomeType:
     | 'steal'
     | 'caughtStealing'
@@ -457,6 +457,66 @@ export const colorPlayOutcome = (pitch: PitchAtBatEvent) => {
   }
 }
 
+export const formatPitchType = (pitch: PitchAtBatEvent) => {
+  switch (pitch.pitchData?.pitchType) {
+    case 'intentionalBall':
+      return 'Intentional Ball'
+    default:
+      return pitch.pitchData?.pitchType ?? ''
+  }
+}
+
+export const formatPitchOutcome = (pitch: PitchAtBatEvent) => {
+  switch (pitch.outcomeType) {
+    case 'catcherInterference':
+      return 'Catcher Interference'
+    case 'dirtBall':
+      return 'Dirt Ball'
+    case 'enforcedBall':
+      return 'Enforced Ball'
+    case 'enforcedStrike':
+      return 'Enforced Strike'
+    case 'fieldersChoice':
+      return 'Fielders Choice'
+    case 'flyOut':
+      return 'Fly Out'
+    case 'groundOut':
+      return 'Ground Out'
+    case 'hitByPitch':
+      return 'Hit By Putch'
+    case 'hitterInterference':
+      return 'Hitter Interence'
+    case 'homeRun':
+      return 'Home Run'
+    case 'intentionalBall':
+      return 'Intentional Ball'
+    case 'intentionalWalk':
+      return 'Intentional Walk'
+    case 'lineOut':
+      return 'Line Out'
+    case 'outOfBattersBox':
+      return 'Out of Batters Box'
+    case 'outOnAppeal':
+      return 'Out On Appeal'
+    case 'popOut':
+      return 'Pop Out'
+    case 'reachedOnError':
+      return 'Reached On Error'
+    case 'rulingPending':
+      return 'Ruling Pending'
+    case 'sacrificeBunt':
+      return 'Sacrifice Bunt'
+    case 'sacrificeFly':
+      return 'Sacrifice Fly'
+    case 'strikeLooking':
+      return 'Strike Looking'
+    case 'strikeSwinging':
+      return 'Strike Swinging'
+    default:
+      return pitch.outcomeType ?? ''
+  }
+}
+
 interface StealAtBatEvent {
   type: 'steal'
   count: PitchCount
@@ -550,4 +610,55 @@ export const filterScoringPlays = (innings: InningPlayByPlay[]) => {
       }),
     }
   })
+}
+
+export const getCurrentInningNumber = (innings: InningPlayByPlay[]) => {
+  return innings.length
+}
+
+export const getCurrentHalfInning = (innings: InningPlayByPlay[]) =>
+  findLast(
+    innings.flatMap((x) => x.halves),
+    (x) => x.events.length > 0,
+  )
+
+export const getCurrentOuts = (innings: InningPlayByPlay[]) => {
+  const inning = getCurrentHalfInning(innings)
+  if (!inning) return 0
+  const lastAtBat = findLast(
+    inning.events,
+    (e) => e.type === 'atBat' && e.events.length > 0,
+  ) as InningAtBatEvent | undefined
+  const lastPitch = last(
+    lastAtBat?.events.filter((e) => e.type === 'pitch' || e.type === 'steal'),
+  )
+  return lastPitch?.count.outs ?? 0
+}
+
+export const getCurrentRunners = (innings: InningPlayByPlay[]) => {
+  const inning = getCurrentHalfInning(innings)
+  if (!inning) return []
+  const lastAtBat = findLast(
+    inning.events,
+    (e) => e.type === 'atBat' && e.events.length > 0,
+  ) as InningAtBatEvent | undefined
+  const lastPitch = last(
+    lastAtBat?.events.filter((e) => e.type === 'pitch' || e.type === 'steal'),
+  )
+  return lastPitch?.runners ?? []
+}
+
+export const getCurrentAtBat = (innings: InningPlayByPlay[]) => {
+  const inning = getCurrentHalfInning(innings)
+  if (!inning) return undefined
+  return findLast(inning.events, (e) => e.type === 'atBat')
+}
+
+export const getCurrentAtBatCount = (innings: InningPlayByPlay[]) => {
+  const atBat = getCurrentAtBat(innings)
+  if (!atBat) return { balls: 0, strikes: 0 }
+  const lastPitch = last(
+    atBat.events.filter((e) => e.type === 'pitch' || e.type === 'steal'),
+  )
+  return lastPitch?.count ?? { balls: 0, strikes: 0 }
 }

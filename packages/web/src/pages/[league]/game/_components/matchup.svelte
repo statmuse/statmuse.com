@@ -5,28 +5,37 @@
   import {
     type GameraTeamReference,
     type GameraPlayerReference,
-    type Position,
+    type Runner,
     formatMlbPosition,
+    type TeamGameModel,
   } from '@statmuse/core/gamera'
   import OutsIndicator from './outs-indicator.svelte'
   import AtBatCount from './at-bat-count.svelte'
+  import { last, some } from 'lodash-es'
 
   export let homeTeam: GameraTeamReference
   export let awayTeam: GameraTeamReference
 
-  export let awayPlayer: GameraPlayerReference & {
-    handedness: string
-    positions: Position[]
-  }
-  export let homePlayer: GameraPlayerReference & {
-    handedness: string
-    positions: Position[]
-  }
+  export let awayTeamModel: TeamGameModel
+  export let homeTeamModel: TeamGameModel
 
-  export let half: 'top' | 'bottom'
+  export let awayPlayer: GameraPlayerReference
+  export let homePlayer: GameraPlayerReference
+
+  export let halfInning: 'top' | 'bottom'
   export let balls: number
   export let strikes: number
   export let outs: number
+  export let runners: Runner[]
+
+  const awayPosition = last(
+    awayTeamModel.players?.find((p) => p.playerId === awayPlayer.id)?.lineup
+      .positions,
+  )
+  const homePosition = last(
+    homeTeamModel.players?.find((p) => p.playerId === homePlayer.id)?.lineup
+      .positions,
+  )
 </script>
 
 <Panel class="!p-0">
@@ -42,7 +51,7 @@
           height={60}
           class="w-6 h-6 object-contain"
         />
-        {half === 'top' ? 'Batting' : 'Pitching'}
+        {halfInning === 'top' ? 'Batting' : 'Pitching'}
       </div>
       <Image
         src={awayPlayer.imageUrl}
@@ -53,13 +62,19 @@
       />
     </div>
     <div class="pt-2 flex flex-col items-center">
-      <Icon name="baseball-diamond" class="w-14 -mt-1" fillSecondBase />
+      <Icon
+        name="baseball-diamond"
+        class="w-14 -mt-1"
+        fillFirstBase={some(runners, (r) => r.endingBase === 1)}
+        fillSecondBase={some(runners, (r) => r.endingBase === 2)}
+        fillThirdBase={some(runners, (r) => r.endingBase === 3)}
+      />
       <OutsIndicator class="mb-1" {outs} />
       <AtBatCount {balls} {strikes} />
     </div>
     <div>
       <div class="flex gap-1 justify-end py-2">
-        {half === 'bottom' ? 'Batting' : 'Pitching'}
+        {halfInning === 'bottom' ? 'Batting' : 'Pitching'}
         <Image
           src={homeTeam?.logoImageUrl ?? ''}
           alt={homeTeam?.name ?? ''}
@@ -80,9 +95,9 @@
   <div class="flex justify-between px-3 py-2">
     <div>
       <p class="text-lg font-semibold leading-none">
-        {awayPlayer.firstName?.slice(0, 1)}. {awayPlayer.lastName}
+        {awayPlayer.entity ? awayPlayer.entity.shortDisplay : ''}
         <span class="text-base font-normal text-gray-5">
-          {formatMlbPosition(awayPlayer.positions, awayPlayer.handedness)}
+          {formatMlbPosition(awayPosition) ?? ''}
         </span>
       </p>
       <div class="flex gap-1.5">
@@ -97,9 +112,9 @@
     </div>
     <div class="text-right">
       <p class="text-lg font-semibold leading-none">
-        {homePlayer.firstName?.slice(0, 1)}. {homePlayer.lastName}
+        {homePlayer.entity ? homePlayer.entity.shortDisplay : ''}
         <span class="text-base font-normal text-gray-5">
-          {formatMlbPosition(homePlayer.positions, homePlayer.handedness)}
+          {formatMlbPosition(homePosition) ?? ''}
         </span>
       </p>
       <div class="flex gap-1.5">

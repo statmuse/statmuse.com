@@ -14,13 +14,11 @@ interface Props {
   homeTeam?: NonNullable<MlbGameDataResponse['teams']>[number]
   awayScores?: GameResultsResponse
   homeScores?: GameResultsResponse
-  latestCount?: {
-    half: string
-    inning: number
-    outs: number
-  }
   awayScore: number
   homeScore: number
+  halfInning: string
+  inning: number
+  outs: number
 }
 
 const getTeamFromGameResult = (
@@ -42,7 +40,9 @@ const {
   homeScores,
   awayScore,
   homeScore,
-  latestCount,
+  halfInning,
+  inning,
+  outs,
 } = Astro.props
 
 const awayTeamRecord = getTeamFromGameResult(
@@ -60,7 +60,7 @@ const homeTeamRecord = getTeamFromGameResult(
     class="h-[45px] flex bg-gray-6 dark:bg-gray-4 px-3 py-2 justify-center relative"
   >
     <p class="text-gray-5 absolute left-3 top-2">{network}</p>
-    <Inning client:load {...latestCount} />
+    <Inning client:load {halfInning} {inning} {outs} />
     <div class="absolute right-3 top-2">
       <Share />
     </div>
