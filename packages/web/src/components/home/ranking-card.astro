@@ -6,6 +6,7 @@ import type { GameraDomain, GameraEntity } from '@statmuse/core/gamera'
 import { createAskPath } from '@statmuse/core/path'
 
 interface Props {
+  domain?: Exclude<GameraDomain, 'PGA'>
   title: string
   sections: {
     title: string
@@ -28,7 +29,8 @@ interface Props {
   leaders?: boolean
 }
 
-const { title, sections, toggleOptions, rankings, leaders } = Astro.props
+const { title, sections, toggleOptions, rankings, leaders, domain } =
+  Astro.props
 ---
 
 <Panel class="!pb-0 group">
@@ -59,8 +61,10 @@ const { title, sections, toggleOptions, rankings, leaders } = Astro.props
                   : ''
               }
               class:list={[
-                'py-1 w-12 relative cursor-pointer',
+                'py-1 relative cursor-pointer',
                 {
+                  'w-12': domain !== 'EPL',
+                  'w-14': domain === 'EPL',
                   'group-has-[#leaders-0:checked]:text-gray-2':
                     index === 0 && leaders,
                   'group-has-[#leaders-1:checked]:text-gray-2':

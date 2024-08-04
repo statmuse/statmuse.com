@@ -218,6 +218,7 @@ const league = Astro.params.league
               />
               {leaders && (
                 <RankingCard
+                  {domain}
                   title={
                     domain &&
                     leaders[0] &&
@@ -249,6 +250,7 @@ const league = Astro.params.league
               )}
               {rankings && (
                 <RankingCard
+                  {domain}
                   title={
                     domain &&
                     rankings[0] &&

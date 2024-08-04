@@ -49,8 +49,10 @@ const toggleTitle = (name: string, domain: GameraDomain) => {
                 <label
                   for={`standings-${index}`}
                   class:list={[
-                    'py-1 w-12 relative cursor-pointer',
+                    'py-1 relative cursor-pointer',
                     {
+                      'w-12': domain !== 'EPL',
+                      'w-14': domain === 'EPL',
                       'group-has-[#standings-0:checked]:text-gray-2':
                         index === 0,
                       'group-has-[#standings-1:checked]:text-gray-2':
