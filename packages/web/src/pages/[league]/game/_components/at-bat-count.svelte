@@ -6,7 +6,7 @@
   export let balls: number
   export let strikes: number
 
-  export let pitches: PitchAtBatEvent[]
+  export let pitches: PitchAtBatEvent[] = []
 
   // bg-red fill-red
   // bg-green fill-green

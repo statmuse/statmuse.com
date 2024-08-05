@@ -125,9 +125,10 @@ export type Position =
   | 'pinchRunner'
 
 export const formatMlbPosition = (
-  position: Position | Position[],
+  position?: Position | Position[],
   handedness?: 'left' | 'right',
 ) => {
+  if (!position) return ''
   const lastPosition = Array.isArray(position)
     ? position[position.length - 1]
     : position

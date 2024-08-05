@@ -19,8 +19,10 @@
   export let awayTeamModel: TeamGameModel
   export let homeTeamModel: TeamGameModel
 
-  export let awayPlayer: GameraPlayerReference
-  export let homePlayer: GameraPlayerReference
+  export let playerMap: Record<number, GameraPlayerReference> | undefined
+
+  export let awayPlayerAb: { playerId: number; handedness: string } | undefined
+  export let homePlayerAb: { playerId: number; handedness: string } | undefined
 
   export let halfInning: 'top' | 'bottom'
   export let balls: number
@@ -28,13 +30,23 @@
   export let outs: number
   export let runners: Runner[]
 
+  const awayPlayer = playerMap?.[awayPlayerAb?.playerId ?? 0]
+  const homePlayer = playerMap?.[homePlayerAb?.playerId ?? 0]
+
   const awayPosition = last(
-    awayTeamModel.players?.find((p) => p.playerId === awayPlayer.id)?.lineup
+    awayTeamModel.players?.find((p) => p.playerId === awayPlayer?.id)?.lineup
       .positions,
   )
   const homePosition = last(
-    homeTeamModel.players?.find((p) => p.playerId === homePlayer.id)?.lineup
+    homeTeamModel.players?.find((p) => p.playerId === homePlayer?.id)?.lineup
       .positions,
+  )
+
+  const awayPlayerStats = awayTeamModel.stats?.splits?.find(
+    (s) => s.playerId === awayPlayer?.id,
+  )
+  const homePlayerStats = homeTeamModel.stats?.splits?.find(
+    (s) => s.playerId === homePlayer?.id,
   )
 </script>
 
@@ -54,8 +66,8 @@
         {halfInning === 'top' ? 'Batting' : 'Pitching'}
       </div>
       <Image
-        src={awayPlayer.imageUrl}
-        alt={awayPlayer.usedName ?? ''}
+        src={awayPlayer?.imageUrl ?? ''}
+        alt={awayPlayer?.usedName ?? ''}
         width={120}
         height={90}
         class="h-[75px] max-w-[10 0px] object-contain object-left-bottom"
@@ -84,8 +96,8 @@
         />
       </div>
       <Image
-        src={homePlayer.imageUrl}
-        alt={homePlayer.usedName ?? ''}
+        src={homePlayer?.imageUrl ?? ''}
+        alt={homePlayer?.usedName ?? ''}
         width={120}
         height={90}
         class="h-[75px] max-w-[10 0px] object-contain object-right-bottom"
@@ -95,41 +107,172 @@
   <div class="flex justify-between px-3 py-2">
     <div>
       <p class="text-lg font-semibold leading-none">
-        {awayPlayer.entity ? awayPlayer.entity.shortDisplay : ''}
+        {awayPlayer?.entity ? awayPlayer.entity.shortDisplay : ''}
         <span class="text-base font-normal text-gray-5">
-          {formatMlbPosition(awayPosition) ?? ''}
+          {formatMlbPosition(awayPosition, awayPlayerAb?.handedness) ?? ''}
         </span>
       </p>
       <div class="flex gap-1.5">
-        <p>2-1</p>
-        <p>
-          1 <span class="text-gray-5">R</span>
-        </p>
-        <p>
-          1 <span class="text-gray-5">H</span>
-        </p>
+        {#if halfInning === 'top'}
+          {#if awayPlayerStats?.stats?.['Batting-AtBats']}
+            <p>
+              {awayPlayerStats?.stats?.['Batting-Hits']
+                ?.display}-{awayPlayerStats?.stats?.['Batting-AtBats'].display}
+            </p>
+          {/if}
+          {#if awayPlayerStats?.stats?.['Batting-Runs']?.value > 0}
+            <p>
+              {awayPlayerStats?.stats?.['Batting-Runs'].display}
+              <span class="text-gray-5">R</span>
+            </p>
+          {/if}
+          {#if awayPlayerStats?.stats?.['Batting-Doubles']?.value > 0}
+            <p>
+              {awayPlayerStats?.stats?.['Batting-Doubles'].display}
+              <span class="text-gray-5">2B</span>
+            </p>
+          {/if}
+          {#if awayPlayerStats?.stats?.['Batting-Triples']?.value > 0}
+            <p>
+              {awayPlayerStats?.stats?.['Batting-Triples'].display}
+              <span class="text-gray-5">3B</span>
+            </p>
+          {/if}
+          {#if awayPlayerStats?.stats?.['Batting-HomeRuns']?.value > 0}
+            <p>
+              {awayPlayerStats?.stats?.['Batting-HomeRuns'].display}
+              <span class="text-gray-5">HR</span>
+            </p>
+          {/if}
+          {#if awayPlayerStats?.stats?.['Batting-RunsBattedIn']?.value > 0}
+            <p>
+              {awayPlayerStats?.stats?.['Batting-RunsBattedIn'].display}
+              <span class="text-gray-5">RBI</span>
+            </p>
+          {/if}
+          {#if awayPlayerStats?.stats?.['Batting-Walks']?.value > 0}
+            <p>
+              {awayPlayerStats?.stats?.['Batting-Walks'].display}
+              <span class="text-gray-5">BB</span>
+            </p>
+          {/if}
+          {#if awayPlayerStats?.stats?.['Batting-Strikeouts']?.value > 0}
+            <p>
+              {awayPlayerStats?.stats?.['Batting-Strikeouts'].display}
+              <span class="text-gray-5">K</span>
+            </p>
+          {/if}
+        {:else}
+          {#if awayPlayerStats?.stats?.['Pitching-InningsPitched']}
+            <p>
+              {awayPlayerStats?.stats?.['Pitching-InningsPitched'].display}
+              <span class="text-gray-5">IP</span>
+            </p>
+          {/if}
+          {#if awayPlayerStats?.stats?.['Pitching-EarnedRuns']}
+            <p>
+              {awayPlayerStats?.stats?.['Pitching-EarnedRuns'].display}
+              <span class="text-gray-5">ER</span>
+            </p>
+          {/if}
+          {#if awayPlayerStats?.stats?.['Pitching-Strikeouts']?.value > 0}
+            <p>
+              {awayPlayerStats?.stats?.['Pitching-Strikeouts'].display}
+              <span class="text-gray-5">K</span>
+            </p>
+          {/if}
+          {#if awayPlayerStats?.stats?.['Pitching-Walks']?.value > 0}
+            <p>
+              {awayPlayerStats?.stats?.['Pitching-Walks'].display}
+              <span class="text-gray-5">BB</span>
+            </p>
+          {/if}
+        {/if}
       </div>
     </div>
     <div class="text-right">
       <p class="text-lg font-semibold leading-none">
-        {homePlayer.entity ? homePlayer.entity.shortDisplay : ''}
+        {homePlayer?.entity ? homePlayer.entity.shortDisplay : ''}
         <span class="text-base font-normal text-gray-5">
-          {formatMlbPosition(homePosition) ?? ''}
+          {formatMlbPosition(homePosition, homePlayerAb?.handedness) ?? ''}
         </span>
       </p>
-      <div class="flex gap-1.5">
-        <p>
-          26 <span class="text-gray-5">P</span>
-        </p>
-        <p>
-          3.1 <span class="text-gray-5">IP</span>
-        </p>
-        <p>
-          2 <span class="text-gray-5">ER</span>
-        </p>
-        <p>
-          4 <span class="text-gray-5">SO</span>
-        </p>
+      <div class="flex gap-1.5 justify-end">
+        {#if halfInning === 'bottom'}
+          {#if homePlayerStats?.stats?.['Batting-AtBats']}
+            <p>
+              {homePlayerStats?.stats?.['Batting-Hits']
+                ?.display}-{homePlayerStats?.stats?.['Batting-AtBats'].display}
+            </p>
+          {/if}
+          {#if homePlayerStats?.stats?.['Batting-Runs']?.value > 0}
+            <p>
+              {homePlayerStats?.stats?.['Batting-Runs'].display}
+              <span class="text-gray-5">R</span>
+            </p>
+          {/if}
+          {#if homePlayerStats?.stats?.['Batting-Doubles']?.value > 0}
+            <p>
+              {homePlayerStats?.stats?.['Batting-Doubles'].display}
+              <span class="text-gray-5">2B</span>
+            </p>
+          {/if}
+          {#if homePlayerStats?.stats?.['Batting-Triples']?.value > 0}
+            <p>
+              {homePlayerStats?.stats?.['Batting-Triples'].display}
+              <span class="text-gray-5">3B</span>
+            </p>
+          {/if}
+          {#if homePlayerStats?.stats?.['Batting-HomeRuns']?.value > 0}
+            <p>
+              {homePlayerStats?.stats?.['Batting-HomeRuns'].display}
+              <span class="text-gray-5">HR</span>
+            </p>
+          {/if}
+          {#if homePlayerStats?.stats?.['Batting-RunsBattedIn']?.value > 0}
+            <p>
+              {homePlayerStats?.stats?.['Batting-RunsBattedIn'].display}
+              <span class="text-gray-5">RBI</span>
+            </p>
+          {/if}
+          {#if homePlayerStats?.stats?.['Batting-Walks']?.value > 0}
+            <p>
+              {homePlayerStats?.stats?.['Batting-Walks'].display}
+              <span class="text-gray-5">BB</span>
+            </p>
+          {/if}
+          {#if homePlayerStats?.stats?.['Batting-Strikeouts']?.value > 0}
+            <p>
+              {homePlayerStats?.stats?.['Batting-Strikeouts'].display}
+              <span class="text-gray-5">K</span>
+            </p>
+          {/if}
+        {:else}
+          {#if homePlayerStats?.stats?.['Pitching-InningsPitched']}
+            <p>
+              {homePlayerStats?.stats?.['Pitching-InningsPitched'].display}
+              <span class="text-gray-5">IP</span>
+            </p>
+          {/if}
+          {#if homePlayerStats?.stats?.['Pitching-EarnedRuns']}
+            <p>
+              {homePlayerStats?.stats?.['Pitching-EarnedRuns'].display}
+              <span class="text-gray-5">ER</span>
+            </p>
+          {/if}
+          {#if homePlayerStats?.stats?.['Pitching-Strikeouts']?.value > 0}
+            <p>
+              {homePlayerStats?.stats?.['Pitching-Strikeouts'].display}
+              <span class="text-gray-5">K</span>
+            </p>
+          {/if}
+          {#if homePlayerStats?.stats?.['Pitching-Walks']?.value > 0}
+            <p>
+              {homePlayerStats?.stats?.['Pitching-Walks'].display}
+              <span class="text-gray-5">BB</span>
+            </p>
+          {/if}
+        {/if}
       </div>
     </div>
   </div>

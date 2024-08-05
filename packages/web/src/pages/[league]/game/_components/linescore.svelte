@@ -3,6 +3,7 @@
   import Icon from '@components/icon.svelte'
   import Image from '@components/image.svelte'
   import type {
+    GameraPlayerReference,
     GameraTeamReference,
     InningAtBatEvent,
     Runner,
@@ -25,6 +26,17 @@
   export let runners: Runner[]
 
   export let atBat: InningAtBatEvent | undefined
+
+  export let playerMap: Record<number, GameraPlayerReference> | undefined
+
+  export let awayPlayerAb: { playerId: number; handedness: string } | undefined
+  export let homePlayerAb: { playerId: number; handedness: string } | undefined
+
+  export let halfInning: 'top' | 'bottom'
+  export let currentInning: number
+
+  const awayPlayer = playerMap?.[awayPlayerAb?.playerId ?? 0]
+  const homePlayer = playerMap?.[homePlayerAb?.playerId ?? 0]
 
   const maxInnings = max([
     9,
@@ -78,15 +90,47 @@
       {#each range(maxInnings ?? 9) as inning (inning)}
         <div class="text-gray-5 px-1.5">
           <p>{inning + 1}</p>
-          <p>
-            {awayTeamModel?.lineScore[inning] !== undefined
-              ? awayTeamModel?.lineScore[inning].runs
-              : ''}
+          <p
+            class:relative={inning + 1 === currentInning &&
+              halfInning === 'top'}
+          >
+            {#if inning + 1 === currentInning && halfInning === 'top'}
+              <div
+                class="w-6 h-6 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                style={`background: ${awayTeam.colors.backgroundColor}`}
+              ></div>
+            {/if}
+            <span
+              class="relative"
+              style={inning + 1 === currentInning && halfInning === 'top'
+                ? `color: ${awayTeam.colors.foregroundColor}`
+                : ''}
+            >
+              {awayTeamModel?.lineScore[inning] !== undefined
+                ? awayTeamModel?.lineScore[inning].runs
+                : ''}
+            </span>
           </p>
-          <p>
-            {homeTeamModel?.lineScore[inning] !== undefined
-              ? homeTeamModel?.lineScore[inning].runs
-              : ''}
+          <p
+            class:relative={inning + 1 === currentInning &&
+              halfInning === 'bottom'}
+          >
+            {#if inning + 1 === currentInning && halfInning === 'bottom'}
+              <div
+                class="w-6 h-6 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                style={`background: ${homeTeam.colors.backgroundColor}`}
+              ></div>
+            {/if}
+            <span
+              class="relative"
+              style={inning + 1 === currentInning && halfInning === 'bottom'
+                ? `color: ${homeTeam.colors.foregroundColor}`
+                : ''}
+            >
+              {homeTeamModel?.lineScore[inning] !== undefined
+                ? homeTeamModel?.lineScore[inning].runs
+                : ''}
+            </span>
           </p>
         </div>
       {/each}
@@ -122,8 +166,10 @@
       class="px-3 py-2 flex items-center justify-between border-t border-gray-6 dark:border-gray-4"
     >
       <div>
-        <p class="text-gray-5 text-sm">Batting</p>
-        <p>A. Judge</p>
+        <p class="text-gray-5 text-sm">
+          {halfInning === 'top' ? 'Batting' : 'Pitching'}
+        </p>
+        <p>{awayPlayer?.entity.shortDisplay}</p>
       </div>
       <div class="flex items-center gap-2.5">
         <AtBatCount
@@ -135,15 +181,17 @@
         <Icon
           name="baseball-diamond"
           class="w-9"
-          fillFirstBase={some(runners, (r) => r.startingBase === 1)}
-          fillSecondBase={some(runners, (r) => r.startingBase === 2)}
-          fillThirdBase={some(runners, (r) => r.startingBase === 3)}
+          fillFirstBase={some(runners, (r) => r.endingBase === 1)}
+          fillSecondBase={some(runners, (r) => r.endingBase === 2)}
+          fillThirdBase={some(runners, (r) => r.endingBase === 3)}
         />
         <OutsIndicator {outs} vertical />
       </div>
       <div class="text-right">
-        <p class="text-gray-5 text-sm">Pitching</p>
-        <p>P. Skenes</p>
+        <p class="text-gray-5 text-sm">
+          {halfInning === 'bottom' ? 'Batting' : 'Pitching'}
+        </p>
+        <p>{homePlayer?.entity.shortDisplay}</p>
       </div>
     </div>
   {/if}

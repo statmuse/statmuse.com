@@ -9,8 +9,6 @@
 
   export let atBat: InningAtBatEvent
 
-  console.log(atBat)
-
   const pitches = atBat.events.filter((e) => e.type === 'pitch')
 </script>
 

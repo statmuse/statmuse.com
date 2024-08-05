@@ -13,8 +13,11 @@
     playerId: number
     stats?: StatModel
   }[] = []
-  export let playerMap: Record<number, GameraPlayerReference> = {}
+  export let playerMap: Record<number, GameraPlayerReference> | undefined
   export let lineup: PlayerGameModel[] = []
+  export let playerAb: { playerId: number; handedness: string } | undefined
+
+  const higlightPlayer = playerMap?.[playerAb?.playerId ?? 0]
 
   const columns = [
     {
@@ -74,7 +77,7 @@
     ['lineup.battingOrder', 'lineup.battingOrderSequence'],
   )
     .map((p) => {
-      const player = playerMap[p.playerId]
+      const player = playerMap?.[p.playerId]
       const playerStats = find(splits, { playerId: p.playerId })
 
       if (player && playerStats) {
@@ -86,8 +89,6 @@
             position: p.lineup.positions
               ?.map((x) => formatMlbPosition(x))
               .join('-'),
-            imageUrl:
-              p.lineup.battingOrderSequence === 1 ? player.imageUrl : undefined,
           },
           AB: playerStats.stats?.['Batting-AtBats'],
           R: playerStats.stats?.['Batting-Runs'],
@@ -106,43 +107,49 @@
   const doubles = splits
     .filter((s) => s.stats?.['Batting-Doubles']?.value > 0)
     .map((s) => {
-      const player = playerMap[s.playerId]
+      const player = playerMap?.[s.playerId]
       return {
-        name: player.entity.shortDisplay,
+        name: player?.entity.shortDisplay,
         total: s.stats?.['Batting-Doubles']?.value,
       }
     })
   const triples = splits
     .filter((s) => s.stats?.['Batting-Triples']?.value > 0)
     .map((s) => {
-      const player = playerMap[s.playerId]
+      const player = playerMap?.[s.playerId]
       return {
-        name: player.entity.shortDisplay,
+        name: player?.entity.shortDisplay,
         total: s.stats?.['Batting-Triples']?.value,
       }
     })
   const homeRun = splits
     .filter((s) => s.stats?.['Batting-HomeRuns']?.value > 0)
     .map((s) => {
-      const player = playerMap[s.playerId]
+      const player = playerMap?.[s.playerId]
       return {
-        name: player.entity.shortDisplay,
+        name: player?.entity.shortDisplay,
         total: s.stats?.['Batting-HomeRuns']?.value,
       }
     })
   const rbis = splits
     .filter((s) => s.stats?.['Batting-RunsBattedIn']?.value > 0)
     .map((s) => {
-      const player = playerMap[s.playerId]
+      const player = playerMap?.[s.playerId]
       return {
-        name: player.entity.shortDisplay,
+        name: player?.entity.shortDisplay,
         total: s.stats?.['Batting-RunsBattedIn']?.value,
       }
     })
 </script>
 
 <div class="space-y-3">
-  <Grid data={{ columns, rows }} stickyColumns={['NAME']} />
+  <Grid
+    data={{ columns, rows }}
+    stickyColumns={['NAME']}
+    highlight={higlightPlayer
+      ? { [higlightPlayer.usedName ?? '']: higlightPlayer.colors }
+      : undefined}
+  />
 
   <div class="text-sm">
     <p class="mb-1.5">Batting</p>

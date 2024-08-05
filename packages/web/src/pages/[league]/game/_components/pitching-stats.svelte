@@ -77,7 +77,6 @@
             display: player.usedName,
             value: player.usedName,
             entity: player.entity,
-            imageUrl: player.imageUrl,
             position: p.lineup.pitchingSequence === 1 ? 'SP' : undefined,
           },
           IP: playerStats.stats?.['Pitching-InningsPitched'],

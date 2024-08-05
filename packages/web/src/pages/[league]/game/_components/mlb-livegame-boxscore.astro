@@ -64,6 +64,11 @@ const outs = getCurrentOuts(innings ?? [])
 const atBat = getCurrentAtBat(innings ?? [])
 const atBatCount = getCurrentAtBatCount(innings ?? [])
 const runners = getCurrentRunners(innings ?? [])
+
+const matchUp = {
+  awayPlayer: halfInning?.half === 'top' ? atBat?.batter : atBat?.pitcher,
+  homePlayer: halfInning?.half === 'bottom' ? atBat?.batter : atBat?.pitcher,
+}
 ---
 
 <Layout {awayTeam} {homeTeam}>
@@ -93,16 +98,9 @@ const runners = getCurrentRunners(innings ?? [])
       {homeTeam}
       {awayTeamModel}
       {homeTeamModel}
-      awayPlayer={playerMap?.[
-        halfInning?.half === 'top'
-          ? atBat?.batter.playerId ?? 0
-          : atBat?.pitcher.playerId ?? 0
-      ] ?? {}}
-      homePlayer={playerMap?.[
-        halfInning?.half === 'bottom'
-          ? atBat?.batter.playerId ?? 0
-          : atBat?.pitcher.playerId ?? 0
-      ] ?? {}}
+      {playerMap}
+      awayPlayerAb={matchUp.awayPlayer}
+      homePlayerAb={matchUp.homePlayer}
       halfInning={halfInning?.half ?? 'top'}
       {outs}
       balls={atBatCount.balls}
@@ -116,6 +114,8 @@ const runners = getCurrentRunners(innings ?? [])
       {homeTeam}
       {awayTeamModel}
       {homeTeamModel}
+      currentInning={inning}
+      halfInning={halfInning?.half ?? 'top'}
     />
     <Fragment>
       {
@@ -157,6 +157,11 @@ const runners = getCurrentRunners(innings ?? [])
       {atBat}
       {outs}
       {runners}
+      {playerMap}
+      awayPlayerAb={matchUp.awayPlayer}
+      homePlayerAb={matchUp.homePlayer}
+      halfInning={halfInning?.half ?? 'top'}
+      currentInning={inning}
       balls={atBatCount.balls}
       strikes={atBatCount.strikes}
       displayMatchup
@@ -165,6 +170,7 @@ const runners = getCurrentRunners(innings ?? [])
       {playerMap}
       lineup={awayTeamModel.players}
       splits={awayTeamModel.stats?.splits}
+      playerAb={matchUp.awayPlayer}
     />
     <PitchingStats
       {playerMap}
@@ -182,6 +188,11 @@ const runners = getCurrentRunners(innings ?? [])
       {atBat}
       {outs}
       {runners}
+      {playerMap}
+      awayPlayerAb={matchUp.awayPlayer}
+      homePlayerAb={matchUp.homePlayer}
+      halfInning={halfInning?.half ?? 'top'}
+      currentInning={inning}
       balls={atBatCount.balls}
       strikes={atBatCount.strikes}
       displayMatchup
@@ -190,6 +201,7 @@ const runners = getCurrentRunners(innings ?? [])
       {playerMap}
       lineup={homeTeamModel.players}
       splits={homeTeamModel.stats?.splits}
+      playerAb={matchUp.homePlayer}
     />
     <PitchingStats
       {playerMap}
