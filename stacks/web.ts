@@ -36,6 +36,7 @@ import { Trending } from './trending'
 import { ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53'
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets'
 import { Duration } from 'aws-cdk-lib/core'
+import { Realtime } from './realtime'
 
 export function Web({ stack }: StackContext) {
   const dns = use(DNS)
@@ -44,6 +45,7 @@ export function Web({ stack }: StackContext) {
   const secrets = use(Secrets)
   const analytics = use(AnalyticsProxy)
   const trending = use(Trending)
+  const realtime = use(Realtime)
 
   const isProd = stack.stage === 'production'
 
@@ -151,6 +153,7 @@ export function Web({ stack }: StackContext) {
       PUBLIC_ANALYTICS_CDN_PROXY_URL: analytics.cdnUrl,
       PUBLIC_ANALYTICS_API_PROXY_URL: analytics.apiUrl,
       PUBLIC_STAGE: stack.stage,
+      PUBLIC_IOT_HOST: realtime.endpointAddress,
     },
     regional: { prefetchSecrets: true },
     nodejs: { install: ['pg'], esbuild: { external: ['pg-native', 'sharp'] } },

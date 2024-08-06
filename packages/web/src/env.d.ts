@@ -11,6 +11,7 @@ interface ImportMetaEnv {
   readonly PUBLIC_ANALYTICS_CDN_PROXY_URL: string
   readonly PUBLIC_STAGE: string
   readonly ANSWER_CARDS_ENABLED: string
+  readonly PUBLIC_IOT_HOST: string
 }
 
 interface ImportMeta {
@@ -23,7 +24,7 @@ declare namespace App {
     visitor: import('@statmuse/core/visitor').Visitor
     user?: import('@statmuse/core/user').User
     subscribed: boolean
-    platform: "web" | "native"
+    platform: 'web' | 'native'
     trendingData?: import('./types').TrendingItem
   }
 }
