@@ -7,6 +7,7 @@ import { Secrets } from './stacks/secrets'
 import { AnalyticsProxy } from './stacks/analytics-proxy'
 import { RedirectMoney } from './stacks/redirect'
 import { Trending } from './stacks/trending'
+import { GameEventBus } from './stacks/game-event-bus'
 
 export default {
   config(_input) {
@@ -36,5 +37,6 @@ export default {
       .stack(RedirectMoney)
       .stack(Trending)
       .stack(Web)
+      .stack(GameEventBus)
   },
 } satisfies SSTConfig
