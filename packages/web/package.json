@@ -20,6 +20,7 @@
     "@astrojs/tailwind": "5.1.0",
     "@aws-sdk/client-bedrock-runtime": "^3.525.0",
     "@aws-sdk/client-dynamodb": "^3.499.0",
+    "@aws-sdk/client-iot-data-plane": "^3.624.0",
     "@aws-sdk/client-secrets-manager": "^3.354.0",
     "@aws-sdk/client-sesv2": "^3.391.0",
     "@aws-sdk/client-translate": "^3.529.1",
