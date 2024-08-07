@@ -13,6 +13,7 @@ export const getPlayerCards = async (props: {
   domain: string
   teamId?: string | number
   seasonYear?: number
+  league?: 'epl' | 'lal'
 }) => {
   try {
     const { context, domain, ...params } = props
@@ -30,6 +31,7 @@ export const getTeamCards = async (props: {
   context: Context
   domain: string
   teamId?: number
+  league?: 'epl' | 'lal'
 }) => {
   try {
     const { context, domain, ...params } = props
