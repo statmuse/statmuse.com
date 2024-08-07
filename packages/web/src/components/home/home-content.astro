@@ -27,8 +27,8 @@ interface Props {
   domain?: GameraDomain
   musings?: LatestMusing[]
   profile?: GameraPlayerProfileResponse
-  leaders?: PlayerLeadersResponse
-  rankings?: TeamRankingsResponse
+  leaders?: PlayerLeadersResponse[]
+  rankings?: TeamRankingsResponse[]
   betting?: TeamRankingsResponse
   standings?: GetStandingsResponse | [GetStandingsResponse]
   trendingPlayers?: TrendingItem['datasets'][number]
@@ -151,13 +151,14 @@ const league = Astro.params.league
                   client:load
                   options={standings.map((s) => ({
                     value: s?.domain.toLowerCase(),
-                    label: s?.domain === 'EPL' ? 'PL' : s?.domain,
+                    label: s?.domain === 'EPL' ? 'FC' : s?.domain,
                   }))}
                   toggle={{
                     nba: ['East', 'West'],
                     nfl: ['AFC', 'NFC'],
                     nhl: ['East', 'West'],
                     mlb: ['AL', 'NL'],
+                    epl: ['PL', 'LaLiga'],
                   }}
                 >
                   {standings[0] && (
@@ -217,45 +218,67 @@ const league = Astro.params.league
               />
               {leaders && (
                 <RankingCard
+                  {domain}
                   title={
-                    domain && leaders[0].seasonType === 'postseason'
+                    domain &&
+                    leaders[0] &&
+                    leaders[0][0]?.seasonType === 'postseason'
                       ? 'Playoff Leaders'
                       : 'League Leaders'
                   }
-                  sections={leaders.map((leader) => ({
-                    title: leader.title,
-                    domain: leader.domain,
-                    query: leader.query,
-                    items: leader.players.map((player) => ({
-                      display: player.usedName,
-                      stat: player.statDisplayValue,
-                      imageUrl: player.imageUrl,
-                      entity: player.entity,
-                      colors: player.colors,
+                  toggleOptions={
+                    leaders.length > 1 && domain === 'EPL'
+                      ? ['PL', 'LaLiga']
+                      : undefined
+                  }
+                  leaders
+                  sections={leaders.map((collection) =>
+                    collection.map((leader) => ({
+                      title: leader.title,
+                      domain: leader.domain,
+                      query: leader.query,
+                      items: leader.players.map((player) => ({
+                        display: player.usedName,
+                        stat: player.statDisplayValue,
+                        imageUrl: player.imageUrl,
+                        entity: player.entity,
+                        colors: player.colors,
+                      })),
                     })),
-                  }))}
+                  )}
                 />
               )}
               {rankings && (
                 <RankingCard
+                  {domain}
                   title={
-                    domain && rankings[0].seasonType === 'postseason'
+                    domain &&
+                    rankings[0] &&
+                    rankings[0][0]?.seasonType === 'postseason'
                       ? 'Playoff Rankings'
                       : 'League Rankings'
                   }
-                  sections={rankings.map((ranking) => ({
-                    title: ranking.title,
-                    domain: ranking.domain,
-                    query: ranking.query,
-                    images: ranking.images,
-                    items: ranking.teams.map((team) => ({
-                      display: team.nickname,
-                      stat: team.statDisplayValue,
-                      imageUrl: team.logoImageUrl,
-                      entity: team.entity,
-                      colors: team.colors,
+                  toggleOptions={
+                    rankings.length > 1 && domain === 'EPL'
+                      ? ['PL', 'LaLiga']
+                      : undefined
+                  }
+                  rankings
+                  sections={rankings.map((collection) =>
+                    collection.map((ranking) => ({
+                      title: ranking.title,
+                      domain: ranking.domain,
+                      query: ranking.query,
+                      images: ranking.images,
+                      items: ranking.teams.map((team) => ({
+                        display: team.nickname,
+                        stat: team.statDisplayValue,
+                        imageUrl: team.logoImageUrl,
+                        entity: team.entity,
+                        colors: team.colors,
+                      })),
                     })),
-                  }))}
+                  )}
                 />
               )}
               <AditudeAdBanner
@@ -270,19 +293,21 @@ const league = Astro.params.league
               {betting && (
                 <RankingCard
                   title="Betting Trends"
-                  sections={betting.map((section) => ({
-                    title: section.title,
-                    domain: section.domain,
-                    query: section.query,
-                    images: section.images,
-                    items: section.teams.map((team) => ({
-                      display: team.nickname,
-                      stat: team.statDisplayValue,
-                      imageUrl: team.logoImageUrl,
-                      entity: team.entity,
-                      colors: team.colors,
+                  sections={[
+                    betting.map((section) => ({
+                      title: section.title,
+                      domain: section.domain,
+                      query: section.query,
+                      images: section.images,
+                      items: section.teams.map((team) => ({
+                        display: team.nickname,
+                        stat: team.statDisplayValue,
+                        imageUrl: team.logoImageUrl,
+                        entity: team.entity,
+                        colors: team.colors,
+                      })),
                     })),
-                  }))}
+                  ]}
                 />
               )}
               <div>

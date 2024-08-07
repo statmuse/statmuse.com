@@ -13,13 +13,15 @@ interface Props {
   response?: PlayerCardResponse
   mlbBatting?: boolean
   mlbPitching?: boolean
+  soccerLeague?: 'epl' | 'lal'
   adSlot?: {
     divId: string
     slotId: string
   }
 }
 
-const { domain, response, mlbBatting, mlbPitching, adSlot } = Astro.props
+const { domain, response, mlbBatting, mlbPitching, adSlot, soccerLeague } =
+  Astro.props
 
 if (!response || response.cards.length === 0) return undefined
 
@@ -350,12 +352,24 @@ const askLink = (
     case 'mostGoals':
       return createAskPath({
         domain: league,
-        query: `goal leaders ${year}${postseason}`,
+        query: `goal leaders ${
+          soccerLeague === 'epl'
+            ? 'in the PL '
+            : soccerLeague === 'lal'
+            ? 'in LaLiga '
+            : ''
+        }${year}${postseason}`,
       })
     case 'mostAssists':
       return createAskPath({
         domain: league,
-        query: `assist leaders ${year}${postseason}`,
+        query: `assist leaders ${
+          soccerLeague === 'epl'
+            ? 'in the PL '
+            : soccerLeague === 'lal'
+            ? 'in LaLiga '
+            : ''
+        }${year}${postseason}`,
       })
     case 'mostPoints':
       return createAskPath({
@@ -479,39 +493,60 @@ const askLink = (
         }`,
       })
     // EPL Player
-    case 'mostGoals':
-      return createAskPath({
-        domain: league,
-        query: `goal leaders ${year}${postseason}`,
-      })
-    case 'mostAssists':
-      return createAskPath({
-        domain: league,
-        query: `assist leaders ${year}${postseason}`,
-      })
+    // case 'mostGoals':
+    //   return createAskPath({
+    //     domain: league,
+    //     query: `goal leaders ${year}${postseason}`,
+    //   })
+    // case 'mostAssists':
+    //   return createAskPath({
+    //     domain: league,
+    //     query: `assist leaders ${year}${postseason}`,
+    //   })
     case 'mostShotsOnTarget':
       return createAskPath({
         domain: league,
-        query: `shots on target leaders ${year}${postseason}`,
+        query: `shots on target leaders ${
+          soccerLeague === 'epl'
+            ? 'in the PL '
+            : soccerLeague === 'lal'
+            ? 'in LaLiga '
+            : ''
+        }${year}${postseason}`,
       })
     case 'mostBigChancesCreated':
       return createAskPath({
         domain: league,
-        query: `big chances created leaders ${year}${
-          season === 'postseason' ? ' postseason' : ''
-        }`,
+        query: `big chances created leaders ${
+          soccerLeague === 'epl'
+            ? 'in the PL '
+            : soccerLeague === 'lal'
+            ? 'in LaLiga '
+            : ''
+        }${year}${season === 'postseason' ? ' postseason' : ''}`,
       })
     case 'mostCleanSheets':
       return createAskPath({
         domain: league,
-        query: `clean sheet leaders ${year}${postseason}`,
+        query: `clean sheet leaders ${
+          soccerLeague === 'epl'
+            ? 'in the PL '
+            : soccerLeague === 'lal'
+            ? 'in LaLiga '
+            : ''
+        }${year}${postseason}`,
       })
     default:
       return stat
   }
 }
 
-const domainDisplay = domain === 'EPL' ? 'PL' : domain
+const domainDisplay =
+  domain === 'EPL' && soccerLeague === 'epl'
+    ? 'PL'
+    : domain === 'EPL' && soccerLeague === 'lal'
+    ? 'LaLiga'
+    : domain
 const title = `${domainDisplay} ${response.seasonYearDisplay} ${
   mlbBatting ? 'Batting ' : mlbPitching ? 'Pitching ' : ''
 }Leaders`

@@ -99,6 +99,19 @@ export const getPositionName = (bio: GameraPlayerBio) => {
     }
   }
 
+  if (bio.domain === 'EPL') {
+    switch (bio.position) {
+      case 'GK':
+        return 'Goalkeeper'
+      case 'DF':
+        return 'Defender'
+      case 'MF':
+        return 'Midfielder'
+      case 'FW':
+        return 'Forward'
+    }
+  }
+
   return bio.position
 }
 

@@ -4,7 +4,6 @@ import { Web } from './stacks/web'
 import { DNS } from './stacks/dns'
 import { Imports } from './stacks/imports'
 import { Secrets } from './stacks/secrets'
-import { Auth } from './stacks/auth'
 import { AnalyticsProxy } from './stacks/analytics-proxy'
 import { RedirectMoney } from './stacks/redirect'
 import { Trending } from './stacks/trending'
@@ -33,7 +32,6 @@ export default {
       .stack(Secrets)
       .stack(DNS)
       .stack(API)
-      .stack(Auth)
       .stack(AnalyticsProxy)
       .stack(RedirectMoney)
       .stack(Trending)

@@ -32,11 +32,11 @@ const league = Astro.params.league as LeagueParam
 const domain = leagueToDomain(league)
 
 const meta = {
-  title: `${league === 'fc' ? 'Premier League' : league.toUpperCase()} Stats`,
+  title: `${league === 'fc' ? 'FC' : league.toUpperCase()} Stats`,
   description:
     league === 'fc' || league === 'pga'
       ? `Instant answers to your ${
-          league === 'pga' ? league.toUpperCase() : 'Premier League'
+          league === 'pga' ? league.toUpperCase() : 'Premier League and LaLiga'
         } questions. Stats, scores, bios, records and more — just ask.`
       : `Instant answers to your ${league.toUpperCase()} questions. Stats, scores, bios, records, odds and more — just ask.`,
   facebook: {
@@ -56,6 +56,8 @@ const meta = {
 let musings: LatestMusing[] | undefined
 let leaders: PlayerLeadersResponse
 let rankings: TeamRankingsResponse | undefined
+let laligaLeaders: PlayerLeadersResponse
+let laligaRankings: TeamRankingsResponse | undefined
 let trendingSearches: TrendingItem['datasets'][number] | undefined
 let trendingPlayers: TrendingItem['datasets'][number] | undefined
 let trendingTeams: TrendingItem['datasets'][number] | undefined
@@ -67,11 +69,26 @@ let trendingData: TrendingItem | undefined
 if (domain !== 'PGA') {
   ;[musings, leaders, rankings, betting, standings] = await Promise.all([
     listLatestMusings(domain),
-    homeLeadersByDomain({ context: Astro, domain }),
-    homeRankingsByDomain({ context: Astro, domain }),
+    homeLeadersByDomain({
+      context: Astro,
+      domain,
+      ...(league === 'fc' ? { league: 'epl' } : {}),
+    }),
+    homeRankingsByDomain({
+      context: Astro,
+      domain,
+      ...(league === 'fc' ? { league: 'epl' } : {}),
+    }),
     homeBettingByDomain({ context: Astro, domain }),
     getStandings({ context: Astro, domain }),
   ])
+
+  if (league === 'fc') {
+    ;[laligaLeaders, laligaRankings] = await Promise.all([
+      homeLeadersByDomain({ context: Astro, domain, league: 'lal' }),
+      homeRankingsByDomain({ context: Astro, domain, league: 'lal' }),
+    ])
+  }
 
   if (rankings) {
     const teams = await Promise.all(
@@ -90,6 +107,29 @@ if (domain !== 'PGA') {
     for (const index in teams) {
       const team = teams[index]
       const rank = rankings[index]
+      if (team && rank) {
+        rank.images = team.teamRepresentatives.map((r) => r.url)
+      }
+    }
+  }
+
+  if (laligaRankings) {
+    const teams = await Promise.all(
+      laligaRankings?.map(
+        (r) =>
+          r &&
+          getTeamSeasonBio({
+            context: Astro,
+            domain: r.teams[0].entity.domain,
+            team: r.teams[0].entity.id,
+            year: r.teams[0].entity.id,
+          }),
+      ),
+    )
+
+    for (const index in teams) {
+      const team = teams[index]
+      const rank = laligaRankings[index]
       if (team && rank) {
         rank.images = team.teamRepresentatives.map((r) => r.url)
       }
@@ -147,8 +187,16 @@ Caching.swr(Astro)
     {domain}
     {musings}
     {profile}
-    {leaders}
-    {rankings}
+    leaders={laligaLeaders && leaders
+      ? [leaders, laligaLeaders]
+      : leaders
+      ? [leaders]
+      : undefined}
+    rankings={laligaRankings && rankings
+      ? [rankings, laligaRankings]
+      : rankings
+      ? [rankings]
+      : undefined}
     {betting}
     {standings}
     {trendingPlayers}

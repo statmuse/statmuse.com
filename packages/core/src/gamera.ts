@@ -1448,9 +1448,6 @@ export interface StandingsBase {
   conference?: {
     name: string
   }
-  league?: {
-    name: string
-  }
   division: {
     name: string
   }
@@ -1460,6 +1457,9 @@ export interface StandingsMlb extends StandingsBase {
   rank: {
     league: number
     division: number
+  }
+  league: {
+    name: string
   }
   clinchedAbbrev: string
   stats: {
@@ -1588,6 +1588,7 @@ export interface StandingsNfl extends StandingsBase {
 }
 
 export interface StandingsEpl extends StandingsBase {
+  league: 'epl' | 'lal'
   rank: {
     league: number
   }

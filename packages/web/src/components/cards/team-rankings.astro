@@ -11,13 +11,14 @@ import { createAskPath } from '@statmuse/core/path'
 interface Props {
   domain: GameraDomain
   response?: TeamCardResponse
+  soccerLeague?: 'epl' | 'lal'
   adSlot?: {
     divId: string
     slotId: string
   }
 }
 
-const { domain, response, adSlot } = Astro.props
+const { domain, response, adSlot, soccerLeague } = Astro.props
 
 if (!response || response.cards.length === 0) return undefined
 
@@ -198,26 +199,48 @@ const askLink = (
     case 'mostGoals':
       return createAskPath({
         domain: league,
-        query: `most goals by a team ${year}${postseason}`,
+        query: `most goals by a team ${
+          soccerLeague === 'epl'
+            ? 'in the PL '
+            : soccerLeague === 'lal'
+            ? 'in LaLiga '
+            : ''
+        }${year}${postseason}`,
       })
     case 'leastGoalsAgainst':
       return createAskPath({
         domain: league,
-        query: `fewest goals against by a team ${year}${postseason}`,
+        query: `fewest goals against by a team ${
+          soccerLeague === 'epl'
+            ? 'in the PL '
+            : soccerLeague === 'lal'
+            ? 'in LaLiga '
+            : ''
+        }${year}${postseason}`,
       })
     case 'bestGoalDifferential':
       return createAskPath({
         domain: league,
-        query: `highest goal difference by a team ${year}${postseason}`,
+        query: `highest goal difference by a team ${
+          soccerLeague === 'epl'
+            ? 'in the PL '
+            : soccerLeague === 'lal'
+            ? 'in LaLiga '
+            : ''
+        }${year}${postseason}`,
       })
     default:
       return stat
   }
 }
 
-const title = `${domain === 'EPL' ? 'PL' : domain} ${
-  response.seasonYearDisplay
-} Rankings`
+const title = `${
+  domain === 'EPL' && soccerLeague === 'epl'
+    ? 'PL'
+    : domain === 'EPL' && soccerLeague === 'lal'
+    ? 'LaLiga'
+    : domain
+} ${response.seasonYearDisplay} Rankings`
 
 const cards = response.cards
   .filter(filterTeamCards)

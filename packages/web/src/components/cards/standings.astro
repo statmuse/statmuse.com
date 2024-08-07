@@ -11,16 +11,22 @@ interface Props {
     divId: string
     slotId: string
   }
+  soccerLeague?: 'epl' | 'lal'
 }
 
-const { domain, response, adSlot } = Astro.props
+const { domain, response, adSlot, soccerLeague } = Astro.props
 
 if (!response || !response.teams) return undefined
 
 const display = `${
   domain === 'NBA' ? 'Conference' : domain === 'EPL' ? '' : 'Division'
 } ${domain === 'EPL' ? 'Table' : 'Standings'}`
-const domainDisplay = domain === 'EPL' ? 'PL' : domain
+const domainDisplay =
+  domain === 'EPL' && soccerLeague === 'epl'
+    ? 'PL'
+    : domain === 'EPL' && soccerLeague === 'lal'
+    ? 'LaLiga'
+    : domain
 const title = `${domainDisplay} ${response.seasonYearDisplay} ${display}`
 
 const group = domain !== 'NBA' && domain !== 'EPL' ? 'division' : undefined
