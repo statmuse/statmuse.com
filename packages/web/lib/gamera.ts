@@ -27,13 +27,10 @@ export async function request<T>(
     params as Record<string, string>,
   ).toString()}`
 
-  console.log('request.1', { requestUrl })
-
   try {
     const response = await fetch(requestUrl, {
       headers: getGameraHeaders(context),
     })
-    console.log('request.2', { response })
     return response.json() as Promise<T>
   } catch (error) {
     console.error(error)

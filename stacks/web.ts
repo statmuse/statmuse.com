@@ -168,7 +168,10 @@ export function Web({ stack }: StackContext) {
       },
       serverCachePolicy: new CachePolicy(stack, 'DistributionCachePolicy', {
         queryStringBehavior: CacheQueryStringBehavior.all(),
-        headerBehavior: CacheHeaderBehavior.allowList('x-statmuse-platform'),
+        headerBehavior: CacheHeaderBehavior.allowList(
+          'x-statmuse-platform',
+          'x-statmuse-native-view',
+        ),
         cookieBehavior: CacheCookieBehavior.allowList('statmuse-platform'),
         defaultTtl: Duration.days(0),
         enableAcceptEncodingGzip: true,

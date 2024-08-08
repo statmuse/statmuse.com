@@ -15,7 +15,7 @@ export type AnalyticsPageviewProperties = {
   is_error?: boolean
   is_search?: boolean
   method?: 'GET' | 'POST'
-  origin?: 'web'
+  origin?: 'web' | 'native'
   origin_scope?: 'browser'
   page_domain?:
     | 'nba'
@@ -41,7 +41,6 @@ export type AnalyticsPageviewProperties = {
     | 'standings'
     | 'trending'
     | 'team'
-    | 'mobile'
     | 'unknown'
   query?: string
   disposition?: Disposition

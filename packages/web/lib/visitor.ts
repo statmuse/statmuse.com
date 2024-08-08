@@ -65,12 +65,13 @@ export const fromRequest = async (context: Session.Context) => {
   const bot = isBot(headers)
   const bot_name = bot ? botName(headers) : undefined
   const session = Session.get(context)
-  const visitorId =
-    session?.type === 'visitor'
-      ? session.properties.id
-      : session?.type === 'user'
-        ? session.properties.visitorId
-        : undefined
+  const visitorId = context.locals.deviceId
+    ? context.locals.deviceId
+    : session?.type === 'visitor'
+    ? session.properties.id
+    : session?.type === 'user'
+    ? session.properties.visitorId
+    : undefined
 
   const existing = visitorId ? await Visitor.get(visitorId) : undefined
   if (existing) return existing

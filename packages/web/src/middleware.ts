@@ -1,7 +1,7 @@
 import * as Session from '@lib/session'
-import { defineMiddleware, sequence } from 'astro:middleware'
 import * as User from '@statmuse/core/user'
 import * as Visitor from '@statmuse/core/visitor'
+import { defineMiddleware, sequence } from 'astro:middleware'
 import { getTrendingData } from '@lib/trending'
 import { verifyLegacySession } from '@lib/jwt-builder'
 
@@ -21,6 +21,18 @@ export const platform = defineMiddleware(async (context, next) => {
     'web') as 'web' | 'native'
 
   context.locals.platform = platform
+
+  const colorScheme = context.request.headers?.get('x-statmuse-color-scheme')
+  if (colorScheme) context.locals.colorScheme = colorScheme as 'light' | 'dark'
+
+  const nativeView = context.request.headers?.get('x-statmuse-native-view')
+  if (nativeView)
+    context.locals.nativeView = nativeView as typeof context.locals.nativeView
+
+  const deviceId = context.request.headers?.get('x-statmuse-device-id')
+  if (deviceId) context.locals.deviceId = deviceId
+
+  console.log('context.locals', context.locals)
 
   if (platform === 'native') {
     const nextYear = new Date()

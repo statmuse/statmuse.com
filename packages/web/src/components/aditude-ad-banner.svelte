@@ -24,7 +24,7 @@
   }
 
   const isMobile = isMobileTest(navigator.userAgent)
-  const shouldRender = $isNativeMobile
+  $: shouldRender = $isNativeMobile
     ? false
     : onlyMobile
     ? isMobile
