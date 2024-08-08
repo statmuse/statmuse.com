@@ -4,7 +4,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { throttle, uniqBy } from 'lodash-es'
-  import { session } from '@lib/stores'
+  import { session, isNativeMobile } from '@lib/stores'
   import type { AskDocument } from '@statmuse/core/elastic'
   import { isMobileTest } from '@lib/useragent'
   import Icon from '@components/icon.svelte'
@@ -259,17 +259,32 @@
         enterkeyhint="search"
         bind:value={query}
         on:focus={(e) => {
-          expand = true
-          loadSuggestions(e.target.value)
-          disableScroll()
+          if ($isNativeMobile) {
+            window.ReactNativeWebView.postMessage(
+              JSON.stringify({
+                type: 'ask-bar-focus',
+                query: e.currentTarget?.value,
+              }),
+            )
+          } else {
+            expand = true
+            loadSuggestions(e.currentTarget?.value)
+            disableScroll()
+          }
         }}
       />
       {#if query.length > 0}
         <button
           on:click={() => {
-            expand = true
-            query = ''
-            disableScroll()
+            if ($isNativeMobile) {
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({ type: 'ask-bar-clear' }),
+              )
+            } else {
+              expand = true
+              query = ''
+              disableScroll()
+            }
           }}
         >
           <Icon name="x" class="w-4 h-4 mr-1" />

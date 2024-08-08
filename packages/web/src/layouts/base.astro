@@ -133,7 +133,10 @@ const canonicalUrl = meta?.canonical
 
 <html lang="en">
   <head>
-    <meta name="color-scheme" content="dark light" />
+    <meta
+      name="color-scheme"
+      content={Astro.locals.colorScheme ?? 'dark light'}
+    />
 
     <script is:inline>
       function setTheme(document) {
@@ -143,6 +146,7 @@ const canonicalUrl = meta?.canonical
 
         if (
           localStorage.theme === 'dark' ||
+          metaColorScheme?.content === 'dark' ||
           (!('theme' in localStorage) &&
             window.matchMedia('(prefers-color-scheme: dark)').matches)
         ) {
@@ -211,7 +215,7 @@ const canonicalUrl = meta?.canonical
         />
       )
     }
-    {Astro.locals.platform === "web" && <ViewTransitions />}
+    {Astro.locals.platform === 'web' && <ViewTransitions />}
     <link
       href="https://www.statmuse.com/opensearch.xml"
       rel="search"
@@ -296,7 +300,6 @@ const canonicalUrl = meta?.canonical
       'has-[#menu:checked]:overflow-y-scroll has-[#menu:checked]:fixed': true,
       'has-[#menu:checked]:w-full has-[#menu:checked]:h-full': true,
       'max-w-7xl min-h-screen mx-auto px-3 md:px-5 flex flex-col': true,
-      dark: Astro.locals.platform === 'native',
     }}
   >
     <Header {preferredDomain} {query} {conversationToken} {money} />
@@ -538,9 +541,11 @@ const canonicalUrl = meta?.canonical
         'astro:page-load',
         async () => {
           try {
-            const session: Session = await fetch('/auth/session').then((r) =>
-              r.json(),
-            )
+            // @ts-expect-error
+            const headers = window.smHeaders as string | undefined
+            const session: Session = await fetch('/auth/session', {
+              headers: headers ? JSON.parse(headers) : undefined,
+            }).then((r) => r.json())
             sessionStore.set(session)
 
             if (session.type === 'visitor') {
