@@ -31,8 +31,6 @@ const games = zip(
   orderBy(homeTeamResults?.games, 'gameData', 'desc').slice(0, 5),
 )
 
-console.log(awayTeamResults)
-
 const getTeamResult = (teamId: number, game?: GameResult) =>
   game?.homeTeam.teamId === teamId
     ? game.homeTeam.gameResult

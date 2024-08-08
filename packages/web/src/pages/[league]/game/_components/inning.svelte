@@ -1,19 +1,17 @@
 <script lang="ts">
-  export let outs = 0
-  export let halfInning
-  export let inning
+  import { outs, halfInning, inningNumber } from './stores'
 </script>
 
 <div class="flex gap-2">
   <p>
     <span class="capitalize">
-      {halfInning === 'top' && outs === 3
+      {$halfInning?.half === 'top' && $outs === 3
         ? 'mid'
-        : halfInning === 'bottom' && outs === 3
+        : $halfInning?.half === 'bottom' && $outs === 3
         ? 'end'
-        : halfInning}
+        : $halfInning?.half ?? 'top'}
     </span>
-    {inning}
+    {$inningNumber}
   </p>
-  <p>{outs} outs</p>
+  <p>{$outs} outs</p>
 </div>

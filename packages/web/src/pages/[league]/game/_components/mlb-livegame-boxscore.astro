@@ -1,17 +1,7 @@
 ---
 import { getGames, getPlayByPlay } from '@lib/gamera'
 import Layout from './layout.astro'
-import {
-  type MlbGameDataResponse,
-  type GameraPlayerReference,
-  filterScoringPlays,
-  getCurrentHalfInning,
-  getCurrentInningNumber,
-  getCurrentOuts,
-  getCurrentAtBat,
-  getCurrentAtBatCount,
-  getCurrentRunners,
-} from '@statmuse/core/gamera'
+import { type MlbGameDataResponse } from '@statmuse/core/gamera'
 import { find, orderBy } from 'lodash-es'
 import GameInfo from './game-info.astro'
 import Matchup from './matchup.svelte'
@@ -21,6 +11,8 @@ import PlayByPlay from './play-by-play.svelte'
 import LivegameHero from './livegame-hero.astro'
 import BattingStats from './batting-stats.svelte'
 import PitchingStats from './pitching-stats.svelte'
+import GameState from './game-state.svelte'
+import * as stores from './stores'
 
 interface Props {
   gameData: MlbGameDataResponse
@@ -37,7 +29,6 @@ const {
   venue,
   weather,
   officials,
-  players,
 } = gameData
 
 const [homeScores, awayScores, playByPlay] = await Promise.all([
@@ -46,40 +37,16 @@ const [homeScores, awayScores, playByPlay] = await Promise.all([
   getPlayByPlay({ context: Astro, gameId }),
 ])
 
-const innings = playByPlay?.innings
-
 const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
 const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
 
-const playerMap = players?.reduce(
-  (acc, p) => ({ ...acc, [p.id]: p }),
-  {} as Record<number, GameraPlayerReference>,
-)
-
-const scoringInnings = filterScoringPlays(innings ?? [])
-
-const halfInning = getCurrentHalfInning(innings ?? [])
-const inning = getCurrentInningNumber(innings ?? [])
-const outs = getCurrentOuts(innings ?? [])
-const atBat = getCurrentAtBat(innings ?? [])
-const atBatCount = getCurrentAtBatCount(innings ?? [])
-const runners = getCurrentRunners(innings ?? [])
-
-const matchUp = {
-  awayPlayer: halfInning?.half === 'top' ? atBat?.batter : atBat?.pitcher,
-  homePlayer: halfInning?.half === 'bottom' ? atBat?.batter : atBat?.pitcher,
-}
+stores.gameState.set({ gameData, playByPlay })
 ---
 
 <Layout {awayTeam} {homeTeam}>
   <LivegameHero
     slot="hero"
     network={networkName}
-    awayScore={awayTeamModel.score}
-    homeScore={homeTeamModel.score}
-    {inning}
-    halfInning={halfInning?.half ?? 'top'}
-    {outs}
     {awayTeam}
     awayScores={awayScores && {
       ...awayScores,
@@ -92,144 +59,23 @@ const matchUp = {
     }}
   />
   <Fragment slot="game">
-    <Matchup
-      client:load
-      {awayTeam}
-      {homeTeam}
-      {awayTeamModel}
-      {homeTeamModel}
-      {playerMap}
-      awayPlayerAb={matchUp.awayPlayer}
-      homePlayerAb={matchUp.homePlayer}
-      halfInning={halfInning?.half ?? 'top'}
-      {outs}
-      balls={atBatCount.balls}
-      strikes={atBatCount.strikes}
-      {runners}
-    />
-    <PitchByPitch client:load {atBat} />
-    <Linescore
-      client:load
-      {awayTeam}
-      {homeTeam}
-      {awayTeamModel}
-      {homeTeamModel}
-      currentInning={inning}
-      halfInning={halfInning?.half ?? 'top'}
-    />
-    <Fragment>
-      {
-        scoringInnings?.map((inning) => {
-          const number = inning.number
-          const [topHalf, bottomHalf] = inning.halves
-          return (
-            <Fragment>
-              {topHalf.events.length > 0 && (
-                <PlayByPlay
-                  inningTitle={`Top ${number}`}
-                  inning={topHalf}
-                  {playerMap}
-                  colors={awayTeam?.colors}
-                />
-              )}
-              {bottomHalf.events.length > 0 && (
-                <PlayByPlay
-                  inningTitle={`Bottom ${number}`}
-                  inning={bottomHalf}
-                  {playerMap}
-                  colors={homeTeam?.colors}
-                />
-              )}
-            </Fragment>
-          )
-        })
-      }
-    </Fragment>
+    <Matchup {awayTeam} {homeTeam} />
+    <PitchByPitch client:load />
+    <Linescore client:load {awayTeam} {homeTeam} />
+    <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
     <GameInfo {venue} {weather} {officials} />
   </Fragment>
   <Fragment slot="away">
-    <Linescore
-      client:load
-      {awayTeam}
-      {homeTeam}
-      {awayTeamModel}
-      {homeTeamModel}
-      {atBat}
-      {outs}
-      {runners}
-      {playerMap}
-      awayPlayerAb={matchUp.awayPlayer}
-      homePlayerAb={matchUp.homePlayer}
-      halfInning={halfInning?.half ?? 'top'}
-      currentInning={inning}
-      balls={atBatCount.balls}
-      strikes={atBatCount.strikes}
-      displayMatchup
-    />
-    <BattingStats
-      {playerMap}
-      lineup={awayTeamModel.players}
-      splits={awayTeamModel.stats?.splits}
-      playerAb={matchUp.awayPlayer}
-    />
-    <PitchingStats
-      {playerMap}
-      lineup={awayTeamModel.players}
-      splits={awayTeamModel.stats?.splits}
-    />
+    <Linescore client:load {awayTeam} {homeTeam} displayMatchup />
+    <BattingStats client:load teamKey="away" />
+    <PitchingStats client:load teamKey="away" />
   </Fragment>
   <Fragment slot="home">
-    <Linescore
-      client:load
-      {awayTeam}
-      {homeTeam}
-      {awayTeamModel}
-      {homeTeamModel}
-      {atBat}
-      {outs}
-      {runners}
-      {playerMap}
-      awayPlayerAb={matchUp.awayPlayer}
-      homePlayerAb={matchUp.homePlayer}
-      halfInning={halfInning?.half ?? 'top'}
-      currentInning={inning}
-      balls={atBatCount.balls}
-      strikes={atBatCount.strikes}
-      displayMatchup
-    />
-    <BattingStats
-      {playerMap}
-      lineup={homeTeamModel.players}
-      splits={homeTeamModel.stats?.splits}
-      playerAb={matchUp.homePlayer}
-    />
-    <PitchingStats
-      {playerMap}
-      lineup={homeTeamModel.players}
-      splits={homeTeamModel.stats?.splits}
-    />
+    <Linescore client:load {awayTeam} {homeTeam} displayMatchup />
+    <BattingStats client:load teamKey="home" />
+    <PitchingStats client:load teamKey="home" />
   </Fragment>
-  <Fragment slot="plays">
-    {
-      innings?.map((inning) => {
-        const number = inning.number
-        const [topHalf, bottomHalf] = inning.halves
-
-        return (
-          <Fragment>
-            <PlayByPlay
-              inningTitle={`Top ${number}`}
-              inning={topHalf}
-              {playerMap}
-            />
-            <PlayByPlay
-              inningTitle={`Bottom ${number}`}
-              inning={bottomHalf}
-              {playerMap}
-            />
-          </Fragment>
-        )
-      })
-    }
-  </Fragment>
+  <PlayByPlay client:load slot="plays" {awayTeam} {homeTeam} />
+  <GameState client:only="svelte" {gameData} {playByPlay} />
+  <!-- <Realtime client:only="svelte" /> -->
 </Layout>

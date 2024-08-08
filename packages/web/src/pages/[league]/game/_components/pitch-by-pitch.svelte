@@ -4,12 +4,11 @@
     colorPlayOutcome,
     formatPitchType,
     formatPitchOutcome,
-    type InningAtBatEvent,
   } from '@statmuse/core/gamera'
 
-  export let atBat: InningAtBatEvent
+  import { atBat } from './stores'
 
-  const pitches = atBat.events.filter((e) => e.type === 'pitch')
+  $: pitches = $atBat?.events.filter((e) => e.type === 'pitch') ?? []
 </script>
 
 <Panel

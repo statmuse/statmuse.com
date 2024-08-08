@@ -4,50 +4,15 @@
   import Image from '@components/image.svelte'
   import {
     type GameraTeamReference,
-    type GameraPlayerReference,
-    type Runner,
     formatMlbPosition,
-    type TeamGameModel,
   } from '@statmuse/core/gamera'
   import OutsIndicator from './outs-indicator.svelte'
   import AtBatCount from './at-bat-count.svelte'
-  import { last, some } from 'lodash-es'
+  import { some } from 'lodash-es'
+  import { matchup, runners } from './stores'
 
   export let homeTeam: GameraTeamReference
   export let awayTeam: GameraTeamReference
-
-  export let awayTeamModel: TeamGameModel
-  export let homeTeamModel: TeamGameModel
-
-  export let playerMap: Record<number, GameraPlayerReference> | undefined
-
-  export let awayPlayerAb: { playerId: number; handedness: string } | undefined
-  export let homePlayerAb: { playerId: number; handedness: string } | undefined
-
-  export let halfInning: 'top' | 'bottom'
-  export let balls: number
-  export let strikes: number
-  export let outs: number
-  export let runners: Runner[]
-
-  const awayPlayer = playerMap?.[awayPlayerAb?.playerId ?? 0]
-  const homePlayer = playerMap?.[homePlayerAb?.playerId ?? 0]
-
-  const awayPosition = last(
-    awayTeamModel.players?.find((p) => p.playerId === awayPlayer?.id)?.lineup
-      .positions,
-  )
-  const homePosition = last(
-    homeTeamModel.players?.find((p) => p.playerId === homePlayer?.id)?.lineup
-      .positions,
-  )
-
-  const awayPlayerStats = awayTeamModel.stats?.splits?.find(
-    (s) => s.playerId === awayPlayer?.id,
-  )
-  const homePlayerStats = homeTeamModel.stats?.splits?.find(
-    (s) => s.playerId === homePlayer?.id,
-  )
 </script>
 
 <Panel class="!p-0">
@@ -63,11 +28,11 @@
           height={60}
           class="w-6 h-6 object-contain"
         />
-        {halfInning === 'top' ? 'Batting' : 'Pitching'}
+        {$matchup.away.type === 'batter' ? 'Batting' : 'Pitching'}
       </div>
       <Image
-        src={awayPlayer?.imageUrl ?? ''}
-        alt={awayPlayer?.usedName ?? ''}
+        src={$matchup.away.player?.imageUrl ?? ''}
+        alt={$matchup.away.player?.usedName ?? ''}
         width={120}
         height={90}
         class="h-[75px] max-w-[10 0px] object-contain object-left-bottom"
@@ -77,16 +42,16 @@
       <Icon
         name="baseball-diamond"
         class="w-14 -mt-1"
-        fillFirstBase={some(runners, (r) => r.endingBase === 1)}
-        fillSecondBase={some(runners, (r) => r.endingBase === 2)}
-        fillThirdBase={some(runners, (r) => r.endingBase === 3)}
+        fillFirstBase={some($runners, (r) => r.endingBase === 1)}
+        fillSecondBase={some($runners, (r) => r.endingBase === 2)}
+        fillThirdBase={some($runners, (r) => r.endingBase === 3)}
       />
-      <OutsIndicator class="mb-1" {outs} />
-      <AtBatCount {balls} {strikes} />
+      <OutsIndicator class="mb-1" />
+      <AtBatCount />
     </div>
     <div>
       <div class="flex gap-1 justify-end py-2">
-        {halfInning === 'bottom' ? 'Batting' : 'Pitching'}
+        {$matchup.home.type === 'batter' ? 'Batting' : 'Pitching'}
         <Image
           src={homeTeam?.logoImageUrl ?? ''}
           alt={homeTeam?.name ?? ''}
@@ -96,8 +61,8 @@
         />
       </div>
       <Image
-        src={homePlayer?.imageUrl ?? ''}
-        alt={homePlayer?.usedName ?? ''}
+        src={$matchup.home.player?.imageUrl ?? ''}
+        alt={$matchup.home.player?.usedName ?? ''}
         width={120}
         height={90}
         class="h-[75px] max-w-[10 0px] object-contain object-right-bottom"
@@ -107,83 +72,88 @@
   <div class="flex justify-between px-3 py-2">
     <div>
       <p class="text-lg font-semibold leading-none">
-        {awayPlayer?.entity ? awayPlayer.entity.shortDisplay : ''}
+        {$matchup.away.player?.entity
+          ? $matchup.away.player?.entity.shortDisplay
+          : ''}
         <span class="text-base font-normal text-gray-5">
-          {formatMlbPosition(awayPosition, awayPlayerAb?.handedness) ?? ''}
+          {formatMlbPosition(
+            $matchup.away.position,
+            $matchup.away.handedness,
+          ) ?? ''}
         </span>
       </p>
       <div class="flex gap-1.5">
-        {#if halfInning === 'top'}
-          {#if awayPlayerStats?.stats?.['Batting-AtBats']}
+        {#if $matchup.away.type === 'batter'}
+          {#if $matchup.away.stats?.['Batting-AtBats']}
             <p>
-              {awayPlayerStats?.stats?.['Batting-Hits']
-                ?.display}-{awayPlayerStats?.stats?.['Batting-AtBats'].display}
+              {$matchup.away.stats?.['Batting-Hits']?.display}-{$matchup.away
+                .stats?.['Batting-AtBats'].display}
             </p>
           {/if}
-          {#if awayPlayerStats?.stats?.['Batting-Runs']?.value > 0}
+          {#if $matchup.away.stats?.['Batting-Runs']?.value > 0}
             <p>
-              {awayPlayerStats?.stats?.['Batting-Runs'].display}
+              {$matchup.away.stats?.['Batting-Runs'].display}
               <span class="text-gray-5">R</span>
             </p>
           {/if}
-          {#if awayPlayerStats?.stats?.['Batting-Doubles']?.value > 0}
+          {#if $matchup.away.stats?.['Batting-Doubles']?.value > 0}
             <p>
-              {awayPlayerStats?.stats?.['Batting-Doubles'].display}
+              {$matchup.away.stats?.['Batting-Doubles'].display}
               <span class="text-gray-5">2B</span>
             </p>
           {/if}
-          {#if awayPlayerStats?.stats?.['Batting-Triples']?.value > 0}
+          {#if $matchup.away.stats?.['Batting-Triples']?.value > 0}
             <p>
-              {awayPlayerStats?.stats?.['Batting-Triples'].display}
+              {$matchup.away.stats?.['Batting-Triples'].display}
               <span class="text-gray-5">3B</span>
             </p>
           {/if}
-          {#if awayPlayerStats?.stats?.['Batting-HomeRuns']?.value > 0}
+          {#if $matchup.away.stats?.['Batting-HomeRuns']?.value > 0}
             <p>
-              {awayPlayerStats?.stats?.['Batting-HomeRuns'].display}
+              {$matchup.away.stats?.['Batting-HomeRuns'].display}
               <span class="text-gray-5">HR</span>
             </p>
           {/if}
-          {#if awayPlayerStats?.stats?.['Batting-RunsBattedIn']?.value > 0}
+          {#if $matchup.away.stats?.['Batting-RunsBattedIn']?.value > 0}
             <p>
-              {awayPlayerStats?.stats?.['Batting-RunsBattedIn'].display}
+              {$matchup.away.stats?.['Batting-RunsBattedIn'].display}
               <span class="text-gray-5">RBI</span>
             </p>
           {/if}
-          {#if awayPlayerStats?.stats?.['Batting-Walks']?.value > 0}
+          {#if $matchup.away.stats?.['Batting-Walks']?.value > 0}
             <p>
-              {awayPlayerStats?.stats?.['Batting-Walks'].display}
+              {$matchup.away.stats?.['Batting-Walks'].display}
               <span class="text-gray-5">BB</span>
             </p>
           {/if}
-          {#if awayPlayerStats?.stats?.['Batting-Strikeouts']?.value > 0}
+          {#if $matchup.away.stats?.['Batting-Strikeouts']?.value > 0}
             <p>
-              {awayPlayerStats?.stats?.['Batting-Strikeouts'].display}
+              {$matchup.away.stats?.['Batting-Strikeouts'].display}
               <span class="text-gray-5">K</span>
             </p>
           {/if}
         {:else}
-          {#if awayPlayerStats?.stats?.['Pitching-InningsPitched']}
+          {#if $matchup.away.stats?.['Pitching-InningsPitched']}
             <p>
-              {awayPlayerStats?.stats?.['Pitching-InningsPitched'].display}
+              {$matchup.away.stats?.['Pitching-InningsPitched'].display}
               <span class="text-gray-5">IP</span>
             </p>
           {/if}
-          {#if awayPlayerStats?.stats?.['Pitching-EarnedRuns']}
+          {#if $matchup.away.stats?.['Pitching-EarnedRuns']}
             <p>
-              {awayPlayerStats?.stats?.['Pitching-EarnedRuns'].display}
+              {$matchup.away.stats?.['Pitching-EarnedRuns'].display}
               <span class="text-gray-5">ER</span>
             </p>
           {/if}
-          {#if awayPlayerStats?.stats?.['Pitching-Strikeouts']?.value > 0}
+          {#if $matchup.away.stats?.['Pitching-Strikeouts']?.value > 0}
             <p>
-              {awayPlayerStats?.stats?.['Pitching-Strikeouts'].display}
+              {$matchup.away.stats?.['Pitching-Strikeouts'].display}
               <span class="text-gray-5">K</span>
             </p>
           {/if}
-          {#if awayPlayerStats?.stats?.['Pitching-Walks']?.value > 0}
+          {#if $matchup.away.stats?.['Pitching-Walks']?.value > 0}
             <p>
-              {awayPlayerStats?.stats?.['Pitching-Walks'].display}
+              {$matchup.away.stats?.['Pitching-Walks'].display}
               <span class="text-gray-5">BB</span>
             </p>
           {/if}
@@ -192,83 +162,88 @@
     </div>
     <div class="text-right">
       <p class="text-lg font-semibold leading-none">
-        {homePlayer?.entity ? homePlayer.entity.shortDisplay : ''}
+        {$matchup.home.player?.entity
+          ? $matchup.home.player?.entity.shortDisplay
+          : ''}
         <span class="text-base font-normal text-gray-5">
-          {formatMlbPosition(homePosition, homePlayerAb?.handedness) ?? ''}
+          {formatMlbPosition(
+            $matchup.home.position,
+            $matchup.home.handedness,
+          ) ?? ''}
         </span>
       </p>
       <div class="flex gap-1.5 justify-end">
-        {#if halfInning === 'bottom'}
-          {#if homePlayerStats?.stats?.['Batting-AtBats']}
+        {#if $matchup.home.type === 'batter'}
+          {#if $matchup.home.stats?.['Batting-AtBats']}
             <p>
-              {homePlayerStats?.stats?.['Batting-Hits']
-                ?.display}-{homePlayerStats?.stats?.['Batting-AtBats'].display}
+              {$matchup.home.stats?.['Batting-Hits']?.display}-{$matchup.home
+                .stats?.['Batting-AtBats'].display}
             </p>
           {/if}
-          {#if homePlayerStats?.stats?.['Batting-Runs']?.value > 0}
+          {#if $matchup.home.stats?.['Batting-Runs']?.value > 0}
             <p>
-              {homePlayerStats?.stats?.['Batting-Runs'].display}
+              {$matchup.home.stats?.['Batting-Runs'].display}
               <span class="text-gray-5">R</span>
             </p>
           {/if}
-          {#if homePlayerStats?.stats?.['Batting-Doubles']?.value > 0}
+          {#if $matchup.home.stats?.['Batting-Doubles']?.value > 0}
             <p>
-              {homePlayerStats?.stats?.['Batting-Doubles'].display}
+              {$matchup.home.stats?.['Batting-Doubles'].display}
               <span class="text-gray-5">2B</span>
             </p>
           {/if}
-          {#if homePlayerStats?.stats?.['Batting-Triples']?.value > 0}
+          {#if $matchup.home.stats?.['Batting-Triples']?.value > 0}
             <p>
-              {homePlayerStats?.stats?.['Batting-Triples'].display}
+              {$matchup.home.stats?.['Batting-Triples'].display}
               <span class="text-gray-5">3B</span>
             </p>
           {/if}
-          {#if homePlayerStats?.stats?.['Batting-HomeRuns']?.value > 0}
+          {#if $matchup.home.stats?.['Batting-HomeRuns']?.value > 0}
             <p>
-              {homePlayerStats?.stats?.['Batting-HomeRuns'].display}
+              {$matchup.home.stats?.['Batting-HomeRuns'].display}
               <span class="text-gray-5">HR</span>
             </p>
           {/if}
-          {#if homePlayerStats?.stats?.['Batting-RunsBattedIn']?.value > 0}
+          {#if $matchup.home.stats?.['Batting-RunsBattedIn']?.value > 0}
             <p>
-              {homePlayerStats?.stats?.['Batting-RunsBattedIn'].display}
+              {$matchup.home.stats?.['Batting-RunsBattedIn'].display}
               <span class="text-gray-5">RBI</span>
             </p>
           {/if}
-          {#if homePlayerStats?.stats?.['Batting-Walks']?.value > 0}
+          {#if $matchup.home.stats?.['Batting-Walks']?.value > 0}
             <p>
-              {homePlayerStats?.stats?.['Batting-Walks'].display}
+              {$matchup.home.stats?.['Batting-Walks'].display}
               <span class="text-gray-5">BB</span>
             </p>
           {/if}
-          {#if homePlayerStats?.stats?.['Batting-Strikeouts']?.value > 0}
+          {#if $matchup.home.stats?.['Batting-Strikeouts']?.value > 0}
             <p>
-              {homePlayerStats?.stats?.['Batting-Strikeouts'].display}
+              {$matchup.home.stats?.['Batting-Strikeouts'].display}
               <span class="text-gray-5">K</span>
             </p>
           {/if}
         {:else}
-          {#if homePlayerStats?.stats?.['Pitching-InningsPitched']}
+          {#if $matchup.home.stats?.['Pitching-InningsPitched']}
             <p>
-              {homePlayerStats?.stats?.['Pitching-InningsPitched'].display}
+              {$matchup.home.stats?.['Pitching-InningsPitched'].display}
               <span class="text-gray-5">IP</span>
             </p>
           {/if}
-          {#if homePlayerStats?.stats?.['Pitching-EarnedRuns']}
+          {#if $matchup.home.stats?.['Pitching-EarnedRuns']}
             <p>
-              {homePlayerStats?.stats?.['Pitching-EarnedRuns'].display}
+              {$matchup.home.stats?.['Pitching-EarnedRuns'].display}
               <span class="text-gray-5">ER</span>
             </p>
           {/if}
-          {#if homePlayerStats?.stats?.['Pitching-Strikeouts']?.value > 0}
+          {#if $matchup.home.stats?.['Pitching-Strikeouts']?.value > 0}
             <p>
-              {homePlayerStats?.stats?.['Pitching-Strikeouts'].display}
+              {$matchup.home.stats?.['Pitching-Strikeouts'].display}
               <span class="text-gray-5">K</span>
             </p>
           {/if}
-          {#if homePlayerStats?.stats?.['Pitching-Walks']?.value > 0}
+          {#if $matchup.home.stats?.['Pitching-Walks']?.value > 0}
             <p>
-              {homePlayerStats?.stats?.['Pitching-Walks'].display}
+              {$matchup.home.stats?.['Pitching-Walks'].display}
               <span class="text-gray-5">BB</span>
             </p>
           {/if}

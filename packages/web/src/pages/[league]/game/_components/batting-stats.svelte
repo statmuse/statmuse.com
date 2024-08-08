@@ -1,23 +1,20 @@
 <script lang="ts">
   import Grid from '@components/grid.svelte'
-  import {
-    formatMlbPosition,
-    type GameraPlayerReference,
-    type PlayerGameModel,
-    type StatModel,
-  } from '@statmuse/core/gamera'
+  import { formatMlbPosition } from '@statmuse/core/gamera'
   import { orderBy, filter, find } from 'lodash-es'
+  import { gameState, players, matchup } from './stores'
 
-  export let splits: {
-    splitType?: string
-    playerId: number
-    stats?: StatModel
-  }[] = []
-  export let playerMap: Record<number, GameraPlayerReference> | undefined
-  export let lineup: PlayerGameModel[] = []
-  export let playerAb: { playerId: number; handedness: string } | undefined
+  export let teamKey: 'away' | 'home'
 
-  const higlightPlayer = playerMap?.[playerAb?.playerId ?? 0]
+  $: higlightPlayer = $matchup[teamKey].player
+  $: lineup =
+    teamKey === 'away'
+      ? $gameState.gameData?.awayTeam.players
+      : $gameState.gameData?.homeTeam.players
+  $: splits =
+    teamKey === 'away'
+      ? $gameState.gameData?.awayTeam.stats?.splits
+      : $gameState.gameData?.homeTeam.stats?.splits
 
   const columns = [
     {
@@ -72,13 +69,13 @@
     },
   ]
 
-  const rows = orderBy(
+  $: rows = orderBy(
     filter(lineup, (p) => p.lineup.battingOrder),
     ['lineup.battingOrder', 'lineup.battingOrderSequence'],
   )
     .map((p) => {
-      const player = playerMap?.[p.playerId]
-      const playerStats = find(splits, { playerId: p.playerId })
+      const player = $players?.[p.playerId]
+      const playerStats = find(splits, { playerId: p.playerId ?? 0 })
 
       if (player && playerStats) {
         return {
@@ -104,37 +101,37 @@
     })
     .filter((x) => !!x)
 
-  const doubles = splits
-    .filter((s) => s.stats?.['Batting-Doubles']?.value > 0)
+  $: doubles = splits
+    ?.filter((s) => s.stats?.['Batting-Doubles']?.value > 0)
     .map((s) => {
-      const player = playerMap?.[s.playerId]
+      const player = $players?.[s.playerId]
       return {
         name: player?.entity.shortDisplay,
         total: s.stats?.['Batting-Doubles']?.value,
       }
     })
-  const triples = splits
-    .filter((s) => s.stats?.['Batting-Triples']?.value > 0)
+  $: triples = splits
+    ?.filter((s) => s.stats?.['Batting-Triples']?.value > 0)
     .map((s) => {
-      const player = playerMap?.[s.playerId]
+      const player = $players?.[s.playerId]
       return {
         name: player?.entity.shortDisplay,
         total: s.stats?.['Batting-Triples']?.value,
       }
     })
-  const homeRun = splits
-    .filter((s) => s.stats?.['Batting-HomeRuns']?.value > 0)
+  $: homeRun = splits
+    ?.filter((s) => s.stats?.['Batting-HomeRuns']?.value > 0)
     .map((s) => {
-      const player = playerMap?.[s.playerId]
+      const player = $players?.[s.playerId]
       return {
         name: player?.entity.shortDisplay,
         total: s.stats?.['Batting-HomeRuns']?.value,
       }
     })
-  const rbis = splits
-    .filter((s) => s.stats?.['Batting-RunsBattedIn']?.value > 0)
+  $: rbis = splits
+    ?.filter((s) => s.stats?.['Batting-RunsBattedIn']?.value > 0)
     .map((s) => {
-      const player = playerMap?.[s.playerId]
+      const player = $players?.[s.playerId]
       return {
         name: player?.entity.shortDisplay,
         total: s.stats?.['Batting-RunsBattedIn']?.value,
@@ -153,42 +150,42 @@
 
   <div class="text-sm">
     <p class="mb-1.5">Batting</p>
-    {#if doubles.length > 0}
+    {#if doubles?.length > 0}
       <p>
         2B:
         <span class="text-gray-5">
           {doubles
-            .map((p) => `${p.name}${p?.total > 1 ? ` ${p.total}` : ''}`)
+            ?.map((p) => `${p.name}${p?.total > 1 ? ` ${p.total}` : ''}`)
             .join(', ')}
         </span>
       </p>
     {/if}
-    {#if triples.length > 0}
+    {#if triples?.length > 0}
       <p>
         3B:
         <span class="text-gray-5">
           {triples
-            .map((p) => `${p.name}${p?.total > 1 ? ` ${p.total}` : ''}`)
+            ?.map((p) => `${p.name}${p?.total > 1 ? ` ${p.total}` : ''}`)
             .join(', ')}
         </span>
       </p>
     {/if}
-    {#if homeRun.length > 0}
+    {#if homeRun?.length > 0}
       <p>
         HR:
         <span class="text-gray-5">
           {homeRun
-            .map((p) => `${p.name}${p?.total > 1 ? ` ${p.total}` : ''}`)
+            ?.map((p) => `${p.name}${p?.total > 1 ? ` ${p.total}` : ''}`)
             .join(', ')}
         </span>
       </p>
     {/if}
-    {#if rbis.length > 0}
+    {#if rbis?.length > 0}
       <p>
         RBI:
         <span class="text-gray-5">
           {rbis
-            .map((p) => `${p.name}${p?.total > 1 ? ` ${p.total}` : ''}`)
+            ?.map((p) => `${p.name}${p?.total > 1 ? ` ${p.total}` : ''}`)
             .join(', ')}
         </span>
       </p>

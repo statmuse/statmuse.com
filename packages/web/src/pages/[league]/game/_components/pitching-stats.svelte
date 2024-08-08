@@ -1,19 +1,18 @@
 <script lang="ts">
   import Grid from '@components/grid.svelte'
-  import {
-    type GameraPlayerReference,
-    type PlayerGameModel,
-    type StatModel,
-  } from '@statmuse/core/gamera'
   import { orderBy, filter, find } from 'lodash-es'
+  import { gameState, players } from './stores'
 
-  export let splits: {
-    splitType?: string
-    playerId: number
-    stats?: StatModel
-  }[] = []
-  export let playerMap: Record<number, GameraPlayerReference> = {}
-  export let lineup: PlayerGameModel[] = []
+  export let teamKey: 'away' | 'home'
+
+  $: lineup =
+    teamKey === 'away'
+      ? $gameState.gameData?.awayTeam.players
+      : $gameState.gameData?.homeTeam.players
+  $: splits =
+    teamKey === 'away'
+      ? $gameState.gameData?.awayTeam.stats?.splits
+      : $gameState.gameData?.homeTeam.stats?.splits
 
   const columns = [
     {
@@ -63,12 +62,12 @@
     },
   ]
 
-  const rows = orderBy(
+  $: rows = orderBy(
     filter(lineup, (p) => p.lineup.pitchingSequence),
     ['lineup.pitchingSequence'],
   )
     .map((p) => {
-      const player = playerMap[p.playerId]
+      const player = $players?.[p.playerId]
       const playerStats = find(splits, { playerId: p.playerId })
 
       if (player && playerStats) {

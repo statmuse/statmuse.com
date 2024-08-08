@@ -7,6 +7,7 @@ import type {
   GameResultsResponse,
   MlbGameDataResponse,
 } from '@statmuse/core/gamera'
+import Score from './score.svelte'
 
 interface Props {
   network: string
@@ -14,11 +15,6 @@ interface Props {
   homeTeam?: NonNullable<MlbGameDataResponse['teams']>[number]
   awayScores?: GameResultsResponse
   homeScores?: GameResultsResponse
-  awayScore: number
-  homeScore: number
-  halfInning: string
-  inning: number
-  outs: number
 }
 
 const getTeamFromGameResult = (
@@ -32,18 +28,7 @@ const getTeamFromGameResult = (
     : undefined
 }
 
-const {
-  network,
-  awayTeam,
-  homeTeam,
-  awayScores,
-  homeScores,
-  awayScore,
-  homeScore,
-  halfInning,
-  inning,
-  outs,
-} = Astro.props
+const { network, awayTeam, homeTeam, awayScores, homeScores } = Astro.props
 
 const awayTeamRecord = getTeamFromGameResult(
   awayTeam?.teamId,
@@ -60,7 +45,7 @@ const homeTeamRecord = getTeamFromGameResult(
     class="h-[45px] flex bg-gray-6 dark:bg-gray-4 px-3 py-2 justify-center relative"
   >
     <p class="text-gray-5 absolute left-3 top-2">{network}</p>
-    <Inning client:load {halfInning} {inning} {outs} />
+    <Inning client:load />
     <div class="absolute right-3 top-2">
       <Share />
     </div>
@@ -88,7 +73,7 @@ const homeTeamRecord = getTeamFromGameResult(
             )
           }{' '}{awayTeam?.abbreviation}
         </h4>
-        <p class="text-2xl">{awayScore}</p>
+        <p class="text-2xl"><Score client:load teamKey="away" /></p>
       </div>
     </div>
     <div
@@ -113,7 +98,7 @@ const homeTeamRecord = getTeamFromGameResult(
             )
           }
         </h4>
-        <p class="text-2xl">{homeScore}</p>
+        <p class="text-2xl"><Score client:load teamKey="home" /></p>
       </div>
     </div>
   </div>

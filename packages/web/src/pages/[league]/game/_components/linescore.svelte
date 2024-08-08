@@ -2,58 +2,44 @@
   import Panel from '@components/panel.svelte'
   import Icon from '@components/icon.svelte'
   import Image from '@components/image.svelte'
-  import type {
-    GameraPlayerReference,
-    GameraTeamReference,
-    InningAtBatEvent,
-    Runner,
-    TeamGameModel,
-  } from '@statmuse/core/gamera'
+  import type { GameraTeamReference } from '@statmuse/core/gamera/index'
   import AtBatCount from './at-bat-count.svelte'
   import OutsIndicator from './outs-indicator.svelte'
   import { max, range, some } from 'lodash-es'
 
+  import {
+    gameState,
+    inningNumber,
+    halfInning,
+    matchup,
+    atBat,
+    runners,
+  } from './stores'
+
   export let awayTeam: GameraTeamReference
   export let homeTeam: GameraTeamReference
-  export let awayTeamModel: TeamGameModel
-  export let homeTeamModel: TeamGameModel
   export let displayMatchup: boolean = false
   export let final: boolean = false
 
-  export let outs: number
-  export let balls: number
-  export let strikes: number
-  export let runners: Runner[]
+  $: awayTeamModel = $gameState.gameData?.awayTeam
+  $: homeTeamModel = $gameState.gameData?.homeTeam
 
-  export let atBat: InningAtBatEvent | undefined
-
-  export let playerMap: Record<number, GameraPlayerReference> | undefined
-
-  export let awayPlayerAb: { playerId: number; handedness: string } | undefined
-  export let homePlayerAb: { playerId: number; handedness: string } | undefined
-
-  export let halfInning: 'top' | 'bottom'
-  export let currentInning: number
-
-  const awayPlayer = playerMap?.[awayPlayerAb?.playerId ?? 0]
-  const homePlayer = playerMap?.[homePlayerAb?.playerId ?? 0]
-
-  const maxInnings = max([
+  $: maxInnings = max([
     9,
-    awayTeamModel.lineScore?.length,
-    homeTeamModel.lineScore?.length,
+    $gameState.gameData?.awayTeam.lineScore?.length,
+    $gameState.gameData?.homeTeam.lineScore?.length,
   ])
 
-  const totals = [
+  $: totals = [
     [
       'R',
-      awayTeamModel.stats?.stats['Batting-Runs']?.display,
-      homeTeamModel.stats?.stats['Batting-Runs']?.display,
+      $gameState.gameData?.awayTeam.stats?.stats?.['Batting-Runs']?.display,
+      $gameState.gameData?.homeTeam.stats?.stats?.['Batting-Runs']?.display,
     ],
     [
       'H',
-      awayTeamModel.stats?.stats['Batting-Hits']?.display,
-      homeTeamModel.stats?.stats['Batting-Hits']?.display,
+      $gameState.gameData?.awayTeam.stats?.stats?.['Batting-Hits']?.display,
+      $gameState.gameData?.homeTeam.stats?.stats?.['Batting-Hits']?.display,
     ],
     ['E', 0, 0],
   ]
@@ -90,19 +76,16 @@
       {#each range(maxInnings ?? 9) as inning (inning)}
         <div class="text-gray-5 px-1.5">
           <p>{inning + 1}</p>
-          <p
-            class:relative={inning + 1 === currentInning &&
-              halfInning === 'top'}
-          >
-            {#if inning + 1 === currentInning && halfInning === 'top'}
-              <div
+          <p class="relative">
+            {#if inning + 1 === $inningNumber && $halfInning?.half === 'top'}
+              <span
                 class="w-6 h-6 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                 style={`background: ${awayTeam.colors.backgroundColor}`}
-              ></div>
+              />
             {/if}
             <span
               class="relative"
-              style={inning + 1 === currentInning && halfInning === 'top'
+              style={inning + 1 === $inningNumber && $halfInning?.half === 'top'
                 ? `color: ${awayTeam.colors.foregroundColor}`
                 : ''}
             >
@@ -111,19 +94,17 @@
                 : ''}
             </span>
           </p>
-          <p
-            class:relative={inning + 1 === currentInning &&
-              halfInning === 'bottom'}
-          >
-            {#if inning + 1 === currentInning && halfInning === 'bottom'}
-              <div
+          <p class="relative">
+            {#if inning + 1 === $inningNumber && $halfInning?.half === 'bottom'}
+              <span
                 class="w-6 h-6 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                 style={`background: ${homeTeam.colors.backgroundColor}`}
-              ></div>
+              />
             {/if}
             <span
               class="relative"
-              style={inning + 1 === currentInning && halfInning === 'bottom'
+              style={inning + 1 === $inningNumber &&
+              $halfInning?.half === 'bottom'
                 ? `color: ${homeTeam.colors.foregroundColor}`
                 : ''}
             >
@@ -167,31 +148,29 @@
     >
       <div>
         <p class="text-gray-5 text-sm">
-          {halfInning === 'top' ? 'Batting' : 'Pitching'}
+          {$matchup.away.type === 'batter' ? 'Batting' : 'Pitching'}
         </p>
-        <p>{awayPlayer?.entity.shortDisplay}</p>
+        <p>{$matchup.away.player?.entity.shortDisplay}</p>
       </div>
       <div class="flex items-center gap-2.5">
         <AtBatCount
-          {balls}
-          {strikes}
-          pitches={atBat?.events.filter((e) => e.type === 'pitch') ?? []}
+          pitches={$atBat?.events.filter((e) => e.type === 'pitch') ?? []}
           indicator
         />
         <Icon
           name="baseball-diamond"
           class="w-9"
-          fillFirstBase={some(runners, (r) => r.endingBase === 1)}
-          fillSecondBase={some(runners, (r) => r.endingBase === 2)}
-          fillThirdBase={some(runners, (r) => r.endingBase === 3)}
+          fillFirstBase={some($runners, (r) => r.endingBase === 1)}
+          fillSecondBase={some($runners, (r) => r.endingBase === 2)}
+          fillThirdBase={some($runners, (r) => r.endingBase === 3)}
         />
-        <OutsIndicator {outs} vertical />
+        <OutsIndicator vertical />
       </div>
       <div class="text-right">
         <p class="text-gray-5 text-sm">
-          {halfInning === 'bottom' ? 'Batting' : 'Pitching'}
+          {$matchup.home.type === 'batter' ? 'Batting' : 'Pitching'}
         </p>
-        <p>{homePlayer?.entity.shortDisplay}</p>
+        <p>{$matchup.home.player?.entity.shortDisplay}</p>
       </div>
     </div>
   {/if}
