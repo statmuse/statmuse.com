@@ -77,7 +77,7 @@
         <div class="text-gray-5 px-1.5">
           <p>{inning + 1}</p>
           <p class="relative">
-            {#if inning + 1 === $inningNumber && $halfInning?.half === 'top'}
+            {#if inning + 1 === $inningNumber && $halfInning?.half === 'top' && !final}
               <span
                 class="w-6 h-6 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                 style={`background: ${awayTeam.colors.backgroundColor}`}
@@ -85,7 +85,9 @@
             {/if}
             <span
               class="relative"
-              style={inning + 1 === $inningNumber && $halfInning?.half === 'top'
+              style={inning + 1 === $inningNumber &&
+              $halfInning?.half === 'top' &&
+              !final
                 ? `color: ${awayTeam.colors.foregroundColor}`
                 : ''}
             >
@@ -95,7 +97,7 @@
             </span>
           </p>
           <p class="relative">
-            {#if inning + 1 === $inningNumber && $halfInning?.half === 'bottom'}
+            {#if inning + 1 === $inningNumber && $halfInning?.half === 'bottom' && !final}
               <span
                 class="w-6 h-6 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                 style={`background: ${homeTeam.colors.backgroundColor}`}
@@ -104,7 +106,8 @@
             <span
               class="relative"
               style={inning + 1 === $inningNumber &&
-              $halfInning?.half === 'bottom'
+              $halfInning?.half === 'bottom' &&
+              !final
                 ? `color: ${homeTeam.colors.foregroundColor}`
                 : ''}
             >
