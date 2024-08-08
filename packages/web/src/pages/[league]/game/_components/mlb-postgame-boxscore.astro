@@ -1,17 +1,8 @@
 ---
-import {
-  getGames,
-  getPlayByPlay,
-  getSchedule,
-  getStandingsRaw,
-} from '@lib/gamera'
+import { getGames, getPlayByPlay, getStandingsRaw } from '@lib/gamera'
 import Layout from './layout.astro'
-import {
-  type GameraPlayerReference,
-  type MlbGameDataResponse,
-  filterScoringPlays,
-} from '@statmuse/core/gamera'
-import { find, orderBy } from 'lodash-es'
+import { type MlbGameDataResponse } from '@statmuse/core/gamera'
+import { find } from 'lodash-es'
 import PostgameHero from './postgame-hero.astro'
 import GameInfo from './game-info.astro'
 import Schedule from './schedule.astro'
@@ -30,6 +21,7 @@ interface Props {
 const { gameData, gameId } = Astro.props
 
 const {
+  seasonYearDisplay: seasonYear,
   networkName,
   awayTeam: awayTeamModel,
   homeTeam: homeTeamModel,
@@ -40,18 +32,17 @@ const {
   gameTimestamp,
 } = gameData
 
-const [homeScores, awayScores, awaySchedule, standings, playByPlay] =
-  await Promise.all([
-    getGames({ context: Astro, domain: 'mlb', teamId: homeTeamModel.teamId }),
-    getGames({ context: Astro, domain: 'mlb', teamId: awayTeamModel.teamId }),
-    getSchedule({
-      context: Astro,
-      domain: 'mlb',
-      teamId: awayTeamModel.teamId,
-    }),
-    getStandingsRaw({ context: Astro, domain: 'mlb' }),
-    getPlayByPlay({ context: Astro, gameId }),
-  ])
+const [awayGames, standings, playByPlay] = await Promise.all([
+  getGames({
+    context: Astro,
+    domain: 'mlb',
+    teamId: awayTeamModel.teamId,
+    seasonYear,
+    gameState: ['completed', 'inProgress', 'scheduled'],
+  }),
+  getStandingsRaw({ context: Astro, domain: 'mlb' }),
+  getPlayByPlay({ context: Astro, gameId }),
+])
 
 stores.gameState.set({ gameData, playByPlay })
 
@@ -65,24 +56,18 @@ const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
     network={networkName}
     timestamp={gameTimestamp}
     {awayTeam}
-    awayScores={awayScores && {
-      ...awayScores,
-      games: orderBy(awayScores.games, 'gameDate', 'desc'),
-    }}
+    awayRecord={awayTeamModel.record}
     {homeTeam}
-    homeScores={homeScores && {
-      ...homeScores,
-      games: orderBy(homeScores.games, 'gameDate', 'desc'),
-    }}
+    homeRecord={homeTeamModel.record}
   />
   <Fragment slot="game">
     <Linescore {awayTeam} {homeTeam} final />
     <PlayByPlay {awayTeam} {homeTeam} scoring />
-    <!-- <Schedule
+    <Schedule
       {teams}
-      finalGames={awayScores?.games}
-      scheduledGames={awaySchedule?.games}
-    /> -->
+      currentGameId={Number.parseInt(gameId)}
+      games={awayGames?.games}
+    />
     <Standings
       {standings}
       awayTeamId={awayTeamModel.teamId}

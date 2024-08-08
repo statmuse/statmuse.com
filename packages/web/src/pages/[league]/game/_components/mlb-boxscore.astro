@@ -23,7 +23,7 @@ if (!gameData) return NOT_FOUND_404
     switch (gameData.gameStatus) {
       case 'scheduled':
       case 'delayed':
-        return <MlbPregameBoxscore {gameData} />
+        return <MlbPregameBoxscore {gameData} {gameId} />
       case 'inProgress':
         return <MlbLivegameBoxscore {gameData} {gameId} />
       case 'completed':

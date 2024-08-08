@@ -3,43 +3,20 @@ import Timestamp from '@components/timestamp.svelte'
 import Share from '@components/share/index.svelte'
 import { hexToHSL } from '@lib/color'
 import Image from '@components/image.astro'
-import type {
-  GameResultsResponse,
-  MlbGameDataResponse,
-} from '@statmuse/core/gamera'
+import type { MlbGameDataResponse } from '@statmuse/core/gamera'
 import Score from './score.svelte'
 
 interface Props {
   network: string
   awayTeam?: NonNullable<MlbGameDataResponse['teams']>[number]
   homeTeam?: NonNullable<MlbGameDataResponse['teams']>[number]
-  awayScores?: GameResultsResponse
-  homeScores?: GameResultsResponse
+  awayRecord?: { wins: number; losses: number }
+  homeRecord?: { wins: number; losses: number }
   timestamp: string
 }
 
-const getTeamFromGameResult = (
-  teamId?: number,
-  game?: GameResultsResponse['games'][number],
-) => {
-  return game?.awayTeam.teamId === teamId
-    ? game?.awayTeam
-    : game?.homeTeam.teamId === teamId
-    ? game?.homeTeam
-    : undefined
-}
-
-const { network, awayTeam, homeTeam, awayScores, homeScores, timestamp } =
+const { network, awayTeam, homeTeam, awayRecord, homeRecord, timestamp } =
   Astro.props
-
-const awayTeamRecord = getTeamFromGameResult(
-  awayTeam?.teamId,
-  awayScores?.games[0],
-)?.record
-const homeTeamRecord = getTeamFromGameResult(
-  homeTeam?.teamId,
-  homeScores?.games[0],
-)?.record
 ---
 
 <div class="-mx-3">
@@ -70,8 +47,8 @@ const homeTeamRecord = getTeamFromGameResult(
       <div class="px-3 flex flex-col justify-center leading-none">
         <h4 class="font-semibold text-lg">
           {
-            awayTeamRecord && (
-              <span class="text-sm font-normal">{`${awayTeamRecord.wins}-${awayTeamRecord.losses}`}</span>
+            awayRecord && (
+              <span class="text-sm font-normal">{`${awayRecord.wins}-${awayRecord.losses}`}</span>
             )
           }{' '}{awayTeam?.abbreviation}
         </h4>
@@ -95,8 +72,8 @@ const homeTeamRecord = getTeamFromGameResult(
       <div class="px-3 flex flex-col justify-center leading-none">
         <h4 class="font-semibold text-lg">
           {homeTeam?.abbreviation}{' '}{
-            homeTeamRecord && (
-              <span class="text-sm font-normal">{`${homeTeamRecord.wins}-${homeTeamRecord.losses}`}</span>
+            homeRecord && (
+              <span class="text-sm font-normal">{`${homeRecord.wins}-${homeRecord.losses}`}</span>
             )
           }
         </h4>

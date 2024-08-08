@@ -2,7 +2,6 @@
 import Image from '@components/image.astro'
 import Panel from '@components/panel.astro'
 import Timestamp from '@components/timestamp.svelte'
-import { parseGameId } from '@lib/parse'
 import type {
   MlbGameDataResponse,
   ScheduleGame,
@@ -10,30 +9,25 @@ import type {
 } from '@statmuse/core/gamera'
 import { findIndex, takeWhile, takeRightWhile, find } from 'lodash-es'
 
-interface Props {
-  teams: MlbGameDataResponse['teams']
-  finalGames?: GameResult[]
-  scheduledGames?: ScheduleGame[]
-}
-
-const { teams, finalGames, scheduledGames } = Astro.props
-const { game } = Astro.params
-const gameId = Number.parseInt(parseGameId(game!))
-
 type Game = GameResult | ScheduleGame
 
-const isGameResult = (game: Game): game is GameResult =>
-  'id' in (game as GameResult)
+interface Props {
+  teams: MlbGameDataResponse['teams']
+  games?: Game[]
+  currentGameId: number
+}
 
-const allGames: Game[] = [
-  ...(finalGames?.sort((a, b) => a.gameDate.localeCompare(b.gameDate)) ?? []),
-  ...(scheduledGames ?? []),
-]
+const { teams, games: allGames, currentGameId } = Astro.props
+
+if (!allGames) return undefined
+
+const isGameResult = (game: Game): game is GameResult =>
+  game.type === 'completed'
 
 let games: Game[] = []
 
 let gameIndex = findIndex(allGames, (g) =>
-  isGameResult(g) ? g.id === gameId : g.gameId === gameId,
+  isGameResult(g) ? g.id === currentGameId : g.gameId === currentGameId,
 )
 if (gameIndex !== -1) {
   const game = allGames[gameIndex]

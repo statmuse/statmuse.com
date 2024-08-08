@@ -22,6 +22,7 @@ interface Props {
 const { gameData, gameId } = Astro.props
 
 const {
+  seasonYearDisplay: seasonYear,
   networkName,
   awayTeam: awayTeamModel,
   homeTeam: homeTeamModel,
@@ -32,8 +33,20 @@ const {
 } = gameData
 
 const [homeScores, awayScores, playByPlay] = await Promise.all([
-  getGames({ context: Astro, domain: 'mlb', teamId: homeTeamModel.teamId }),
-  getGames({ context: Astro, domain: 'mlb', teamId: awayTeamModel.teamId }),
+  getGames({
+    context: Astro,
+    domain: 'mlb',
+    teamId: homeTeamModel.teamId,
+    seasonYear,
+    gameState: 'completed',
+  }),
+  getGames({
+    context: Astro,
+    domain: 'mlb',
+    teamId: awayTeamModel.teamId,
+    seasonYear,
+    gameState: 'completed',
+  }),
   getPlayByPlay({ context: Astro, gameId }),
 ])
 

@@ -45,17 +45,33 @@ export async function getGame<T extends Domain>(props: {
   }
 }
 
+type Season = 'regularSeaaon' | 'postseason'
+
+type GameState = 'scheduled' | 'inProgress' | 'completed'
+
 export const getGames = async (props: {
   context: Context
   domain: string
   teamId?: string | number
-  seasonYear?: number
+  seasonYear?: string | number
+  startGameDate?: string
+  endGameDate?: string
+  seasonType?: Season | Season[]
+  gameState?: GameState | GameState[]
 }) => {
   try {
     const { domain, context, ...params } = props
     const league = domain.toLowerCase()
     const path = `${league}/games/v2`
-    const data = await request<GameResultsResponse>(context, path, params)
+    const data = await request<GameResultsResponse>(
+      context,
+      path,
+      new URLSearchParams(
+        Object.entries(params)
+          .map(([k, v]) => (Array.isArray(v) ? v.map((x) => [k, x]) : [[k, v]]))
+          .flat() as string[][],
+      ),
+    )
     return data
   } catch (error) {
     console.error(error)

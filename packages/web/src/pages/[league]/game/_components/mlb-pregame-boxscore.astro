@@ -11,7 +11,6 @@ import LastGames from './last-games.astro'
 import {
   getGames,
   getInjuries,
-  getSchedule,
   getStandingsRaw,
   getTeamSeasonStats,
   getTeamSeasonPlayerStats,
@@ -23,11 +22,13 @@ import Odds from './odds.astro'
 
 interface Props {
   gameData: MlbGameDataResponse
+  gameId: string
 }
 
-const { gameData } = Astro.props
+const { gameData, gameId } = Astro.props
 
 const {
+  seasonYearDisplay: seasonYear,
   teams,
   awayTeam: awayTeamModel,
   homeTeam: homeTeamModel,
@@ -41,9 +42,8 @@ const {
 } = gameData
 
 const [
-  homeScores,
-  awayScores,
-  awaySchedule,
+  homeGames,
+  awayGames,
   homeTeamSeasonStats,
   awayTeamSeasonStats,
   injuries,
@@ -51,9 +51,20 @@ const [
   awayTeamPlayerStats,
   homeTeamPlayerStats,
 ] = await Promise.all([
-  getGames({ context: Astro, domain: 'mlb', teamId: homeTeamModel.teamId }),
-  getGames({ context: Astro, domain: 'mlb', teamId: awayTeamModel.teamId }),
-  getSchedule({ context: Astro, domain: 'mlb', teamId: awayTeamModel.teamId }),
+  getGames({
+    context: Astro,
+    domain: 'mlb',
+    teamId: homeTeamModel.teamId,
+    seasonYear,
+    gameState: ['completed', 'inProgress', 'scheduled'],
+  }),
+  getGames({
+    context: Astro,
+    domain: 'mlb',
+    teamId: awayTeamModel.teamId,
+    seasonYear,
+    gameState: ['completed', 'inProgress', 'scheduled'],
+  }),
   getTeamSeasonStats({
     context: Astro,
     domain: 'MLB',
@@ -105,14 +116,22 @@ const homeTeamInjuries = find(
     network={networkName}
     timestamp={gameTimestamp}
     {awayTeam}
-    awayScores={awayScores && {
-      ...awayScores,
-      games: orderBy(awayScores.games, 'gameDate', 'desc'),
+    awayScores={awayGames && {
+      ...awayGames,
+      games: orderBy(
+        awayGames.games.filter((g) => g.type === 'completed'),
+        'gameDate',
+        'desc',
+      ),
     }}
     {homeTeam}
-    homeScores={homeScores && {
-      ...homeScores,
-      games: orderBy(homeScores.games, 'gameDate', 'desc'),
+    homeScores={homeGames && {
+      ...homeGames,
+      games: orderBy(
+        homeGames.games.filter((g) => g.type === 'completed'),
+        'gameDate',
+        'desc',
+      ),
     }}
   />
   <Fragment slot="game">
@@ -130,8 +149,8 @@ const homeTeamInjuries = find(
     <Injuries {awayTeamInjuries} {homeTeamInjuries} />
     <Schedule
       {teams}
-      finalGames={awayScores?.games}
-      scheduledGames={awaySchedule?.games}
+      currentGameId={Number.parseInt(gameId)}
+      games={awayGames?.games}
     />
     <Standings
       {standings}
@@ -142,8 +161,14 @@ const homeTeamInjuries = find(
       {teams}
       {awayTeamModel}
       {homeTeamModel}
-      awayTeamResults={awayScores}
-      homeTeamResults={homeScores}
+      awayTeamResults={{
+        ...awayGames,
+        games: awayGames?.games.filter((g) => g.type === 'completed') ?? [],
+      }}
+      homeTeamResults={{
+        ...homeGames,
+        games: homeGames?.games.filter((g) => g.type === 'completed') ?? [],
+      }}
     />
     <GameInfo {venue} {weather} {officials} />
   </Fragment>
