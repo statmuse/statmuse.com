@@ -4,6 +4,7 @@ import type {
   MlbPlayByPlayResponse,
 } from '@statmuse/core/gamera'
 import * as Realtime from '@statmuse/core/realtime'
+import { last } from 'lodash-es'
 
 const gameraApiUrl = process.env.GAMERA_API_URL
 const gameraApiKey = Config.GAMERA_API_KEY
@@ -59,16 +60,37 @@ const fetchPlayByPlay = async (props: {
 export const handler = async (event: any) => {
   try {
     const { gameId, gameVersion: version } = event.detail
-    // const [gameData, playByPlay] = await Promise.all([
-    //   fetchGameData({
-    //     gameId,
-    //     version,
-    //     statKeySet: ['battingStandard', 'pitchingStandard'],
-    //   }),
-    //   fetchPlayByPlay({ gameId, version }),
-    // ])
+    const [gameData, playByPlay] = await Promise.all([
+      fetchGameData({
+        gameId,
+        version,
+        statKeySet: ['battingStandard', 'pitchingStandard'],
+      }),
+      fetchPlayByPlay({ gameId, version }),
+    ])
 
-    Realtime.publish(`mlb/game/${gameId}/all`, { data: 'sample-data' })
+    const payload = {
+      lastInning: last(playByPlay.innings),
+      players: gameData.players,
+      gameScore: {
+        away: gameData.awayTeam.score,
+        home: gameData.homeTeam.score,
+      },
+      lineup: {
+        away: gameData.awayTeam.players,
+        home: gameData.homeTeam.players,
+      },
+      stats: {
+        away: gameData.awayTeam.stats,
+        home: gameData.homeTeam.stats,
+      },
+      lineScore: {
+        away: gameData.awayTeam.lineScore,
+        home: gameData.homeTeam.lineScore,
+      },
+    }
+
+    Realtime.publish(`mlb/game/${gameId}/all`, payload)
   } catch (error) {
     console.error(error)
   }

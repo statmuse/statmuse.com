@@ -27,9 +27,10 @@ interface IotAuthorizerResponse {}
 export async function handler(
   event: IotAuthorizerEvent,
 ): Promise<IotAuthorizerResponse> {
-  // const tokens = Buffer.from(event.protocolData.mqtt.password, 'base64')
-
-  // do something with the tokens
+  const gameId = Buffer.from(
+    event.protocolData.mqtt.password,
+    'base64',
+  ).toString()
 
   const policy = {
     isAuthenticated: true, //A Boolean that determines whether client can connect.
@@ -53,12 +54,12 @@ export async function handler(
           {
             Action: 'iot:Receive',
             Effect: 'Allow',
-            Resource: `arn:aws:iot:us-east-1:${process.env.ACCOUNT}:topic/${Config.APP}/${Config.STAGE}/mlb/game/*`,
+            Resource: `arn:aws:iot:us-east-1:${process.env.ACCOUNT}:topic/${Config.APP}/${Config.STAGE}/mlb/game/${gameId}/*`,
           },
           {
             Action: 'iot:Subscribe',
             Effect: 'Allow',
-            Resource: `arn:aws:iot:us-east-1:${process.env.ACCOUNT}:topicfilter/${Config.APP}/${Config.STAGE}/mlb/game/*`,
+            Resource: `arn:aws:iot:us-east-1:${process.env.ACCOUNT}:topicfilter/${Config.APP}/${Config.STAGE}/mlb/game/${gameId}/*`,
           },
         ],
       },

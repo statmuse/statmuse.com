@@ -2,6 +2,16 @@
   import { iot, mqtt } from 'aws-iot-device-sdk-v2'
   import { v4 as uuidv4 } from 'uuid'
   import { onMount } from 'svelte'
+  import {
+    innings,
+    gameScore,
+    lineScore,
+    players,
+    lineup,
+    stats,
+  } from '../pages/[league]/game/_components/stores'
+
+  export let gameId: string
 
   let connection: mqtt.MqttClientConnection
 
@@ -15,7 +25,7 @@
         '',
         `${import.meta.env.PUBLIC_STAGE}-statmuse-authorizer`,
         '',
-        'oakland;athletics',
+        gameId,
       )
       .with_keep_alive_seconds(1200)
       .build()
@@ -27,7 +37,7 @@
       console.log('WS connected')
 
       await connection.subscribe(
-        `statmuse/${import.meta.env.PUBLIC_STAGE}/mlb/game/#`,
+        `statmuse/${import.meta.env.PUBLIC_STAGE}/mlb/game/${gameId}/#`,
         mqtt.QoS.AtLeastOnce,
       )
     })
@@ -54,13 +64,22 @@
 
     connection.on('message', (fullTopic, payload) => {
       console.log('full topic: ', fullTopic)
-      console.log('payload: ', payload)
 
-      // const splits = fullTopic.split("/");
-      // const workspaceID = splits[2];
-      // const topic = splits[4];
-      // const message = new TextDecoder("utf8").decode(new Uint8Array(payload));
-      // const parsed = JSON.parse(message);
+      const data = JSON.parse(new TextDecoder('utf8').decode(payload))
+
+      const currentInnings = innings.get()
+
+      console.log(data)
+
+      gameScore.set(data.gameScore)
+      lineScore.set(data.lineScore)
+      lineup.set(data.lineup)
+      stats.set(data.stats)
+      players.set(data.players.reduce((acc, p) => ({ ...acc, [p.id]: p }), {}))
+      innings.set([
+        ...currentInnings.filter((i) => i.number !== data.lastInning.number),
+        data.lastInning,
+      ])
     })
 
     connection.on('disconnect', console.log)
