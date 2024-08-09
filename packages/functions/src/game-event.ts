@@ -26,11 +26,13 @@ const fetchGameData = async (props: {
   version?: string
 }): Promise<MlbGameDataResponse | undefined> => {
   try {
-    const { gameId, statKeySet } = props
+    const { gameId, statKeySet, version } = props
     const requestUrl =
       `${gameraApiUrl}mlb/games/${gameId}?` +
       new URLSearchParams(
-        statKeySet.map((key) => ['statKeySet', key]),
+        statKeySet
+          .map((key) => ['statKeySet', key])
+          .concat(version ? [['version', version]] : []),
       ).toString()
     const response = await fetch(requestUrl, { headers })
     return response.json()
