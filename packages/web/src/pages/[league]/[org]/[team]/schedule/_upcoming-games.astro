@@ -1,0 +1,94 @@
+---
+import Grid from '@components/grid.svelte'
+import type {
+  GameraTeamReference,
+  GameResultsResponse,
+} from '@statmuse/core/gamera'
+import dayjs from 'dayjs'
+
+interface Props {
+  response: GameResultsResponse
+  teamId: number
+  domain: string
+}
+
+const { response, teamId, domain } = Astro.props
+
+const games = response.games.reverse().slice(0, 5)
+
+const teams = response.teams.reduce(
+  (acc, t) => ({ ...acc, [t.teamId]: t }),
+  {} as Record<number, GameraTeamReference>,
+)
+
+const columns = [
+  { rowItemKey: 'DATE', title: 'DATE', type: 'date' },
+  { rowItemKey: 'ALIGNMENT', title: '', type: 'string' },
+  { rowItemKey: 'OPP', title: 'OPP', type: 'string' },
+  { rowItemKey: 'TIME', title: 'TIME (ET)', type: 'time' },
+  { rowItemKey: 'NETWORK', title: 'NETWORK', type: 'string' },
+]
+
+const rows = games.map((game) => {
+  const oppId =
+    game.awayTeamId === teamId
+      ? game.homeTeamId
+      : game.homeTeamId === teamId
+      ? game.awayTeamId
+      : game.awayTeam?.teamId && game.awayTeam?.teamId === teamId
+      ? game.homeTeam.teamId
+      : game.awayTeam.teamId
+
+  const oppTeam = teams[oppId]
+  const team = teams[teamId]
+
+  const isHome = game.homeTeamId === teamId || game.homeTeam?.teamId === teamId
+
+  return {
+    DATE: {
+      value: game.gameDate,
+      display: dayjs(game.gameDate).format('ddd M/D'),
+      entity: {
+        display: `${dayjs(game.gameDate).format('M/D/YYYY')} ${
+          team.abbreviation
+        } ${isHome ? 'vs' : 'at'} ${oppTeam.abbreviation}`,
+        domain,
+        type: 'game',
+        id: game.id.toString(),
+      },
+    },
+    ALIGNMENT: {
+      value: isHome ? 'vs' : '@',
+      display: isHome ? 'vs' : '@',
+    },
+    OPP: {
+      value: oppTeam.abbreviation,
+      display: oppTeam.abbreviation,
+      imageUrl: oppTeam.logoImageUrl,
+      entity: oppTeam.entity,
+    },
+    TIME: {
+      value:
+        game.type === 'scheduled' ? game.gameTimestamp : game.awayTeam.score,
+      display:
+        game.type === 'scheduled'
+          ? dayjs(game.gameTimestamp).format('h:mm A')
+          : `${game.awayTeam.score} - ${game.awayTeam.score}`,
+    },
+    NETWORK: {
+      value: game.type === 'scheduled' ? '' : '',
+      display: game.type === 'scheduled' ? '' : '',
+    },
+  }
+})
+---
+
+<Grid
+  title="Upcoming Games"
+  data={{ columns, rows }}
+  fullWidth={false}
+  columnStyles={{
+    DATE: 'text-left w-20',
+    default: 'w-20',
+  }}
+/>
