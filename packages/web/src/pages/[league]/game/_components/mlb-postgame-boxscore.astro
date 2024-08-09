@@ -11,7 +11,15 @@ import Linescore from './linescore.svelte'
 import PlayByPlay from './play-by-play.svelte'
 import BattingStats from './batting-stats.svelte'
 import PitchingStats from './pitching-stats.svelte'
-import * as stores from './stores'
+import {
+  gameState,
+  innings,
+  gameScore,
+  lineScore,
+  players,
+  lineup,
+  stats,
+} from './stores'
 
 interface Props {
   gameData: MlbGameDataResponse
@@ -44,7 +52,27 @@ const [awayGames, standings, playByPlay] = await Promise.all([
   getPlayByPlay({ context: Astro, gameId }),
 ])
 
-stores.gameState.set({ gameData, playByPlay })
+gameState.set({ gameData, playByPlay })
+innings.set(playByPlay?.innings ?? [])
+gameScore.set({
+  away: gameData.awayTeam.score,
+  home: gameData.homeTeam.score,
+})
+lineScore.set({
+  away: gameData.awayTeam.lineScore,
+  home: gameData.homeTeam.lineScore,
+})
+stats.set({
+  away: gameData.awayTeam.stats,
+  home: gameData.homeTeam.stats,
+})
+lineup.set({
+  away: gameData.awayTeam.players,
+  home: gameData.homeTeam.players,
+})
+players.set(
+  gameData.players?.reduce((acc, p) => ({ ...acc, [p.id]: p }), {}) ?? {},
+)
 
 const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
 const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
@@ -76,11 +104,11 @@ const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
     <GameInfo {venue} {weather} {officials} />
   </Fragment>
   <Fragment slot="away">
-    <BattingStats teamKey="away" />
+    <BattingStats teamKey="away" final />
     <PitchingStats teamKey="away" />
   </Fragment>
   <Fragment slot="home">
-    <BattingStats teamKey="home" />
+    <BattingStats teamKey="home" final />
     <PitchingStats teamKey="home" />
   </Fragment>
   <PlayByPlay slot="plays" {awayTeam} {homeTeam} />

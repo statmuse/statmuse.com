@@ -1,18 +1,12 @@
 <script lang="ts">
   import Grid from '@components/grid.svelte'
   import { orderBy, filter, find } from 'lodash-es'
-  import { gameState, players } from './stores'
+  import { players, stats, lineup as lineUp } from './stores'
 
   export let teamKey: 'away' | 'home'
 
-  $: lineup =
-    teamKey === 'away'
-      ? $gameState.gameData?.awayTeam.players
-      : $gameState.gameData?.homeTeam.players
-  $: splits =
-    teamKey === 'away'
-      ? $gameState.gameData?.awayTeam.stats?.splits
-      : $gameState.gameData?.homeTeam.stats?.splits
+  $: lineup = $lineUp[teamKey]
+  $: splits = $stats[teamKey]?.splits
 
   const columns = [
     {

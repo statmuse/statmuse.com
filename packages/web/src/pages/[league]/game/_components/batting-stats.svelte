@@ -1,20 +1,15 @@
 <script lang="ts">
   import Grid from '@components/grid.svelte'
-  import { formatMlbPosition } from '@statmuse/core/gamera'
+  import { formatMlbPosition } from '@statmuse/core/gamera/index'
   import { orderBy, filter, find } from 'lodash-es'
-  import { gameState, players, matchup } from './stores'
+  import { players, matchup, lineup as lineUp, stats } from './stores'
 
   export let teamKey: 'away' | 'home'
+  export let final = false
 
-  $: higlightPlayer = $matchup[teamKey].player
-  $: lineup =
-    teamKey === 'away'
-      ? $gameState.gameData?.awayTeam.players
-      : $gameState.gameData?.homeTeam.players
-  $: splits =
-    teamKey === 'away'
-      ? $gameState.gameData?.awayTeam.stats?.splits
-      : $gameState.gameData?.homeTeam.stats?.splits
+  $: higlightPlayer = final ? undefined : $matchup[teamKey].player
+  $: lineup = $lineUp[teamKey]
+  $: splits = $stats[teamKey]?.splits
 
   const columns = [
     {
@@ -82,7 +77,18 @@
           NAME: {
             display: player.usedName,
             value: player.usedName,
-            entity: player.entity,
+            entity: {
+              ...player.entity,
+              display:
+                p.lineup.battingOrderSequence !== 1
+                  ? `- ${player.entity.display}`
+                  : player.entity.display,
+              shortDisplay:
+                p.lineup.battingOrderSequence !== 1 &&
+                player.entity.shortDisplay
+                  ? `- ${player.entity.shortDisplay}`
+                  : player.entity.shortDisplay,
+            },
             position: p.lineup.positions
               ?.map((x) => formatMlbPosition(x))
               .join('-'),
@@ -106,7 +112,7 @@
     .map((s) => {
       const player = $players?.[s.playerId]
       return {
-        name: player?.entity.shortDisplay,
+        name: player?.entity.shortDisplay ?? player?.entity.display,
         total: s.stats?.['Batting-Doubles']?.value,
       }
     })
@@ -115,7 +121,7 @@
     .map((s) => {
       const player = $players?.[s.playerId]
       return {
-        name: player?.entity.shortDisplay,
+        name: player?.entity.shortDisplay ?? player?.entity.display,
         total: s.stats?.['Batting-Triples']?.value,
       }
     })
@@ -124,7 +130,7 @@
     .map((s) => {
       const player = $players?.[s.playerId]
       return {
-        name: player?.entity.shortDisplay,
+        name: player?.entity.shortDisplay ?? player?.entity.display,
         total: s.stats?.['Batting-HomeRuns']?.value,
       }
     })
@@ -133,7 +139,7 @@
     .map((s) => {
       const player = $players?.[s.playerId]
       return {
-        name: player?.entity.shortDisplay,
+        name: player?.entity.shortDisplay ?? player?.entity.display,
         total: s.stats?.['Batting-RunsBattedIn']?.value,
       }
     })

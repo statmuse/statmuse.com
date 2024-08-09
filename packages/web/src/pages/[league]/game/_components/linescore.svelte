@@ -14,6 +14,8 @@
     matchup,
     atBat,
     runners,
+    lineScore,
+    stats,
   } from './stores'
 
   export let awayTeam: GameraTeamReference
@@ -24,22 +26,18 @@
   $: awayTeamModel = $gameState.gameData?.awayTeam
   $: homeTeamModel = $gameState.gameData?.homeTeam
 
-  $: maxInnings = max([
-    9,
-    $gameState.gameData?.awayTeam.lineScore?.length,
-    $gameState.gameData?.homeTeam.lineScore?.length,
-  ])
+  $: maxInnings = max([9, $lineScore.away?.length, $lineScore.home?.length])
 
   $: totals = [
     [
       'R',
-      $gameState.gameData?.awayTeam.stats?.stats?.['Batting-Runs']?.display,
-      $gameState.gameData?.homeTeam.stats?.stats?.['Batting-Runs']?.display,
+      $stats.away?.stats?.['Batting-Runs']?.display,
+      $stats.home?.stats?.['Batting-Runs']?.display,
     ],
     [
       'H',
-      $gameState.gameData?.awayTeam.stats?.stats?.['Batting-Hits']?.display,
-      $gameState.gameData?.homeTeam.stats?.stats?.['Batting-Hits']?.display,
+      $stats.away?.stats?.['Batting-Hits']?.display,
+      $stats.home?.stats?.['Batting-Hits']?.display,
     ],
     ['E', 0, 0],
   ]
@@ -91,8 +89,8 @@
                 ? `color: ${awayTeam.colors.foregroundColor}`
                 : ''}
             >
-              {awayTeamModel?.lineScore[inning] !== undefined
-                ? awayTeamModel?.lineScore[inning].runs
+              {$lineScore.away?.[inning] !== undefined
+                ? $lineScore.away[inning].runs
                 : ''}
             </span>
           </p>
@@ -111,8 +109,8 @@
                 ? `color: ${homeTeam.colors.foregroundColor}`
                 : ''}
             >
-              {homeTeamModel?.lineScore[inning] !== undefined
-                ? homeTeamModel?.lineScore[inning].runs
+              {$lineScore.home?.[inning] !== undefined
+                ? $lineScore.home[inning].runs
                 : ''}
             </span>
           </p>

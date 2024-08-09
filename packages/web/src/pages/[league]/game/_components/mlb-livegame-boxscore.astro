@@ -12,7 +12,16 @@ import LivegameHero from './livegame-hero.astro'
 import BattingStats from './batting-stats.svelte'
 import PitchingStats from './pitching-stats.svelte'
 import GameState from './game-state.svelte'
-import * as stores from './stores'
+import Realtime from '@components/realtime.svelte'
+import {
+  gameState,
+  innings,
+  gameScore,
+  lineScore,
+  players,
+  lineup,
+  stats,
+} from './stores'
 
 interface Props {
   gameData: MlbGameDataResponse
@@ -53,7 +62,27 @@ const [homeScores, awayScores, playByPlay] = await Promise.all([
 const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
 const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
 
-stores.gameState.set({ gameData, playByPlay })
+gameState.set({ gameData, playByPlay })
+innings.set(playByPlay?.innings ?? [])
+gameScore.set({
+  away: gameData.awayTeam.score,
+  home: gameData.homeTeam.score,
+})
+lineScore.set({
+  away: gameData.awayTeam.lineScore,
+  home: gameData.homeTeam.lineScore,
+})
+stats.set({
+  away: gameData.awayTeam.stats,
+  home: gameData.homeTeam.stats,
+})
+lineup.set({
+  away: gameData.awayTeam.players,
+  home: gameData.homeTeam.players,
+})
+players.set(
+  gameData.players?.reduce((acc, p) => ({ ...acc, [p.id]: p }), {}) ?? {},
+)
 ---
 
 <Layout {awayTeam} {homeTeam}>
@@ -72,7 +101,7 @@ stores.gameState.set({ gameData, playByPlay })
     }}
   />
   <Fragment slot="game">
-    <Matchup {awayTeam} {homeTeam} />
+    <Matchup client:load {awayTeam} {homeTeam} />
     <PitchByPitch client:load />
     <Linescore client:load {awayTeam} {homeTeam} />
     <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
@@ -90,5 +119,5 @@ stores.gameState.set({ gameData, playByPlay })
   </Fragment>
   <PlayByPlay client:load slot="plays" {awayTeam} {homeTeam} />
   <GameState client:only="svelte" {gameData} {playByPlay} />
-  <!-- <Realtime client:only="svelte" /> -->
+  <Realtime client:only="svelte" {gameId} />
 </Layout>
