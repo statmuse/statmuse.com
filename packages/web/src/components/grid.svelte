@@ -5,7 +5,7 @@
   import type { ComponentProps } from 'svelte'
   import { orderBy, some } from 'lodash-es'
   import { session } from '@lib/stores'
-  import type { GameraGrid, Colors } from '@statmuse/core/gamera'
+  import type { GameraGrid, Colors } from '@statmuse/core/gamera/index'
   import EntityLink from '@components/entity-link.svelte'
   import Image from '@components/image.svelte'
   import Panel from '@components/panel.svelte'
@@ -45,60 +45,6 @@
   let sortKey = ''
   let sortOrder: 'asc' | 'desc'
   let expand = false
-
-  let grids = (Array.isArray(data) ? data : [data]).map((grid) => {
-    let columns = grid.columns.flatMap((col) => {
-      const isSticky = stickyColumns.includes(col.rowItemKey)
-      const hasImage = some(grid.rows, `${col.rowItemKey}.imageUrl`)
-
-      if (isSticky && hasImage) {
-        return [
-          { rowItemKey: 'IMAGE', title: '', type: 'string' },
-          { ...col, sticky: true },
-        ]
-      }
-
-      if (isSticky) {
-        return { ...col, sticky: true }
-      }
-
-      if (hasImage) {
-        return { ...col, hasImage: true }
-      }
-
-      return col
-    }) as Column[]
-
-    if (!some(columns, 'sticky')) {
-      const [firstColumn, ...rest] = columns
-      columns = [{ ...firstColumn, sticky: true }, ...rest]
-    }
-
-    const allRows = grid.rows.map((row) =>
-      stickyColumns.reduce((r, key) => {
-        if (r[key]?.imageUrl) {
-          return {
-            ...r,
-            [key]: {
-              ...r[key],
-              imageUrl: undefined,
-            },
-            IMAGE: r[key],
-          }
-        }
-        return r
-      }, row),
-    )
-
-    let rows = limitRows ? allRows.slice(0, freeRowLimit) : allRows
-
-    return {
-      ...grid,
-      allRows,
-      columns,
-      rows,
-    }
-  })
 
   const textAlign = (col: Column) => {
     switch (col.type) {
@@ -179,6 +125,60 @@
     return undefined
   }
 
+  $: grids = (Array.isArray(data) ? data : [data]).map((grid) => {
+    let columns = grid.columns.flatMap((col) => {
+      const isSticky = stickyColumns.includes(col.rowItemKey)
+      const hasImage = some(grid.rows, `${col.rowItemKey}.imageUrl`)
+
+      if (isSticky && hasImage) {
+        return [
+          { rowItemKey: 'IMAGE', title: '', type: 'string' },
+          { ...col, sticky: true },
+        ]
+      }
+
+      if (isSticky) {
+        return { ...col, sticky: true }
+      }
+
+      if (hasImage) {
+        return { ...col, hasImage: true }
+      }
+
+      return col
+    }) as Column[]
+
+    if (!some(columns, 'sticky')) {
+      const [firstColumn, ...rest] = columns
+      columns = [{ ...firstColumn, sticky: true }, ...rest]
+    }
+
+    const allRows = grid.rows.map((row) =>
+      stickyColumns.reduce((r, key) => {
+        if (r[key]?.imageUrl) {
+          return {
+            ...r,
+            [key]: {
+              ...r[key],
+              imageUrl: undefined,
+            },
+            IMAGE: r[key],
+          }
+        }
+        return r
+      }, row),
+    )
+
+    let rows = limitRows ? allRows.slice(0, freeRowLimit) : allRows
+
+    return {
+      ...grid,
+      allRows,
+      columns,
+      rows,
+    }
+  })
+
   $: {
     if (limitRows) {
       if (
@@ -220,7 +220,7 @@
 >
   <div class="relative overflow-x-auto -mx-3">
     <table class="whitespace-nowrap" class:w-full={fullWidth}>
-      {#each grids as grid}
+      {#each grids as grid (grid)}
         {@const { columns, rows, aggregations } = grid}
         {#if head}
           <thead>
@@ -262,7 +262,7 @@
               {#if rankColumn}
                 <td class="w-2 pl-3 text-gray-5">{rowIndex + 1}</td>
               {/if}
-              {#each columns as col, index (row[col.rowItemKey])}
+              {#each columns as col, index (col.rowItemKey)}
                 {#if row[col.rowItemKey]}
                   {@const { display, imageUrl, entity, position, injured } =
                     row[col.rowItemKey]}
@@ -371,7 +371,10 @@
                     </EntityLink>
                   </td>
                 {:else}
-                  <td></td>
+                  <td
+                    style:background={highlightColors?.backgroundColor}
+                    style:color={highlightColors?.foregroundColor}
+                  ></td>
                 {/if}
               {/each}
             </tr>
@@ -382,7 +385,7 @@
                 {#if rankColumn}
                   <td class="w-2 pl-3 text-gray-5"></td>
                 {/if}
-                {#each columns as col, index (row[col.rowItemKey])}
+                {#each columns as col, index (col.rowItemKey)}
                   {#if row[col.rowItemKey]}
                     {@const { display } = row[col.rowItemKey]}
                     <td
