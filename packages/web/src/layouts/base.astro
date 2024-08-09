@@ -86,7 +86,7 @@ const analyticsProperties = Object.assign(
     is_error: isError(Astro.response.status),
     is_search: false,
     method: Astro.request.method,
-    origin: 'web',
+    origin: Astro.locals.platform,
     origin_scope: 'browser',
     page_domain: 'unknown',
     page_type: 'unknown',
