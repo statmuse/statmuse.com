@@ -42,8 +42,6 @@ const seasonSchedule = await getTeamSeasonSchedule({
   year,
 })
 
-console.log(gameResults?.grids[0].rows[0])
-
 let mlbGames: GameResultsResponse | undefined
 if (league === 'mlb') {
   mlbGames = await getGames({
@@ -80,7 +78,7 @@ Caching.swr(Astro)
 
 <TeamLayout {bio} {meta} page="schedule">
   {
-    mlbGames && (
+    mlbGames && mlbGames.games.length > 0 && (
       <UpcomingGames
         response={mlbGames}
         teamId={Number.parseInt(parseTeamId(team))}
