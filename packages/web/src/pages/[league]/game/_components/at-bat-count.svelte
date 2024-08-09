@@ -1,5 +1,8 @@
 <script lang="ts">
-  import { colorPlayOutcome, type PitchAtBatEvent } from '@statmuse/core/gamera'
+  import {
+    colorPlayOutcome,
+    type PitchAtBatEvent,
+  } from '@statmuse/core/gamera/index'
   import { atBatCount } from './stores'
 
   export let indicator: boolean | undefined = undefined

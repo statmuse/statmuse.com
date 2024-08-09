@@ -10,7 +10,7 @@
     tokensToText,
     type Colors,
     type InningHalf,
-  } from '@statmuse/core/gamera'
+  } from '@statmuse/core/gamera/index'
   import { findLast, filter, some } from 'lodash-es'
   import { players } from './stores'
 

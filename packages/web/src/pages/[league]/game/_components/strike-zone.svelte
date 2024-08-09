@@ -1,6 +1,9 @@
 <script lang="ts">
   import Icon from '@components/icon.svelte'
-  import { colorPlayOutcome, type PitchAtBatEvent } from '@statmuse/core/gamera'
+  import {
+    colorPlayOutcome,
+    type PitchAtBatEvent,
+  } from '@statmuse/core/gamera/index'
 
   const mapXCoordinate = (x: number) => {
     let xPoint

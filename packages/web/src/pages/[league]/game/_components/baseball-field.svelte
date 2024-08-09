@@ -1,6 +1,6 @@
 <script lang="ts">
   import Icon from '@components/icon.svelte'
-  import type { Coordinates } from '@statmuse/core/gamera'
+  import type { Coordinates } from '@statmuse/core/gamera/index'
 
   const mapXCoordinate = (x: number) => {
     let xPoint

@@ -5,7 +5,7 @@
   import {
     type GameraTeamReference,
     formatMlbPosition,
-  } from '@statmuse/core/gamera'
+  } from '@statmuse/core/gamera/index'
   import OutsIndicator from './outs-indicator.svelte'
   import AtBatCount from './at-bat-count.svelte'
   import { some } from 'lodash-es'
