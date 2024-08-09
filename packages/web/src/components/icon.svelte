@@ -8,7 +8,8 @@
 
   const style =
     'fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;'
-  const icons = {
+
+  $: icons = {
     about: `<g><rect x="13.7" y="5.6" style="${style}" width="4.1" height="18.4"/><path style="${style}" d="M24.3,18.5c0.9-0.3,1.6-0.7,2.2-1.4c-0.8,0.2-1.6,0.4-2.4,0.4c-0.5,0-1,0-1.4,0v-3v-2.4c0-2.7-2.2-4.9-4.9-4.9 v9.6c0.9,0,1.5,0.7,1.5,1.5v2.2c0,1.8,1.5,3.3,3.3,3.3h2.4v-2.4h-0.9c-0.8,0-1.5-0.7-1.5-1.5v-1.3C23.2,18.7,23.8,18.7,24.3,18.5z" /><rect x="9.5" y="9.8" style="${style}" width="4.1" height="14.2"/><path style="${style}" d="M5.4,12.8v5.5l0,0c0,0.5-0.3,1.1-0.8,1.6c-0.5,0.5-1.1,0.8-1.6,0.8c0.7,0.7,1.8,0.7,2.4,0v3.2h4.1V8.7 C7.3,8.7,5.4,10.5,5.4,12.8z"/></g>`,
     'all-home': `<g style="${style}"><path d="m10.1 17.1h9.3v9.3h-9.3z"/><path d="m3 14.8v11.7h23.5v-11.7l-11.7-11.8z"/></g>`,
     back: `<g><line style="${style}" x1="26.5" y1="14.8" x2="3" y2="14.8"/><polyline style="${style}" points="14.7,26.5 3,14.8 14.7,3"/></g>`,
@@ -75,7 +76,7 @@
     'yellow-card': `<style type="text/css"> .st16{fill:#EAC428;stroke:#EAC428;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;} </style> <rect x="6" y="3" class="st16" width="17.5" height="23.5"/>`,
   } as const
 
-  const displayIcon = icons[name]
+  $: displayIcon = icons[name]
 </script>
 
 <svg
