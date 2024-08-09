@@ -57,7 +57,7 @@
   ]
 
   $: rows = orderBy(
-    filter(lineup, (p) => p.lineup.pitchingSequence),
+    filter(lineup, (p) => !!p.lineup.pitchingSequence),
     ['lineup.pitchingSequence'],
   )
     .map((p) => {

@@ -122,19 +122,21 @@
         <div class="px-1.5" class:text-gray-5={index !== 0}>
           <p>{inning[0]}</p>
           <p
-            class={final && awayTeamModel.gameResult === 'win'
+            class={final && awayTeamModel?.gameResult === 'win'
               ? 'text-gray-2 dark:text-gray-7'
               : ''}
-            class:font-semibold={awayTeamModel.gameResult === 'win' &&
+            class:font-semibold={final &&
+              awayTeamModel?.gameResult === 'win' &&
               index === 0}
           >
             {inning[1] !== undefined ? inning[1] : ''}
           </p>
           <p
-            class={final && homeTeamModel.gameResult === 'win'
+            class={final && homeTeamModel?.gameResult === 'win'
               ? 'text-gray-2 dark:text-gray-7'
               : ''}
-            class:font-semibold={homeTeamModel.gameResult === 'win' &&
+            class:font-semibold={final &&
+              homeTeamModel?.gameResult === 'win' &&
               index === 0}
           >
             {inning[2] !== undefined ? inning[2] : ''}
