@@ -166,6 +166,7 @@ export function Web({ stack }: StackContext) {
         headerBehavior: CacheHeaderBehavior.allowList(
           'x-statmuse-platform',
           'x-statmuse-native-view',
+          'x-statmuse-color-scheme',
         ),
         cookieBehavior: CacheCookieBehavior.allowList('statmuse-platform'),
         defaultTtl: Duration.days(0),
