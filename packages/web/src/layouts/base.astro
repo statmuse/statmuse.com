@@ -133,10 +133,7 @@ const canonicalUrl = meta?.canonical
 
 <html lang="en">
   <head>
-    <meta
-      name="color-scheme"
-      content={Astro.locals.colorScheme ?? 'dark light'}
-    />
+    <meta name="color-scheme" content={'dark light'} />
 
     <script is:inline>
       function setTheme(document) {
@@ -144,17 +141,26 @@ const canonicalUrl = meta?.canonical
           'meta[name="color-scheme"]',
         )
 
-        if (
-          localStorage.theme === 'dark' ||
-          metaColorScheme?.content === 'dark' ||
-          (!('theme' in localStorage) &&
-            window.matchMedia('(prefers-color-scheme: dark)').matches)
-        ) {
-          document.documentElement.classList.add('dark')
-          metaColorScheme.setAttribute('content', 'dark')
+        if (window.colorScheme) {
+          if (window.colorScheme === 'dark') {
+            document.documentElement.classList.add('dark')
+            metaColorScheme.setAttribute('content', 'dark')
+          } else {
+            document.documentElement.classList.remove('dark')
+            metaColorScheme.setAttribute('content', 'light')
+          }
         } else {
-          document.documentElement.classList.remove('dark')
-          metaColorScheme.setAttribute('content', 'light')
+          if (
+            localStorage.theme === 'dark' ||
+            (!('theme' in localStorage) &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches)
+          ) {
+            document.documentElement.classList.add('dark')
+            metaColorScheme.setAttribute('content', 'dark')
+          } else {
+            document.documentElement.classList.remove('dark')
+            metaColorScheme.setAttribute('content', 'light')
+          }
         }
       }
 
