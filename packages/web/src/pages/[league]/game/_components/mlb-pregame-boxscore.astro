@@ -133,7 +133,7 @@ const homeTeamInjuries = find(
     <Schedule
       teams={teams ?? []}
       currentGameId={Number.parseInt(gameId)}
-      games={awayTeamGames?.games}
+      games={awayTeamGames?.games.reverse()}
     />
     <Standings
       {standings}
