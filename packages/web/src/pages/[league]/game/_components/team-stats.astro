@@ -1,14 +1,15 @@
 ---
 import Image from '@components/image.astro'
 import Panel from '@components/panel.astro'
-import { type MlbGameDataResponse } from '@statmuse/core/gamera'
-import { hexToHSL } from '@lib/color'
-import type { GameraTeamSeasonStats } from '@statmuse/core/gamera'
+import type {
+  GameraTeamReference,
+  GameraTeamSeasonStats,
+} from '@statmuse/core/gamera'
 import { find } from 'lodash-es'
 
 interface Props {
-  awayTeam?: NonNullable<MlbGameDataResponse['teams']>[number]
-  homeTeam?: NonNullable<MlbGameDataResponse['teams']>[number]
+  awayTeam?: GameraTeamReference
+  homeTeam?: GameraTeamReference
   awayTeamSeasonStats?: GameraTeamSeasonStats
   homeTeamSeasonStats?: GameraTeamSeasonStats
 }

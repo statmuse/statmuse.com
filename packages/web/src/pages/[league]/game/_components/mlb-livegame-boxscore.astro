@@ -2,7 +2,7 @@
 import { getGames, getPlayByPlay } from '@lib/gamera'
 import Layout from './layout.astro'
 import { type MlbGameDataResponse } from '@statmuse/core/gamera'
-import { find, orderBy } from 'lodash-es'
+import { find } from 'lodash-es'
 import GameInfo from './game-info.astro'
 import Matchup from './matchup.svelte'
 import PitchByPitch from './pitch-by-pitch.svelte'
@@ -41,7 +41,7 @@ const {
   officials,
 } = gameData
 
-const [homeScores, awayScores, playByPlay] = await Promise.all([
+const [homeTeamGames, awayTeamGames, playByPlay] = await Promise.all([
   getGames({
     context: Astro,
     domain: 'mlb',
@@ -90,15 +90,9 @@ players.set(
     slot="hero"
     network={networkName}
     {awayTeam}
-    awayScores={awayScores && {
-      ...awayScores,
-      games: orderBy(awayScores.games, 'gameDate', 'desc'),
-    }}
+    awayTeamGames={awayTeamGames?.games.filter((g) => g.type === 'completed')}
     {homeTeam}
-    homeScores={homeScores && {
-      ...homeScores,
-      games: orderBy(homeScores.games, 'gameDate', 'desc'),
-    }}
+    homeTeamGames={homeTeamGames?.games.filter((g) => g.type === 'completed')}
   />
   <Fragment slot="game">
     <Matchup client:load {awayTeam} {homeTeam} />

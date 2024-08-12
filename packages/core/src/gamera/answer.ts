@@ -376,7 +376,7 @@ export interface NbaShotsDetail extends DetailBase {
   charts: NbaShotChart[]
 }
 
-export interface ScheduledGame {
+export interface ScheduleDetailGame {
   date: string
   time?: string
   status?: string
@@ -399,9 +399,9 @@ export interface ScheduledGame {
 }
 
 export interface ScheduleDetail extends DetailBase {
-  scheduled: ScheduledGame[]
-  inProgress: ScheduledGame[]
-  completed: ScheduledGame[]
+  scheduled: ScheduleDetailGame[]
+  inProgress: ScheduleDetailGame[]
+  completed: ScheduleDetailGame[]
   type: 'schedule'
 }
 

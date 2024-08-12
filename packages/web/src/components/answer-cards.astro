@@ -8,10 +8,11 @@ import {
 } from '@lib/gamera'
 import type {
   PlayerCardResponse,
-  GameResultsResponse,
-  ScheduleResponse,
+  GameraGamesResponse,
+  GameraScheduleResponse,
   TeamCardResponse,
   GameraDomain,
+  CompletedGame,
 } from '@statmuse/core/gamera'
 import PlayerLeaders from '@components/cards/player-leaders.astro'
 import FantasyLeaders from './cards/fantasy-leaders.astro'
@@ -31,8 +32,8 @@ const { domain, teamId } = Astro.props
 let playerCardsResp: PlayerCardResponse | undefined
 let teamCardsResp: TeamCardResponse | undefined
 let standingsResp: Awaited<ReturnType<typeof getStandings>> | undefined
-let scheduleResp: ScheduleResponse | undefined
-let scoresResp: GameResultsResponse | undefined
+let scheduleResp: GameraScheduleResponse | undefined
+let scoresResp: GameraGamesResponse<CompletedGame> | undefined
 
 const allowedDomains = ['NBA', 'NFL', 'NHL', 'EPL', 'MLB']
 
@@ -43,7 +44,7 @@ if (allowedDomains.includes(domain)) {
       getTeamCards({ context: Astro, domain }),
       getStandings({ context: Astro, domain }),
       getSchedule({ context: Astro, domain }),
-      getGames({ context: Astro, domain }),
+      getGames<'completed'>({ context: Astro, domain }),
     ])
 }
 ---

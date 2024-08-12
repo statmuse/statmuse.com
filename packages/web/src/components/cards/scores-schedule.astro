@@ -1,16 +1,17 @@
 ---
 import type {
   GameraDomain,
-  ScheduleResponse,
-  GameResultsResponse,
+  GameraScheduleResponse,
+  GameraGamesResponse,
+  CompletedGame,
 } from '@statmuse/core/gamera'
 import ScheduleCard from '@components/cards/schedule-card.astro'
 import ScoresCard from '@components/cards/scores-card.astro'
 
 interface Props {
   domain: GameraDomain
-  scoresResponse?: GameResultsResponse
-  scheduleResponse?: ScheduleResponse
+  scoresResponse?: GameraGamesResponse<CompletedGame>
+  scheduleResponse?: GameraScheduleResponse
 }
 
 const { domain, scoresResponse, scheduleResponse } = Astro.props

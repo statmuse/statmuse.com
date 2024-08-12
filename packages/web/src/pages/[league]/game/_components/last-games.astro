@@ -2,7 +2,11 @@
 import Image from '@components/image.astro'
 import Panel from '@components/panel.astro'
 import { type MlbGameDataResponse } from '@statmuse/core/gamera'
-import type { GameResultsResponse, GameResult } from '@statmuse/core/gamera'
+import type {
+  GameraGamesResponse,
+  CompletedGame,
+  GameraTeamReference,
+} from '@statmuse/core/gamera'
 import dayjs from 'dayjs'
 import { find, orderBy, zip } from 'lodash-es'
 
@@ -10,8 +14,8 @@ interface Props {
   teams: MlbGameDataResponse['teams']
   awayTeamModel: MlbGameDataResponse['awayTeam']
   homeTeamModel: MlbGameDataResponse['homeTeam']
-  awayTeamResults?: GameResultsResponse
-  homeTeamResults?: GameResultsResponse
+  awayTeamResults?: GameraGamesResponse<CompletedGame>
+  homeTeamResults?: GameraGamesResponse<CompletedGame>
 }
 
 const {
@@ -31,7 +35,7 @@ const games = zip(
   orderBy(homeTeamResults?.games, 'gameData', 'desc').slice(0, 5),
 )
 
-const getTeamResult = (teamId: number, game?: GameResult) =>
+const getTeamResult = (teamId: number, game?: CompletedGame) =>
   game?.homeTeam.teamId === teamId
     ? game.homeTeam.gameResult
     : game?.awayTeam.teamId === teamId
@@ -40,8 +44,8 @@ const getTeamResult = (teamId: number, game?: GameResult) =>
 
 const getOpponent = (
   teamId: number,
-  game?: GameResult,
-  teams?: GameResultsResponse['teams'],
+  game?: CompletedGame,
+  teams?: GameraTeamReference[],
 ) => {
   let visitorTeam
   let opponent

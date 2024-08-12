@@ -3,6 +3,10 @@ import type {
   GameraTeamReference,
   GameraToken,
   Value,
+  Season,
+  GameStatus,
+  Game,
+  BettingOdds,
 } from './base'
 import type {
   GameraDefaultResponse,
@@ -69,45 +73,10 @@ export type GameraAnswerBoxScore =
   | GameraAnswerNhlBoxScore
   | GameraAnswerEplBoxScore
 
-export interface GameResultTeam {
-  teamId: number
-  score: number
-  record: {
-    wins: number
-    losses: number
-  }
-  gameResult: string
-}
-
-export interface GameResult {
-  id: number
-  season: {
-    type: string
-  }
-  gameDate: string
-  homeTeam: GameResultTeam
-  awayTeam: GameResultTeam
-}
-
-export interface GameResultsResponse {
+export interface GameraGamesResponse<G extends Game> {
   seasonYearDisplay: string
   teams: GameraTeamReference[]
-  games: GameResult[]
-}
-
-type GameStatus =
-  | 'scheduled'
-  | 'postponed'
-  | 'delayed'
-  | 'inProgress'
-  | 'suspended'
-  | 'completed'
-  | 'canceled'
-
-type SeasonPhase = {
-  type: 'regularSeason' | 'postseason'
-  year: number
-  yearDisplay?: string
+  games: G[]
 }
 
 export type Position =
@@ -238,32 +207,11 @@ interface Official {
   fullName?: string
 }
 
-type TeamLine = {
-  spread: Value<number>
-  spreadOdds: Value<number>
-  moneyline: Value<number>
-  moneylineOpen: Value<number>
-}
-
-interface SportsbookLine {
-  id: 'consensus' | 'draftKings' | 'fanDuel' | 'mgm' | 'williamHill'
-  homeTeam: TeamLine
-  awayTeam: TeamLine
-  overUnder: Value<number>
-  overUnderOddsOver: Value<number>
-  overUnderOddsUnder: Value<number>
-  overUnderOpen: Value<number>
-}
-
-export interface BettingOdds {
-  sportsbooks?: SportsbookLine[]
-}
-
 export interface MlbGameDataResponse {
   gameId: number
   gameStatus: GameStatus
   seasonYearDisplay?: string
-  season: SeasonPhase
+  season: Season
   gameDate: string
   gameTimestamp: string
   networkName: string

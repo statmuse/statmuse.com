@@ -4,9 +4,10 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import Grid from '@components/grid.svelte'
 import type {
-  ScheduleResponse,
+  GameraScheduleResponse,
   GameraGrid,
   GameraEntity,
+  GameraTeamReference,
 } from '@statmuse/core/gamera'
 import type { KanedamaEntity } from '@statmuse/core/kanedama'
 
@@ -15,7 +16,7 @@ dayjs.extend(timezone)
 
 interface Props {
   title: string
-  data: ScheduleResponse
+  data: GameraScheduleResponse
   href?: string
   entity?: GameraEntity | KanedamaEntity
 }
@@ -30,7 +31,7 @@ const teams = data.teams.reduce(
     ...result,
     [team.teamId]: team,
   }),
-  {} as Record<number, ScheduleResponse['teams'][0]>,
+  {} as Record<number, GameraTeamReference>,
 )
 
 const games = data.games.slice(0, 5)

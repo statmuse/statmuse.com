@@ -2,17 +2,17 @@
 import Image from '@components/image.astro'
 import Panel from '@components/panel.astro'
 import Timestamp from '@components/timestamp.svelte'
-import type {
-  MlbGameDataResponse,
-  ScheduleGame,
-  GameResult,
+import {
+  type Game,
+  type GameraTeamReference,
+  isCompletedGame,
+  isScheduledGame,
+  isInProgressGame,
 } from '@statmuse/core/gamera'
 import { findIndex, takeWhile, takeRightWhile, find } from 'lodash-es'
 
-type Game = GameResult | ScheduleGame
-
 interface Props {
-  teams: MlbGameDataResponse['teams']
+  teams: GameraTeamReference[]
   games?: Game[]
   currentGameId: number
 }
@@ -21,33 +21,23 @@ const { teams, games: allGames, currentGameId } = Astro.props
 
 if (!allGames) return undefined
 
-const isGameResult = (game: Game): game is GameResult =>
-  game.type === 'completed'
+const getAwayTeamId = (game: Game) =>
+  isScheduledGame(game) ? game.awayTeamId : game.awayTeam.teamId
+const getHomeTeamId = (game: Game) =>
+  isScheduledGame(game) ? game.homeTeamId : game.homeTeam.teamId
 
 let games: Game[] = []
 
-let gameIndex = findIndex(allGames, (g) =>
-  isGameResult(g) ? g.id === currentGameId : g.gameId === currentGameId,
-)
+let gameIndex = findIndex(allGames, (g) => g.gameId === currentGameId)
+
 if (gameIndex !== -1) {
   const game = allGames[gameIndex]
-  const awayTeamId = isGameResult(game) ? game.awayTeam.teamId : game.awayTeamId
-  const homeTeamId = isGameResult(game) ? game.homeTeam.teamId : game.homeTeamId
+  const awayTeamId = getAwayTeamId(game)
+  const homeTeamId = getHomeTeamId(game)
 
-  const sameTeams = (g: Game) => {
-    if (isGameResult(g)) {
-      return (
-        (g.awayTeam.teamId === awayTeamId ||
-          g.awayTeam.teamId === homeTeamId) &&
-        (g.homeTeam.teamId === awayTeamId || g.homeTeam.teamId === homeTeamId)
-      )
-    } else {
-      return (
-        (g.awayTeamId === awayTeamId || g.awayTeamId === homeTeamId) &&
-        (g.homeTeamId === awayTeamId || g.homeTeamId === homeTeamId)
-      )
-    }
-  }
+  const sameTeams = (g: Game) =>
+    [awayTeamId, homeTeamId].includes(getAwayTeamId(g)) &&
+    [awayTeamId, homeTeamId].includes(getHomeTeamId(g))
 
   const beforeGames = takeRightWhile(allGames.slice(0, gameIndex), sameTeams)
   const afterGames = takeWhile(allGames.slice(gameIndex), sameTeams)
@@ -60,24 +50,21 @@ if (gameIndex !== -1) {
   <div class="divide-y divide-gray-6 dark:divide-gray-4">
     {
       games.map((game, index) => {
-        const awayTeamId = isGameResult(game)
-          ? game.awayTeam.teamId
-          : game.awayTeamId
-        const homeTeamId = isGameResult(game)
-          ? game.homeTeam.teamId
-          : game.homeTeamId
-
+        const awayTeamId = getAwayTeamId(game)
+        const homeTeamId = getHomeTeamId(game)
         const awayTeam = find(teams, { teamId: awayTeamId })
         const homeTeam = find(teams, { teamId: homeTeamId })
 
-        if (isGameResult(game)) {
+        if (isCompletedGame(game) || isInProgressGame(game)) {
           return (
             <div class="flex gap-3 py-2">
               <div class="flex-1">
                 <div
                   class:list={{
                     'flex justify-between py-0.5': true,
-                    'font-semibold': game.awayTeam.gameResult === 'win',
+                    'font-semibold':
+                      isCompletedGame(game) &&
+                      game.awayTeam.gameResult === 'win',
                   }}
                 >
                   <div class="flex gap-1 items-center">
@@ -95,7 +82,9 @@ if (gameIndex !== -1) {
                 <div
                   class:list={{
                     'flex justify-between py-0.5': true,
-                    'font-semibold': game.homeTeam.gameResult === 'win',
+                    'font-semibold':
+                      isCompletedGame(game) &&
+                      game.homeTeam.gameResult === 'win',
                   }}
                 >
                   <div class="flex gap-1 items-center">
@@ -114,7 +103,7 @@ if (gameIndex !== -1) {
               <div class="w-16 flex items-center justify-end text-right text-sm text-gray-5">
                 <div>
                   <p>Game {index + 1}</p>
-                  <p>Final</p>
+                  {isCompletedGame(game) ? <p>Final</p> : <p>Live</p>}
                 </div>
               </div>
             </div>
@@ -158,7 +147,7 @@ if (gameIndex !== -1) {
               <div class="w-16 flex items-center justify-end text-right text-sm text-gray-5">
                 <p>
                   {homeTeam?.abbreviation}{' '}
-                  {game.odds?.sportsbooks[0].homeTeam.spreadOdds.display}
+                  {game.odds?.sportsbooks?.[0].homeTeam.spreadOdds.display}
                 </p>
               </div>
             </div>

@@ -1,11 +1,13 @@
 import type {
+  Game,
   GameraAnswerEplBoxScore,
   GameraAnswerMlbBoxScore,
   GameraAnswerNbaBoxScore,
   GameraAnswerNflBoxScore,
   GameraAnswerNhlBoxScore,
+  GameStatus,
+  GameraGamesResponse,
   MlbGameDataResponse,
-  GameResultsResponse,
   MlbPlayByPlayResponse,
 } from '@statmuse/core/gamera'
 import { parseGameId } from '@lib/parse'
@@ -47,9 +49,9 @@ export async function getGame<T extends Domain>(props: {
 
 type Season = 'regularSeaaon' | 'postseason'
 
-type GameState = 'scheduled' | 'inProgress' | 'completed'
-
-export const getGames = async (props: {
+export const getGames = async <
+  G extends Extract<GameStatus, 'scheduled' | 'inProgress' | 'completed'>,
+>(props: {
   context: Context
   domain: string
   teamId?: string | number
@@ -57,13 +59,13 @@ export const getGames = async (props: {
   startGameDate?: string
   endGameDate?: string
   seasonType?: Season | Season[]
-  gameState?: GameState | GameState[]
+  gameState?: G | G[]
 }) => {
   try {
     const { domain, context, ...params } = props
     const league = domain.toLowerCase()
     const path = `${league}/games/v2`
-    const data = await request<GameResultsResponse>(
+    const data = await request<GameraGamesResponse<Extract<Game, { type: G }>>>(
       context,
       path,
       new URLSearchParams(

@@ -5,7 +5,7 @@ import flatten from 'lodash/fp/flatten'
 import groupBy from 'lodash/fp/groupBy'
 import {
   type ScheduleDetail,
-  type ScheduledGame,
+  type ScheduleDetailGame,
   fallbackIcon,
 } from '@statmuse/core/gamera'
 import EntityLink from '@components/entity-link.astro'
@@ -21,7 +21,7 @@ const league = Astro.props.league.toLowerCase()
 const detail = Astro.props.detail
 const groupGames = compose(entries, groupBy('date'))
 
-type ScheduledGameWithType = ScheduledGame & {
+type ScheduledGameWithType = ScheduleDetailGame & {
   type: 'completed' | 'inProgress' | 'scheduled'
 }
 

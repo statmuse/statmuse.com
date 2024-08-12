@@ -99,3 +99,92 @@ export interface GameraTeamReference {
   colors: Colors
   entity: GameraEntity
 }
+
+type TeamLine = {
+  spread: Value<number>
+  spreadOdds: Value<number>
+  moneyline: Value<number>
+  moneylineOpen: Value<number>
+}
+
+interface SportsbookLine {
+  id: 'consensus' | 'draftKings' | 'fanDuel' | 'mgm' | 'williamHill'
+  homeTeam: TeamLine
+  awayTeam: TeamLine
+  overUnder: Value<number>
+  overUnderOddsOver: Value<number>
+  overUnderOddsUnder: Value<number>
+  overUnderOpen: Value<number>
+}
+
+export interface BettingOdds {
+  sportsbooks?: SportsbookLine[]
+}
+
+export interface GameTeam {
+  teamId: number
+  score: number
+  record: {
+    wins: number
+    losses: number
+  }
+  gameResult: string
+}
+
+export interface ScheduledGame {
+  id: number
+  gameId: number
+  type: 'scheduled'
+  season: Season
+  gameTimestamp: string
+  gameDate: string
+  homeTeamId: number
+  awayTeamId: number
+  odds?: BettingOdds
+}
+
+export interface InProgressGame
+  extends Omit<CompletedGame, 'type' | 'homeTeam' | 'awayTeam'> {
+  type: 'inProgress'
+  summary?: GameraToken[]
+  homeTeam: Omit<GameTeam, 'record' | 'gameResult'>
+  awayTeam: Omit<GameTeam, 'record' | 'gameResult'>
+}
+
+export interface CompletedGame {
+  id: number
+  gameId: number
+  type: 'completed'
+  season: Season
+  gameDate: string
+  homeTeam: GameTeam
+  awayTeam: GameTeam
+}
+
+export type Game = ScheduledGame | InProgressGame | CompletedGame
+
+export const isScheduledGame = (game: Game): game is ScheduledGame =>
+  game.type === 'scheduled'
+
+export const isInProgressGame = (game: Game): game is InProgressGame =>
+  game.type === 'inProgress'
+
+export const isCompletedGame = (game: Game): game is CompletedGame =>
+  game.type === 'completed'
+
+export type GameStatus =
+  | 'scheduled'
+  | 'postponed'
+  | 'delayed'
+  | 'inProgress'
+  | 'suspended'
+  | 'completed'
+  | 'canceled'
+
+export type SeasonType = 'regularSeason' | 'postseason'
+
+export type Season = {
+  type: SeasonType
+  year: number
+  yearDisplay?: string
+}

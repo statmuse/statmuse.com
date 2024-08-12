@@ -1,6 +1,6 @@
 ---
 import Layout from './layout.astro'
-import { find, orderBy } from 'lodash-es'
+import { find } from 'lodash-es'
 import GameInfo from './game-info.astro'
 import ProbablePitchers from './probable-pitchers.astro'
 import TeamStats from './team-stats.astro'
@@ -42,8 +42,8 @@ const {
 } = gameData
 
 const [
-  homeGames,
-  awayGames,
+  homeTeamGames,
+  awayTeamGames,
   homeTeamSeasonStats,
   awayTeamSeasonStats,
   injuries,
@@ -116,41 +116,24 @@ const homeTeamInjuries = find(
     network={networkName}
     timestamp={gameTimestamp}
     {awayTeam}
-    awayScores={awayGames && {
-      ...awayGames,
-      games: orderBy(
-        awayGames.games.filter((g) => g.type === 'completed'),
-        'gameDate',
-        'desc',
-      ),
-    }}
+    awayTeamGames={awayTeamGames?.games.filter((g) => g.type === 'completed')}
     {homeTeam}
-    homeScores={homeGames && {
-      ...homeGames,
-      games: orderBy(
-        homeGames.games.filter((g) => g.type === 'completed'),
-        'gameDate',
-        'desc',
-      ),
-    }}
+    homeTeamGames={homeTeamGames?.games.filter((g) => g.type === 'completed')}
   />
   <Fragment slot="game">
     <Odds {odds} {awayTeam} {homeTeam} />
-    <ProbablePitchers {players} {teams} {awayTeamModel} {homeTeamModel} />
+    <ProbablePitchers {awayTeamModel} {homeTeamModel} />
     <TeamStats
       {awayTeam}
       {homeTeam}
       {homeTeamSeasonStats}
       {awayTeamSeasonStats}
-      {teams}
-      {awayTeamModel}
-      {homeTeamModel}
     />
     <Injuries {awayTeamInjuries} {homeTeamInjuries} />
     <Schedule
-      {teams}
+      teams={teams ?? []}
       currentGameId={Number.parseInt(gameId)}
-      games={awayGames?.games}
+      games={awayTeamGames?.games}
     />
     <Standings
       {standings}
@@ -161,13 +144,13 @@ const homeTeamInjuries = find(
       {teams}
       {awayTeamModel}
       {homeTeamModel}
-      awayTeamResults={{
-        ...awayGames,
-        games: awayGames?.games.filter((g) => g.type === 'completed') ?? [],
+      awayTeamResults={awayTeamGames && {
+        ...awayTeamGames,
+        games: awayTeamGames.games.filter((g) => g.type === 'completed'),
       }}
-      homeTeamResults={{
-        ...homeGames,
-        games: homeGames?.games.filter((g) => g.type === 'completed') ?? [],
+      homeTeamResults={homeTeamGames && {
+        ...homeTeamGames,
+        games: homeTeamGames.games.filter((g) => g.type === 'completed'),
       }}
     />
     <GameInfo {venue} {weather} {officials} />

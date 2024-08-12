@@ -40,7 +40,7 @@ const {
   gameTimestamp,
 } = gameData
 
-const [awayGames, standings, playByPlay] = await Promise.all([
+const [awayTeamGames, standings, playByPlay] = await Promise.all([
   getGames({
     context: Astro,
     domain: 'mlb',
@@ -92,9 +92,9 @@ const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
     <Linescore {awayTeam} {homeTeam} final />
     <PlayByPlay {awayTeam} {homeTeam} scoring />
     <Schedule
-      {teams}
+      teams={teams ?? []}
       currentGameId={Number.parseInt(gameId)}
-      games={awayGames?.games}
+      games={awayTeamGames?.games}
     />
     <Standings
       {standings}

@@ -3,24 +3,18 @@ import Inning from './inning.svelte'
 import Share from '@components/share/index.svelte'
 import { hexToHSL } from '@lib/color'
 import Image from '@components/image.astro'
-import type {
-  GameResultsResponse,
-  MlbGameDataResponse,
-} from '@statmuse/core/gamera'
+import type { CompletedGame, GameraTeamReference } from '@statmuse/core/gamera'
 import Score from './score.svelte'
 
 interface Props {
   network: string
-  awayTeam?: NonNullable<MlbGameDataResponse['teams']>[number]
-  homeTeam?: NonNullable<MlbGameDataResponse['teams']>[number]
-  awayScores?: GameResultsResponse
-  homeScores?: GameResultsResponse
+  awayTeam?: GameraTeamReference
+  homeTeam?: GameraTeamReference
+  awayTeamGames?: CompletedGame[]
+  homeTeamGames?: CompletedGame[]
 }
 
-const getTeamFromGameResult = (
-  teamId?: number,
-  game?: GameResultsResponse['games'][number],
-) => {
+const getTeamFromGameResult = (teamId?: number, game?: CompletedGame) => {
   return game?.awayTeam.teamId === teamId
     ? game?.awayTeam
     : game?.homeTeam.teamId === teamId
@@ -28,15 +22,16 @@ const getTeamFromGameResult = (
     : undefined
 }
 
-const { network, awayTeam, homeTeam, awayScores, homeScores } = Astro.props
+const { network, awayTeam, homeTeam, awayTeamGames, homeTeamGames } =
+  Astro.props
 
 const awayTeamRecord = getTeamFromGameResult(
   awayTeam?.teamId,
-  awayScores?.games[0],
+  awayTeamGames?.[0],
 )?.record
 const homeTeamRecord = getTeamFromGameResult(
   homeTeam?.teamId,
-  homeScores?.games[0],
+  homeTeamGames?.[0],
 )?.record
 ---
 

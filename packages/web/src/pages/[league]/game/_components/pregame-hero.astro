@@ -3,24 +3,18 @@ import Timestamp from '@components/timestamp.svelte'
 import Share from '@components/share/index.svelte'
 import { hexToHSL } from '@lib/color'
 import Image from '@components/image.astro'
-import type {
-  GameResultsResponse,
-  MlbGameDataResponse,
-} from '@statmuse/core/gamera'
+import type { CompletedGame, GameraTeamReference } from '@statmuse/core/gamera'
 
 interface Props {
   network: string
   timestamp: string
-  awayTeam?: NonNullable<MlbGameDataResponse['teams']>[number]
-  homeTeam?: NonNullable<MlbGameDataResponse['teams']>[number]
-  awayScores?: GameResultsResponse
-  homeScores?: GameResultsResponse
+  awayTeam?: GameraTeamReference
+  homeTeam?: GameraTeamReference
+  awayTeamGames?: CompletedGame[]
+  homeTeamGames?: CompletedGame[]
 }
 
-const getTeamFromGameResult = (
-  teamId?: number,
-  game?: GameResultsResponse['games'][number],
-) => {
+const getTeamFromGameResult = (teamId?: number, game?: CompletedGame) => {
   return game?.awayTeam.teamId === teamId
     ? game?.awayTeam
     : game?.homeTeam.teamId === teamId
@@ -28,19 +22,19 @@ const getTeamFromGameResult = (
     : undefined
 }
 
-const { network, timestamp, awayTeam, homeTeam, awayScores, homeScores } =
+const { network, timestamp, awayTeam, homeTeam, awayTeamGames, homeTeamGames } =
   Astro.props
 
 const awayTeamRecord = getTeamFromGameResult(
   awayTeam?.teamId,
-  awayScores?.games[0],
+  awayTeamGames?.[0],
 )?.record
 const homeTeamRecord = getTeamFromGameResult(
   homeTeam?.teamId,
-  homeScores?.games[0],
+  homeTeamGames?.[0],
 )?.record
 
-const awayTeamRecordLast5 = awayScores?.games.slice(0, 5).reduce(
+const awayTeamRecordLast5 = awayTeamGames?.slice(0, 5).reduce(
   (record, game) => {
     if (!record) return record
 
@@ -63,7 +57,7 @@ const awayTeamRecordLast5 = awayScores?.games.slice(0, 5).reduce(
   awayTeam?.teamId ? { wins: 0, losses: 0 } : undefined,
 )
 
-const homeTeamRecordLast5 = homeScores?.games.slice(0, 5).reduce(
+const homeTeamRecordLast5 = homeTeamGames?.slice(0, 5).reduce(
   (record, game) => {
     if (!record) return record
 

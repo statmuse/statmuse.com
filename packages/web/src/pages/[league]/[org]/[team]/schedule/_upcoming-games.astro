@@ -1,13 +1,16 @@
 ---
 import Grid from '@components/grid.svelte'
-import type {
-  GameraTeamReference,
-  GameResultsResponse,
+import {
+  type GameraTeamReference,
+  type GameraGamesResponse,
+  type ScheduledGame,
+  type InProgressGame,
+  isScheduledGame,
 } from '@statmuse/core/gamera'
 import dayjs from 'dayjs'
 
 interface Props {
-  response: GameResultsResponse
+  response: GameraGamesResponse<ScheduledGame | InProgressGame>
   teamId: number
   domain: string
 }
@@ -30,19 +33,21 @@ const columns = [
 ]
 
 const rows = games.map((game) => {
-  const oppId =
-    game.awayTeamId === teamId
-      ? game.homeTeamId
-      : game.homeTeamId === teamId
-      ? game.awayTeamId
-      : game.awayTeam?.teamId && game.awayTeam?.teamId === teamId
-      ? game.homeTeam.teamId
-      : game.awayTeam.teamId
+  let oppId: number
+  let isHome: boolean
+  if (isScheduledGame(game)) {
+    oppId = game.awayTeamId === teamId ? game.homeTeamId : game.awayTeamId
+    isHome = game.homeTeamId === teamId
+  } else {
+    oppId =
+      game.awayTeam.teamId === teamId
+        ? game.homeTeam.teamId
+        : game.awayTeam.teamId
+    isHome = game.homeTeam.teamId === teamId
+  }
 
   const oppTeam = teams[oppId]
   const team = teams[teamId]
-
-  const isHome = game.homeTeamId === teamId || game.homeTeam?.teamId === teamId
 
   return {
     DATE: {

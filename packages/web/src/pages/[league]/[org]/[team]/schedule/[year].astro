@@ -3,7 +3,9 @@ import TeamLayout from '@layouts/team.astro'
 import Grid from '@components/grid.svelte'
 import {
   getUrlForEntity,
-  type GameResultsResponse,
+  type GameraGamesResponse,
+  type InProgressGame,
+  type ScheduledGame,
 } from '@statmuse/core/gamera'
 import {
   getGames,
@@ -42,7 +44,7 @@ const seasonSchedule = await getTeamSeasonSchedule({
   year,
 })
 
-let mlbGames: GameResultsResponse | undefined
+let mlbGames: GameraGamesResponse<ScheduledGame | InProgressGame> | undefined
 if (league === 'mlb') {
   mlbGames = await getGames({
     context: Astro,

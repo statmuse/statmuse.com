@@ -4,9 +4,10 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import Grid from '@components/grid.svelte'
 import type {
-  GameResultsResponse,
+  GameraGamesResponse,
   GameraTeamReference,
   GameraGrid,
+  CompletedGame,
 } from '@statmuse/core/gamera'
 
 dayjs.extend(utc)
@@ -14,7 +15,7 @@ dayjs.extend(timezone)
 
 interface Props {
   title?: string
-  data: GameResultsResponse
+  data: GameraGamesResponse<CompletedGame>
 }
 
 const data = Astro.props.data
