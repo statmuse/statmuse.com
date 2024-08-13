@@ -3,9 +3,8 @@ import Logo from '@components/logo.astro'
 import AskBar from '@components/ask-bar.svelte'
 import DropdownMenu from '@components/dropdown-menu.astro'
 import AuthMenu from '@components/auth-menu.svelte'
-import type { HTMLAttributes } from 'astro/types'
 
-interface Props extends HTMLAttributes<'div'> {
+interface Props {
   query?: string
   conversationToken?: string
   preferredDomain?: string
@@ -18,17 +17,14 @@ const preferredDomain = Astro.props.preferredDomain ?? ''
 ---
 
 <div
-  class:list={[
-    Astro.props.class,
-    {
-      'flex gap-3 items-center relative': true,
-      'min-h-[62px] py-[11px] z-[100]': true,
-      'bg-team-primary-bg dark:bg-team-primary-dark-bg': true,
-      'md:bg-gray-7 dark:md:bg-gray-2 sticky top-0': true,
-      '-mx-3 px-3 md:px-0 md:mx-0': true,
-      '': false,
-    },
-  ]}
+  class:list={{
+    'flex gap-3 items-center relative': true,
+    'min-h-[62px] py-[11px] z-[100]': true,
+    'bg-team-primary-bg dark:bg-team-primary-dark-bg': true,
+    'md:bg-gray-7 dark:md:bg-gray-2 sticky top-0': true,
+    '-mx-3 px-3 md:px-0 md:mx-0': true,
+    '': false,
+  }}
 >
   {
     Astro.locals.platform === 'web' && (

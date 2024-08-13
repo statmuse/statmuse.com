@@ -11,7 +11,7 @@ interface Props {
 const { awayTeam, homeTeam } = Astro.props
 ---
 
-<Base headerClass="!bg-gray-6 dark:!bg-gray-4" renderRightColumn={false}>
+<Base class="group" renderRightColumn={false}>
   <slot name="hero" />
   <div class:list={['group']}>
     <div

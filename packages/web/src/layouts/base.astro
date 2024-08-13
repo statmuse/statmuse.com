@@ -31,7 +31,6 @@ interface Props extends ComponentProps<typeof Header> {
   class?: string | null
   share?: HeroProps['share']
   renderRightColumn?: boolean
-  headerClass?: string
 }
 
 const {
@@ -45,7 +44,6 @@ const {
   money,
   share,
   renderRightColumn = true,
-  headerClass = '',
 } = Astro.props
 const foreground = colors?.foreground || colors?.foregroundColor
 const background = colors?.background || colors?.backgroundColor
@@ -293,13 +291,7 @@ const canonicalUrl = meta?.canonical
       dark: Astro.locals.platform === 'native',
     }}
   >
-    <Header
-      class={headerClass}
-      {preferredDomain}
-      {query}
-      {conversationToken}
-      {money}
-    />
+    <Header {preferredDomain} {query} {conversationToken} {money} />
     <div
       data-content
       class:list={{
