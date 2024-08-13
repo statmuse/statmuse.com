@@ -25,9 +25,9 @@ if (!gameData) return NOT_FOUND_404
       case 'delayed':
         return <MlbPregameBoxscore {gameData} {gameId} />
       case 'inProgress':
-      case 'completed':
         return <MlbLivegameBoxscore {gameData} {gameId} />
-      // return <MlbPostgameBoxscore {gameData} {gameId} />
+      case 'completed':
+        return <MlbPostgameBoxscore {gameData} {gameId} />
     }
   })()
 }
