@@ -177,7 +177,7 @@ const homeTeamInjuries = find(
       </div>
     </nav>
   </PregameHero>
-  <Fragment slot="preview">
+  <div slot="preview" class="space-y-3 gap-3 justify-center md:columns-2">
     <Odds {odds} {awayTeam} {homeTeam} />
     <ProbablePitchers {awayTeamModel} {homeTeamModel} />
     <TeamStats
@@ -211,13 +211,15 @@ const homeTeamInjuries = find(
       }}
     />
     <GameInfo {venue} {weather} {officials} />
-  </Fragment>
+  </div>
+
   <TeamPlayerStats
     slot="away"
     {players}
     teamModel={awayTeamModel}
     teamPlayerStats={awayTeamPlayerStats}
   />
+
   <TeamPlayerStats
     slot="home"
     {players}
