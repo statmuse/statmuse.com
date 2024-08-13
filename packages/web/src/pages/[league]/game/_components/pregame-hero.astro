@@ -4,6 +4,7 @@ import Share from '@components/share/index.svelte'
 import { hexToHSL } from '@lib/color'
 import Image from '@components/image.astro'
 import type { CompletedGame, GameraTeamReference } from '@statmuse/core/gamera'
+import Panel from '@components/panel.astro'
 
 interface Props {
   network: string
@@ -81,10 +82,14 @@ const homeTeamRecordLast5 = homeTeamGames?.slice(0, 5).reduce(
 )
 ---
 
-<div class="-mx-3">
-  <div
-    class="h-[45px] flex bg-gray-6 dark:bg-gray-4 px-3 py-2 justify-center relative"
-  >
+<Panel
+  class:list={{
+    '!p-0 -mx-3 md:mx-0': true,
+    'rounded-none border-0 md:rounded-2xl': true,
+    '!bg-gray-7 dark:!bg-gray-2 md:!bg-gray-8 md:dark:!bg-gray-3': true,
+  }}
+>
+  <div class="h-[45px] flex px-3 py-2 justify-center relative">
     <p class="text-gray-5 absolute left-3 top-2">{network}</p>
     <Timestamp client:only="svelte" {timestamp} />
     <div class="absolute right-3 top-2">
@@ -149,4 +154,5 @@ const homeTeamRecordLast5 = homeTeamGames?.slice(0, 5).reduce(
       </div>
     </div>
   </div>
-</div>
+  <slot />
+</Panel>

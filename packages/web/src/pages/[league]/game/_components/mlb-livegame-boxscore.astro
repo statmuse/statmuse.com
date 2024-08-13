@@ -93,7 +93,64 @@ players.set(
     awayTeamGames={awayTeamGames?.games.filter((g) => g.type === 'completed')}
     {homeTeam}
     homeTeamGames={homeTeamGames?.games.filter((g) => g.type === 'completed')}
-  />
+  >
+    <nav
+      class:list={{
+        'hidden md:flex gap-3 justify-center': true,
+        'overflow-x-scroll no-scrollbar': true,
+        'pt-3': true,
+      }}
+    >
+      <div class="group/nav flex flex-col gap-1.5 overflow-clip">
+        <label
+          class:list={{
+            'cursor-pointer whitespace-nowrap': true,
+          }}
+          for="game"
+          set:html="Game"
+        />
+        <div
+          class:list={{
+            'w-full h-5 -mb-2.5 bg-current rounded-2xl': true,
+            'hidden group-has-[#game:checked]:block group-has-[#plays:checked]:block group-hover/nav:block': true,
+          }}
+        >
+        </div>
+      </div>
+      <div class="group/nav flex flex-col gap-1.5 overflow-clip">
+        <label
+          class:list={{
+            'cursor-pointer whitespace-nowrap': true,
+          }}
+          for="away"
+          set:html={awayTeam?.nickname}
+        />
+        <div
+          class:list={{
+            'w-full h-5 -mb-2.5 bg-current rounded-2xl': true,
+            'hidden group-has-[#away:checked]:block group-hover/nav:block': true,
+          }}
+        >
+        </div>
+      </div>
+      <div class="group/nav flex flex-col gap-1.5 overflow-clip">
+        <label
+          class:list={{
+            'cursor-pointer whitespace-nowrap': true,
+          }}
+          for="home"
+          set:html={homeTeam?.nickname}
+        />
+        <div
+          class:list={{
+            'w-full h-5 -mb-2.5 bg-current rounded-2xl': true,
+            'hidden group-has-[#home:checked]:block group-hover/nav:block': true,
+          }}
+        >
+        </div>
+      </div>
+    </nav>
+  </LivegameHero>
   <Fragment slot="game">
     <Matchup client:load {awayTeam} {homeTeam} />
     <PitchByPitch client:load />
