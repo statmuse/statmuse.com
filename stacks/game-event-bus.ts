@@ -18,16 +18,6 @@ export function GameEventBus({ stack }: StackContext) {
         },
       },
     },
-    rules: {
-      gameUpdate: {
-        pattern: {
-          detailType: ['mlb.game', 'mlb.gamePlayByPlay'],
-        },
-        targets: {
-          mlb: 'packages/functions/src/game-event.handler',
-        },
-      },
-    },
     cdk: {
       eventBus: eventbus.EventBus.fromEventBusName(
         stack,
