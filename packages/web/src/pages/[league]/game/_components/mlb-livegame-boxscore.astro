@@ -197,7 +197,7 @@ players.set(
           id="all"
           checked
         />
-        <PlayByPlay client:load {awayTeam} {homeTeam} />
+        <PlayByPlay client:load {awayTeam} {homeTeam} reverseOrder />
       </div>
       <div class="hidden has-[#scoring:checked]:flex flex-col gap-3">
         <input
@@ -223,7 +223,7 @@ players.set(
     <PitchingStats client:load teamKey="home" />
   </Fragment>
 
-  <PlayByPlay client:load slot="plays" {awayTeam} {homeTeam} />
+  <PlayByPlay client:load slot="plays" {awayTeam} {homeTeam} reverseOrder />
 
   <GameState client:only="svelte" {gameData} {playByPlay} />
   <Realtime client:only="svelte" {gameId} />
