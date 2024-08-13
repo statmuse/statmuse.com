@@ -166,17 +166,17 @@ const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
     </div>
     <div class="group/plays flex-1 hidden md:block">
       <div
-        class="bg-gray-8 dark:bg-gray-3 text-inherit border border-gray-6 dark:border-gray-3 flex text-center mb-3 rounded-full relative overflow-clip"
+        class="bg-gray-6 dark:bg-gray-4 text-gray-5 border border-gray-6 dark:border-gray-3 flex text-center mb-3 rounded-full relative overflow-clip"
       >
         <div
-          class="absolute h-full w-1/2 bg-teal rounded-full left-0 group-has-[#scoring:checked]/plays:translate-x-0 group-has-[#all:checked]/plays:translate-x-full transition-transform ease-out"
+          class="absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 group-has-[#scoring:checked]/plays:translate-x-0 group-has-[#all:checked]/plays:translate-x-full transition-transform ease-out"
         >
         </div>
         <label
           for="scoring"
           class:list={{
             'flex-1 py-1 hover:cursor-pointer relative': true,
-            'group-has-[#scoring:checked]/plays:text-gray-8': true,
+            'group-has-[#scoring:checked]/plays:text-gray-2': true,
           }}
         >
           Scoring Plays
@@ -185,7 +185,7 @@ const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
           for="all"
           class:list={{
             'flex-1 py-1 hover:cursor-pointer relative': true,
-            'group-has-[#all:checked]/plays:text-gray-8': true,
+            'group-has-[#all:checked]/plays:text-gray-2': true,
           }}
         >
           All Plays

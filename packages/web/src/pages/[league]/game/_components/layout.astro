@@ -9,6 +9,35 @@ interface Props {
 }
 
 const { awayTeam, homeTeam } = Astro.props
+
+const toggleLinks = [
+  {
+    label: 'preview',
+    render: Astro.slots.has('preview'),
+  },
+  {
+    label: 'summary',
+    render: Astro.slots.has('summary'),
+  },
+  {
+    label: 'game',
+    render: Astro.slots.has('game'),
+  },
+  {
+    label: 'away',
+    render: Astro.slots.has('away'),
+    team: awayTeam,
+  },
+  {
+    label: 'home',
+    render: Astro.slots.has('home'),
+    team: homeTeam,
+  },
+  {
+    label: 'plays',
+    render: Astro.slots.has('plays'),
+  },
+]
 ---
 
 <Base class="group" renderRightColumn={false}>
@@ -18,101 +47,46 @@ const { awayTeam, homeTeam } = Astro.props
       class="md:hidden flex gap-1.5 mb-3 overflow-x-scroll no-scrollbar -mx-3 px-3"
     >
       {
-        Astro.slots.has('preview') && (
-          <label
-            class:list={{
-              'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
-              'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
-              'border-gray-6 dark:border-gray-3': true,
-              'group-has-[#preview:checked]:bg-gray-7 group-has-[#preview:checked]:text-gray-2': true,
-            }}
-            for="preview"
-          >
-            Preview
-          </label>
-        )
-      }
-      {
-        Astro.slots.has('summary') && (
-          <label
-            class:list={{
-              'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
-              'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
-              'border-gray-6 dark:border-gray-3': true,
-              'group-has-[#summary:checked]:bg-gray-7 group-has-[#summary:checked]:text-gray-2': true,
-            }}
-            for="summary"
-          >
-            Summary
-          </label>
-        )
-      }
-      {
-        Astro.slots.has('game') && (
-          <label
-            class:list={{
-              'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
-              'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
-              'border-gray-6 dark:border-gray-3': true,
-              'group-has-[#game:checked]:bg-gray-7 group-has-[#game:checked]:text-gray-2': true,
-            }}
-            for="game"
-          >
-            Game
-          </label>
-        )
-      }
-      {
-        Astro.slots.has('away') && (
-          <label
-            class:list={{
-              'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
-              'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
-              'border-gray-6 dark:border-gray-3': true,
-              'group-has-[#away:checked]:bg-team-primary group-has-[#away:checked]:text-team-secondary': true,
-            }}
-            style={{
-              '--team-primary-color': awayTeam?.colors.backgroundColor,
-              '--team-secondary-color': awayTeam?.colors.foregroundColor,
-            }}
-            for="away"
-          >
-            {awayTeam?.nickname}
-          </label>
-        )
-      }
-      {
-        Astro.slots.has('home') && (
-          <label
-            class:list={{
-              'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
-              'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
-              'border-gray-6 dark:border-gray-3': true,
-              'group-has-[#home:checked]:bg-team-primary group-has-[#home:checked]:text-team-secondary': true,
-            }}
-            style={{
-              '--team-primary-color': homeTeam?.colors.backgroundColor,
-              '--team-secondary-color': homeTeam?.colors.foregroundColor,
-            }}
-            for="home"
-          >
-            {homeTeam?.nickname}
-          </label>
-        )
-      }
-      {
-        Astro.slots.has('plays') && (
-          <label
-            class:list={{
-              'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
-              'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
-              'border-gray-6 dark:border-gray-3': true,
-              'group-has-[#plays:checked]:bg-gray-7 group-has-[#plays:checked]:text-gray-2': true,
-            }}
-            for="plays"
-          >
-            Plays
-          </label>
+        toggleLinks.map(
+          (link) =>
+            link.render && (
+              <label
+                class:list={{
+                  'p-1 px-3 text-center whitespace-nowrap border rounded-full capitalize cursor-pointer': true,
+                  'bg-gray-8 dark:bg-gray-3': true,
+                  'border-gray-6 dark:border-gray-3': true,
+                  'group-has-[#preview:checked]:dark:bg-gray-7 group-has-[#preview:checked]:dark:text-gray-2':
+                    link.label === 'preview',
+                  'group-has-[#preview:checked]:bg-teal group-has-[#preview:checked]:text-gray-8':
+                    link.label === 'preview',
+                  'group-has-[#summary:checked]:dark:bg-gray-7 group-has-[#summary:checked]:dark:text-gray-2':
+                    link.label === 'summary',
+                  'group-has-[#summary:checked]:bg-teal group-has-[#summary:checked]:text-gray-8':
+                    link.label === 'summary',
+                  'group-has-[#game:checked]:dark:bg-gray-7 group-has-[#game:checked]:dark:text-gray-2':
+                    link.label === 'game',
+                  'group-has-[#game:checked]:bg-teal group-has-[#game:checked]:text-gray-8':
+                    link.label === 'game',
+                  'group-has-[#plays:checked]:dark:bg-gray-7 group-has-[#plays:checked]:dark:text-gray-2':
+                    link.label === 'plays',
+                  'group-has-[#plays:checked]:bg-teal group-has-[#plays:checked]:text-gray-8':
+                    link.label === 'plays',
+                  'group-has-[#home:checked]:bg-team-primary group-has-[#home:checked]:text-team-secondary group-has-[#home:checked]:border-team-primary':
+                    link.label === 'home',
+                  'group-has-[#away:checked]:bg-team-primary group-has-[#away:checked]:text-team-secondary group-has-[#away:checked]:border-team-primary':
+                    link.label === 'away',
+                }}
+                style={
+                  link.team && {
+                    '--team-primary-color': link.team?.colors.backgroundColor,
+                    '--team-secondary-color': link.team?.colors.foregroundColor,
+                  }
+                }
+                for={link.label}
+              >
+                {link.team?.nickname ?? link.label}
+              </label>
+            ),
         )
       }
     </div>
