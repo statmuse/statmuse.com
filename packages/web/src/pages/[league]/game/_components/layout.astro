@@ -15,50 +15,91 @@ const { awayTeam, homeTeam } = Astro.props
   <slot name="hero" />
   <div class:list={['group']}>
     <div
-      class="flex gap-1.5 mb-3 overflow-x-scroll no-scrollbar -mx-3 px-3"
-      slot="tab-list"
+      class="md:hidden flex gap-1.5 mb-3 overflow-x-scroll no-scrollbar -mx-3 px-3"
     >
-      <label
-        class:list={{
-          'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
-          'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
-          'border-gray-6 dark:border-gray-3': true,
-          'group-has-[#game:checked]:bg-gray-7 group-has-[#game:checked]:text-gray-2': true,
-        }}
-        for="game"
-      >
-        Game
-      </label>
-      <label
-        class:list={{
-          'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
-          'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
-          'border-gray-6 dark:border-gray-3': true,
-          'group-has-[#away:checked]:bg-team-primary group-has-[#away:checked]:text-team-secondary': true,
-        }}
-        style={{
-          '--team-primary-color': awayTeam?.colors.backgroundColor,
-          '--team-secondary-color': awayTeam?.colors.foregroundColor,
-        }}
-        for="away"
-      >
-        {awayTeam?.nickname}
-      </label>
-      <label
-        class:list={{
-          'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
-          'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
-          'border-gray-6 dark:border-gray-3': true,
-          'group-has-[#home:checked]:bg-team-primary group-has-[#home:checked]:text-team-secondary': true,
-        }}
-        style={{
-          '--team-primary-color': homeTeam?.colors.backgroundColor,
-          '--team-secondary-color': homeTeam?.colors.foregroundColor,
-        }}
-        for="home"
-      >
-        {homeTeam?.nickname}
-      </label>
+      {
+        Astro.slots.has('preview') && (
+          <label
+            class:list={{
+              'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
+              'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
+              'border-gray-6 dark:border-gray-3': true,
+              'group-has-[#preview:checked]:bg-gray-7 group-has-[#preview:checked]:text-gray-2': true,
+            }}
+            for="preview"
+          >
+            Preview
+          </label>
+        )
+      }
+      {
+        Astro.slots.has('summary') && (
+          <label
+            class:list={{
+              'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
+              'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
+              'border-gray-6 dark:border-gray-3': true,
+              'group-has-[#summary:checked]:bg-gray-7 group-has-[#summary:checked]:text-gray-2': true,
+            }}
+            for="summary"
+          >
+            Summary
+          </label>
+        )
+      }
+      {
+        Astro.slots.has('game') && (
+          <label
+            class:list={{
+              'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
+              'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
+              'border-gray-6 dark:border-gray-3': true,
+              'group-has-[#game:checked]:bg-gray-7 group-has-[#game:checked]:text-gray-2': true,
+            }}
+            for="game"
+          >
+            Game
+          </label>
+        )
+      }
+      {
+        Astro.slots.has('away') && (
+          <label
+            class:list={{
+              'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
+              'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
+              'border-gray-6 dark:border-gray-3': true,
+              'group-has-[#away:checked]:bg-team-primary group-has-[#away:checked]:text-team-secondary': true,
+            }}
+            style={{
+              '--team-primary-color': awayTeam?.colors.backgroundColor,
+              '--team-secondary-color': awayTeam?.colors.foregroundColor,
+            }}
+            for="away"
+          >
+            {awayTeam?.nickname}
+          </label>
+        )
+      }
+      {
+        Astro.slots.has('home') && (
+          <label
+            class:list={{
+              'p-1 px-3 text-center whitespace-nowrap border rounded-full': true,
+              'bg-gray-6 dark:bg-gray-3 text-gray-5 dark:text-gray-8': true,
+              'border-gray-6 dark:border-gray-3': true,
+              'group-has-[#home:checked]:bg-team-primary group-has-[#home:checked]:text-team-secondary': true,
+            }}
+            style={{
+              '--team-primary-color': homeTeam?.colors.backgroundColor,
+              '--team-secondary-color': homeTeam?.colors.foregroundColor,
+            }}
+            for="home"
+          >
+            {homeTeam?.nickname}
+          </label>
+        )
+      }
       {
         Astro.slots.has('plays') && (
           <label
@@ -75,37 +116,77 @@ const { awayTeam, homeTeam } = Astro.props
         )
       }
     </div>
-    <div class="hidden has-[#game:checked]:flex flex-col gap-3">
-      <input
-        class="absolute opacity-0"
-        type="radio"
-        name="boxscore"
-        id="game"
-        checked
-      />
-      <slot name="game" />
-    </div>
-    <div class="hidden has-[#away:checked]:flex flex-col gap-3">
-      <input
-        class="absolute opacity-0"
-        type="radio"
-        name="boxscore"
-        id="away"
-      />
-      <slot name="away" />
-    </div>
-    <div class="hidden has-[#home:checked]:flex flex-col gap-3">
-      <input
-        class="absolute opacity-0"
-        type="radio"
-        name="boxscore"
-        id="home"
-      />
-      <slot name="home" />
-    </div>
+    {
+      Astro.slots.has('preview') && (
+        <div class="hidden has-[#preview:checked]:flex flex-col gap-3">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="boxscore"
+            id="preview"
+            checked
+          />
+          <slot name="preview" />
+        </div>
+      )
+    }
+    {
+      Astro.slots.has('summary') && (
+        <div class="hidden has-[#summary:checked]:flex md:group-has-[#plays:checked]:flex flex-col gap-3">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="boxscore"
+            id="summary"
+            checked
+          />
+          <slot name="summary" />
+        </div>
+      )
+    }
+    {
+      Astro.slots.has('game') && (
+        <div class="hidden has-[#game:checked]:flex md:group-has-[#plays:checked]:flex flex-col gap-3">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="boxscore"
+            id="game"
+            checked
+          />
+          <slot name="game" />
+        </div>
+      )
+    }
+    {
+      Astro.slots.has('away') && (
+        <div class="hidden has-[#away:checked]:flex flex-col gap-3">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="boxscore"
+            id="away"
+          />
+          <slot name="away" />
+        </div>
+      )
+    }
+    {
+      Astro.slots.has('home') && (
+        <div class="hidden has-[#home:checked]:flex flex-col gap-3">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="boxscore"
+            id="home"
+          />
+          <slot name="home" />
+        </div>
+      )
+    }
     {
       Astro.slots.has('plays') && (
-        <div class="hidden has-[#plays:checked]:flex flex-col gap-3">
+        <div class="hidden has-[#plays:checked]:flex md:!hidden flex-col gap-3">
           <input
             class="absolute opacity-0"
             type="radio"

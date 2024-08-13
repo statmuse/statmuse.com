@@ -87,8 +87,7 @@ const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
     awayRecord={awayTeamModel.record}
     {homeTeam}
     homeRecord={homeTeamModel.record}
-  />
-  <Fragment slot="game">
+  <Fragment slot="summary">
     <Linescore {awayTeam} {homeTeam} final />
     <PlayByPlay {awayTeam} {homeTeam} scoring />
     <Schedule

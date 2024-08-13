@@ -119,8 +119,7 @@ const homeTeamInjuries = find(
     awayTeamGames={awayTeamGames?.games.filter((g) => g.type === 'completed')}
     {homeTeam}
     homeTeamGames={homeTeamGames?.games.filter((g) => g.type === 'completed')}
-  />
-  <Fragment slot="game">
+  <Fragment slot="preview">
     <Odds {odds} {awayTeam} {homeTeam} />
     <ProbablePitchers {awayTeamModel} {homeTeamModel} />
     <TeamStats
