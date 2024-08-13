@@ -5,6 +5,7 @@
   import type { GameraTeamReference } from '@statmuse/core/gamera/index'
   import AtBatCount from './at-bat-count.svelte'
   import OutsIndicator from './outs-indicator.svelte'
+  import Matchup from './matchup.svelte'
   import { max, range, some } from 'lodash-es'
 
   import {
@@ -44,110 +45,117 @@
 </script>
 
 <Panel class="!p-0">
-  <div class="p-2 flex flex-nowrap">
-    <div class="self-end pr-1">
-      <div class="flex gap-1 items-center">
-        <Image
-          src={awayTeam.logoImageUrl ?? ''}
-          alt={awayTeam.name ?? ''}
-          width={60}
-          height={60}
-          class="w-5 h-5 object-contain"
-        />
-        {awayTeam.abbreviation}
-      </div>
-      <div class="flex gap-1 items-center">
-        <Image
-          src={homeTeam.logoImageUrl ?? ''}
-          alt={homeTeam.name ?? ''}
-          width={60}
-          height={60}
-          class="w-5 h-5 object-contain"
-        />
-        {homeTeam.abbreviation}
-      </div>
-    </div>
-    <div
-      class="flex-1 flex no-scrollbar overflow-scroll"
-      style="justify-content: safe end;"
-    >
-      {#each range(maxInnings ?? 9) as inning (inning)}
-        <div class="text-gray-5 px-1.5">
-          <p>{inning + 1}</p>
-          <p class="relative">
-            {#if inning + 1 === $inningNumber && $halfInning?.half === 'top' && !final}
-              <span
-                class="w-6 h-6 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                style={`background: ${awayTeam.colors.backgroundColor}`}
-              />
-            {/if}
-            <span
-              class="relative"
-              style={inning + 1 === $inningNumber &&
-              $halfInning?.half === 'top' &&
-              !final
-                ? `color: ${awayTeam.colors.foregroundColor}`
-                : ''}
-            >
-              {$lineScore.away?.[inning] !== undefined
-                ? $lineScore.away[inning].runs
-                : ''}
-            </span>
-          </p>
-          <p class="relative">
-            {#if inning + 1 === $inningNumber && $halfInning?.half === 'bottom' && !final}
-              <span
-                class="w-6 h-6 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                style={`background: ${homeTeam.colors.backgroundColor}`}
-              />
-            {/if}
-            <span
-              class="relative"
-              style={inning + 1 === $inningNumber &&
-              $halfInning?.half === 'bottom' &&
-              !final
-                ? `color: ${homeTeam.colors.foregroundColor}`
-                : ''}
-            >
-              {$lineScore.home?.[inning] !== undefined
-                ? $lineScore.home[inning].runs
-                : ''}
-            </span>
-          </p>
+  <div class="flex gap-3">
+    <div class="flex-1 p-2 flex flex-nowrap items-end">
+      <div class="pr-1">
+        <div class="flex gap-1 items-center">
+          <Image
+            src={awayTeam.logoImageUrl ?? ''}
+            alt={awayTeam.name ?? ''}
+            width={60}
+            height={60}
+            class="w-5 h-5 object-contain"
+          />
+          {awayTeam.abbreviation}
         </div>
-      {/each}
-    </div>
-    <div class="flex">
-      {#each totals as inning, index (inning)}
-        <div class="px-1.5" class:text-gray-5={index !== 0}>
-          <p>{inning[0]}</p>
-          <p
-            class={final && awayTeamModel?.gameResult === 'win'
-              ? 'text-gray-2 dark:text-gray-7'
-              : ''}
-            class:font-semibold={final &&
-              awayTeamModel?.gameResult === 'win' &&
-              index === 0}
-          >
-            {inning[1] !== undefined ? inning[1] : ''}
-          </p>
-          <p
-            class={final && homeTeamModel?.gameResult === 'win'
-              ? 'text-gray-2 dark:text-gray-7'
-              : ''}
-            class:font-semibold={final &&
-              homeTeamModel?.gameResult === 'win' &&
-              index === 0}
-          >
-            {inning[2] !== undefined ? inning[2] : ''}
-          </p>
+        <div class="flex gap-1 items-center">
+          <Image
+            src={homeTeam.logoImageUrl ?? ''}
+            alt={homeTeam.name ?? ''}
+            width={60}
+            height={60}
+            class="w-5 h-5 object-contain"
+          />
+          {homeTeam.abbreviation}
         </div>
-      {/each}
+      </div>
+      <div
+        class="flex-1 flex no-scrollbar overflow-scroll"
+        style="justify-content: safe end;"
+      >
+        {#each range(maxInnings ?? 9) as inning (inning)}
+          <div class="text-gray-5 px-1.5">
+            <p>{inning + 1}</p>
+            <p class="relative">
+              {#if inning + 1 === $inningNumber && $halfInning?.half === 'top' && !final}
+                <span
+                  class="w-6 h-6 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                  style={`background: ${awayTeam.colors.backgroundColor}`}
+                />
+              {/if}
+              <span
+                class="relative"
+                style={inning + 1 === $inningNumber &&
+                $halfInning?.half === 'top' &&
+                !final
+                  ? `color: ${awayTeam.colors.foregroundColor}`
+                  : ''}
+              >
+                {$lineScore.away?.[inning] !== undefined
+                  ? $lineScore.away[inning].runs
+                  : ''}
+              </span>
+            </p>
+            <p class="relative">
+              {#if inning + 1 === $inningNumber && $halfInning?.half === 'bottom' && !final}
+                <span
+                  class="w-6 h-6 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                  style={`background: ${homeTeam.colors.backgroundColor}`}
+                />
+              {/if}
+              <span
+                class="relative"
+                style={inning + 1 === $inningNumber &&
+                $halfInning?.half === 'bottom' &&
+                !final
+                  ? `color: ${homeTeam.colors.foregroundColor}`
+                  : ''}
+              >
+                {$lineScore.home?.[inning] !== undefined
+                  ? $lineScore.home[inning].runs
+                  : ''}
+              </span>
+            </p>
+          </div>
+        {/each}
+      </div>
+      <div class="flex">
+        {#each totals as inning, index (inning)}
+          <div class="px-1.5" class:text-gray-5={index !== 0}>
+            <p>{inning[0]}</p>
+            <p
+              class={final && awayTeamModel?.gameResult === 'win'
+                ? 'text-gray-2 dark:text-gray-7'
+                : ''}
+              class:font-semibold={final &&
+                awayTeamModel?.gameResult === 'win' &&
+                index === 0}
+            >
+              {inning[1] !== undefined ? inning[1] : ''}
+            </p>
+            <p
+              class={final && homeTeamModel?.gameResult === 'win'
+                ? 'text-gray-2 dark:text-gray-7'
+                : ''}
+              class:font-semibold={final &&
+                homeTeamModel?.gameResult === 'win' &&
+                index === 0}
+            >
+              {inning[2] !== undefined ? inning[2] : ''}
+            </p>
+          </div>
+        {/each}
+      </div>
     </div>
+    {#if displayMatchup}
+      <div class="flex-1 hidden md:block">
+        <Matchup {awayTeam} {homeTeam} />
+      </div>
+    {/if}
   </div>
   {#if displayMatchup}
     <div
-      class="px-3 py-2 flex items-center justify-between border-t border-gray-6 dark:border-gray-4"
+      class="md:hidden px-3 py-2 flex items-center justify-between border-t border-gray-6 dark:border-gray-4"
     >
       <div>
         <p class="text-gray-5 text-sm">

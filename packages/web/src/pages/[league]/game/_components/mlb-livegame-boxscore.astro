@@ -151,24 +151,80 @@ players.set(
       </div>
     </nav>
   </LivegameHero>
-  <Fragment slot="game">
-    <Matchup client:load {awayTeam} {homeTeam} />
-    <PitchByPitch client:load />
-    <Linescore client:load {awayTeam} {homeTeam} />
-    <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
-    <GameInfo {venue} {weather} {officials} />
-  </Fragment>
+
+  <div slot="game" class="flex gap-3">
+    <div class="flex-1 flex flex-col gap-3">
+      <Matchup client:load {awayTeam} {homeTeam} />
+      <PitchByPitch client:load />
+      <Linescore client:load {awayTeam} {homeTeam} />
+      <div class="md:hidden flex flex-col gap-3">
+        <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
+      </div>
+      <GameInfo {venue} {weather} {officials} />
+    </div>
+    <div class="group/plays flex-1 hidden md:block">
+      <div
+        class="bg-gray-8 dark:bg-gray-3 text-inherit border border-gray-6 dark:border-gray-3 flex text-center mb-3 rounded-full relative overflow-clip"
+      >
+        <div
+          class="absolute h-full w-1/2 bg-teal rounded-full left-0 group-has-[#all:checked]/plays:translate-x-0 group-has-[#scoring:checked]/plays:translate-x-full transition-transform ease-out"
+        >
+        </div>
+        <label
+          for="all"
+          class:list={{
+            'flex-1 py-1 hover:cursor-pointer relative': true,
+            'group-has-[#all:checked]/plays:text-gray-8': true,
+          }}
+        >
+          All Plays
+        </label>
+        <label
+          for="scoring"
+          class:list={{
+            'flex-1 py-1 hover:cursor-pointer relative': true,
+            'group-has-[#scoring:checked]/plays:text-gray-8': true,
+          }}
+        >
+          Scoring Plays
+        </label>
+      </div>
+      <div class="hidden has-[#all:checked]:flex flex-col gap-3">
+        <input
+          class="absolute opacity-0"
+          type="radio"
+          name="plays"
+          id="all"
+          checked
+        />
+        <PlayByPlay client:load {awayTeam} {homeTeam} />
+      </div>
+      <div class="hidden has-[#scoring:checked]:flex flex-col gap-3">
+        <input
+          class="absolute opacity-0"
+          type="radio"
+          name="plays"
+          id="scoring"
+        />
+        <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
+      </div>
+    </div>
+  </div>
+
   <Fragment slot="away">
     <Linescore client:load {awayTeam} {homeTeam} displayMatchup />
     <BattingStats client:load teamKey="away" />
     <PitchingStats client:load teamKey="away" />
   </Fragment>
+
   <Fragment slot="home">
     <Linescore client:load {awayTeam} {homeTeam} displayMatchup />
     <BattingStats client:load teamKey="home" />
     <PitchingStats client:load teamKey="home" />
   </Fragment>
+
   <PlayByPlay client:load slot="plays" {awayTeam} {homeTeam} />
+
   <GameState client:only="svelte" {gameData} {playByPlay} />
   <Realtime client:only="svelte" {gameId} />
 </Layout>
