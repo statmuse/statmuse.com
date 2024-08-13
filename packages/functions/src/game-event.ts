@@ -14,7 +14,7 @@ const headers: Record<string, string> = {
   'x-origin': 'game-event.bot',
   'x-origin-scope': 'game-event',
   'x-origin-version': '1.0',
-  'x-visitor-id': 'game-event',
+  'x-visitor-id': `game-event.${Config.STAGE}`,
   'x-statmuse-api-key': gameraApiKey,
 }
 
