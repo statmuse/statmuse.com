@@ -11,7 +11,7 @@
   $: inningPlays = scoring
     ? $scoringInnings
     : reverseOrder
-    ? $innings.toReversed()
+    ? $innings
     : $innings
 </script>
 
