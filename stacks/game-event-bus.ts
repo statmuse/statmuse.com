@@ -27,6 +27,17 @@ export function GameEventBus({ stack }: StackContext) {
     },
   })
 
+  bus.addRules(stack, {
+    gameUpdate: {
+      pattern: {
+        detailType: ['mlb.game', 'mlb.gamePlayByPlay'],
+      },
+      targets: {
+        mlb: 'packages/functions/src/game-event.handler',
+      },
+    },
+  })
+
   return {
     bus,
   }
