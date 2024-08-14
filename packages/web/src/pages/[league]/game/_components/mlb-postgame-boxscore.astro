@@ -20,6 +20,7 @@ import {
   lineup,
   stats,
 } from './stores'
+import { Caching } from '@lib/caching'
 
 interface Props {
   gameData: MlbGameDataResponse
@@ -76,6 +77,8 @@ players.set(
 
 const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
 const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
+
+Caching.swr(Astro)
 ---
 
 <Layout {awayTeam} {homeTeam}>

@@ -19,6 +19,11 @@ import type { MlbGameDataResponse } from '@statmuse/core/gamera'
 import TeamPlayerStats from './team-player-stats.astro'
 import PregameHero from './pregame-hero.astro'
 import Odds from './odds.astro'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
+import { Caching } from '@lib/caching'
+
+dayjs.extend(duration)
 
 interface Props {
   gameData: MlbGameDataResponse
@@ -108,6 +113,18 @@ const homeTeamInjuries = find(
   injuries?.teams,
   (t) => t.team.teamId === homeTeamModel.teamId,
 )
+
+const timeUntilStart = dayjs.duration(
+  dayjs(gameData.gameTimestamp).diff(dayjs()),
+)
+
+if (timeUntilStart.asHours() > 24) {
+  Caching.swr(Astro, { maxage: 3600, revalidate: 82800 })
+} else if (timeUntilStart.asHours() > 6) {
+  Caching.swr(Astro, { maxage: 900, revalidate: 21600 })
+} else {
+  Caching.swr(Astro, { maxage: 300, revalidate: 600 })
+}
 ---
 
 <Layout {awayTeam} {homeTeam}>

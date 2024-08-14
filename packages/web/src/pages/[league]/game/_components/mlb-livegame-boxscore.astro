@@ -22,6 +22,7 @@ import {
   lineup,
   stats,
 } from './stores'
+import { Caching } from '@lib/caching'
 
 interface Props {
   gameData: MlbGameDataResponse
@@ -83,6 +84,8 @@ lineup.set({
 players.set(
   gameData.players?.reduce((acc, p) => ({ ...acc, [p.id]: p }), {}) ?? {},
 )
+
+Caching.swr(Astro, { maxage: 15, revalidate: 25 })
 ---
 
 <Layout {awayTeam} {homeTeam}>
