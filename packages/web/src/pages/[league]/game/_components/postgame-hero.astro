@@ -6,9 +6,9 @@ import Image from '@components/image.astro'
 import type { MlbGameDataResponse } from '@statmuse/core/gamera'
 import Score from './score.svelte'
 import Panel from '@components/panel.astro'
+import { inningNumber } from './stores'
 
 interface Props {
-  network: string
   awayTeam?: NonNullable<MlbGameDataResponse['teams']>[number]
   homeTeam?: NonNullable<MlbGameDataResponse['teams']>[number]
   awayRecord?: { wins: number; losses: number }
@@ -16,8 +16,7 @@ interface Props {
   timestamp: string
 }
 
-const { network, awayTeam, homeTeam, awayRecord, homeRecord, timestamp } =
-  Astro.props
+const { awayTeam, homeTeam, awayRecord, homeRecord, timestamp } = Astro.props
 ---
 
 <Panel
@@ -28,8 +27,10 @@ const { network, awayTeam, homeTeam, awayRecord, homeRecord, timestamp } =
   }}
 >
   <div class="h-[45px] flex px-3 py-2 justify-center relative">
-    <p class="text-gray-5 absolute left-3 top-2">{network}</p>
-    <Timestamp client:only="svelte" {timestamp} final />
+    <p class="text-gray-5 absolute left-3 top-2">
+      <Timestamp client:only="svelte" {timestamp} dateOnly />
+    </p>
+    <p>Final{inningNumber.get() !== 9 ? `/${inningNumber.get()}` : ''}</p>
     <div class="absolute right-3 top-2">
       <Share />
     </div>

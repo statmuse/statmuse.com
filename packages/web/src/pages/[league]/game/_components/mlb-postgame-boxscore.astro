@@ -31,7 +31,6 @@ const { gameData, gameId } = Astro.props
 
 const {
   seasonYearDisplay: seasonYear,
-  networkName,
   awayTeam: awayTeamModel,
   homeTeam: homeTeamModel,
   teams,
@@ -84,7 +83,6 @@ Caching.swr(Astro)
 <Layout {awayTeam} {homeTeam}>
   <PostgameHero
     slot="hero"
-    network={networkName}
     timestamp={gameTimestamp}
     {awayTeam}
     awayRecord={awayTeamModel.record}
