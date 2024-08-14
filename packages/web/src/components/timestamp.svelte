@@ -7,7 +7,6 @@
   dayjs.extend(advancedFormat)
 
   export let timestamp
-  export let final: boolean = false
 
   const now = dayjs()
   const gameDay = dayjs(timestamp)
@@ -17,4 +16,4 @@
     diff === 0 ? 'Today' : diff === 1 ? 'Tomorrow' : gameDay.format('MMM D')
 </script>
 
-{`${prefix} ${final ? 'Final' : gameDay.format('h:mma')}`}
+{`${prefix} ${gameDay.format('h:mm A')}`}
