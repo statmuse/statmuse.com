@@ -9,10 +9,13 @@
 </script>
 
 <svg {...$$props} viewBox="0 0 982 412.9" xmlns="http://www.w3.org/2000/svg">
-  <path d="m409.9 98.1h162.2v186h-162.2z" fill="#909396" />
+  <path
+    d="m409.9 98.1h162.2v186h-162.2z"
+    class="fill-gray-6 dark:fill-gray-5"
+  />
   <g
     fill="none"
-    stroke="#fff"
+    class="stroke-gray-2 dark:stroke-gray-8"
     stroke-linecap="round"
     stroke-linejoin="round"
     stroke-width="2"
@@ -27,14 +30,17 @@
     <path d="m470.7 215.3h40.5v48.5h-40.5z" />
     <path d="m511.3 215.3h40.5v48.5h-40.5z" />
   </g>
-  <path d="m553.3 357.5h-124.6l-2.9 11.8 65.2 10.4 65.2-10.4z" fill="#ebebeb" />
+  <path
+    d="m553.3 357.5h-124.6l-2.9 11.8 65.2 10.4 65.2-10.4z"
+    class="fill-gray-5 dark:fill-gray-6"
+  />
   <path
     d="m32.3 412.9 134.9-77.1h218.2l-45.2 77.1h27l36.5-81.7h-254.2l-147.9 81.7z"
-    fill="#ebebeb"
+    class="fill-gray-5 dark:fill-gray-6"
   />
   <path
     d="m641.8 412.9-45.3-77.1h218.3l134.8 77.1h30.7l-147.8-81.7h-254.2l36.5 81.7z"
-    fill="#ebebeb"
+    class="fill-gray-5 dark:fill-gray-6"
   />
   <clipPath id="a"><path d="m188 .6h224.2v412.3h-224.2z" /></clipPath>
   <clipPath id="b">
