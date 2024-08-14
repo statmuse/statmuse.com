@@ -1,18 +1,25 @@
 <script lang="ts">
   import HalfInningPlayByPlay from './half-inning-play-by-play.svelte'
   import { innings, scoringInnings } from './stores'
-  import type { GameraTeamReference } from '@statmuse/core/gamera/index'
+  import type {
+    GameraTeamReference,
+    InningPlayByPlay,
+  } from '@statmuse/core/gamera/index'
 
   export let scoring: boolean = false
   export let reverseOrder: boolean = false
   export let awayTeam: GameraTeamReference | undefined = undefined
   export let homeTeam: GameraTeamReference | undefined = undefined
 
-  $: inningPlays = scoring
-    ? $scoringInnings
-    : reverseOrder
-    ? $innings
-    : $innings
+  let inningPlays: InningPlayByPlay[]
+  $: {
+    inningPlays = scoring ? $scoringInnings : $innings
+
+    if (reverseOrder) {
+      console.log('reversing the plays')
+      inningPlays = [...inningPlays].reverse()
+    }
+  }
 </script>
 
 {#each inningPlays as inning (inning)}
