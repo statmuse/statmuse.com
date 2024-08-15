@@ -112,3 +112,46 @@ export const matchup = computed(
     }
   },
 )
+
+export const init = (props: {
+  gameData: MlbGameDataResponse
+  playByPlay?: MlbPlayByPlayResponse
+}) => {
+  const { gameData, playByPlay } = props
+
+  gameState.set({ gameData, playByPlay })
+  innings.set(playByPlay?.innings ?? [])
+  gameScore.set({
+    away: gameData.awayTeam.score,
+    home: gameData.homeTeam.score,
+  })
+  lineScore.set({
+    away: gameData.awayTeam.lineScore,
+    home: gameData.homeTeam.lineScore,
+  })
+  stats.set({
+    away: gameData.awayTeam.stats,
+    home: gameData.homeTeam.stats,
+  })
+  lineup.set({
+    away: gameData.awayTeam.players,
+    home: gameData.homeTeam.players,
+  })
+  players.set(
+    gameData.players?.reduce((acc, p) => ({ ...acc, [p.id]: p }), {}) ?? {},
+  )
+}
+
+export const update = (data: any) => {
+  console.log(data)
+
+  gameScore.set(data.gameScore)
+  lineScore.set(data.lineScore)
+  lineup.set(data.lineup)
+  stats.set(data.stats)
+  players.set(data.players.reduce((acc, p) => ({ ...acc, [p.id]: p }), {}))
+  innings.set([
+    ...innings.get().filter((i) => i.number !== data.lastInning.number),
+    data.lastInning,
+  ])
+}

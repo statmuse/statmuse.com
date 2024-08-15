@@ -2,14 +2,7 @@
   import { iot, mqtt } from 'aws-iot-device-sdk-v2'
   import { v4 as uuidv4 } from 'uuid'
   import { onMount } from 'svelte'
-  import {
-    innings,
-    gameScore,
-    lineScore,
-    players,
-    lineup,
-    stats,
-  } from '../pages/[league]/game/_components/stores'
+  import * as store from '../pages/[league]/game/_components/stores'
 
   export let gameId: string
 
@@ -64,22 +57,8 @@
 
     connection.on('message', (fullTopic, payload) => {
       console.log('full topic: ', fullTopic)
-
       const data = JSON.parse(new TextDecoder('utf8').decode(payload))
-
-      const currentInnings = innings.get()
-
-      console.log(data)
-
-      gameScore.set(data.gameScore)
-      lineScore.set(data.lineScore)
-      lineup.set(data.lineup)
-      stats.set(data.stats)
-      players.set(data.players.reduce((acc, p) => ({ ...acc, [p.id]: p }), {}))
-      innings.set([
-        ...currentInnings.filter((i) => i.number !== data.lastInning.number),
-        data.lastInning,
-      ])
+      store.update(data)
     })
 
     connection.on('disconnect', console.log)

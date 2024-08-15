@@ -13,15 +13,7 @@ import BattingStats from './batting-stats.svelte'
 import PitchingStats from './pitching-stats.svelte'
 import GameState from './game-state.svelte'
 import Realtime from '@components/realtime.svelte'
-import {
-  gameState,
-  innings,
-  gameScore,
-  lineScore,
-  players,
-  lineup,
-  stats,
-} from './stores'
+import * as store from './stores'
 import { Caching } from '@lib/caching'
 
 interface Props {
@@ -63,27 +55,7 @@ const [homeTeamGames, awayTeamGames, playByPlay] = await Promise.all([
 const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
 const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
 
-gameState.set({ gameData, playByPlay })
-innings.set(playByPlay?.innings ?? [])
-gameScore.set({
-  away: gameData.awayTeam.score,
-  home: gameData.homeTeam.score,
-})
-lineScore.set({
-  away: gameData.awayTeam.lineScore,
-  home: gameData.homeTeam.lineScore,
-})
-stats.set({
-  away: gameData.awayTeam.stats,
-  home: gameData.homeTeam.stats,
-})
-lineup.set({
-  away: gameData.awayTeam.players,
-  home: gameData.homeTeam.players,
-})
-players.set(
-  gameData.players?.reduce((acc, p) => ({ ...acc, [p.id]: p }), {}) ?? {},
-)
+store.init({ gameData, playByPlay })
 
 Caching.swr(Astro, { maxage: 15, revalidate: 25 })
 ---

@@ -16,7 +16,6 @@
     inningPlays = scoring ? $scoringInnings : $innings
 
     if (reverseOrder) {
-      console.log('reversing the plays')
       inningPlays = [...inningPlays].reverse()
     }
   }
