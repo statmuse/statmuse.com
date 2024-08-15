@@ -233,6 +233,8 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
     ),
   ])
 
+console.log(teamCards?.map((t) => console.log(t.teams)))
+
 if (teamCards) {
   const teams = await Promise.all(
     teamCards?.map(
@@ -240,9 +242,9 @@ if (teamCards) {
         r &&
         getTeamSeasonBio({
           context: Astro,
-          domain: r.teams[0].entity.domain,
-          team: r.teams[0].entity.id,
-          year: r.teams[0].entity.id,
+          domain: r.teams[0]?.entity.domain,
+          team: r.teams[0]?.entity.id,
+          year: r.teams[0]?.entity.id,
         }),
     ),
   )
