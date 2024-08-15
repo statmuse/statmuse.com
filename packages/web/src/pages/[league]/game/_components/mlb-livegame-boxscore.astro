@@ -60,7 +60,7 @@ store.init({ gameData, playByPlay })
 Caching.swr(Astro, { maxage: 15, revalidate: 25 })
 ---
 
-<Layout {awayTeam} {homeTeam}>
+<Layout status={gameData.gameStatus} {awayTeam} {homeTeam}>
   <LivegameHero
     slot="hero"
     network={networkName}
@@ -68,121 +68,121 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
     awayTeamGames={awayTeamGames?.games.filter((g) => g.type === 'completed')}
     {homeTeam}
     homeTeamGames={homeTeamGames?.games.filter((g) => g.type === 'completed')}
-  >
-    <nav
-      class:list={{
-        'hidden md:flex gap-3 justify-center': true,
-        'overflow-x-scroll no-scrollbar': true,
-        'pt-3': true,
-      }}
-    >
-      <div class="group/nav flex flex-col gap-1.5 overflow-clip">
-        <label
-          class:list={{
-            'cursor-pointer whitespace-nowrap': true,
-          }}
-          for="game"
-          set:html="Game"
-        />
-        <div
-          class:list={{
-            'w-full h-5 -mb-2.5 bg-current rounded-2xl': true,
-            'hidden group-has-[#game:checked]:block group-has-[#plays:checked]:block group-hover/nav:block': true,
-          }}
-        >
-        </div>
-      </div>
-      <div class="group/nav flex flex-col gap-1.5 overflow-clip">
-        <label
-          class:list={{
-            'cursor-pointer whitespace-nowrap': true,
-          }}
-          for="away"
-          set:html={awayTeam?.nickname}
-        />
-        <div
-          class:list={{
-            'w-full h-5 -mb-2.5 bg-current rounded-2xl': true,
-            'hidden group-has-[#away:checked]:block group-hover/nav:block': true,
-          }}
-        >
-        </div>
-      </div>
-      <div class="group/nav flex flex-col gap-1.5 overflow-clip">
-        <label
-          class:list={{
-            'cursor-pointer whitespace-nowrap': true,
-          }}
-          for="home"
-          set:html={homeTeam?.nickname}
-        />
-        <div
-          class:list={{
-            'w-full h-5 -mb-2.5 bg-current rounded-2xl': true,
-            'hidden group-has-[#home:checked]:block group-hover/nav:block': true,
-          }}
-        >
-        </div>
-      </div>
-    </nav>
-  </LivegameHero>
+  />
 
   <div slot="game" class="flex gap-3">
     <div class="flex-1 flex flex-col gap-3 overflow-hidden">
       <Matchup client:load {awayTeam} {homeTeam} />
       <PitchByPitch client:load />
-      <Linescore client:load {awayTeam} {homeTeam} />
+      <div class="md:hidden">
+        <Linescore client:load {awayTeam} {homeTeam} />
+      </div>
       <div class="md:hidden flex flex-col gap-3">
         <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
       </div>
-      <GameInfo {venue} {weather} {officials} />
-    </div>
-    <div class="group/plays flex-1 hidden md:block">
-      <div
-        class="bg-gray-6 dark:bg-gray-4 text-gray-5 border border-gray-6 dark:border-gray-3 flex text-center mb-3 rounded-full relative overflow-clip"
-      >
+      <div class="group/plays hidden md:block">
         <div
-          class="absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 group-has-[#all:checked]/plays:translate-x-0 group-has-[#scoring:checked]/plays:translate-x-full transition-transform ease-out"
+          class="bg-gray-6 dark:bg-gray-4 text-gray-5 border border-gray-6 dark:border-gray-3 flex text-center mb-3 rounded-full relative overflow-clip"
         >
+          <div
+            class="absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 group-has-[#all:checked]/plays:translate-x-0 group-has-[#scoring:checked]/plays:translate-x-full transition-transform ease-out"
+          >
+          </div>
+          <label
+            for="all"
+            class:list={{
+              'flex-1 py-1 hover:cursor-pointer relative': true,
+              'group-has-[#all:checked]/plays:text-gray-2': true,
+            }}
+          >
+            All Plays
+          </label>
+          <label
+            for="scoring"
+            class:list={{
+              'flex-1 py-1 hover:cursor-pointer relative': true,
+              'group-has-[#scoring:checked]/plays:text-gray-2': true,
+            }}
+          >
+            Scoring Plays
+          </label>
         </div>
-        <label
-          for="all"
-          class:list={{
-            'flex-1 py-1 hover:cursor-pointer relative': true,
-            'group-has-[#all:checked]/plays:text-gray-2': true,
-          }}
+        <div class="hidden has-[#all:checked]:flex flex-col gap-3">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="plays"
+            id="all"
+            checked
+          />
+          <PlayByPlay client:load {awayTeam} {homeTeam} reverseOrder />
+        </div>
+        <div class="hidden has-[#scoring:checked]:flex flex-col gap-3">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="plays"
+            id="scoring"
+          />
+          <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
+        </div>
+      </div>
+      <div class="md:hidden">
+        <GameInfo {venue} {weather} {officials} />
+      </div>
+    </div>
+    <div class="flex-1 hidden md:flex flex-col gap-3 overflow-hidden">
+      <Linescore client:load {awayTeam} {homeTeam} />
+      <div class="group/teams">
+        <div
+          class="bg-gray-6 dark:bg-gray-4 text-gray-5 border border-gray-6 dark:border-gray-3 flex text-center mb-3 rounded-full relative overflow-clip"
         >
-          All Plays
-        </label>
-        <label
-          for="scoring"
-          class:list={{
-            'flex-1 py-1 hover:cursor-pointer relative': true,
-            'group-has-[#scoring:checked]/plays:text-gray-2': true,
-          }}
-        >
-          Scoring Plays
-        </label>
+          <div
+            class="absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 group-has-[#away-box:checked]/teams:translate-x-0 group-has-[#home-box:checked]/teams:translate-x-full transition-transform ease-out"
+          >
+          </div>
+          <label
+            for="away-box"
+            class:list={{
+              'flex-1 py-1 hover:cursor-pointer relative': true,
+              'group-has-[#away-box:checked]/teams:text-gray-2': true,
+            }}
+          >
+            {awayTeam.nickname}
+          </label>
+          <label
+            for="home-box"
+            class:list={{
+              'flex-1 py-1 hover:cursor-pointer relative': true,
+              'group-has-[#home-box:checked]/teams:text-gray-2': true,
+            }}
+          >
+            {homeTeam.nickname}
+          </label>
+        </div>
+        <div class="hidden has-[#away-box:checked]:flex flex-col gap-3">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="box"
+            id="away-box"
+            checked
+          />
+          <BattingStats client:load teamKey="away" />
+          <PitchingStats client:load teamKey="away" />
+        </div>
+        <div class="hidden has-[#home-box:checked]:flex flex-col gap-3">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="box"
+            id="home-box"
+          />
+          <BattingStats client:load teamKey="home" />
+          <PitchingStats client:load teamKey="home" />
+        </div>
       </div>
-      <div class="hidden has-[#all:checked]:flex flex-col gap-3">
-        <input
-          class="absolute opacity-0"
-          type="radio"
-          name="plays"
-          id="all"
-          checked
-        />
-        <PlayByPlay client:load {awayTeam} {homeTeam} reverseOrder />
-      </div>
-      <div class="hidden has-[#scoring:checked]:flex flex-col gap-3">
-        <input
-          class="absolute opacity-0"
-          type="radio"
-          name="plays"
-          id="scoring"
-        />
-        <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
-      </div>
+      <GameInfo {venue} {weather} {officials} />
     </div>
   </div>
 

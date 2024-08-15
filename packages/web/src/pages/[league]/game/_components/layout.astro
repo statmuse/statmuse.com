@@ -1,14 +1,15 @@
 ---
 import Base from '@layouts/base.astro'
 // import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
-import type { GameraTeamReference } from '@statmuse/core/gamera'
+import type { GameraTeamReference, GameStatus } from '@statmuse/core/gamera'
 
 interface Props {
   awayTeam?: GameraTeamReference
   homeTeam?: GameraTeamReference
+  status: GameStatus
 }
 
-const { awayTeam, homeTeam } = Astro.props
+const { awayTeam, homeTeam, status } = Astro.props
 
 const toggleLinks = [
   {
@@ -106,7 +107,12 @@ const toggleLinks = [
     }
     {
       Astro.slots.has('summary') && (
-        <div class="hidden has-[#summary:checked]:flex md:group-has-[#plays:checked]:flex flex-col gap-3">
+        <div
+          class:list={{
+            'hidden has-[#summary:checked]:flex  flex-col gap-3': true,
+            'md:!flex': true,
+          }}
+        >
           <input
             class="absolute opacity-0"
             type="radio"
@@ -120,7 +126,12 @@ const toggleLinks = [
     }
     {
       Astro.slots.has('game') && (
-        <div class="hidden has-[#game:checked]:flex md:group-has-[#plays:checked]:flex flex-col gap-3">
+        <div
+          class:list={{
+            'hidden has-[#game:checked]:flex flex-col gap-3': true,
+            'md:!flex': true,
+          }}
+        >
           <input
             class="absolute opacity-0"
             type="radio"
@@ -134,7 +145,12 @@ const toggleLinks = [
     }
     {
       Astro.slots.has('away') && (
-        <div class="hidden has-[#away:checked]:flex flex-col gap-3">
+        <div
+          class:list={{
+            'hidden has-[#away:checked]:flex flex-col gap-3': true,
+            'md:!hidden': status !== 'scheduled',
+          }}
+        >
           <input
             class="absolute opacity-0"
             type="radio"
@@ -147,7 +163,12 @@ const toggleLinks = [
     }
     {
       Astro.slots.has('home') && (
-        <div class="hidden has-[#home:checked]:flex flex-col gap-3">
+        <div
+          class:list={{
+            'hidden has-[#home:checked]:flex flex-col gap-3': true,
+            'md:!hidden': status !== 'scheduled',
+          }}
+        >
           <input
             class="absolute opacity-0"
             type="radio"
