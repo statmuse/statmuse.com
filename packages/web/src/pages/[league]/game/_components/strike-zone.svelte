@@ -1,28 +1,23 @@
 <script lang="ts">
   import Icon from '@components/icon.svelte'
-  import {
-    colorPlayOutcome,
-    type PitchAtBatEvent,
-  } from '@statmuse/core/gamera/index'
+  import type { PitchAtBatEvent } from '@statmuse/core/gamera/index'
 
   const mapXCoordinate = (x: number) => {
-    let xPoint
-    // clamp the value between -150, 150
-    if (x < -150) xPoint = -150
-    if (x > 150) xPoint = 150
-    if (!xPoint) xPoint = x
+    let xPoint = -1 * x * (9.87 / 100) + 14.75
 
-    return ((xPoint + 150) / 300) * 29.5
+    if (xPoint < 2) xPoint = 2
+    if (xPoint > 27.5) xPoint = 27.5
+
+    return xPoint
   }
 
   const mapYCoordinate = (y: number) => {
-    let yPoint
-    // clamp the value between -120, 120
-    if (y < -120) yPoint = -120
-    if (y > 120) yPoint = 120
-    if (!yPoint) yPoint = y
+    let yPoint = -1 * y * (9.87 / 100) + 14.75
 
-    return ((-1 * y + 120) / 240) * 29.5
+    if (yPoint < 2) yPoint = 2
+    if (yPoint > 27.5) yPoint = 27.5
+
+    return yPoint
   }
 
   export let pitches: PitchAtBatEvent[]
@@ -33,7 +28,7 @@
     {#if pitch.pitchData?.coordinates}
       <circle
         r="2"
-        class={colorPlayOutcome(pitch)}
+        class="fill-current"
         cx={mapXCoordinate(pitch.pitchData?.coordinates?.x)}
         cy={mapYCoordinate(pitch.pitchData?.coordinates?.y)}
       />

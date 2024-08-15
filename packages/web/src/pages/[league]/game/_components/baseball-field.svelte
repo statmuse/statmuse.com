@@ -3,23 +3,21 @@
   import type { Coordinates } from '@statmuse/core/gamera/index'
 
   const mapXCoordinate = (x: number) => {
-    let xPoint
-    // clamp the value between 45, 205
-    if (x < 45) xPoint = 45
-    if (x > 205) xPoint = 205
-    if (!xPoint) xPoint = x
+    let xPoint = (x / 250) * 29.5
 
-    return ((xPoint - 45) / 160) * 29.5
+    if (xPoint < 2) xPoint = 2
+    if (xPoint > 27.5) xPoint = 27.5
+
+    return xPoint
   }
 
   const mapYCoordinate = (y: number) => {
-    let yPoint
-    // clamp the value between 65, 220
-    if (y < 65) yPoint = 65
-    if (y > 220) yPoint = 220
-    if (!yPoint) yPoint = y
+    let yPoint = (y / 250) * 29.5
 
-    return ((y - 65) / 155) * 29.5
+    if (yPoint < 2) yPoint = 2
+    if (yPoint > 27.5) yPoint = 27.5
+
+    return yPoint
   }
 
   export let coordinate: Coordinates
