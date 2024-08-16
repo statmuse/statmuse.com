@@ -206,6 +206,22 @@ export type MlbStatModel<StatKey extends MlbStatKey> = {
   [K in StatKey]+?: Value<number>
 }
 
+export const getDisplay = <K extends MlbStatKey>(
+  statModel: MlbStatModel<K>,
+  key: K,
+) => {
+  if (!statModel[key]) return ''
+  return statModel[key].display
+}
+
+export const getValue = <K extends MlbStatKey>(
+  statModel: MlbStatModel<K>,
+  key: K,
+) => {
+  if (!statModel[key]) return 0
+  return statModel[key].value
+}
+
 export interface StatModel {
   'Pitching-EarnedRunAverage'?: Value<number>
   'Pitching-EarnedRuns'?: Value<number>
