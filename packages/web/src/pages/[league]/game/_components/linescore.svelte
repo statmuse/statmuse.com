@@ -39,7 +39,11 @@
       $stats.away?.stats?.['Batting-Hits']?.display,
       $stats.home?.stats?.['Batting-Hits']?.display,
     ],
-    ['E', 0, 0],
+    [
+      'E',
+      $stats.away?.stats?.['Fielding-Errors']?.display,
+      $stats.home?.stats?.['Fielding-Errors']?.display,
+    ],
   ]
 </script>
 
@@ -118,9 +122,9 @@
       {/each}
     </div>
     <div class="flex">
-      {#each totals as inning, index (inning)}
+      {#each totals as total, index (total)}
         <div class="px-1.5" class:text-gray-5={index !== 0}>
-          <p>{inning[0]}</p>
+          <p>{total[0]}</p>
           <p
             class={final && awayTeamModel?.gameResult === 'win'
               ? 'text-gray-2 dark:text-gray-7'
@@ -129,7 +133,7 @@
               awayTeamModel?.gameResult === 'win' &&
               index === 0}
           >
-            {inning[1] !== undefined ? inning[1] : ''}
+            {total[1] ?? '0'}
           </p>
           <p
             class={final && homeTeamModel?.gameResult === 'win'
@@ -139,7 +143,7 @@
               homeTeamModel?.gameResult === 'win' &&
               index === 0}
           >
-            {inning[2] !== undefined ? inning[2] : ''}
+            {total[2] ?? '0'}
           </p>
         </div>
       {/each}
