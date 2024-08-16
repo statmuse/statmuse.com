@@ -140,6 +140,72 @@ export interface PlayerGameModel {
   }
 }
 
+export type MlbStatKey =
+  | 'Pitching-EarnedRunAverage'
+  | 'Pitching-EarnedRuns'
+  | 'Pitching-GamesPitched'
+  | 'Pitching-HitBatsmen'
+  | 'Pitching-Hits'
+  | 'Pitching-HomeRuns'
+  | 'Pitching-InningsPitched'
+  | 'Pitching-Runs'
+  | 'Pitching-Strikeouts'
+  | 'Pitching-Walks'
+  | 'Batting-AtBats'
+  | 'Batting-BattingAverage'
+  | 'Batting-CaughtStealing'
+  | 'Batting-Doubles'
+  | 'Batting-HitByPitches'
+  | 'Batting-Hits'
+  | 'Batting-HomeRuns'
+  | 'Batting-OnBasePercentage'
+  | 'Batting-Runs'
+  | 'Batting-RunsBattedIn'
+  | 'Batting-SluggingPercentage'
+  | 'Batting-StolenBases'
+  | 'Batting-Strikeouts'
+  | 'Batting-Triples'
+  | 'Batting-Walks'
+  | 'Fielding-Errors'
+
+export type MlbStatKeySet = {
+  pitchingStandard: Extract<
+    MlbStatKey,
+    | 'Pitching-EarnedRunAverage'
+    | 'Pitching-EarnedRuns'
+    | 'Pitching-GamesPitched'
+    | 'Pitching-HitBatsmen'
+    | 'Pitching-Hits'
+    | 'Pitching-HomeRuns'
+    | 'Pitching-InningsPitched'
+    | 'Pitching-Runs'
+    | 'Pitching-Strikeouts'
+    | 'Pitching-Walks'
+  >
+  battingStandard: Extract<
+    MlbStatKey,
+    | 'Batting-AtBats'
+    | 'Batting-BattingAverage'
+    | 'Batting-CaughtStealing'
+    | 'Batting-Doubles'
+    | 'Batting-HitByPitches'
+    | 'Batting-Hits'
+    | 'Batting-HomeRuns'
+    | 'Batting-OnBasePercentage'
+    | 'Batting-Runs'
+    | 'Batting-RunsBattedIn'
+    | 'Batting-SluggingPercentage'
+    | 'Batting-StolenBases'
+    | 'Batting-Strikeouts'
+    | 'Batting-Triples'
+    | 'Batting-Walks'
+  >
+}
+
+export type MlbStatModel<StatKey extends MlbStatKey> = {
+  [K in StatKey]+?: Value<number>
+}
+
 export interface StatModel {
   'Pitching-EarnedRunAverage'?: Value<number>
   'Pitching-EarnedRuns'?: Value<number>
@@ -168,7 +234,7 @@ export interface StatModel {
   'Batting-Walks'?: Value<number>
 }
 
-export interface TeamGameModel {
+export interface TeamGameModel<Keys extends MlbStatKey> {
   teamId: number
   score: number
   record: {
@@ -177,11 +243,11 @@ export interface TeamGameModel {
   }
   gameResult: 'win' | 'loss' | 'noDecision' | 'suspended'
   stats?: {
-    stats?: StatModel
+    stats?: MlbStatModel<Keys>
     splits?: {
       splitType?: string
       playerId: number
-      stats?: StatModel
+      stats?: MlbStatModel<Keys>
     }[]
   }
   probablePitcher?: {
@@ -207,7 +273,7 @@ interface Official {
   fullName?: string
 }
 
-export interface MlbGameDataResponse {
+export interface MlbGameDataResponse<Keys extends MlbStatKey> {
   gameId: number
   gameStatus: GameStatus
   seasonYearDisplay?: string
@@ -215,8 +281,8 @@ export interface MlbGameDataResponse {
   gameDate: string
   gameTimestamp: string
   networkName: string
-  homeTeam: TeamGameModel
-  awayTeam: TeamGameModel
+  homeTeam: TeamGameModel<Keys>
+  awayTeam: TeamGameModel<Keys>
   weather?: {
     temperatureFahrenheit: number
     cloudCoveragePercentage: number

@@ -12,7 +12,8 @@ const gameId = parseGameId(game ?? '')
 const gameData = await getGameData({
   context: Astro,
   gameId,
-  statKeySet: ['pitchingStandard', 'battingStandard'],
+  statKeySet: ['battingStandard', 'pitchingStandard'],
+  statKey: 'Fielding-Errors',
 })
 
 if (!gameData) return NOT_FOUND_404

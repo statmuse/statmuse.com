@@ -2,11 +2,12 @@
   import type {
     MlbGameDataResponse,
     MlbPlayByPlayResponse,
+    MlbStatKey,
   } from '@statmuse/core/gamera/index'
   import * as store from './stores'
   import { onMount } from 'svelte'
 
-  export let gameData: MlbGameDataResponse
+  export let gameData: MlbGameDataResponse<MlbStatKey>
   export let playByPlay: MlbPlayByPlayResponse
 
   onMount(() => {

@@ -3,14 +3,14 @@ import Timestamp from '@components/timestamp.svelte'
 import Share from '@components/share/index.svelte'
 import { hexToHSL } from '@lib/color'
 import Image from '@components/image.astro'
-import type { MlbGameDataResponse } from '@statmuse/core/gamera'
+import type { GameraTeamReference } from '@statmuse/core/gamera'
 import Score from './score.svelte'
 import Panel from '@components/panel.astro'
 import { inningNumber } from './stores'
 
 interface Props {
-  awayTeam?: NonNullable<MlbGameDataResponse['teams']>[number]
-  homeTeam?: NonNullable<MlbGameDataResponse['teams']>[number]
+  awayTeam?: GameraTeamReference
+  homeTeam?: GameraTeamReference
   awayRecord?: { wins: number; losses: number }
   homeRecord?: { wins: number; losses: number }
   timestamp: string

@@ -6,18 +6,19 @@ import {
   type MlbGameDataResponse,
   type MlbPlayByPlayResponse,
   type GameraPlayerReference,
-  type StatModel,
+  type MlbStatModel,
   getCurrentAtBat,
   getCurrentAtBatCount,
   getCurrentRunners,
   type InningPlayByPlay,
   type PlayerGameModel,
+  type MlbStatKey,
 } from '@statmuse/core/gamera'
 import { atom, map, computed } from 'nanostores'
 import { last } from 'lodash-es'
 
 interface GameState extends Record<string, unknown> {
-  gameData?: MlbGameDataResponse
+  gameData?: MlbGameDataResponse<MlbStatKey>
   playByPlay?: MlbPlayByPlayResponse
 }
 
@@ -50,19 +51,19 @@ export const lineup = map<{
 
 export const stats = map<{
   away?: {
-    stats?: StatModel
+    stats?: MlbStatModel<MlbStatKey>
     splits?: {
       splitType?: string
       playerId: number
-      stats?: StatModel
+      stats?: MlbStatModel<MlbStatKey>
     }[]
   }
   home?: {
-    stats?: StatModel
+    stats?: MlbStatModel<MlbStatKey>
     splits?: {
       splitType?: string
       playerId: number
-      stats?: StatModel
+      stats?: MlbStatModel<MlbStatKey>
     }[]
   }
 }>({})
@@ -114,7 +115,7 @@ export const matchup = computed(
 )
 
 export const init = (props: {
-  gameData: MlbGameDataResponse
+  gameData: MlbGameDataResponse<MlbStatKey>
   playByPlay?: MlbPlayByPlayResponse
 }) => {
   const { gameData, playByPlay } = props

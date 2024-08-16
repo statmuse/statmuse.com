@@ -2,6 +2,7 @@ import { Config } from 'sst/node/config'
 import type {
   MlbGameDataResponse,
   MlbPlayByPlayResponse,
+  MlbStatKey,
 } from '@statmuse/core/gamera'
 import * as Realtime from '@statmuse/core/realtime'
 import { last } from 'lodash-es'
@@ -24,7 +25,7 @@ const fetchGameData = async (props: {
   gameId: string | number
   statKeySet: StatKey[]
   version?: string
-}): Promise<MlbGameDataResponse | undefined> => {
+}): Promise<MlbGameDataResponse<MlbStatKey> | undefined> => {
   try {
     const { gameId, statKeySet, version } = props
     const requestUrl =

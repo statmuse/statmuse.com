@@ -1,7 +1,7 @@
 ---
 import { getGames, getPlayByPlay } from '@lib/gamera'
 import Layout from './layout.astro'
-import { type MlbGameDataResponse } from '@statmuse/core/gamera'
+import type { MlbGameDataResponse, MlbStatKey } from '@statmuse/core/gamera'
 import { find } from 'lodash-es'
 import GameInfo from './game-info.astro'
 import Matchup from './matchup.svelte'
@@ -17,7 +17,7 @@ import * as store from './stores'
 import { Caching } from '@lib/caching'
 
 interface Props {
-  gameData: MlbGameDataResponse
+  gameData: MlbGameDataResponse<MlbStatKey>
   gameId: string
 }
 

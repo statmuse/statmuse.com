@@ -1,17 +1,19 @@
 ---
 import {
-  type MlbGameDataResponse,
   type GameraTeamSeasonPlayerStats,
   formatMlbPosition,
+  type TeamGameModel,
+  type MlbStatKey,
+  type GameraPlayerReference,
 } from '@statmuse/core/gamera'
 import MlbPlayerLeaders from './mlb-player-leaders.astro'
 import Grid from '@components/grid.svelte'
 import { find } from 'lodash-es'
 
 interface Props {
-  teamModel: MlbGameDataResponse['homeTeam']
+  teamModel: TeamGameModel<MlbStatKey>
   teamPlayerStats?: GameraTeamSeasonPlayerStats
-  players: MlbGameDataResponse['players']
+  players: GameraPlayerReference[]
 }
 
 const { teamModel, teamPlayerStats, players } = Astro.props
@@ -57,8 +59,6 @@ const playerMap = players?.reduce(
             const row = find(battingStats.rows, {
               PLAYER: { display: player.usedName },
             })
-
-            batter.lineup.positions
 
             return {
               ...row,
