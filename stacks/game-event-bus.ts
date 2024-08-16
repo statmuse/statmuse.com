@@ -31,6 +31,10 @@ export function GameEventBus({ stack }: StackContext) {
     gameUpdate: {
       pattern: {
         detailType: ['mlb.game', 'mlb.gamePlayByPlay'],
+        detail: {
+          oldGameData: { gameStatus: ['scheduled', 'inProgress'] },
+          newGameData: { gameStatus: ['inProgress', 'completed'] },
+        },
       },
       targets: {
         mlb: 'packages/functions/src/game-event.handler',
