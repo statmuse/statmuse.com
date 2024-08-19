@@ -6,7 +6,11 @@ import type {
   GameraParameter,
   GameraGalleryImage,
   GameraTeamReference,
+  GameraPlayerReference,
+  GameraGridColumn,
+  GameraGridCellValue,
 } from './base'
+import type { MlbStatKey, MlbStatModel } from './games'
 
 export interface GameraPlayerBio {
   domain: GameraDomain
@@ -101,4 +105,31 @@ export interface GameraPlayerProfileResponse {
   fantasy?: {
     grid: GameraGrid
   }
+}
+
+export type MlbSplitType = 'player'
+
+interface SplitItem<S> {
+  playerId: number
+  splitType: S
+  statsLookupKey: string
+}
+
+interface SplitGroup<S> {
+  groupIndex: number
+  splitType: 'group'
+  statsLookupKey: string
+  splits: SplitItem<S>[]
+}
+
+export interface MlbPlayerStatsResponse<
+  K extends MlbStatKey,
+  S extends MlbSplitType,
+> {
+  stats?: {
+    splits: SplitGroup<S>[]
+    statsLookupKey: string
+    statsLookup: Record<string, MlbStatModel<K>>
+  }
+  players?: GameraPlayerReference[]
 }
