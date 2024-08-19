@@ -133,3 +133,37 @@ export interface MlbPlayerStatsResponse<
   }
   players?: GameraPlayerReference[]
 }
+
+export const mapStatsResponseToGrid = <K extends MlbStatKey>(
+  columns: (GameraGridColumn & { statKey: K })[],
+  data: {
+    player?: GameraPlayerReference
+    stats?: MlbStatModel<K>
+    position?: string
+  }[],
+): GameraGrid => {
+  const [, ...restColumns] = columns
+
+  const rows = data.map((d) => {
+    return restColumns.reduce(
+      (acc, col) => ({
+        ...acc,
+        [col.rowItemKey]: d.stats?.[col.statKey] ?? { display: '-', value: 0 },
+      }),
+      {
+        PLAYER: {
+          display: d.player?.usedName,
+          value: `${d.player?.lastName}, ${d.player?.firstName}`,
+          entity: d.player?.entity,
+          imageUrl: d.player?.imageUrl,
+          position: d.position,
+        },
+      } as Record<string, GameraGridCellValue<unknown>>,
+    )
+  })
+
+  return {
+    columns,
+    rows,
+  }
+}
