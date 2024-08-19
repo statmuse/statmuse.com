@@ -36,6 +36,7 @@
   export { classes as class }
   export let textInherit = false
   export let rankColumn = false
+  export let disableSort = false
 
   const styles = Object.assign(
     { ALIGNMENT: 'w-2', SEASON: 'text-center' },
@@ -65,7 +66,7 @@
       styles[col.rowItemKey?.toUpperCase()] ||
       styles[col.rowItemKey?.toLowerCase()] ||
       styles['default']
-    if (/text\-(left|center|right)/.test(style)) {
+    if (/text-(left|center|right)/.test(style)) {
       return style
     }
     return `${textAlign(col)} ${style ?? ''}`
@@ -230,9 +231,8 @@
               {/if}
               {#each columns as col, index (col.rowItemKey)}
                 <th
-                  class={`cursor-pointer font-normal p-1.5 text-gray-5 ${applyStyles(
-                    col,
-                  )}`}
+                  class={`font-normal p-1.5 text-gray-5 ${applyStyles(col)}`}
+                  class:cursor-pointer={!disableSort}
                   class:pl-8={col.hasImage}
                   class:pl-3={index === 0 && !rankColumn}
                   class:pr-3={index === columns.length - 1}
@@ -244,7 +244,9 @@
                     (!sortKey && col.tags?.isReferencedInQuestion)}
                   class:text-team-secondary={sortKey === col.rowItemKey ||
                     (!sortKey && col.tags?.isReferencedInQuestion)}
-                  on:click={onClickSort(col.rowItemKey)}
+                  on:click={!disableSort
+                    ? onClickSort(col.rowItemKey)
+                    : undefined}
                 >
                   {col.title}
                 </th>

@@ -85,6 +85,7 @@ const homeTeamGrid = mapStandingsToGrid({
           [homeTeam?.team.nickname ?? '']: homeTeam?.team.colors,
         }}
         textInherit
+        disableSort
       />
     ) : (
       <Fragment>
@@ -103,6 +104,7 @@ const homeTeamGrid = mapStandingsToGrid({
               [awayTeam?.team.nickname ?? '']: awayTeam?.team.colors,
             }}
             textInherit
+            disableSort
           />
         </div>
         <div class="hidden has-[#standings-home:checked]:block">
@@ -119,6 +121,7 @@ const homeTeamGrid = mapStandingsToGrid({
               [homeTeam?.team.nickname ?? '']: homeTeam?.team.colors,
             }}
             textInherit
+            disableSort
           />
         </div>
       </Fragment>
