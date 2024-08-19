@@ -235,7 +235,10 @@ if (timeUntilStart.asHours() > 24) {
       </div>
     </nav>
   </PregameHero>
-  <div slot="preview" class="space-y-3 gap-3 justify-center md:columns-2">
+  <div
+    slot="preview"
+    class="space-y-3 gap-3 justify-center @xl/boxscore:columns-2"
+  >
     <Odds {odds} {awayTeam} {homeTeam} />
     <ProbablePitchers {awayTeamModel} {homeTeamModel} />
     <TeamStats

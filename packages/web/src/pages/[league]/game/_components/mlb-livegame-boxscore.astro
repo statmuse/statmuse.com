@@ -60,7 +60,7 @@ store.init({ gameData, playByPlay })
 Caching.swr(Astro, { maxage: 15, revalidate: 25 })
 ---
 
-<Layout status={gameData.gameStatus} {awayTeam} {homeTeam}>
+<Layout status={gameData.gameStatus} {awayTeam} {homeTeam} useContainerQuery>
   <LivegameHero
     slot="hero"
     network={networkName}
@@ -74,13 +74,13 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
     <div class="flex-1 flex flex-col gap-3 overflow-hidden">
       <Matchup client:load {awayTeam} {homeTeam} />
       <PitchByPitch client:load />
-      <div class="md:hidden">
+      <div class="@xl/boxscore:hidden">
         <Linescore client:load {awayTeam} {homeTeam} />
       </div>
-      <div class="md:hidden flex flex-col gap-3">
+      <div class="@xl/boxscore:hidden flex flex-col gap-3">
         <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
       </div>
-      <div class="group/plays hidden md:block">
+      <div class="group/plays hidden @xl/boxscore:block">
         <div
           class="bg-gray-6 dark:bg-gray-4 text-gray-5 border border-gray-6 dark:border-gray-3 flex text-center mb-3 rounded-full relative overflow-clip"
         >
@@ -127,11 +127,11 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
           <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
         </div>
       </div>
-      <div class="md:hidden">
+      <div class="@xl/boxscore:hidden">
         <GameInfo {venue} {weather} {officials} />
       </div>
     </div>
-    <div class="flex-1 hidden md:flex flex-col gap-3 overflow-hidden">
+    <div class="flex-1 hidden @xl/boxscore:flex flex-col gap-3 overflow-hidden">
       <Linescore client:load {awayTeam} {homeTeam} />
       <div class="group/teams">
         <div
