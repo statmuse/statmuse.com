@@ -19,7 +19,7 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
   await Promise.all([
     listLatestHomeMusings(),
     Promise.all([
-      getPlayerCards({ context: Astro, domain: 'EPL' }).then(
+      getPlayerCards({ context: Astro, domain: 'EPL', league: 'epl' }).then(
         (x) =>
           x && {
             title: 'PL Goals',
@@ -94,7 +94,7 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
       ),
     ]),
     Promise.all([
-      getTeamCards({ context: Astro, domain: 'EPL' }).then(
+      getTeamCards({ context: Astro, domain: 'EPL', league: 'epl' }).then(
         (x) =>
           x && {
             title: 'PL Goal Difference',
