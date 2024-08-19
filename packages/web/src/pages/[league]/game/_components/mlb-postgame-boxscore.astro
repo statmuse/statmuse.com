@@ -11,6 +11,7 @@ import Linescore from './linescore.svelte'
 import PlayByPlay from './play-by-play.svelte'
 import BattingStats from './batting-stats.svelte'
 import PitchingStats from './pitching-stats.svelte'
+import GameSummary from './game-summary.astro'
 import * as store from './stores'
 import { Caching } from '@lib/caching'
 
@@ -30,6 +31,7 @@ const {
   weather,
   officials,
   gameTimestamp,
+  summary,
 } = gameData
 
 const [awayTeamGames, standings, playByPlay] = await Promise.all([
@@ -124,6 +126,7 @@ Caching.swr(Astro)
           awayTeamId={awayTeamModel.teamId}
           homeTeamId={homeTeamModel.teamId}
         />
+        <GameSummary {summary} />
         <GameInfo {venue} {weather} {officials} />
       </div>
     </div>
@@ -188,6 +191,7 @@ Caching.swr(Astro)
         awayTeamId={awayTeamModel.teamId}
         homeTeamId={homeTeamModel.teamId}
       />
+      <GameSummary {summary} />
       <GameInfo {venue} {weather} {officials} />
     </div>
   </div>

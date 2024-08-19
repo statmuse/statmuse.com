@@ -1,0 +1,16 @@
+---
+import Panel from '@components/panel.astro'
+import { tokensToHtml, type GameraToken } from '@statmuse/core/gamera'
+
+interface Props {
+  summary?: GameraToken[]
+}
+
+const { summary } = Astro.props
+
+if (!summary) return undefined
+---
+
+<Panel title="Game Summary">
+  <p set:html={tokensToHtml(summary)} />
+</Panel>
