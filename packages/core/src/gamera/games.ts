@@ -141,16 +141,22 @@ export interface PlayerGameModel {
 }
 
 export type MlbStatKey =
+  | 'Pitching-CompleteGames'
   | 'Pitching-EarnedRunAverage'
   | 'Pitching-EarnedRuns'
   | 'Pitching-GamesPitched'
+  | 'Pitching-GamesStarted'
   | 'Pitching-HitBatsmen'
   | 'Pitching-Hits'
   | 'Pitching-HomeRuns'
   | 'Pitching-InningsPitched'
+  | 'Pitching-Losses'
   | 'Pitching-Runs'
+  | 'Pitching-Saves'
+  | 'Pitching-Shutouts'
   | 'Pitching-Strikeouts'
   | 'Pitching-Walks'
+  | 'Pitching-Wins'
   | 'Batting-AtBats'
   | 'Batting-BattingAverage'
   | 'Batting-CaughtStealing'
@@ -158,6 +164,7 @@ export type MlbStatKey =
   | 'Batting-HitByPitches'
   | 'Batting-Hits'
   | 'Batting-HomeRuns'
+  | 'Batting-GamesPlayed'
   | 'Batting-OnBasePercentage'
   | 'Batting-Runs'
   | 'Batting-RunsBattedIn'
@@ -171,16 +178,22 @@ export type MlbStatKey =
 export type MlbStatKeySet = {
   pitchingStandard: Extract<
     MlbStatKey,
+    | 'Pitching-CompleteGames'
     | 'Pitching-EarnedRunAverage'
     | 'Pitching-EarnedRuns'
     | 'Pitching-GamesPitched'
+    | 'Pitching-GamesStarted'
     | 'Pitching-HitBatsmen'
     | 'Pitching-Hits'
     | 'Pitching-HomeRuns'
     | 'Pitching-InningsPitched'
+    | 'Pitching-Losses'
     | 'Pitching-Runs'
+    | 'Pitching-Saves'
+    | 'Pitching-Shutouts'
     | 'Pitching-Strikeouts'
     | 'Pitching-Walks'
+    | 'Pitching-Wins'
   >
   battingStandard: Extract<
     MlbStatKey,
@@ -191,6 +204,7 @@ export type MlbStatKeySet = {
     | 'Batting-HitByPitches'
     | 'Batting-Hits'
     | 'Batting-HomeRuns'
+    | 'Batting-GamesPlayed'
     | 'Batting-OnBasePercentage'
     | 'Batting-Runs'
     | 'Batting-RunsBattedIn'
