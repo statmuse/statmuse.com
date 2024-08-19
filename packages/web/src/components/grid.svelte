@@ -213,13 +213,8 @@
   }
 </script>
 
-<Panel
-  {title}
-  {href}
-  {entity}
-  class={`${classes} pb-0 ${!fullWidth ? 'md:w-fit' : ''}`}
->
-  <div class="relative overflow-x-auto -mx-3">
+<Panel {title} {href} {entity} class={`${classes} pb-0`}>
+  <div class="@container/table relative overflow-x-auto -mx-3">
     <table class="whitespace-nowrap" class:w-full={fullWidth}>
       {#each grids as grid (grid)}
         {@const { columns, rows, aggregations } = grid}
@@ -346,17 +341,16 @@
                           class={position || injured ? 'flex items-center' : ''}
                         >
                           <span
-                            class:hidden={entity?.shortDisplay &&
-                              (col.rowItemKey === 'NAME' ||
-                                col.rowItemKey === 'PLAYER')}
-                            class:md:block={entity?.shortDisplay &&
-                              (col.rowItemKey === 'NAME' ||
-                                col.rowItemKey === 'PLAYER')}
+                            class={entity?.shortDisplay &&
+                            (col.rowItemKey === 'NAME' ||
+                              col.rowItemKey === 'PLAYER')
+                              ? '@lg/table:block hidden'
+                              : ''}
                           >
                             {display}
                           </span>
                           {#if entity?.shortDisplay && (col.rowItemKey === 'NAME' || col.rowItemKey === 'PLAYER')}
-                            <span class="md:hidden">
+                            <span class="@lg/table:hidden">
                               {entity?.shortDisplay}
                             </span>
                           {/if}
