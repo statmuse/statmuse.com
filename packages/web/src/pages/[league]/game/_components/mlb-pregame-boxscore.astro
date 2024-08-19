@@ -271,7 +271,7 @@ if (timeUntilStart.asHours() > 24) {
         games: homeTeamGames.games.filter((g) => g.type === 'completed'),
       }}
     />
-    <GameInfo {venue} {weather} {officials} />
+    <GameInfo {venue} {weather} {officials} {gameTimestamp} />
   </div>
 
   <TeamPlayerStats

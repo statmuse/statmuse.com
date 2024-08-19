@@ -32,6 +32,7 @@ const {
   venue,
   weather,
   officials,
+  gameTimestamp,
 } = gameData
 
 const [homeTeamGames, awayTeamGames, playByPlay] = await Promise.all([
@@ -128,7 +129,7 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
         </div>
       </div>
       <div class="@xl/boxscore:hidden">
-        <GameInfo {venue} {weather} {officials} />
+        <GameInfo {venue} {weather} {officials} {gameTimestamp} />
       </div>
     </div>
     <div class="flex-1 hidden @xl/boxscore:flex flex-col gap-3 overflow-hidden">
@@ -182,7 +183,7 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
           <PitchingStats client:load teamKey="home" />
         </div>
       </div>
-      <GameInfo {venue} {weather} {officials} />
+      <GameInfo {venue} {weather} {officials} {gameTimestamp} />
     </div>
   </div>
 

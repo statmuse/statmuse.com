@@ -3,18 +3,25 @@ import Panel from '@components/panel.astro'
 import type { MlbGameDataResponse, MlbStatKey } from '@statmuse/core/gamera'
 import { find } from 'lodash-es'
 import Icon from '@components/icon.svelte'
+import dayjs from 'dayjs'
 
 interface Props {
   venue: MlbGameDataResponse<MlbStatKey>['venue']
   weather: MlbGameDataResponse<MlbStatKey>['weather']
   officials: MlbGameDataResponse<MlbStatKey>['officials']
+  gameTimestamp: string
 }
 
-const { venue, weather, officials } = Astro.props
+const { venue, weather, officials, gameTimestamp } = Astro.props
 ---
 
 <Panel title="Game Info">
   <div class="space-y-3">
+    <div class="flex gap-1.5 items-center">
+      <Icon name="calendar" class="w-5 h-5" />{
+        dayjs(gameTimestamp).format('MMMM D, YYYY')
+      }
+    </div>
     <div>
       <p class="flex gap-1.5 items-center">
         <Icon name="stadium" class="w-5 h-5" />{venue.name}
