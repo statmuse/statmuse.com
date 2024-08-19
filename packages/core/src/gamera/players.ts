@@ -152,13 +152,13 @@ export const mapStatsResponseToGrid = <K extends MlbStatKey>(
       }),
       {
         PLAYER: {
-          display: d.player?.usedName,
+          display: d.player?.usedName ?? '',
           value: `${d.player?.lastName}, ${d.player?.firstName}`,
           entity: d.player?.entity,
           imageUrl: d.player?.imageUrl,
           position: d.position,
         },
-      } as Record<string, GameraGridCellValue<unknown>>,
+      },
     )
   })
 

@@ -36,15 +36,15 @@ const {
 const splits = teamPlayerStats?.stats?.splits[0].splits
 const statsMap = teamPlayerStats?.stats?.statsLookup
 
-// console.log('team: ', team)
-// console.log(teamPlayerStatsAgainstPitcher)
-
 const splitsAgainstPitcher =
   teamPlayerStatsAgainstPitcher?.stats?.splits[0].splits
 const statsMapAgainstPitcher = teamPlayerStatsAgainstPitcher?.stats?.statsLookup
 
-const players = teamPlayerStats?.players
-const playerMap = players?.reduce(
+const players = [
+  ...(teamPlayerStats?.players ?? []),
+  ...(teamPlayerStatsAgainstPitcher?.players ?? []),
+]
+const playerMap = players.reduce(
   (acc, player) => {
     return {
       ...acc,
