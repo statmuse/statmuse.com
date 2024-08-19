@@ -147,6 +147,7 @@
 
 <div class="space-y-3">
   <Grid
+    textInherit
     data={{ columns, rows }}
     stickyColumns={['NAME']}
     highlight={higlightPlayer

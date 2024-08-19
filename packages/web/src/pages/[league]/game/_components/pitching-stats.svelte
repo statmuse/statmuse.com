@@ -86,4 +86,4 @@
     .filter((x) => !!x)
 </script>
 
-<Grid data={{ columns, rows }} stickyColumns={['NAME']} />
+<Grid textInherit data={{ columns, rows }} stickyColumns={['NAME']} />
