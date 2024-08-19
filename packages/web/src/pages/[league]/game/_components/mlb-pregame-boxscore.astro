@@ -13,9 +13,13 @@ import {
   getInjuries,
   getStandingsRaw,
   getTeamSeasonStats,
-  getTeamSeasonPlayerStats,
+  getMlbPlayerSplits,
 } from '@lib/gamera'
-import type { MlbGameDataResponse, MlbStatKey } from '@statmuse/core/gamera'
+import type {
+  GameraPlayerReference,
+  MlbGameDataResponse,
+  MlbStatKey,
+} from '@statmuse/core/gamera'
 import TeamPlayerStats from './team-player-stats.astro'
 import PregameHero from './pregame-hero.astro'
 import Odds from './odds.astro'
@@ -33,6 +37,7 @@ interface Props {
 const { gameData, gameId } = Astro.props
 
 const {
+  season,
   seasonYearDisplay: seasonYear,
   teams,
   awayTeam: awayTeamModel,
@@ -55,6 +60,8 @@ const [
   standings,
   awayTeamPlayerStats,
   homeTeamPlayerStats,
+  awayTeamBattingAgainstPitcher,
+  homeTeamBattingAgainstPitcher,
 ] = await Promise.all([
   getGames({
     context: Astro,
@@ -86,20 +93,46 @@ const [
   }),
   getInjuries({ context: Astro }),
   getStandingsRaw({ context: Astro, domain: 'mlb' }),
-  getTeamSeasonPlayerStats({
+  getMlbPlayerSplits({
     context: Astro,
-    domain: 'MLB',
-    team: `team-${awayTeamModel.teamId}`,
-    year: gameData.seasonYearDisplay ?? '',
-    params: {},
+    seasonYear,
+    seasontype: season.type,
+    teamId: awayTeamModel.teamId,
+    currentTeamId: awayTeamModel.teamId,
+    statKeySet: ['battingStandard', 'pitchingStandard'],
+    split: 'player',
   }),
-  getTeamSeasonPlayerStats({
+  getMlbPlayerSplits({
     context: Astro,
-    domain: 'MLB',
-    team: `team-${homeTeamModel.teamId}`,
-    year: gameData.seasonYearDisplay ?? '',
-    params: {},
+    seasonYear,
+    seasontype: season.type,
+    teamId: homeTeamModel.teamId,
+    currentTeamId: homeTeamModel.teamId,
+    statKeySet: ['battingStandard', 'pitchingStandard'],
+    split: 'player',
   }),
+  homeTeamModel.probablePitcher?.playerId
+    ? getMlbPlayerSplits({
+        context: Astro,
+        seasontype: 'regularSeason',
+        teamId: awayTeamModel.teamId,
+        currentTeamId: awayTeamModel.teamId,
+        statKeySet: 'battingStandard',
+        split: 'player',
+        opponentPitcherId: homeTeamModel.probablePitcher?.playerId,
+      })
+    : undefined,
+  awayTeamModel.probablePitcher?.playerId
+    ? getMlbPlayerSplits({
+        context: Astro,
+        seasontype: 'regularSeason',
+        teamId: homeTeamModel.teamId,
+        currentTeamId: homeTeamModel.teamId,
+        statKeySet: 'battingStandard',
+        split: 'player',
+        opponentPitcherId: awayTeamModel.probablePitcher?.playerId,
+      })
+    : undefined,
 ])
 
 const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
@@ -114,6 +147,14 @@ const homeTeamInjuries = find(
   (t) => t.team.teamId === homeTeamModel.teamId,
 )
 
+const playerMap = players?.reduce(
+  (acc, p) => ({ ...acc, [p.id]: p }),
+  {} as Record<number, GameraPlayerReference>,
+)
+
+const awayPitcher = playerMap?.[awayTeamModel.probablePitcher?.playerId ?? 0]
+const homePitcher = playerMap?.[homeTeamModel.probablePitcher?.playerId ?? 0]
+
 const timeUntilStart = dayjs.duration(
   dayjs(gameData.gameTimestamp).diff(dayjs()),
 )
@@ -127,7 +168,7 @@ if (timeUntilStart.asHours() > 24) {
 }
 ---
 
-<Layout {awayTeam} {homeTeam}>
+<Layout status={gameData.gameStatus} {awayTeam} {homeTeam}>
   <PregameHero
     slot="hero"
     network={networkName}
@@ -215,7 +256,7 @@ if (timeUntilStart.asHours() > 24) {
       homeTeamId={homeTeamModel.teamId}
     />
     <LastGames
-      {teams}
+      teams={teams ?? []}
       {awayTeamModel}
       {homeTeamModel}
       awayTeamResults={awayTeamGames && {
@@ -232,15 +273,19 @@ if (timeUntilStart.asHours() > 24) {
 
   <TeamPlayerStats
     slot="away"
-    {players}
+    team="away"
+    opposingPitcher={homePitcher}
     teamModel={awayTeamModel}
     teamPlayerStats={awayTeamPlayerStats}
+    teamPlayerStatsAgainstPitcher={awayTeamBattingAgainstPitcher}
   />
 
   <TeamPlayerStats
     slot="home"
-    {players}
+    team="home"
+    opposingPitcher={awayPitcher}
     teamModel={homeTeamModel}
     teamPlayerStats={homeTeamPlayerStats}
+    teamPlayerStatsAgainstPitcher={homeTeamBattingAgainstPitcher}
   />
 </Layout>
