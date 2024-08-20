@@ -30,6 +30,7 @@
         inningTitle={`Bottom ${number}`}
         inning={bottomHalf}
         colors={homeTeam?.colors}
+        reverseOrder
       />
     {/if}
     {#if topHalf.events.length > 0}
@@ -37,6 +38,7 @@
         inningTitle={`Top ${number}`}
         inning={topHalf}
         colors={awayTeam?.colors}
+        reverseOrder
       />
     {/if}
   {:else}

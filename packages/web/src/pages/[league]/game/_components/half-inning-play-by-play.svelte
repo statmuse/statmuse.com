@@ -16,6 +16,7 @@
 
   export let inningTitle: string
   export let inning: InningHalf
+  export let reverseOrder = false
 
   export let colors: Colors | undefined = undefined
 
@@ -28,7 +29,12 @@
   background={colors?.backgroundColor}
   foreground={colors?.foregroundColor}
 >
-  <div class="divide-y divide-gray-6 dark:divide-gray-4">
+  <div
+    class="flex divide-y divide-gray-6 dark:divide-gray-4"
+    class:flex-col={!reverseOrder}
+    class:flex-col-reverse={reverseOrder}
+    class:divide-y-reverse={reverseOrder}
+  >
     {#each inning.events as event (event)}
       {#if event.type !== 'atBat'}
         <div
