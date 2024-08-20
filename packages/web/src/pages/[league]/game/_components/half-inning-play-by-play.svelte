@@ -50,7 +50,7 @@
             </div>
             {#if $players}
               {@const player = $players[event.playerId]}
-              {#if player}
+              {#if player && !player.imageUrl.includes('silhouette')}
                 <Image
                   src={player.imageUrl}
                   alt={player.usedName ?? ''}
@@ -75,7 +75,7 @@
                 </div>
                 {#if $players}
                   {@const player = $players[atBatEvent.playerId]}
-                  {#if player}
+                  {#if player && !player.imageUrl.includes('silhouette')}
                     <Image
                       src={player.imageUrl}
                       alt={player.usedName ?? ''}
@@ -106,7 +106,7 @@
                   </div>
                   {#if $players}
                     {@const player = $players[runners[0].playerId]}
-                    {#if player}
+                    {#if player && !player.imageUrl.includes('silhouette')}
                       <Image
                         src={player.imageUrl}
                         alt={player.usedName ?? ''}
@@ -150,7 +150,7 @@
                       </div>
                       {#if $players}
                         {@const player = $players[runners[0].playerId]}
-                        {#if player}
+                        {#if player && !player.imageUrl.includes('silhouette')}
                           <Image
                             src={player.imageUrl}
                             alt={player.usedName ?? ''}
@@ -200,7 +200,7 @@
                       </div>
                       {#if $players}
                         {@const player = $players[runners[0].playerId]}
-                        {#if player}
+                        {#if player && !player.imageUrl.includes('silhouette')}
                           <Image
                             src={player.imageUrl}
                             alt={player.usedName ?? ''}
@@ -278,7 +278,7 @@
               </div>
               {#if $players}
                 {@const player = $players[event.batter.playerId]}
-                {#if player}
+                {#if player && !player.imageUrl.includes('silhouette')}
                   <Image
                     src={player.imageUrl}
                     alt={player.usedName ?? ''}
