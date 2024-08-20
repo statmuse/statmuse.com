@@ -7,11 +7,14 @@
   import {
     colorPlayOutcome,
     formatPlayOutcome,
+    isLineupChange,
+    isPitch,
+    isSteal,
     tokensToText,
     type Colors,
     type InningHalf,
   } from '@statmuse/core/gamera/index'
-  import { findLast, filter, some } from 'lodash-es'
+  import { findLast, some } from 'lodash-es'
   import { players } from './stores'
 
   export let inningTitle: string
@@ -60,65 +63,161 @@
           </div>
         </div>
       {:else}
-        {@const lineupEvents = filter(event.events, (e) => e.type === 'lineup')}
-        {@const stealEvents = filter(event.events, (e) => e.type === 'steal')}
-        {#each lineupEvents as lineupEvent (lineupEvent)}
-          <div
-            class="-mx-3 px-3"
-            style={colors ? `border-color: ${colors.foregroundColor}` : ''}
-          >
-            <div class="flex mt-1">
-              <div class="flex-1 space-y-1 pb-2 pt-1">
-                <p>{tokensToText(lineupEvent.description)}</p>
+        {#each event.events as atBatEvent (atBatEvent)}
+          {#if isLineupChange(atBatEvent)}
+            <div
+              class="-mx-3 px-3"
+              style={colors ? `border-color: ${colors.foregroundColor}` : ''}
+            >
+              <div class="flex mt-1">
+                <div class="flex-1 space-y-1 pb-2 pt-1">
+                  <p>{tokensToText(atBatEvent.description)}</p>
+                </div>
+                {#if $players}
+                  {@const player = $players[atBatEvent.playerId]}
+                  {#if player}
+                    <Image
+                      src={player.imageUrl}
+                      alt={player.usedName ?? ''}
+                      width={120}
+                      height={90}
+                      class="h-[75px] max-w-[100px] object-contain object-right-bottom self-end"
+                    />
+                  {/if}
+                {/if}
               </div>
-              {#if $players}
-                {@const player = $players[lineupEvent.playerId]}
-                {#if player}
-                  <Image
-                    src={player.imageUrl}
-                    alt={player.usedName ?? ''}
-                    width={120}
-                    height={90}
-                    class="h-[75px] max-w-[100px] object-contain object-right-bottom self-end"
-                  />
+            </div>
+          {:else if isSteal(atBatEvent)}
+            {#if atBatEvent.runners && some(atBatEvent.runners, (r) => !!r.description)}
+              {@const runners = atBatEvent.runners}
+              <div
+                class="-mx-3 px-3"
+                style={colors ? `border-color: ${colors.foregroundColor}` : ''}
+              >
+                <div class="flex mt-1">
+                  <div class="flex-1 space-y-1 pb-2 pt-1">
+                    <p>
+                      {runners
+                        .flatMap((r) => r.description)
+                        .filter((x) => !!x)
+                        .map((r) => r.text)
+                        .join(' ')}
+                    </p>
+                  </div>
+                  {#if $players}
+                    {@const player = $players[runners[0].playerId]}
+                    {#if player}
+                      <Image
+                        src={player.imageUrl}
+                        alt={player.usedName ?? ''}
+                        width={120}
+                        height={90}
+                        class="h-[75px] max-w-[100px] object-contain object-right-bottom self-end"
+                      />
+                    {/if}
+                  {/if}
+                </div>
+              </div>
+            {/if}
+          {:else if isPitch(atBatEvent)}
+            {#if !atBatEvent.flags.isAtBatOver}
+              {#if atBatEvent.outcomeType === 'balk'}
+                {@const runners = atBatEvent.runners}
+                {#if runners && runners.length > 0}
+                  <div
+                    class="-mx-3 px-3"
+                    style={colors
+                      ? `border-color: ${colors.foregroundColor}`
+                      : ''}
+                  >
+                    <div class="flex mt-1">
+                      <div class="flex-1 space-y-1 pb-2 pt-1">
+                        <p>
+                          {runners
+                            .flatMap((r) => r.description)
+                            .filter((x) => !!x)
+                            .map((r) => r.text)
+                            .join(' ')}
+                        </p>
+                        <p
+                          class="rounded-2xl px-2 capitalize w-fit"
+                          style={colors
+                            ? `color: ${colors.backgroundColor}; background: ${colors.foregroundColor}`
+                            : ''}
+                        >
+                          {atBatEvent.outcomeType}
+                        </p>
+                      </div>
+                      {#if $players}
+                        {@const player = $players[runners[0].playerId]}
+                        {#if player}
+                          <Image
+                            src={player.imageUrl}
+                            alt={player.usedName ?? ''}
+                            width={120}
+                            height={90}
+                            class="h-[75px] max-w-[100px] object-contain object-right-bottom self-end"
+                          />
+                        {/if}
+                      {/if}
+                    </div>
+                  </div>
+                {/if}
+              {:else}
+                {@const runners = atBatEvent.runners}
+                {#if runners && runners.length > 0 && some(runners, (r) => !!r.description)}
+                  <div
+                    class="-mx-3 px-3"
+                    style={colors
+                      ? `border-color: ${colors.foregroundColor}`
+                      : ''}
+                  >
+                    <div class="flex mt-1">
+                      <div class="flex-1 space-y-1 pb-2 pt-1">
+                        <p>
+                          {tokensToText(
+                            runners
+                              .flatMap((r) => r.description)
+                              .filter((x) => !!x),
+                          )}
+                        </p>
+                        <p
+                          class="rounded-2xl px-2 capitalize w-fit"
+                          style={colors
+                            ? `color: ${colors.backgroundColor}; background: ${colors.foregroundColor}`
+                            : ''}
+                        >
+                          {runners[0].outcomeType === 'steal'
+                            ? 'Stolen Base'
+                            : runners[0].outcomeType === 'caughtStealing'
+                            ? 'Caught Stealing'
+                            : atBatEvent.flags.isWildPitch
+                            ? 'Wild Pitch'
+                            : atBatEvent.flags.isPassedBall
+                            ? 'Passed Ball'
+                            : ''}
+                        </p>
+                      </div>
+                      {#if $players}
+                        {@const player = $players[runners[0].playerId]}
+                        {#if player}
+                          <Image
+                            src={player.imageUrl}
+                            alt={player.usedName ?? ''}
+                            width={120}
+                            height={90}
+                            class="h-[75px] max-w-[100px] object-contain object-right-bottom self-end"
+                          />
+                        {/if}
+                      {/if}
+                    </div>
+                  </div>
                 {/if}
               {/if}
-            </div>
-          </div>
-        {/each}
-        {#each stealEvents as stealEvent (stealEvent)}
-          {#if stealEvent.runners}
-            {#each stealEvent.runners as runner (runner)}
-              {#if runner.outcomeType}
-                <div
-                  class="-mx-3 px-3"
-                  style={colors
-                    ? `border-color: ${colors.foregroundColor}`
-                    : ''}
-                >
-                  <div class="flex mt-1">
-                    <div class="flex-1 space-y-1 pb-2 pt-1">
-                      <p>{runner.outcomeType}</p>
-                      <p>{tokensToText(runner.description)}</p>
-                    </div>
-                    {#if $players}
-                      {@const player = $players[runner.playerId]}
-                      {#if player}
-                        <Image
-                          src={player.imageUrl}
-                          alt={player.usedName ?? ''}
-                          width={120}
-                          height={90}
-                          class="h-[75px] max-w-[100px] object-contain object-right-bottom self-end"
-                        />
-                      {/if}
-                    {/if}
-                  </div>
-                </div>
-              {/if}
-            {/each}
+            {/if}
           {/if}
         {/each}
+
         {#if event.description}
           <div
             class="-mx-3 px-3"
@@ -129,7 +228,9 @@
                 <p>{tokensToText(event.description)}</p>
                 {#if event.type === 'atBat'}
                   {@const lastPitch = findLast(event.events, { type: 'pitch' })}
-                  {@const pitches = filter(event.events, { type: 'pitch' })}
+                  {@const pitches =
+                    event.pitches ??
+                    event.events.filter((e) => e.type === 'pitch')}
                   {#if lastPitch && lastPitch.type === 'pitch'}
                     {@const { count, hitData, runners } = lastPitch}
                     <div class="flex items-center gap-1.5">

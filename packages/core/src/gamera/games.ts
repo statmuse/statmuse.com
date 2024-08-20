@@ -377,7 +377,7 @@ interface PitchCount {
 }
 
 export interface Runner {
-  outcomeType:
+  outcomeType?:
     | 'steal'
     | 'caughtStealing'
     | 'pickoff'
@@ -451,7 +451,7 @@ export const formatPlayOutcome = (pitch: PitchAtBatEvent) => {
     case 'enforcedStrike':
     case 'strikeLooking':
     case 'strikeSwinging':
-      return 'Strikout'
+      return pitch.flags.isDoublePlay ? 'Strikeout Double Play' : 'Strikeout'
     case 'single':
       return 'Single'
     case 'double':
@@ -465,19 +465,26 @@ export const formatPlayOutcome = (pitch: PitchAtBatEvent) => {
     case 'sacrificeFly':
       return 'Sacrifice Fly'
     case 'groundOut':
-      return 'Ground Out'
+      return pitch.flags.isDoublePlay
+        ? 'Grounded Into DP'
+        : pitch.flags.isTriplePlay
+        ? 'Grounded Into TP'
+        : 'Groundout'
     case 'lineOut':
-      return 'Line Out'
     case 'flyOut':
-      return 'Fly Out'
     case 'popOut':
-      return 'Pop Out'
+      return pitch.flags.isDoublePlay
+        ? 'Double Play'
+        : pitch.flags.isTriplePlay
+        ? 'Triple Play'
+        : pitch.outcomeType.slice(0, 1).toUpperCase() +
+          pitch.outcomeType.slice(1).toLowerCase()
     case 'fieldersChoice':
       return 'Forceout'
     case 'hitByPitch':
       return 'Hit By Pitch'
     case 'reachedOnError':
-      return 'Reached On Error'
+      return 'Field Error'
     default:
       return pitch.outcomeType
   }
@@ -516,19 +523,21 @@ export const formatPitchOutcome = (pitch: PitchAtBatEvent) => {
     case 'catcherInterference':
       return 'Catcher Interference'
     case 'dirtBall':
-      return 'Dirt Ball'
+      return 'Ball'
     case 'enforcedBall':
       return 'Enforced Ball'
     case 'enforcedStrike':
       return 'Enforced Strike'
     case 'fieldersChoice':
-      return 'Fielders Choice'
+      return 'Forceout'
+    case 'foul':
+      return pitch.count.strikes === 3 ? 'Foul Tip' : 'Foul'
     case 'flyOut':
       return 'Fly Out'
     case 'groundOut':
       return 'Ground Out'
     case 'hitByPitch':
-      return 'Hit By Putch'
+      return 'Hit By Pitch'
     case 'hitterInterference':
       return 'Hitter Interence'
     case 'homeRun':
@@ -548,7 +557,7 @@ export const formatPitchOutcome = (pitch: PitchAtBatEvent) => {
     case 'reachedOnError':
       return 'Reached On Error'
     case 'rulingPending':
-      return 'Ruling Pending'
+      return 'In Play'
     case 'sacrificeBunt':
       return 'Sacrifice Bunt'
     case 'sacrificeFly':
@@ -579,10 +588,19 @@ interface LineupChangeAtBatEvent {
 
 type AtBatEvent = PitchAtBatEvent | StealAtBatEvent | LineupChangeAtBatEvent
 
+export const isPitch = (event: AtBatEvent): event is PitchAtBatEvent =>
+  event.type === 'pitch'
+export const isSteal = (event: AtBatEvent): event is StealAtBatEvent =>
+  event.type === 'steal'
+export const isLineupChange = (
+  event: AtBatEvent,
+): event is LineupChangeAtBatEvent => event.type === 'lineup'
+
 export interface InningAtBatEvent {
   pitcher: { playerId: number; handedness: 'right' | 'left' }
   batter: { playerId: number; handedness: 'right' | 'left' }
   events: AtBatEvent[]
+  pitches?: PitchAtBatEvent[] // for scoring plays
   description?: GameraToken[]
   type: 'atBat'
 }
@@ -636,20 +654,29 @@ export const filterScoringPlays = (innings: InningPlayByPlay[]) => {
           events: halfInning.events
             .filter((event) => event.type === 'atBat')
             .flatMap((event) => {
-              const stealEvents = event.events.filter((e) => e.type === 'steal')
-              const scoringStealEvents = stealEvents.filter((e) =>
-                some(e.runners, (r) => r.endingBase === 4),
+              const stealOrPitchEvents = event.events.filter(
+                (e) =>
+                  (e.type === 'steal' || e.type === 'pitch') &&
+                  some(e.runners, (r) => r.endingBase === 4),
               )
 
-              const pitchEvents = event.events.filter((e) => e.type === 'pitch')
-              const isScorintAtBat = some(pitchEvents, (e) =>
-                some(e.runners, (r) => r.endingBase === 4),
-              )
+              const lastPitch = last(stealOrPitchEvents)
 
-              if (isScorintAtBat) {
-                return [...scoringStealEvents, event]
+              if (stealOrPitchEvents.length > 0) {
+                return [
+                  {
+                    ...event,
+                    events: stealOrPitchEvents,
+                    pitches: event.events.filter((e) => e.type === 'pitch'),
+                    description:
+                      lastPitch?.type === 'pitch' && lastPitch.flags.isAtBatOver
+                        ? event.description
+                        : undefined,
+                  },
+                ]
+              } else {
+                return []
               }
-              return [...scoringStealEvents]
             }),
         }
       }),
