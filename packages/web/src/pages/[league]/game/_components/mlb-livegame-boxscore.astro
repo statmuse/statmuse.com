@@ -1,5 +1,5 @@
 ---
-import { getGames, getPlayByPlay } from '@lib/gamera'
+import { getGames, getPlayByPlay, getStandingsRaw } from '@lib/gamera'
 import Layout from './layout.astro'
 import type { MlbGameDataResponse, MlbStatKey } from '@statmuse/core/gamera'
 import { find } from 'lodash-es'
@@ -11,6 +11,7 @@ import PlayByPlay from './play-by-play.svelte'
 import LivegameHero from './livegame-hero.astro'
 import BattingStats from './batting-stats.svelte'
 import PitchingStats from './pitching-stats.svelte'
+import Standings from './standings.astro'
 import GameState from './game-state.svelte'
 import Realtime from '@components/realtime.svelte'
 import * as store from './stores'
@@ -35,23 +36,26 @@ const {
   gameTimestamp,
 } = gameData
 
-const [homeTeamGames, awayTeamGames, playByPlay] = await Promise.all([
-  getGames({
-    context: Astro,
-    domain: 'mlb',
-    teamId: homeTeamModel.teamId,
-    seasonYear,
-    gameState: 'completed',
-  }),
-  getGames({
-    context: Astro,
-    domain: 'mlb',
-    teamId: awayTeamModel.teamId,
-    seasonYear,
-    gameState: 'completed',
-  }),
-  getPlayByPlay({ context: Astro, gameId }),
-])
+const [homeTeamGames, awayTeamGames, playByPlay, standings] = await Promise.all(
+  [
+    getGames({
+      context: Astro,
+      domain: 'mlb',
+      teamId: homeTeamModel.teamId,
+      seasonYear,
+      gameState: 'completed',
+    }),
+    getGames({
+      context: Astro,
+      domain: 'mlb',
+      teamId: awayTeamModel.teamId,
+      seasonYear,
+      gameState: 'completed',
+    }),
+    getPlayByPlay({ context: Astro, gameId }),
+    getStandingsRaw({ context: Astro, domain: 'mlb' }),
+  ],
+)
 
 const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
 const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
@@ -128,7 +132,12 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
           <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
         </div>
       </div>
-      <div class="@xl/boxscore:hidden">
+      <div class="@xl/boxscore:hidden flex flex-col gap-3">
+        <Standings
+          {standings}
+          awayTeamId={awayTeamModel.teamId}
+          homeTeamId={homeTeamModel.teamId}
+        />
         <GameInfo {venue} {weather} {officials} {gameTimestamp} />
       </div>
     </div>
@@ -183,6 +192,11 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
           <PitchingStats client:load teamKey="home" />
         </div>
       </div>
+      <Standings
+        {standings}
+        awayTeamId={awayTeamModel.teamId}
+        homeTeamId={homeTeamModel.teamId}
+      />
       <GameInfo {venue} {weather} {officials} {gameTimestamp} />
     </div>
   </div>
