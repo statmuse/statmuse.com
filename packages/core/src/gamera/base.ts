@@ -48,8 +48,13 @@ export interface GameraGridColumn {
 export interface GameraGridCellValue<T> extends Value<T> {
   imageUrl?: string
   entity?: GameraEntity
-  position?: string
-  injured?: boolean
+  meta?: {
+    id?: number
+    shortDisplay?: string
+    position?: string
+    injured?: boolean
+    padding?: boolean
+  }
 }
 
 export interface GameraGrid {

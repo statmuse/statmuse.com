@@ -261,7 +261,7 @@
               {/if}
               {#each columns as col, index (col.rowItemKey)}
                 {#if row[col.rowItemKey]}
-                  {@const { display, imageUrl, entity, position, injured } =
+                  {@const { display, imageUrl, entity, meta } =
                     row[col.rowItemKey]}
                   <td
                     class={`${applyStyles(col)} ${padding} ${
@@ -338,10 +338,14 @@
                         </div>
                       {:else}
                         <div
-                          class={position || injured ? 'flex items-center' : ''}
+                          class={meta?.position || meta?.injured
+                            ? 'flex items-center'
+                            : ''}
+                          class:pl-2={meta?.padding}
                         >
                           <span
-                            class={entity?.shortDisplay &&
+                            class={(entity?.shortDisplay ||
+                              meta?.shortDisplay) &&
                             (col.rowItemKey === 'NAME' ||
                               col.rowItemKey === 'PLAYER')
                               ? '@lg/table:block hidden'
@@ -349,17 +353,17 @@
                           >
                             {display}
                           </span>
-                          {#if entity?.shortDisplay && (col.rowItemKey === 'NAME' || col.rowItemKey === 'PLAYER')}
+                          {#if (entity?.shortDisplay || meta?.shortDisplay) && (col.rowItemKey === 'NAME' || col.rowItemKey === 'PLAYER')}
                             <span class="@lg/table:hidden">
-                              {entity?.shortDisplay}
+                              {entity?.shortDisplay ?? meta?.shortDisplay}
                             </span>
                           {/if}
-                          {#if position}
+                          {#if meta?.position}
                             <span class="text-gray-5 text-sm ml-1">
-                              {position}
+                              {meta.position}
                             </span>
                           {/if}
-                          {#if injured}
+                          {#if meta?.injured}
                             <Icon name="injury" class="w-4 ml-1" />
                           {/if}
                         </div>

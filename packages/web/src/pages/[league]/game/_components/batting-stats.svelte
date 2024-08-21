@@ -72,36 +72,50 @@
       const player = $players?.[p.playerId]
       const playerStats = find(splits, { playerId: p.playerId ?? 0 })
 
-      if (player && playerStats) {
+      if (player) {
         return {
           NAME: {
-            display: player.usedName,
+            display: player.usedName ?? '',
             value: player.usedName,
-            entity: {
-              ...player.entity,
-              display:
-                p.lineup.battingOrderSequence !== 1
-                  ? `- ${player.entity.display}`
-                  : player.entity.display,
-              shortDisplay:
-                p.lineup.battingOrderSequence !== 1 &&
-                player.entity.shortDisplay
-                  ? `- ${player.entity.shortDisplay}`
-                  : player.entity.shortDisplay,
+            meta: {
+              id: player.id,
+              shortDisplay: player.entity.shortDisplay,
+              position: p.lineup.positions
+                ?.map((x) => formatMlbPosition(x))
+                .join('-'),
+              padding: p.lineup.battingOrderSequence !== 1,
             },
-            position: p.lineup.positions
-              ?.map((x) => formatMlbPosition(x))
-              .join('-'),
           },
-          AB: playerStats.stats?.['Batting-AtBats'],
-          R: playerStats.stats?.['Batting-Runs'],
-          H: playerStats.stats?.['Batting-Hits'],
-          RBI: playerStats.stats?.['Batting-RunsBattedIn'],
-          BB: playerStats.stats?.['Batting-Walks'],
-          K: playerStats.stats?.['Batting-Strikeouts'],
-          AVG: playerStats.stats?.['Batting-BattingAverage'],
-          OBP: playerStats.stats?.['Batting-OnBasePercentage'],
-          SLG: playerStats.stats?.['Batting-SluggingPercentage'],
+          AB: playerStats?.stats?.['Batting-AtBats'] ?? {
+            value: 0,
+            display: '-',
+          },
+          R: playerStats?.stats?.['Batting-Runs'] ?? { value: 0, display: '-' },
+          H: playerStats?.stats?.['Batting-Hits'] ?? { value: 0, display: '-' },
+          RBI: playerStats?.stats?.['Batting-RunsBattedIn'] ?? {
+            value: 0,
+            display: '-',
+          },
+          BB: playerStats?.stats?.['Batting-Walks'] ?? {
+            value: 0,
+            display: '-',
+          },
+          K: playerStats?.stats?.['Batting-Strikeouts'] ?? {
+            value: 0,
+            display: '-',
+          },
+          AVG: playerStats?.stats?.['Batting-BattingAverage'] ?? {
+            value: 0,
+            display: '-',
+          },
+          OBP: playerStats?.stats?.['Batting-OnBasePercentage'] ?? {
+            value: 0,
+            display: '-',
+          },
+          SLG: playerStats?.stats?.['Batting-SluggingPercentage'] ?? {
+            value: 0,
+            display: '-',
+          },
         }
       }
     })

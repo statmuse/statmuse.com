@@ -64,22 +64,49 @@
       const player = $players?.[p.playerId]
       const playerStats = find(splits, { playerId: p.playerId })
 
-      if (player && playerStats) {
+      if (player) {
         return {
           NAME: {
-            display: player.usedName,
+            display: player.usedName ?? '',
             value: player.usedName,
-            entity: player.entity,
-            position: p.lineup.pitchingSequence === 1 ? 'SP' : undefined,
+            meta: {
+              id: player.id,
+              shortDisplay: player.entity.shortDisplay,
+              position: p.lineup.pitchingSequence === 1 ? 'SP' : undefined,
+            },
           },
-          IP: playerStats.stats?.['Pitching-InningsPitched'],
-          H: playerStats.stats?.['Pitching-Hits'],
-          R: playerStats.stats?.['Pitching-Runs'],
-          ER: playerStats.stats?.['Pitching-EarnedRuns'],
-          BB: playerStats.stats?.['Pitching-Walks'],
-          K: playerStats.stats?.['Pitching-Strikeouts'],
-          HR: playerStats.stats?.['Pitching-HomeRuns'],
-          ERA: playerStats.stats?.['Pitching-EarnedRunAverage'],
+          IP: playerStats?.stats?.['Pitching-InningsPitched'] ?? {
+            value: 0,
+            display: '-',
+          },
+          H: playerStats?.stats?.['Pitching-Hits'] ?? {
+            value: 0,
+            display: '-',
+          },
+          R: playerStats?.stats?.['Pitching-Runs'] ?? {
+            value: 0,
+            display: '-',
+          },
+          ER: playerStats?.stats?.['Pitching-EarnedRuns'] ?? {
+            value: 0,
+            display: '-',
+          },
+          BB: playerStats?.stats?.['Pitching-Walks'] ?? {
+            value: 0,
+            display: '-',
+          },
+          K: playerStats?.stats?.['Pitching-Strikeouts'] ?? {
+            value: 0,
+            display: '-',
+          },
+          HR: playerStats?.stats?.['Pitching-HomeRuns'] ?? {
+            value: 0,
+            display: '-',
+          },
+          ERA: playerStats?.stats?.['Pitching-EarnedRunAverage'] ?? {
+            value: 0,
+            display: '-',
+          },
         }
       }
     })
