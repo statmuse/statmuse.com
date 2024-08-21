@@ -119,7 +119,7 @@ Caching.swr(Astro)
         <Schedule
           teams={teams ?? []}
           currentGameId={Number.parseInt(gameId)}
-          games={awayTeamGames?.games.reverse()}
+          games={awayTeamGames?.games}
         />
         <Standings
           {standings}
@@ -184,7 +184,7 @@ Caching.swr(Astro)
       <Schedule
         teams={teams ?? []}
         currentGameId={Number.parseInt(gameId)}
-        games={awayTeamGames?.games.reverse()}
+        games={awayTeamGames?.games}
       />
       <Standings
         {standings}

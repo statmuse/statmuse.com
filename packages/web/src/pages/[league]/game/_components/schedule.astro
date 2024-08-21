@@ -17,9 +17,12 @@ interface Props {
   currentGameId: number
 }
 
-const { teams, games: allGames, currentGameId } = Astro.props
+const { teams, currentGameId } = Astro.props
+let allGames = Astro.props.games
 
 if (!allGames) return undefined
+
+allGames = [...allGames].reverse()
 
 const getAwayTeamId = (game: Game) =>
   isScheduledGame(game) ? game.awayTeamId : game.awayTeam.teamId
@@ -103,7 +106,13 @@ if (gameIndex !== -1) {
               <div class="w-16 flex items-center justify-end text-right text-sm text-gray-5">
                 <div>
                   <p>Game {index + 1}</p>
-                  {isCompletedGame(game) ? <p>Final</p> : <p>Live</p>}
+                  {isCompletedGame(game) ? (
+                    <p>Final</p>
+                  ) : (
+                    <p class="text-gray-8 bg-teal px-2 rounded-lg text-center w-fit">
+                      Live
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
