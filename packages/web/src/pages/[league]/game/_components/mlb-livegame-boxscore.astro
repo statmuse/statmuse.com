@@ -12,6 +12,7 @@ import LivegameHero from './livegame-hero.astro'
 import BattingStats from './batting-stats.svelte'
 import PitchingStats from './pitching-stats.svelte'
 import Standings from './standings.astro'
+import Schedule from './schedule.astro'
 import GameState from './game-state.svelte'
 import Realtime from '@components/realtime.svelte'
 import * as store from './stores'
@@ -43,14 +44,14 @@ const [homeTeamGames, awayTeamGames, playByPlay, standings] = await Promise.all(
       domain: 'mlb',
       teamId: homeTeamModel.teamId,
       seasonYear,
-      gameState: 'completed',
+      gameState: ['scheduled', 'inProgress', 'completed'],
     }),
     getGames({
       context: Astro,
       domain: 'mlb',
       teamId: awayTeamModel.teamId,
       seasonYear,
-      gameState: 'completed',
+      gameState: ['scheduled', 'inProgress', 'completed'],
     }),
     getPlayByPlay({ context: Astro, gameId }),
     getStandingsRaw({ context: Astro, domain: 'mlb' }),
@@ -133,6 +134,11 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
         </div>
       </div>
       <div class="@xl/boxscore:hidden flex flex-col gap-3">
+        <Schedule
+          teams={teams ?? []}
+          currentGameId={Number.parseInt(gameId)}
+          games={awayTeamGames?.games}
+        />
         <Standings
           {standings}
           awayTeamId={awayTeamModel.teamId}
@@ -192,6 +198,11 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
           <PitchingStats client:load teamKey="home" />
         </div>
       </div>
+      <Schedule
+        teams={teams ?? []}
+        currentGameId={Number.parseInt(gameId)}
+        games={awayTeamGames?.games}
+      />
       <Standings
         {standings}
         awayTeamId={awayTeamModel.teamId}
