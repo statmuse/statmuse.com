@@ -74,8 +74,9 @@
   <div class="flex justify-between px-3 py-2">
     <div>
       <p class="text-lg font-semibold leading-none">
-        {$matchup.away.player?.entity
-          ? $matchup.away.player?.entity.shortDisplay
+        {$matchup.away.player
+          ? $matchup.away.player.entity.shortDisplay ??
+            $matchup.away.player.usedName
           : ''}
         <span class="text-base font-normal text-gray-5">
           {formatMlbPosition(
@@ -167,8 +168,9 @@
     </div>
     <div class="text-right">
       <p class="text-lg font-semibold leading-none">
-        {$matchup.home.player?.entity
-          ? $matchup.home.player?.entity.shortDisplay
+        {$matchup.home.player
+          ? $matchup.home.player.entity.shortDisplay ??
+            $matchup.home.player.usedName
           : ''}
         <span class="text-base font-normal text-gray-5">
           {formatMlbPosition(
