@@ -36,7 +36,9 @@ export const halfInning = computed(innings, (i) => getCurrentHalfInning(i))
 
 export const inningNumber = computed(innings, (i) => getCurrentInningNumber(i))
 
-export const players = map<Record<number, GameraPlayerReference>>({})
+export const players = map<Record<number, GameraPlayerReference | undefined>>(
+  {},
+)
 
 export const atBat = computed(innings, (i) => getCurrentAtBat(i))
 

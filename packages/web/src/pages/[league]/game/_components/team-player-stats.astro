@@ -44,37 +44,35 @@ const players = [
   ...(teamPlayerStats?.players ?? []),
   ...(teamPlayerStatsAgainstPitcher?.players ?? []),
 ]
-const playerMap = players.reduce(
-  (acc, player) => {
-    return {
-      ...acc,
-      [player.id]: player,
-    }
-  },
-  {} as Record<number, (typeof players)[0]>,
-)
+const playerMap = players.reduce<
+  Record<number, GameraPlayerReference | undefined>
+>((acc, player) => {
+  return {
+    ...acc,
+    [player.id]: player,
+  }
+}, {})
 
 const data =
   splits?.map((s) => ({
-    player: playerMap?.[s.playerId],
+    player: playerMap[s.playerId],
     stats: statsMap?.[s.statsLookupKey],
   })) ?? []
 
-const playerStatsMap = data.reduce(
+const playerStatsMap = data.reduce<Record<number, (typeof data)[number]>>(
   (acc, d) => ({ ...acc, [d.player?.id ?? '']: d }),
-  {} as Record<number, (typeof data)[number]>,
+  {},
 )
 
 const dataAgainstPitcher =
   splitsAgainstPitcher?.map((s) => ({
-    player: playerMap?.[s.playerId],
+    player: playerMap[s.playerId],
     stats: statsMapAgainstPitcher?.[s.statsLookupKey],
   })) ?? []
 
-const againstPitcherPlayerStatsMap = dataAgainstPitcher.reduce(
-  (acc, d) => ({ ...acc, [d.player?.id ?? '']: d }),
-  {} as Record<number, (typeof dataAgainstPitcher)[number]>,
-)
+const againstPitcherPlayerStatsMap = dataAgainstPitcher.reduce<
+  Record<number, (typeof dataAgainstPitcher)[number]>
+>((acc, d) => ({ ...acc, [d.player?.id ?? '']: d }), {})
 
 const battingColumns: (GameraGridColumn & {
   statKey: MlbStatKeySet['battingStandard']
@@ -246,7 +244,7 @@ if (teamModel.players !== undefined) {
     .filter((p) => p.lineup.battingOrder && p.lineup.battingOrderSequence === 1)
     .map((p) => ({
       ...againstPitcherPlayerStatsMap[p.playerId],
-      player: playerMap?.[p.playerId],
+      player: playerMap[p.playerId],
       position: formatMlbPosition(last(p.lineup.positions)),
     }))
 

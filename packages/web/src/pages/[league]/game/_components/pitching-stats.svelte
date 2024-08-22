@@ -61,7 +61,7 @@
     ['lineup.pitchingSequence'],
   )
     .map((p) => {
-      const player = $players?.[p.playerId]
+      const player = $players[p.playerId]
       const playerStats = find(splits, { playerId: p.playerId })
 
       if (player) {

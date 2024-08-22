@@ -19,10 +19,9 @@ const { response, teamId, domain } = Astro.props
 
 const games = response.games.reverse().slice(0, 5)
 
-const teams = response.teams.reduce(
-  (acc, t) => ({ ...acc, [t.teamId]: t }),
-  {} as Record<number, GameraTeamReference>,
-)
+const teams = response.teams.reduce<
+  Record<number, GameraTeamReference | undefined>
+>((acc, t) => ({ ...acc, [t.teamId]: t }), {})
 
 const columns = [
   { rowItemKey: 'DATE', title: 'DATE', type: 'date' },
@@ -55,8 +54,8 @@ const rows = games.map((game) => {
       display: dayjs(game.gameDate).format('ddd M/D'),
       entity: {
         display: `${dayjs(game.gameDate).format('M/D/YYYY')} ${
-          isHome ? oppTeam.abbreviation : team.abbreviation
-        } @ ${isHome ? team.abbreviation : oppTeam.abbreviation}`,
+          isHome ? oppTeam?.abbreviation : team?.abbreviation
+        } @ ${isHome ? team?.abbreviation : oppTeam?.abbreviation}`,
         domain,
         type: 'game',
         id: game.id.toString(),
@@ -67,10 +66,10 @@ const rows = games.map((game) => {
       display: isHome ? 'vs' : '@',
     },
     OPP: {
-      value: oppTeam.abbreviation,
-      display: oppTeam.abbreviation,
-      imageUrl: oppTeam.logoImageUrl,
-      entity: oppTeam.entity,
+      value: oppTeam?.abbreviation,
+      display: oppTeam?.abbreviation ?? '',
+      imageUrl: oppTeam?.logoImageUrl,
+      entity: oppTeam?.entity,
     },
     TIME: {
       value:

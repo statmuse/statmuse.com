@@ -147,10 +147,9 @@ const homeTeamInjuries = find(
   (t) => t.team.teamId === homeTeamModel.teamId,
 )
 
-const playerMap = players?.reduce(
-  (acc, p) => ({ ...acc, [p.id]: p }),
-  {} as Record<number, GameraPlayerReference>,
-)
+const playerMap = players?.reduce<
+  Record<number, GameraPlayerReference | undefined>
+>((acc, p) => ({ ...acc, [p.id]: p }), {})
 
 const awayPitcher = playerMap?.[awayTeamModel.probablePitcher?.playerId ?? 0]
 const homePitcher = playerMap?.[homeTeamModel.probablePitcher?.playerId ?? 0]

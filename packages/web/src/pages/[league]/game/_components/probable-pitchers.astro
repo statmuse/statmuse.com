@@ -13,7 +13,7 @@ import EntityLink from '@components/entity-link.astro'
 interface Props {
   awayTeamModel: TeamGameModel<MlbStatKey>
   homeTeamModel: TeamGameModel<MlbStatKey>
-  playerMap?: Record<number, GameraPlayerReference>
+  playerMap?: Record<number, GameraPlayerReference | undefined>
 }
 
 const { awayTeamModel, homeTeamModel, playerMap } = Astro.props

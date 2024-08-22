@@ -69,7 +69,7 @@
     ['lineup.battingOrder', 'lineup.battingOrderSequence'],
   )
     .map((p) => {
-      const player = $players?.[p.playerId]
+      const player = $players[p.playerId]
       const playerStats = find(splits, { playerId: p.playerId ?? 0 })
 
       if (player) {
@@ -124,7 +124,7 @@
   $: doubles = splits
     ?.filter((s) => s.stats?.['Batting-Doubles']?.value > 0)
     .map((s) => {
-      const player = $players?.[s.playerId]
+      const player = $players[s.playerId]
       return {
         name: player?.entity.shortDisplay ?? player?.entity.display,
         total: s.stats?.['Batting-Doubles']?.value,
@@ -133,7 +133,7 @@
   $: triples = splits
     ?.filter((s) => s.stats?.['Batting-Triples']?.value > 0)
     .map((s) => {
-      const player = $players?.[s.playerId]
+      const player = $players[s.playerId]
       return {
         name: player?.entity.shortDisplay ?? player?.entity.display,
         total: s.stats?.['Batting-Triples']?.value,
@@ -142,7 +142,7 @@
   $: homeRun = splits
     ?.filter((s) => s.stats?.['Batting-HomeRuns']?.value > 0)
     .map((s) => {
-      const player = $players?.[s.playerId]
+      const player = $players[s.playerId]
       return {
         name: player?.entity.shortDisplay ?? player?.entity.display,
         total: s.stats?.['Batting-HomeRuns']?.value,
@@ -151,7 +151,7 @@
   $: rbis = splits
     ?.filter((s) => s.stats?.['Batting-RunsBattedIn']?.value > 0)
     .map((s) => {
-      const player = $players?.[s.playerId]
+      const player = $players[s.playerId]
       return {
         name: player?.entity.shortDisplay ?? player?.entity.display,
         total: s.stats?.['Batting-RunsBattedIn']?.value,

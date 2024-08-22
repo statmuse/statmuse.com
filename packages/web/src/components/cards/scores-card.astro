@@ -21,12 +21,14 @@ interface Props {
 const data = Astro.props.data
 const title = Astro.props.title
 
-const teams = data.teams.reduce(
+const teams = data.teams.reduce<
+  Record<number, GameraTeamReference | undefined>
+>(
   (result, team) => ({
     ...result,
     [team.teamId]: team,
   }),
-  {} as Record<number, GameraTeamReference>,
+  {},
 )
 
 const games = data.games.slice(0, 5)
@@ -49,20 +51,20 @@ const grid: GameraGrid = {
         display: dayjs(g.gameDate).tz('America/New_York').format('ddd M/D'),
       },
       TEAM: {
-        value: awayTeam.abbreviation,
-        display: awayTeam.abbreviation,
-        imageUrl: awayTeam.logoImageUrl,
-        entity: awayTeam.entity,
+        value: awayTeam?.abbreviation,
+        display: awayTeam?.abbreviation ?? '',
+        imageUrl: awayTeam?.logoImageUrl,
+        entity: awayTeam?.entity,
       },
       ALIGNMENT: {
         value: '@',
         display: '@',
       },
       OPP: {
-        value: homeTeam.abbreviation,
-        display: homeTeam.abbreviation,
-        imageUrl: homeTeam.logoImageUrl,
-        entity: homeTeam.entity,
+        value: homeTeam?.abbreviation,
+        display: homeTeam?.abbreviation ?? '',
+        imageUrl: homeTeam?.logoImageUrl,
+        entity: homeTeam?.entity,
       },
       SCORE: {
         value: g.awayTeam.score,
@@ -70,10 +72,10 @@ const grid: GameraGrid = {
         entity: {
           display: `${dayjs(g.gameDate)
             .tz('America/New_York')
-            .format('M/D/YYYY')} ${awayTeam.abbreviation} @ ${
-            homeTeam.abbreviation
+            .format('M/D/YYYY')} ${awayTeam?.abbreviation} @ ${
+            homeTeam?.abbreviation
           }`,
-          domain: homeTeam.entity.domain,
+          domain: homeTeam?.entity.domain,
           type: 'game',
           id: g.id.toString(),
         },
