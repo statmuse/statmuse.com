@@ -240,7 +240,7 @@ if (timeUntilStart.asHours() > 24) {
     class="space-y-3 gap-3 justify-center @xl/boxscore:columns-2"
   >
     <Odds {odds} {awayTeam} {homeTeam} />
-    <ProbablePitchers {awayTeamModel} {homeTeamModel} />
+    <ProbablePitchers {awayTeamModel} {homeTeamModel} {playerMap} />
     <TeamStats
       {awayTeam}
       {homeTeam}
@@ -249,9 +249,10 @@ if (timeUntilStart.asHours() > 24) {
     />
     <Injuries {awayTeamInjuries} {homeTeamInjuries} />
     <Schedule
+      domain="MLB"
       teams={teams ?? []}
       currentGameId={Number.parseInt(gameId)}
-      games={awayTeamGames?.games.reverse()}
+      games={awayTeamGames?.games}
     />
     <Standings
       {standings}
@@ -259,14 +260,15 @@ if (timeUntilStart.asHours() > 24) {
       homeTeamId={homeTeamModel.teamId}
     />
     <LastGames
+      domain="MLB"
       teams={teams ?? []}
       {awayTeamModel}
       {homeTeamModel}
-      awayTeamResults={awayTeamGames && {
+      awayTeamCompletedGames={awayTeamGames && {
         ...awayTeamGames,
         games: awayTeamGames.games.filter((g) => g.type === 'completed'),
       }}
-      homeTeamResults={homeTeamGames && {
+      homeTeamCompletedGames={homeTeamGames && {
         ...homeTeamGames,
         games: homeTeamGames.games.filter((g) => g.type === 'completed'),
       }}

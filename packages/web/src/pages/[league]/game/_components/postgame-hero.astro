@@ -7,6 +7,7 @@ import type { GameraTeamReference } from '@statmuse/core/gamera'
 import Score from './score.svelte'
 import Panel from '@components/panel.astro'
 import { inningNumber } from './stores'
+import EntityLink from '@components/entity-link.astro'
 
 interface Props {
   awayTeam?: GameraTeamReference
@@ -51,13 +52,20 @@ const { awayTeam, homeTeam, awayRecord, homeRecord, timestamp } = Astro.props
         class="absolute left-0 h-full object-contain -translate-x-1/2"
       />
       <div class="px-3 flex flex-col justify-center leading-none">
-        <h4 class="font-semibold text-lg">
-          {
-            awayRecord && (
-              <span class="text-sm font-normal">{`${awayRecord.wins}-${awayRecord.losses}`}</span>
-            )
-          }{' '}{awayTeam?.abbreviation}
-        </h4>
+        <EntityLink
+          entity={awayTeam?.entity}
+          class="text-inherit hover:no-underline group/link"
+        >
+          <h4 class="font-semibold text-lg">
+            {
+              awayRecord && (
+                <span class="text-sm font-normal">{`${awayRecord.wins}-${awayRecord.losses}`}</span>
+              )
+            }{' '}<span class="group-hover/link:underline">
+              {awayTeam?.abbreviation}
+            </span>
+          </h4>
+        </EntityLink>
         <p class="text-2xl"><Score teamKey="away" /></p>
       </div>
     </div>
@@ -76,13 +84,20 @@ const { awayTeam, homeTeam, awayRecord, homeRecord, timestamp } = Astro.props
         class="absolute right-0 h-full object-contain translate-x-1/2"
       />
       <div class="px-3 flex flex-col justify-center leading-none">
-        <h4 class="font-semibold text-lg">
-          {homeTeam?.abbreviation}{' '}{
-            homeRecord && (
-              <span class="text-sm font-normal">{`${homeRecord.wins}-${homeRecord.losses}`}</span>
-            )
-          }
-        </h4>
+        <EntityLink
+          entity={homeTeam?.entity}
+          class="text-inherit hover:no-underline group/link"
+        >
+          <h4 class="font-semibold text-lg">
+            <span class="group-hover/link:underline">
+              {homeTeam?.abbreviation}
+            </span>{' '}{
+              homeRecord && (
+                <span class="text-sm font-normal">{`${homeRecord.wins}-${homeRecord.losses}`}</span>
+              )
+            }
+          </h4>
+        </EntityLink>
         <p class="text-2xl"><Score teamKey="home" /></p>
       </div>
     </div>

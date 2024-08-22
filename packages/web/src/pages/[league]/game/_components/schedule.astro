@@ -1,4 +1,5 @@
 ---
+import EntityLink from '@components/entity-link.astro'
 import Image from '@components/image.astro'
 import Panel from '@components/panel.astro'
 import Timestamp from '@components/timestamp.svelte'
@@ -8,16 +9,19 @@ import {
   isCompletedGame,
   isScheduledGame,
   isInProgressGame,
+  type GameraDomain,
 } from '@statmuse/core/gamera'
+import dayjs from 'dayjs'
 import { findIndex, takeWhile, takeRightWhile, find } from 'lodash-es'
 
 interface Props {
+  domain: GameraDomain
   teams: GameraTeamReference[]
   games?: Game[]
   currentGameId: number
 }
 
-const { teams, currentGameId } = Astro.props
+const { domain, teams, currentGameId } = Astro.props
 let allGames = Astro.props.games
 
 if (!allGames) return undefined
@@ -60,7 +64,21 @@ if (gameIndex !== -1) {
 
         if (isCompletedGame(game) || isInProgressGame(game)) {
           return (
-            <div class="flex gap-3 py-2">
+            <EntityLink
+              entity={
+                currentGameId !== game.gameId
+                  ? {
+                      id: game.id.toString(),
+                      type: 'game',
+                      display: `${dayjs(game.gameDate).format('M/D/YYYY')} ${
+                        awayTeam?.abbreviation
+                      } @ ${homeTeam?.abbreviation}`,
+                      domain,
+                    }
+                  : undefined
+              }
+              class="flex gap-3 py-2 text-inherit hover:no-underline"
+            >
               <div class="flex-1">
                 <div
                   class:list={{
@@ -115,11 +133,25 @@ if (gameIndex !== -1) {
                   )}
                 </div>
               </div>
-            </div>
+            </EntityLink>
           )
         } else {
           return (
-            <div class="flex gap-3 py-2">
+            <EntityLink
+              entity={
+                currentGameId !== game.gameId
+                  ? {
+                      id: game.id.toString(),
+                      type: 'game',
+                      display: `${dayjs(game.gameDate).format('M/D/YYYY')} ${
+                        awayTeam?.abbreviation
+                      } @ ${homeTeam?.abbreviation}`,
+                      domain,
+                    }
+                  : undefined
+              }
+              class="flex gap-3 py-2 text-inherit hover:no-underline"
+            >
               <div class="flex-1">
                 <div class="flex gap-1 py-0.5">
                   <Image
@@ -159,7 +191,7 @@ if (gameIndex !== -1) {
                   {game.odds?.sportsbooks?.[0].homeTeam.spreadOdds.display}
                 </p>
               </div>
-            </div>
+            </EntityLink>
           )
         }
       })

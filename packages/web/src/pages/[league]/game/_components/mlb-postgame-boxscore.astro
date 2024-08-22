@@ -118,6 +118,7 @@ Caching.swr(Astro)
         <div class="@xl/boxscore:hidden flex flex-col gap-3">
           <PlayByPlay {awayTeam} {homeTeam} scoring />
           <Schedule
+            domain="MLB"
             teams={teams ?? []}
             currentGameId={Number.parseInt(gameId)}
             games={awayTeamGames?.games}
@@ -184,6 +185,7 @@ Caching.swr(Astro)
           </div>
         </div>
         <Schedule
+          domain="MLB"
           teams={teams ?? []}
           currentGameId={Number.parseInt(gameId)}
           games={awayTeamGames?.games}

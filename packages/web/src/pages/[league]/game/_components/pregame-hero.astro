@@ -5,6 +5,7 @@ import { hexToHSL } from '@lib/color'
 import Image from '@components/image.astro'
 import type { CompletedGame, GameraTeamReference } from '@statmuse/core/gamera'
 import Panel from '@components/panel.astro'
+import EntityLink from '@components/entity-link.astro'
 
 interface Props {
   network: string
@@ -112,7 +113,12 @@ const homeTeamRecordLast5 = homeTeamGames?.slice(0, 5).reduce(
         class="absolute left-0 h-full object-contain -translate-x-1/2"
       />
       <div class="px-3 flex flex-col justify-center">
-        <h4 class="text-lg font-semibold">{awayTeam?.nickname}</h4>
+        <EntityLink
+          entity={awayTeam?.entity}
+          class="text-lg font-semibold text-inherit"
+        >
+          {awayTeam?.nickname}
+        </EntityLink>
         {
           awayTeamRecord && (
             <p class="text-[16px]">{`${awayTeamRecord.wins}-${awayTeamRecord.losses}`}</p>
@@ -140,7 +146,12 @@ const homeTeamRecordLast5 = homeTeamGames?.slice(0, 5).reduce(
         class="absolute right-0 h-full object-contain translate-x-1/2"
       />
       <div class="px-3 flex flex-col justify-center">
-        <h4 class="text-lg font-semibold">{homeTeam?.nickname}</h4>
+        <EntityLink
+          entity={homeTeam?.entity}
+          class="text-lg font-semibold text-inherit"
+        >
+          {homeTeam?.nickname}
+        </EntityLink>
         {
           homeTeamRecord && (
             <p class="text-[16px]">{`${homeTeamRecord.wins}-${homeTeamRecord.losses}`}</p>

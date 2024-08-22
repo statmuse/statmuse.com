@@ -17,6 +17,7 @@
     lineScore,
     stats,
   } from './stores'
+  import EntityLink from '@components/entity-link.svelte'
 
   export let awayTeam: GameraTeamReference
   export let homeTeam: GameraTeamReference
@@ -50,7 +51,10 @@
 <Panel class="!p-0">
   <div class="flex-1 p-2 flex flex-nowrap items-end">
     <div class="pr-1">
-      <div class="flex gap-1 items-center">
+      <EntityLink
+        entity={awayTeam.entity}
+        class="flex gap-1 items-center text-inherit"
+      >
         <Image
           src={awayTeam.logoImageUrl ?? ''}
           alt={awayTeam.name ?? ''}
@@ -59,8 +63,11 @@
           class="w-5 h-5 object-contain"
         />
         {awayTeam.abbreviation}
-      </div>
-      <div class="flex gap-1 items-center">
+      </EntityLink>
+      <EntityLink
+        entity={homeTeam.entity}
+        class="flex gap-1 items-center text-inherit"
+      >
         <Image
           src={homeTeam.logoImageUrl ?? ''}
           alt={homeTeam.name ?? ''}
@@ -69,7 +76,7 @@
           class="w-5 h-5 object-contain"
         />
         {homeTeam.abbreviation}
-      </div>
+      </EntityLink>
     </div>
     <div
       class="flex-1 flex no-scrollbar overflow-scroll"

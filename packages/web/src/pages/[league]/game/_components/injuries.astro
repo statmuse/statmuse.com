@@ -1,4 +1,5 @@
 ---
+import EntityLink from '@components/entity-link.astro'
 import Icon from '@components/icon.svelte'
 import Image from '@components/image.astro'
 import Panel from '@components/panel.astro'
@@ -49,7 +50,10 @@ const injuryDescription = (
   <div
     class="relative flex justify-center py-2 border-b border-gray-6 dark:border-gray-4"
   >
-    <div class="flex gap-1 absolute left-3 top-2">
+    <EntityLink
+      entity={awayTeam?.entity}
+      class="flex gap-1 absolute left-3 top-2 text-inherit"
+    >
       <Image
         src={awayTeam?.logoImageUrl ?? ''}
         alt={awayTeam?.name ?? ''}
@@ -58,11 +62,14 @@ const injuryDescription = (
         class="w-6 h-6 object-contain"
       />
       {awayTeam?.abbreviation}
-    </div>
+    </EntityLink>
 
     <h3 class="font-semibold">Injuries</h3>
 
-    <div class="flex gap-1 absolute right-3 top-2">
+    <EntityLink
+      entity={homeTeam?.entity}
+      class="flex gap-1 absolute right-3 top-2 text-inherit"
+    >
       {homeTeam?.abbreviation}
       <Image
         src={homeTeam?.logoImageUrl ?? ''}
@@ -71,44 +78,58 @@ const injuryDescription = (
         height={60}
         class="w-6 h-6 object-contain"
       />
-    </div>
+    </EntityLink>
   </div>
   <div class="divide-y divide-gray-6 dark:divide-gray-4 *:px-3 *:py-1">
     {
       injuries.map((injury) => (
         <div class="flex justify-between">
-          <div>
-            {injury[0] && (
-              <>
-                <p>
-                  {injury[0]?.player.usedName}{' '}
-                  <span class="text-gray-5 text-sm">
-                    {formatMlbPosition(injury[0]?.position)}
-                  </span>
-                </p>
-                <p class="text-sm text-gray-5 flex gap-1.5 items-center">
-                  <Icon name="injury" class="w-4 h-4" />
-                  {injuryDescription(injury[0].injuries[0])}
-                </p>
-              </>
-            )}
-          </div>
-          <div class="text-right">
-            {injury[1] && (
-              <>
-                <p>
-                  <span class="text-gray-5 text-sm">
-                    {formatMlbPosition(injury[1]?.position)}
-                  </span>{' '}
-                  {injury[1]?.player.usedName}
-                </p>
-                <p class="text-sm text-gray-5 flex gap-1.5 items-center">
-                  {injuryDescription(injury[1].injuries[0])}
-                  <Icon name="injury" class="w-4 h-4" />
-                </p>
-              </>
-            )}
-          </div>
+          <EntityLink
+            entity={injury[0]?.player.entity}
+            class="hover:no-underline text-inherit group/link"
+          >
+            <div>
+              {injury[0] && (
+                <>
+                  <div class="flex gap-1 items-center">
+                    <p class="group-hover/link:underline">
+                      {injury[0]?.player.usedName}
+                    </p>
+                    <span class="text-gray-5 text-sm">
+                      {formatMlbPosition(injury[0]?.position)}
+                    </span>
+                  </div>
+                  <p class="text-sm text-gray-5 flex gap-1.5 items-center">
+                    <Icon name="injury" class="w-4 h-4" />
+                    {injuryDescription(injury[0].injuries[0])}
+                  </p>
+                </>
+              )}
+            </div>
+          </EntityLink>
+          <EntityLink
+            entity={injury[1]?.player.entity}
+            class="hover:no-underline text-inherit group/link"
+          >
+            <div>
+              {injury[1] && (
+                <>
+                  <div class="flex gap-1 items-center justify-end">
+                    <span class="text-gray-5 text-sm">
+                      {formatMlbPosition(injury[1]?.position)}
+                    </span>
+                    <p class="group-hover/link:underline">
+                      {injury[1]?.player.usedName}
+                    </p>
+                  </div>
+                  <p class="text-sm text-gray-5 flex gap-1.5 items-center justify-end">
+                    {injuryDescription(injury[1].injuries[0])}
+                    <Icon name="injury" class="w-4 h-4" />
+                  </p>
+                </>
+              )}
+            </div>
+          </EntityLink>
         </div>
       ))
     }

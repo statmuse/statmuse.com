@@ -55,8 +55,8 @@ const rows = games.map((game) => {
       display: dayjs(game.gameDate).format('ddd M/D'),
       entity: {
         display: `${dayjs(game.gameDate).format('M/D/YYYY')} ${
-          team.abbreviation
-        } ${isHome ? 'vs' : 'at'} ${oppTeam.abbreviation}`,
+          isHome ? oppTeam.abbreviation : team.abbreviation
+        } @ ${isHome ? team.abbreviation : oppTeam.abbreviation}`,
         domain,
         type: 'game',
         id: game.id.toString(),
@@ -78,7 +78,7 @@ const rows = games.map((game) => {
       display:
         game.type === 'scheduled'
           ? dayjs(game.gameTimestamp).format('h:mm A')
-          : `${game.awayTeam.score} - ${game.awayTeam.score}`,
+          : `${game.awayTeam.score} - ${game.homeTeam.score}`,
     },
     NETWORK: {
       value: game.type === 'scheduled' ? '' : '',

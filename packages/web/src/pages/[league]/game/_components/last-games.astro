@@ -1,4 +1,5 @@
 ---
+import EntityLink from '@components/entity-link.astro'
 import Image from '@components/image.astro'
 import Panel from '@components/panel.astro'
 import type {
@@ -7,33 +8,44 @@ import type {
   GameraTeamReference,
   TeamGameModel,
   MlbStatKey,
+  GameraDomain,
 } from '@statmuse/core/gamera'
 import dayjs from 'dayjs'
 import { find, orderBy, zip } from 'lodash-es'
 
 interface Props {
+  domain: GameraDomain
   teams: GameraTeamReference[]
   awayTeamModel: TeamGameModel<MlbStatKey>
   homeTeamModel: TeamGameModel<MlbStatKey>
-  awayTeamResults?: GameraGamesResponse<CompletedGame>
-  homeTeamResults?: GameraGamesResponse<CompletedGame>
+  awayTeamCompletedGames?: GameraGamesResponse<CompletedGame>
+  homeTeamCompletedGames?: GameraGamesResponse<CompletedGame>
 }
 
 const {
+  domain,
   teams,
   awayTeamModel,
   homeTeamModel,
-  awayTeamResults,
-  homeTeamResults,
+  awayTeamCompletedGames,
+  homeTeamCompletedGames,
 } = Astro.props
+
+const teamMap = [
+  ...(awayTeamCompletedGames?.teams ?? []),
+  ...(homeTeamCompletedGames?.teams ?? []),
+].reduce<Record<number, GameraTeamReference | undefined>>(
+  (acc, t) => ({ ...acc, [t.teamId]: t }),
+  {},
+)
 
 const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
 
 const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
 
 const games = zip(
-  orderBy(awayTeamResults?.games, 'gameDate', 'desc').slice(0, 5),
-  orderBy(homeTeamResults?.games, 'gameData', 'desc').slice(0, 5),
+  orderBy(awayTeamCompletedGames?.games, 'gameDate', 'desc').slice(0, 5),
+  orderBy(homeTeamCompletedGames?.games, 'gameData', 'desc').slice(0, 5),
 )
 
 const getTeamResult = (teamId: number, game?: CompletedGame) =>
@@ -73,7 +85,10 @@ const getOpponent = (
   <div
     class="relative flex justify-center py-2 border-b border-gray-6 dark:border-gray-4"
   >
-    <div class="flex gap-1 absolute left-3 top-2">
+    <EntityLink
+      entity={awayTeam?.entity}
+      class="flex gap-1 absolute left-3 top-2 text-inherit"
+    >
       <Image
         src={awayTeam?.logoImageUrl ?? ''}
         alt={awayTeam?.name ?? ''}
@@ -82,11 +97,14 @@ const getOpponent = (
         class="w-6 h-6 object-contain"
       />
       {awayTeam?.abbreviation}
-    </div>
+    </EntityLink>
 
     <h3 class="font-semibold">Last 5</h3>
 
-    <div class="flex gap-1 absolute right-3 top-2">
+    <EntityLink
+      entity={homeTeam?.entity}
+      class="flex gap-1 absolute right-3 top-2 text-inherit"
+    >
       {homeTeam?.abbreviation}
       <Image
         src={homeTeam?.logoImageUrl ?? ''}
@@ -95,19 +113,32 @@ const getOpponent = (
         height={60}
         class="w-6 h-6 object-contain"
       />
-    </div>
+    </EntityLink>
   </div>
   <div class="divide-y divide-gray-6 dark:divide-gray-4 *:px-3 *:py-1">
     {
       games.map(([awayTeamScore, homeTeamScore]) => (
         <div class="flex justify-between">
-          <div>
+          <EntityLink
+            entity={{
+              id: awayTeamScore?.id.toString() ?? '',
+              type: 'game',
+              display: `${dayjs(awayTeamScore?.gameDate).format('M/D/YYYY')} ${
+                teamMap[awayTeamScore?.awayTeam.teamId ?? 0]?.abbreviation
+              } @ ${
+                teamMap[awayTeamScore?.homeTeam.teamId ?? 0]?.abbreviation
+              }`,
+              domain,
+            }}
+            class="text-inherit hover:no-underline group/link"
+          >
             <p class="text-sm text-gray-5">
               {dayjs(awayTeamScore?.gameDate).format('ddd, MMM D')}
             </p>
             <div class="flex gap-1 items-center">
               <span
                 class:list={{
+                  'group-hover/link:underline': true,
                   'text-green':
                     getTeamResult(awayTeamModel.teamId, awayTeamScore) ===
                     'win',
@@ -127,7 +158,7 @@ const getOpponent = (
                 const opponent = getOpponent(
                   awayTeamModel.teamId,
                   awayTeamScore,
-                  awayTeamResults?.teams,
+                  awayTeamCompletedGames?.teams,
                 )
                 return (
                   <Fragment>
@@ -144,14 +175,27 @@ const getOpponent = (
                 )
               })()}
             </div>
-          </div>
-          <div class="text-right">
+          </EntityLink>
+          <EntityLink
+            entity={{
+              id: homeTeamScore?.id.toString() ?? '',
+              type: 'game',
+              display: `${dayjs(homeTeamScore?.gameDate).format('M/D/YYYY')} ${
+                teamMap[homeTeamScore?.awayTeam.teamId ?? 0]?.abbreviation
+              } @ ${
+                teamMap[homeTeamScore?.homeTeam.teamId ?? 0]?.abbreviation
+              }`,
+              domain,
+            }}
+            class="text-right text-inherit hover:no-underline group/link"
+          >
             <p class="text-sm text-gray-5">
               {dayjs(homeTeamScore?.gameDate).format('ddd, MMM D')}
             </p>
             <div class="flex gap-1 items-center">
               <span
                 class:list={{
+                  'group-hover/link:underline': true,
                   'text-green':
                     getTeamResult(homeTeamModel.teamId, homeTeamScore) ===
                     'win',
@@ -171,7 +215,7 @@ const getOpponent = (
                 const opponent = getOpponent(
                   homeTeamModel.teamId,
                   homeTeamScore,
-                  homeTeamResults?.teams,
+                  homeTeamCompletedGames?.teams,
                 )
                 return (
                   <Fragment>
@@ -188,7 +232,7 @@ const getOpponent = (
                 )
               })()}
             </div>
-          </div>
+          </EntityLink>
         </div>
       ))
     }

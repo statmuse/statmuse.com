@@ -8,7 +8,6 @@ import type {
   GameraTeamReference,
   GameraPlayerReference,
   GameraGridColumn,
-  GameraGridCellValue,
 } from './base'
 import type { MlbStatKey, MlbStatModel } from './games'
 

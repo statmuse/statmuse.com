@@ -1,4 +1,5 @@
 ---
+import EntityLink from '@components/entity-link.astro'
 import Image from '@components/image.astro'
 import Panel from '@components/panel.astro'
 import type {
@@ -84,7 +85,10 @@ const pitchingStats = [
   <div
     class="relative flex justify-center py-2 border-b border-gray-6 dark:border-gray-4"
   >
-    <div class="flex gap-1 absolute left-3 top-2">
+    <EntityLink
+      entity={awayTeam?.entity}
+      class="flex gap-1 absolute left-3 top-2 text-inherit"
+    >
       <Image
         src={awayTeam?.logoImageUrl ?? ''}
         alt={awayTeam?.name ?? ''}
@@ -93,11 +97,14 @@ const pitchingStats = [
         class="w-6 h-6 object-contain"
       />
       {awayTeam?.abbreviation}
-    </div>
+    </EntityLink>
 
     <h3 class="font-semibold">Team Stats</h3>
 
-    <div class="flex gap-1 absolute right-3 top-2">
+    <EntityLink
+      entity={homeTeam?.entity}
+      class="flex gap-1 absolute right-3 top-2 text-inherit"
+    >
       {homeTeam?.abbreviation}
       <Image
         src={homeTeam?.logoImageUrl ?? ''}
@@ -106,7 +113,7 @@ const pitchingStats = [
         height={60}
         class="w-6 h-6 object-contain"
       />
-    </div>
+    </EntityLink>
   </div>
   <div class="divide-y divide-gray-6 dark:divide-gray-4 *:px-1 *:py-1">
     {

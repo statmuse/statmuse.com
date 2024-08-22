@@ -1,16 +1,22 @@
 ---
 import Image from '@components/image.astro'
 import Panel from '@components/panel.astro'
-import type { MlbStatKey, TeamGameModel } from '@statmuse/core/gamera'
+import type {
+  GameraPlayerReference,
+  MlbStatKey,
+  TeamGameModel,
+} from '@statmuse/core/gamera'
 import { getPlayerBio, getPlayerStats } from '@lib/gamera'
 import { find } from 'lodash-es'
+import EntityLink from '@components/entity-link.astro'
 
 interface Props {
   awayTeamModel: TeamGameModel<MlbStatKey>
   homeTeamModel: TeamGameModel<MlbStatKey>
+  playerMap?: Record<number, GameraPlayerReference>
 }
 
-const { awayTeamModel, homeTeamModel } = Astro.props
+const { awayTeamModel, homeTeamModel, playerMap } = Astro.props
 
 const homeStartingId = find(homeTeamModel.players, {
   lineup: { pitchingSequence: 1 },
@@ -84,13 +90,19 @@ const stats = [
 
 const homeTeam = homePitcherBio?.team
 const awayTeam = awayPitcherBio?.team
+
+const awayPlayer = playerMap?.[awayPitcherId ?? 0]
+const homePlayer = playerMap?.[homePitcherId ?? 0]
 ---
 
 {
   (homePitcherId || awayPitcherId) && (
     <Panel class="!p-0">
       <div class="relative flex justify-center py-2">
-        <div class="flex gap-1 absolute left-3 top-2">
+        <EntityLink
+          entity={awayTeam?.entity}
+          class="flex gap-1 absolute left-3 top-2 text-inherit"
+        >
           <Image
             src={awayTeam?.logoImageUrl ?? ''}
             alt={awayTeam?.name ?? ''}
@@ -99,13 +111,16 @@ const awayTeam = awayPitcherBio?.team
             class="w-6 h-6 object-contain"
           />
           {awayTeam?.abbreviation}
-        </div>
+        </EntityLink>
 
         <h3 class="font-semibold">
           {homeStartingId && awayStartingId ? 'Starting' : 'Probable'} Pitchers
         </h3>
 
-        <div class="flex gap-1 absolute right-3 top-2">
+        <EntityLink
+          entity={homeTeam?.entity}
+          class="flex gap-1 absolute right-3 top-2 text-inherit"
+        >
           {homeTeam?.abbreviation}
           <Image
             src={homeTeam?.logoImageUrl ?? ''}
@@ -114,28 +129,37 @@ const awayTeam = awayPitcherBio?.team
             height={60}
             class="w-6 h-6 object-contain"
           />
-        </div>
+        </EntityLink>
       </div>
       <div class="flex justify-between px-3 border-b border-gray-6 dark:border-gray-4">
-        <Image
-          src={awayPitcherBio?.bustImageUrl ?? ''}
-          alt={awayPitcherBio?.usedName ?? ''}
-          width={120}
-          height={90}
-          class="h-[90px] object-contain object-left"
-        />
-        <Image
-          src={homePitcherBio?.bustImageUrl ?? ''}
-          alt={homePitcherBio?.usedName ?? ''}
-          width={120}
-          height={90}
-          class="h-[90px] object-contain object-right"
-        />
+        <EntityLink entity={awayPlayer?.entity}>
+          <Image
+            src={awayPitcherBio?.bustImageUrl ?? ''}
+            alt={awayPitcherBio?.usedName ?? ''}
+            width={120}
+            height={90}
+            class="h-[90px] object-contain object-left"
+          />
+        </EntityLink>
+        <EntityLink entity={homePlayer?.entity}>
+          <Image
+            src={homePitcherBio?.bustImageUrl ?? ''}
+            alt={homePitcherBio?.usedName ?? ''}
+            width={120}
+            height={90}
+            class="h-[90px] object-contain object-right"
+          />
+        </EntityLink>
       </div>
       <div class="divide-y divide-gray-6 dark:divide-gray-4 *:px-1 *:py-1">
         <div class="flex justify-between !px-3">
           <div>
-            <p class="font-semibold">{awayPitcherBio?.usedName ?? 'TBD'}</p>
+            <EntityLink
+              entity={awayPlayer?.entity}
+              class="font-semibold text-inherit"
+            >
+              {awayPitcherBio?.usedName}
+            </EntityLink>
             {awayPitcherBio && (
               <p class="text-[16px] text-gray-5">{`${
                 awayPitcherBio.throwsHandedness === 'right' ? 'RH' : 'LH'
@@ -143,7 +167,12 @@ const awayTeam = awayPitcherBio?.team
             )}
           </div>
           <div class="text-right">
-            <p class="font-semibold">{homePitcherBio?.usedName ?? 'TBD'}</p>
+            <EntityLink
+              entity={homePlayer?.entity}
+              class="font-semibold text-inherit"
+            >
+              {homePitcherBio?.usedName}
+            </EntityLink>
             {homePitcherBio && (
               <p class="text-[16px] text-gray-5">{`${
                 homePitcherBio.throwsHandedness === 'right' ? 'RH' : 'LH'
