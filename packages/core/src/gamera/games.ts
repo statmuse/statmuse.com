@@ -439,138 +439,6 @@ export interface PitchAtBatEvent {
   flags: PitchFlags
 }
 
-export const formatPlayOutcome = (pitch: PitchAtBatEvent) => {
-  switch (pitch.outcomeType) {
-    case 'ball':
-    case 'dirtBall':
-    case 'enforcedBall':
-    case 'intentionalBall':
-    case 'intentionalWalk':
-      return 'Walk'
-    case 'foul':
-    case 'enforcedStrike':
-    case 'strikeLooking':
-    case 'strikeSwinging':
-      return pitch.flags.isDoublePlay ? 'Strikeout Double Play' : 'Strikeout'
-    case 'single':
-      return 'Single'
-    case 'double':
-      return 'Double'
-    case 'triple':
-      return 'Triple'
-    case 'homeRun':
-      return 'Home Run'
-    case 'sacrificeBunt':
-      return 'Sacrifice Bunt'
-    case 'sacrificeFly':
-      return 'Sacrifice Fly'
-    case 'groundOut':
-      return pitch.flags.isDoublePlay
-        ? 'Grounded Into DP'
-        : pitch.flags.isTriplePlay
-        ? 'Grounded Into TP'
-        : 'Groundout'
-    case 'lineOut':
-    case 'flyOut':
-    case 'popOut':
-      return pitch.flags.isDoublePlay
-        ? 'Double Play'
-        : pitch.flags.isTriplePlay
-        ? 'Triple Play'
-        : pitch.outcomeType.slice(0, 1).toUpperCase() +
-          pitch.outcomeType.slice(1).toLowerCase()
-    case 'fieldersChoice':
-      return 'Forceout'
-    case 'hitByPitch':
-      return 'Hit By Pitch'
-    case 'reachedOnError':
-      return 'Field Error'
-    default:
-      return pitch.outcomeType
-  }
-}
-
-export const colorPlayOutcome = (pitch: PitchAtBatEvent) => {
-  switch (pitch.outcomeType) {
-    case 'ball':
-    case 'dirtBall':
-    case 'enforcedBall':
-    case 'intentionalBall':
-    case 'intentionalWalk':
-    case 'pitchout':
-      return 'fill-green bg-green'
-    case 'foul':
-    case 'enforcedStrike':
-    case 'strikeLooking':
-    case 'strikeSwinging':
-      return 'fill-red bg-red'
-    default:
-      return 'fill-blue bg-blue'
-  }
-}
-
-export const formatPitchType = (pitch: PitchAtBatEvent) => {
-  switch (pitch.pitchData?.pitchType) {
-    case 'intentionalBall':
-      return 'Intentional Ball'
-    default:
-      return pitch.pitchData?.pitchType ?? ''
-  }
-}
-
-export const formatPitchOutcome = (pitch: PitchAtBatEvent) => {
-  switch (pitch.outcomeType) {
-    case 'catcherInterference':
-      return 'Catcher Interference'
-    case 'dirtBall':
-      return 'Ball'
-    case 'enforcedBall':
-      return 'Enforced Ball'
-    case 'enforcedStrike':
-      return 'Enforced Strike'
-    case 'fieldersChoice':
-      return 'Forceout'
-    case 'foul':
-      return pitch.count.strikes === 3 ? 'Foul Tip' : 'Foul'
-    case 'flyOut':
-      return 'Fly Out'
-    case 'groundOut':
-      return 'Ground Out'
-    case 'hitByPitch':
-      return 'Hit By Pitch'
-    case 'hitterInterference':
-      return 'Hitter Interence'
-    case 'homeRun':
-      return 'Home Run'
-    case 'intentionalBall':
-      return 'Intentional Ball'
-    case 'intentionalWalk':
-      return 'Intentional Walk'
-    case 'lineOut':
-      return 'Line Out'
-    case 'outOfBattersBox':
-      return 'Out of Batters Box'
-    case 'outOnAppeal':
-      return 'Out On Appeal'
-    case 'popOut':
-      return 'Pop Out'
-    case 'reachedOnError':
-      return 'Reached On Error'
-    case 'rulingPending':
-      return 'In Play'
-    case 'sacrificeBunt':
-      return 'Sacrifice Bunt'
-    case 'sacrificeFly':
-      return 'Sacrifice Fly'
-    case 'strikeLooking':
-      return 'Strike Looking'
-    case 'strikeSwinging':
-      return 'Strike Swinging'
-    default:
-      return pitch.outcomeType ?? ''
-  }
-}
-
 interface StealAtBatEvent {
   type: 'steal'
   count: PitchCount
@@ -733,4 +601,143 @@ export const getCurrentAtBatCount = (innings: InningPlayByPlay[]) => {
     atBat.events.filter((e) => e.type === 'pitch' || e.type === 'steal'),
   )
   return lastPitch?.count ?? { balls: 0, strikes: 0 }
+}
+
+export const formatPlayOutcome = (pitch: PitchAtBatEvent) => {
+  switch (pitch.outcomeType) {
+    case 'ball':
+    case 'dirtBall':
+    case 'enforcedBall':
+    case 'intentionalBall':
+    case 'intentionalWalk':
+      return 'Walk'
+    case 'foul':
+    case 'enforcedStrike':
+    case 'strikeLooking':
+    case 'strikeSwinging':
+      return pitch.flags.isDoublePlay ? 'Strikeout Double Play' : 'Strikeout'
+    case 'single':
+      return 'Single'
+    case 'double':
+      return 'Double'
+    case 'triple':
+      return 'Triple'
+    case 'homeRun':
+      return 'Home Run'
+    case 'sacrificeBunt':
+      return 'Sacrifice Bunt'
+    case 'sacrificeFly':
+      return 'Sacrifice Fly'
+    case 'groundOut':
+      return pitch.flags.isDoublePlay
+        ? 'Grounded Into DP'
+        : pitch.flags.isTriplePlay
+        ? 'Grounded Into TP'
+        : 'Groundout'
+    case 'lineOut':
+    case 'flyOut':
+      return pitch.flags.isDoublePlay
+        ? 'Double Play'
+        : pitch.flags.isTriplePlay
+        ? 'Triple Play'
+        : pitch.outcomeType.slice(0, 1).toUpperCase() +
+          pitch.outcomeType.slice(1).toLowerCase()
+    case 'popOut':
+      return pitch.flags.isDoublePlay
+        ? 'Double Play'
+        : pitch.flags.isTriplePlay
+        ? 'Triple Play'
+        : 'Pop Out'
+    case 'fieldersChoice':
+      return 'Forceout'
+    case 'hitByPitch':
+      return 'Hit By Pitch'
+    case 'reachedOnError':
+      return 'Field Error'
+    default:
+      return pitch.outcomeType
+  }
+}
+
+export const colorPlayOutcome = (pitch: PitchAtBatEvent) => {
+  switch (pitch.outcomeType) {
+    case 'ball':
+    case 'dirtBall':
+    case 'enforcedBall':
+    case 'intentionalBall':
+    case 'intentionalWalk':
+    case 'pitchout':
+      return 'fill-green bg-green'
+    case 'foul':
+    case 'enforcedStrike':
+    case 'strikeLooking':
+    case 'strikeSwinging':
+      return 'fill-red bg-red'
+    default:
+      return 'fill-blue bg-blue'
+  }
+}
+
+export const formatPitchType = (pitch: PitchAtBatEvent) => {
+  switch (pitch.pitchData?.pitchType) {
+    case 'intentionalBall':
+      return 'Intentional Ball'
+    default:
+      return pitch.pitchData?.pitchType ?? ''
+  }
+}
+
+export const formatPitchOutcome = (pitch: PitchAtBatEvent) => {
+  switch (pitch.outcomeType) {
+    case 'catcherInterference':
+      return 'Catcher Interference'
+    case 'dirtBall':
+      return 'Ball'
+    case 'enforcedBall':
+      return 'Enforced Ball'
+    case 'enforcedStrike':
+      return 'Enforced Strike'
+    case 'pitchout':
+      return 'Pitch Out'
+    case 'fieldersChoice':
+      return 'Forceout'
+    case 'foul':
+      return pitch.count.strikes === 3 ? 'Foul Tip' : 'Foul'
+    case 'flyOut':
+      return 'Flyout'
+    case 'popOut':
+      return 'Pop Out'
+    case 'lineOut':
+      return 'Lineout'
+    case 'groundOut':
+      return 'Groundout'
+    case 'hitByPitch':
+      return 'Hit By Pitch'
+    case 'hitterInterference':
+      return 'Hitter Interence'
+    case 'homeRun':
+      return 'Home Run'
+    case 'intentionalBall':
+      return 'Intentional Ball'
+    case 'intentionalWalk':
+      return 'Intentional Walk'
+    case 'outOfBattersBox':
+      return 'Out of Batters Box'
+    case 'outOnAppeal':
+      return 'Out On Appeal'
+    case 'reachedOnError':
+      return 'Reached On Error'
+    case 'rulingPending':
+      return 'In Play'
+    case 'sacrificeBunt':
+      return 'Sacrifice Bunt'
+    case 'sacrificeFly':
+      return 'Sacrifice Fly'
+    case 'strikeLooking':
+      return 'Strike Looking'
+    case 'strikeSwinging':
+      return 'Strike Swinging'
+    default:
+      return pitch.outcomeType ?? ''
+  }
 }
