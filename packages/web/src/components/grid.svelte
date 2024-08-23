@@ -37,6 +37,9 @@
   export let textInherit = false
   export let rankColumn = false
   export let disableSort = false
+  export let onRowClick:
+    | ((row: GameraGrid['rows'][number]) => (e: Event) => void)
+    | undefined = undefined
 
   const styles = Object.assign(
     { ALIGNMENT: 'w-2', SEASON: 'text-center' },
@@ -255,7 +258,10 @@
               row[columns[0].rowItemKey],
               highlight,
             )}
-            <tr>
+            <tr
+              class:hover:cursor-pointer={!!onRowClick}
+              on:click={onRowClick ? onRowClick(row) : undefined}
+            >
               {#if rankColumn}
                 <td class="w-2 pl-3 text-gray-5">{rowIndex + 1}</td>
               {/if}
