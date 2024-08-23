@@ -116,6 +116,51 @@ export const matchup = computed(
   },
 )
 
+export const selectedId = atom<
+  { id: number; alignment: 'home' | 'away' } | undefined
+>()
+
+export const selectedPlayer = computed(
+  [selectedId, players, stats, innings, gameState],
+  ($selectedId, $players, $stats, $innings, $gameState) => {
+    if (!$selectedId) return undefined
+
+    const { alignment } = $selectedId
+    const player = $players[$selectedId.id]
+
+    const oppTeamId =
+      alignment === 'home'
+        ? $gameState.gameData?.awayTeam.teamId
+        : $gameState.gameData?.homeTeam.teamId
+    const oppTeam = $gameState.gameData?.teams?.find(
+      (t) => t.teamId === oppTeamId,
+    )
+
+    const stats = $stats[alignment]?.splits?.find(
+      (s) => s.playerId === player?.id,
+    )?.stats
+
+    const atBats = $innings.flatMap((inning) => {
+      const number = inning.number
+      const half = inning.halves[alignment === 'away' ? 0 : 1].half
+
+      return inning.halves[alignment === 'away' ? 0 : 1].events
+        .filter((e) => e.type === 'atBat')
+        .filter((e) => e.batter.playerId === player?.id)
+        .map((x) => ({ ...x, number, half }))
+    })
+
+    return {
+      player,
+      stats,
+      oppTeam,
+      alignment,
+      gameTimestamp: $gameState.gameData?.gameTimestamp,
+      atBats,
+    }
+  },
+)
+
 export const init = (props: {
   gameData: MlbGameDataResponse<MlbStatKey>
   playByPlay?: MlbPlayByPlayResponse
