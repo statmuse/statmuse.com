@@ -395,6 +395,7 @@ const canonicalUrl = meta?.canonical
       )
     }
     {share && <ShareModal client:load {...share} />}
+    <slot name="modal" />
     {
       enableAdBanner && Astro.locals.platform === 'web' && (
         <CloseableContainer
