@@ -29,5 +29,7 @@
     <slot />
   </a>
 {:else}
-  <slot />
+  <span {...$$restProps}>
+    <slot />
+  </span>
 {/if}

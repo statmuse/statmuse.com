@@ -5,11 +5,16 @@
     formatPitchType,
     formatPitchOutcome,
     type PitchAtBatEvent,
+    type GameraToken,
+    tokensToText,
   } from '@statmuse/core/gamera'
   import AbStrikezone from './ab-strikezone.svelte'
 
   export let batterHandedness: string | undefined = undefined
   export let pitches: PitchAtBatEvent[]
+  export let summary:
+    | { number: number; half: 'top' | 'bottom'; description?: GameraToken[] }
+    | undefined = undefined
 
   const mapPitchNumber = () => {
     let pitchNumber = 0
@@ -56,4 +61,12 @@
       </div>
     {/each}
   </div>
+  {#if summary && summary.description}
+    <div class="px-3 pb-2">
+      <p class="capitalize font-semibold mb-2">
+        {`${summary.half} ${summary.number}`}
+      </p>
+      <p>{tokensToText(summary.description)}</p>
+    </div>
+  {/if}
 </Panel>

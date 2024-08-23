@@ -14,6 +14,8 @@ import PitchingStats from './pitching-stats.svelte'
 import GameSummary from './game-summary.astro'
 import * as store from './stores'
 import { Caching } from '@lib/caching'
+import PlayerModal from './player-modal.svelte'
+import GameState from './game-state.svelte'
 import BattingSummary from './batting-summary.svelte'
 
 interface Props {
@@ -217,4 +219,8 @@ Caching.swr(Astro)
   </Fragment>
 
   <PlayByPlay slot="plays" {awayTeam} {homeTeam} />
+
+  <GameState client:load {gameData} {playByPlay} />
+
+  <PlayerModal client:only="svelte" slot="modal" />
 </Layout>
