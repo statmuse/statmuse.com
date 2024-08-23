@@ -14,6 +14,7 @@ import PitchingStats from './pitching-stats.svelte'
 import GameSummary from './game-summary.astro'
 import * as store from './stores'
 import { Caching } from '@lib/caching'
+import BattingSummary from './batting-summary.svelte'
 
 interface Props {
   gameData: MlbGameDataResponse<MlbStatKey>
@@ -170,7 +171,8 @@ Caching.swr(Astro)
               id="away-box"
               checked
             />
-            <BattingStats teamKey="away" final />
+            <BattingStats client:load teamKey="away" final />
+            <BattingSummary teamKey="away" />
             <PitchingStats teamKey="away" />
           </div>
           <div class="hidden has-[#home-box:checked]:flex flex-col gap-3">
@@ -180,7 +182,8 @@ Caching.swr(Astro)
               name="box"
               id="home-box"
             />
-            <BattingStats teamKey="home" final />
+            <BattingStats client:load teamKey="home" final />
+            <BattingSummary teamKey="home" />
             <PitchingStats teamKey="home" />
           </div>
         </div>
@@ -202,12 +205,14 @@ Caching.swr(Astro)
   </div>
 
   <Fragment slot="away">
-    <BattingStats teamKey="away" final />
+    <BattingStats client:load teamKey="away" final />
+    <BattingSummary teamKey="away" />
     <PitchingStats teamKey="away" />
   </Fragment>
 
   <Fragment slot="home">
-    <BattingStats teamKey="home" final />
+    <BattingStats client:load teamKey="home" final />
+    <BattingSummary teamKey="home" />
     <PitchingStats teamKey="home" />
   </Fragment>
 
