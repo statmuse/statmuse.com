@@ -6,9 +6,10 @@
     formatPitchOutcome,
     type PitchAtBatEvent,
   } from '@statmuse/core/gamera'
-
-  import { atBat } from './stores'
   import AbStrikezone from './ab-strikezone.svelte'
+
+  export let batterHandedness: string | undefined = undefined
+  export let pitches: PitchAtBatEvent[]
 
   const mapPitchNumber = () => {
     let pitchNumber = 0
@@ -20,21 +21,21 @@
           : ++pitchNumber,
     })
   }
-  $: pitches =
-    $atBat?.events
-      .filter((e) => e.type === 'pitch')
-      .filter((e) => e.outcomeType !== 'balk')
-      .map(mapPitchNumber()) ?? []
+  $: pitchesWithNumber = pitches.map(mapPitchNumber()) ?? []
 </script>
 
 <Panel class="!p-0">
   <div class="flex flex-col items-center">
-    <AbStrikezone class="h-96" pitches={pitches.filter((p) => p.pitchData)} />
+    <AbStrikezone
+      class="h-96"
+      {batterHandedness}
+      pitches={pitchesWithNumber.filter((p) => p.pitchData)}
+    />
   </div>
   <div
     class="min-h-[140px] flex items-center overflow-x-scroll no-scrollbar divide-x divide-gray-6 dark:divide-gray-4"
   >
-    {#each pitches as pitch (pitch)}
+    {#each pitchesWithNumber as pitch (pitch)}
       <div class="min-h-[140px] text-nowrap px-3 py-2 text-center">
         <div
           class={`w-7 h-7 text-gray-7 rounded-full flex justify-center items-center mx-auto ${colorPlayOutcome(

@@ -1,10 +1,10 @@
 <script lang="ts">
   import { colorPlayOutcome, type PitchAtBatEvent } from '@statmuse/core/gamera'
-  import { atBat } from './stores'
 
   const mapXCoordinate = (x: number) => -1 * x * (61 / 100) + 491
   const mapYCoordinate = (y: number) => -1 * y * (72 / 100) + 191
 
+  export let batterHandedness: string | undefined = undefined
   export let pitches: PitchAtBatEvent[]
 </script>
 
@@ -96,7 +96,7 @@
   <g
     clip-path="url(#a)"
     transform-origin="center center"
-    transform={`scale(${$atBat?.batter.handedness === 'left' ? '-1' : '1'}, 1)`}
+    transform={`scale(${batterHandedness === 'left' ? '-1' : '1'}, 1)`}
   >
     <path
       d="m306.9 2.9c14.3-4.2 11.5-7.7 11.5-7.7h21.7l2.4 6.6-11.8 9.3-23-.3-.9-7.9z"

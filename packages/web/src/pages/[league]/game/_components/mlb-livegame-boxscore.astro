@@ -5,7 +5,7 @@ import type { MlbGameDataResponse, MlbStatKey } from '@statmuse/core/gamera'
 import { find } from 'lodash-es'
 import GameInfo from './game-info.astro'
 import Matchup from './matchup.svelte'
-import PitchByPitch from './pitch-by-pitch.svelte'
+import LivePitchByPitch from './live-pitch-by-pitch.svelte'
 import Linescore from './linescore.svelte'
 import PlayByPlay from './play-by-play.svelte'
 import LivegameHero from './livegame-hero.astro'
@@ -80,7 +80,7 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
   <div slot="game" class="flex gap-3">
     <div class="flex-1 flex flex-col gap-3 overflow-hidden">
       <Matchup client:load {awayTeam} {homeTeam} />
-      <PitchByPitch client:load />
+      <LivePitchByPitch client:load />
       <div class="@xl/boxscore:hidden">
         <Linescore client:load {awayTeam} {homeTeam} />
       </div>
