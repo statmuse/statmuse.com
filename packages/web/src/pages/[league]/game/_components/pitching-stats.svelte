@@ -2,6 +2,7 @@
   import Grid from '@components/grid.svelte'
   import { orderBy, filter, find } from 'lodash-es'
   import { players, stats, lineup as lineUp } from './stores'
+  import { getValue } from '@statmuse/core/gamera'
 
   export let teamKey: 'away' | 'home'
 
@@ -72,7 +73,14 @@
             meta: {
               id: player.id,
               shortDisplay: player.entity.shortDisplay,
-              position: p.lineup.pitchingSequence === 1 ? 'SP' : undefined,
+              position:
+                getValue(playerStats?.stats ?? {}, 'Pitching-Wins') > 0
+                  ? '(W)'
+                  : getValue(playerStats?.stats ?? {}, 'Pitching-Losses') > 0
+                  ? '(L)'
+                  : getValue(playerStats?.stats ?? {}, 'Pitching-Saves') > 0
+                  ? '(S)'
+                  : undefined,
             },
           },
           IP: playerStats?.stats?.['Pitching-InningsPitched'] ?? {
