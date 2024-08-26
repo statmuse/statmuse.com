@@ -2,11 +2,14 @@
   import Panel from '@components/panel.svelte'
   import Icon from '@components/icon.svelte'
   import Image from '@components/image.svelte'
-  import type { GameraTeamReference } from '@statmuse/core/gamera/index'
+  import type {
+    GameraPlayerReference,
+    GameraTeamReference,
+  } from '@statmuse/core/gamera/index'
   import AtBatCount from './at-bat-count.svelte'
   import OutsIndicator from './outs-indicator.svelte'
   import { max, range, some } from 'lodash-es'
-
+  import EntityLink from '@components/entity-link.svelte'
   import {
     gameState,
     inningNumber,
@@ -16,13 +19,17 @@
     runners,
     lineScore,
     stats,
+    players,
   } from './stores'
-  import EntityLink from '@components/entity-link.svelte'
 
   export let awayTeam: GameraTeamReference
   export let homeTeam: GameraTeamReference
   export let displayMatchup: boolean = false
   export let final: boolean = false
+
+  let winningPitcher: GameraPlayerReference | undefined
+  let losingPitcher: GameraPlayerReference | undefined
+  let savePitcher: GameraPlayerReference | undefined
 
   $: awayTeamModel = $gameState.gameData?.awayTeam
   $: homeTeamModel = $gameState.gameData?.homeTeam
@@ -46,6 +53,29 @@
       $stats.home?.stats?.['Fielding-Errors']?.display,
     ],
   ]
+
+  $: {
+    if (final) {
+      const splits = [
+        ...($stats.away?.splits ?? []),
+        ...($stats.home?.splits ?? []),
+      ]
+
+      const winningPitcherId = splits.find(
+        (s) => s.stats?.['Pitching-Wins']?.value > 0,
+      )?.playerId
+      const losingPitcherId = splits.find(
+        (s) => s.stats?.['Pitching-Losses']?.value > 0,
+      )?.playerId
+      const savePitcherId = splits.find(
+        (s) => s.stats?.['Pitching-Saves']?.value > 0,
+      )?.playerId
+
+      winningPitcher = $players[winningPitcherId ?? 0]
+      losingPitcher = $players[losingPitcherId ?? 0]
+      savePitcher = $players[savePitcherId ?? 0]
+    }
+  }
 </script>
 
 <Panel class="!p-0">
@@ -186,6 +216,36 @@
         </p>
         <p>{$matchup.home.player?.entity.shortDisplay}</p>
       </div>
+    </div>
+  {/if}
+  {#if final}
+    <div
+      class="text-sm px-3 py-2 flex items-center gap-3 border-t border-gray-6 dark:border-gray-4"
+    >
+      {#if winningPitcher}
+        <div>
+          <p class="text-gray-5">Win</p>
+          <EntityLink entity={winningPitcher.entity} class="text-inherit">
+            {winningPitcher.entity.shortDisplay ?? winningPitcher.usedName}
+          </EntityLink>
+        </div>
+      {/if}
+      {#if losingPitcher}
+        <div>
+          <p class="text-gray-5">Loss</p>
+          <EntityLink entity={losingPitcher.entity} class="text-inherit">
+            {losingPitcher.entity.shortDisplay ?? losingPitcher.usedName}
+          </EntityLink>
+        </div>
+      {/if}
+      {#if savePitcher}
+        <div>
+          <p class="text-gray-5">Save</p>
+          <EntityLink entity={savePitcher.entity} class="text-inherit">
+            {savePitcher.entity.shortDisplay ?? savePitcher.usedName}
+          </EntityLink>
+        </div>
+      {/if}
     </div>
   {/if}
 </Panel>
