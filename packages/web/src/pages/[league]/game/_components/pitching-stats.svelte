@@ -8,6 +8,7 @@
 
   $: lineup = $lineUp[teamKey]
   $: splits = $stats[teamKey]?.splits
+  $: totals = $stats[teamKey]?.stats
 
   const columns = [
     {
@@ -119,11 +120,48 @@
       }
     })
     .filter((x) => !!x)
+
+  $: aggregations = [
+    {
+      NAME: {
+        display: 'Totals',
+        value: 'Totals',
+      },
+      IP: totals?.['Pitching-InningsPitched'] ?? {
+        value: 0,
+        display: '-',
+      },
+      H: totals?.['Pitching-Hits'] ?? {
+        value: 0,
+        display: '-',
+      },
+      R: totals?.['Pitching-Runs'] ?? {
+        value: 0,
+        display: '-',
+      },
+      ER: totals?.['Pitching-EarnedRuns'] ?? {
+        value: 0,
+        display: '-',
+      },
+      BB: totals?.['Pitching-Walks'] ?? {
+        value: 0,
+        display: '-',
+      },
+      K: totals?.['Pitching-Strikeouts'] ?? {
+        value: 0,
+        display: '-',
+      },
+      HR: totals?.['Pitching-HomeRuns'] ?? {
+        value: 0,
+        display: '-',
+      },
+    },
+  ]
 </script>
 
 <Grid
   textInherit
   disableSort
-  data={{ columns, rows }}
+  data={{ columns, rows, aggregations }}
   stickyColumns={['NAME']}
 />

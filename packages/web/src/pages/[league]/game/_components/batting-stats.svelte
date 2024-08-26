@@ -16,6 +16,7 @@
   $: higlightPlayer = final ? undefined : $matchup[teamKey].player
   $: lineup = $lineUp[teamKey]
   $: splits = $stats[teamKey]?.splits
+  $: totals = $stats[teamKey]?.stats
 
   const columns = [
     {
@@ -126,12 +127,39 @@
       }
     })
     .filter((x) => !!x)
+
+  $: aggregations = [
+    {
+      NAME: {
+        display: 'Totals',
+        value: 'Totals',
+      },
+      AB: totals?.['Batting-AtBats'] ?? {
+        value: 0,
+        display: '-',
+      },
+      R: totals?.['Batting-Runs'] ?? { value: 0, display: '-' },
+      H: totals?.['Batting-Hits'] ?? { value: 0, display: '-' },
+      RBI: totals?.['Batting-RunsBattedIn'] ?? {
+        value: 0,
+        display: '-',
+      },
+      BB: totals?.['Batting-Walks'] ?? {
+        value: 0,
+        display: '-',
+      },
+      K: totals?.['Batting-Strikeouts'] ?? {
+        value: 0,
+        display: '-',
+      },
+    },
+  ]
 </script>
 
 <Grid
   textInherit
   disableSort
-  data={{ columns, rows }}
+  data={{ columns, rows, aggregations }}
   stickyColumns={['NAME']}
   highlight={higlightPlayer
     ? { [higlightPlayer.usedName ?? '']: higlightPlayer.colors }
