@@ -115,8 +115,8 @@ const toggleLinks = [
         <div
           class:list={{
             'hidden has-[#summary:checked]:flex  flex-col gap-3': true,
-            'md:!flex': !useContainerQuery,
-            '@xl/boxscore:!flex': useContainerQuery,
+            // 'md:!flex': !useContainerQuery,
+            // '@xl/boxscore:!flex': useContainerQuery,
           }}
         >
           <input
@@ -147,6 +147,25 @@ const toggleLinks = [
             checked
           />
           <slot name="game" />
+        </div>
+      )
+    }
+    {
+      Astro.slots.has('box') && (
+        <div
+          class:list={{
+            'hidden has-[#box:checked]:flex flex-col gap-3': true,
+            // 'md:!flex': !useContainerQuery,
+            '@xl/boxscore:!flex': useContainerQuery,
+          }}
+        >
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="boxscore"
+            id="box"
+          />
+          <slot name="box" />
         </div>
       )
     }

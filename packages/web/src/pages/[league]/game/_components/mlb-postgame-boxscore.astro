@@ -65,130 +65,103 @@ Caching.swr(Astro)
     awayRecord={awayTeamModel.record}
     {homeTeam}
     homeRecord={homeTeamModel.record}
-  />
-
-  <div slot="summary" class="flex flex-col gap-3">
-    <Linescore {awayTeam} {homeTeam} final />
-    <div class="flex gap-3">
-      <div class="flex-1 flex flex-col gap-3">
-        <div class="group/plays hidden @xl/boxscore:block">
-          <div
-            class="bg-gray-6 dark:bg-gray-4 text-gray-5 border border-gray-6 dark:border-gray-3 flex text-center mb-3 rounded-full relative overflow-clip"
-          >
-            <div
-              class="absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 group-has-[#scoring:checked]/plays:translate-x-0 group-has-[#all:checked]/plays:translate-x-full transition-transform ease-out"
-            >
-            </div>
-            <label
-              for="scoring"
-              class:list={{
-                'flex-1 py-1 hover:cursor-pointer relative': true,
-                'group-has-[#scoring:checked]/plays:text-gray-2': true,
-              }}
-            >
-              Scoring Plays
-            </label>
-            <label
-              for="all"
-              class:list={{
-                'flex-1 py-1 hover:cursor-pointer relative': true,
-                'group-has-[#all:checked]/plays:text-gray-2': true,
-              }}
-            >
-              All Plays
-            </label>
-          </div>
-          <div class="hidden has-[#scoring:checked]:flex flex-col gap-3">
-            <input
-              class="absolute opacity-0"
-              type="radio"
-              name="plays"
-              id="scoring"
-              checked
-            />
-            <PlayByPlay {awayTeam} {homeTeam} scoring />
-          </div>
-          <div class="hidden has-[#all:checked]:flex flex-col gap-3">
-            <input
-              class="absolute opacity-0"
-              type="radio"
-              name="plays"
-              id="all"
-            />
-            <PlayByPlay {awayTeam} {homeTeam} />
-          </div>
-        </div>
-        <div class="@xl/boxscore:hidden flex flex-col gap-3">
-          <PlayByPlay {awayTeam} {homeTeam} scoring />
-          <Schedule
-            domain="MLB"
-            teams={teams ?? []}
-            currentGameId={Number.parseInt(gameId)}
-            games={awayTeamGames?.games}
-          />
-          <Standings
-            {standings}
-            awayTeamId={awayTeamModel.teamId}
-            homeTeamId={homeTeamModel.teamId}
-          />
-          <GameSummary {summary} />
-          <GameInfo {venue} {weather} {officials} {gameTimestamp} />
+  >
+    <nav
+      class:list={{
+        'hidden @xl/boxscore:flex gap-3 justify-center': true,
+        'overflow-x-scroll no-scrollbar': true,
+        'pt-3': true,
+      }}
+    >
+      <div class="group/nav flex flex-col gap-1.5 overflow-clip">
+        <label
+          class:list={{
+            'cursor-pointer whitespace-nowrap': true,
+          }}
+          for="summary"
+          set:html="Summary"
+        />
+        <div
+          class:list={{
+            'w-full h-5 -mb-2.5 bg-current rounded-2xl': true,
+            'hidden group-has-[#summary:checked]:block group-hover/nav:block': true,
+          }}
+        >
         </div>
       </div>
-      <div
-        class="flex-1 hidden @xl/boxscore:flex flex-col gap-3 overflow-hidden"
-      >
-        <div class="group/teams">
-          <div
-            class="bg-gray-6 dark:bg-gray-4 text-gray-5 border border-gray-6 dark:border-gray-3 flex text-center mb-3 rounded-full relative overflow-clip"
-          >
-            <div
-              class="absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 group-has-[#away-box:checked]/teams:translate-x-0 group-has-[#home-box:checked]/teams:translate-x-full transition-transform ease-out"
-            >
-            </div>
-            <label
-              for="away-box"
-              class:list={{
-                'flex-1 py-1 hover:cursor-pointer relative': true,
-                'group-has-[#away-box:checked]/teams:text-gray-2': true,
-              }}
-            >
-              {awayTeam.nickname}
-            </label>
-            <label
-              for="home-box"
-              class:list={{
-                'flex-1 py-1 hover:cursor-pointer relative': true,
-                'group-has-[#home-box:checked]/teams:text-gray-2': true,
-              }}
-            >
-              {homeTeam.nickname}
-            </label>
-          </div>
-          <div class="hidden has-[#away-box:checked]:flex flex-col gap-3">
-            <input
-              class="absolute opacity-0"
-              type="radio"
-              name="box"
-              id="away-box"
-              checked
-            />
-            <BattingStats client:load teamKey="away" final />
-            <BattingSummary teamKey="away" />
-            <PitchingStats teamKey="away" />
-          </div>
-          <div class="hidden has-[#home-box:checked]:flex flex-col gap-3">
-            <input
-              class="absolute opacity-0"
-              type="radio"
-              name="box"
-              id="home-box"
-            />
-            <BattingStats client:load teamKey="home" final />
-            <BattingSummary teamKey="home" />
-            <PitchingStats teamKey="home" />
-          </div>
+      <div class="group/nav flex flex-col gap-1.5 overflow-clip">
+        <label
+          class:list={{
+            'cursor-pointer whitespace-nowrap': true,
+          }}
+          for="box"
+          set:html="Box"
+        />
+        <div
+          class:list={{
+            'w-full h-5 -mb-2.5 bg-current rounded-2xl': true,
+            'hidden group-has-[#box:checked]:block group-hover/nav:block': true,
+          }}
+        >
         </div>
+      </div>
+    </nav>
+  </PostgameHero>
+
+  <div slot="summary" class="flex gap-3">
+    <div class="flex-1 flex flex-col gap-3">
+      <div class="@xl/boxscore:hidden">
+        <Linescore {awayTeam} {homeTeam} final />
+      </div>
+      <div class="group/plays hidden @xl/boxscore:block">
+        <div
+          class="bg-gray-6 dark:bg-gray-4 text-gray-5 border border-gray-6 dark:border-gray-3 flex text-center mb-3 rounded-full relative overflow-clip"
+        >
+          <div
+            class="absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 group-has-[#scoring:checked]/plays:translate-x-0 group-has-[#all:checked]/plays:translate-x-full transition-transform ease-out"
+          >
+          </div>
+          <label
+            for="scoring"
+            class:list={{
+              'flex-1 py-1 hover:cursor-pointer relative': true,
+              'group-has-[#scoring:checked]/plays:text-gray-2': true,
+            }}
+          >
+            Scoring Plays
+          </label>
+          <label
+            for="all"
+            class:list={{
+              'flex-1 py-1 hover:cursor-pointer relative': true,
+              'group-has-[#all:checked]/plays:text-gray-2': true,
+            }}
+          >
+            All Plays
+          </label>
+        </div>
+        <div class="hidden has-[#scoring:checked]:flex flex-col gap-3">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="plays"
+            id="scoring"
+            checked
+          />
+          <PlayByPlay {awayTeam} {homeTeam} scoring />
+        </div>
+        <div class="hidden has-[#all:checked]:flex flex-col gap-3">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="plays"
+            id="all"
+          />
+          <PlayByPlay {awayTeam} {homeTeam} />
+        </div>
+      </div>
+      <div class="@xl/boxscore:hidden flex flex-col gap-3">
+        <PlayByPlay {awayTeam} {homeTeam} scoring />
         <Schedule
           domain="MLB"
           teams={teams ?? []}
@@ -204,6 +177,34 @@ Caching.swr(Astro)
         <GameInfo {venue} {weather} {officials} {gameTimestamp} />
       </div>
     </div>
+    <div class="flex-1 hidden @xl/boxscore:flex flex-col gap-3 overflow-hidden">
+      <Linescore {awayTeam} {homeTeam} final />
+      <Schedule
+        domain="MLB"
+        teams={teams ?? []}
+        currentGameId={Number.parseInt(gameId)}
+        games={awayTeamGames?.games}
+      />
+      <Standings
+        {standings}
+        awayTeamId={awayTeamModel.teamId}
+        homeTeamId={homeTeamModel.teamId}
+      />
+      <GameSummary {summary} />
+      <GameInfo {venue} {weather} {officials} {gameTimestamp} />
+    </div>
+  </div>
+
+  <div
+    slot="box"
+    class="hidden @xl/boxscore:grid grid-cols-2 gap-3 items-start"
+  >
+    <BattingStats client:load teamKey="away" final />
+    <BattingStats client:load teamKey="home" final />
+    <BattingSummary teamKey="away" />
+    <BattingSummary teamKey="home" />
+    <PitchingStats teamKey="away" />
+    <PitchingStats teamKey="home" />
   </div>
 
   <Fragment slot="away">
