@@ -220,11 +220,11 @@
   {/if}
   {#if final}
     <div
-      class="text-sm px-3 py-2 flex items-center gap-3 border-t border-gray-6 dark:border-gray-4"
+      class="px-3 py-2 flex justify-evenly items-center text-center gap-3 border-t border-gray-6 dark:border-gray-4"
     >
       {#if winningPitcher}
         <div>
-          <p class="text-gray-5">Win</p>
+          <span class="text-gray-5">W:</span>
           <EntityLink entity={winningPitcher.entity} class="text-inherit">
             {winningPitcher.entity.shortDisplay ?? winningPitcher.usedName}
           </EntityLink>
@@ -232,7 +232,7 @@
       {/if}
       {#if losingPitcher}
         <div>
-          <p class="text-gray-5">Loss</p>
+          <span class="text-gray-5">L:</span>
           <EntityLink entity={losingPitcher.entity} class="text-inherit">
             {losingPitcher.entity.shortDisplay ?? losingPitcher.usedName}
           </EntityLink>
@@ -240,7 +240,7 @@
       {/if}
       {#if savePitcher}
         <div>
-          <p class="text-gray-5">Save</p>
+          <span class="text-gray-5">S:</span>
           <EntityLink entity={savePitcher.entity} class="text-inherit">
             {savePitcher.entity.shortDisplay ?? savePitcher.usedName}
           </EntityLink>
