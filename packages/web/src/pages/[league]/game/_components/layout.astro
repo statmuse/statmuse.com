@@ -1,16 +1,27 @@
 ---
 import Base from '@layouts/base.astro'
 // import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
-import type { GameraTeamReference, GameStatus } from '@statmuse/core/gamera'
+import type {
+  GameraTeamReference,
+  GameStatus,
+  MlbPlayByPlayResponse,
+} from '@statmuse/core/gamera'
 
 interface Props {
   awayTeam?: GameraTeamReference
   homeTeam?: GameraTeamReference
   status: GameStatus
   useContainerQuery?: boolean
+  playByPlay?: MlbPlayByPlayResponse
 }
 
-const { awayTeam, homeTeam, status, useContainerQuery = false } = Astro.props
+const {
+  awayTeam,
+  homeTeam,
+  status,
+  playByPlay,
+  useContainerQuery = false,
+} = Astro.props
 
 const toggleLinks = [
   {
@@ -37,7 +48,7 @@ const toggleLinks = [
   },
   {
     label: 'plays',
-    render: Astro.slots.has('plays'),
+    render: Astro.slots.has('plays') && playByPlay,
   },
 ]
 ---
@@ -156,7 +167,7 @@ const toggleLinks = [
           class:list={{
             'hidden has-[#box:checked]:flex flex-col gap-3': true,
             // 'md:!flex': !useContainerQuery,
-            '@xl/boxscore:!flex': useContainerQuery,
+            '@xl/boxscore:has-[#box:checked]:flex': useContainerQuery,
           }}
         >
           <input
@@ -208,7 +219,7 @@ const toggleLinks = [
       )
     }
     {
-      Astro.slots.has('plays') && (
+      Astro.slots.has('plays') && playByPlay && (
         <div
           class:list={{
             'hidden has-[#plays:checked]:flex flex-col gap-3': true,
