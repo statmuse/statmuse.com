@@ -6,7 +6,7 @@ import Icon from '@components/icon.svelte'
 import dayjs from 'dayjs'
 
 interface Props {
-  venue: MlbGameDataResponse<MlbStatKey>['venue']
+  venue?: MlbGameDataResponse<MlbStatKey>['venue']
   weather: MlbGameDataResponse<MlbStatKey>['weather']
   officials: MlbGameDataResponse<MlbStatKey>['officials']
   gameTimestamp: string
@@ -22,12 +22,17 @@ const { venue, weather, officials, gameTimestamp } = Astro.props
         dayjs(gameTimestamp).format('MMMM D, YYYY')
       }
     </div>
-    <div>
-      <p class="flex gap-1.5 items-center">
-        <Icon name="stadium" class="w-5 h-5" />{venue.name}
-      </p>
-      <p class="text-sm text-gray-5 ml-[29px]">{venue.location}</p>
-    </div>
+    {
+      venue && (
+        <div>
+          <p class="flex gap-1.5 items-center">
+            <Icon name="stadium" class="w-5 h-5" />
+            {venue.name}
+          </p>
+          <p class="text-sm text-gray-5 ml-[29px]">{venue.location}</p>
+        </div>
+      )
+    }
     {
       weather && (
         <div class="flex gap-3">

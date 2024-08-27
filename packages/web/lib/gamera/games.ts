@@ -121,6 +121,9 @@ export const getPlayByPlay = async (props: {
     const { gameId, context } = props
     const path = `mlb/games/${gameId}/playByPlay`
     const data = await request<MlbPlayByPlayResponse>(context, path)
+    if (data.error) {
+      return undefined
+    }
     return data
   } catch (error) {
     console.error(error)
