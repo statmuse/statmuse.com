@@ -68,7 +68,13 @@ store.init({ gameData, playByPlay })
 Caching.swr(Astro, { maxage: 15, revalidate: 25 })
 ---
 
-<Layout status={gameData.gameStatus} {awayTeam} {homeTeam} useContainerQuery>
+<Layout
+  status={gameData.gameStatus}
+  {awayTeam}
+  {homeTeam}
+  {playByPlay}
+  useContainerQuery
+>
   <LivegameHero
     slot="hero"
     network={networkName}
