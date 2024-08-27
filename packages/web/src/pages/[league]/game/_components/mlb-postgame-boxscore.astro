@@ -67,6 +67,7 @@ Caching.swr(Astro)
     awayRecord={awayTeamModel.record}
     {homeTeam}
     homeRecord={homeTeamModel.record}
+    inningNumber={gameData.awayTeam.lineScore?.length}
   >
     <nav
       class:list={{

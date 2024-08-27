@@ -6,7 +6,6 @@ import Image from '@components/image.astro'
 import type { GameraTeamReference } from '@statmuse/core/gamera'
 import Score from './score.svelte'
 import Panel from '@components/panel.astro'
-import { inningNumber } from './stores'
 import EntityLink from '@components/entity-link.astro'
 
 interface Props {
@@ -15,9 +14,11 @@ interface Props {
   awayRecord?: { wins: number; losses: number }
   homeRecord?: { wins: number; losses: number }
   timestamp: string
+  inningNumber?: number
 }
 
-const { awayTeam, homeTeam, awayRecord, homeRecord, timestamp } = Astro.props
+const { awayTeam, homeTeam, awayRecord, homeRecord, timestamp, inningNumber } =
+  Astro.props
 ---
 
 <Panel
@@ -31,7 +32,7 @@ const { awayTeam, homeTeam, awayRecord, homeRecord, timestamp } = Astro.props
     <p class="text-gray-5 absolute left-3 top-2">
       <Timestamp client:only="svelte" {timestamp} dateOnly />
     </p>
-    <p>Final{inningNumber.get() !== 9 ? `/${inningNumber.get()}` : ''}</p>
+    <p>Final{inningNumber && inningNumber !== 9 ? `/${inningNumber}` : ''}</p>
     <div class="absolute right-3 top-2">
       <Share />
     </div>
