@@ -6,6 +6,7 @@ import { mapStandingsToGrid } from '@lib/gamera'
 import type { StandingsMlb } from '@statmuse/core/gamera'
 import Grid from '@components/grid.svelte'
 import { hexToHSL } from '@lib/color'
+import ToggleContainer from './toggle-container.svelte'
 
 interface Props {
   standings?: StandingsResponse
@@ -37,94 +38,57 @@ const homeTeamGrid = mapStandingsToGrid({
 ---
 
 <Panel class="!p-0 group">
-  <div class="mt-2 mb-1 px-3 flex items-center justify-between">
-    <h3 class="font-semibold">
-      {
-        awayDivision === homeDivision ? (
-          awayDivision
-        ) : (
-          <>
-            <span class="hidden group-has-[#standings-away:checked]:inline">
-              {awayDivision}
-            </span>
-            <span class="hidden group-has-[#standings-home:checked]:inline">
-              {homeDivision}
-            </span>
-          </>
-        )
-      }
-       Standings
-    </h3>
-    {
-      awayDivision !== homeDivision && (
-        <div class="w-fit bg-gray-6 dark:bg-gray-4 text-gray-5 border border-gray-6 dark:border-gray-3 flex text-center rounded-full relative overflow-clip">
-          <div class="absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 group-has-[#standings-away:checked]:translate-x-0 group-has-[#standings-home:checked]:translate-x-full transition-transform ease-out" />
-          <label
-            for="standings-away"
-            class="py-1 w-12 relative cursor-pointer group-has-[#standings-away:checked]:text-gray-2"
-          >
-            {awayTeam?.team.abbreviation}
-          </label>
-          <label
-            for="standings-home"
-            class="py-1 w-12 relative cursor-pointer group-has-[#standings-home:checked]:text-gray-2"
-          >
-            {homeTeam?.team.abbreviation}
-          </label>
-        </div>
-      )
-    }
-  </div>
   {
-    awayDivision === homeDivision ? (
-      <Grid
-        class="!border-none"
-        data={awayTeamGrid}
-        highlight={{
-          [awayTeam?.team.nickname ?? '']: awayTeam?.team.colors,
-          [homeTeam?.team.nickname ?? '']: homeTeam?.team.colors,
-        }}
-        textInherit
-        disableSort
-      />
+    awayDivision !== homeDivision ? (
+      <ToggleContainer
+        client:load
+        toggleOptions={[
+          {
+            label: awayTeam?.team.abbreviation,
+            value: awayTeam?.team.abbreviation,
+            title: `${awayDivision} Standings`,
+          },
+          {
+            label: homeTeam?.team.abbreviation,
+            value: homeTeam?.team.abbreviation,
+            title: `${homeDivision} Standings`,
+          },
+        ]}
+      >
+        <Grid
+          slot="first"
+          class="!border-none"
+          data={awayTeamGrid}
+          highlight={{
+            [awayTeam?.team.nickname ?? '']: awayTeam?.team.colors,
+          }}
+          textInherit
+          disableSort
+        />
+        <Grid
+          slot="second"
+          class="!border-none"
+          data={homeTeamGrid}
+          highlight={{
+            [homeTeam?.team.nickname ?? '']: homeTeam?.team.colors,
+          }}
+          textInherit
+          disableSort
+        />
+      </ToggleContainer>
     ) : (
-      <Fragment>
-        <div class="hidden has-[#standings-away:checked]:block">
-          <input
-            class="absolute top-0 opacity-0"
-            type="radio"
-            name="standings"
-            id="standings-away"
-            checked
-          />
-          <Grid
-            class="!border-none"
-            data={awayTeamGrid}
-            highlight={{
-              [awayTeam?.team.nickname ?? '']: awayTeam?.team.colors,
-            }}
-            textInherit
-            disableSort
-          />
-        </div>
-        <div class="hidden has-[#standings-home:checked]:block">
-          <input
-            class="absolute top-0 opacity-0"
-            type="radio"
-            name="standings"
-            id="standings-home"
-          />
-          <Grid
-            class="!border-none"
-            data={homeTeamGrid}
-            highlight={{
-              [homeTeam?.team.nickname ?? '']: homeTeam?.team.colors,
-            }}
-            textInherit
-            disableSort
-          />
-        </div>
-      </Fragment>
+      <ToggleContainer client:load title={`${awayDivision} Standings`}>
+        <Grid
+          class="!border-none"
+          data={awayTeamGrid}
+          highlight={{
+            [awayTeam?.team.nickname ?? '']: awayTeam?.team.colors,
+            [homeTeam?.team.nickname ?? '']: homeTeam?.team.colors,
+          }}
+          textInherit
+          disableSort
+        />
+      </ToggleContainer>
     )
   }
 </Panel>
