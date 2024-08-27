@@ -1,6 +1,9 @@
 <script lang="ts">
   import Grid from '@components/grid.svelte'
-  import { formatMlbPosition } from '@statmuse/core/gamera/index'
+  import {
+    formatMlbPosition,
+    type GameraTeamReference,
+  } from '@statmuse/core/gamera/index'
   import { orderBy, filter, find } from 'lodash-es'
   import {
     players,
@@ -9,9 +12,13 @@
     stats,
     selectedId,
   } from './stores'
+  import Panel from '@components/panel.svelte'
+  import EntityLink from '@components/entity-link.svelte'
+  import Image from '@components/image.svelte'
 
   export let teamKey: 'away' | 'home'
   export let final = false
+  export let team: GameraTeamReference | undefined = undefined
 
   $: higlightPlayer = final ? undefined : $matchup[teamKey].player
   $: lineup = $lineUp[teamKey]
@@ -156,14 +163,31 @@
   ]
 </script>
 
-<Grid
-  textInherit
-  disableSort
-  data={{ columns, rows, aggregations }}
-  stickyColumns={['NAME']}
-  highlight={higlightPlayer
-    ? { [higlightPlayer.usedName ?? '']: higlightPlayer.colors }
-    : undefined}
-  onRowClick={(row) => () =>
-    selectedId.set({ id: row.NAME?.meta?.id ?? 0, alignment: teamKey })}
-/>
+<Panel class="!p-0">
+  {#if team}
+    <div class="px-3 pt-2">
+      <EntityLink entity={team.entity} class="flex gap-1 text-inherit">
+        <Image
+          src={team.logoImageUrl ?? ''}
+          alt={team.name ?? ''}
+          width={60}
+          height={60}
+          class="w-6 h-6 object-contain"
+        />
+        {team.abbreviation}
+      </EntityLink>
+    </div>
+  {/if}
+  <Grid
+    class="!border-none"
+    textInherit
+    disableSort
+    data={{ columns, rows, aggregations }}
+    stickyColumns={['NAME']}
+    highlight={higlightPlayer
+      ? { [higlightPlayer.usedName ?? '']: higlightPlayer.colors }
+      : undefined}
+    onRowClick={(row) => () =>
+      selectedId.set({ id: row.NAME?.meta?.id ?? 0, alignment: teamKey })}
+  />
+</Panel>

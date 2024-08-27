@@ -246,8 +246,8 @@ Caching.swr(Astro)
     slot="box"
     class="hidden @xl/boxscore:grid grid-cols-2 gap-3 items-start"
   >
-    <BattingStats client:load teamKey="away" final />
-    <BattingStats client:load teamKey="home" final />
+    <BattingStats client:load team={awayTeam} teamKey="away" final />
+    <BattingStats client:load team={homeTeam} teamKey="home" final />
     <BattingSummary teamKey="away" />
     <BattingSummary teamKey="home" />
     <PitchingStats teamKey="away" />
