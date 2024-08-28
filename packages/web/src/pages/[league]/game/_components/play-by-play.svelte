@@ -28,6 +28,7 @@
     {#if bottomHalf.events.length > 0}
       <HalfInningPlayByPlay
         inningTitle={`Bottom ${number}`}
+        inningNumber={number}
         inning={bottomHalf}
         colors={homeTeam?.colors}
         reverseOrder
@@ -36,6 +37,7 @@
     {#if topHalf.events.length > 0}
       <HalfInningPlayByPlay
         inningTitle={`Top ${number}`}
+        inningNumber={number}
         inning={topHalf}
         colors={awayTeam?.colors}
         reverseOrder
@@ -45,6 +47,7 @@
     {#if topHalf.events.length > 0}
       <HalfInningPlayByPlay
         inningTitle={`Top ${number}`}
+        inningNumber={number}
         inning={topHalf}
         colors={awayTeam?.colors}
       />
@@ -52,6 +55,7 @@
     {#if bottomHalf.events.length > 0}
       <HalfInningPlayByPlay
         inningTitle={`Bottom ${number}`}
+        inningNumber={number}
         inning={bottomHalf}
         colors={homeTeam?.colors}
       />

@@ -22,6 +22,7 @@
   export let inningTitle: string
   export let inning: InningHalf
   export let reverseOrder = false
+  export let inningNumber: number
 
   export let colors: Colors | undefined = undefined
 
@@ -225,7 +226,11 @@
             class="-mx-3 px-3 cursor-pointer"
             style={colors ? `border-color: ${colors.foregroundColor}` : ''}
             on:click={() =>
-              selectedAtBat.set({ atBat: event, number: 2, half: 'bottom' })}
+              selectedAtBat.set({
+                atBat: event,
+                number: inningNumber,
+                half: inning.half,
+              })}
           >
             <div class="flex mt-1">
               <div class="flex-1 space-y-1 pb-2 pt-1">
