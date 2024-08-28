@@ -7,9 +7,13 @@
     type PitchAtBatEvent,
   } from '@statmuse/core/gamera'
   import AbStrikezone from './ab-strikezone.svelte'
+  import { afterUpdate } from 'svelte'
 
   export let batterHandedness: string | undefined = undefined
   export let pitches: PitchAtBatEvent[]
+  export let autoScroll = false
+
+  let pitchSequenceContainer: HTMLElement
 
   const mapPitchNumber = () => {
     let pitchNumber = 0
@@ -21,6 +25,13 @@
           : ++pitchNumber,
     })
   }
+
+  afterUpdate(() => {
+    if (autoScroll) {
+      pitchSequenceContainer.scrollLeft = pitchSequenceContainer.scrollWidth
+    }
+  })
+
   $: pitchesWithNumber = pitches.map(mapPitchNumber()) ?? []
 </script>
 
@@ -33,6 +44,7 @@
     />
   </div>
   <div
+    bind:this={pitchSequenceContainer}
     class="min-h-[140px] flex items-center overflow-x-scroll no-scrollbar divide-x divide-gray-6 dark:divide-gray-4"
   >
     {#each pitchesWithNumber as pitch (pitch)}

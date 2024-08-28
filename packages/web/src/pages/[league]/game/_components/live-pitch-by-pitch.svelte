@@ -4,6 +4,7 @@
 </script>
 
 <PitchByPitch
+  autoScroll
   batterHandedness={$atBat?.batter.handedness}
   pitches={$atBat?.events
     .filter((e) => e.type === 'pitch')
