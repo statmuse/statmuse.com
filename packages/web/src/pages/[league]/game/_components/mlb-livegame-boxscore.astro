@@ -19,6 +19,7 @@ import * as store from './stores'
 import { Caching } from '@lib/caching'
 import BattingSummary from './batting-summary.svelte'
 import PlayerModal from './player-modal.svelte'
+import AtBatModal from './at-bat-modal.svelte'
 
 interface Props {
   gameData: MlbGameDataResponse<MlbStatKey>
@@ -242,5 +243,8 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
 
   <GameState client:only="svelte" {gameData} {playByPlay} />
   <Realtime client:only="svelte" {gameId} />
-  <PlayerModal client:only="svelte" slot="modal" />
+  <Fragment slot="modal">
+    <PlayerModal client:only="svelte" />
+    <AtBatModal client:only="svelte" />
+  </Fragment>
 </Layout>

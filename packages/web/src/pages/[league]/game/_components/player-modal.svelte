@@ -62,7 +62,7 @@
       class="px-2 py-2 flex flex-col md:flex-row items-center gap-2 w-full md:w-fit absolute left-1/2 top-2 md:top-1/2 -translate-x-1/2 md:-translate-y-1/2"
       on:click|stopPropagation
     >
-      <div class="flex flex-col gap-3 w-full md:w-[380px]">
+      <div class="flex flex-col gap-2 w-full md:w-[380px]">
         <div
           class="w-fit p-2 bg-gray-8 dark:bg-gray-3 text-inherit border border-gray-6 dark:border-gray-3 rounded-full hover:cursor-pointer"
           on:click={() => selectedId.set(undefined)}

@@ -13,6 +13,7 @@ import {
   type InningPlayByPlay,
   type PlayerGameModel,
   type MlbStatKey,
+  type InningAtBatEvent,
 } from '@statmuse/core/gamera'
 import { atom, map, computed } from 'nanostores'
 import { last } from 'lodash-es'
@@ -160,6 +161,10 @@ export const selectedPlayer = computed(
     }
   },
 )
+
+export const selectedAtBat = atom<
+  { atBat: InningAtBatEvent; number: number; half: string } | undefined
+>()
 
 export const init = (props: {
   gameData: MlbGameDataResponse<MlbStatKey>

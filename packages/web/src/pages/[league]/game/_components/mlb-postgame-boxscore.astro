@@ -17,6 +17,7 @@ import { Caching } from '@lib/caching'
 import PlayerModal from './player-modal.svelte'
 import GameState from './game-state.svelte'
 import BattingSummary from './batting-summary.svelte'
+import AtBatModal from './at-bat-modal.svelte'
 
 interface Props {
   gameData: MlbGameDataResponse<MlbStatKey>
@@ -154,7 +155,7 @@ Caching.swr(Astro)
                 id="scoring"
                 checked
               />
-              <PlayByPlay {awayTeam} {homeTeam} scoring />
+              <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
             </div>
             <div class="hidden has-[#all:checked]:flex flex-col gap-3">
               <input
@@ -163,11 +164,11 @@ Caching.swr(Astro)
                 name="plays"
                 id="all"
               />
-              <PlayByPlay {awayTeam} {homeTeam} />
+              <PlayByPlay client:load {awayTeam} {homeTeam} />
             </div>
           </div>
           <div class="@xl/boxscore:hidden flex flex-col gap-3">
-            <PlayByPlay {awayTeam} {homeTeam} scoring />
+            <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
             <Schedule
               domain="MLB"
               teams={teams ?? []}
@@ -266,9 +267,12 @@ Caching.swr(Astro)
     <PitchingStats teamKey="home" />
   </Fragment>
 
-  {playByPlay && <PlayByPlay slot="plays" {awayTeam} {homeTeam} />}
+  {playByPlay && <PlayByPlay client:load slot="plays" {awayTeam} {homeTeam} />}
 
   <GameState client:load {gameData} {playByPlay} />
 
-  <PlayerModal client:only="svelte" slot="modal" />
+  <Fragment slot="modal">
+    <PlayerModal client:only="svelte" />
+    <AtBatModal client:only="svelte" />
+  </Fragment>
 </Layout>

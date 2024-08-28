@@ -1,3 +1,5 @@
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <script lang="ts">
   import Icon from '@components/icon.svelte'
   import Image from '@components/image.svelte'
@@ -15,7 +17,7 @@
     type InningHalf,
   } from '@statmuse/core/gamera/index'
   import { findLast, some } from 'lodash-es'
-  import { players } from './stores'
+  import { players, selectedAtBat } from './stores'
 
   export let inningTitle: string
   export let inning: InningHalf
@@ -220,8 +222,10 @@
 
         {#if event.description}
           <div
-            class="-mx-3 px-3"
+            class="-mx-3 px-3 cursor-pointer"
             style={colors ? `border-color: ${colors.foregroundColor}` : ''}
+            on:click={() =>
+              selectedAtBat.set({ atBat: event, number: 2, half: 'bottom' })}
           >
             <div class="flex mt-1">
               <div class="flex-1 space-y-1 pb-2 pt-1">
