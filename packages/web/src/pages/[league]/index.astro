@@ -3,7 +3,6 @@ import HomeLayout from '@layouts/home.astro'
 import HomeContent from '@components/home/home-content.astro'
 import { Caching } from '@lib/caching'
 import { examples } from '@lib/examples'
-import { createAskPath } from '@statmuse/core/path'
 import { NOT_FOUND_404 } from '@lib/response'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
 import { listLatestMusings, type LatestMusing } from '@statmuse/core/musing'
@@ -22,11 +21,11 @@ import { find } from 'lodash-es'
 import type { GameraPlayerProfileResponse } from '@statmuse/core/gamera'
 import type { TrendingItem } from 'src/types'
 
-const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc']
+const leaguePaths = ['nba', 'nfl', 'mlb', 'nhl', 'pga', 'fc', 'cfb']
 if (!Astro.params.league || !leaguePaths.includes(Astro.params.league))
   return NOT_FOUND_404
 
-const league = Astro.params.league as LeagueParam
+const league = Astro.params.league as Exclude<LeagueParam, 'money'>
 const domain = leagueToDomain(league)
 
 const meta = {
@@ -64,7 +63,7 @@ let standings: GetStandingsResponse
 let profile: GameraPlayerProfileResponse | undefined
 let trendingData: TrendingItem | undefined
 
-if (domain !== 'PGA') {
+if (['NBA', 'NHL', 'NFL', 'MLB', 'EPL'].includes(domain)) {
   ;[musings, leaders, rankings, betting, standings] = await Promise.all([
     listLatestMusings(domain),
     homeLeadersByDomain({

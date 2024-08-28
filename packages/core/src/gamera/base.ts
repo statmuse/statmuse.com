@@ -3,7 +3,7 @@ export interface Colors {
   foregroundColor: string
 }
 
-export type GameraDomain = 'NBA' | 'NFL' | 'MLB' | 'NHL' | 'PGA' | 'EPL'
+export type GameraDomain = 'NBA' | 'NFL' | 'MLB' | 'NHL' | 'PGA' | 'EPL' | 'CFB'
 
 export type GameraToken = {
   text: string

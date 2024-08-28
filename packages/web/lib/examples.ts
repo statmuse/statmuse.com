@@ -1,4 +1,5 @@
 import { createAskPath } from '@statmuse/core/path'
+import type { LeagueParam } from './params'
 
 const nbaExamples = [
   [
@@ -518,9 +519,10 @@ const eplExamples = [
 
 export type ExampleSet = [string, { query: string; path: string }[]]
 
-export const examples = {
+export const examples: Record<Exclude<LeagueParam, 'money'>, ExampleSet[]> = {
   nba: nbaExamples as ExampleSet[],
   nfl: nflExamples as ExampleSet[],
+  cfb: [] as ExampleSet[],
   mlb: mlbExamples as ExampleSet[],
   nhl: nhlExamples as ExampleSet[],
   pga: pgaExamples as ExampleSet[],

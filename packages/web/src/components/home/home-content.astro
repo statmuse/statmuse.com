@@ -65,7 +65,7 @@ const league = Astro.params.league
 
 <div class="group">
   {
-    domain !== 'PGA' ? (
+    !(domain === 'PGA' || domain === 'CFB') ? (
       <>
         <div class="bg-gray-8 dark:bg-gray-3 text-inherit border border-gray-6 dark:border-gray-3 flex lg:hidden text-center mb-3 rounded-full relative overflow-clip">
           <div class="absolute h-full w-1/2 bg-teal rounded-full left-0 group-has-[#stat:checked]:translate-x-0 group-has-[#musing:checked]:translate-x-full transition-transform ease-out" />
