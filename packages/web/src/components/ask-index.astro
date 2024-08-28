@@ -68,8 +68,10 @@ const title = 'Trending Live'
 const meta = {
   title,
   description: `Instant answers to your ${
-    selected === 'fc' ? 'Premier League' : selected?.toUpperCase() ?? 'sports'
-  } questions. Stats, scores, schedules, standings, recaps and more — just ask.`,
+    selected === 'fc'
+      ? 'Premier League and LaLiga'
+      : selected?.toUpperCase() ?? 'sports'
+  } questions. Stats, scores, bios, records and more — just ask.`,
   pageType: 'question',
 }
 ---

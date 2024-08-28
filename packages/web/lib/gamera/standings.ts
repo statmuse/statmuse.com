@@ -18,16 +18,17 @@ export const getStandings = async (props: {
   seasonYear?: number
 }) => {
   try {
-    const league = props.domain.toLowerCase()
+    const { context, domain, ...params } = props
+    const league = domain.toLowerCase()
     const path = `${league}/standings`
-    const data = await request<StandingsResponse>(props.context, path)
+    const data = await request<StandingsResponse>(context, path, params)
     if (data) {
       return {
         ...data,
-        domain: props.domain as GameraDomain,
+        domain: domain as GameraDomain,
         teams:
           league === 'epl'
-            ? { all: data.teams }
+            ? groupBy(data.teams, 'league')
             : groupBy(
                 data.teams,
                 league === 'mlb' ? 'league.name' : 'conference.name',

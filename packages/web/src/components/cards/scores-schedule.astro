@@ -12,9 +12,10 @@ interface Props {
   domain: GameraDomain
   scoresResponse?: GameraGamesResponse<CompletedGame>
   scheduleResponse?: GameraScheduleResponse
+  soccerLeague?: 'epl' | 'lal'
 }
 
-const { domain, scoresResponse, scheduleResponse } = Astro.props
+const { domain, scoresResponse, scheduleResponse, soccerLeague } = Astro.props
 
 if (
   !scoresResponse ||
@@ -24,9 +25,15 @@ if (
 )
   return undefined
 
-const title = `${domain === 'EPL' ? 'PL' : domain} ${
-  scoresResponse.seasonYearDisplay
-} Scores & Schedule`
+const title = `${
+  domain === 'EPL' && soccerLeague === 'epl'
+    ? 'PL'
+    : domain === 'EPL' && soccerLeague === 'lal'
+    ? 'LaLiga'
+    : domain
+} ${scoresResponse.seasonYearDisplay} Scores & ${
+  domain === 'EPL' ? 'Fixtures' : 'Schedule'
+}`
 ---
 
 <div>
@@ -35,6 +42,9 @@ const title = `${domain === 'EPL' ? 'PL' : domain} ${
   </h2>
   <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
     <ScoresCard title="Scores" data={scoresResponse} />
-    <ScheduleCard title="Schedule" data={scheduleResponse} />
+    <ScheduleCard
+      title={domain === 'EPL' ? 'Fixtures' : 'Schedule'}
+      data={scheduleResponse}
+    />
   </div>
 </div>

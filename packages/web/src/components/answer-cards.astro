@@ -34,18 +34,35 @@ let teamCardsResp: TeamCardResponse | undefined
 let standingsResp: Awaited<ReturnType<typeof getStandings>> | undefined
 let scheduleResp: GameraScheduleResponse | undefined
 let scoresResp: GameraGamesResponse<CompletedGame> | undefined
+let laligaPlayerCardsResp: PlayerCardResponse | undefined
+let laligaTeamCardsResp: TeamCardResponse | undefined
 
 const allowedDomains = ['NBA', 'NFL', 'NHL', 'EPL', 'MLB']
 
 if (allowedDomains.includes(domain)) {
   ;[playerCardsResp, teamCardsResp, standingsResp, scheduleResp, scoresResp] =
     await Promise.all([
-      getPlayerCards({ context: Astro, domain }),
-      getTeamCards({ context: Astro, domain }),
+      getPlayerCards({
+        context: Astro,
+        domain,
+        ...(domain === 'EPL' ? { league: 'epl' } : {}),
+      }),
+      getTeamCards({
+        context: Astro,
+        domain,
+        ...(domain === 'EPL' ? { league: 'epl' } : {}),
+      }),
       getStandings({ context: Astro, domain }),
       getSchedule({ context: Astro, domain }),
       getGames<'completed'>({ context: Astro, domain }),
     ])
+}
+
+if (domain === 'EPL') {
+  ;[laligaPlayerCardsResp, laligaTeamCardsResp] = await Promise.all([
+    getPlayerCards({ context: Astro, domain, league: 'lal' }),
+    getTeamCards({ context: Astro, domain, league: 'lal' }),
+  ])
 }
 ---
 
@@ -59,8 +76,19 @@ if (allowedDomains.includes(domain)) {
     {domain}
     response={playerCardsResp}
     mlbBatting={domain === 'MLB'}
+    soccerLeague={domain === 'EPL' ? 'epl' : undefined}
     adSlot={{ divId: 'pb-slot-2', slotId: 'pb-slot-incontent-2' }}
   />
+  {
+    domain === 'EPL' && (
+      <PlayerLeaders
+        {domain}
+        soccerLeague="lal"
+        response={laligaPlayerCardsResp}
+        adSlot={{ divId: 'pb-slot-2', slotId: 'pb-slot-incontent-2' }}
+      />
+    )
+  }
   {
     domain === 'MLB' && (
       <PlayerLeaders
@@ -76,9 +104,20 @@ if (allowedDomains.includes(domain)) {
   }
   <TeamRankings
     {domain}
+    soccerLeague={domain === 'EPL' ? 'epl' : undefined}
     response={teamCardsResp}
     adSlot={{ divId: 'pb-slot-3', slotId: 'pb-slot-incontent-3' }}
   />
+  {
+    domain === 'EPL' && (
+      <TeamRankings
+        {domain}
+        soccerLeague="lal"
+        response={laligaTeamCardsResp}
+        adSlot={{ divId: 'pb-slot-3', slotId: 'pb-slot-incontent-3' }}
+      />
+    )
+  }
   <FantasyLeaders
     {domain}
     response={playerCardsResp}
@@ -87,12 +126,63 @@ if (allowedDomains.includes(domain)) {
   <TeamBetting {domain} response={teamCardsResp} />
   <Standings
     {domain}
-    response={standingsResp}
+    soccerLeague={domain === 'EPL' ? 'epl' : undefined}
+    response={domain === 'EPL' && standingsResp
+      ? { ...standingsResp, teams: { epl: standingsResp.teams.epl } }
+      : standingsResp}
     adSlot={{ divId: 'pb-slot-5', slotId: 'pb-slot-incontent-1' }}
   />
+  {
+    domain === 'EPL' && (
+      <Standings
+        {domain}
+        soccerLeague="lal"
+        response={
+          standingsResp
+            ? { ...standingsResp, teams: { lal: standingsResp.teams.lal } }
+            : standingsResp
+        }
+      />
+    )
+  }
   <ScoresSchedule
     {domain}
-    scoresResponse={scoresResp}
-    scheduleResponse={scheduleResp}
+    soccerLeague={domain === 'EPL' ? 'epl' : undefined}
+    scoresResponse={domain === 'EPL' && scoresResp
+      ? {
+          ...scoresResp,
+          games: scoresResp.games.filter((g) => g.league === 'epl'),
+        }
+      : scoresResp}
+    scheduleResponse={domain === 'EPL' && scheduleResp
+      ? {
+          ...scheduleResp,
+          games: scheduleResp.games.filter((g) => g.league === 'epl'),
+        }
+      : scheduleResp}
   />
+  {
+    domain === 'EPL' && (
+      <ScoresSchedule
+        {domain}
+        soccerLeague="lal"
+        scoresResponse={
+          scoresResp
+            ? {
+                ...scoresResp,
+                games: scoresResp.games.filter((g) => g.league === 'lal'),
+              }
+            : scoresResp
+        }
+        scheduleResponse={
+          scheduleResp
+            ? {
+                ...scheduleResp,
+                games: scheduleResp.games.filter((g) => g.league === 'lal'),
+              }
+            : scheduleResp
+        }
+      />
+    )
+  }
 </div>

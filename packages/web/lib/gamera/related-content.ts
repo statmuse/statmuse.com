@@ -13,6 +13,7 @@ export const getPlayerCards = async (props: {
   domain: string
   teamId?: string | number
   seasonYear?: number
+  league?: 'epl' | 'lal'
 }) => {
   try {
     const { context, domain, ...params } = props
@@ -30,6 +31,7 @@ export const getTeamCards = async (props: {
   context: Context
   domain: string
   teamId?: number
+  league?: 'epl' | 'lal'
 }) => {
   try {
     const { context, domain, ...params } = props
@@ -131,13 +133,20 @@ const playerMapByDomain: Record<
 export const homeLeadersByDomain = async (props: {
   context: Context
   domain: Exclude<GameraDomain, 'PGA'>
+  league?: 'epl' | 'lal'
 }) => {
   const leaders = await getPlayerCards(props)
   if (leaders) {
     return playerMapByDomain[props.domain].map((x) => ({
       ...x,
       domain: props.domain,
-      query: `${x.query} ${leaders.seasonYearDisplay}${
+      query: `${x.query}${
+        props.league === 'epl'
+          ? ' in premier league'
+          : props.league === 'lal'
+          ? ' in laliga'
+          : ''
+      } ${leaders.seasonYearDisplay}${
         leaders.seasonType === 'postseason' ? ' postseason' : ''
       }`,
       seasonType: leaders.seasonType,
@@ -282,13 +291,20 @@ const teamMapByDomain: Record<
 export const homeRankingsByDomain = async (props: {
   context: Context
   domain: Exclude<GameraDomain, 'PGA'>
+  league?: 'epl' | 'lal'
 }) => {
   const leaders = await getTeamCards(props)
   if (leaders) {
     return teamMapByDomain[props.domain].map((x) => ({
       ...x,
       domain: props.domain,
-      query: `${x.query} ${leaders.seasonYearDisplay}${
+      query: `${x.query}${
+        props.league === 'epl'
+          ? ' in premier league'
+          : props.league === 'lal'
+          ? ' in laliga'
+          : ''
+      } ${leaders.seasonYearDisplay}${
         leaders.seasonType === 'postseason' ? ' postseason' : ''
       }`,
       seasonType: leaders.seasonType,

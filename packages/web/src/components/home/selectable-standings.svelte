@@ -28,7 +28,6 @@
   const {
     elements: { trigger, menu, option },
     states: { selectedLabel, open },
-    helpers: { isSelected },
   } = createSelect({
     defaultSelected,
     forceVisible: true,
@@ -50,7 +49,9 @@
       class="font-semibold w-40 px-3 text-left flex justify-between items-center"
     >
       {$selectedLabel
-        ? `${$selectedLabel} ${$selectedLabel === 'PL' ? 'Table' : 'Standings'}`
+        ? `${$selectedLabel === 'FC' ? 'League' : $selectedLabel} ${
+            $selectedLabel === 'FC' ? 'Table' : 'Standings'
+          }`
         : 'Choose an option'}
       {#if $open}
         <Icon name="dropdown-up" class="w-4 h-4" />
@@ -83,7 +84,9 @@
         {#each toggleOptions as option, i}
           <label
             for={`standings-${i}`}
-            class="py-1 w-12 relative cursor-pointer"
+            class="py-1 relative cursor-pointer"
+            class:w-12={selectedValue !== 'epl'}
+            class:w-14={selectedValue === 'epl'}
             class:group-has-[#standings-0:checked]:text-gray-2={i == 0}
             class:group-has-[#standings-1:checked]:text-gray-2={i == 1}
           >

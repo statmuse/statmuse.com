@@ -45,6 +45,7 @@ export default defineConfig({
   ],
   output: 'server',
   server: {
+    host: true,
     port: 3000,
   },
   devToolbar: {
@@ -73,8 +74,8 @@ export default defineConfig({
     '/company/products': '/company/about',
     '/company/shoutouts': '/company/about',
     '/company/twitter-love': '/company/about',
-    '/product/data': '/product/data/nba',
-    '/product/examples': '/product/examples/nba',
+    '/product/data': '/product/data/fc',
+    '/product/examples': '/product/examples/fc',
     '/getting-started/data-coverage': '/product/data',
     '/getting-started/glossary': '/product/data',
     '/getting-started/personalities': '/product/examples',

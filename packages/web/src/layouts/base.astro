@@ -64,8 +64,8 @@ const description =
   'Instant answers to your NBA, NFL, NHL, MLB, PGA and European football questions. Stats, scores, bios, betting, fantasy and more — just ask.'
 const keywords =
   meta?.keywords ||
-  'StatMuse, sports, stats, search, sports search, sports information, sports stats, statistics, fantasy stats, advanced stats, betting information, NBA stats, NFL stats, NHL stats, PGA stats, MLB stats, Premier League stats'
-const defaultImageUrl = 'https://www.statmuse.com/images/sm-meta-banner-2.jpg'
+  'StatMuse, sports, stats, search, sports search, sports information, sports stats, statistics, fantasy stats, advanced stats, betting information, NBA stats, NFL stats, NHL stats, PGA stats, MLB stats, Premier League stats, LaLiga stats'
+const defaultImageUrl = 'https://www.statmuse.com/images/sm-meta-banner.jpg'
 
 const isError = (status?: number) => {
   if (!status) return true
@@ -78,7 +78,7 @@ const analyticsProperties = Object.assign(
     is_error: isError(Astro.response.status),
     is_search: false,
     method: Astro.request.method,
-    origin: 'web',
+    origin: Astro.locals.platform,
     origin_scope: 'browser',
     page_domain: 'unknown',
     page_type: 'unknown',
@@ -125,7 +125,7 @@ const canonicalUrl = meta?.canonical
 
 <html lang="en">
   <head>
-    <meta name="color-scheme" content="dark light" />
+    <meta name="color-scheme" content={'dark light'} />
 
     <script is:inline>
       function setTheme(document) {
@@ -133,16 +133,26 @@ const canonicalUrl = meta?.canonical
           'meta[name="color-scheme"]',
         )
 
-        if (
-          localStorage.theme === 'dark' ||
-          (!('theme' in localStorage) &&
-            window.matchMedia('(prefers-color-scheme: dark)').matches)
-        ) {
-          document.documentElement.classList.add('dark')
-          metaColorScheme.setAttribute('content', 'dark')
+        if (window.colorScheme) {
+          if (window.colorScheme === 'dark') {
+            document.documentElement.classList.add('dark')
+            metaColorScheme.setAttribute('content', 'dark')
+          } else {
+            document.documentElement.classList.remove('dark')
+            metaColorScheme.setAttribute('content', 'light')
+          }
         } else {
-          document.documentElement.classList.remove('dark')
-          metaColorScheme.setAttribute('content', 'light')
+          if (
+            localStorage.theme === 'dark' ||
+            (!('theme' in localStorage) &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches)
+          ) {
+            document.documentElement.classList.add('dark')
+            metaColorScheme.setAttribute('content', 'dark')
+          } else {
+            document.documentElement.classList.remove('dark')
+            metaColorScheme.setAttribute('content', 'light')
+          }
         }
       }
 
@@ -203,7 +213,7 @@ const canonicalUrl = meta?.canonical
         />
       )
     }
-    <ViewTransitions />
+    {Astro.locals.platform === 'web' && <ViewTransitions />}
     <link
       href="https://www.statmuse.com/opensearch.xml"
       rel="search"
@@ -288,7 +298,6 @@ const canonicalUrl = meta?.canonical
       'has-[#menu:checked]:overflow-y-scroll has-[#menu:checked]:fixed': true,
       'has-[#menu:checked]:w-full has-[#menu:checked]:h-full': true,
       'max-w-7xl min-h-screen mx-auto px-3 md:px-5 flex flex-col': true,
-      dark: Astro.locals.platform === 'native',
     }}
   >
     <Header {preferredDomain} {query} {conversationToken} {money} />
@@ -531,9 +540,11 @@ const canonicalUrl = meta?.canonical
         'astro:page-load',
         async () => {
           try {
-            const session: Session = await fetch('/auth/session').then((r) =>
-              r.json(),
-            )
+            // @ts-expect-error
+            const headers = window.smHeaders as string | undefined
+            const session: Session = await fetch('/auth/session', {
+              headers: headers ? JSON.parse(headers) : undefined,
+            }).then((r) => r.json())
             sessionStore.set(session)
 
             if (session.type === 'visitor') {

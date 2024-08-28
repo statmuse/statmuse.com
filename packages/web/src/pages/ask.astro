@@ -17,13 +17,21 @@ let conversationToken: string | undefined
 let queryClarificationFor: string | undefined
 
 if (Astro.request.method === 'POST') {
-  const data = await Astro.request.formData()
-  preferredDomain = data.get('question[preferred_domain]')?.toString()
-  query = data.get('question[query]')?.toString()
-  conversationToken = data.get('question[conversation_token]')?.toString()
-  queryClarificationFor = data
-    .get('question[query_clarification_for]')
-    ?.toString()
+  if (Astro.locals.platform === 'web') {
+    const data = await Astro.request.formData()
+    preferredDomain = data.get('question[preferred_domain]')?.toString()
+    query = data.get('question[query]')?.toString()
+    conversationToken = data.get('question[conversation_token]')?.toString()
+    queryClarificationFor = data
+      .get('question[query_clarification_for]')
+      ?.toString()
+  } else {
+    const data = await Astro.request.json()
+    query = data.query
+    preferredDomain = data.preferred_domain
+    conversationToken = data.conversation_token
+    queryClarificationFor = data.query_clarification_for
+  }
 
   const canQuery = await Enforcer.canQuery(Astro.locals)
   if (!canQuery) {

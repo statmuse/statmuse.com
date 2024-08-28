@@ -160,6 +160,7 @@ export interface StandingsNfl extends StandingsBase {
 }
 
 export interface StandingsEpl extends StandingsBase {
+  league: 'epl' | 'lal'
   rank: {
     league: number
   }

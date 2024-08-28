@@ -25,6 +25,9 @@ declare namespace App {
     user?: import('@statmuse/core/user').User
     subscribed: boolean
     platform: 'web' | 'native'
+    colorScheme?: 'light' | 'dark'
+    nativeView?: 'home' | 'scores' | 'search' | 'trending' | 'more'
+    deviceId?: string
     trendingData?: import('./types').TrendingItem
   }
 }

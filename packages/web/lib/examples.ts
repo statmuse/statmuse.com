@@ -438,11 +438,33 @@ const pgaExamples = [
 
 const eplExamples = [
   [
+    'Stats',
+    [
+      'Most G/A in a LaLiga season?',
+      'Who scored the most PL hat tricks all time?',
+      'Which player has created the most chances in the last 2 PL seasons?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'fc', query: q }),
+    })),
+  ],
+  [
+    'Advanced Stats',
+    [
+      'Which winger has completed the most take-ons in the last 3 LaLiga seasons?',
+      'Highest xG overperformers in the Prem?',
+      'Who had the most through balls in LaLiga last season?',
+    ].map((q) => ({
+      query: q,
+      path: createAskPath({ domain: 'fc', query: q }),
+    })),
+  ],
+  [
     'Scores',
     [
-      'Arsenal record vs the Big 6 this season',
-      'What was the score of the last Man United vs Man City match?',
+      'Did Barcelona win?',
       'What was the score of the last Manchester derby?',
+      'What happened in the Arsenal match?',
     ].map((q) => ({
       query: q,
       path: createAskPath({ domain: 'fc', query: q }),
@@ -451,9 +473,9 @@ const eplExamples = [
   [
     'Fixtures',
     [
-      'What matches are on this week?',
-      'When is the next North West derby?',
-      'When do Tottenham play next?',
+      'What PL matches are on this week?',
+      'When is the next El Clásico?',
+      'When do Liverpool play next?',
     ].map((q) => ({
       query: q,
       path: createAskPath({ domain: 'fc', query: q }),
@@ -463,19 +485,8 @@ const eplExamples = [
     'Table',
     [
       'Premier League table?',
-      'Who won the Premier League last season?',
-      "What was Liverpool's record last year?",
-    ].map((q) => ({
-      query: q,
-      path: createAskPath({ domain: 'fc', query: q }),
-    })),
-  ],
-  [
-    'Stats',
-    [
-      'Who scored the most goals in a season?',
-      'Who has the most hat tricks all time?',
-      'Which team leads the league in passes per match?',
+      'Who won LaLiga last season?',
+      "What was Real Madrid's record last year?",
     ].map((q) => ({
       query: q,
       path: createAskPath({ domain: 'fc', query: q }),
@@ -484,7 +495,7 @@ const eplExamples = [
   [
     'Bios',
     [
-      'Tell me about Thierry Henry',
+      'Zinedine Zidane stats',
       'How tall is Peter Crouch?',
       'How old is Bukayo Saka?',
     ].map((q) => ({
@@ -495,20 +506,9 @@ const eplExamples = [
   [
     'Recaps',
     [
-      'How did Cristiano Ronaldo do in 2007-08 season?',
-      'How is Haaland doing?',
-      'Did Son Heung-Min have a good season last year?',
-    ].map((q) => ({
-      query: q,
-      path: createAskPath({ domain: 'fc', query: q }),
-    })),
-  ],
-  [
-    'Beyond the Box Score',
-    [
-      'Who has the most touches in opponent box this season?',
-      'Who leads the league in big chances created?',
-      'Which player has the most passes in the final third last year?',
+      'How did Neymar do in 2015/16 season?',
+      'How is Phil Foden doing?',
+      'Did Vini Jr have a good season last year?',
     ].map((q) => ({
       query: q,
       path: createAskPath({ domain: 'fc', query: q }),
@@ -525,5 +525,4 @@ export const examples = {
   nhl: nhlExamples as ExampleSet[],
   pga: pgaExamples as ExampleSet[],
   fc: eplExamples as ExampleSet[],
-  money: eplExamples as ExampleSet[],
 }

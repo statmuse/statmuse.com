@@ -21,7 +21,7 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
   await Promise.all([
     listLatestHomeMusings(),
     Promise.all([
-      getPlayerCards({ context: Astro, domain: 'EPL' }).then(
+      getPlayerCards({ context: Astro, domain: 'EPL', league: 'epl' }).then(
         (x) =>
           x && {
             title: 'PL Goals',
@@ -96,7 +96,7 @@ const [musings, playerCards, teamCards, bettingCards, standings] =
       ),
     ]),
     Promise.all([
-      getTeamCards({ context: Astro, domain: 'EPL' }).then(
+      getTeamCards({ context: Astro, domain: 'EPL', league: 'epl' }).then(
         (x) =>
           x && {
             title: 'PL Goal Difference',
@@ -242,9 +242,9 @@ if (teamCards) {
         r &&
         getTeamSeasonBio({
           context: Astro,
-          domain: r.teams[0].entity.domain,
-          team: r.teams[0].entity.id,
-          year: r.teams[0].entity.id,
+          domain: r.teams[0]?.entity.domain,
+          team: r.teams[0]?.entity.id,
+          year: r.teams[0]?.entity.id,
         }),
     ),
   )
@@ -311,10 +311,10 @@ Caching.swr(Astro)
     {musings}
     {profile}
     leaders={playerCards.filter((x) => x).length > 0
-      ? playerCards.filter((x) => x)
+      ? [playerCards.filter((x) => x)]
       : undefined}
     rankings={teamCards.filter((x) => x).length > 0
-      ? teamCards.filter((x) => x)
+      ? [teamCards.filter((x) => x)]
       : undefined}
     betting={bettingCards.filter((x) => x).length > 0
       ? bettingCards.filter((x) => x)
