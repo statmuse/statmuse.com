@@ -26,9 +26,17 @@
 
       <Panel class="w-full md:w-[380px] !p-0">
         <div class="px-3 py-2 border-b border-gray-6 dark:border-gray-4">
-          <p class="capitalize font-semibold">
-            {`${$selectedAtBat.half} ${$selectedAtBat.number}`}
-          </p>
+          <div class="flex gap-4">
+            <p class="capitalize font-semibold">
+              {`${$selectedAtBat.half} ${$selectedAtBat.number}`}
+            </p>
+            {#if $selectedAtBat.pitcher}
+              <span class="text-gray-5">
+                P: {$selectedAtBat.pitcher.entity.shortDisplay ??
+                  $selectedAtBat.pitcher.usedName}
+              </span>
+            {/if}
+          </div>
           <p>{tokensToText($selectedAtBat.atBat.description)}</p>
         </div>
         <PitchByPitch

@@ -148,7 +148,12 @@ export const selectedPlayer = computed(
       return inning.halves[alignment === 'away' ? 0 : 1].events
         .filter((e) => e.type === 'atBat')
         .filter((e) => e.batter.playerId === player?.id)
-        .map((x) => ({ ...x, number, half }))
+        .map((x) => ({
+          ...x,
+          number,
+          half,
+          pitcher: $players[x.pitcher.playerId],
+        }))
     })
 
     return {
@@ -163,7 +168,13 @@ export const selectedPlayer = computed(
 )
 
 export const selectedAtBat = atom<
-  { atBat: InningAtBatEvent; number: number; half: string } | undefined
+  | {
+      atBat: InningAtBatEvent
+      number: number
+      half: string
+      pitcher?: GameraPlayerReference
+    }
+  | undefined
 >()
 
 export const init = (props: {

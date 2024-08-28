@@ -230,6 +230,7 @@
                 atBat: event,
                 number: inningNumber,
                 half: inning.half,
+                pitcher: $players[event.pitcher.playerId],
               })}
           >
             <div class="flex mt-1">

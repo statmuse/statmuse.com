@@ -144,9 +144,17 @@
             class="px-3 py-2 flex justify-between border-b border-gray-6 dark:border-gray-4"
           >
             <div class="flex-1">
-              <p class="capitalize font-semibold">
-                {`${atBat.half} ${atBat.number}`}
-              </p>
+              <div class="flex gap-4">
+                <p class="capitalize font-semibold">
+                  {`${atBat.half} ${atBat.number}`}
+                </p>
+                {#if atBat.pitcher}
+                  <span class="text-gray-5">
+                    P: {atBat.pitcher.entity.shortDisplay ??
+                      atBat.pitcher.usedName}
+                  </span>
+                {/if}
+              </div>
               <p>{tokensToText(atBat.description)}</p>
             </div>
             {#if $selectedPlayer.atBats.length > 0}
