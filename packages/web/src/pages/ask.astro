@@ -56,28 +56,6 @@ const domain =
     ? 'fc'
     : response?.visual?.domain?.toLowerCase()
 
-// Redirect to game route for new boxscores
-if (
-  response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional' &&
-  find(response.visual.detail, (d) => d.type === 'mlbHistoricalBoxScore')
-) {
-  const boxscore = find(
-    response.visual.detail,
-    (d) => d.type === 'mlbHistoricalBoxScore',
-  )
-  if (boxscore)
-    return Astro.redirect(
-      getUrlForEntity({
-        type: 'game',
-        domain,
-        id: boxscore.gameId.toString(),
-        display: `${dayjs(boxscore.gameDate).format('M/D/YYYY')} ${
-          boxscore.awayTeam.abbrev
-        } @ ${boxscore.homeTeam.abbrev}`,
-      }),
-    )
-}
-
 if (queryClarificationFor)
   return Astro.redirect(createAskPath({ domain, query: queryClarificationFor }))
 
