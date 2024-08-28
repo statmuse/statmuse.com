@@ -8,6 +8,9 @@ import {
   isScheduledGame,
 } from '@statmuse/core/gamera'
 import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(timezone)
 
 interface Props {
   response: GameraGamesResponse<ScheduledGame | InProgressGame>
@@ -76,8 +79,16 @@ const rows = games.map((game) => {
         game.type === 'scheduled' ? game.gameTimestamp : game.awayTeam.score,
       display:
         game.type === 'scheduled'
-          ? dayjs(game.gameTimestamp).format('h:mm A')
+          ? dayjs(game.gameTimestamp).tz('America/New_York').format('h:mm A')
           : `${game.awayTeam.score} - ${game.homeTeam.score}`,
+      entity: {
+        display: `${dayjs(game.gameDate).format('M/D/YYYY')} ${
+          isHome ? oppTeam?.abbreviation : team?.abbreviation
+        } @ ${isHome ? team?.abbreviation : oppTeam?.abbreviation}`,
+        domain,
+        type: 'game',
+        id: game.id.toString(),
+      },
     },
     NETWORK: {
       value: game.type === 'scheduled' ? '' : '',
