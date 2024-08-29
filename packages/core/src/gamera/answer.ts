@@ -323,6 +323,7 @@ export interface DetailBase {
     | 'schedule'
     | 'nbaShots'
     | 'gameOddsIndicator'
+    | 'boxScore'
 }
 
 export interface Standings {
@@ -419,6 +420,11 @@ export interface StatsDetail extends DetailBase {
   type: 'stats'
   grids: GameraGrid[]
   columnCharts: GameraChart[]
+}
+
+export interface BoxScoreDetail extends DetailBase {
+  type: 'boxScore'
+  gameId: number
 }
 
 export interface NbaTeamGameStats {
@@ -797,6 +803,7 @@ export interface ChoicesNlg {
 export type GameraResponse = GameraDefaultResponse | GameraChoicesResponse
 
 export type Detail =
+  | BoxScoreDetail
   | StatsDetail
   | NbaHistoricalBoxScore
   | NflHistoricalBoxScore
