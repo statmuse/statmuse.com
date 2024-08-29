@@ -14,6 +14,7 @@ import {
   type PlayerGameModel,
   type MlbStatKey,
   type InningAtBatEvent,
+  getValue,
 } from '@statmuse/core/gamera'
 import { atom, map, computed } from 'nanostores'
 import { last } from 'lodash-es'
@@ -116,6 +117,102 @@ export const matchup = computed(
     }
   },
 )
+
+export const battingSummary = computed([stats, players], ($stats, $players) => {
+  const awaySplits = $stats.away?.splits
+  const homeSplits = $stats.home?.splits
+
+  const awayDoubles = awaySplits
+    ?.filter((s) => getValue(s.stats ?? {}, 'Batting-Doubles') > 0)
+    .map((s) => {
+      const player = $players[s.playerId]
+      return {
+        name: player?.entity.shortDisplay ?? player?.entity.display,
+        total: getValue(s.stats ?? {}, 'Batting-Doubles'),
+      }
+    })
+  const homeDoubles = homeSplits
+    ?.filter((s) => getValue(s.stats ?? {}, 'Batting-Doubles') > 0)
+    .map((s) => {
+      const player = $players[s.playerId]
+      return {
+        name: player?.entity.shortDisplay ?? player?.entity.display,
+        total: getValue(s.stats ?? {}, 'Batting-Doubles'),
+      }
+    })
+
+  const awayTriples = awaySplits
+    ?.filter((s) => getValue(s.stats ?? {}, 'Batting-Triples') > 0)
+    .map((s) => {
+      const player = $players[s.playerId]
+      return {
+        name: player?.entity.shortDisplay ?? player?.entity.display,
+        total: getValue(s.stats ?? {}, 'Batting-Triples'),
+      }
+    })
+  const homeTriples = homeSplits
+    ?.filter((s) => getValue(s.stats ?? {}, 'Batting-Triples') > 0)
+    .map((s) => {
+      const player = $players[s.playerId]
+      return {
+        name: player?.entity.shortDisplay ?? player?.entity.display,
+        total: getValue(s.stats ?? {}, 'Batting-Triples'),
+      }
+    })
+
+  const awayHomeRuns = awaySplits
+    ?.filter((s) => getValue(s.stats ?? {}, 'Batting-HomeRuns') > 0)
+    .map((s) => {
+      const player = $players[s.playerId]
+      return {
+        name: player?.entity.shortDisplay ?? player?.entity.display,
+        total: getValue(s.stats ?? {}, 'Batting-HomeRuns'),
+      }
+    })
+  const homeHomeRuns = homeSplits
+    ?.filter((s) => getValue(s.stats ?? {}, 'Batting-HomeRuns') > 0)
+    .map((s) => {
+      const player = $players[s.playerId]
+      return {
+        name: player?.entity.shortDisplay ?? player?.entity.display,
+        total: getValue(s.stats ?? {}, 'Batting-HomeRuns'),
+      }
+    })
+
+  const awayRbis = awaySplits
+    ?.filter((s) => getValue(s.stats ?? {}, 'Batting-RunsBattedIn') > 0)
+    .map((s) => {
+      const player = $players[s.playerId]
+      return {
+        name: player?.entity.shortDisplay ?? player?.entity.display,
+        total: getValue(s.stats ?? {}, 'Batting-RunsBattedIn'),
+      }
+    })
+  const homeRbis = homeSplits
+    ?.filter((s) => getValue(s.stats ?? {}, 'Batting-RunsBattedIn') > 0)
+    .map((s) => {
+      const player = $players[s.playerId]
+      return {
+        name: player?.entity.shortDisplay ?? player?.entity.display,
+        total: getValue(s.stats ?? {}, 'Batting-RunsBattedIn'),
+      }
+    })
+
+  return {
+    away: {
+      doubles: awayDoubles?.length > 0 ? awayDoubles : undefined,
+      triples: awayTriples?.length > 0 ? awayTriples : undefined,
+      homeRuns: awayHomeRuns?.length > 0 ? awayHomeRuns : undefined,
+      rbis: awayRbis?.length > 0 ? awayRbis : undefined,
+    },
+    home: {
+      doubles: homeDoubles?.length > 0 ? homeDoubles : undefined,
+      triples: homeTriples?.length > 0 ? homeTriples : undefined,
+      homeRuns: homeHomeRuns?.length > 0 ? homeHomeRuns : undefined,
+      rbis: homeRbis?.length > 0 ? homeRbis : undefined,
+    },
+  }
+})
 
 export const selectedId = atom<
   { id: number; alignment: 'home' | 'away' } | undefined
