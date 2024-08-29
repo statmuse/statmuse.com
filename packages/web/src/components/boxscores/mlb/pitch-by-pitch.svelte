@@ -6,7 +6,7 @@
     formatPitchOutcome,
     type PitchAtBatEvent,
   } from '@statmuse/core/gamera'
-  import AbStrikezone from './ab-strikezone.svelte'
+  import Strikezone from './strikezone.svelte'
   import { afterUpdate } from 'svelte'
 
   export let batterHandedness: string | undefined = undefined
@@ -37,7 +37,7 @@
 
 <Panel class={`!p-0 ${$$restProps.class}`}>
   <div class="flex flex-col items-center">
-    <AbStrikezone
+    <Strikezone
       class="h-96"
       {batterHandedness}
       pitches={pitchesWithNumber.filter((p) => p.pitchData)}

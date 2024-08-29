@@ -10,7 +10,7 @@ import {
 import { find } from 'lodash-es'
 import PostgameHero from './postgame-hero.astro'
 import GameInfo from './game-info.astro'
-import Schedule from './schedule.astro'
+import CurrentSeries from './current-series.astro'
 import Standings from './standings.astro'
 import Linescore from './linescore.svelte'
 import PlayByPlay from './play-by-play.svelte'
@@ -209,7 +209,7 @@ Caching.swr(Astro)
           </div>
           <div class="@xl/boxscore:hidden flex flex-col gap-3">
             <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
-            <Schedule
+            <CurrentSeries
               domain="MLB"
               teams={teams ?? []}
               currentGameId={Number.parseInt(gameId)}
@@ -231,7 +231,7 @@ Caching.swr(Astro)
         </div>
         <div class="flex-1 hidden @xl/boxscore:flex flex-col gap-3 overflow-hidden">
           <Linescore {awayTeam} {homeTeam} final />
-          <Schedule
+          <CurrentSeries
             domain="MLB"
             teams={teams ?? []}
             currentGameId={Number.parseInt(gameId)}
@@ -261,7 +261,7 @@ Caching.swr(Astro)
         class="space-y-3 gap-3 justify-center @xl/boxscore:columns-2"
       >
         <Linescore {awayTeam} {homeTeam} final />
-        <Schedule
+        <CurrentSeries
           domain="MLB"
           teams={teams ?? []}
           currentGameId={Number.parseInt(gameId)}

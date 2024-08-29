@@ -4,8 +4,8 @@
   import Icon from '@components/icon.svelte'
   import Image from '@components/image.svelte'
   import Panel from '@components/panel.svelte'
-  import BaseballField from './baseball-field.svelte'
-  import StrikeZone from './strike-zone.svelte'
+  import BaseballFieldIcon from './baseball-field-icon.svelte'
+  import StrikezoneIcon from './strikezone-icon.svelte'
   import {
     colorPlayOutcome,
     formatPlayOutcome,
@@ -256,10 +256,10 @@
                       </div>
                       <p class="text-lg">{count.outs} outs</p>
                       {#if pitches}
-                        <StrikeZone class="w-6" {pitches} />
+                        <StrikezoneIcon class="w-6" {pitches} />
                       {/if}
                       {#if hitData?.coordinates}
-                        <BaseballField
+                        <BaseballFieldIcon
                           class="w-6 fill-current"
                           coordinate={hitData.coordinates}
                         />

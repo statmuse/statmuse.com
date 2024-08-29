@@ -16,7 +16,7 @@ import LivegameHero from './livegame-hero.astro'
 import BattingStats from './batting-stats.svelte'
 import PitchingStats from './pitching-stats.svelte'
 import Standings from './standings.astro'
-import Schedule from './schedule.astro'
+import CurrentSeries from './current-series.astro'
 import GameState from './game-state.svelte'
 import Realtime from '@components/realtime.svelte'
 import * as store from './stores'
@@ -163,7 +163,7 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
         </div>
       </div>
       <div class="@xl/boxscore:hidden flex flex-col gap-3">
-        <Schedule
+        <CurrentSeries
           domain="MLB"
           teams={teams ?? []}
           currentGameId={Number.parseInt(gameId)}
@@ -230,7 +230,7 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
           <PitchingStats client:load teamKey="home" />
         </div>
       </div>
-      <Schedule
+      <CurrentSeries
         domain="MLB"
         teams={teams ?? []}
         currentGameId={Number.parseInt(gameId)}

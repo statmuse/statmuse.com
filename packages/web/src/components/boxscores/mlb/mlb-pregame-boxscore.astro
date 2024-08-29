@@ -5,7 +5,7 @@ import GameInfo from './game-info.astro'
 import ProbablePitchers from './probable-pitchers.astro'
 import TeamStats from './team-stats.astro'
 import Injuries from './injuries.astro'
-import Schedule from './schedule.astro'
+import CurrentSeries from './current-series.astro'
 import Standings from './standings.astro'
 import LastGames from './last-games.astro'
 import {
@@ -280,7 +280,7 @@ const meta = {
       {awayTeamSeasonStats}
     />
     <Injuries {awayTeamInjuries} {homeTeamInjuries} />
-    <Schedule
+    <CurrentSeries
       domain="MLB"
       teams={teams ?? []}
       currentGameId={Number.parseInt(gameId)}
