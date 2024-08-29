@@ -213,6 +213,62 @@ export const battingSummary = computed([stats, players], ($stats, $players) => {
     },
   }
 })
+export const baseRunningSummary = computed(
+  [stats, players],
+  ($stats, $players) => {
+    const awaySplits = $stats.away?.splits
+    const homeSplits = $stats.home?.splits
+
+    const awaySB = awaySplits
+      ?.filter((s) => getValue(s.stats ?? {}, 'Batting-StolenBases') > 0)
+      .map((s) => {
+        const player = $players[s.playerId]
+        return {
+          name: player?.entity.shortDisplay ?? player?.entity.display,
+          total: getValue(s.stats ?? {}, 'Batting-StolenBases'),
+        }
+      })
+    const homeSB = homeSplits
+      ?.filter((s) => getValue(s.stats ?? {}, 'Batting-StolenBases') > 0)
+      .map((s) => {
+        const player = $players[s.playerId]
+        return {
+          name: player?.entity.shortDisplay ?? player?.entity.display,
+          total: getValue(s.stats ?? {}, 'Batting-StolenBases'),
+        }
+      })
+
+    const awayCS = awaySplits
+      ?.filter((s) => getValue(s.stats ?? {}, 'Batting-CaughtStealing') > 0)
+      .map((s) => {
+        const player = $players[s.playerId]
+        return {
+          name: player?.entity.shortDisplay ?? player?.entity.display,
+          total: getValue(s.stats ?? {}, 'Batting-CaughtStealing'),
+        }
+      })
+    const homeCS = homeSplits
+      ?.filter((s) => getValue(s.stats ?? {}, 'Batting-CaughtStealing') > 0)
+      .map((s) => {
+        const player = $players[s.playerId]
+        return {
+          name: player?.entity.shortDisplay ?? player?.entity.display,
+          total: getValue(s.stats ?? {}, 'Batting-CaughtStealing'),
+        }
+      })
+
+    return {
+      away: {
+        stolenBases: awaySB?.length > 0 ? awaySB : undefined,
+        caughtStealing: awayCS?.length > 0 ? awayCS : undefined,
+      },
+      home: {
+        stolenBases: homeSB?.length > 0 ? homeSB : undefined,
+        caughtStealing: homeCS?.length > 0 ? homeCS : undefined,
+      },
+    }
+  },
+)
 
 export const selectedId = atom<
   { id: number; alignment: 'home' | 'away' } | undefined

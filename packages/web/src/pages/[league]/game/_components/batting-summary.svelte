@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { battingSummary } from './stores'
+  import { battingSummary, baseRunningSummary } from './stores'
 
   export let teamKey: 'away' | 'home'
 
   $: batting = $battingSummary[teamKey]
+  $: baserunning = $baseRunningSummary[teamKey]
 </script>
 
 <div class="text-sm">
@@ -44,6 +45,29 @@
         RBI:
         <span class="text-gray-5">
           {batting.rbis
+            ?.map((p) => `${p.name}${p?.total > 1 ? ` ${p.total}` : ''}`)
+            .join(', ')}
+        </span>
+      </p>
+    {/if}
+  {/if}
+  {#if baserunning.stolenBases || baserunning.caughtStealing}
+    <p class="my-1.5">Baserunning</p>
+    {#if baserunning.stolenBases}
+      <p>
+        SB:
+        <span class="text-gray-5">
+          {baserunning.stolenBases
+            ?.map((p) => `${p.name}${p?.total > 1 ? ` ${p.total}` : ''}`)
+            .join(', ')}
+        </span>
+      </p>
+    {/if}
+    {#if baserunning.caughtStealing}
+      <p>
+        CS:
+        <span class="text-gray-5">
+          {baserunning.caughtStealing
             ?.map((p) => `${p.name}${p?.total > 1 ? ` ${p.total}` : ''}`)
             .join(', ')}
         </span>
