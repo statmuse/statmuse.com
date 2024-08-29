@@ -293,18 +293,18 @@ export interface Summary {
 
 export interface ContentReference {
   domainTags?: {
-    domain: GameraDomain
+    domain?: GameraDomain
   }
   questionTags?: {
-    actorType: string
-    teamIds: number[]
-    playerIds: number[]
-    seasonYears: number[]
+    actorType?: string
+    teamIds?: number[]
+    playerIds?: number[]
+    seasonYears?: number[]
   }
   answerTags?: {
-    teamIds: number[]
-    playerIds: number[]
-    seasonYears: number[]
+    teamIds?: number[]
+    playerIds?: number[]
+    seasonYears?: number[]
   }
 }
 
