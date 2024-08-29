@@ -21,6 +21,7 @@ import {
   getTeamSeasonOverview,
 } from '@lib/gamera/teams'
 import dayjs from 'dayjs'
+import { getGameData } from './games'
 
 type AskOptions = {
   league?: string
@@ -261,18 +262,27 @@ export async function handleResponse(
     }
   }
 
-  const mlbBoxscore = response.visual.detail?.find(
-    (d) => d.type === 'mlbHistoricalBoxScore',
-  )
-  if (mlbBoxscore) {
-    redirectUrl = getUrlForEntity({
-      type: 'game',
-      domain: response.visual.domain ?? 'MLB',
-      id: mlbBoxscore.gameId.toString(),
-      display: `${dayjs(mlbBoxscore.gameDate).format('M/D/YYYY')} ${
-        mlbBoxscore.awayTeam.abbrev
-      } @ ${mlbBoxscore.homeTeam.abbrev}`,
-    })
+  const boxscore = response.visual.detail?.find((d) => d.type === 'boxScore')
+  if (boxscore && response.visual.domain === 'MLB') {
+    const game = await getGameData({ context, gameId: boxscore.gameId })
+
+    if (game) {
+      const awayTeam = game.teams?.find(
+        (t) => t.teamId === game.awayTeam.teamId,
+      )
+      const homeTeam = game.teams?.find(
+        (t) => t.teamId === game.homeTeam.teamId,
+      )
+
+      redirectUrl = getUrlForEntity({
+        type: 'game',
+        domain: response.visual.domain ?? 'MLB',
+        id: boxscore.gameId.toString(),
+        display: `${dayjs(game.gameDate).format(
+          'M/D/YYYY',
+        )} ${awayTeam?.abbreviation} @ ${homeTeam?.abbreviation}`,
+      })
+    }
   }
 
   return {
