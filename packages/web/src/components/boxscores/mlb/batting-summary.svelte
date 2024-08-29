@@ -7,7 +7,7 @@
   $: baserunning = $baseRunningSummary[teamKey]
 </script>
 
-<div class="text-sm">
+<div class="text-sm px-3">
   {#if batting.doubles || batting.triples || batting.homeRuns || batting.rbis}
     <p class="mb-1.5">Batting</p>
     {#if batting.doubles}
