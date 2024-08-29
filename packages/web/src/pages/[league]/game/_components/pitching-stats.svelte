@@ -1,14 +1,16 @@
 <script lang="ts">
   import Grid from '@components/grid.svelte'
   import { orderBy, filter, find } from 'lodash-es'
-  import { players, stats, lineup as lineUp } from './stores'
+  import { players, stats, lineup as lineUp, matchup } from './stores'
   import { getValue } from '@statmuse/core/gamera'
 
   export let teamKey: 'away' | 'home'
+  export let final = false
 
   $: lineup = $lineUp[teamKey]
   $: splits = $stats[teamKey]?.splits
   $: totals = $stats[teamKey]?.stats
+  $: higlightPlayer = final ? undefined : $matchup[teamKey].player
 
   const columns = [
     {
@@ -164,4 +166,7 @@
   disableSort
   data={{ columns, rows, aggregations }}
   stickyColumns={['NAME']}
+  highlight={higlightPlayer
+    ? { [higlightPlayer.usedName ?? '']: higlightPlayer.colors }
+    : undefined}
 />
