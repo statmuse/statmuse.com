@@ -70,10 +70,16 @@ const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
 
 store.init({ gameData, playByPlay })
 
+const meta = {
+  title: `${awayTeam?.nickname} ${awayTeamModel.score}-${homeTeamModel.score} ${homeTeam?.nickname} (Live)`,
+  description: `(LIVE) ${awayTeam?.name} vs. ${homeTeam?.name}. Live pitch, play-by-play, stats and more.`,
+}
+
 Caching.swr(Astro, { maxage: 15, revalidate: 25 })
 ---
 
 <Layout
+  {meta}
   analytics={{
     page_domain: 'mlb',
     page_type: 'game',

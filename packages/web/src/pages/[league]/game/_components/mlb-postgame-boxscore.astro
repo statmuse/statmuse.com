@@ -1,10 +1,11 @@
 ---
 import { getGames, getPlayByPlay, getStandingsRaw } from '@lib/gamera'
 import Layout from './layout.astro'
-import type {
-  ContentReference,
-  MlbGameDataResponse,
-  MlbStatKey,
+import {
+  tokensToText,
+  type ContentReference,
+  type MlbGameDataResponse,
+  type MlbStatKey,
 } from '@statmuse/core/gamera'
 import { find } from 'lodash-es'
 import PostgameHero from './postgame-hero.astro'
@@ -22,6 +23,7 @@ import PlayerModal from './player-modal.svelte'
 import GameState from './game-state.svelte'
 import BattingSummary from './batting-summary.svelte'
 import AtBatModal from './at-bat-modal.svelte'
+import dayjs from 'dayjs'
 
 interface Props {
   gameData: MlbGameDataResponse<MlbStatKey>
@@ -61,10 +63,18 @@ store.init({ gameData, playByPlay })
 const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
 const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
 
+const meta = {
+  title: `${awayTeam?.nickname} ${awayTeamModel.score}-${homeTeamModel.score} ${
+    homeTeam?.nickname
+  } (${dayjs(gameTimestamp ?? gameDate).format('MMM D, YYYY')})`,
+  description: tokensToText(gameData.summary),
+}
+
 Caching.swr(Astro)
 ---
 
 <Layout
+  {meta}
   analytics={{
     page_domain: 'mlb',
     page_type: 'game',

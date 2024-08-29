@@ -26,9 +26,13 @@ import PregameHero from './pregame-hero.astro'
 import Odds from './odds.astro'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import { Caching } from '@lib/caching'
 
 dayjs.extend(duration)
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 interface Props {
   gameData: MlbGameDataResponse<MlbStatKey>
@@ -166,9 +170,23 @@ if (timeUntilStart.asHours() > 24) {
 } else {
   Caching.swr(Astro, { maxage: 300, revalidate: 600 })
 }
+
+const meta = {
+  title: `${awayTeam?.nickname} vs. ${homeTeam?.nickname} (${dayjs(
+    gameTimestamp,
+  ).format('MMM D, YYYY')})`,
+  description: `${awayTeam?.name} vs. ${homeTeam?.name} on ${dayjs(
+    gameTimestamp,
+  ).format('dddd, MMM D YYYY')} at ${dayjs(gameTimestamp)
+    .tz('America/New_York')
+    .format(
+      'h:mma',
+    )} ET. Preview probable pitchers, lineups stats vs starting pitchers, injury status and more.`,
+}
 ---
 
 <Layout
+  {meta}
   analytics={{
     page_domain: 'mlb',
     page_type: 'game',
