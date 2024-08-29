@@ -2,7 +2,7 @@
   import { iot, mqtt } from 'aws-iot-device-sdk-v2'
   import { v4 as uuidv4 } from 'uuid'
   import { onMount } from 'svelte'
-  import * as store from '../pages/[league]/game/_components/stores'
+  import * as store from '@components/boxscores/mlb/stores'
 
   export let gameId: string
 
