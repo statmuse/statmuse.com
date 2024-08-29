@@ -1,13 +1,14 @@
 ---
 import Base from '@layouts/base.astro'
 // import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import type { ComponentProps } from 'astro/types'
 import type {
   GameraTeamReference,
   GameStatus,
   MlbPlayByPlayResponse,
 } from '@statmuse/core/gamera'
 
-interface Props {
+interface Props extends ComponentProps<typeof Base> {
   awayTeam?: GameraTeamReference
   homeTeam?: GameraTeamReference
   status: GameStatus
@@ -21,6 +22,7 @@ const {
   status,
   playByPlay,
   useContainerQuery = false,
+  ...rest
 } = Astro.props
 
 const toggleLinks = [
@@ -53,7 +55,7 @@ const toggleLinks = [
 ]
 ---
 
-<Base class="group @container/boxscore">
+<Base {...rest} class="group @container/boxscore">
   <slot name="hero" />
   <div class:list={['group']}>
     <div

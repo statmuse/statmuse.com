@@ -16,6 +16,7 @@ import {
   getMlbPlayerSplits,
 } from '@lib/gamera'
 import type {
+  ContentReference,
   GameraPlayerReference,
   MlbGameDataResponse,
   MlbStatKey,
@@ -167,7 +168,21 @@ if (timeUntilStart.asHours() > 24) {
 }
 ---
 
-<Layout status={gameData.gameStatus} {awayTeam} {homeTeam}>
+<Layout
+  analytics={{
+    page_domain: 'mlb',
+    page_type: 'game',
+    is_search: true,
+    contentReference: {
+      answerTags: {
+        teamIds: [awayTeam?.teamId, homeTeam?.teamId].filter((x) => !!x),
+      },
+    } as ContentReference,
+  }}
+  status={gameData.gameStatus}
+  {awayTeam}
+  {homeTeam}
+>
   <PregameHero
     slot="hero"
     network={networkName}
