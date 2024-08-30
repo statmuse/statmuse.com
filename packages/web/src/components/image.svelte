@@ -32,14 +32,15 @@
   }
 
   const multiplier = 3
-  const imageUrl = getImageUrl(source)
-  const encoded = imageUrl ? encodeURIComponent(imageUrl) : undefined
-  const src = imageUrl
+
+  $: imageUrl = getImageUrl(source)
+  $: encoded = imageUrl ? encodeURIComponent(imageUrl) : undefined
+  $: src = imageUrl
     ? `/_image?href=${encoded}&f=webp&w=${width * multiplier}&h=${
         height * multiplier
       }`
     : undefined
-  const srcset = `/_image?href=${encoded}&w=${width * multiplier}&h=${
+  $: srcset = `/_image?href=${encoded}&w=${width * multiplier}&h=${
     height * multiplier
   }&f=webp ${width * multiplier}px`
   const sizes = `${width * multiplier}px`

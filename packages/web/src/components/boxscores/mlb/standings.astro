@@ -1,0 +1,94 @@
+---
+import Panel from '@components/panel.astro'
+import type { StandingsResponse } from '@statmuse/core/gamera'
+import { find, filter } from 'lodash-es'
+import { mapStandingsToGrid } from '@lib/gamera'
+import type { StandingsMlb } from '@statmuse/core/gamera'
+import Grid from '@components/grid.svelte'
+import { hexToHSL } from '@lib/color'
+import ToggleContainer from './toggle-container.svelte'
+
+interface Props {
+  standings?: StandingsResponse
+  awayTeamId: number
+  homeTeamId: number
+}
+
+const { standings, awayTeamId, homeTeamId } = Astro.props
+
+const teams = standings?.teams as StandingsMlb[]
+
+const awayTeam = find(teams, { team: { teamId: awayTeamId } })
+const awayDivision = awayTeam?.division.name
+const awayTeamStandings = filter(teams, { division: { name: awayDivision } })
+
+const awayTeamGrid = mapStandingsToGrid({
+  domain: 'MLB',
+  teams: awayTeamStandings,
+})
+
+const homeTeam = find(teams, { team: { teamId: homeTeamId } })
+const homeDivision = homeTeam?.division.name
+const homeTeamStandings = filter(teams, { division: { name: homeDivision } })
+
+const homeTeamGrid = mapStandingsToGrid({
+  domain: 'MLB',
+  teams: homeTeamStandings,
+})
+---
+
+<Panel class="!p-0 group">
+  {
+    awayDivision !== homeDivision ? (
+      <ToggleContainer
+        client:load
+        toggleOptions={[
+          {
+            label: awayTeam?.team.abbreviation,
+            value: awayTeam?.team.abbreviation,
+            title: `${awayDivision} Standings`,
+          },
+          {
+            label: homeTeam?.team.abbreviation,
+            value: homeTeam?.team.abbreviation,
+            title: `${homeDivision} Standings`,
+          },
+        ]}
+      >
+        <Grid
+          slot="first"
+          class="!border-none"
+          data={awayTeamGrid}
+          highlight={{
+            [awayTeam?.team.nickname ?? '']: awayTeam?.team.colors,
+          }}
+          textInherit
+          disableSort
+        />
+        <Grid
+          slot="second"
+          class="!border-none"
+          data={homeTeamGrid}
+          highlight={{
+            [homeTeam?.team.nickname ?? '']: homeTeam?.team.colors,
+          }}
+          textInherit
+          disableSort
+        />
+      </ToggleContainer>
+    ) : (
+      <ToggleContainer client:load title={`${awayDivision} Standings`}>
+        <Grid
+          class="!border-none"
+          data={awayTeamGrid}
+          highlight={{
+            [awayTeam?.team.nickname ?? '']: awayTeam?.team.colors,
+            [homeTeam?.team.nickname ?? '']: homeTeam?.team.colors,
+          }}
+          textInherit
+          disableSort
+        />
+      </ToggleContainer>
+    )
+  }
+</Panel>

@@ -1,14 +1,19 @@
 ---
-import { getPlayerCards, getTeamCards } from '@lib/related-content'
+import {
+  getGames,
+  getPlayerCards,
+  getSchedule,
+  getStandings,
+  getTeamCards,
+} from '@lib/gamera'
 import type {
   PlayerCardResponse,
-  ScoresResponse,
-  ScheduleResponse,
+  GameraGamesResponse,
+  GameraScheduleResponse,
   TeamCardResponse,
   GameraDomain,
+  CompletedGame,
 } from '@statmuse/core/gamera'
-import { getStandings } from '@lib/standings'
-import { getGames, getSchedule } from '@lib/game'
 import PlayerLeaders from '@components/cards/player-leaders.astro'
 import FantasyLeaders from './cards/fantasy-leaders.astro'
 import TeamRankings from './cards/team-rankings.astro'
@@ -27,8 +32,8 @@ const { domain, teamId } = Astro.props
 let playerCardsResp: PlayerCardResponse | undefined
 let teamCardsResp: TeamCardResponse | undefined
 let standingsResp: Awaited<ReturnType<typeof getStandings>> | undefined
-let scheduleResp: ScheduleResponse | undefined
-let scoresResp: ScoresResponse | undefined
+let scheduleResp: GameraScheduleResponse | undefined
+let scoresResp: GameraGamesResponse<CompletedGame> | undefined
 let laligaPlayerCardsResp: PlayerCardResponse | undefined
 let laligaTeamCardsResp: TeamCardResponse | undefined
 
@@ -49,7 +54,7 @@ if (allowedDomains.includes(domain)) {
       }),
       getStandings({ context: Astro, domain }),
       getSchedule({ context: Astro, domain }),
-      getGames({ context: Astro, domain }),
+      getGames<'completed'>({ context: Astro, domain }),
     ])
 }
 

@@ -1,0 +1,329 @@
+---
+import Layout from './layout.astro'
+import { find } from 'lodash-es'
+import GameInfo from './game-info.astro'
+import ProbablePitchers from './probable-pitchers.astro'
+import TeamStats from './team-stats.astro'
+import Injuries from './injuries.astro'
+import CurrentSeries from './current-series.astro'
+import Standings from './standings.astro'
+import LastGames from './last-games.astro'
+import {
+  getGames,
+  getInjuries,
+  getStandingsRaw,
+  getTeamSeasonStats,
+  getMlbPlayerSplits,
+} from '@lib/gamera'
+import type {
+  ContentReference,
+  GameraPlayerReference,
+  MlbGameDataResponse,
+  MlbStatKey,
+} from '@statmuse/core/gamera'
+import TeamPlayerStats from './team-player-stats.astro'
+import PregameHero from './pregame-hero.astro'
+import Odds from './odds.astro'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import { Caching } from '@lib/caching'
+
+dayjs.extend(duration)
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
+interface Props {
+  gameData: MlbGameDataResponse<MlbStatKey>
+  gameId: string
+}
+
+const { gameData, gameId } = Astro.props
+
+const {
+  season,
+  seasonYearDisplay: seasonYear,
+  teams,
+  awayTeam: awayTeamModel,
+  homeTeam: homeTeamModel,
+  weather,
+  officials,
+  venue,
+  players,
+  networkName,
+  gameTimestamp,
+  odds,
+  timeOfDay,
+} = gameData
+
+const [
+  homeTeamGames,
+  awayTeamGames,
+  homeTeamSeasonStats,
+  awayTeamSeasonStats,
+  injuries,
+  standings,
+  awayTeamPlayerStats,
+  homeTeamPlayerStats,
+  awayTeamBattingAgainstPitcher,
+  homeTeamBattingAgainstPitcher,
+] = await Promise.all([
+  getGames({
+    context: Astro,
+    domain: 'mlb',
+    teamId: homeTeamModel.teamId,
+    seasonYear,
+    gameState: ['completed', 'inProgress', 'scheduled'],
+  }),
+  getGames({
+    context: Astro,
+    domain: 'mlb',
+    teamId: awayTeamModel.teamId,
+    seasonYear,
+    gameState: ['completed', 'inProgress', 'scheduled'],
+  }),
+  getTeamSeasonStats({
+    context: Astro,
+    domain: 'MLB',
+    team: `team-${homeTeamModel.teamId}`,
+    year: gameData.seasonYearDisplay ?? '',
+    params: {},
+  }),
+  getTeamSeasonStats({
+    context: Astro,
+    domain: 'MLB',
+    team: `team-${awayTeamModel.teamId}`,
+    year: gameData.seasonYearDisplay ?? '',
+    params: {},
+  }),
+  getInjuries({ context: Astro }),
+  getStandingsRaw({ context: Astro, domain: 'mlb' }),
+  getMlbPlayerSplits({
+    context: Astro,
+    seasonYear,
+    seasontype: season.type,
+    teamId: awayTeamModel.teamId,
+    currentTeamId: awayTeamModel.teamId,
+    statKeySet: ['battingStandard', 'pitchingStandard'],
+    split: 'player',
+  }),
+  getMlbPlayerSplits({
+    context: Astro,
+    seasonYear,
+    seasontype: season.type,
+    teamId: homeTeamModel.teamId,
+    currentTeamId: homeTeamModel.teamId,
+    statKeySet: ['battingStandard', 'pitchingStandard'],
+    split: 'player',
+  }),
+  homeTeamModel.probablePitcher?.playerId
+    ? getMlbPlayerSplits({
+        context: Astro,
+        seasontype: 'regularSeason',
+        teamId: awayTeamModel.teamId,
+        currentTeamId: awayTeamModel.teamId,
+        statKeySet: 'battingStandard',
+        split: 'player',
+        opponentPitcherId: homeTeamModel.probablePitcher?.playerId,
+      })
+    : undefined,
+  awayTeamModel.probablePitcher?.playerId
+    ? getMlbPlayerSplits({
+        context: Astro,
+        seasontype: 'regularSeason',
+        teamId: homeTeamModel.teamId,
+        currentTeamId: homeTeamModel.teamId,
+        statKeySet: 'battingStandard',
+        split: 'player',
+        opponentPitcherId: awayTeamModel.probablePitcher?.playerId,
+      })
+    : undefined,
+])
+
+const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
+const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
+
+const awayTeamInjuries = find(
+  injuries?.teams,
+  (t) => t.team.teamId === awayTeamModel.teamId,
+)
+const homeTeamInjuries = find(
+  injuries?.teams,
+  (t) => t.team.teamId === homeTeamModel.teamId,
+)
+
+const playerMap = players?.reduce<
+  Record<number, GameraPlayerReference | undefined>
+>((acc, p) => ({ ...acc, [p.id]: p }), {})
+
+const awayPitcher = playerMap?.[awayTeamModel.probablePitcher?.playerId ?? 0]
+const homePitcher = playerMap?.[homeTeamModel.probablePitcher?.playerId ?? 0]
+
+const timeUntilStart = dayjs.duration(
+  dayjs(gameData.gameTimestamp).diff(dayjs()),
+)
+
+if (timeUntilStart.asHours() > 24) {
+  Caching.swr(Astro, { maxage: 3600, revalidate: 82800 })
+} else if (timeUntilStart.asHours() > 6) {
+  Caching.swr(Astro, { maxage: 900, revalidate: 21600 })
+} else {
+  Caching.swr(Astro, { maxage: 300, revalidate: 600 })
+}
+
+const meta = {
+  title: `${awayTeam?.nickname} vs. ${homeTeam?.nickname} (${dayjs(
+    gameTimestamp,
+  ).format('MMM D, YYYY')})`,
+  description: `${awayTeam?.name} vs. ${homeTeam?.name} on ${dayjs(
+    gameTimestamp,
+  ).format('dddd, MMM D YYYY')} at ${dayjs(gameTimestamp)
+    .tz('America/New_York')
+    .format(
+      'h:mma',
+    )} ET. Preview probable pitchers, lineups stats vs starting pitchers, injury status and more.`,
+}
+---
+
+<Layout
+  {meta}
+  analytics={{
+    page_domain: 'mlb',
+    page_type: 'game',
+    is_search: true,
+    contentReference: {
+      answerTags: {
+        teamIds: [awayTeam?.teamId, homeTeam?.teamId].filter((x) => !!x),
+      },
+    } as ContentReference,
+  }}
+  status={gameData.gameStatus}
+  {awayTeam}
+  {homeTeam}
+>
+  <PregameHero
+    slot="hero"
+    network={networkName}
+    timestamp={gameTimestamp}
+    {awayTeam}
+    awayTeamGames={awayTeamGames?.games.filter((g) => g.type === 'completed')}
+    {homeTeam}
+    homeTeamGames={homeTeamGames?.games.filter((g) => g.type === 'completed')}
+  >
+    <nav
+      class:list={{
+        'hidden md:flex gap-3 justify-center': true,
+        'overflow-x-scroll no-scrollbar': true,
+        'pt-3': true,
+      }}
+    >
+      <div class="group/nav flex flex-col gap-1.5 overflow-clip">
+        <label
+          class:list={{
+            'cursor-pointer whitespace-nowrap': true,
+          }}
+          for="preview"
+          set:html="Preview"
+        />
+        <div
+          class:list={{
+            'w-full h-5 -mb-2.5 bg-current rounded-2xl': true,
+            'hidden group-has-[#preview:checked]:block group-hover/nav:block': true,
+          }}
+        >
+        </div>
+      </div>
+      <div class="group/nav flex flex-col gap-1.5 overflow-clip">
+        <label
+          class:list={{
+            'cursor-pointer whitespace-nowrap': true,
+          }}
+          for="away"
+          set:html={awayTeam?.nickname}
+        />
+        <div
+          class:list={{
+            'w-full h-5 -mb-2.5 bg-current rounded-2xl': true,
+            'hidden group-has-[#away:checked]:block group-hover/nav:block': true,
+          }}
+        >
+        </div>
+      </div>
+      <div class="group/nav flex flex-col gap-1.5 overflow-clip">
+        <label
+          class:list={{
+            'cursor-pointer whitespace-nowrap': true,
+          }}
+          for="home"
+          set:html={homeTeam?.nickname}
+        />
+        <div
+          class:list={{
+            'w-full h-5 -mb-2.5 bg-current rounded-2xl': true,
+            'hidden group-has-[#home:checked]:block group-hover/nav:block': true,
+          }}
+        >
+        </div>
+      </div>
+    </nav>
+  </PregameHero>
+  <div
+    slot="preview"
+    class="space-y-3 gap-3 justify-center @xl/boxscore:columns-2"
+  >
+    <Odds {odds} {awayTeam} {homeTeam} />
+    <ProbablePitchers {awayTeamModel} {homeTeamModel} {playerMap} />
+    <TeamStats
+      {awayTeam}
+      {homeTeam}
+      {homeTeamSeasonStats}
+      {awayTeamSeasonStats}
+    />
+    <Injuries {awayTeamInjuries} {homeTeamInjuries} />
+    <CurrentSeries
+      domain="MLB"
+      teams={teams ?? []}
+      currentGameId={Number.parseInt(gameId)}
+      games={awayTeamGames?.games}
+    />
+    <Standings
+      {standings}
+      awayTeamId={awayTeamModel.teamId}
+      homeTeamId={homeTeamModel.teamId}
+    />
+    <LastGames
+      domain="MLB"
+      teams={teams ?? []}
+      {awayTeamModel}
+      {homeTeamModel}
+      awayTeamCompletedGames={awayTeamGames && {
+        ...awayTeamGames,
+        games: awayTeamGames.games.filter((g) => g.type === 'completed'),
+      }}
+      homeTeamCompletedGames={homeTeamGames && {
+        ...homeTeamGames,
+        games: homeTeamGames.games.filter((g) => g.type === 'completed'),
+      }}
+    />
+    <GameInfo {venue} {weather} {officials} {gameTimestamp} {timeOfDay} />
+  </div>
+
+  <TeamPlayerStats
+    slot="away"
+    team="away"
+    opposingPitcher={homePitcher}
+    teamModel={awayTeamModel}
+    teamPlayerStats={awayTeamPlayerStats}
+    teamPlayerStatsAgainstPitcher={awayTeamBattingAgainstPitcher}
+  />
+
+  <TeamPlayerStats
+    slot="home"
+    team="home"
+    opposingPitcher={awayPitcher}
+    teamModel={homeTeamModel}
+    teamPlayerStats={homeTeamPlayerStats}
+    teamPlayerStatsAgainstPitcher={homeTeamBattingAgainstPitcher}
+  />
+</Layout>

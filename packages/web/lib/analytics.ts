@@ -5,10 +5,7 @@ import type {
   Subject as GameraSubject,
   TokenizationScore,
 } from '@statmuse/core/gamera'
-import type {
-  ContentReference as KanedamaContentReference,
-  Subject as KanedamaSubject,
-} from '@statmuse/core/kanedama'
+import type { ContentReference as KanedamaContentReference } from '@statmuse/core/kanedama'
 import { isBotTest } from '@lib/useragent'
 
 export type AnalyticsPageviewProperties = {
@@ -46,7 +43,7 @@ export type AnalyticsPageviewProperties = {
   disposition?: Disposition
   tokenizationScore?: TokenizationScore
   contentReference?: GameraContentReference | KanedamaContentReference
-  subject?: GameraSubject | KanedamaSubject
+  subject?: Pick<GameraSubject, 'imageUrl' | 'colors'>
 }
 
 declare global {
@@ -160,7 +157,7 @@ const getReferenceIds = (
   }
 }
 
-const getSubjectItems = (subject?: GameraSubject | KanedamaSubject) => {
+const getSubjectItems = (subject?: GameraSubject) => {
   if (!subject) return {}
   return {
     subject_image: subject.imageUrl,

@@ -1,0 +1,59 @@
+---
+import PlayerCardComponent from '@components/cards/player.astro'
+import { getPlayerCards } from '@lib/gamera'
+
+interface Props {
+  teamId: string | number
+}
+
+const { teamId } = Astro.props
+
+const cardsResponse = await getPlayerCards({
+  context: Astro,
+  domain: 'mlb',
+  teamId,
+})
+
+const battingLeaders = cardsResponse?.cards
+  .filter(
+    (c) =>
+      [
+        'mostBattingHomeRuns',
+        'mostBattingRunsBattedIn',
+        'bestBattingAverage',
+      ].includes(c.stat) && c.players.length > 0,
+  )
+  .map((c) => ({ ...c.players[0], stat: c.stat }))
+
+const pitchingLeaders = cardsResponse?.cards
+  .filter(
+    (c) =>
+      [
+        'mostPitchingWins',
+        'mostPitchingStrikeouts',
+        'bestPitchingEarnedRunAverage',
+      ].includes(c.stat) && c.players.length > 0,
+  )
+  .map((c) => ({ ...c.players[0], stat: c.stat }))
+---
+
+{
+  cardsResponse && (
+    <div class="grid grid-cols-[repeat(auto-fit,_minmax(325px,_1fr))] gap-3">
+      {battingLeaders && (
+        <PlayerCardComponent
+          title="Team Batting Leaders"
+          entity={cardsResponse.team?.entity}
+          card={{ stat: '', type: '', players: battingLeaders }}
+        />
+      )}
+      {pitchingLeaders && (
+        <PlayerCardComponent
+          title="Team Pitching Leaders"
+          entity={cardsResponse.team?.entity}
+          card={{ stat: '', type: '', players: pitchingLeaders }}
+        />
+      )}
+    </div>
+  )
+}

@@ -16,10 +16,11 @@
   "dependencies": {
     "@astrojs/node": "8.2.3",
     "@astrojs/react": "3.0.10",
-    "@astrojs/svelte": "5.2.0",
+    "@astrojs/svelte": "5.7.0",
     "@astrojs/tailwind": "5.1.0",
     "@aws-sdk/client-bedrock-runtime": "^3.525.0",
     "@aws-sdk/client-dynamodb": "^3.499.0",
+    "@aws-sdk/client-iot-data-plane": "^3.624.0",
     "@aws-sdk/client-secrets-manager": "^3.354.0",
     "@aws-sdk/client-sesv2": "^3.391.0",
     "@aws-sdk/client-translate": "^3.529.1",
@@ -33,6 +34,7 @@
     "astro": "4.4.8",
     "astro-robots-txt": "^1.0.0",
     "astro-sst": "2.40.7",
+    "aws-iot-device-sdk-v2": "^1.20.0",
     "classnames": "^2.3.2",
     "d3": "^7.8.5",
     "d3-array": "^3.2.4",
@@ -47,7 +49,7 @@
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "marked": "^5.1.0",
-    "nanostores": "^0.9.3",
+    "nanostores": "^0.11.2",
     "numeral": "^2.0.6",
     "pg": "^8.11.0",
     "prop-types": "^15.8.1",
@@ -57,7 +59,7 @@
     "sharp": "^0.32.3",
     "solid-js": "^1.7.6",
     "stripe": "^12.13.0",
-    "svelte": "^4.2.0",
+    "svelte": "^4.2.18",
     "svelte-portal": "^2.2.1",
     "tailwindcss": "^3.4.1",
     "uuid": "^9.0.1"
@@ -78,14 +80,11 @@
     "@types/pg": "^8.10.2",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
-    "@typescript-eslint/eslint-plugin": "^5.59.11",
-    "@typescript-eslint/parser": "^5.59.11",
-    "eslint": "^8.43.0",
-    "eslint-plugin-astro": "^0.27.1",
+    "@types/uuid": "^10.0.0",
     "prettier-plugin-astro": "^0.12.0",
-    "prettier-plugin-svelte": "^3.0.3",
-    "svelte-check": "^3.5.2",
+    "prettier-plugin-svelte": "^3.2.6",
+    "svelte-check": "^3.8.5",
     "svelte-sequential-preprocessor": "^2.0.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.5.4"
   }
 }

@@ -5,7 +5,7 @@
   import type { ComponentProps } from 'svelte'
   import { orderBy, some } from 'lodash-es'
   import { session } from '@lib/stores'
-  import type { GameraGrid } from '@statmuse/core/gamera'
+  import type { GameraGrid, Colors } from '@statmuse/core/gamera/index'
   import EntityLink from '@components/entity-link.svelte'
   import Image from '@components/image.svelte'
   import Panel from '@components/panel.svelte'
@@ -28,7 +28,7 @@
   export let padding = 'px-2'
   export let head = true
   export let rankingRange = [10, 20]
-  export let highlight: string | undefined = undefined
+  export let highlight: Record<string, Colors> | undefined = undefined
   export let title: PanelProps['title'] = undefined
   export let href: PanelProps['href'] = undefined
   export let entity: PanelProps['entity'] = undefined
@@ -36,6 +36,10 @@
   export { classes as class }
   export let textInherit = false
   export let rankColumn = false
+  export let disableSort = false
+  export let onRowClick:
+    | ((row: GameraGrid['rows'][number]) => (e: Event) => void)
+    | undefined = undefined
 
   const styles = Object.assign(
     { ALIGNMENT: 'w-2', SEASON: 'text-center' },
@@ -46,7 +50,86 @@
   let sortOrder: 'asc' | 'desc'
   let expand = false
 
-  let grids = (Array.isArray(data) ? data : [data]).map((grid) => {
+  const textAlign = (col: Column) => {
+    switch (col.type) {
+      case 'date':
+      case 'number':
+      case 'time':
+        return 'text-right'
+      case 'string':
+        return 'text-left'
+      default:
+        return 'text-center'
+    }
+  }
+
+  const applyStyles = (col: Column) => {
+    const style =
+      styles[col.rowItemKey] ||
+      styles[col.rowItemKey?.toUpperCase()] ||
+      styles[col.rowItemKey?.toLowerCase()] ||
+      styles['default']
+    if (/text-(left|center|right)/.test(style)) {
+      return style
+    }
+    return `${textAlign(col)} ${style ?? ''}`
+  }
+
+  const imgClass = ({ imageUrl = '', entity }: RowItem) => {
+    if (entity?.type.includes('player')) {
+      return [
+        'w-10',
+        'h-8',
+        'max-w-none',
+        'object-cover',
+        'object-bottom',
+        'bg-gray-8 dark:bg-gray-3',
+        '-mb-[1px]',
+        'mt-2',
+        // 'mx-auto',
+        'overflow-visible',
+        imageUrl.includes('silhouette') ? 'opacity-50' : '',
+      ]
+        .filter((x) => x)
+        .join(' ')
+    }
+    return 'w-4 h-4 max-w-none object-contain'
+  }
+
+  const onClickSort = (key: string) => () => {
+    sortOrder = sortKey === key && sortOrder === 'desc' ? 'asc' : 'desc'
+    sortKey = key
+  }
+
+  const onClickExpand = (e: Event) => {
+    e.preventDefault()
+    expand = !expand
+  }
+
+  const dateRegex = /(Sun|Mon|Tue|Wed|Thu|Fri|Sat)\s(\d+\/\d+)/
+  const scoreRegex = /(W|L|T|D)\s(\d+-\d+)/
+
+  const [topRank, bottomRank] = rankingRange
+  const rankingColor = (row: RowItem, display: string) => {
+    if (row?.display.includes('Rank') && display.match(/(\d+).*/)) {
+      const [, num] = Array.from(display.match(/(\d+).*/) || [])
+      if (Number(num) <= topRank) return 'text-[#009444]'
+      if (Number(num) >= bottomRank) return 'text-[#BF1D2D]'
+    }
+    return ''
+  }
+
+  const shouldApplyRowHighlight = (
+    row: RowItem,
+    highlight?: Record<string, Colors>,
+  ) => {
+    if (highlight && highlight[row.value as string]) {
+      return highlight[row.value as string]
+    }
+    return undefined
+  }
+
+  $: grids = (Array.isArray(data) ? data : [data]).map((grid) => {
     let columns = grid.columns.flatMap((col) => {
       const isSticky = stickyColumns.includes(col.rowItemKey)
       const hasImage = some(grid.rows, `${col.rowItemKey}.imageUrl`)
@@ -100,82 +183,6 @@
     }
   })
 
-  const textAlign = (col: Column) => {
-    switch (col.type) {
-      case 'date':
-      case 'number':
-      case 'time':
-        return 'text-right'
-      case 'string':
-        return 'text-left'
-      default:
-        return 'text-center'
-    }
-  }
-
-  const applyStyles = (col: Column) => {
-    const style =
-      styles[col.rowItemKey] ||
-      styles[col.rowItemKey?.toUpperCase()] ||
-      styles[col.rowItemKey?.toLowerCase()] ||
-      styles['default']
-    if (/text\-(left|center|right)/.test(style)) {
-      return style
-    }
-    return `${textAlign(col)} ${style ?? ''}`
-  }
-
-  const imgClass = ({ imageUrl = '', entity }: RowItem) => {
-    if (entity?.type.includes('player')) {
-      return [
-        'w-10',
-        'h-8',
-        'max-w-none',
-        'object-cover',
-        'object-bottom',
-        'bg-gray-8 dark:bg-gray-3',
-        '-mb-[1px]',
-        'mt-2',
-        'mx-auto',
-        'overflow-visible',
-        imageUrl.includes('silhouette') ? 'opacity-50' : '',
-      ]
-        .filter((x) => x)
-        .join(' ')
-    }
-    return 'w-4 h-4 max-w-none object-contain'
-  }
-
-  const onClickSort = (key: string) => () => {
-    sortOrder = sortKey === key && sortOrder === 'desc' ? 'asc' : 'desc'
-    sortKey = key
-  }
-
-  const onClickExpand = (e: Event) => {
-    e.preventDefault()
-    expand = !expand
-  }
-
-  const dateRegex = /(Sun|Mon|Tue|Wed|Thu|Fri|Sat)\s(\d+\/\d+)/
-  const scoreRegex = /(W|L|T|D)\s(\d+-\d+)/
-
-  const [topRank, bottomRank] = rankingRange
-  const rankingColor = (row: RowItem, display: string) => {
-    if (row?.display.includes('Rank') && display.match(/(\d+).*/)) {
-      const [, num] = Array.from(display.match(/(\d+).*/) || [])
-      if (Number(num) <= topRank) return 'text-[#009444]'
-      if (Number(num) >= bottomRank) return 'text-[#BF1D2D]'
-    }
-    return ''
-  }
-
-  const shouldApplyRowHighlight = (row: RowItem, highlight?: string) => {
-    if (highlight) {
-      return highlight === row.value
-    }
-    return false
-  }
-
   $: {
     if (limitRows) {
       if (
@@ -209,15 +216,10 @@
   }
 </script>
 
-<Panel
-  {title}
-  {href}
-  {entity}
-  class={`${classes} pb-0 ${!fullWidth ? 'md:w-fit' : ''}`}
->
-  <div class="relative overflow-x-auto -mx-3">
+<Panel {title} {href} {entity} class={`${classes} pb-0`}>
+  <div class="@container/table relative overflow-x-auto -mx-3">
     <table class="whitespace-nowrap" class:w-full={fullWidth}>
-      {#each grids as grid}
+      {#each grids as grid (grid)}
         {@const { columns, rows, aggregations } = grid}
         {#if head}
           <thead>
@@ -227,9 +229,8 @@
               {/if}
               {#each columns as col, index (col.rowItemKey)}
                 <th
-                  class={`cursor-pointer font-normal p-1.5 text-gray-5 ${applyStyles(
-                    col,
-                  )}`}
+                  class={`font-normal p-1.5 text-gray-5 ${applyStyles(col)}`}
+                  class:cursor-pointer={!disableSort}
                   class:pl-8={col.hasImage}
                   class:pl-3={index === 0 && !rankColumn}
                   class:pr-3={index === columns.length - 1}
@@ -241,7 +242,9 @@
                     (!sortKey && col.tags?.isReferencedInQuestion)}
                   class:text-team-secondary={sortKey === col.rowItemKey ||
                     (!sortKey && col.tags?.isReferencedInQuestion)}
-                  on:click={onClickSort(col.rowItemKey)}
+                  on:click={!disableSort
+                    ? onClickSort(col.rowItemKey)
+                    : undefined}
                 >
                   {col.title}
                 </th>
@@ -251,17 +254,21 @@
         {/if}
         <tbody class="divide-y divide-gray-6 dark:divide-gray-4 leading-[22px]">
           {#each rows as row, rowIndex (row)}
-            {@const rowHighlight = shouldApplyRowHighlight(
+            {@const highlightColors = shouldApplyRowHighlight(
               row[columns[0].rowItemKey],
               highlight,
             )}
-            <tr>
+            <tr
+              class:hover:cursor-pointer={!!onRowClick}
+              on:click={onRowClick ? onRowClick(row) : undefined}
+            >
               {#if rankColumn}
                 <td class="w-2 pl-3 text-gray-5">{rowIndex + 1}</td>
               {/if}
-              {#each columns as col, index (row[col.rowItemKey])}
+              {#each columns as col, index (col.rowItemKey)}
                 {#if row[col.rowItemKey]}
-                  {@const { display, imageUrl, entity } = row[col.rowItemKey]}
+                  {@const { display, imageUrl, entity, meta } =
+                    row[col.rowItemKey]}
                   <td
                     class={`${applyStyles(col)} ${padding} ${
                       imageUrl ? 'w-2' : ''
@@ -272,23 +279,20 @@
                     class:sticky={col.sticky}
                     class:left-0={col.sticky}
                     class:bg-gray-8={col.sticky &&
-                      !(sortKey === col.rowItemKey) &&
-                      !rowHighlight}
+                      !(sortKey === col.rowItemKey)}
                     class:dark:bg-gray-3={col.sticky &&
-                      !(sortKey === col.rowItemKey) &&
-                      !rowHighlight}
-                    class:bg-team-primary={rowHighlight ||
-                      sortKey === col.rowItemKey ||
+                      !(sortKey === col.rowItemKey)}
+                    class:bg-team-primary={sortKey === col.rowItemKey ||
                       (!sortKey && col.tags?.isReferencedInQuestion)}
-                    class:text-team-secondary={rowHighlight ||
-                      sortKey === col.rowItemKey ||
+                    class:text-team-secondary={sortKey === col.rowItemKey ||
                       (!sortKey && col.tags?.isReferencedInQuestion)}
                     class:text-gray-5={col.rowItemKey === 'RANK'}
+                    style:background={highlightColors?.backgroundColor}
+                    style:color={highlightColors?.foregroundColor}
                   >
                     <EntityLink
                       {entity}
-                      class={rowHighlight ||
-                      sortKey === col.rowItemKey ||
+                      class={sortKey === col.rowItemKey ||
                       (!sortKey && col.tags?.isReferencedInQuestion)
                         ? 'text-team-secondary'
                         : textInherit
@@ -339,22 +343,44 @@
                           <div>{score}</div>
                         </div>
                       {:else}
-                        <span
-                          class:hidden={entity?.shortDisplay &&
-                            col.rowItemKey === 'NAME'}
-                          class:md:block={entity?.shortDisplay &&
-                            col.rowItemKey === 'NAME'}
+                        <div
+                          class={meta?.position || meta?.injured
+                            ? 'flex items-center'
+                            : ''}
+                          class:pl-2={meta?.padding}
                         >
-                          {display}
-                        </span>
-                        {#if entity?.shortDisplay && col.rowItemKey === 'NAME'}
-                          <span class="md:hidden">{entity?.shortDisplay}</span>
-                        {/if}
+                          <span
+                            class={(entity?.shortDisplay ||
+                              meta?.shortDisplay) &&
+                            (col.rowItemKey === 'NAME' ||
+                              col.rowItemKey === 'PLAYER')
+                              ? '@lg/table:block hidden'
+                              : ''}
+                          >
+                            {display}
+                          </span>
+                          {#if (entity?.shortDisplay || meta?.shortDisplay) && (col.rowItemKey === 'NAME' || col.rowItemKey === 'PLAYER')}
+                            <span class="@lg/table:hidden">
+                              {entity?.shortDisplay ?? meta?.shortDisplay}
+                            </span>
+                          {/if}
+                          {#if meta?.position}
+                            <span class="text-gray-5 text-sm ml-1">
+                              {meta.position}
+                            </span>
+                          {/if}
+                          {#if meta?.injured}
+                            <Icon name="injury" class="w-4 ml-1" />
+                          {/if}
+                        </div>
                       {/if}
                     </EntityLink>
                   </td>
                 {:else}
-                  <td></td>
+                  <td
+                    style:background={highlightColors?.backgroundColor}
+                    style:color={highlightColors?.foregroundColor}
+                  ></td>
                 {/if}
               {/each}
             </tr>
@@ -365,7 +391,7 @@
                 {#if rankColumn}
                   <td class="w-2 pl-3 text-gray-5"></td>
                 {/if}
-                {#each columns as col, index (row[col.rowItemKey])}
+                {#each columns as col, index (col.rowItemKey)}
                   {#if row[col.rowItemKey]}
                     {@const { display } = row[col.rowItemKey]}
                     <td

@@ -1,0 +1,169 @@
+---
+import Timestamp from '@components/timestamp.svelte'
+import Share from '@components/share/index.svelte'
+import { hexToHSL } from '@lib/color'
+import Image from '@components/image.astro'
+import type { CompletedGame, GameraTeamReference } from '@statmuse/core/gamera'
+import Panel from '@components/panel.astro'
+import EntityLink from '@components/entity-link.astro'
+
+interface Props {
+  network: string
+  timestamp: string
+  awayTeam?: GameraTeamReference
+  homeTeam?: GameraTeamReference
+  awayTeamGames?: CompletedGame[]
+  homeTeamGames?: CompletedGame[]
+}
+
+const getTeamFromGameResult = (teamId?: number, game?: CompletedGame) => {
+  return game?.awayTeam.teamId === teamId
+    ? game?.awayTeam
+    : game?.homeTeam.teamId === teamId
+    ? game?.homeTeam
+    : undefined
+}
+
+const { network, timestamp, awayTeam, homeTeam, awayTeamGames, homeTeamGames } =
+  Astro.props
+
+const awayTeamRecord = getTeamFromGameResult(
+  awayTeam?.teamId,
+  awayTeamGames?.[0],
+)?.record
+const homeTeamRecord = getTeamFromGameResult(
+  homeTeam?.teamId,
+  homeTeamGames?.[0],
+)?.record
+
+const awayTeamRecordLast5 = awayTeamGames?.slice(0, 5).reduce(
+  (record, game) => {
+    if (!record) return record
+
+    const team = getTeamFromGameResult(awayTeam?.teamId, game)
+
+    if (team?.gameResult === 'win') {
+      return {
+        ...record,
+        wins: record.wins + 1,
+      }
+    }
+
+    if (team?.gameResult === 'loss') {
+      return {
+        ...record,
+        losses: record.losses + 1,
+      }
+    }
+  },
+  awayTeam?.teamId ? { wins: 0, losses: 0 } : undefined,
+)
+
+const homeTeamRecordLast5 = homeTeamGames?.slice(0, 5).reduce(
+  (record, game) => {
+    if (!record) return record
+
+    const team = getTeamFromGameResult(homeTeam?.teamId, game)
+
+    if (team?.gameResult === 'win') {
+      return {
+        ...record,
+        wins: record.wins + 1,
+      }
+    }
+
+    if (team?.gameResult === 'loss') {
+      return {
+        ...record,
+        losses: record.losses + 1,
+      }
+    }
+  },
+  homeTeam?.teamId ? { wins: 0, losses: 0 } : undefined,
+)
+---
+
+<Panel
+  class:list={{
+    '!p-0 -mx-3 md:mx-0': true,
+    'rounded-none border-0 md:rounded-2xl': true,
+    '!bg-gray-7 dark:!bg-gray-2 md:!bg-gray-8 md:dark:!bg-gray-3': true,
+  }}
+>
+  <div class="h-[45px] flex px-3 py-2 justify-center relative">
+    <p class="text-gray-5 absolute left-3 top-2">{network}</p>
+    <Timestamp client:only="svelte" {timestamp} />
+    <div class="absolute right-3 top-2">
+      <Share />
+    </div>
+  </div>
+  <div class="flex h-20 overflow-clip">
+    <div
+      class="flex-1 flex relative justify-end text-right"
+      style={{
+        background: hexToHSL(awayTeam?.colors?.backgroundColor ?? '', 0.2),
+        color: awayTeam?.colors?.foregroundColor,
+      }}
+    >
+      <Image
+        src={awayTeam?.logoImageUrl ?? ''}
+        alt={awayTeam?.name ?? ''}
+        width={140}
+        height={140}
+        class="absolute left-0 h-full object-contain -translate-x-1/3"
+      />
+      <div class="px-3 flex flex-col justify-center">
+        <EntityLink
+          entity={awayTeam?.entity}
+          class="text-lg font-semibold text-inherit"
+        >
+          {awayTeam?.nickname}
+        </EntityLink>
+        {
+          awayTeamRecord && (
+            <p class="text-[16px]">{`${awayTeamRecord.wins}-${awayTeamRecord.losses}`}</p>
+          )
+        }
+        {
+          awayTeamRecordLast5 && (
+            <p class="text-[16px]">{`${awayTeamRecordLast5.wins}-${awayTeamRecordLast5.losses} in Last 5`}</p>
+          )
+        }
+      </div>
+    </div>
+    <div
+      class="flex-1 flex relative"
+      style={{
+        background: hexToHSL(homeTeam?.colors?.backgroundColor ?? '', 0.2),
+        color: homeTeam?.colors?.foregroundColor,
+      }}
+    >
+      <Image
+        src={homeTeam?.logoImageUrl ?? ''}
+        alt={homeTeam?.name ?? ''}
+        width={140}
+        height={140}
+        class="absolute right-0 h-full object-contain translate-x-1/3"
+      />
+      <div class="px-3 flex flex-col justify-center">
+        <EntityLink
+          entity={homeTeam?.entity}
+          class="text-lg font-semibold text-inherit"
+        >
+          {homeTeam?.nickname}
+        </EntityLink>
+        {
+          homeTeamRecord && (
+            <p class="text-[16px]">{`${homeTeamRecord.wins}-${homeTeamRecord.losses}`}</p>
+          )
+        }
+        {
+          homeTeamRecordLast5 && (
+            <p class="text-[16px]">{`${homeTeamRecordLast5.wins}-${homeTeamRecordLast5.losses} in Last 5`}</p>
+          )
+        }
+      </div>
+    </div>
+  </div>
+  <slot />
+</Panel>

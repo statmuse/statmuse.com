@@ -2,7 +2,7 @@
 import Layout from '@layouts/base.astro'
 import Explore from '@components/explore.astro'
 import {
-  type GameraBoxScore,
+  type GameraAnswerBoxScore,
   tokensToHtml,
   tokensToText,
   type GameraDomain,
@@ -18,7 +18,7 @@ import type { ComponentProps } from 'astro/types'
 import Hero from '@components/hero.astro'
 
 interface Props extends ComponentProps<typeof Layout> {
-  data: GameraBoxScore
+  data: GameraAnswerBoxScore
   domain: GameraDomain
 }
 

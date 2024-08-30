@@ -6,7 +6,7 @@ import {
   getTeamSeasonBio,
   getTeamSeasonGameResults,
   getTeamSeasonSchedule,
-} from '@lib/team'
+} from '@lib/gamera'
 import { getLeagueKeywords } from '@lib/meta'
 import { Caching } from '@lib/caching'
 import { NOT_FOUND_404 } from '@lib/response'
@@ -62,6 +62,7 @@ Caching.swr(Astro)
         client:load
         title={schedule.grid.name}
         data={schedule.grid}
+        class="md:w-[390px]"
         fullWidth={false}
         columnStyles={{
           DATE: 'text-left w-20',
@@ -77,6 +78,7 @@ Caching.swr(Astro)
           client:load
           title={data.name}
           {data}
+          class="md:w-[390px]"
           fullWidth={false}
           columnStyles={{
             DATE: 'text-left w-20',

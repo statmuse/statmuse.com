@@ -45,6 +45,7 @@ export default {
         green: '#32c771',
         orange: '#efa125',
         red: '#dd3636',
+        blue: '#0086ff',
       },
       fontFamily: {
         sans: ['calibre', 'calibre-fallback', ...defaultTheme.fontFamily.sans],

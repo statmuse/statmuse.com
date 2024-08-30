@@ -1,0 +1,111 @@
+---
+import Grid from '@components/grid.svelte'
+import {
+  type GameraTeamReference,
+  type GameraGamesResponse,
+  type ScheduledGame,
+  type InProgressGame,
+  isScheduledGame,
+} from '@statmuse/core/gamera'
+import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
+interface Props {
+  response: GameraGamesResponse<ScheduledGame | InProgressGame>
+  teamId: number
+  domain: string
+}
+
+const { response, teamId, domain } = Astro.props
+
+const games = response.games.reverse().slice(0, 5)
+
+const teams = response.teams.reduce<
+  Record<number, GameraTeamReference | undefined>
+>((acc, t) => ({ ...acc, [t.teamId]: t }), {})
+
+const columns = [
+  { rowItemKey: 'DATE', title: 'DATE', type: 'date' },
+  { rowItemKey: 'ALIGNMENT', title: '', type: 'string' },
+  { rowItemKey: 'OPP', title: 'OPP', type: 'string' },
+  { rowItemKey: 'TIME', title: 'TIME (ET)', type: 'time' },
+  { rowItemKey: 'NETWORK', title: 'NETWORK', type: 'string' },
+]
+
+const rows = games.map((game) => {
+  let oppId: number
+  let isHome: boolean
+  if (isScheduledGame(game)) {
+    oppId = game.awayTeamId === teamId ? game.homeTeamId : game.awayTeamId
+    isHome = game.homeTeamId === teamId
+  } else {
+    oppId =
+      game.awayTeam.teamId === teamId
+        ? game.homeTeam.teamId
+        : game.awayTeam.teamId
+    isHome = game.homeTeam.teamId === teamId
+  }
+
+  const oppTeam = teams[oppId]
+  const team = teams[teamId]
+
+  return {
+    DATE: {
+      value: game.gameDate,
+      display: dayjs(game.gameDate).format('ddd M/D'),
+      entity: {
+        display: `${dayjs(game.gameDate).format('M/D/YYYY')} ${
+          isHome ? oppTeam?.abbreviation : team?.abbreviation
+        } @ ${isHome ? team?.abbreviation : oppTeam?.abbreviation}`,
+        domain,
+        type: 'game',
+        id: game.id.toString(),
+      },
+    },
+    ALIGNMENT: {
+      value: isHome ? 'vs' : '@',
+      display: isHome ? 'vs' : '@',
+    },
+    OPP: {
+      value: oppTeam?.abbreviation,
+      display: oppTeam?.abbreviation ?? '',
+      imageUrl: oppTeam?.logoImageUrl,
+      entity: oppTeam?.entity,
+    },
+    TIME: {
+      value: game.type === 'scheduled' ? game.gameTimestamp : 0,
+      display:
+        game.type === 'scheduled'
+          ? dayjs(game.gameTimestamp).tz('America/New_York').format('h:mm A')
+          : 'Live',
+      entity: {
+        display: `${dayjs(game.gameDate).format('M/D/YYYY')} ${
+          isHome ? oppTeam?.abbreviation : team?.abbreviation
+        } @ ${isHome ? team?.abbreviation : oppTeam?.abbreviation}`,
+        domain,
+        type: 'game',
+        id: game.id.toString(),
+      },
+    },
+    NETWORK: {
+      value: game.type === 'scheduled' ? '' : '',
+      display: game.type === 'scheduled' ? '' : '',
+    },
+  }
+})
+---
+
+<Grid
+  title="Upcoming Games"
+  data={{ columns, rows }}
+  class="md:w-[390px]"
+  fullWidth={false}
+  columnStyles={{
+    DATE: 'text-left w-20',
+    default: 'w-20',
+  }}
+/>

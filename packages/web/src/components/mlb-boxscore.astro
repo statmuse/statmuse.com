@@ -1,7 +1,7 @@
 ---
 import { groupBy } from 'remeda'
 import {
-  type GameraMlbBoxScore,
+  type GameraAnswerMlbBoxScore,
   type MlbHistoricalBoxScore,
   getUrlForEntity,
 } from '@statmuse/core/gamera'
@@ -13,7 +13,7 @@ import Image from '@components/image.astro'
 import Panel from './panel.astro'
 
 interface Props extends HTMLAttributes<'div'> {
-  data?: GameraMlbBoxScore
+  data?: GameraAnswerMlbBoxScore
   detail?: MlbHistoricalBoxScore
 }
 

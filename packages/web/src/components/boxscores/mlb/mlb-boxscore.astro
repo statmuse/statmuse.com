@@ -1,0 +1,34 @@
+---
+import MlbPregameBoxscore from './mlb-pregame-boxscore.astro'
+import MlbLivegameBoxscore from './mlb-livegame-boxscore.astro'
+import MlbPostgameBoxscore from './mlb-postgame-boxscore.astro'
+import { parseGameId } from '@lib/parse'
+import { NOT_FOUND_404 } from '@lib/response'
+import { getGameData } from '@lib/gamera'
+
+const { league, game } = Astro.params
+const gameId = parseGameId(game ?? '')
+
+const gameData = await getGameData({
+  context: Astro,
+  gameId,
+  statKeySet: ['battingStandard', 'pitchingStandard'],
+  statKey: 'Fielding-Errors',
+})
+
+if (!gameData) return NOT_FOUND_404
+---
+
+{
+  (function () {
+    switch (gameData.gameStatus) {
+      case 'scheduled':
+      case 'delayed':
+        return <MlbPregameBoxscore {gameData} {gameId} />
+      case 'inProgress':
+        return <MlbLivegameBoxscore {gameData} {gameId} />
+      case 'completed':
+        return <MlbPostgameBoxscore {gameData} {gameId} />
+    }
+  })()
+}

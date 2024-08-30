@@ -1,0 +1,107 @@
+---
+import Timestamp from '@components/timestamp.svelte'
+import Share from '@components/share/index.svelte'
+import { hexToHSL } from '@lib/color'
+import Image from '@components/image.astro'
+import type { GameraTeamReference } from '@statmuse/core/gamera'
+import Score from './score.svelte'
+import Panel from '@components/panel.astro'
+import EntityLink from '@components/entity-link.astro'
+
+interface Props {
+  awayTeam?: GameraTeamReference
+  homeTeam?: GameraTeamReference
+  awayRecord?: { wins: number; losses: number }
+  homeRecord?: { wins: number; losses: number }
+  timestamp: string
+  inningNumber?: number
+}
+
+const { awayTeam, homeTeam, awayRecord, homeRecord, timestamp, inningNumber } =
+  Astro.props
+---
+
+<Panel
+  class:list={{
+    '!p-0 -mx-3 md:mx-0': true,
+    'rounded-none border-0 md:rounded-2xl': true,
+    '!bg-gray-7 dark:!bg-gray-2 md:!bg-gray-8 md:dark:!bg-gray-3': true,
+  }}
+>
+  <div class="h-[45px] flex px-3 py-2 justify-center relative">
+    <p class="text-gray-5 absolute left-3 top-2">
+      <Timestamp client:only="svelte" {timestamp} dateOnly />
+    </p>
+    <p>Final{inningNumber && inningNumber !== 9 ? `/${inningNumber}` : ''}</p>
+    <div class="absolute right-3 top-2">
+      <Share />
+    </div>
+  </div>
+  <div class="flex h-20 overflow-clip">
+    <div
+      class="flex-1 flex relative justify-end text-right"
+      style={{
+        background: hexToHSL(awayTeam?.colors?.backgroundColor ?? '', 0.2),
+        color: awayTeam?.colors?.foregroundColor,
+      }}
+    >
+      <Image
+        src={awayTeam?.logoImageUrl ?? ''}
+        alt={awayTeam?.name ?? ''}
+        width={140}
+        height={140}
+        class="absolute left-0 h-full object-contain -translate-x-1/3"
+      />
+      <div class="px-3 flex flex-col justify-center leading-none">
+        <EntityLink
+          entity={awayTeam?.entity}
+          class="text-inherit hover:no-underline group/link"
+        >
+          <h4 class="font-semibold text-lg">
+            {
+              awayRecord && (
+                <span class="text-sm font-normal">{`${awayRecord.wins}-${awayRecord.losses}`}</span>
+              )
+            }{' '}<span class="group-hover/link:underline">
+              {awayTeam?.abbreviation}
+            </span>
+          </h4>
+        </EntityLink>
+        <p class="text-2xl"><Score teamKey="away" /></p>
+      </div>
+    </div>
+    <div
+      class="flex-1 flex relative"
+      style={{
+        background: hexToHSL(homeTeam?.colors?.backgroundColor ?? '', 0.2),
+        color: homeTeam?.colors?.foregroundColor,
+      }}
+    >
+      <Image
+        src={homeTeam?.logoImageUrl ?? ''}
+        alt={homeTeam?.name ?? ''}
+        width={140}
+        height={140}
+        class="absolute right-0 h-full object-contain translate-x-1/3"
+      />
+      <div class="px-3 flex flex-col justify-center leading-none">
+        <EntityLink
+          entity={homeTeam?.entity}
+          class="text-inherit hover:no-underline group/link"
+        >
+          <h4 class="font-semibold text-lg">
+            <span class="group-hover/link:underline">
+              {homeTeam?.abbreviation}
+            </span>{' '}{
+              homeRecord && (
+                <span class="text-sm font-normal">{`${homeRecord.wins}-${homeRecord.losses}`}</span>
+              )
+            }
+          </h4>
+        </EntityLink>
+        <p class="text-2xl"><Score teamKey="home" /></p>
+      </div>
+    </div>
+  </div>
+  <slot />
+</Panel>

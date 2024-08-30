@@ -4,9 +4,13 @@ import PlayerCardComponent from '@components/cards/player.astro'
 import ScheduleCard from '@components/cards/schedule-card.astro'
 import EntityLink from '@components/entity-link.astro'
 import Panel from '@components/panel.astro'
-import { getGame, getSchedule } from '@lib/game'
-import { getPlayerCards } from '@lib/related-content'
-import { getTeamSeasonBio, getTeamSeasonOverview } from '@lib/team'
+import {
+  getGame,
+  getPlayerCards,
+  getSchedule,
+  getTeamSeasonBio,
+  getTeamSeasonOverview,
+} from '@lib/gamera'
 import type {
   GameraDomain,
   PlayerCard,

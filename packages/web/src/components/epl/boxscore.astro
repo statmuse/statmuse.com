@@ -3,7 +3,7 @@ import { orderBy, groupBy } from 'lodash-es'
 import Image from '@components/image.astro'
 import {
   type EplHistoricalBoxScore,
-  type GameraEplBoxScore,
+  type GameraAnswerEplBoxScore,
   type GameraEntity,
   tokensToText,
 } from '@statmuse/core/gamera'
@@ -17,7 +17,7 @@ import Panel from '@components/panel.astro'
 import Icon from '@components/icon.svelte'
 
 interface Props {
-  data: GameraEplBoxScore
+  data: GameraAnswerEplBoxScore
 }
 
 const { data } = Astro.props

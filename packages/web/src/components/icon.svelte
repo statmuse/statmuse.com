@@ -1,17 +1,40 @@
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <script lang="ts">
   export let name: keyof typeof icons
   export let focusable: string | number | null | undefined = undefined
-  export let fill: string
+  export let fill: string | undefined = undefined
+  export let fillFirstBase: boolean | undefined = undefined
+  export let fillSecondBase: boolean | undefined = undefined
+  export let fillThirdBase: boolean | undefined = undefined
 
   const style =
     'fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;'
-  const icons = {
+
+  $: icons = {
     about: `<g><rect x="13.7" y="5.6" style="${style}" width="4.1" height="18.4"/><path style="${style}" d="M24.3,18.5c0.9-0.3,1.6-0.7,2.2-1.4c-0.8,0.2-1.6,0.4-2.4,0.4c-0.5,0-1,0-1.4,0v-3v-2.4c0-2.7-2.2-4.9-4.9-4.9 v9.6c0.9,0,1.5,0.7,1.5,1.5v2.2c0,1.8,1.5,3.3,3.3,3.3h2.4v-2.4h-0.9c-0.8,0-1.5-0.7-1.5-1.5v-1.3C23.2,18.7,23.8,18.7,24.3,18.5z" /><rect x="9.5" y="9.8" style="${style}" width="4.1" height="14.2"/><path style="${style}" d="M5.4,12.8v5.5l0,0c0,0.5-0.3,1.1-0.8,1.6c-0.5,0.5-1.1,0.8-1.6,0.8c0.7,0.7,1.8,0.7,2.4,0v3.2h4.1V8.7 C7.3,8.7,5.4,10.5,5.4,12.8z"/></g>`,
     'all-home': `<g style="${style}"><path d="m10.1 17.1h9.3v9.3h-9.3z"/><path d="m3 14.8v11.7h23.5v-11.7l-11.7-11.8z"/></g>`,
     back: `<g><line style="${style}" x1="26.5" y1="14.8" x2="3" y2="14.8"/><polyline style="${style}" points="14.7,26.5 3,14.8 14.7,3"/></g>`,
+    'baseball-diamond': `<g style="${style}"><g stroke-width="1"><path fill="${
+      fillThirdBase ? 'currentColor' : ''
+    }" d="m4.4 15.1h6.5v6.5h-6.5z" transform="matrix(.70710678 -.70710678 .70710678 .70710678 -10.7 10.7)"/><path fill="${
+      fillSecondBase ? 'currentColor' : ''
+    }" d="m11.5 7.9h6.5v6.5h-6.5z" transform="matrix(.70710678 -.70710678 .70710678 .70710678 -3.6 13.7)"/><path fill="${
+      fillFirstBase ? 'currentColor' : ''
+    }" d="m18.7 15.1h6.5v6.5h-6.5z" transform="matrix(.70710678 -.70710678 .70710678 .70710678 -6.5 20.9)"/></g></g>`,
+    'baseball-diamond-sm': `<g style="${style}"><path fill="${
+      fillThirdBase ? 'currentColor' : ''
+    }" d="m4.4 15.1h6.5v6.5h-6.5z" transform="matrix(.70710678 -.70710678 .70710678 .70710678 -10.7 10.7)"/><path fill="${
+      fillSecondBase ? 'currentColor' : ''
+    }" d="m11.5 7.9h6.5v6.5h-6.5z" transform="matrix(.70710678 -.70710678 .70710678 .70710678 -3.6 13.7)"/><path fill="${
+      fillFirstBase ? 'currentColor' : ''
+    }" d="m18.7 15.1h6.5v6.5h-6.5z" transform="matrix(.70710678 -.70710678 .70710678 .70710678 -6.5 20.9)"/></g>`,
+    'baseball-field': `<g style="${style}"><path d="m26.5 13.2-11.7 11.7-11.8-11.7s2.6-8.7 11.8-8.7 11.7 8.7 11.7 8.7z" fill="none"/><path d="m12.2 18.8h5.1v5.1h-5.1z" transform="matrix(.70710678 -.70710678 .70710678 .70710678 -10.8 16.7)"/></g>`,
+    'baseball-strike-zone': `<g style="${style}"><path d="m4.9 3h6.5v7.8h-6.5z"/><path d="m11.5 3h6.5v7.8h-6.5z"/><path d="m18 3h6.5v7.8h-6.5z"/><path d="m4.9 10.8h6.5v7.8h-6.5z"/><path d="m11.5 10.8h6.5v7.8h-6.5z"/><path d="m18 10.8h6.5v7.8h-6.5z"/><path d="m4.9 18.7h6.5v7.8h-6.5z"/><path d="m11.5 18.7h6.5v7.8h-6.5z"/><path d="m18 18.7h6.5v7.8h-6.5z"/></g>`,
     beta: `<g style="fill: ${
       fill ? fill : 'currentColor'
     };"><path d="m6.9 13.4c0-.5-.3-.8-1-.8h-1.1v1.5h1.1c.7 0 1-.3 1-.8z"/><path d="m6.1 15.2h-1.3v1.6h1.3c.6 0 1-.3 1-.8s-.3-.8-1-.8z"/><path d="m22.6 7.8h-15.7c-3.8 0-6.9 3.1-6.9 7s3.1 6.9 6.9 6.9h15.6c3.8 0 6.9-3.1 6.9-6.9s-3.1-6.9-6.9-6.9zm-16.4 10.2h-2.7v-6.5h2.5c1.4 0 2.2.6 2.2 1.8s-.4 1.2-.9 1.4c.6.2 1.1.8 1.1 1.5 0 1.2-.8 1.9-2.2 1.9zm7.7-5.3h-3.1v1.4h2.8v1.2h-2.8v1.6h3.1v1.2h-4.4v-6.5h4.4v1.2zm4.1 5.3h-1.4v-5.4h-2.1v-1.2h5.6v1.2h-2.1zm6.6 0-.6-1.6h-2.5l-.6 1.6h-1.4l2.5-6.5h1.4l2.5 6.5h-1.4z"/><path d="m22 15.3h1.6l-.8-2.2z"/></g>`,
+    calendar: `<g style="${style}"><rect x="3" y="3" width="23.5" height="23.5"/><line x1="3" y1="8" x2="26.5" y2="8"/><g><g><line x1="21.7" y1="17.2" x2="21.7" y2="17.2"/><line x1="21.7" y1="12.6" x2="21.7" y2="12.6"/></g><g><line x1="17.1" y1="21.9" x2="17.1" y2="21.9"/><line x1="17.1" y1="17.2" x2="17.1" y2="17.2"/><line x1="17.1" y1="12.6" x2="17.1" y2="12.6"/></g><g><line x1="12.4" y1="21.9" x2="12.4" y2="21.9"/><line x1="12.4" y1="17.2" x2="12.4" y2="17.2"/><line x1="12.4" y1="12.6" x2="12.4" y2="12.6"/></g><g><line x1="7.8" y1="21.9" x2="7.8" y2="21.9"/><line x1="7.8" y1="17.2" x2="7.8" y2="17.2"/><line x1="7.8" y1="12.6" x2="7.8" y2="12.6"/></g></g></g>`,
+    cloud: `<path style="${style}" d="m21.5 12.2c0-3.6-2.8-6.4-6.3-6.4-3.5 0-6.3 2.8-6.3 6.3v1.6h-1c-2.7 0-4.9 2.2-4.9 4.9s2.2 4.9 4.9 4.9h12.8c3.2 0 5.7-2.6 5.7-5.7s-2.2-5.3-4.9-5.7z" />`,
     next: `<polyline style="${style}" points="10.6 6.5 18.9 14.8 10.7 23" />`,
     blog: `<g><rect x="3" y="3" style="${style}" width="23.5" height="23.5"/><g><g><line style="${style}" x1="7.7" y1="8.1" x2="21.8" y2="8.1"/></g><g><line style="${style}" x1="7.7" y1="12.5" x2="17.7" y2="12.5"/></g><g><line style="${style}" x1="7.7" y1="17" x2="21.8" y2="17"/></g><g><line style="${style}" x1="7.7" y1="21.4" x2="17.7" y2="21.4"/></g></g></g>`,
     dropdown: `<path d="m6.5 10.6 8.2 8.3 8.3-8.3" style="${style}" />`,
@@ -26,8 +49,11 @@
     harden: `<g><polyline style="${style}" points="18.7,18.7 18.7,14.8 14.8,14.8 6.9,14.8 6.9,10.8 14.8,10.8 14.8,6.9 6.9,6.9 6.9,3 3,3 3,18.7    6.9,18.7 6.9,22.6 10.8,22.6 10.8,26.5 18.7,26.5  "/><polyline style="${style}" points="14.8,10.8 22.6,10.8 22.6,14.8"/><polyline style="${style}" points="18.7,6.9 22.6,6.9 22.6,3 26.5,3 26.5,18.7 22.6,18.7 22.6,22.6 14.8,22.6 14.8,18.7 10.8,18.7"/></g>`,
     heart: `<path style="${style}" d="M24.8,6.5c-2.3-2.3-5.9-2.3-8.2,0l-1.9,1.9l-1.9-1.9c-2.3-2.3-5.9-2.3-8.2,0c-2.3,2.3-2.3,5.9,0,8.2l10,10l0,0 l0,0l10-10C27.1,12.4,27.1,8.7,24.8,6.5z"/>`,
     history: `<path style="${style}" d="M3,14.7c0,6.5,5.3,11.7,11.7,11.7c6.5,0,11.7-5.3,11.7-11.7S21.2,3,14.8,3c-3.2,0-6.2,1.3-8.3,3.4"/> <line style="${style}" x1="6.4" y1="6.4" x2="6.4" y2="3"/> <line style="${style}" x1="9.9" y1="6.4" x2="6.4" y2="6.4"/> <line style="${style}" x1="14.7" y1="14.7" x2="14.7" y2="6.4"/> <line style="${style}" x1="18.7" y1="18.7" x2="14.7" y2="14.7"/>`,
+    injury:
+      '<circle cx="14.8" cy="14.8" fill="#dd3636" r="11.7"/><g stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="14.8" cy="14.8" fill="none" r="11.7" stroke="#dd3636"/><path d="m13.5 7.8h2.5v13.8h-2.5z" fill="#fff" stroke="#fff"/><path d="m13.5 7.8h2.5v13.8h-2.5z" fill="#fff" stroke="#fff" transform="matrix(0 -1 1 0 0 29.5)"/></g>',
     mlb: `<defs><path id="a" d="m26.5 14.7c0 6.5-5.2 11.7-11.7 11.7s-11.8-5.1-11.8-11.6 5.2-11.8 11.8-11.8 11.7 5.2 11.7 11.7z"/><clipPath id="b"><use xlink:href="#a"/></clipPath></defs><g style="${style}"><g clip-path="url(#b)" stroke-linecap="round"><path d="m8 14.7h4"/><path d="m21.5 14.7h-4"/><path d="m7.5 19.1h4"/><path d="m7.5 10.4h4"/><path d="m22 19.1h-4"/><path d="m22 10.4h-4"/></g><use stroke-linecap="round" xlink:href="#a"/><path d="m22.2 5.6c-1.6 2.2-2.6 5.4-2.6 9.1s1 7 2.6 9.1"/><path d="m7.3 23.9c1.6-2.2 2.6-5.4 2.6-9.1s-1-7-2.6-9.1"/></g>`,
     moon: `<path style="${style}" d="M22.1,19.5C15.4,19.5,10,14.1,10,7.4c0-1.5,0.3-3,0.8-4.4C6.2,4.8,3,9.2,3,14.3C3,21,8.5,26.5,15.2,26.5 c5.2,0,9.6-3.2,11.3-7.8C25.1,19.2,23.7,19.5,22.1,19.5z"/>`,
+    'moon-cloud': `<g style="${style}"><path d="m16.9 17.1c0-2.7-2.1-4.8-4.7-4.8-2.6 0-4.7 2.1-4.7 4.7v1.2h-.8c-2 0-3.7 1.7-3.7 3.7s1.7 3.7 3.7 3.7h9.6c2.4 0 4.3-1.9 4.3-4.3s-1.6-4-3.7-4.3z"/><path d="m18.1 17.4c.6.2 1.2.3 1.9.3 3 0 5.6-1.9 6.7-4.6-.8.3-1.7.5-2.6.5-3.9 0-7.1-3.2-7.1-7.1s.2-1.8.5-2.6c-2.7 1-4.6 3.6-4.6 6.7s0 1.2.2 1.8"/></g>`,
     'money-candles': `<g><rect x="3" y="7.6" style="${style}" width="7.9" height="14.2"/><g><rect x="18.6" y="10.7" style="${style}" width="7.9" height="8.2"/><line style="${style}" x1="22.6" y1="18.8" x2="22.6" y2="22.4"/><line style="${style}" x1="22.6" y1="7.1" x2="22.6" y2="10.7"/></g><line style="${style}" x1="6.9" y1="21.9" x2="6.9" y2="25.4"/><line style="${style}" x1="6.9" y1="4.1" x2="6.9" y2="7.6"/></g>`,
     'money-chart': `<polyline style="${style}" points="3.3,22.4 10.9,12.6 18.6,17.7 26.2,7.1 "/>`,
     money: `<g><g><g><polyline style="${style}" points="3,18.1 10.8,9 18.7,12 26.5,3 18.7,3    "/></g></g><line style="${style}" x1="26.5" y1="26.5" x2="26.5" y2="16.8"/><line style="${style}" x1="18.7" y1="26.5" x2="18.7" y2="19"/><line style="${style}" x1="10.8" y1="26.5" x2="10.8" y2="17"/><line style="${style}" x1="3" y1="26.5" x2="3" y2="23.1"/><line style="${style}" x1="26.5" y1="10.8" x2="26.5" y2="3"/></g>`,
@@ -38,19 +64,23 @@
     profile: `<g style="${style}"><circle cx="14.8" cy="14.8" r="11.7" stroke-linecap="round"/><circle cx="14.8" cy="12.8" r="5.7" stroke-linecap="round"/><path d="m23.2 22.9c-1.9-2.6-5-4.3-8.5-4.3s-6.6 1.7-8.5 4.3"/></g>`,
     shop: `<rect x="3" y="7.4" style="${style}" width="23.5" height="19.1"/><path style="${style}" d="M10.8,10.8V6.9c0-2.2,1.8-3.9,3.9-3.9h0c2.2,0,3.9,1.8,3.9,3.9v3.9"/><line style="${style}" x1="3" y1="22.6" x2="26.5" y2="22.6"/>`,
     sun: `<g><circle style="${style}" cx="14.8" cy="14.8" r="4.9"/><line style="${style}" x1="23.5" y1="14.8" x2="26.5" y2="14.8"/><line style="${style}" x1="3" y1="14.8" x2="6" y2="14.8"/><line style="${style}" x1="14.8" y1="23.5" x2="14.8" y2="26.5"/><line style="${style}" x1="14.8" y1="3" x2="14.8" y2="6"/><line style="${style}" x1="20.9" y1="20.9" x2="23.1" y2="23.1"/><line style="${style}" x1="6.4" y1="6.4" x2="8.6" y2="8.6"/><line style="${style}" x1="8.6" y1="20.9" x2="6.4" y2="23.1"/><line style="${style}" x1="23.1" y1="6.4" x2="20.9" y2="8.6"/></g>`,
+    'sun-cloud': `<g style="${style}"><path d="m24.5 11.8h2"/><path d="m18.5 3.9v2"/><path d="m22.7 16 1.5 1.4"/><path d="m12.9 6.2 1.4 1.4"/><path d="m24.2 6.2-1.5 1.4"/><path d="m16.9 17.1c0-2.7-2.1-4.8-4.7-4.8-2.6 0-4.7 2.1-4.7 4.7v1.2h-.8c-2 0-3.7 1.7-3.7 3.7s1.7 3.7 3.7 3.7h9.6c2.4 0 4.3-1.9 4.3-4.3s-1.6-4-3.7-4.3z"/><circle cx="18.6" cy="11.8" r="3.3"/></g>`,
     'red-card': `<style type="text/css"> .st19{fill:#DD3636;stroke:#DD3636;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;} </style> <rect x="6" y="3" class="st19" width="17.5" height="23.5"/>`,
     search: `<g><circle style="${style}" cx="12.8" cy="12.8" r="9.7"/><line style="${style}" x1="26.5" y1="26.5" x2="19.6" y2="19.6"/></g>`,
     share: `<g><polyline style="${style}" points="7.7,11.2 14.8,4.1 21.8,11.1   "/><line style="${style}" x1="14.8" y1="4.1" x2="14.8" y2="17.2"/><polyline style="${style}" points="3,17.4 3,25.4 26.5,25.4 26.5,17.4  "/></g>`,
+    stadium: `<g style="${style}"><path d="m3 24.5h23.5"/><path d="m3 10.1h23.5v5h-23.5z"/><path d="m3 15.1c1.2 2.2 1.8 6.2 1.8 9.3"/><path d="m26.5 15.1c-1.2 2.2-1.8 6.2-1.8 9.3"/><path d="m12.4 10.1v5"/><path d="m7.6 10.1v5"/><path d="m17.1 10.1v5"/><path d="m21.9 10.1v5"/><path d="m14.7 18.6c1.5 0 2.7 1.2 2.7 2.7v3.2h-5.3v-3.2c0-1.5 1.2-2.7 2.7-2.7z"/><path d="m10 10.1v-5.1"/><path d="m10 6.3h1.7"/><path d="m19.5 10.1v-5.1"/><path d="m19.5 6.3h1.8"/></g>`,
     'sub-in': `<style type="text/css"> .st18{fill:none;stroke:#32C771;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;} </style> <g> <line class="st18" x1="14.8" y1="26.5" x2="14.8" y2="3"/> <polyline class="st18" points="3,14.7 14.8,3 26.5,14.7 "/> </g>`,
     'sub-out': `<style type="text/css"> .st17{fill:none;stroke:#DD3636;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;} </style> <g> <line class="st17" x1="14.8" y1="3" x2="14.8" y2="26.5"/> <polyline class="st17" points="26.5,14.8 14.8,26.5 3,14.8 "/> </g>`,
     sub: `<style type="text/css"> .st13{fill:none;stroke:#00A43F;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;} .st14{fill:none;stroke:#00A33F;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;} .st15{fill:none;stroke:#D30000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;} </style> <g> <g> <line class="st13" x1="9.7" y1="15.7" x2="9.7" y2="3.1"/> <polyline class="st14" points="3,9.7 9.7,3.1 16.3,9.7 "/> </g> <g> <line class="st15" x1="19.8" y1="13.8" x2="19.8" y2="26.4"/> <polyline class="st15" points="26.5,19.8 19.8,26.4 13.2,19.8 "/> </g> </g>`,
     'trending-money': `<g><polyline style="${style}" points="1,23.6 10.8,13.7 15.8,18.7 28.5,5.9 18.7,5.9   "/><line style="${style}" x1="28.5" y1="15.8" x2="28.5" y2="5.9"/></g>`,
     'trending-sports': `<g><path style="${style}" d="M14.7,26.5c4.4,0,8.9-5.4,0-12.9v0c0,0,0,0,0,0c0,0,0,0,0,0v0C5.8,20.9,10.3,26.5,14.7,26.5z"/><path style="${style}" d="M14.8,3L14.8,3c0,4.8-8.6,5.8-10.1,11.7c-1.7,6.6,4,11.7,10.1,11.7v0c0,0,0,0,0,0C24.2,26.5,32.4,14.4,14.8,3z   "/></g>`,
+    umpire: `<g style="${style}"><path d="m21.9 9.3c-.5-3.5-3.5-6.3-7.2-6.3s-6.7 2.7-7.2 6.3"/><path d="m7.5 15.2c.5 3.5 3.5 6.3 7.2 6.3s6.7-2.7 7.2-6.3"/><path d="m7.4 9.3h14.5v6.3h-14.5z"/><path d="m7 9.3h-3.3v5l4.6 3.3 2.7 8.9h7.5l2.7-8.9 4.6-3.3v-5h-3.3"/><path d="m14.8 26.5v-5"/></g>`,
+    wind: `<g style="${style}"><path d="m19.7 11.3c0-1.9 1.5-3.4 3.4-3.4s3.4 1.5 3.4 3.4-1.5 3.4-3.4 3.4h-20.1"/><path d="m15.7 22.1c0 1.9 1.5 3.4 3.4 3.4s3.4-1.5 3.4-3.4-1.5-3.4-3.4-3.4h-13.3"/><path d="m9.7 7.4c0-1.9 1.5-3.4 3.4-3.4s3.4 1.5 3.4 3.4-1.5 3.4-3.4 3.4h-7.3"/></g>`,
     x: `<g><line style="${style}" x1="3" y1="26.5" x2="26.5" y2="3"/><line style="${style}" x1="3" y1="3" x2="26.5" y2="26.5"/></g>`,
     'yellow-card': `<style type="text/css"> .st16{fill:#EAC428;stroke:#EAC428;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;} </style> <rect x="6" y="3" class="st16" width="17.5" height="23.5"/>`,
   } as const
 
-  const displayIcon = icons[name]
+  $: displayIcon = icons[name]
 </script>
 
 <svg
@@ -63,4 +93,5 @@
   on:click
 >
   {@html displayIcon}
+  <slot />
 </svg>

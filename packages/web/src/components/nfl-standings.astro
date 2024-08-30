@@ -1,10 +1,11 @@
 ---
-import type { StandingsDetail } from '@statmuse/core/gamera'
+import type { StandingsDetail, SubjectColors } from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
 import Standings from '@components/standings.astro'
 
 interface Props extends HTMLAttributes<'div'> {
   detail: StandingsDetail
+  highlight?: Record<string, SubjectColors>
 }
 
 const detail = Astro.props.detail
@@ -25,4 +26,4 @@ if (
   groups.reverse()
 ---
 
-<Standings {groups} highlight={detail.topic?.team} />
+<Standings {groups} highlight={Astro.props.highlight} />

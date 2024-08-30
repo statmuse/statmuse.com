@@ -1,6 +1,6 @@
 import type { GameraDomain } from '@statmuse/core/gamera'
 
-export type LeagueParam = 'nba' | 'nfl' | 'mlb' | 'nhl' | 'pga' | 'fc' | 'money'
+export type LeagueParam = Lowercase<Exclude<GameraDomain, 'EPL'>> | 'fc'
 
 export const leagueToDomain = (param: LeagueParam): GameraDomain => {
   if (param === 'fc') return 'EPL'

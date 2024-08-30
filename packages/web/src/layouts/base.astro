@@ -45,21 +45,13 @@ const {
   share,
   renderRightColumn = true,
 } = Astro.props
-const foreground = colors?.foreground || colors?.foregroundColor || '#fff'
-const background = colors?.background || colors?.backgroundColor || '#00c1d8'
+const foreground = colors?.foreground || colors?.foregroundColor
+const background = colors?.background || colors?.backgroundColor
 
 const style = colors
   ? `:root {
-        --team-primary-color: ${background};
-        --team-secondary-color: ${foreground};
-      }
-      .dynamic-color {
-        background-color: ${background};
-        color: ${foreground};
-        fill: ${foreground};
-      }
-      .loading-bar-animate {
-        background-color: initial;
+        ${background && `--team-primary-color: ${background}`};
+        ${foreground && `--team-secondary-color: ${foreground}`};
       }
     `
   : undefined
@@ -412,6 +404,7 @@ const canonicalUrl = meta?.canonical
       )
     }
     {share && <ShareModal client:load {...share} />}
+    <slot name="modal" />
     {
       enableAdBanner && Astro.locals.platform === 'web' && (
         <CloseableContainer

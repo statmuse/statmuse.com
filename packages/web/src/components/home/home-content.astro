@@ -7,12 +7,12 @@ import MusingsCard from '@components/home/musings-card.astro'
 import PlayerPerformanceCard from '@components/player/performance-card.astro'
 import type { LatestMusing } from '@statmuse/core/musing'
 import type {
+  GetStandingsResponse,
   PlayerLeadersResponse,
   TeamRankingsResponse,
-} from '@lib/related-content'
+} from '@lib/gamera'
 import RankingCard from '@components/home/ranking-card.astro'
 import Standings from '@components/home/standings.astro'
-import type { GetStandingsResponse } from '@lib/standings'
 import type { TrendingItem } from 'src/types'
 import TrendingList from '@components/trending-list.astro'
 import WithSubscription from '@components/with-subscription.svelte'

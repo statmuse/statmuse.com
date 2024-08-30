@@ -1,0 +1,186 @@
+---
+import EntityLink from '@components/entity-link.astro'
+import Image from '@components/image.astro'
+import Panel from '@components/panel.astro'
+import type {
+  GameraTeamReference,
+  GameraTeamSeasonStats,
+} from '@statmuse/core/gamera'
+import { find } from 'lodash-es'
+
+interface Props {
+  awayTeam?: GameraTeamReference
+  homeTeam?: GameraTeamReference
+  awayTeamSeasonStats?: GameraTeamSeasonStats
+  homeTeamSeasonStats?: GameraTeamSeasonStats
+}
+
+const { awayTeam, homeTeam, awayTeamSeasonStats, homeTeamSeasonStats } =
+  Astro.props
+
+const awayBattingStats = find(awayTeamSeasonStats?.grids, {
+  name: 'Team Regular Season Batting Stats',
+})?.rows[0]
+const homeBattingStats = find(homeTeamSeasonStats?.grids, {
+  name: 'Team Regular Season Batting Stats',
+})?.rows[0]
+
+const awayPitchingStats = find(awayTeamSeasonStats?.grids, {
+  name: 'Team Regular Season Pitching Stats',
+})?.rows[0]
+const homePitchingStats = find(homeTeamSeasonStats?.grids, {
+  name: 'Team Regular Season Pitching Stats',
+})?.rows[0]
+
+type StatRow = typeof awayBattingStats
+
+const battingStats = [
+  {
+    key: 'HR',
+    compare: (a: StatRow, b: StatRow) => a?.HR.display > b?.HR.display,
+  },
+  {
+    key: 'R',
+    compare: (a: StatRow, b: StatRow) => a?.R.display > b?.R.display,
+  },
+  {
+    key: 'H',
+    compare: (a: StatRow, b: StatRow) => a?.H.display > b?.H.display,
+  },
+  {
+    key: 'AVG',
+    compare: (a: StatRow, b: StatRow) => a?.AVG.display > b?.AVG.display,
+  },
+  {
+    key: 'OBP',
+    compare: (a: StatRow, b: StatRow) => a?.OBP.display > b?.OBP.display,
+  },
+  {
+    key: 'SLG',
+    compare: (a: StatRow, b: StatRow) => a?.SLG.display > b?.SLG.display,
+  },
+]
+
+const pitchingStats = [
+  {
+    key: 'ERA',
+    compare: (a: StatRow, b: StatRow) => a?.ERA?.display < b?.ERA?.display,
+  },
+  {
+    key: 'SO',
+    compare: (a: StatRow, b: StatRow) => a?.SO?.display > b?.SO?.display,
+  },
+  {
+    key: 'BB',
+    compare: (a: StatRow, b: StatRow) => a?.BB?.display < b?.BB?.display,
+  },
+  {
+    key: 'WHIP',
+    compare: (a: StatRow, b: StatRow) => a?.WHIP?.display < b?.WHIP?.display,
+  },
+]
+---
+
+<Panel class="!p-0">
+  <div
+    class="relative flex justify-center py-2 border-b border-gray-6 dark:border-gray-4"
+  >
+    <EntityLink
+      entity={awayTeam?.entity}
+      class="flex gap-1 absolute left-3 top-2 text-inherit"
+    >
+      <Image
+        src={awayTeam?.logoImageUrl ?? ''}
+        alt={awayTeam?.name ?? ''}
+        width={60}
+        height={60}
+        class="w-6 h-6 object-contain"
+      />
+      {awayTeam?.abbreviation}
+    </EntityLink>
+
+    <h3 class="font-semibold">Team Stats</h3>
+
+    <EntityLink
+      entity={homeTeam?.entity}
+      class="flex gap-1 absolute right-3 top-2 text-inherit"
+    >
+      {homeTeam?.abbreviation}
+      <Image
+        src={homeTeam?.logoImageUrl ?? ''}
+        alt={homeTeam?.name ?? ''}
+        width={60}
+        height={60}
+        class="w-6 h-6 object-contain"
+      />
+    </EntityLink>
+  </div>
+  <div class="divide-y divide-gray-6 dark:divide-gray-4 *:px-1 *:py-1">
+    {
+      battingStats.map((stat) => (
+        <div class="flex justify-center relative">
+          <p
+            class="absolute top-1 left-1 px-2 rounded-2xl"
+            style={
+              stat.compare(awayBattingStats, homeBattingStats)
+                ? {
+                    background: awayTeam?.colors.backgroundColor,
+                    color: awayTeam?.colors.foregroundColor,
+                  }
+                : {}
+            }
+          >
+            {awayBattingStats[stat.key]?.display}
+          </p>
+          <p class="text-gray-5">{stat.key}</p>
+          <p
+            class="absolute top-1 right-1 px-2 rounded-2xl"
+            style={
+              stat.compare(homeBattingStats, awayBattingStats)
+                ? {
+                    background: homeTeam?.colors.backgroundColor,
+                    color: homeTeam?.colors.foregroundColor,
+                  }
+                : {}
+            }
+          >
+            {homeBattingStats[stat.key]?.display}
+          </p>
+        </div>
+      ))
+    }
+    {
+      pitchingStats.map((stat) => (
+        <div class="flex justify-center relative">
+          <p
+            class="absolute top-1 left-1 px-2 rounded-2xl"
+            style={
+              stat.compare(awayPitchingStats, homePitchingStats)
+                ? {
+                    background: awayTeam?.colors.backgroundColor,
+                    color: awayTeam?.colors.foregroundColor,
+                  }
+                : {}
+            }
+          >
+            {awayPitchingStats[stat.key]?.display}
+          </p>
+          <p class="text-gray-5">{stat.key}</p>
+          <p
+            class="absolute top-1 right-1 px-2 rounded-2xl"
+            style={
+              stat.compare(homePitchingStats, awayPitchingStats)
+                ? {
+                    background: homeTeam?.colors.backgroundColor,
+                    color: homeTeam?.colors.foregroundColor,
+                  }
+                : {}
+            }
+          >
+            {homePitchingStats[stat.key]?.display}
+          </p>
+        </div>
+      ))
+    }
+  </div>
+</Panel>

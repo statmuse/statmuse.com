@@ -1,0 +1,240 @@
+---
+import EntityLink from '@components/entity-link.astro'
+import Image from '@components/image.astro'
+import Panel from '@components/panel.astro'
+import type {
+  GameraGamesResponse,
+  CompletedGame,
+  GameraTeamReference,
+  TeamGameModel,
+  MlbStatKey,
+  GameraDomain,
+} from '@statmuse/core/gamera'
+import dayjs from 'dayjs'
+import { find, orderBy, zip } from 'lodash-es'
+
+interface Props {
+  domain: GameraDomain
+  teams: GameraTeamReference[]
+  awayTeamModel: TeamGameModel<MlbStatKey>
+  homeTeamModel: TeamGameModel<MlbStatKey>
+  awayTeamCompletedGames?: GameraGamesResponse<CompletedGame>
+  homeTeamCompletedGames?: GameraGamesResponse<CompletedGame>
+}
+
+const {
+  domain,
+  teams,
+  awayTeamModel,
+  homeTeamModel,
+  awayTeamCompletedGames,
+  homeTeamCompletedGames,
+} = Astro.props
+
+const teamMap = [
+  ...(awayTeamCompletedGames?.teams ?? []),
+  ...(homeTeamCompletedGames?.teams ?? []),
+].reduce<Record<number, GameraTeamReference | undefined>>(
+  (acc, t) => ({ ...acc, [t.teamId]: t }),
+  {},
+)
+
+const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
+
+const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
+
+const games = zip(
+  orderBy(awayTeamCompletedGames?.games, 'gameDate', 'desc').slice(0, 5),
+  orderBy(homeTeamCompletedGames?.games, 'gameData', 'desc').slice(0, 5),
+)
+
+const getTeamResult = (teamId: number, game?: CompletedGame) =>
+  game?.homeTeam.teamId === teamId
+    ? game.homeTeam.gameResult
+    : game?.awayTeam.teamId === teamId
+    ? game.awayTeam.gameResult
+    : undefined
+
+const getOpponent = (
+  teamId: number,
+  game?: CompletedGame,
+  teams?: GameraTeamReference[],
+) => {
+  let visitorTeam
+  let opponent
+
+  if (teamId !== game?.awayTeam.teamId) {
+    opponent = game?.awayTeam.teamId
+    visitorTeam = true
+  }
+
+  if (teamId !== game?.homeTeam.teamId) {
+    opponent = game?.homeTeam.teamId
+    visitorTeam = false
+  }
+
+  const team = find(teams, { teamId: opponent })
+  return {
+    ...team,
+    visitorTeam,
+  }
+}
+---
+
+<Panel class="!p-0">
+  <div
+    class="relative flex justify-center py-2 border-b border-gray-6 dark:border-gray-4"
+  >
+    <EntityLink
+      entity={awayTeam?.entity}
+      class="flex gap-1 absolute left-3 top-2 text-inherit"
+    >
+      <Image
+        src={awayTeam?.logoImageUrl ?? ''}
+        alt={awayTeam?.name ?? ''}
+        width={60}
+        height={60}
+        class="w-6 h-6 object-contain"
+      />
+      {awayTeam?.abbreviation}
+    </EntityLink>
+
+    <h3 class="font-semibold">Last 5</h3>
+
+    <EntityLink
+      entity={homeTeam?.entity}
+      class="flex gap-1 absolute right-3 top-2 text-inherit"
+    >
+      {homeTeam?.abbreviation}
+      <Image
+        src={homeTeam?.logoImageUrl ?? ''}
+        alt={homeTeam?.name ?? ''}
+        width={60}
+        height={60}
+        class="w-6 h-6 object-contain"
+      />
+    </EntityLink>
+  </div>
+  <div class="divide-y divide-gray-6 dark:divide-gray-4 *:px-3 *:py-1">
+    {
+      games.map(([awayTeamScore, homeTeamScore]) => (
+        <div class="flex justify-between">
+          <EntityLink
+            entity={{
+              id: awayTeamScore?.id.toString() ?? '',
+              type: 'game',
+              display: `${dayjs(awayTeamScore?.gameDate).format('M/D/YYYY')} ${
+                teamMap[awayTeamScore?.awayTeam.teamId ?? 0]?.abbreviation
+              } @ ${
+                teamMap[awayTeamScore?.homeTeam.teamId ?? 0]?.abbreviation
+              }`,
+              domain,
+            }}
+            class="text-inherit hover:no-underline group/link"
+          >
+            <p class="text-sm text-gray-5">
+              {dayjs(awayTeamScore?.gameDate).format('ddd, MMM D')}
+            </p>
+            <div class="flex gap-1 items-center">
+              <span
+                class:list={{
+                  'group-hover/link:underline': true,
+                  'text-green':
+                    getTeamResult(awayTeamModel.teamId, awayTeamScore) ===
+                    'win',
+                  'text-red':
+                    getTeamResult(awayTeamModel.teamId, awayTeamScore) ===
+                    'loss',
+                }}
+              >
+                {`${
+                  getTeamResult(awayTeamModel.teamId, awayTeamScore) === 'win'
+                    ? 'W'
+                    : 'L'
+                } `}
+                {`${awayTeamScore?.awayTeam.score}-${awayTeamScore?.homeTeam.score}`}
+              </span>
+              {(() => {
+                const opponent = getOpponent(
+                  awayTeamModel.teamId,
+                  awayTeamScore,
+                  awayTeamCompletedGames?.teams,
+                )
+                return (
+                  <Fragment>
+                    <span>{opponent.visitorTeam ? 'vs' : 'at'}</span>
+                    <Image
+                      src={opponent?.logoImageUrl ?? ''}
+                      alt={opponent?.name ?? ''}
+                      width={60}
+                      height={60}
+                      class="w-5 h-5 object-contain"
+                    />
+                    {opponent?.abbreviation}
+                  </Fragment>
+                )
+              })()}
+            </div>
+          </EntityLink>
+          <EntityLink
+            entity={{
+              id: homeTeamScore?.id.toString() ?? '',
+              type: 'game',
+              display: `${dayjs(homeTeamScore?.gameDate).format('M/D/YYYY')} ${
+                teamMap[homeTeamScore?.awayTeam.teamId ?? 0]?.abbreviation
+              } @ ${
+                teamMap[homeTeamScore?.homeTeam.teamId ?? 0]?.abbreviation
+              }`,
+              domain,
+            }}
+            class="text-right text-inherit hover:no-underline group/link"
+          >
+            <p class="text-sm text-gray-5">
+              {dayjs(homeTeamScore?.gameDate).format('ddd, MMM D')}
+            </p>
+            <div class="flex gap-1 items-center">
+              <span
+                class:list={{
+                  'group-hover/link:underline': true,
+                  'text-green':
+                    getTeamResult(homeTeamModel.teamId, homeTeamScore) ===
+                    'win',
+                  'text-red':
+                    getTeamResult(homeTeamModel.teamId, homeTeamScore) ===
+                    'loss',
+                }}
+              >
+                {`${
+                  getTeamResult(homeTeamModel.teamId, homeTeamScore) === 'win'
+                    ? 'W'
+                    : 'L'
+                } `}
+                {`${homeTeamScore?.awayTeam.score}-${homeTeamScore?.homeTeam.score}`}
+              </span>
+              {(() => {
+                const opponent = getOpponent(
+                  homeTeamModel.teamId,
+                  homeTeamScore,
+                  homeTeamCompletedGames?.teams,
+                )
+                return (
+                  <Fragment>
+                    <span>{opponent.visitorTeam ? 'vs' : 'at'}</span>
+                    <Image
+                      src={opponent?.logoImageUrl ?? ''}
+                      alt={opponent?.name ?? ''}
+                      width={60}
+                      height={60}
+                      class="w-5 h-5 object-contain"
+                    />
+                    {opponent?.abbreviation}
+                  </Fragment>
+                )
+              })()}
+            </div>
+          </EntityLink>
+        </div>
+      ))
+    }
+  </div>
+</Panel>

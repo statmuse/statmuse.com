@@ -1,0 +1,288 @@
+---
+import {
+  getGames,
+  getInjuries,
+  getPlayByPlay,
+  getStandingsRaw,
+} from '@lib/gamera'
+import Layout from './layout.astro'
+import type {
+  ContentReference,
+  MlbGameDataResponse,
+  MlbStatKey,
+} from '@statmuse/core/gamera'
+import { find } from 'lodash-es'
+import GameInfo from './game-info.astro'
+import Matchup from './matchup.svelte'
+import LivePitchByPitch from './live-pitch-by-pitch.svelte'
+import Linescore from './linescore.svelte'
+import PlayByPlay from './play-by-play.svelte'
+import LivegameHero from './livegame-hero.astro'
+import BattingStats from './batting-stats.svelte'
+import PitchingStats from './pitching-stats.svelte'
+import Standings from './standings.astro'
+import CurrentSeries from './current-series.astro'
+import GameState from './game-state.svelte'
+import Realtime from '@components/realtime.svelte'
+import * as store from './stores'
+import { Caching } from '@lib/caching'
+import BattingSummary from './batting-summary.svelte'
+import PlayerModal from './player-modal.svelte'
+import AtBatModal from './at-bat-modal.svelte'
+import Injuries from './injuries.astro'
+
+interface Props {
+  gameData: MlbGameDataResponse<MlbStatKey>
+  gameId: string
+}
+
+const { gameData, gameId } = Astro.props
+
+const {
+  seasonYearDisplay: seasonYear,
+  networkName,
+  awayTeam: awayTeamModel,
+  homeTeam: homeTeamModel,
+  teams,
+  venue,
+  weather,
+  officials,
+  gameTimestamp,
+  timeOfDay,
+} = gameData
+
+const [homeTeamGames, awayTeamGames, playByPlay, standings, injuries] =
+  await Promise.all([
+    getGames({
+      context: Astro,
+      domain: 'mlb',
+      teamId: homeTeamModel.teamId,
+      seasonYear,
+      gameState: ['scheduled', 'inProgress', 'completed'],
+    }),
+    getGames({
+      context: Astro,
+      domain: 'mlb',
+      teamId: awayTeamModel.teamId,
+      seasonYear,
+      gameState: ['scheduled', 'inProgress', 'completed'],
+    }),
+    getPlayByPlay({ context: Astro, gameId }),
+    getStandingsRaw({ context: Astro, domain: 'mlb' }),
+    getInjuries({ context: Astro }),
+  ])
+
+const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
+const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
+
+const awayTeamInjuries = find(
+  injuries?.teams,
+  (t) => t.team.teamId === awayTeamModel.teamId,
+)
+const homeTeamInjuries = find(
+  injuries?.teams,
+  (t) => t.team.teamId === homeTeamModel.teamId,
+)
+
+store.init({ gameData, playByPlay })
+
+const meta = {
+  title: `${awayTeam?.nickname} ${awayTeamModel.score}-${homeTeamModel.score} ${homeTeam?.nickname} (Live)`,
+  description: `(LIVE) ${awayTeam?.name} vs. ${homeTeam?.name}. Live pitch, play-by-play, stats and more.`,
+}
+
+Caching.swr(Astro, { maxage: 15, revalidate: 25 })
+---
+
+<Layout
+  {meta}
+  analytics={{
+    page_domain: 'mlb',
+    page_type: 'game',
+    is_search: true,
+    contentReference: {
+      answerTags: {
+        teamIds: [awayTeam?.teamId, homeTeam?.teamId].filter((x) => !!x),
+      },
+    } as ContentReference,
+  }}
+  status={gameData.gameStatus}
+  {awayTeam}
+  {homeTeam}
+  {playByPlay}
+  useContainerQuery
+>
+  <LivegameHero
+    slot="hero"
+    network={networkName}
+    {awayTeam}
+    awayTeamGames={awayTeamGames?.games.filter((g) => g.type === 'completed')}
+    {homeTeam}
+    homeTeamGames={homeTeamGames?.games.filter((g) => g.type === 'completed')}
+  />
+
+  <div slot="game" class="flex gap-3">
+    <div class="flex-1 flex flex-col gap-3 overflow-hidden">
+      <Matchup client:load {awayTeam} {homeTeam} />
+      <LivePitchByPitch client:load />
+      <div class="@xl/boxscore:hidden">
+        <Linescore client:load {awayTeam} {homeTeam} />
+      </div>
+      <div class="@xl/boxscore:hidden flex flex-col gap-3">
+        <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
+      </div>
+      <div class="group/plays hidden @xl/boxscore:block">
+        <div
+          class="bg-gray-6 dark:bg-gray-4 text-gray-5 border border-gray-6 dark:border-gray-3 flex text-center mb-3 rounded-full relative overflow-clip"
+        >
+          <div
+            class="absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 group-has-[#all:checked]/plays:translate-x-0 group-has-[#scoring:checked]/plays:translate-x-full transition-transform ease-out"
+          >
+          </div>
+          <label
+            for="all"
+            class:list={{
+              'flex-1 py-1 hover:cursor-pointer relative': true,
+              'group-has-[#all:checked]/plays:text-gray-2': true,
+            }}
+          >
+            All Plays
+          </label>
+          <label
+            for="scoring"
+            class:list={{
+              'flex-1 py-1 hover:cursor-pointer relative': true,
+              'group-has-[#scoring:checked]/plays:text-gray-2': true,
+            }}
+          >
+            Scoring Plays
+          </label>
+        </div>
+        <div class="hidden has-[#all:checked]:flex flex-col gap-3">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="plays"
+            id="all"
+            checked
+          />
+          <PlayByPlay client:load {awayTeam} {homeTeam} reverseOrder />
+        </div>
+        <div class="hidden has-[#scoring:checked]:flex flex-col gap-3">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="plays"
+            id="scoring"
+          />
+          <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
+        </div>
+      </div>
+      <div class="@xl/boxscore:hidden flex flex-col gap-3">
+        <Injuries {awayTeamInjuries} {homeTeamInjuries} />
+        <CurrentSeries
+          domain="MLB"
+          teams={teams ?? []}
+          currentGameId={Number.parseInt(gameId)}
+          games={awayTeamGames?.games}
+        />
+        <Standings
+          {standings}
+          awayTeamId={awayTeamModel.teamId}
+          homeTeamId={homeTeamModel.teamId}
+        />
+        <GameInfo {venue} {weather} {officials} {gameTimestamp} {timeOfDay} />
+      </div>
+    </div>
+    <div class="flex-1 hidden @xl/boxscore:flex flex-col gap-3 overflow-hidden">
+      <Linescore client:load {awayTeam} {homeTeam} />
+      <div class="group/teams">
+        <div
+          class="bg-gray-6 dark:bg-gray-4 text-gray-5 border border-gray-6 dark:border-gray-3 flex text-center mb-3 rounded-full relative overflow-clip"
+        >
+          <div
+            class="absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 group-has-[#away-box:checked]/teams:translate-x-0 group-has-[#home-box:checked]/teams:translate-x-full transition-transform ease-out"
+          >
+          </div>
+          <label
+            for="away-box"
+            class:list={{
+              'flex-1 py-1 hover:cursor-pointer relative': true,
+              'group-has-[#away-box:checked]/teams:text-gray-2': true,
+            }}
+          >
+            {awayTeam.nickname}
+          </label>
+          <label
+            for="home-box"
+            class:list={{
+              'flex-1 py-1 hover:cursor-pointer relative': true,
+              'group-has-[#home-box:checked]/teams:text-gray-2': true,
+            }}
+          >
+            {homeTeam.nickname}
+          </label>
+        </div>
+        <div class="hidden has-[#away-box:checked]:flex flex-col gap-3">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="box"
+            id="away-box"
+            checked
+          />
+          <BattingStats client:load teamKey="away" />
+          <BattingSummary client:load teamKey="away" />
+          <PitchingStats client:load teamKey="away" />
+        </div>
+        <div class="hidden has-[#home-box:checked]:flex flex-col gap-3">
+          <input
+            class="absolute opacity-0"
+            type="radio"
+            name="box"
+            id="home-box"
+          />
+          <BattingStats client:load teamKey="home" />
+          <BattingSummary client:load teamKey="home" />
+          <PitchingStats client:load teamKey="home" />
+        </div>
+      </div>
+      <Injuries {awayTeamInjuries} {homeTeamInjuries} />
+      <CurrentSeries
+        domain="MLB"
+        teams={teams ?? []}
+        currentGameId={Number.parseInt(gameId)}
+        games={awayTeamGames?.games}
+      />
+      <Standings
+        {standings}
+        awayTeamId={awayTeamModel.teamId}
+        homeTeamId={homeTeamModel.teamId}
+      />
+      <GameInfo {venue} {weather} {officials} {gameTimestamp} {timeOfDay} />
+    </div>
+  </div>
+
+  <Fragment slot="away">
+    <Linescore client:load {awayTeam} {homeTeam} displayMatchup />
+    <BattingStats client:load teamKey="away" />
+    <BattingSummary client:load teamKey="away" />
+    <PitchingStats client:load teamKey="away" />
+  </Fragment>
+
+  <Fragment slot="home">
+    <Linescore client:load {awayTeam} {homeTeam} displayMatchup />
+    <BattingStats client:load teamKey="home" />
+    <BattingSummary client:load teamKey="home" />
+    <PitchingStats client:load teamKey="home" />
+  </Fragment>
+
+  <PlayByPlay client:load slot="plays" {awayTeam} {homeTeam} reverseOrder />
+
+  <GameState client:only="svelte" {gameData} {playByPlay} />
+  <Realtime client:only="svelte" {gameId} />
+  <Fragment slot="modal">
+    <PlayerModal client:only="svelte" />
+    <AtBatModal client:only="svelte" />
+  </Fragment>
+</Layout>

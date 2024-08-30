@@ -4,16 +4,18 @@ import HomeContent from '@components/home/home-content.astro'
 import { listLatestHomeMusings } from '@statmuse/core/musing'
 import { Caching } from '@lib/caching'
 import { find } from 'lodash-es'
-import { getTeamCards } from '@lib/related-content'
-import { getPlayerCards } from '@lib/related-content'
-import { getPlayerProfile } from '@lib/player'
 import type {
   GameraDomain,
   GameraPlayerProfileResponse,
 } from '@statmuse/core/gamera'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
-import { getTeamSeasonBio } from '@lib/team'
-import { getStandings } from '@lib/standings'
+import {
+  getPlayerCards,
+  getPlayerProfile,
+  getStandings,
+  getTeamCards,
+  getTeamSeasonBio,
+} from '@lib/gamera'
 
 const [musings, playerCards, teamCards, bettingCards, standings] =
   await Promise.all([

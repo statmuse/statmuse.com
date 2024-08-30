@@ -344,13 +344,13 @@ export interface KanedamaChartsDetail extends DetailBase {
 
 export interface ContentReference {
   domainTags?: {
-    domain: string
+    domain?: string
   }
   questionTags?: {
-    assetIds: string[]
+    assetIds?: string[]
   }
   answerTags?: {
-    assetIds: string[]
+    assetIds?: string[]
   }
 }
 

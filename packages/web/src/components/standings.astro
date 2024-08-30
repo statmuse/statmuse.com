@@ -1,16 +1,21 @@
 ---
-import type { Standings, GameraGrid } from '@statmuse/core/gamera'
+import type {
+  Standings,
+  GameraGrid,
+  SubjectColors,
+} from '@statmuse/core/gamera'
 import type { HTMLAttributes } from 'astro/types'
 import Tabs from '@components/tabs.astro'
 import TabPanel from '@components/tab-panel.astro'
 import Grid from '@components/grid.svelte'
+import { mapValues } from 'lodash-es'
 
 interface Props extends HTMLAttributes<'div'> {
   groups: {
     name: string
     standings: Standings[]
   }[]
-  highlight?: string
+  highlight?: Record<string, SubjectColors>
 }
 
 const groups = Astro.props.groups
@@ -47,7 +52,10 @@ function addImageToGrid(grid: GameraGrid): GameraGrid {
                   stickyColumns={['TEAM']}
                   columnStyles={{ TEAM: 'w-28' }}
                   data={addImageToGrid(x.grid)}
-                  highlight={Astro.props.highlight}
+                  highlight={mapValues(Astro.props.highlight, (x) => ({
+                    backgroundColor: x.background,
+                    foregroundColor: x.foreground,
+                  }))}
                 />
               </div>
             ))}
@@ -65,7 +73,10 @@ function addImageToGrid(grid: GameraGrid): GameraGrid {
               stickyColumns={['TEAM']}
               columnStyles={{ TEAM: 'w-28' }}
               data={addImageToGrid(x.grid)}
-              highlight={Astro.props.highlight}
+              highlight={mapValues(Astro.props.highlight, (x) => ({
+                backgroundColor: x.background,
+                foregroundColor: x.foreground,
+              }))}
             />
           </div>
         )),

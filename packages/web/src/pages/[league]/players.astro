@@ -2,7 +2,7 @@
 import PlayerGallery from '@components/player-gallery.astro'
 import { Caching } from '@lib/caching'
 import { leagueToDomain, type LeagueParam } from '@lib/params'
-import { getPlayerGalleryList } from '@lib/player'
+import { getPlayerGalleryList } from '@lib/gamera'
 
 const league = Astro.params.league as LeagueParam
 const domain = leagueToDomain(league)

@@ -11,6 +11,7 @@ interface ImportMetaEnv {
   readonly PUBLIC_ANALYTICS_CDN_PROXY_URL: string
   readonly PUBLIC_STAGE: string
   readonly ANSWER_CARDS_ENABLED: string
+  readonly PUBLIC_IOT_HOST: string
 }
 
 interface ImportMeta {

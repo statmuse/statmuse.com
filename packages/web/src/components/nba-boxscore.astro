@@ -1,6 +1,6 @@
 ---
 import {
-  type GameraNbaBoxScore,
+  type GameraAnswerNbaBoxScore,
   type NbaHistoricalBoxScore,
   getUrlForEntity,
 } from '@statmuse/core/gamera'
@@ -13,7 +13,7 @@ import TeamStat from '@components/team-stat.astro'
 import Panel from './panel.astro'
 
 interface Props extends HTMLAttributes<'div'> {
-  data?: GameraNbaBoxScore
+  data?: GameraAnswerNbaBoxScore
   detail?: NbaHistoricalBoxScore
 }
 

@@ -11,6 +11,7 @@ import {
   cdnBaseUrl,
   tokensToHtml,
   isGameraDefaultResponse,
+  tokensToText,
 } from '../gamera'
 import { tokensToText as tokensToTextFinance } from '../kanedama'
 import type {
@@ -24,7 +25,6 @@ import type {
   NewFinanceAskEvent,
   NewFinanceAskUser,
 } from './ask.sql'
-import { tokensToText } from '../gamera'
 import * as Context from '../context'
 import { createAskPath } from '../path'
 import type { NewLink } from '../link/link.sql'

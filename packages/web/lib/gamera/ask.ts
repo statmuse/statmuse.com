@@ -1,42 +1,27 @@
 import {
+  type EplHistoricalBoxScore,
+  type GameraAnswerEplBoxScore,
+  type GameraResponse,
+  type GameraChart,
   type PlayerProfileDetail,
   type TeamProfileDetail,
-  type GameraResponse,
   tokensToHtml,
-  type GameraChart,
+  tokensToText,
   getUrlForEntity,
+  parameterize,
 } from '@statmuse/core/gamera'
 import { relativeTimeFromDates } from '@statmuse/core/time'
 import type { Musing } from '@statmuse/core/musing'
-import type { HeroProps } from './props'
-import type { Context } from './session'
-import { Config } from 'sst/node/config'
+import type { HeroProps } from '../props'
+import type { Context } from '../session'
 import { clarify } from '@lib/bedrock'
-import { translate, translateObject } from '@lib/translate'
-import { createAskPath } from '@statmuse/core/path'
-import { getTeamFranchiseLatestSeason, getTeamSeasonOverview } from './team'
-export const gameraApiUrl = import.meta.env.GAMERA_API_URL
-export const gameraApiKey = Config.GAMERA_API_KEY
-
-export async function request<T>(
-  context: Context,
-  path: string,
-  params?: Record<string, string | number> | URLSearchParams,
-): Promise<T | undefined> {
-  const requestUrl = `${gameraApiUrl}${path}?${new URLSearchParams(
-    params as Record<string, string>,
-  ).toString()}`
-
-  try {
-    const response = await fetch(requestUrl, {
-      headers: getGameraHeaders(context),
-    })
-    return response.json() as Promise<T>
-  } catch (error) {
-    console.error(error)
-    return undefined
-  }
-}
+import { request } from '@lib/gamera/base'
+import {
+  getTeamFranchiseLatestSeason,
+  getTeamSeasonOverview,
+} from '@lib/gamera/teams'
+import dayjs from 'dayjs'
+import { getGameData } from './games'
 
 type AskOptions = {
   league?: string
@@ -68,7 +53,7 @@ export async function ask(
     params['preferredDomain'] = options.preferredDomain
   }
 
-  let response = await request<GameraResponse>(
+  const response = await request<GameraResponse>(
     context,
     `${league ? league + '/' : ''}answer`,
     params,
@@ -186,41 +171,6 @@ export async function ask(
   return { response }
 }
 
-export const getGameraHeaders = (context: Context) => {
-  const visitor = context.locals.visitor
-
-  const headers: Record<string, string> = {
-    Accept: 'application/json',
-    'x-origin': visitor.origin_name,
-    'x-origin-scope': 'browser',
-    'x-origin-version': '2.0',
-    'x-visitor-id': visitor.id,
-    'x-statmuse-api-key': gameraApiKey,
-    // 'x-request-id': context.request.
-  }
-
-  if (visitor.last_request_ip) {
-    headers['x-visitor-ip'] = visitor.last_request_ip
-  }
-
-  const timezoneOffset = getTimezoneOffset(visitor.timezone_name)
-  if (timezoneOffset) {
-    headers['x-visitor-tz'] = timezoneOffset
-  }
-
-  return headers
-}
-
-const getTimezoneOffset = (timeZone: string | undefined) => {
-  if (!timeZone) return undefined
-
-  const date = new Date()
-  const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }))
-  const tzDate = new Date(date.toLocaleString('en-US', { timeZone }))
-  const minutes = (tzDate.getTime() - utcDate.getTime()) / 6e4
-  return (minutes / 60).toString()
-}
-
 export function getHeroProps(props: {
   response?: GameraResponse
   musing?: Musing
@@ -245,10 +195,6 @@ export function getHeroProps(props: {
     : answer.visual.summary.subject.imageUrl
   const answered = musing ? relativeTimeFromDates(musing.publish_at) : undefined
   const imageAlt = props.imageAlt
-  const audioUrl =
-    props.musing?.audio_answer_url ||
-    answer.visual.summary.narrator?.answerWithIntroAudioUrl ||
-    answer.visual.summary.narrator?.answerAudioUrl
 
   return {
     content,
@@ -257,7 +203,6 @@ export function getHeroProps(props: {
     imageUrl,
     imageAlt,
     answered,
-    audioUrl,
   }
 }
 
@@ -279,10 +224,8 @@ export async function handleResponse(
   context: Context,
   response: GameraResponse,
 ) {
-  const subject = response.visual?.summary?.subject
-  const conversationToken = response.conversation?.token
-  if (!subject) console.log({ response })
-
+  const subject = response.visual.summary.subject
+  const conversationToken = response.conversation.token
   if (response.type === 'nlgPromptForMoreInfoVisualChoicesOptional') {
     return { subject, conversationToken }
   }
@@ -319,9 +262,102 @@ export async function handleResponse(
     }
   }
 
+  const boxscore = response.visual.detail?.find((d) => d.type === 'boxScore')
+  if (boxscore && response.visual.domain === 'MLB') {
+    const game = await getGameData({ context, gameId: boxscore.gameId })
+
+    if (game) {
+      const awayTeam = game.teams?.find(
+        (t) => t.teamId === game.awayTeam.teamId,
+      )
+      const homeTeam = game.teams?.find(
+        (t) => t.teamId === game.homeTeam.teamId,
+      )
+
+      redirectUrl = getUrlForEntity({
+        type: 'game',
+        domain: response.visual.domain ?? 'MLB',
+        id: boxscore.gameId.toString(),
+        display: `${dayjs(game.gameDate).format(
+          'M/D/YYYY',
+        )} ${awayTeam?.abbreviation} @ ${homeTeam?.abbreviation}`,
+      })
+    }
+  }
+
   return {
     subject,
     redirectUrl,
     conversationToken,
   }
+}
+
+export function handleAskResponseFromPost(response: GameraResponse) {
+  const query = tokensToText(
+    response.visual.summaryTokens?.filter((t) => t.type !== 'inferred'),
+  ).toLowerCase()
+
+  if (response.type === 'nlgPromptForMoreInfoVisualChoicesOptional') {
+    return { query }
+  }
+
+  const playerProfile = response.visual.detail?.find(
+    (d) => d.type === 'playerProfile',
+  ) as PlayerProfileDetail
+
+  if (playerProfile) {
+    if (playerProfile.entity.domain === 'PGA') {
+      return {
+        query: `${playerProfile.entity.display} career stats`,
+      }
+    }
+    return {
+      query,
+      type: playerProfile.entity.type,
+      player: `${parameterize(playerProfile.entity.display)}-${
+        playerProfile.entity.id
+      }`,
+      league: playerProfile.entity.domain,
+    }
+  }
+
+  const teamProfile = response.visual.detail?.find(
+    (d) => d.type === 'teamProfile',
+  ) as TeamProfileDetail
+
+  if (teamProfile && teamProfile.entity.type === 'teamSeason') {
+    const [teamId, year] = teamProfile.entity.id.split('/')
+    return {
+      query,
+      type: teamProfile.entity.type,
+      team: `${parameterize(teamProfile.entity.display)}-${teamId}`,
+      year,
+      league: teamProfile.entity.domain,
+    }
+  }
+
+  if (teamProfile && teamProfile.entity.type === 'teamFranchise') {
+    return {
+      query,
+      type: teamProfile.entity.type,
+      team: `${parameterize(teamProfile.entity.display)}-${
+        teamProfile.entity.id
+      }`,
+      league: teamProfile.entity.domain,
+    }
+  }
+
+  const eplBoxscore = response.visual.detail?.find(
+    (d) => d.type === 'eplHistoricalBoxScore',
+  ) as EplHistoricalBoxScore
+
+  if (eplBoxscore) {
+    return {
+      query,
+      type: eplBoxscore.type,
+      data: response as GameraAnswerEplBoxScore,
+    }
+  }
+
+  return { query }
 }

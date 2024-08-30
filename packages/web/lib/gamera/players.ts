@@ -5,9 +5,13 @@ import type {
   GameraPlayerProfileResponse,
   GameraPlayerSplits,
   GameraPlayerStats,
+  MlbPlayerStatsResponse,
+  MlbSplitType,
+  MlbStatKeySet,
+  SeasonType,
 } from '@statmuse/core/gamera'
-import { parsePlayerId } from './parse'
-import { request } from '@lib/gamera'
+import { parsePlayerId } from '../parse'
+import { request } from '@lib/gamera/base'
 import { dbReader } from '@statmuse/core/db'
 import type { Context } from '@lib/session'
 import { orderBy } from 'lodash-es'
@@ -232,3 +236,37 @@ export const getPlayerGalleryList = async (league?: string) => {
 export type PlayerGalleryItem = Awaited<
   ReturnType<typeof getPlayerGalleryList>
 >[number]
+
+export const getMlbPlayerSplits = async <
+  KS extends keyof MlbStatKeySet,
+  // K extends MlbStatKey,
+  S extends MlbSplitType,
+>(props: {
+  context: Context
+  seasontype: SeasonType
+  teamId: number
+  split: S | S[]
+  statKeySet: KS | KS[]
+  // statKey?: K | K[]
+  seasonYear?: number | string
+  currentTeamId?: number
+  opponentPitcherId?: number
+}) => {
+  try {
+    const { context, ...params } = props
+    const path = `mlb/players/stats`
+    const data = await request<MlbPlayerStatsResponse<MlbStatKeySet[KS], S>>(
+      context,
+      path,
+      new URLSearchParams(
+        Object.entries(params)
+          .map(([k, v]) => (Array.isArray(v) ? v.map((x) => [k, x]) : [[k, v]]))
+          .flat() as string[][],
+      ),
+    )
+    return data
+  } catch (error) {
+    console.error(error)
+    return undefined
+  }
+}

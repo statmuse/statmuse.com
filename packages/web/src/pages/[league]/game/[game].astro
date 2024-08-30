@@ -2,11 +2,11 @@
 import GameLayout from '@layouts/game.astro'
 import NbaBoxscore from '@components/nba-boxscore.astro'
 import NflBoxscore from '@components/nfl-boxscore.astro'
-import MlbBoxscore from '@components/mlb-boxscore.astro'
 import NhlBoxscore from '@components/nhl-boxscore.astro'
 import EplBoxscore from '@components/epl-boxscore.astro'
+import MlbBoxscore from '@components/boxscores/mlb/mlb-boxscore.astro'
 import { Caching } from '@lib/caching'
-import { getGame } from '@lib/game'
+import { getGame } from '@lib/gamera'
 import { NOT_FOUND_404 } from '@lib/response'
 import { type LeagueParam, leagueToDomain } from '@lib/params'
 
@@ -15,30 +15,34 @@ const game = Astro.params.game
 if (!game || !league) return NOT_FOUND_404
 
 const domain = leagueToDomain(league)
-const data = await getGame({ context: Astro, domain, game })
-if (!data) return NOT_FOUND_404
-if (data.type === 'error') return NOT_FOUND_404
+const data =
+  domain !== 'MLB' ? await getGame({ context: Astro, domain, game }) : undefined
+if (!data && domain !== 'MLB') return NOT_FOUND_404
+if (data?.type === 'error') return NOT_FOUND_404
 
 Caching.swr(Astro)
 ---
 
-<GameLayout {data} {domain}>
-  {
-    (function () {
-      switch (data.domain) {
-        case 'NBA':
-          return <NbaBoxscore {data} />
-        case 'NFL':
-          return <NflBoxscore {data} />
-        case 'MLB':
-          return <MlbBoxscore {data} />
-        case 'NHL':
-          return <NhlBoxscore {data} />
-        case 'EPL':
-          return <EplBoxscore {data} />
-        default:
-          throw new Error('cannot render a boxscore for PGA')
-      }
-    })()
-  }
-</GameLayout>
+{
+  domain === 'MLB' ? (
+    // New Boxscores
+    <MlbBoxscore />
+  ) : (
+    <GameLayout {data} {domain}>
+      {(function () {
+        switch (data.domain) {
+          case 'NBA':
+            return <NbaBoxscore {data} />
+          case 'NFL':
+            return <NflBoxscore {data} />
+          case 'NHL':
+            return <NhlBoxscore {data} />
+          case 'EPL':
+            return <EplBoxscore {data} />
+          default:
+            throw new Error('cannot render a boxscore for PGA')
+        }
+      })()}
+    </GameLayout>
+  )
+}

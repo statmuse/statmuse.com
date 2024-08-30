@@ -1,6 +1,6 @@
 ---
 import {
-  type GameraEplBoxScore,
+  type GameraAnswerEplBoxScore,
   type EplHistoricalBoxScore,
   getUrlForEntity,
 } from '@statmuse/core/gamera'
@@ -15,7 +15,7 @@ import Goal from '@components/icons/goal.astro'
 import Substitution from '@components/icons/substitution.astro'
 
 interface Props extends HTMLAttributes<'div'> {
-  data?: GameraEplBoxScore
+  data?: GameraAnswerEplBoxScore
   detail?: EplHistoricalBoxScore
 }
 

@@ -11,8 +11,8 @@ import type {
   GameraTeamSeasonSplits,
   GameraTeamSeasonStats,
 } from '@statmuse/core/gamera'
-import { parseTeamId, parseYearId } from './parse'
-import { request } from '@lib/gamera'
+import { parseTeamId, parseYearId } from '../parse'
+import { request } from '@lib/gamera/base'
 import type { Context } from '@lib/session'
 
 export const getTeamSeasonOverview = async (props: {
@@ -61,7 +61,7 @@ export const getTeamSeasonStats = async (props: {
   domain: GameraDomain
   team: string
   year: string
-  params: URLSearchParams
+  params: Record<string, string> | URLSearchParams
 }) => {
   try {
     const teamId = parseTeamId(props.team)
@@ -80,7 +80,7 @@ export const getTeamSeasonPlayerStats = async (props: {
   domain: GameraDomain
   team: string
   year: string
-  params: URLSearchParams
+  params: Record<string, string> | URLSearchParams
 }) => {
   try {
     const teamId = parseTeamId(props.team)

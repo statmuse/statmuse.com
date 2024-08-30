@@ -4,7 +4,7 @@ import type {
   TeamCardResponse,
   TeamInfo,
 } from '@statmuse/core/gamera'
-import { request } from '@lib/gamera'
+import { request } from '@lib/gamera/base'
 import type { Context } from '@lib/session'
 import { find } from 'lodash-es'
 
@@ -46,7 +46,7 @@ export const getTeamCards = async (props: {
 }
 
 const playerMapByDomain: Record<
-  GameraDomain,
+  Exclude<GameraDomain, 'PGA'>,
   { stat: string; title: string; query: string }[]
 > = {
   NBA: [
@@ -132,7 +132,7 @@ const playerMapByDomain: Record<
 
 export const homeLeadersByDomain = async (props: {
   context: Context
-  domain: GameraDomain
+  domain: Exclude<GameraDomain, 'PGA'>
   league?: 'epl' | 'lal'
 }) => {
   const leaders = await getPlayerCards(props)
@@ -160,7 +160,7 @@ export type PlayerLeadersResponse = Awaited<
 >
 
 const teamMapByDomain: Record<
-  GameraDomain,
+  Exclude<GameraDomain, 'PGA'>,
   { stat: string; title: string; query: string }[]
 > = {
   NBA: [
@@ -290,7 +290,7 @@ const teamMapByDomain: Record<
 
 export const homeRankingsByDomain = async (props: {
   context: Context
-  domain: GameraDomain
+  domain: Exclude<GameraDomain, 'PGA'>
   league?: 'epl' | 'lal'
 }) => {
   const leaders = await getTeamCards(props)
@@ -324,7 +324,7 @@ export type TeamRankingsResponse = {
 }[]
 
 const bettingMapByDomain: Record<
-  GameraDomain,
+  Exclude<GameraDomain, 'PGA' | 'EPL'>,
   { stat: string; title: string; query: string }[]
 > = {
   NBA: [
@@ -379,7 +379,7 @@ const bettingMapByDomain: Record<
 
 export const homeBettingByDomain = async (props: {
   context: Context
-  domain: GameraDomain
+  domain: Exclude<GameraDomain, 'PGA'>
 }) => {
   if (props.domain === 'EPL') return undefined
   const leaders = await getTeamCards(props)

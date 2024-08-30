@@ -1,0 +1,489 @@
+---
+import {
+  formatMlbPosition,
+  mapStatsResponseToGrid,
+  type TeamGameModel,
+  type MlbStatKey,
+  type MlbPlayerStatsResponse,
+  type MlbStatKeySet,
+  type GameraGridColumn,
+  type GameraGrid,
+  type GameraPlayerReference,
+} from '@statmuse/core/gamera'
+import MlbPlayerLeaders from './mlb-player-leaders.astro'
+import Grid from '@components/grid.svelte'
+import { last, orderBy } from 'lodash-es'
+
+interface Props {
+  team: 'home' | 'away'
+  opposingPitcher?: GameraPlayerReference
+  teamModel: TeamGameModel<MlbStatKey>
+  teamPlayerStats?: MlbPlayerStatsResponse<MlbStatKey, 'player'>
+  teamPlayerStatsAgainstPitcher?: MlbPlayerStatsResponse<
+    MlbStatKeySet['battingStandard'],
+    'player'
+  >
+}
+
+const {
+  opposingPitcher,
+  team,
+  teamModel,
+  teamPlayerStats,
+  teamPlayerStatsAgainstPitcher,
+} = Astro.props
+
+const splits = teamPlayerStats?.stats?.splits[0].splits
+const statsMap = teamPlayerStats?.stats?.statsLookup
+
+const splitsAgainstPitcher =
+  teamPlayerStatsAgainstPitcher?.stats?.splits[0].splits
+const statsMapAgainstPitcher = teamPlayerStatsAgainstPitcher?.stats?.statsLookup
+
+const players = [
+  ...(teamPlayerStats?.players ?? []),
+  ...(teamPlayerStatsAgainstPitcher?.players ?? []),
+]
+const playerMap = players.reduce<
+  Record<number, GameraPlayerReference | undefined>
+>((acc, player) => {
+  return {
+    ...acc,
+    [player.id]: player,
+  }
+}, {})
+
+const data =
+  splits?.map((s) => ({
+    player: playerMap[s.playerId],
+    stats: statsMap?.[s.statsLookupKey],
+  })) ?? []
+
+const playerStatsMap = data.reduce<Record<number, (typeof data)[number]>>(
+  (acc, d) => ({ ...acc, [d.player?.id ?? '']: d }),
+  {},
+)
+
+const dataAgainstPitcher =
+  splitsAgainstPitcher?.map((s) => ({
+    player: playerMap[s.playerId],
+    stats: statsMapAgainstPitcher?.[s.statsLookupKey],
+  })) ?? []
+
+const againstPitcherPlayerStatsMap = dataAgainstPitcher.reduce<
+  Record<number, (typeof dataAgainstPitcher)[number]>
+>((acc, d) => ({ ...acc, [d.player?.id ?? '']: d }), {})
+
+const battingColumns: (GameraGridColumn & {
+  statKey: MlbStatKeySet['battingStandard']
+})[] = [
+  {
+    title: 'Batters',
+    rowItemKey: 'PLAYER',
+    type: 'string',
+    statKey: 'Batting-GamesPlayed',
+  },
+  {
+    title: 'G',
+    rowItemKey: 'G',
+    type: 'number',
+    statKey: 'Batting-GamesPlayed',
+  },
+  { title: 'AB', rowItemKey: 'AB', type: 'number', statKey: 'Batting-AtBats' },
+  { title: 'R', rowItemKey: 'R', type: 'number', statKey: 'Batting-Runs' },
+  { title: 'H', rowItemKey: 'H', type: 'number', statKey: 'Batting-Hits' },
+  { title: '2B', rowItemKey: '2B', type: 'number', statKey: 'Batting-Doubles' },
+  { title: '3B', rowItemKey: '3B', type: 'number', statKey: 'Batting-Triples' },
+  {
+    title: 'HR',
+    rowItemKey: 'HR',
+    type: 'number',
+    statKey: 'Batting-HomeRuns',
+  },
+  {
+    title: 'RBI',
+    rowItemKey: 'RBI',
+    type: 'number',
+    statKey: 'Batting-RunsBattedIn',
+  },
+  { title: 'BB', rowItemKey: 'BB', type: 'number', statKey: 'Batting-Walks' },
+  {
+    title: 'HBP',
+    rowItemKey: 'HBP',
+    type: 'number',
+    statKey: 'Batting-HitByPitches',
+  },
+  {
+    title: 'SO',
+    rowItemKey: 'SO',
+    type: 'number',
+    statKey: 'Batting-Strikeouts',
+  },
+  {
+    title: 'SB',
+    rowItemKey: 'SB',
+    type: 'number',
+    statKey: 'Batting-StolenBases',
+  },
+  {
+    title: 'CS',
+    rowItemKey: 'CS',
+    type: 'number',
+    statKey: 'Batting-CaughtStealing',
+  },
+  {
+    title: 'AVG',
+    rowItemKey: 'AVG',
+    type: 'number',
+    statKey: 'Batting-BattingAverage',
+  },
+  {
+    title: 'OBP',
+    rowItemKey: 'OBP',
+    type: 'number',
+    statKey: 'Batting-OnBasePercentage',
+  },
+  {
+    title: 'SLG',
+    rowItemKey: 'SLG',
+    type: 'number',
+    statKey: 'Batting-SluggingPercentage',
+  },
+]
+
+const pitchingColumns: (GameraGridColumn & {
+  statKey: MlbStatKeySet['pitchingStandard']
+})[] = [
+  {
+    title: 'Pitchers',
+    rowItemKey: 'PLAYER',
+    type: 'string',
+    statKey: 'Pitching-GamesPitched',
+  },
+  {
+    title: 'G',
+    rowItemKey: 'G',
+    type: 'number',
+    statKey: 'Pitching-GamesPitched',
+  },
+  {
+    title: 'GS',
+    rowItemKey: 'GS',
+    type: 'number',
+    statKey: 'Pitching-GamesStarted',
+  },
+  { title: 'W', rowItemKey: 'W', type: 'number', statKey: 'Pitching-Wins' },
+  { title: 'L', rowItemKey: 'L', type: 'number', statKey: 'Pitching-Losses' },
+  {
+    title: 'ERA',
+    rowItemKey: 'ERA',
+    type: 'number',
+    statKey: 'Pitching-EarnedRunAverage',
+  },
+  {
+    title: 'SO',
+    rowItemKey: 'SO',
+    type: 'number',
+    statKey: 'Pitching-Strikeouts',
+  },
+  {
+    title: 'CG',
+    rowItemKey: 'CG',
+    type: 'number',
+    statKey: 'Pitching-CompleteGames',
+  },
+  {
+    title: 'SHO',
+    rowItemKey: 'SHO',
+    type: 'number',
+    statKey: 'Pitching-Shutouts',
+  },
+  { title: 'SV', rowItemKey: 'SV', type: 'number', statKey: 'Pitching-Saves' },
+  {
+    title: 'IP',
+    rowItemKey: 'IP',
+    type: 'number',
+    statKey: 'Pitching-InningsPitched',
+  },
+  { title: 'H', rowItemKey: 'H', type: 'number', statKey: 'Pitching-Hits' },
+  {
+    title: 'ER',
+    rowItemKey: 'ER',
+    type: 'number',
+    statKey: 'Pitching-EarnedRuns',
+  },
+  { title: 'R', rowItemKey: 'R', type: 'number', statKey: 'Pitching-Runs' },
+  {
+    title: 'HR',
+    rowItemKey: 'HR',
+    type: 'number',
+    statKey: 'Pitching-HomeRuns',
+  },
+  { title: 'BB', rowItemKey: 'BB', type: 'number', statKey: 'Pitching-Walks' },
+  {
+    title: 'HBP',
+    rowItemKey: 'HBP',
+    type: 'number',
+    statKey: 'Pitching-HitBatsmen',
+  },
+]
+
+let battingGrid: GameraGrid
+let battingGridAgainstPitcher: GameraGrid
+let pitchingGrid: GameraGrid
+
+if (teamModel.players !== undefined) {
+  const battingLineupStats = teamModel.players
+    .filter((p) => p.lineup.battingOrder && p.lineup.battingOrderSequence === 1)
+    .map((p) => ({
+      ...playerStatsMap[p.playerId],
+      position: formatMlbPosition(last(p.lineup.positions)),
+    }))
+
+  const battingLineupStatsAgainstPitcher = teamModel.players
+    .filter((p) => p.lineup.battingOrder && p.lineup.battingOrderSequence === 1)
+    .map((p) => ({
+      ...againstPitcherPlayerStatsMap[p.playerId],
+      player: playerMap[p.playerId],
+      position: formatMlbPosition(last(p.lineup.positions)),
+    }))
+
+  const startingPitcherStats = teamModel.players
+    .filter((p) => p.lineup.pitchingSequence === 1)
+    .map((p) => ({ ...playerStatsMap[p.playerId] }))
+
+  battingGrid = mapStatsResponseToGrid(battingColumns, battingLineupStats)
+  battingGridAgainstPitcher = mapStatsResponseToGrid(
+    battingColumns,
+    battingLineupStatsAgainstPitcher,
+  )
+  pitchingGrid = mapStatsResponseToGrid(pitchingColumns, startingPitcherStats)
+} else {
+  battingGrid = mapStatsResponseToGrid(
+    battingColumns,
+    data.filter((d) => !!d.stats?.['Batting-GamesPlayed']),
+  )
+
+  pitchingGrid = mapStatsResponseToGrid(
+    pitchingColumns,
+    data.filter((d) => !!d.stats?.['Pitching-GamesPitched']),
+  )
+
+  battingGridAgainstPitcher = mapStatsResponseToGrid(
+    battingColumns,
+    dataAgainstPitcher.filter((d) => !!d.stats?.['Batting-GamesPlayed']),
+  )
+}
+---
+
+<Fragment>
+  {
+    teamModel.players && (
+      <Fragment>
+        <div class="group">
+          {opposingPitcher && (
+            <div class="flex gap-3">
+              <p class="flex-1 text-right">Season</p>
+              <div class="w-14 h-7 bg-gray-6 dark:bg-gray-4 border border-gray-6 dark:border-gray-4 mb-3 rounded-full relative overflow-clip">
+                <div
+                  class:list={{
+                    'absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 transition-transform ease-out': true,
+                    'group-has-[#away-season:checked]:translate-x-0 group-has-[#away-pitcher:checked]:translate-x-full':
+                      team === 'away',
+                    'group-has-[#home-season:checked]:translate-x-0 group-has-[#home-pitcher:checked]:translate-x-full':
+                      team === 'home',
+                  }}
+                />
+                <label
+                  for={`${team}-season`}
+                  class:list={{
+                    'block h-full w-full hover:cursor-pointer absolute top-0 left-0': true,
+                    'group-has-[#away-season:checked]:-z-10': team === 'away',
+                    'group-has-[#home-season:checked]:-z-10': team === 'home',
+                  }}
+                />
+                <label
+                  for={`${team}-pitcher`}
+                  class:list={{
+                    'block h-full w-full hover:cursor-pointer absolute top-0 left-0': true,
+                    'group-has-[#away-pitcher:checked]:-z-10': team === 'away',
+                    'group-has-[#home-pitcher:checked]:-z-10': team === 'home',
+                  }}
+                />
+              </div>
+              <p class="flex-1">
+                {opposingPitcher.entity.shortDisplay ??
+                  opposingPitcher.usedName}
+              </p>
+            </div>
+          )}
+          <div
+            class:list={{
+              hidden: true,
+              'has-[#away-season:checked]:block': team === 'away',
+              'has-[#home-season:checked]:block': team === 'home',
+            }}
+          >
+            <input
+              class="absolute opacity-0"
+              type="radio"
+              name={`${team}-batting-stats`}
+              id={`${team}-season`}
+              checked
+            />
+            <Grid
+              client:load
+              data={{
+                ...battingGrid,
+                columns: battingGrid.columns.map((col) =>
+                  col.rowItemKey === 'PLAYER'
+                    ? { ...col, title: 'Lineup' }
+                    : col,
+                ),
+              }}
+              stickyColumns={['PLAYER']}
+            />
+          </div>
+          <div
+            class:list={{
+              hidden: true,
+              'has-[#away-pitcher:checked]:block': team === 'away',
+              'has-[#home-pitcher:checked]:block': team === 'home',
+            }}
+          >
+            <input
+              class="absolute opacity-0"
+              type="radio"
+              name={`${team}-batting-stats`}
+              id={`${team}-pitcher`}
+            />
+            <Grid
+              client:load
+              data={{
+                ...battingGridAgainstPitcher,
+                columns: battingGridAgainstPitcher.columns.map((col) =>
+                  col.rowItemKey === 'PLAYER'
+                    ? { ...col, title: 'Lineup' }
+                    : col,
+                ),
+              }}
+              stickyColumns={['PLAYER']}
+            />
+          </div>
+        </div>
+        <Grid
+          client:load
+          data={{
+            ...pitchingGrid,
+            columns: pitchingGrid.columns.map((col) =>
+              col.rowItemKey === 'PLAYER' ? { ...col, title: 'Starter' } : col,
+            ),
+          }}
+          stickyColumns={['PLAYER']}
+        />
+      </Fragment>
+    )
+  }
+  <MlbPlayerLeaders teamId={teamModel.teamId} />
+  {
+    teamModel.players === undefined && (
+      <Fragment>
+        <div class="group">
+          {opposingPitcher && (
+            <div class="flex gap-3">
+              <p class="flex-1 text-right">Season</p>
+              <div class="w-14 h-7 bg-gray-6 dark:bg-gray-4 border border-gray-6 dark:border-gray-4 mb-3 rounded-full relative overflow-clip">
+                <div
+                  class:list={{
+                    'absolute h-full w-1/2 bg-gray-8 dark:bg-gray-7 rounded-full left-0 transition-transform ease-out': true,
+                    'group-has-[#away-season:checked]:translate-x-0 group-has-[#away-pitcher:checked]:translate-x-full':
+                      team === 'away',
+                    'group-has-[#home-season:checked]:translate-x-0 group-has-[#home-pitcher:checked]:translate-x-full':
+                      team === 'home',
+                  }}
+                />
+                <label
+                  for={`${team}-season`}
+                  class:list={{
+                    'block h-full w-full hover:cursor-pointer absolute top-0 left-0': true,
+                    'group-has-[#away-season:checked]:-z-10': team === 'away',
+                    'group-has-[#home-season:checked]:-z-10': team === 'home',
+                  }}
+                />
+                <label
+                  for={`${team}-pitcher`}
+                  class:list={{
+                    'block h-full w-full hover:cursor-pointer absolute top-0 left-0': true,
+                    'group-has-[#away-pitcher:checked]:-z-10': team === 'away',
+                    'group-has-[#home-pitcher:checked]:-z-10': team === 'home',
+                  }}
+                />
+              </div>
+              <p class="flex-1">
+                {opposingPitcher.entity.shortDisplay ??
+                  opposingPitcher.usedName}
+              </p>
+            </div>
+          )}
+          <div
+            class:list={{
+              hidden: true,
+              'has-[#away-season:checked]:block': team === 'away',
+              'has-[#home-season:checked]:block': team === 'home',
+            }}
+          >
+            <input
+              class="absolute opacity-0"
+              type="radio"
+              name={`${team}-batting-stats`}
+              id={`${team}-season`}
+              checked
+            />
+            <Grid
+              client:load
+              data={{
+                ...battingGrid,
+                rows: orderBy(battingGrid.rows, 'G.value', 'desc'),
+              }}
+              stickyColumns={['PLAYER']}
+            />
+          </div>
+          <div
+            class:list={{
+              hidden: true,
+              'has-[#away-pitcher:checked]:block': team === 'away',
+              'has-[#home-pitcher:checked]:block': team === 'home',
+            }}
+          >
+            <input
+              class="absolute opacity-0"
+              type="radio"
+              name={`${team}-batting-stats`}
+              id={`${team}-pitcher`}
+            />
+            <Grid
+              client:load
+              data={{
+                ...battingGridAgainstPitcher,
+                rows: orderBy(
+                  battingGridAgainstPitcher.rows,
+                  'G.value',
+                  'desc',
+                ),
+              }}
+              stickyColumns={['PLAYER']}
+            />
+          </div>
+        </div>
+        <Grid
+          client:load
+          data={{
+            ...pitchingGrid,
+            rows: orderBy(pitchingGrid.rows, 'G.value', 'desc'),
+          }}
+          stickyColumns={['PLAYER']}
+        />
+      </Fragment>
+    )
+  }
+</Fragment>

@@ -1,0 +1,137 @@
+---
+import EntityLink from '@components/entity-link.astro'
+import Icon from '@components/icon.svelte'
+import Image from '@components/image.astro'
+import Panel from '@components/panel.astro'
+import {
+  formatMlbPosition,
+  type TeamInjuryResponse,
+} from '@statmuse/core/gamera'
+import { zip } from 'lodash-es'
+
+interface Props {
+  awayTeamInjuries?: TeamInjuryResponse['teams'][number]
+  homeTeamInjuries?: TeamInjuryResponse['teams'][number]
+}
+
+const { awayTeamInjuries, homeTeamInjuries } = Astro.props
+
+const injuries = zip(awayTeamInjuries?.players, homeTeamInjuries?.players)
+
+const awayTeam = awayTeamInjuries?.team
+const homeTeam = homeTeamInjuries?.team
+
+const injuryDescription = (
+  injury: TeamInjuryResponse['teams'][number]['players'][number]['injuries'][number],
+) => {
+  let timeline
+  switch (injury.injuryStatus) {
+    case 'dayToDay':
+      timeline = 'Day-to-day'
+      break
+    case 'day7InjuredList':
+      timeline = '7-Day IL'
+      break
+    case 'day10InjuredList':
+      timeline = '10-Day IL'
+      break
+    case 'day15InjuredList':
+      timeline = '15-Day IL'
+      break
+    case 'day60InjuredList':
+      timeline = '60-Day IL'
+      break
+  }
+  return `${timeline} (${injury.description})`
+}
+---
+
+<Panel class="!p-0">
+  <div
+    class="relative flex justify-center py-2 border-b border-gray-6 dark:border-gray-4"
+  >
+    <EntityLink
+      entity={awayTeam?.entity}
+      class="flex gap-1 absolute left-3 top-2 text-inherit"
+    >
+      <Image
+        src={awayTeam?.logoImageUrl ?? ''}
+        alt={awayTeam?.name ?? ''}
+        width={60}
+        height={60}
+        class="w-6 h-6 object-contain"
+      />
+      {awayTeam?.abbreviation}
+    </EntityLink>
+
+    <h3 class="font-semibold">Injuries</h3>
+
+    <EntityLink
+      entity={homeTeam?.entity}
+      class="flex gap-1 absolute right-3 top-2 text-inherit"
+    >
+      {homeTeam?.abbreviation}
+      <Image
+        src={homeTeam?.logoImageUrl ?? ''}
+        alt={homeTeam?.name ?? ''}
+        width={60}
+        height={60}
+        class="w-6 h-6 object-contain"
+      />
+    </EntityLink>
+  </div>
+  <div class="divide-y divide-gray-6 dark:divide-gray-4 *:px-3 *:py-1">
+    {
+      injuries.map((injury) => (
+        <div class="flex justify-between">
+          <EntityLink
+            entity={injury[0]?.player.entity}
+            class="hover:no-underline text-inherit group/link"
+          >
+            <div>
+              {injury[0] && (
+                <>
+                  <div class="flex gap-1 items-center">
+                    <p class="group-hover/link:underline">
+                      {injury[0]?.player.usedName}
+                    </p>
+                    <span class="text-gray-5 text-sm">
+                      {formatMlbPosition(injury[0]?.position)}
+                    </span>
+                  </div>
+                  <p class="text-sm text-gray-5 flex gap-1.5 items-center">
+                    <Icon name="injury" class="w-4 h-4" />
+                    {injuryDescription(injury[0].injuries[0])}
+                  </p>
+                </>
+              )}
+            </div>
+          </EntityLink>
+          <EntityLink
+            entity={injury[1]?.player.entity}
+            class="hover:no-underline text-inherit group/link"
+          >
+            <div>
+              {injury[1] && (
+                <>
+                  <div class="flex gap-1 items-center justify-end">
+                    <span class="text-gray-5 text-sm">
+                      {formatMlbPosition(injury[1]?.position)}
+                    </span>
+                    <p class="group-hover/link:underline">
+                      {injury[1]?.player.usedName}
+                    </p>
+                  </div>
+                  <p class="text-sm text-gray-5 flex gap-1.5 items-center justify-end">
+                    {injuryDescription(injury[1].injuries[0])}
+                    <Icon name="injury" class="w-4 h-4" />
+                  </p>
+                </>
+              )}
+            </div>
+          </EntityLink>
+        </div>
+      ))
+    }
+  </div>
+</Panel>

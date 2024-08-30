@@ -7,6 +7,8 @@ const db = DynamoDBDocumentClient.from(new DynamoDBClient({}), {
   marshallOptions: { removeUndefinedValues: true },
 })
 
+// console.log('dynamo table name: ', Table['imported-table'].tableName)
+
 export const getTrendingData = async (props?: {
   league?: string
   timeframe?: string

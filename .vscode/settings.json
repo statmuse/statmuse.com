@@ -5,5 +5,12 @@
   "prettier.documentSelectors": ["**/*.astro", "**/*.svelte"],
   "search.exclude": {
     "**/.sst": true
-  }
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "astro",
+    "svelte"
+  ]
 }
