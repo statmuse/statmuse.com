@@ -1,5 +1,10 @@
 ---
-import { getGames, getPlayByPlay, getStandingsRaw } from '@lib/gamera'
+import {
+  getGames,
+  getInjuries,
+  getPlayByPlay,
+  getStandingsRaw,
+} from '@lib/gamera'
 import Layout from './layout.astro'
 import type {
   ContentReference,
@@ -24,6 +29,7 @@ import { Caching } from '@lib/caching'
 import BattingSummary from './batting-summary.svelte'
 import PlayerModal from './player-modal.svelte'
 import AtBatModal from './at-bat-modal.svelte'
+import Injuries from './injuries.astro'
 
 interface Props {
   gameData: MlbGameDataResponse<MlbStatKey>
@@ -44,8 +50,8 @@ const {
   gameTimestamp,
 } = gameData
 
-const [homeTeamGames, awayTeamGames, playByPlay, standings] = await Promise.all(
-  [
+const [homeTeamGames, awayTeamGames, playByPlay, standings, injuries] =
+  await Promise.all([
     getGames({
       context: Astro,
       domain: 'mlb',
@@ -62,11 +68,20 @@ const [homeTeamGames, awayTeamGames, playByPlay, standings] = await Promise.all(
     }),
     getPlayByPlay({ context: Astro, gameId }),
     getStandingsRaw({ context: Astro, domain: 'mlb' }),
-  ],
-)
+    getInjuries({ context: Astro }),
+  ])
 
 const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
 const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
+
+const awayTeamInjuries = find(
+  injuries?.teams,
+  (t) => t.team.teamId === awayTeamModel.teamId,
+)
+const homeTeamInjuries = find(
+  injuries?.teams,
+  (t) => t.team.teamId === homeTeamModel.teamId,
+)
 
 store.init({ gameData, playByPlay })
 
@@ -163,6 +178,7 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
         </div>
       </div>
       <div class="@xl/boxscore:hidden flex flex-col gap-3">
+        <Injuries {awayTeamInjuries} {homeTeamInjuries} />
         <CurrentSeries
           domain="MLB"
           teams={teams ?? []}
@@ -230,6 +246,7 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
           <PitchingStats client:load teamKey="home" />
         </div>
       </div>
+      <Injuries {awayTeamInjuries} {homeTeamInjuries} />
       <CurrentSeries
         domain="MLB"
         teams={teams ?? []}
