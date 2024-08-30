@@ -2,6 +2,7 @@
 import { getGames, getPlayByPlay, getStandingsRaw } from '@lib/gamera'
 import Layout from './layout.astro'
 import {
+  getUrlForEntity,
   tokensToText,
   type ContentReference,
   type MlbGameDataResponse,
@@ -69,6 +70,16 @@ const meta = {
     homeTeam?.nickname
   } (${dayjs(gameTimestamp ?? gameDate).format('MMM D, YYYY')})`,
   description: tokensToText(gameData.summary),
+  canonical: {
+    url: getUrlForEntity({
+      id: gameData.gameId.toString(),
+      type: 'game',
+      domain: 'MLB',
+      display: `${dayjs(gameTimestamp ?? gameDate).format('M/D/YYYY')} ${
+        awayTeam?.abbreviation
+      } @ ${homeTeam?.abbreviation}`,
+    }),
+  },
 }
 
 Caching.swr(Astro)

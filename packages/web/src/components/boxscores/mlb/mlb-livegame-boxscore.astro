@@ -6,10 +6,11 @@ import {
   getStandingsRaw,
 } from '@lib/gamera'
 import Layout from './layout.astro'
-import type {
-  ContentReference,
-  MlbGameDataResponse,
-  MlbStatKey,
+import {
+  getUrlForEntity,
+  type ContentReference,
+  type MlbGameDataResponse,
+  type MlbStatKey,
 } from '@statmuse/core/gamera'
 import { find } from 'lodash-es'
 import GameInfo from './game-info.astro'
@@ -30,6 +31,7 @@ import BattingSummary from './batting-summary.svelte'
 import PlayerModal from './player-modal.svelte'
 import AtBatModal from './at-bat-modal.svelte'
 import Injuries from './injuries.astro'
+import dayjs from 'dayjs'
 
 interface Props {
   gameData: MlbGameDataResponse<MlbStatKey>
@@ -89,6 +91,16 @@ store.init({ gameData, playByPlay })
 const meta = {
   title: `${awayTeam?.nickname} ${awayTeamModel.score}-${homeTeamModel.score} ${homeTeam?.nickname} (Live)`,
   description: `(LIVE) ${awayTeam?.name} vs. ${homeTeam?.name}. Live pitch, play-by-play, stats and more.`,
+  canonical: {
+    url: getUrlForEntity({
+      id: gameData.gameId.toString(),
+      type: 'game',
+      domain: 'MLB',
+      display: `${dayjs(gameTimestamp).format('M/D/YYYY')} ${
+        awayTeam?.abbreviation
+      } @ ${homeTeam?.abbreviation}`,
+    }),
+  },
 }
 
 Caching.swr(Astro, { maxage: 15, revalidate: 25 })

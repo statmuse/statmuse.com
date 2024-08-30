@@ -15,11 +15,12 @@ import {
   getTeamSeasonStats,
   getMlbPlayerSplits,
 } from '@lib/gamera'
-import type {
-  ContentReference,
-  GameraPlayerReference,
-  MlbGameDataResponse,
-  MlbStatKey,
+import {
+  getUrlForEntity,
+  type ContentReference,
+  type GameraPlayerReference,
+  type MlbGameDataResponse,
+  type MlbStatKey,
 } from '@statmuse/core/gamera'
 import TeamPlayerStats from './team-player-stats.astro'
 import PregameHero from './pregame-hero.astro'
@@ -183,6 +184,16 @@ const meta = {
     .format(
       'h:mma',
     )} ET. Preview probable pitchers, lineups stats vs starting pitchers, injury status and more.`,
+  canonical: {
+    url: getUrlForEntity({
+      id: gameData.gameId.toString(),
+      type: 'game',
+      domain: 'MLB',
+      display: `${dayjs(gameTimestamp).format('M/D/YYYY')} ${
+        awayTeam?.abbreviation
+      } @ ${homeTeam?.abbreviation}`,
+    }),
+  },
 }
 ---
 
