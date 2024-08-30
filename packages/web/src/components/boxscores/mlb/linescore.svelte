@@ -116,7 +116,7 @@
       {#each range(maxInnings ?? 9) as inning (inning)}
         <div class="text-gray-5 px-1.5">
           <p>{inning + 1}</p>
-          <p class="relative">
+          <p class="relative h-6">
             {#if inning + 1 === $inningNumber && $halfInning?.half === 'top' && !final}
               <span
                 class="w-6 h-6 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -136,7 +136,7 @@
                 : ''}
             </span>
           </p>
-          <p class="relative">
+          <p class="relative h-6">
             {#if inning + 1 === $inningNumber && $halfInning?.half === 'bottom' && !final}
               <span
                 class="w-6 h-6 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
