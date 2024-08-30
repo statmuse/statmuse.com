@@ -54,6 +54,7 @@ const {
   networkName,
   gameTimestamp,
   odds,
+  timeOfDay,
 } = gameData
 
 const [
@@ -305,7 +306,7 @@ const meta = {
         games: homeTeamGames.games.filter((g) => g.type === 'completed'),
       }}
     />
-    <GameInfo {venue} {weather} {officials} {gameTimestamp} />
+    <GameInfo {venue} {weather} {officials} {gameTimestamp} {timeOfDay} />
   </div>
 
   <TeamPlayerStats

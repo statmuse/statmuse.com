@@ -325,6 +325,7 @@ export interface MlbGameDataResponse<Keys extends MlbStatKey> {
     name?: string
     location?: string
   }
+  timeOfDay: 'day' | 'night'
   officials?: Official[]
   teams?: GameraTeamReference[]
   players?: GameraPlayerReference[]

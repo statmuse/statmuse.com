@@ -10,9 +10,10 @@ interface Props {
   weather: MlbGameDataResponse<MlbStatKey>['weather']
   officials: MlbGameDataResponse<MlbStatKey>['officials']
   gameTimestamp: string
+  timeOfDay: 'day' | 'night'
 }
 
-const { venue, weather, officials, gameTimestamp } = Astro.props
+const { venue, weather, officials, gameTimestamp, timeOfDay } = Astro.props
 ---
 
 <Panel title="Game Info">
@@ -37,7 +38,24 @@ const { venue, weather, officials, gameTimestamp } = Astro.props
       weather && (
         <div class="flex gap-3">
           <p class="flex gap-1.5 items-center">
-            <Icon name="weather" class="w-5 h-5" />
+            <Icon
+              name={
+                weather.cloudCoveragePercentage > 0.66
+                  ? 'cloud'
+                  : weather.cloudCoveragePercentage > 0.33 &&
+                    timeOfDay === 'night'
+                  ? 'moon-cloud'
+                  : weather.cloudCoveragePercentage > 0.33 &&
+                    timeOfDay === 'day'
+                  ? 'sun-cloud'
+                  : timeOfDay === 'night'
+                  ? 'moon'
+                  : timeOfDay === 'day'
+                  ? 'sun'
+                  : 'sun-cloud'
+              }
+              class="w-5 h-5"
+            />
             {weather.temperatureFahrenheit}°
           </p>
           <p class="flex gap-1.5 items-center">

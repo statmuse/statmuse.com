@@ -44,6 +44,7 @@ const {
   gameTimestamp,
   gameDate,
   summary,
+  timeOfDay,
 } = gameData
 
 const [awayTeamGames, standings, playByPlay] = await Promise.all([
@@ -225,6 +226,7 @@ Caching.swr(Astro)
               {venue}
               {weather}
               {officials}
+              {timeOfDay}
               gameTimestamp={gameTimestamp || gameDate}
             />
           </div>
@@ -247,6 +249,7 @@ Caching.swr(Astro)
             {venue}
             {weather}
             {officials}
+            {timeOfDay}
             gameTimestamp={gameTimestamp || gameDate}
           />
         </div>
@@ -277,6 +280,7 @@ Caching.swr(Astro)
           {venue}
           {weather}
           {officials}
+          {timeOfDay}
           gameTimestamp={gameTimestamp || gameDate}
         />
       </div>

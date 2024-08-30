@@ -48,6 +48,7 @@ const {
   weather,
   officials,
   gameTimestamp,
+  timeOfDay,
 } = gameData
 
 const [homeTeamGames, awayTeamGames, playByPlay, standings, injuries] =
@@ -190,7 +191,7 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
           awayTeamId={awayTeamModel.teamId}
           homeTeamId={homeTeamModel.teamId}
         />
-        <GameInfo {venue} {weather} {officials} {gameTimestamp} />
+        <GameInfo {venue} {weather} {officials} {gameTimestamp} {timeOfDay} />
       </div>
     </div>
     <div class="flex-1 hidden @xl/boxscore:flex flex-col gap-3 overflow-hidden">
@@ -258,7 +259,7 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
         awayTeamId={awayTeamModel.teamId}
         homeTeamId={homeTeamModel.teamId}
       />
-      <GameInfo {venue} {weather} {officials} {gameTimestamp} />
+      <GameInfo {venue} {weather} {officials} {gameTimestamp} {timeOfDay} />
     </div>
   </div>
 
