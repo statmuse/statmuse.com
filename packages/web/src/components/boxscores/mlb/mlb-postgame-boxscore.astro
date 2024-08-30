@@ -93,12 +93,12 @@ Caching.swr(Astro)
       colors:
         awayTeamModel.gameResult === 'win'
           ? {
-              foreground: awayTeam?.colors.foregroundColor ?? '',
-              background: awayTeam?.colors.backgroundColor ?? '',
+              foreground: awayTeam?.colors?.foregroundColor ?? '',
+              background: awayTeam?.colors?.backgroundColor ?? '',
             }
           : {
-              foreground: homeTeam?.colors.foregroundColor ?? '',
-              background: homeTeam?.colors.backgroundColor ?? '',
+              foreground: homeTeam?.colors?.foregroundColor ?? '',
+              background: homeTeam?.colors?.backgroundColor ?? '',
             },
     },
   }}

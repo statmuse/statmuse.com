@@ -101,7 +101,7 @@ export interface GameraTeamReference {
   nickname: string
   abbreviation: string
   logoImageUrl: string
-  colors: Colors
+  colors?: Colors
   entity: GameraEntity
 }
 

@@ -97,8 +97,9 @@ const toggleLinks = [
                 }}
                 style={
                   link.team && {
-                    '--team-primary-color': link.team?.colors.backgroundColor,
-                    '--team-secondary-color': link.team?.colors.foregroundColor,
+                    '--team-primary-color': link.team?.colors?.backgroundColor,
+                    '--team-secondary-color':
+                      link.team?.colors?.foregroundColor,
                   }
                 }
                 for={link.label}
@@ -191,8 +192,8 @@ const toggleLinks = [
             '@xl/boxscore:!hidden': status !== 'scheduled' && useContainerQuery,
           }}
           style={{
-            '--team-primary-color': awayTeam?.colors.backgroundColor,
-            '--team-secondary-color': awayTeam?.colors.foregroundColor,
+            '--team-primary-color': awayTeam?.colors?.backgroundColor,
+            '--team-secondary-color': awayTeam?.colors?.foregroundColor,
           }}
         >
           <input
@@ -214,8 +215,8 @@ const toggleLinks = [
             '@xl/boxscore:!hidden': status !== 'scheduled' && useContainerQuery,
           }}
           style={{
-            '--team-primary-color': homeTeam?.colors.backgroundColor,
-            '--team-secondary-color': homeTeam?.colors.foregroundColor,
+            '--team-primary-color': homeTeam?.colors?.backgroundColor,
+            '--team-secondary-color': homeTeam?.colors?.foregroundColor,
           }}
         >
           <input
