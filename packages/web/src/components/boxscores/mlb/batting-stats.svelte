@@ -188,6 +188,10 @@
       ? { [higlightPlayer.usedName ?? '']: higlightPlayer.colors }
       : undefined}
     onRowClick={(row) => () =>
-      selectedId.set({ id: row.NAME?.meta?.id ?? 0, alignment: teamKey })}
+      selectedId.set({
+        id: row.NAME?.meta?.id ?? 0,
+        alignment: teamKey,
+        type: 'batter',
+      })}
   />
 </Panel>

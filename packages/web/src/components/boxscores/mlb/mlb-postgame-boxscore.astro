@@ -295,20 +295,20 @@ Caching.swr(Astro)
     <BattingStats client:load team={homeTeam} teamKey="home" final />
     <BattingSummary teamKey="away" />
     <BattingSummary teamKey="home" />
-    <PitchingStats teamKey="away" final />
-    <PitchingStats teamKey="home" final />
+    <PitchingStats client:load teamKey="away" final />
+    <PitchingStats client:load teamKey="home" final />
   </div>
 
   <Fragment slot="away">
     <BattingStats client:load teamKey="away" final />
     <BattingSummary teamKey="away" />
-    <PitchingStats teamKey="away" final />
+    <PitchingStats client:load teamKey="away" final />
   </Fragment>
 
   <Fragment slot="home">
     <BattingStats client:load teamKey="home" final />
     <BattingSummary teamKey="home" />
-    <PitchingStats teamKey="home" final />
+    <PitchingStats client:load teamKey="home" final />
   </Fragment>
 
   {playByPlay && <PlayByPlay client:load slot="plays" {awayTeam} {homeTeam} />}

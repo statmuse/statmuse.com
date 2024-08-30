@@ -7,23 +7,75 @@
   import PitchByPitch from './pitch-by-pitch.svelte'
   import dayjs from 'dayjs'
   import { selectedId, selectedPlayer } from './stores'
-  import { tokensToText, type MlbStatKey } from '@statmuse/core/gamera'
+  import {
+    getValue,
+    tokensToText,
+    type MlbStatKey,
+    type MlbStatModel,
+  } from '@statmuse/core/gamera'
   import Icon from '@components/icon.svelte'
 
-  const statSections: { key: string; statKey: MlbStatKey }[] = [
-    { key: 'AB', statKey: 'Batting-AtBats' },
-    { key: 'R', statKey: 'Batting-Runs' },
-    { key: 'H', statKey: 'Batting-Hits' },
-    { key: '2B', statKey: 'Batting-Doubles' },
-    { key: '3B', statKey: 'Batting-Triples' },
-    { key: 'HR', statKey: 'Batting-HomeRuns' },
-    { key: 'RBI', statKey: 'Batting-RunsBattedIn' },
-    { key: 'BB', statKey: 'Batting-Walks' },
-    { key: 'HBP', statKey: 'Batting-HitByPitches' },
-    { key: 'K', statKey: 'Batting-Strikeouts' },
-    { key: 'SB', statKey: 'Batting-StolenBases' },
-    { key: 'CS', statKey: 'Batting-CaughtStealing' },
-  ]
+  type DisplayFn = (s?: MlbStatModel<MlbStatKey>) => string
+
+  $: statSections = (
+    $selectedPlayer?.type === 'batter'
+      ? [
+          { key: 'AB', statKey: 'Batting-AtBats' },
+          { key: 'R', statKey: 'Batting-Runs' },
+          { key: 'H', statKey: 'Batting-Hits' },
+          { key: '2B', statKey: 'Batting-Doubles' },
+          { key: '3B', statKey: 'Batting-Triples' },
+          { key: 'HR', statKey: 'Batting-HomeRuns' },
+          { key: 'RBI', statKey: 'Batting-RunsBattedIn' },
+          { key: 'BB', statKey: 'Batting-Walks' },
+          { key: 'HBP', statKey: 'Batting-HitByPitches' },
+          { key: 'K', statKey: 'Batting-Strikeouts' },
+          { key: 'SB', statKey: 'Batting-StolenBases' },
+          { key: 'CS', statKey: 'Batting-CaughtStealing' },
+        ]
+      : [
+          {
+            key: 'W/L',
+            statKey: 'Pitching-Wins',
+            display: (s?: MlbStatModel<MlbStatKey>) => {
+              if (getValue(s ?? {}, 'Pitching-Wins') > 0) {
+                return 'W'
+              }
+              if (getValue(s ?? {}, 'Pitching-Losses') > 0) {
+                return 'L'
+              }
+              if (getValue(s ?? {}, 'Pitching-GamesStarted') > 0) {
+                return 'ND'
+              }
+              return '-'
+            },
+          },
+          { key: 'K', statKey: 'Pitching-Strikeouts' },
+          { key: 'GS', statKey: 'Pitching-GamesStarted' },
+          {
+            key: 'CG/SV',
+            statKey: 'Pitching-CompleteGames',
+
+            display: (s?: MlbStatModel<MlbStatKey>) => {
+              if (getValue(s ?? {}, 'Pitching-CompleteGames') > 0) {
+                return 'CG'
+              }
+              if (getValue(s ?? {}, 'Pitching-Saves') > 0) {
+                return 'SV'
+              }
+              return '-'
+            },
+          },
+          { key: 'SHO', statKey: 'Pitching-Shutouts' },
+          { key: 'IP', statKey: 'Pitching-InningsPitched' },
+          { key: 'H', statKey: 'Pitching-Hits' },
+          { key: 'ER', statKey: 'Pitching-EarnedRuns' },
+          { key: 'R', statKey: 'Pitching-Runs' },
+          { key: 'HR', statKey: 'Pitching-HomeRuns' },
+          { key: 'BB', statKey: 'Pitching-Walks' },
+          { key: 'HBP', statKey: 'Pitching-HitBatsmen' },
+        ]
+  ) as { key: string; statKey: MlbStatKey; display?: DisplayFn }[]
 
   let atBatIndex = 0
 
@@ -126,7 +178,11 @@
             {#each statSections as section (section)}
               <div class="flex flex-col items-center">
                 <div class="whitespace-nowrap mb-[2px]">
-                  {stats?.[section.statKey]?.display ?? '-'}
+                  {#if section.display}
+                    {section.display(stats)}
+                  {:else}
+                    {stats?.[section.statKey]?.display ?? '-'}
+                  {/if}
                 </div>
                 <div
                   class="font-light text-sm opacity-80 whitespace-pre text-center leading-[1.1]"

@@ -1,7 +1,13 @@
 <script lang="ts">
   import Grid from '@components/grid.svelte'
   import { orderBy, filter, find } from 'lodash-es'
-  import { players, stats, lineup as lineUp, matchup } from './stores'
+  import {
+    players,
+    stats,
+    lineup as lineUp,
+    matchup,
+    selectedId,
+  } from './stores'
   import { getValue } from '@statmuse/core/gamera'
 
   export let teamKey: 'away' | 'home'
@@ -169,4 +175,10 @@
   highlight={higlightPlayer
     ? { [higlightPlayer.usedName ?? '']: higlightPlayer.colors }
     : undefined}
+  onRowClick={(row) => () =>
+    selectedId.set({
+      id: row.NAME?.meta?.id ?? 0,
+      alignment: teamKey,
+      type: 'pitcher',
+    })}
 />

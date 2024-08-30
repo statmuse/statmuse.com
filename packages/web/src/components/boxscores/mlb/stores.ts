@@ -271,7 +271,8 @@ export const baseRunningSummary = computed(
 )
 
 export const selectedId = atom<
-  { id: number; alignment: 'home' | 'away' } | undefined
+  | { id: number; alignment: 'home' | 'away'; type: 'pitcher' | 'batter' }
+  | undefined
 >()
 
 export const selectedPlayer = computed(
@@ -279,7 +280,7 @@ export const selectedPlayer = computed(
   ($selectedId, $players, $stats, $innings, $gameState) => {
     if (!$selectedId) return undefined
 
-    const { alignment } = $selectedId
+    const { alignment, type } = $selectedId
     const player = $players[$selectedId.id]
 
     const oppTeamId =
@@ -310,6 +311,7 @@ export const selectedPlayer = computed(
     })
 
     return {
+      type,
       player,
       stats,
       oppTeam,

@@ -236,34 +236,6 @@ export const getValue = <K extends MlbStatKey>(
   return statModel[key].value
 }
 
-export interface StatModel {
-  'Pitching-EarnedRunAverage'?: Value<number>
-  'Pitching-EarnedRuns'?: Value<number>
-  'Pitching-GamesPitched'?: Value<number>
-  'Pitching-HitBatsmen'?: Value<number>
-  'Pitching-Hits'?: Value<number>
-  'Pitching-HomeRuns'?: Value<number>
-  'Pitching-InningsPitched'?: Value<number>
-  'Pitching-Runs'?: Value<number>
-  'Pitching-Strikeouts'?: Value<number>
-  'Pitching-Walks'?: Value<number>
-  'Batting-AtBats'?: Value<number>
-  'Batting-BattingAverage'?: Value<number>
-  'Batting-CaughtStealing'?: Value<number>
-  'Batting-Doubles'?: Value<number>
-  'Batting-HitByPitches'?: Value<number>
-  'Batting-Hits'?: Value<number>
-  'Batting-HomeRuns'?: Value<number>
-  'Batting-OnBasePercentage'?: Value<number>
-  'Batting-Runs'?: Value<number>
-  'Batting-RunsBattedIn'?: Value<number>
-  'Batting-SluggingPercentage'?: Value<number>
-  'Batting-StolenBases'?: Value<number>
-  'Batting-Strikeouts'?: Value<number>
-  'Batting-Triples'?: Value<number>
-  'Batting-Walks'?: Value<number>
-}
-
 export interface TeamGameModel<Keys extends MlbStatKey> {
   teamId: number
   score: number
