@@ -362,8 +362,6 @@ export const init = (props: {
 }
 
 export const update = (data: any) => {
-  console.log(data)
-
   gameScore.set(data.gameScore)
   lineScore.set(data.lineScore)
   lineup.set(data.lineup)

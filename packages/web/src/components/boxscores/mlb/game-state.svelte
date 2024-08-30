@@ -12,7 +12,6 @@
 
   onMount(() => {
     store.init({ gameData, playByPlay })
-    window.store = store
     return () => store.gameState.set({})
   })
 </script>

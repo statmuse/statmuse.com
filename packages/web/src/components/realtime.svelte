@@ -56,7 +56,6 @@
     connection.on('resume', console.log)
 
     connection.on('message', (fullTopic, payload) => {
-      console.log('full topic: ', fullTopic)
       const data = JSON.parse(new TextDecoder('utf8').decode(payload))
       store.update(data)
     })
