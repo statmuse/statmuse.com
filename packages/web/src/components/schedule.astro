@@ -11,6 +11,7 @@ import {
 import EntityLink from '@components/entity-link.astro'
 import Image from '@components/image.astro'
 import Panel from './panel.astro'
+import dayjs from 'dayjs'
 
 interface Props {
   league: string
@@ -168,9 +169,26 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
                       </div>
                     </div>
                     <div class="w-28 text-center border-l border-gray-6 dark:border-gray-4 ml-5 mt-2.5">
-                      {game.status?.split(', ').map((s) => (
-                        <p class="my-0.5 first:font-semibold">{s}</p>
-                      ))}
+                      <EntityLink
+                        entity={
+                          league === 'mlb'
+                            ? {
+                                id: game.gameId.toString(),
+                                type: 'game',
+                                domain: 'MLB',
+                                display: `${dayjs(game.date).format(
+                                  'M/D/YYYY',
+                                )} ${game.awayTeam.name} @ ${
+                                  game.homeTeam.name
+                                }`,
+                              }
+                            : undefined
+                        }
+                      >
+                        {game.status?.split(', ').map((s) => (
+                          <p class="my-0.5 first:font-semibold">{s}</p>
+                        ))}
+                      </EntityLink>
                     </div>
                   </div>
                 </div>
@@ -197,9 +215,22 @@ const gamesByDate: [string, ScheduledGameWithType[]][] = groupGames(
                         {game.awayTeam.name}
                       </EntityLink>
                     </p>
-                    <p>
+                    <EntityLink
+                      entity={
+                        league === 'mlb'
+                          ? {
+                              id: game.gameId.toString(),
+                              type: 'game',
+                              domain: 'MLB',
+                              display: `${dayjs(game.date).format(
+                                'M/D/YYYY',
+                              )} ${game.awayTeam.name} @ ${game.homeTeam.name}`,
+                            }
+                          : undefined
+                      }
+                    >
                       {game.time} {game.network && ` on ${game.network}`}
-                    </p>
+                    </EntityLink>
                   </div>
                   <div class="flex items center py-2.5">
                     <EntityLink entity={game.homeTeam.entity}>
