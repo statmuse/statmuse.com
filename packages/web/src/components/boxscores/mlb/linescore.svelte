@@ -20,6 +20,7 @@
     lineScore,
     stats,
     players,
+    outs,
   } from './stores'
 
   export let awayTeam: GameraTeamReference
@@ -208,7 +209,7 @@
           fillSecondBase={some($runners, (r) => r.endingBase === 2)}
           fillThirdBase={some($runners, (r) => r.endingBase === 3)}
         />
-        <OutsIndicator vertical />
+        <OutsIndicator vertical outs={$outs} />
       </div>
       <div class="text-right">
         <p class="text-gray-5 text-sm">

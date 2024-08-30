@@ -11,7 +11,7 @@
   import OutsIndicator from './outs-indicator.svelte'
   import AtBatCount from './at-bat-count.svelte'
   import { some } from 'lodash-es'
-  import { matchup, runners } from './stores'
+  import { matchup, runners, outs } from './stores'
 
   export let homeTeam: GameraTeamReference
   export let awayTeam: GameraTeamReference
@@ -48,7 +48,7 @@
         fillSecondBase={some($runners, (r) => r.endingBase === 2)}
         fillThirdBase={some($runners, (r) => r.endingBase === 3)}
       />
-      <OutsIndicator class="mb-1" />
+      <OutsIndicator class="mb-1" outs={$outs} />
       <AtBatCount />
     </div>
     <div>

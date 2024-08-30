@@ -18,6 +18,7 @@
   } from '@statmuse/core/gamera/index'
   import { findLast, some } from 'lodash-es'
   import { players, selectedAtBat } from './stores'
+  import OutsIndicator from './outs-indicator.svelte'
 
   export let inningTitle: string
   export let inning: InningHalf
@@ -254,7 +255,11 @@
                       >
                         {formatPlayOutcome(lastPitch)}
                       </div>
-                      <p class="text-lg">{count.outs} outs</p>
+                      <OutsIndicator
+                        class="scale-75"
+                        vertical
+                        outs={count.outs}
+                      />
                       {#if pitches}
                         <StrikezoneIcon class="w-6" {pitches} />
                       {/if}
