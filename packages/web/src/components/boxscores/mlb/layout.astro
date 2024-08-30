@@ -190,6 +190,10 @@ const toggleLinks = [
             'md:!hidden': status !== 'scheduled' && !useContainerQuery,
             '@xl/boxscore:!hidden': status !== 'scheduled' && useContainerQuery,
           }}
+          style={{
+            '--team-primary-color': awayTeam?.colors.backgroundColor,
+            '--team-secondary-color': awayTeam?.colors.foregroundColor,
+          }}
         >
           <input
             class="absolute opacity-0"
@@ -208,6 +212,10 @@ const toggleLinks = [
             'hidden has-[#home:checked]:flex flex-col gap-3': true,
             'md:!hidden': status !== 'scheduled' && !useContainerQuery,
             '@xl/boxscore:!hidden': status !== 'scheduled' && useContainerQuery,
+          }}
+          style={{
+            '--team-primary-color': homeTeam?.colors.backgroundColor,
+            '--team-secondary-color': homeTeam?.colors.foregroundColor,
           }}
         >
           <input
