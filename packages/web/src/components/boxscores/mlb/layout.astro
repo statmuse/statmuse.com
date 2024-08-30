@@ -55,7 +55,11 @@ const toggleLinks = [
 ]
 ---
 
-<Base {...rest} class="group @container/boxscore">
+<Base
+  {...rest}
+  share={{ url: Astro.url.href }}
+  class="group @container/boxscore"
+>
   <slot name="hero" />
   <div class:list={['group']}>
     <div

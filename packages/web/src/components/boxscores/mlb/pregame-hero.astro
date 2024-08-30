@@ -94,7 +94,7 @@ const homeTeamRecordLast5 = homeTeamGames?.slice(0, 5).reduce(
     <p class="text-gray-5 absolute left-3 top-2">{network}</p>
     <Timestamp client:only="svelte" {timestamp} />
     <div class="absolute right-3 top-2">
-      <Share />
+      <Share client:load share={{ url: Astro.url.href }} />
     </div>
   </div>
   <div class="flex h-20 overflow-clip">

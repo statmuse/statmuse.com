@@ -34,7 +34,7 @@ const { awayTeam, homeTeam, awayRecord, homeRecord, timestamp, inningNumber } =
     </p>
     <p>Final{inningNumber && inningNumber !== 9 ? `/${inningNumber}` : ''}</p>
     <div class="absolute right-3 top-2">
-      <Share />
+      <Share client:load share={{ url: Astro.url.href }} />
     </div>
   </div>
   <div class="flex h-20 overflow-clip">
