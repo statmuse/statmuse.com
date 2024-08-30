@@ -24,7 +24,7 @@
       url || `${window.location.origin}${createAskPath({ domain, query })}`
     shortLinkUrl = shortCode
       ? `${
-          import.meta.env.SHORT_LINK_URL || 'http://localhost:3000/'
+          import.meta.env.PUBLIC_SHORT_LINK_URL || 'http://localhost:3000/'
         }e/${shortCode}`
       : ''
   })

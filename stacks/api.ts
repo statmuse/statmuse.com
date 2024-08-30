@@ -36,7 +36,9 @@ export function API({ stack }: StackContext) {
     KANEDAMA_API_URL: isProd
       ? 'https://kanedama-prod.public.statmuse.com/'
       : 'https://kanedama-staging.public.statmuse.com/',
-    SHORT_LINK_URL: isProd ? 'https://statm.us/' : 'https://stage.statm.us/',
+    PUBLIC_SHORT_LINK_URL: isProd
+      ? 'https://statm.us/'
+      : 'https://stage.statm.us/',
   }
 
   if (isDev) {
