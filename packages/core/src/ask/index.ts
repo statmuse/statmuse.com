@@ -725,6 +725,17 @@ export const getUserAskSuggestions = (userId: string) =>
     .select(['asks.query as display', sql<string>`'history'`.as('type')])
     .execute()
 
+export const getVisitorAskSuggestions = (visitorId: string) =>
+  dbReader
+    .selectFrom('ask_events')
+    .innerJoin('asks', 'asks.id', 'ask_events.ask_id')
+    .where('asks.is_in_index', '=', true)
+    .where('ask_events.visitor_id', '=', visitorId)
+    .orderBy('ask_events.updated_at', 'desc')
+    .limit(3)
+    .select(['asks.query as display', sql<string>`'history'`.as('type')])
+    .execute()
+
 export const getUserFinanceAskSuggestions = (userId: string) =>
   dbReader
     .selectFrom('finance_asks_users')

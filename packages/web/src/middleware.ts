@@ -6,6 +6,10 @@ import { getTrendingData } from '@lib/trending'
 import { verifyLegacySession } from '@lib/jwt-builder'
 
 export const logging = defineMiddleware(async (context, next) => {
+  if (context.url.pathname.startsWith('/_image')) {
+    return next()
+  }
+
   const req = context.request
   console.log(`${req.method} ${context.url.pathname}${context.url.search}`)
   return next()
@@ -22,29 +26,39 @@ export const platform = defineMiddleware(async (context, next) => {
 
   context.locals.platform = platform
 
-  const colorScheme = context.request.headers?.get('x-statmuse-color-scheme')
-  if (colorScheme) context.locals.colorScheme = colorScheme as 'light' | 'dark'
-
-  const nativeView = context.request.headers?.get('x-statmuse-native-view')
-  if (nativeView)
-    context.locals.nativeView = nativeView as typeof context.locals.nativeView
-
-  const deviceId = context.request.headers?.get('x-statmuse-device-id')
-  if (deviceId) context.locals.deviceId = deviceId
-
-  console.log('context.locals', context.locals)
-
   if (platform === 'native') {
+    const localsCookie = context.cookies?.get('statmuse-locals')?.value
+    if (localsCookie) context.locals = JSON.parse(localsCookie)
+
+    const colorScheme = context.request.headers?.get('x-statmuse-color-scheme')
+    if (colorScheme)
+      context.locals.colorScheme = colorScheme as 'light' | 'dark'
+
+    const nativeView = context.request.headers?.get('x-statmuse-native-view')
+    if (nativeView)
+      context.locals.nativeView = nativeView as typeof context.locals.nativeView
+
+    const deviceId = context.request.headers?.get('x-statmuse-device-id')
+    if (deviceId) context.locals.deviceId = deviceId
+
+    console.log('context.locals', context.locals)
+
     const nextYear = new Date()
     nextYear.setDate(nextYear.getDate() + 365)
 
     const local = context.url.hostname === 'localhost'
-    context.cookies.set('statmuse-platform', platform, {
+    const commonCookieProps = {
       path: '/',
       domain: local ? undefined : 'statmuse.com',
       expires: nextYear,
       maxAge: 31536000,
-    })
+    }
+    context.cookies.set('statmuse-platform', platform, commonCookieProps)
+    context.cookies.set(
+      'statmuse-locals',
+      JSON.stringify({ ...context.locals, nativeView: undefined }),
+      commonCookieProps,
+    )
   }
 
   return next()

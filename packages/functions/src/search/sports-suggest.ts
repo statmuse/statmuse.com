@@ -1,6 +1,9 @@
 import { ApiHandler, useQueryParam } from 'sst/node/api'
 import { type AskDocument, autosuggest } from '@statmuse/core/elastic'
-import { getUserAskSuggestions } from '@statmuse/core/ask'
+import {
+  getUserAskSuggestions,
+  getVisitorAskSuggestions,
+} from '@statmuse/core/ask'
 import { sample } from 'lodash-es'
 
 const fantasyExamples = [
@@ -85,11 +88,18 @@ export const handler = ApiHandler(async (_evt) => {
   const query = useQueryParam('query') as string
   const league = useQueryParam('league') as League
   const userId = useQueryParam('userId')
+  const visitorId = useQueryParam('visitorId')
+
+  console.log({ visitorId })
 
   let history: Partial<AskDocument>[] = []
   if (userId) {
     history = await getUserAskSuggestions(userId)
+  } else if (visitorId) {
+    history = await getVisitorAskSuggestions(visitorId)
   }
+
+  console.log({ history })
 
   if (query === '') {
     return {

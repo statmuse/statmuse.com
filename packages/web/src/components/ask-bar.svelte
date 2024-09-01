@@ -99,6 +99,7 @@
           query,
           ...(preferredDomain && !money ? { league: preferredDomain } : {}),
           ...(userId ? { userId } : {}),
+          ...(visitorId ? { visitorId } : {}),
         })}`,
       )
       const results: {
@@ -227,6 +228,12 @@
   }
   $: open = sections.findIndex((s) => s.suggestions.length > 0) > -1
   $: userId = $session?.type === 'user' ? $session.properties.id : undefined
+  $: visitorId =
+    $session?.type === 'user'
+      ? $session.properties.visitorId
+      : $session?.type === 'visitor'
+      ? $session.properties.id
+      : undefined
   $: {
     if (shadowInput && input) {
       shadowInput.value = query

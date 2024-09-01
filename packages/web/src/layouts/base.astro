@@ -298,6 +298,8 @@ const canonicalUrl = meta?.canonical
       'has-[#menu:checked]:overflow-y-scroll has-[#menu:checked]:fixed': true,
       'has-[#menu:checked]:w-full has-[#menu:checked]:h-full': true,
       'max-w-7xl min-h-screen mx-auto px-3 md:px-5 flex flex-col': true,
+      '[&_a]:!no-underline hover:[&_a]:!no-underline ':
+        Astro.locals.platform === 'native',
     }}
   >
     <Header {preferredDomain} {query} {conversationToken} {money} />

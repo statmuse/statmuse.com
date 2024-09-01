@@ -16,7 +16,12 @@ let preferredDomain: string | undefined
 let conversationToken: string | undefined
 let queryClarificationFor: string | undefined
 
-if (Astro.request.method === 'POST') {
+const params = Astro.url.searchParams
+if (Astro.request.method === 'GET' && params.has('query')) {
+  query = params.get('query')
+  conversationToken = params.get('conversation_token') ?? undefined
+  queryClarificationFor = params.get('query_clarification_for') ?? undefined
+} else if (Astro.request.method === 'POST') {
   if (Astro.locals.platform === 'web') {
     const data = await Astro.request.formData()
     preferredDomain = data.get('question[preferred_domain]')?.toString()
@@ -89,7 +94,19 @@ if (response.type !== 'nlgPromptForMoreInfoVisualChoicesOptional')
       {
         response.visual.choices.map((choice) => (
           <Panel class="rounded-full !py-2">
-            <form action="/ask" method="post">
+            <form
+              action={
+                Astro.locals.platform === 'web'
+                  ? '/ask'
+                  : '/ask?' +
+                    new URLSearchParams({
+                      query: choice.input,
+                      question_conversation_token: response.conversation.token,
+                      query_clarification_for: query,
+                    })
+              }
+              method="post"
+            >
               <input name="_method" type="hidden" value="POST" />
               <input
                 id="question_conversation_token"
