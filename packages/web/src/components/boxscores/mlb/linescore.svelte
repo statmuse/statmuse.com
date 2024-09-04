@@ -195,7 +195,10 @@
         <p class="text-gray-5 text-sm">
           {$matchup.away.type === 'batter' ? 'Batting' : 'Pitching'}
         </p>
-        <p>{$matchup.away.player?.entity.shortDisplay}</p>
+        <p>
+          {$matchup.away.player?.entity.shortDisplay ??
+            $matchup.away.player?.usedName}
+        </p>
       </div>
       <div class="flex items-center gap-2.5">
         <AtBatCount
@@ -215,7 +218,10 @@
         <p class="text-gray-5 text-sm">
           {$matchup.home.type === 'batter' ? 'Batting' : 'Pitching'}
         </p>
-        <p>{$matchup.home.player?.entity.shortDisplay}</p>
+        <p>
+          {$matchup.home.player?.entity.shortDisplay ??
+            $matchup.home.player?.usedName}
+        </p>
       </div>
     </div>
   {/if}
