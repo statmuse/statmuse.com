@@ -10,6 +10,7 @@ import type {
   GameraGridColumn,
 } from './base'
 import type { MlbStatKey, MlbStatModel } from './games'
+import type { PlayerInjury } from './injuries'
 
 export interface GameraPlayerBio {
   domain: GameraDomain
@@ -140,6 +141,7 @@ export const mapStatsResponseToGrid = <K extends MlbStatKey>(
     stats?: MlbStatModel<K>
     position?: string
   }[],
+  injuredPlayerMap?: Record<number, PlayerInjury | undefined>,
 ): GameraGrid => {
   const [, ...restColumns] = columns
 
@@ -150,12 +152,16 @@ export const mapStatsResponseToGrid = <K extends MlbStatKey>(
         [col.rowItemKey]: d.stats?.[col.statKey] ?? { display: '-', value: 0 },
       }),
       {
-        PLAYER: {
+        NAME: {
           display: d.player?.usedName ?? '',
           value: `${d.player?.lastName}, ${d.player?.firstName}`,
           entity: d.player?.entity,
           imageUrl: d.player?.imageUrl,
-          position: d.position,
+          meta: {
+            id: d.player?.id,
+            position: d.position,
+            injured: injuredPlayerMap?.[d.player?.id ?? 0] ? true : false,
+          },
         },
       },
     )

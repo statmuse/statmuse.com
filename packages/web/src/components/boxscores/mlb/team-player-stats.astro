@@ -9,6 +9,7 @@ import {
   type GameraGridColumn,
   type GameraGrid,
   type GameraPlayerReference,
+  type PlayerInjury,
 } from '@statmuse/core/gamera'
 import MlbPlayerLeaders from './mlb-player-leaders.astro'
 import Grid from '@components/grid.svelte'
@@ -23,6 +24,7 @@ interface Props {
     MlbStatKeySet['battingStandard'],
     'player'
   >
+  playerInjuries?: PlayerInjury[]
 }
 
 const {
@@ -31,6 +33,7 @@ const {
   teamModel,
   teamPlayerStats,
   teamPlayerStatsAgainstPitcher,
+  playerInjuries = [],
 } = Astro.props
 
 const splits = teamPlayerStats?.stats?.splits[0].splits
@@ -52,6 +55,16 @@ const playerMap = players.reduce<
     [player.id]: player,
   }
 }, {})
+
+const injuredPlayerMap = playerInjuries.reduce<
+  Record<number, PlayerInjury | undefined>
+>(
+  (acc, p) => ({
+    ...acc,
+    [p.player.id]: p,
+  }),
+  {},
+)
 
 const data =
   splits?.map((s) => ({
@@ -79,7 +92,7 @@ const battingColumns: (GameraGridColumn & {
 })[] = [
   {
     title: 'Batters',
-    rowItemKey: 'PLAYER',
+    rowItemKey: 'NAME',
     type: 'string',
     statKey: 'Batting-GamesPlayed',
   },
@@ -156,7 +169,7 @@ const pitchingColumns: (GameraGridColumn & {
 })[] = [
   {
     title: 'Pitchers',
-    rowItemKey: 'PLAYER',
+    rowItemKey: 'NAME',
     type: 'string',
     statKey: 'Pitching-GamesPitched',
   },
@@ -262,16 +275,19 @@ if (teamModel.players !== undefined) {
   battingGrid = mapStatsResponseToGrid(
     battingColumns,
     data.filter((d) => !!d.stats?.['Batting-GamesPlayed']),
+    injuredPlayerMap,
   )
 
   pitchingGrid = mapStatsResponseToGrid(
     pitchingColumns,
     data.filter((d) => !!d.stats?.['Pitching-GamesPitched']),
+    injuredPlayerMap,
   )
 
   battingGridAgainstPitcher = mapStatsResponseToGrid(
     battingColumns,
     dataAgainstPitcher.filter((d) => !!d.stats?.['Batting-GamesPlayed']),
+    injuredPlayerMap,
   )
 }
 ---
@@ -336,12 +352,10 @@ if (teamModel.players !== undefined) {
               data={{
                 ...battingGrid,
                 columns: battingGrid.columns.map((col) =>
-                  col.rowItemKey === 'PLAYER'
-                    ? { ...col, title: 'Lineup' }
-                    : col,
+                  col.rowItemKey === 'NAME' ? { ...col, title: 'Lineup' } : col,
                 ),
               }}
-              stickyColumns={['PLAYER']}
+              stickyColumns={['NAME']}
             />
           </div>
           <div
@@ -362,12 +376,10 @@ if (teamModel.players !== undefined) {
               data={{
                 ...battingGridAgainstPitcher,
                 columns: battingGridAgainstPitcher.columns.map((col) =>
-                  col.rowItemKey === 'PLAYER'
-                    ? { ...col, title: 'Lineup' }
-                    : col,
+                  col.rowItemKey === 'NAME' ? { ...col, title: 'Lineup' } : col,
                 ),
               }}
-              stickyColumns={['PLAYER']}
+              stickyColumns={['NAME']}
             />
           </div>
         </div>
@@ -376,10 +388,10 @@ if (teamModel.players !== undefined) {
           data={{
             ...pitchingGrid,
             columns: pitchingGrid.columns.map((col) =>
-              col.rowItemKey === 'PLAYER' ? { ...col, title: 'Starter' } : col,
+              col.rowItemKey === 'NAME' ? { ...col, title: 'Starter' } : col,
             ),
           }}
-          stickyColumns={['PLAYER']}
+          stickyColumns={['NAME']}
         />
       </Fragment>
     )
@@ -445,7 +457,7 @@ if (teamModel.players !== undefined) {
                 ...battingGrid,
                 rows: orderBy(battingGrid.rows, 'G.value', 'desc'),
               }}
-              stickyColumns={['PLAYER']}
+              stickyColumns={['NAME']}
             />
           </div>
           <div
@@ -471,7 +483,7 @@ if (teamModel.players !== undefined) {
                   'desc',
                 ),
               }}
-              stickyColumns={['PLAYER']}
+              stickyColumns={['NAME']}
             />
           </div>
         </div>
@@ -481,7 +493,7 @@ if (teamModel.players !== undefined) {
             ...pitchingGrid,
             rows: orderBy(pitchingGrid.rows, 'G.value', 'desc'),
           }}
-          stickyColumns={['PLAYER']}
+          stickyColumns={['NAME']}
         />
       </Fragment>
     )

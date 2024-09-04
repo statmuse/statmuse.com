@@ -11,7 +11,7 @@ interface Injury {
     | 'dayToDay'
 }
 
-interface PlayerInjury {
+export interface PlayerInjury {
   player: GameraPlayerReference
   injuries: Injury[]
   position: Position
