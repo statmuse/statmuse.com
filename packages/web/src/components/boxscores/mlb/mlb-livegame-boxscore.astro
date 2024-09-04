@@ -32,6 +32,7 @@ import PlayerModal from './player-modal.svelte'
 import AtBatModal from './at-bat-modal.svelte'
 import Injuries from './injuries.astro'
 import dayjs from 'dayjs'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 interface Props {
   gameData: MlbGameDataResponse<MlbStatKey>
@@ -140,6 +141,15 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
       <div class="@xl/boxscore:hidden">
         <Linescore client:load {awayTeam} {homeTeam} />
       </div>
+      <AditudeAdBanner
+        client:only="svelte"
+        divId="livegame-1"
+        slotId="pb-slot-banner"
+        class="mx-auto"
+        placeholderClass="w-[300px] h-[250px] mx-auto"
+        onlyMobile
+        lazy
+      />
       <div class="@xl/boxscore:hidden flex flex-col gap-3">
         <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
       </div>
@@ -192,6 +202,15 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
       </div>
       <div class="@xl/boxscore:hidden flex flex-col gap-3">
         <Injuries {awayTeamInjuries} {homeTeamInjuries} />
+        <AditudeAdBanner
+          client:only="svelte"
+          divId="livegame-2"
+          slotId="pb-slot-banner"
+          class="mx-auto"
+          placeholderClass="w-[300px] h-[250px] mx-auto"
+          onlyMobile
+          lazy
+        />
         <CurrentSeries
           domain="MLB"
           teams={teams ?? []}
@@ -204,6 +223,15 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
           homeTeamId={homeTeamModel.teamId}
         />
         <GameInfo {venue} {weather} {officials} {gameTimestamp} {timeOfDay} />
+        <AditudeAdBanner
+          client:only="svelte"
+          divId="livegame-3"
+          slotId="pb-slot-banner"
+          class="mx-auto"
+          placeholderClass="w-[300px] h-[250px] mx-auto"
+          onlyMobile
+          lazy
+        />
       </div>
     </div>
     <div class="flex-1 hidden @xl/boxscore:flex flex-col gap-3 overflow-hidden">
@@ -279,6 +307,15 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
     <Linescore client:load {awayTeam} {homeTeam} displayMatchup />
     <BattingStats client:load teamKey="away" />
     <BattingSummary client:load teamKey="away" />
+    <AditudeAdBanner
+      client:only="svelte"
+      divId="livegame-away"
+      slotId="pb-slot-banner"
+      class="mx-auto"
+      placeholderClass="w-[300px] h-[250px] mx-auto"
+      onlyMobile
+      lazy
+    />
     <PitchingStats client:load teamKey="away" />
   </Fragment>
 
@@ -286,10 +323,26 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
     <Linescore client:load {awayTeam} {homeTeam} displayMatchup />
     <BattingStats client:load teamKey="home" />
     <BattingSummary client:load teamKey="home" />
+    <AditudeAdBanner
+      client:only="svelte"
+      divId="livegame-home"
+      slotId="pb-slot-banner"
+      class="mx-auto"
+      placeholderClass="w-[300px] h-[250px] mx-auto"
+      onlyMobile
+      lazy
+    />
     <PitchingStats client:load teamKey="home" />
   </Fragment>
 
-  <PlayByPlay client:load slot="plays" {awayTeam} {homeTeam} reverseOrder />
+  <PlayByPlay
+    client:load
+    slot="plays"
+    {awayTeam}
+    {homeTeam}
+    renderAds
+    reverseOrder
+  />
 
   <GameState client:only="svelte" {gameData} {playByPlay} />
   <Realtime client:only="svelte" {gameId} />

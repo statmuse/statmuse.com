@@ -14,6 +14,7 @@ import {
 import MlbPlayerLeaders from './mlb-player-leaders.astro'
 import Grid from '@components/grid.svelte'
 import { last, orderBy } from 'lodash-es'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 interface Props {
   team: 'home' | 'away'
@@ -487,6 +488,15 @@ if (teamModel.players !== undefined) {
             />
           </div>
         </div>
+        <AditudeAdBanner
+          client:only="svelte"
+          divId="preview-stats"
+          slotId="pb-slot-banner"
+          class="mx-auto"
+          placeholderClass="w-[320px] h-[100px] mx-auto"
+          onlyMobile
+          lazy
+        />
         <Grid
           client:load
           data={{

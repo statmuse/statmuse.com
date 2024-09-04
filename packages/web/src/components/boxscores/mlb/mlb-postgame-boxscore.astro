@@ -25,6 +25,7 @@ import GameState from './game-state.svelte'
 import BattingSummary from './batting-summary.svelte'
 import AtBatModal from './at-bat-modal.svelte'
 import dayjs from 'dayjs'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
 interface Props {
   gameData: MlbGameDataResponse<MlbStatKey>
@@ -221,6 +222,15 @@ Caching.swr(Astro)
           </div>
           <div class="@xl/boxscore:hidden flex flex-col gap-3">
             <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
+            <AditudeAdBanner
+              client:only="svelte"
+              divId="postgame-1"
+              slotId="pb-slot-banner"
+              class="mx-auto"
+              placeholderClass="w-[320px] h-[100px] mx-auto"
+              onlyMobile
+              lazy
+            />
             <CurrentSeries
               domain="MLB"
               teams={teams ?? []}
@@ -239,6 +249,15 @@ Caching.swr(Astro)
               {officials}
               {timeOfDay}
               gameTimestamp={gameTimestamp || gameDate}
+            />
+            <AditudeAdBanner
+              client:only="svelte"
+              divId="postgame-2"
+              slotId="pb-slot-banner"
+              class="mx-auto"
+              placeholderClass="w-[320px] h-[100px] mx-auto"
+              onlyMobile
+              lazy
             />
           </div>
         </div>
@@ -313,16 +332,38 @@ Caching.swr(Astro)
   <Fragment slot="away">
     <BattingStats client:load teamKey="away" final />
     <BattingSummary teamKey="away" />
+    <AditudeAdBanner
+      client:only="svelte"
+      divId="postgame-away"
+      slotId="pb-slot-banner"
+      class="mx-auto"
+      placeholderClass="w-[320px] h-[100px] mx-auto"
+      onlyMobile
+      lazy
+    />
     <PitchingStats client:load teamKey="away" final />
   </Fragment>
 
   <Fragment slot="home">
     <BattingStats client:load teamKey="home" final />
     <BattingSummary teamKey="home" />
+    <AditudeAdBanner
+      client:only="svelte"
+      divId="postgame-home"
+      slotId="pb-slot-banner"
+      class="mx-auto"
+      placeholderClass="w-[320px] h-[100px] mx-auto"
+      onlyMobile
+      lazy
+    />
     <PitchingStats client:load teamKey="home" final />
   </Fragment>
 
-  {playByPlay && <PlayByPlay client:load slot="plays" {awayTeam} {homeTeam} />}
+  {
+    playByPlay && (
+      <PlayByPlay client:load slot="plays" {awayTeam} {homeTeam} renderAds />
+    )
+  }
 
   <GameState client:load {gameData} {playByPlay} />
 

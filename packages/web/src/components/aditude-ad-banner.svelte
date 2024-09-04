@@ -23,7 +23,8 @@
     })
   }
 
-  const isMobile = isMobileTest(navigator.userAgent)
+  let isMobile = false
+
   $: shouldRender = $isNativeMobile
     ? false
     : onlyMobile
@@ -54,6 +55,7 @@
   }
 
   onMount(() => {
+    isMobile = isMobileTest(navigator.userAgent)
     return () => {
       if (lazy && observer) {
         observer.unobserve(container)

@@ -5,11 +5,13 @@
     GameraTeamReference,
     InningPlayByPlay,
   } from '@statmuse/core/gamera/index'
+  import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
   export let scoring: boolean = false
   export let reverseOrder: boolean = false
   export let awayTeam: GameraTeamReference | undefined = undefined
   export let homeTeam: GameraTeamReference | undefined = undefined
+  export let renderAds = false
 
   let inningPlays: InningPlayByPlay[]
   $: {
@@ -60,5 +62,15 @@
         colors={homeTeam?.colors}
       />
     {/if}
+  {/if}
+  {#if renderAds && number % 3 === (reverseOrder ? 1 : 0)}
+    <AditudeAdBanner
+      divId={`plays-${number}`}
+      slotId={`pb-slot-incontent-${Math.ceil(number / 3) % 4}`}
+      class="mx-auto"
+      placeholderClass="w-[300px] h-[250px] mx-auto"
+      onlyMobile
+      lazy
+    />
   {/if}
 {/each}
