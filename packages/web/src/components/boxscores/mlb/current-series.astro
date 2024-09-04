@@ -121,7 +121,7 @@ if (gameIndex !== -1) {
                   <p>{game.homeTeam.score}</p>
                 </div>
               </div>
-              <div class="w-16 flex items-center justify-end text-right text-sm text-gray-5">
+              <div class="w-20 flex items-center justify-end text-right text-sm text-gray-5">
                 <div>
                   <p>Game {index + 1}</p>
                   {isCompletedGame(game) ? (
@@ -174,7 +174,15 @@ if (gameIndex !== -1) {
                   <p>{homeTeam?.nickname}</p>
                 </div>
               </div>
-              <div class="flex items-center justify-end text-right text-sm">
+              <div class="w-12 flex items-center justify-end text-right text-sm text-gray-5">
+                {game.odds?.sportsbooks?.[0].homeTeam.spreadOdds.display ? (
+                  <p>
+                    {homeTeam?.abbreviation}{' '}
+                    {game.odds?.sportsbooks?.[0].homeTeam.spreadOdds.display}
+                  </p>
+                ) : undefined}
+              </div>
+              <div class="flex w-20 items-center justify-end text-right text-sm">
                 <div>
                   <p>Game {index + 1}</p>
                   <p>
@@ -184,12 +192,6 @@ if (gameIndex !== -1) {
                     />
                   </p>
                 </div>
-              </div>
-              <div class="w-16 flex items-center justify-end text-right text-sm text-gray-5">
-                <p>
-                  {homeTeam?.abbreviation}{' '}
-                  {game.odds?.sportsbooks?.[0].homeTeam.spreadOdds.display}
-                </p>
               </div>
             </EntityLink>
           )
