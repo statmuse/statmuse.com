@@ -62,6 +62,7 @@
     "svelte": "^4.2.18",
     "svelte-portal": "^2.2.1",
     "tailwindcss": "^3.4.1",
+    "tiny-cookie": "^2.5.1",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
