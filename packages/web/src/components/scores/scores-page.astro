@@ -1,0 +1,40 @@
+---
+import Base from '@layouts/base.astro'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import { range } from 'lodash-es'
+import type { GameraDomain } from '@statmuse/core/gamera'
+
+interface Props {
+  domain?: Extract<GameraDomain, 'MLB'>
+}
+
+const { domain } = Astro.props
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
+const parseDate = (dateParam: string | null) => {
+  if (!dayjs(dateParam).isValid()) {
+    return dayjs().tz(Astro.locals.timezone)
+  }
+  return dayjs(dateParam).tz(Astro.locals.timezone, true)
+}
+
+const date = parseDate(Astro.url.searchParams.get('date'))
+
+const days: string[] = []
+
+for (const relativeDay of range(-7, 7)) {
+  if (relativeDay < 0) {
+    days.push(date.subtract(Math.abs(relativeDay), 'day').toISOString())
+  } else {
+    days.push(date.add(relativeDay, 'day').toISOString())
+  }
+}
+---
+
+<Base>
+  <h1>Scores Page</h1>
+</Base>
