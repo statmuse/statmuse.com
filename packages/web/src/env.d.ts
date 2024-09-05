@@ -30,5 +30,6 @@ declare namespace App {
     nativeView?: 'home' | 'scores' | 'search' | 'trending' | 'more'
     deviceId?: string
     trendingData?: import('./types').TrendingItem
+    timezone: string
   }
 }
