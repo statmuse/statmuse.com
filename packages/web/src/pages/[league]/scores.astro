@@ -1,0 +1,11 @@
+---
+import ScoresPage from '@components/scores/scores-page.astro'
+import { leagueToDomain, type LeagueParam } from '@lib/params'
+
+const league = (Astro.params.league as LeagueParam) ?? ''
+const domain = leagueToDomain(league)
+
+if (domain !== 'MLB') return Astro.redirect('/scores' + Astro.url.search)
+---
+
+<ScoresPage {domain} />
