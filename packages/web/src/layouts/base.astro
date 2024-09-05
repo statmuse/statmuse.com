@@ -429,6 +429,13 @@ const canonicalUrl = meta?.canonical
       import type { Session } from '@lib/session'
       import { session as sessionStore, isNativeMobile } from '@lib/stores'
       import { maybeRewriteUrl } from '@lib/client'
+      import { setRawCookie } from 'tiny-cookie'
+
+      setRawCookie('tz', Intl.DateTimeFormat().resolvedOptions().timeZone, {
+        expires: '1Y',
+        domain: window.location.hostname,
+        samesite: 'Lax',
+      })
 
       isNativeMobile.set(document.body?.dataset?.platform === 'native')
 
