@@ -1,0 +1,70 @@
+---
+import EntityLink from '@components/entity-link.astro'
+import Image from '@components/image.astro'
+import Timestamp from '@components/timestamp.svelte'
+import type {
+  GameraDomain,
+  GameraTeamReference,
+  ScheduledGame,
+} from '@statmuse/core/gamera'
+import dayjs from 'dayjs'
+
+interface Props {
+  game: ScheduledGame
+  awayTeam?: GameraTeamReference
+  homeTeam?: GameraTeamReference
+  domain: GameraDomain
+}
+
+const { game, awayTeam, homeTeam, domain } = Astro.props
+---
+
+<EntityLink
+  entity={{
+    id: game.id.toString(),
+    type: 'game',
+    display: `${dayjs(game.gameDate).format('M/D/YYYY')} ${
+      awayTeam?.abbreviation
+    } @ ${homeTeam?.abbreviation}`,
+    domain,
+  }}
+  class="flex gap-3 py-2 px-3 text-inherit hover:no-underline"
+>
+  <div class="flex-1">
+    <div class="flex gap-1 py-0.5">
+      <Image
+        src={awayTeam?.logoImageUrl ?? ''}
+        alt={awayTeam?.name ?? ''}
+        width={60}
+        height={60}
+        class="w-5 h-5 object-contain"
+      />
+      <p>{awayTeam?.nickname}</p>
+    </div>
+    <div class="flex gap-1 py-0.5">
+      <Image
+        src={homeTeam?.logoImageUrl ?? ''}
+        alt={homeTeam?.name ?? ''}
+        width={60}
+        height={60}
+        class="w-5 h-5 object-contain"
+      />
+      <p>{homeTeam?.nickname}</p>
+    </div>
+  </div>
+  <div
+    class="w-12 flex items-center justify-end text-right text-sm text-gray-5"
+  >
+    {
+      game.odds?.sportsbooks?.[0].homeTeam.spreadOdds.display ? (
+        <p>
+          {homeTeam?.abbreviation}{' '}
+          {game.odds?.sportsbooks?.[0].homeTeam.spreadOdds.display}
+        </p>
+      ) : undefined
+    }
+  </div>
+  <div class="flex w-20 items-center justify-end text-right text-sm">
+    <Timestamp client:only="svelte" timestamp={game.gameTimestamp} />
+  </div>
+</EntityLink>
