@@ -5,6 +5,8 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { range } from 'lodash-es'
 import type { GameraDomain } from '@statmuse/core/gamera'
+import Games from './games.astro'
+import AllGames from './all-games.astro'
 
 interface Props {
   domain?: Extract<GameraDomain, 'MLB'>
@@ -37,4 +39,11 @@ for (const relativeDay of range(-7, 7)) {
 
 <Base>
   <h1>Scores Page</h1>
+  {
+    domain ? (
+      <Games {domain} date={date.format('YYYY-MM-DD')} server:defer />
+    ) : (
+      <AllGames date={date.format('YYYY-MM-DD')} server:defer />
+    )
+  }
 </Base>
