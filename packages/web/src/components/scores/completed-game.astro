@@ -1,0 +1,75 @@
+---
+import EntityLink from '@components/entity-link.astro'
+import Image from '@components/image.astro'
+import type {
+  CompletedGame,
+  GameraDomain,
+  GameraTeamReference,
+} from '@statmuse/core/gamera'
+import dayjs from 'dayjs'
+
+interface Props {
+  game: CompletedGame
+  awayTeam?: GameraTeamReference
+  homeTeam?: GameraTeamReference
+  domain: GameraDomain
+}
+
+const { game, awayTeam, homeTeam, domain } = Astro.props
+---
+
+<EntityLink
+  entity={{
+    id: game.id.toString(),
+    type: 'game',
+    display: `${dayjs(game.gameDate).format('M/D/YYYY')} ${
+      awayTeam?.abbreviation
+    } @ ${homeTeam?.abbreviation}`,
+    domain,
+  }}
+  class="flex gap-3 py-2 px-3 text-inherit hover:no-underline"
+>
+  <div class="flex-1">
+    <div
+      class:list={{
+        'flex justify-between py-0.5': true,
+        'font-semibold': game.awayTeam.gameResult === 'win',
+      }}
+    >
+      <div class="flex gap-1 items-center">
+        <Image
+          src={awayTeam?.logoImageUrl ?? ''}
+          alt={awayTeam?.name ?? ''}
+          width={60}
+          height={60}
+          class="w-5 h-5 object-contain"
+        />
+        <p>{awayTeam?.nickname}</p>
+      </div>
+      <p>{game.awayTeam.score}</p>
+    </div>
+    <div
+      class:list={{
+        'flex justify-between py-0.5': true,
+        'font-semibold': game.homeTeam.gameResult === 'win',
+      }}
+    >
+      <div class="flex gap-1 items-center">
+        <Image
+          src={homeTeam?.logoImageUrl ?? ''}
+          alt={homeTeam?.name ?? ''}
+          width={60}
+          height={60}
+          class="w-5 h-5 object-contain"
+        />
+        <p>{homeTeam?.nickname}</p>
+      </div>
+      <p>{game.homeTeam.score}</p>
+    </div>
+  </div>
+  <div
+    class="w-20 flex items-center justify-end text-right text-sm text-gray-5"
+  >
+    <p>Final</p>
+  </div>
+</EntityLink>
