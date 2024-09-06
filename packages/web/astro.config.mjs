@@ -9,6 +9,9 @@ import robotsTxt from 'astro-robots-txt'
 // https://astro.build/config
 export default defineConfig({
   site: 'https://www.statmuse.com',
+  experimental: {
+    serverIslands: true,
+  },
   integrations: [
     tailwind({ applyBaseStyles: false }),
     react(),
