@@ -20,12 +20,12 @@
     isMobile = isMobileTest(navigator.userAgent)
     shouldRender = onlyMobile ? isMobile : onlyDesktop ? !isMobile : true
 
-    if (container) {
+    if (container && isMobile) {
       document.addEventListener('scroll', handleScroll)
     }
 
     return () => {
-      if (container) {
+      if (container && isMobile) {
         document.removeEventListener('scroll', handleScroll)
       }
       if (observer) {
