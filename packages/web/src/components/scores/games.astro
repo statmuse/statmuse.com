@@ -1,0 +1,91 @@
+---
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import type { GameraDomain, GameraTeamReference } from '@statmuse/core/gamera'
+import { getGames } from '@lib/gamera'
+import Panel from '@components/panel.astro'
+import ScheduledGame from './scheduled-game.astro'
+import CompletedGame from './completed-game.astro'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
+interface Props {
+  date: string
+  domain: GameraDomain
+  'server:defer'?: boolean
+}
+
+const { date: dateString, domain } = Astro.props
+
+const date = dayjs(dateString).tz(Astro.locals.timezone, true)
+
+const prevDay = date.subtract(1, 'day').utc().format('YYYY-MM-DD')
+const nextDay = date.add(1, 'day').utc().format('YYYY-MM-DD')
+
+const response = await getGames({
+  context: Astro,
+  domain,
+  startGameDate: prevDay,
+  endGameDate: nextDay,
+  gameState: ['completed', 'inProgress', 'scheduled'],
+})
+
+if (!response) return undefined
+
+const { games, teams } = response
+
+const teamMap = teams.reduce<Record<number, GameraTeamReference | undefined>>(
+  (acc, t) => ({ ...acc, [t.teamId]: t }),
+  {},
+)
+
+const completedGames = games
+  .filter((g) => g.type === 'completed')
+  .filter(
+    (g) => dayjs(g.gameDate).tz(Astro.locals.timezone).date() === date.date(),
+  )
+  .sort((a, b) => a.gameDate.localeCompare(b.gameDate))
+const scheduledGames = games
+  .filter((g) => g.type === 'scheduled')
+  .filter(
+    (g) =>
+      dayjs(g.gameTimestamp).tz(Astro.locals.timezone).date() === date.date(),
+  )
+  .sort((a, b) => a.gameDate.localeCompare(b.gameDate))
+---
+
+{
+  scheduledGames.length > 0 && (
+    <Panel class="!p-0">
+      <div class="divide-y divide-gray-6 dark:divide-gray-4">
+        {scheduledGames.map((game) => (
+          <ScheduledGame
+            {game}
+            {domain}
+            awayTeam={teamMap[game.awayTeamId]}
+            homeTeam={teamMap[game.homeTeamId]}
+          />
+        ))}
+      </div>
+    </Panel>
+  )
+}
+
+{
+  completedGames.length > 0 && (
+    <Panel class="!p-0">
+      <div class="divide-y divide-gray-6 dark:divide-gray-4">
+        {completedGames.map((game) => (
+          <CompletedGame
+            {game}
+            {domain}
+            awayTeam={teamMap[game.awayTeam.teamId]}
+            homeTeam={teamMap[game.homeTeam.teamId]}
+          />
+        ))}
+      </div>
+    </Panel>
+  )
+}
