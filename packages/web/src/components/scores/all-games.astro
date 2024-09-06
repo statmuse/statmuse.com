@@ -2,7 +2,7 @@
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
-import type { GameraDomain, GameraTeamReference } from '@statmuse/core/gamera'
+import type { GameraTeamReference } from '@statmuse/core/gamera'
 import { getGames } from '@lib/gamera'
 import Panel from '@components/panel.astro'
 import ScheduledGame from './scheduled-game.astro'
@@ -13,41 +13,40 @@ dayjs.extend(timezone)
 
 interface Props {
   date: string
-  domain: GameraDomain
   'server:defer'?: boolean
 }
 
-const { date: dateString, domain } = Astro.props
+const { date: dateString } = Astro.props
 
 const date = dayjs(dateString).tz(Astro.locals.timezone, true)
 
 const prevDay = date.subtract(1, 'day').utc().format('YYYY-MM-DD')
 const nextDay = date.add(1, 'day').utc().format('YYYY-MM-DD')
 
-const response = await getGames({
+const mlbGamesResponse = await getGames({
   context: Astro,
-  domain,
+  domain: 'MLB',
   startGameDate: prevDay,
   endGameDate: nextDay,
   gameState: ['completed', 'inProgress', 'scheduled'],
 })
 
-if (!response) return undefined
+if (!mlbGamesResponse) return undefined
 
-const { games, teams } = response
+const { games: mlbGames, teams: mlbTeams } = mlbGamesResponse
 
-const teamMap = teams.reduce<Record<number, GameraTeamReference | undefined>>(
-  (acc, t) => ({ ...acc, [t.teamId]: t }),
-  {},
-)
+const mlbTeamMap = mlbTeams.reduce<
+  Record<number, GameraTeamReference | undefined>
+>((acc, t) => ({ ...acc, [t.teamId]: t }), {})
 
-const completedGames = games
+const mlbCompletedGames = mlbGames
   .filter((g) => g.type === 'completed')
   .filter(
     (g) => dayjs(g.gameDate).tz(Astro.locals.timezone).date() === date.date(),
   )
-  .sort((a, b) => a.gameDate.localeCompare(b.gameDate))
-const scheduledGames = games
+  .sort((a, b) => b.gameDate.localeCompare(a.gameDate))
+
+const mlbScheduledGames = mlbGames
   .filter((g) => g.type === 'scheduled')
   .filter(
     (g) =>
@@ -57,32 +56,24 @@ const scheduledGames = games
 ---
 
 {
-  scheduledGames.length > 0 && (
+  (mlbScheduledGames.length > 0 || mlbCompletedGames.length > 0) && (
     <Panel class="!p-0">
+      <h3 class="my-2 mx-3 font-semibold">MLB</h3>
       <div class="divide-y divide-gray-6 dark:divide-gray-4">
-        {scheduledGames.map((game) => (
+        {mlbScheduledGames.map((game) => (
           <ScheduledGame
             {game}
-            {domain}
-            awayTeam={teamMap[game.awayTeamId]}
-            homeTeam={teamMap[game.homeTeamId]}
+            domain="MLB"
+            awayTeam={mlbTeamMap[game.awayTeamId]}
+            homeTeam={mlbTeamMap[game.homeTeamId]}
           />
         ))}
-      </div>
-    </Panel>
-  )
-}
-
-{
-  completedGames.length > 0 && (
-    <Panel class="!p-0">
-      <div class="divide-y divide-gray-6 dark:divide-gray-4">
-        {completedGames.map((game) => (
+        {mlbCompletedGames.map((game) => (
           <CompletedGame
             {game}
-            {domain}
-            awayTeam={teamMap[game.awayTeam.teamId]}
-            homeTeam={teamMap[game.homeTeam.teamId]}
+            domain="MLB"
+            awayTeam={mlbTeamMap[game.awayTeam.teamId]}
+            homeTeam={mlbTeamMap[game.homeTeam.teamId]}
           />
         ))}
       </div>
