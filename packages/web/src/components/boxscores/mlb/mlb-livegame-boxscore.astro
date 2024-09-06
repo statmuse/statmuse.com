@@ -146,7 +146,7 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
         divId="livegame-1"
         slotId="pb-slot-banner"
         class="mx-auto"
-        placeholderClass="w-[300px] h-[250px] mx-auto"
+        placeholderClass="w-[320px] h-[100px] mx-auto"
         onlyMobile
         lazy
       />
@@ -202,20 +202,20 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
       </div>
       <div class="@xl/boxscore:hidden flex flex-col gap-3">
         <Injuries {awayTeamInjuries} {homeTeamInjuries} />
-        <AditudeAdBanner
-          client:only="svelte"
-          divId="livegame-2"
-          slotId="pb-slot-banner"
-          class="mx-auto"
-          placeholderClass="w-[300px] h-[250px] mx-auto"
-          onlyMobile
-          lazy
-        />
         <CurrentSeries
           domain="MLB"
           teams={teams ?? []}
           currentGameId={Number.parseInt(gameId)}
           games={awayTeamGames?.games}
+        />
+        <AditudeAdBanner
+          client:only="svelte"
+          divId="livegame-2"
+          slotId="pb-slot-banner"
+          class="mx-auto"
+          placeholderClass="w-[320px] h-[100px] mx-auto"
+          onlyMobile
+          lazy
         />
         <Standings
           {standings}
@@ -228,7 +228,7 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
           divId="livegame-3"
           slotId="pb-slot-banner"
           class="mx-auto"
-          placeholderClass="w-[300px] h-[250px] mx-auto"
+          placeholderClass="w-[320px] h-[100px] mx-auto"
           onlyMobile
           lazy
         />
@@ -307,32 +307,32 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
     <Linescore client:load {awayTeam} {homeTeam} displayMatchup />
     <BattingStats client:load teamKey="away" />
     <BattingSummary client:load teamKey="away" />
+    <PitchingStats client:load teamKey="away" />
     <AditudeAdBanner
       client:only="svelte"
       divId="livegame-away"
       slotId="pb-slot-banner"
       class="mx-auto"
-      placeholderClass="w-[300px] h-[250px] mx-auto"
+      placeholderClass="w-[320px] h-[100px] mx-auto"
       onlyMobile
       lazy
     />
-    <PitchingStats client:load teamKey="away" />
   </Fragment>
 
   <Fragment slot="home">
     <Linescore client:load {awayTeam} {homeTeam} displayMatchup />
     <BattingStats client:load teamKey="home" />
     <BattingSummary client:load teamKey="home" />
+    <PitchingStats client:load teamKey="home" />
     <AditudeAdBanner
       client:only="svelte"
       divId="livegame-home"
       slotId="pb-slot-banner"
       class="mx-auto"
-      placeholderClass="w-[300px] h-[250px] mx-auto"
+      placeholderClass="w-[320px] h-[100px] mx-auto"
       onlyMobile
       lazy
     />
-    <PitchingStats client:load teamKey="home" />
   </Fragment>
 
   <PlayByPlay

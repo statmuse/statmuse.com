@@ -222,6 +222,12 @@ Caching.swr(Astro)
           </div>
           <div class="@xl/boxscore:hidden flex flex-col gap-3">
             <PlayByPlay client:load {awayTeam} {homeTeam} scoring />
+            <CurrentSeries
+              domain="MLB"
+              teams={teams ?? []}
+              currentGameId={Number.parseInt(gameId)}
+              games={awayTeamGames?.games}
+            />
             <AditudeAdBanner
               client:only="svelte"
               divId="postgame-1"
@@ -230,12 +236,6 @@ Caching.swr(Astro)
               placeholderClass="w-[320px] h-[100px] mx-auto"
               onlyMobile
               lazy
-            />
-            <CurrentSeries
-              domain="MLB"
-              teams={teams ?? []}
-              currentGameId={Number.parseInt(gameId)}
-              games={awayTeamGames?.games}
             />
             <Standings
               {standings}
@@ -332,6 +332,7 @@ Caching.swr(Astro)
   <Fragment slot="away">
     <BattingStats client:load teamKey="away" final />
     <BattingSummary teamKey="away" />
+    <PitchingStats client:load teamKey="away" final />
     <AditudeAdBanner
       client:only="svelte"
       divId="postgame-away"
@@ -341,12 +342,12 @@ Caching.swr(Astro)
       onlyMobile
       lazy
     />
-    <PitchingStats client:load teamKey="away" final />
   </Fragment>
 
   <Fragment slot="home">
     <BattingStats client:load teamKey="home" final />
     <BattingSummary teamKey="home" />
+    <PitchingStats client:load teamKey="home" final />
     <AditudeAdBanner
       client:only="svelte"
       divId="postgame-home"
@@ -356,7 +357,6 @@ Caching.swr(Astro)
       onlyMobile
       lazy
     />
-    <PitchingStats client:load teamKey="home" final />
   </Fragment>
 
   {
