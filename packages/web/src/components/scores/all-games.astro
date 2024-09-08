@@ -3,10 +3,12 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import type { GameraTeamReference } from '@statmuse/core/gamera'
-import { getGames } from '@lib/gamera'
+import { getGameData, getGames, getPlayByPlay } from '@lib/gamera'
 import Panel from '@components/panel.astro'
 import ScheduledGame from './scheduled-game.astro'
 import CompletedGame from './completed-game.astro'
+import MlbLiveGame from './mlb-live-game.svelte'
+import * as store from './stores'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -53,13 +55,48 @@ const mlbScheduledGames = mlbGames
       dayjs(g.gameTimestamp).tz(Astro.locals.timezone).date() === date.date(),
   )
   .sort((a, b) => a.gameTimestamp.localeCompare(b.gameTimestamp))
+
+const mlbLiveGames = mlbGames
+  .filter((g) => g.type === 'inProgress')
+  .filter(
+    (g) => dayjs(g.gameDate).tz(Astro.locals.timezone).date() === date.date(),
+  )
+  .sort((a, b) => a.gameDate.localeCompare(b.gameDate))
+
+const mlbLiveGameData = await Promise.all(
+  mlbLiveGames.map(async (g) => {
+    const [gameData, playByPlay] = await Promise.allSettled([
+      getGameData({ context: Astro, gameId: g.gameId }),
+      getPlayByPlay({ context: Astro, gameId: g.gameId }),
+    ])
+    return {
+      data: gameData.status === 'fulfilled' ? gameData.value : undefined,
+      playByPlay:
+        playByPlay.status === 'fulfilled' ? playByPlay.value : undefined,
+    }
+  }),
+)
+
+for (const game of mlbLiveGameData) {
+  store.addGame('MLB', game)
+}
 ---
 
 {
-  (mlbScheduledGames.length > 0 || mlbCompletedGames.length > 0) && (
+  (mlbScheduledGames.length > 0 ||
+    mlbCompletedGames.length > 0 ||
+    mlbLiveGames.length > 0) && (
     <Panel class="!p-0">
       <h3 class="my-2 mx-3 font-semibold">MLB</h3>
       <div class="divide-y divide-gray-6 dark:divide-gray-4">
+        {mlbLiveGames.map((game) => (
+          <MlbLiveGame
+            {game}
+            domain="MLB"
+            awayTeam={mlbTeamMap[game.awayTeam.teamId]}
+            homeTeam={mlbTeamMap[game.homeTeam.teamId]}
+          />
+        ))}
         {mlbScheduledGames.map((game) => (
           <ScheduledGame
             {game}

@@ -3,10 +3,12 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import type { GameraDomain, GameraTeamReference } from '@statmuse/core/gamera'
-import { getGames } from '@lib/gamera'
+import { getGameData, getGames, getPlayByPlay } from '@lib/gamera'
 import Panel from '@components/panel.astro'
 import ScheduledGame from './scheduled-game.astro'
 import CompletedGame from './completed-game.astro'
+import MlbLiveGame from './mlb-live-game.svelte'
+import * as store from './stores'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -54,7 +56,47 @@ const scheduledGames = games
       dayjs(g.gameTimestamp).tz(Astro.locals.timezone).date() === date.date(),
   )
   .sort((a, b) => a.gameTimestamp.localeCompare(b.gameTimestamp))
+const liveGames = games
+  .filter((g) => g.type === 'inProgress')
+  .filter(
+    (g) => dayjs(g.gameDate).tz(Astro.locals.timezone).date() === date.date(),
+  )
+  .sort((a, b) => a.gameDate.localeCompare(b.gameDate))
+
+const liveGameData = await Promise.all(
+  liveGames.map(async (g) => {
+    const [gameData, playByPlay] = await Promise.allSettled([
+      getGameData({ context: Astro, gameId: g.gameId }),
+      getPlayByPlay({ context: Astro, gameId: g.gameId }),
+    ])
+    return {
+      data: gameData.status === 'fulfilled' ? gameData.value : undefined,
+      playByPlay:
+        playByPlay.status === 'fulfilled' ? playByPlay.value : undefined,
+    }
+  }),
+)
+
+for (const game of liveGameData) {
+  store.addGame('MLB', game)
+}
 ---
+
+{
+  liveGames.length > 0 && (
+    <Panel class="!p-0">
+      <div class="divide-y divide-gray-6 dark:divide-gray-4">
+        {liveGames.map((game) => (
+          <MlbLiveGame
+            {game}
+            awayTeam={teamMap[game.awayTeam.teamId]}
+            homeTeam={teamMap[game.homeTeam.teamId]}
+          />
+        ))}
+      </div>
+    </Panel>
+  )
+}
 
 {
   scheduledGames.length > 0 && (
