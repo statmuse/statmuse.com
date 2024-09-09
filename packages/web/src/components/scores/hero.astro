@@ -1,0 +1,113 @@
+---
+import Icon from '@components/icon.svelte'
+import Panel from '@components/panel.astro'
+import DayNavigation from './day-navigation.svelte'
+import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
+import Nav from '@components/nav.astro'
+import type { GameraDomain } from '@statmuse/core/gamera'
+import dayjs from 'dayjs'
+
+interface Props {
+  days: string[]
+  selectedDay: string
+  domain?: GameraDomain
+}
+
+const { days, selectedDay, domain } = Astro.props
+
+const leageNavLinks = [
+  {
+    text: 'All',
+    href: '/scores' + Astro.url.search,
+    param: 'all',
+  },
+  {
+    text: 'MLB',
+    href: '/mlb/scores' + Astro.url.search,
+    param: 'mlb',
+  },
+]
+
+const date = dayjs(selectedDay)
+---
+
+<div class="@container/hero flex flex-col gap-3">
+  <Panel
+    class:list={{
+      'rounded-none border-0 md:rounded-2xl': true,
+      '-mx-3 pb-2 pt-4 px-3 @lg/hero:py-3 @lg/hero:px-5 md:mx-0 whitespace-nowrap': true,
+    }}
+  >
+    <div class="relative text-center @lg/hero:text-left">
+      <Icon
+        name="calendar"
+        class="w-5 h-5 absolute left-0 top-1/2 -translate-y-1/2 @lg/hero:hidden"
+      />
+      <h1 class="text-2xl font-semibold">Scores</h1>
+    </div>
+    <DayNavigation
+      class="@lg/hero:hidden -mb-3"
+      {days}
+      {selectedDay}
+      basePath={Astro.url.pathname}
+    />
+    <Nav
+      class="hidden @lg/hero:flex -mb-3"
+      hero
+      links={leageNavLinks}
+      selected={domain ? domain.toLowerCase() : 'all'}
+    />
+    <div
+      class="hidden @lg/hero:flex gap-3 items-center absolute right-3 bottom-2.5"
+    >
+      <div
+        class="w-32 py-0.5 px-2 rounded-2xl flex justify-between items-center bg-red"
+      >
+        <a
+          href={`${Astro.url.pathname}?${new URLSearchParams({
+            date: dayjs(selectedDay).subtract(1, 'day').format('YYYY-MM-DD'),
+          }).toString()}`}
+          class="text-inherit"
+        >
+          <Icon name="next" class="w-4 h-4 rotate-180" />
+        </a>
+        {
+          date.date() === dayjs().date()
+            ? 'Today'
+            : date.date() === dayjs().subtract(1, 'day').date()
+            ? 'Yesterday'
+            : date.date() === dayjs().add(1, 'day').date()
+            ? 'Tomorrow'
+            : date.format('ddd MMM D')
+        }
+        <a
+          href={`${Astro.url.pathname}?${new URLSearchParams({
+            date: dayjs(selectedDay).add(1, 'day').format('YYYY-MM-DD'),
+          }).toString()}`}
+          class="text-inherit"
+        >
+          <Icon name="next" class="w-4 h-4" />
+        </a>
+      </div>
+      <Icon name="calendar" class="w-5 h-5" />
+    </div>
+  </Panel>
+  {
+    Astro.locals.platform === 'web' ? (
+      <div class="md:hidden h-[50px] md:h-[90px] flex justify-center items-center">
+        <AditudeAdBanner
+          client:only="svelte"
+          divId="pb-slot-anchor"
+          slotId="pb-slot-anchor"
+          placeholderClass="w-[320px] md:w-[728px] h-[50px] md:h-[90px]"
+          onlyMobile
+        />
+      </div>
+    ) : null
+  }
+  <Nav
+    class="@lg/hero:hidden"
+    links={leageNavLinks}
+    selected={domain ? domain.toLowerCase() : 'all'}
+  />
+</div>
