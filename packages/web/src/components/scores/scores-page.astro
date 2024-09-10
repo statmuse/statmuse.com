@@ -7,6 +7,7 @@ import { range } from 'lodash-es'
 import type { GameraDomain } from '@statmuse/core/gamera'
 import Games from './games.astro'
 import AllGames from './all-games.astro'
+import Hero from './hero.astro'
 
 interface Props {
   domain?: Extract<GameraDomain, 'MLB'>
@@ -38,7 +39,7 @@ for (const relativeDay of range(-7, 7)) {
 ---
 
 <Base hideHeader={Astro.locals.platform === 'native'}>
-  <h1>Scores Page</h1>
+  <Hero {days} selectedDay={date.toISOString()} {domain} />
   {
     domain ? (
       <Games {domain} date={date.format('YYYY-MM-DD')} server:defer />
