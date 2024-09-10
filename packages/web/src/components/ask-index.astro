@@ -51,7 +51,9 @@ const links: NavLink[] = [
   { text: 'NHL', param: 'nhl' },
   { text: 'MLB', param: 'mlb' },
   { text: 'PGA', param: 'pga' },
-  { text: 'Money', param: 'money' },
+  ...(Astro.locals.platform === 'web'
+    ? [{ text: 'Money', param: 'money' }]
+    : []),
 ]
 
 const items = asks.map((ask) => ({
