@@ -350,12 +350,15 @@ importers:
       '@astrojs/check':
         specifier: ^0.9.3
         version: 0.9.3(prettier-plugin-astro@0.12.0)(prettier@3.3.3)(typescript@5.5.4)
+      '@internationalized/date':
+        specifier: ^3.5.5
+        version: 3.5.5
       '@melt-ui/pp':
         specifier: ^0.3.0
-        version: 0.3.0(@melt-ui/svelte@0.49.1)(svelte@4.2.18)
+        version: 0.3.0(@melt-ui/svelte@0.83.0)(svelte@4.2.18)
       '@melt-ui/svelte':
-        specifier: ^0.49.1
-        version: 0.49.1(svelte@4.2.18)
+        specifier: ^0.83.0
+        version: 0.83.0(svelte@4.2.18)
       '@types/d3-array':
         specifier: ^3.0.5
         version: 3.0.5
@@ -5642,6 +5645,12 @@ packages:
     dev: false
     optional: true
 
+  /@internationalized/date@3.5.5:
+    resolution: {integrity: sha512-H+CfYvOZ0LTJeeLOqm19E3uj/4YjrmOFtBufDHPfvtI80hFAMqtrp7oCACpe4Cil5l8S0Qu/9dYfZc/5lY8WQQ==}
+    dependencies:
+      '@swc/helpers': 0.5.13
+    dev: true
+
   /@isaacs/cliui@8.0.2:
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
@@ -5733,29 +5742,30 @@ packages:
       '@lukeed/csprng': 1.1.0
     dev: false
 
-  /@melt-ui/pp@0.3.0(@melt-ui/svelte@0.49.1)(svelte@4.2.18):
+  /@melt-ui/pp@0.3.0(@melt-ui/svelte@0.83.0)(svelte@4.2.18):
     resolution: {integrity: sha512-b07Bdh8l2KcwKVCXOY+SoBw1dk9eWvQfMSi6SoacpRVyVmmfpi0kV4oGt3HYF0tUCB3sEmVicxse50ZzZxEzEA==}
     engines: {pnpm: '>=8.6.3'}
     peerDependencies:
       '@melt-ui/svelte': '>= 0.29.0'
       svelte: ^3.55.0 || ^4.0.0 || ^5.0.0-next.1
     dependencies:
-      '@melt-ui/svelte': 0.49.1(svelte@4.2.18)
+      '@melt-ui/svelte': 0.83.0(svelte@4.2.18)
       estree-walker: 3.0.3
       magic-string: 0.30.6
       svelte: 4.2.18
     dev: true
 
-  /@melt-ui/svelte@0.49.1(svelte@4.2.18):
-    resolution: {integrity: sha512-zSP/YvAtCGDdMWamBfAhsY3p7a361DQRxkI34swLyZk4QwzJDX5R5mAE5JyiyPdOlBkBuhWF/X3kWpaFamQLTg==}
+  /@melt-ui/svelte@0.83.0(svelte@4.2.18):
+    resolution: {integrity: sha512-E7QT+8YSftz+Hdk1W0hNR3f+cnaF2COMWkStn+2u4vk0RO1I9mXRJl+bJD6uhYaH146oxEB+5elu/ABbv6rpsA==}
     peerDependencies:
-      svelte: '>=3 <5'
+      svelte: ^3.0.0 || ^4.0.0 || ^5.0.0-next.118
     dependencies:
       '@floating-ui/core': 1.5.0
       '@floating-ui/dom': 1.5.3
+      '@internationalized/date': 3.5.5
       dequal: 2.0.3
       focus-trap: 7.5.2
-      nanoid: 4.0.2
+      nanoid: 5.0.7
       svelte: 4.2.18
     dev: true
 
@@ -9026,6 +9036,12 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: false
+
+  /@swc/helpers@0.5.13:
+    resolution: {integrity: sha512-UoKGxQ3r5kYI9dALKJapMmuK+1zWM/H17Z1+iwnNmzcJRnfFuevZs375TA5rW31pu4BS4NoSy1fRsexDXfWn5w==}
+    dependencies:
+      tslib: 2.6.2
+    dev: true
 
   /@tailwindcss/container-queries@0.1.1(tailwindcss@3.4.1):
     resolution: {integrity: sha512-p18dswChx6WnTSaJCSGx6lTmrGzNNvm2FtXmiO6AuA1V4U5REyoqwmT6kgAsIMdjo07QdAfYXHJ4hnMtfHzWgA==}
@@ -13611,9 +13627,9 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  /nanoid@4.0.2:
-    resolution: {integrity: sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw==}
-    engines: {node: ^14 || ^16 || >=18}
+  /nanoid@5.0.7:
+    resolution: {integrity: sha512-oLxFY2gd2IqnjcYyOXD8XGCftpGtZP2AbHbOkthDkvRywH5ayNtPVy9YlOPcHckXzbLTCHpkb7FB+yuxKV13pQ==}
+    engines: {node: ^18 || >=20}
     hasBin: true
     dev: true
 
