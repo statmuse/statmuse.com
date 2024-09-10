@@ -72,7 +72,7 @@ const mlbLiveGameData = await Promise.all(
       getPlayByPlay({ context: Astro, gameId: g.gameId }),
     ])
     return {
-      data: gameData.status === 'fulfilled' ? gameData.value : undefined,
+      gameData: gameData.status === 'fulfilled' ? gameData.value : undefined,
       playByPlay:
         playByPlay.status === 'fulfilled' ? playByPlay.value : undefined,
     }
