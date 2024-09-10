@@ -24,6 +24,7 @@
   } = createDatePicker({
     forceVisible: true,
     defaultValue: defaultDate ? parseDate(defaultDate) : undefined,
+    weekdayFormat: 'short',
     positioning: {
       placement,
     },
@@ -63,7 +64,7 @@
                 {#each $weekdays as day}
                   <th>
                     <div>
-                      {day}
+                      {day.slice(0, 2)}
                     </div>
                   </th>
                 {/each}
