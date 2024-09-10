@@ -37,7 +37,7 @@ for (const relativeDay of range(-7, 7)) {
 }
 ---
 
-<Base>
+<Base hideHeader={Astro.locals.platform === 'native'}>
   <h1>Scores Page</h1>
   {
     domain ? (

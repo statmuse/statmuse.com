@@ -31,6 +31,7 @@ interface Props extends ComponentProps<typeof Header> {
   class?: string | null
   share?: HeroProps['share']
   renderRightColumn?: boolean
+  hideHeader?: boolean
 }
 
 const {
@@ -44,6 +45,7 @@ const {
   money,
   share,
   renderRightColumn = true,
+  hideHeader = false,
 } = Astro.props
 const foreground = colors?.foreground || colors?.foregroundColor
 const background = colors?.background || colors?.backgroundColor
@@ -302,7 +304,11 @@ const canonicalUrl = meta?.canonical
         Astro.locals.platform === 'native',
     }}
   >
-    <Header {preferredDomain} {query} {conversationToken} {money} />
+    {
+      !hideHeader && (
+        <Header {preferredDomain} {query} {conversationToken} {money} />
+      )
+    }
     <div
       data-content
       class:list={{
