@@ -94,6 +94,7 @@ for (const game of mlbLiveGameData) {
         {mlbLiveGames.map((game) => (
           <MlbLiveGame
             {game}
+            client:load
             domain="MLB"
             awayTeam={mlbTeamMap[game.awayTeam.teamId]}
             homeTeam={mlbTeamMap[game.homeTeam.teamId]}
@@ -131,7 +132,7 @@ for (const game of mlbLiveGameData) {
   mlbLiveGames.length > 0 && (
     <Realtime
       client:only="svelte"
-      connectionParam={mlbLiveGames.map((g) => ({
+      connectionParams={mlbLiveGames.map((g) => ({
         domain: 'MLB',
         gameId: g.id,
         topic: 'score',
