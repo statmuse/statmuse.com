@@ -2,13 +2,15 @@
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
-import type { GameraTeamReference } from '@statmuse/core/gamera'
+import { mlbGameScore, type GameraTeamReference } from '@statmuse/core/gamera'
 import { getGameData, getGames, getPlayByPlay } from '@lib/gamera'
 import Panel from '@components/panel.astro'
 import ScheduledGame from './scheduled-game.astro'
 import CompletedGame from './completed-game.astro'
 import MlbLiveGame from './mlb-live-game.svelte'
 import * as store from './stores'
+import State from './state.svelte'
+import Realtime from './realtime.svelte'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -78,7 +80,7 @@ const mlbLiveGameData = await Promise.all(
 )
 
 for (const game of mlbLiveGameData) {
-  store.addGame('MLB', game)
+  store.addMlbGame(mlbGameScore(game))
 }
 ---
 
@@ -115,5 +117,25 @@ for (const game of mlbLiveGameData) {
         ))}
       </div>
     </Panel>
+  )
+}
+{
+  mlbLiveGameData.length > 0 && (
+    <State
+      client:only="svelte"
+      games={mlbLiveGameData.map((g) => mlbGameScore(g))}
+    />
+  )
+}
+{
+  mlbLiveGames.length > 0 && (
+    <Realtime
+      client:only="svelte"
+      connectionParam={mlbLiveGames.map((g) => ({
+        domain: 'MLB',
+        gameId: g.id,
+        topic: 'score',
+      }))}
+    />
   )
 }
