@@ -6,6 +6,7 @@ import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import Nav from '@components/nav.astro'
 import type { GameraDomain } from '@statmuse/core/gamera'
 import dayjs from 'dayjs'
+import DatePicker from './date-picker.svelte'
 
 interface Props {
   days: string[]
@@ -39,10 +40,14 @@ const date = dayjs(selectedDay)
     }}
   >
     <div class="relative text-center @lg/hero:text-left">
-      <Icon
-        name="calendar"
-        class="w-5 h-5 absolute left-0 top-1/2 -translate-y-1/2 @lg/hero:hidden"
-      />
+      <span class="absolute left-0 top-1/2 -translate-y-1/2 @lg/hero:hidden">
+        <DatePicker
+          client:load
+          class="w-5 h-5"
+          basePath={Astro.url.pathname}
+          defaultDate={Astro.url.searchParams.get('date')}
+        />
+      </span>
       <h1 class="text-2xl font-semibold">Scores</h1>
     </div>
     <DayNavigation
@@ -89,7 +94,13 @@ const date = dayjs(selectedDay)
           <Icon name="next" class="w-4 h-4" />
         </a>
       </div>
-      <Icon name="calendar" class="w-5 h-5" />
+      <DatePicker
+        client:load
+        class="w-5 h-5"
+        basePath={Astro.url.pathname}
+        defaultDate={Astro.url.searchParams.get('date')}
+        placement="bottom-end"
+      />
     </div>
   </Panel>
   {
