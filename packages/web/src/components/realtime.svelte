@@ -16,6 +16,7 @@
   export let subscriptionHandler: SubscriptionHandler
 
   let connection: mqtt.MqttClientConnection
+  let unmount = false
 
   async function createConnection() {
     if (connection) await connection.disconnect()
@@ -52,9 +53,8 @@
       )
     })
 
-    connection.on('interrupt', (e) => {
-      console.log('interrupted, restarting', e, JSON.stringify(e))
-      createConnection()
+    connection.on('interrupt', () => {
+      if (!unmount) createConnection()
     })
 
     connection.on('error', (e) => {
@@ -86,7 +86,10 @@
     createConnection()
 
     return () => {
-      if (connection) connection.disconnect()
+      if (connection) {
+        unmount = true
+        connection.disconnect()
+      }
     }
   })
 </script>
