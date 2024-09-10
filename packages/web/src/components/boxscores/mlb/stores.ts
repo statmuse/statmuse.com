@@ -15,6 +15,7 @@ import {
   type MlbStatKey,
   type InningAtBatEvent,
   getValue,
+  type MlbBoxGameState,
 } from '@statmuse/core/gamera'
 import { atom, map, computed } from 'nanostores'
 import { last } from 'lodash-es'
@@ -361,14 +362,20 @@ export const init = (props: {
   )
 }
 
-export const update = (data: any) => {
+export const update = (data: MlbBoxGameState) => {
   gameScore.set(data.gameScore)
   lineScore.set(data.lineScore)
   lineup.set(data.lineup)
   stats.set(data.stats)
-  players.set(data.players.reduce((acc, p) => ({ ...acc, [p.id]: p }), {}))
-  innings.set([
-    ...innings.get().filter((i) => i.number !== data.lastInning.number),
-    data.lastInning,
-  ])
+  players.set(
+    data.players?.reduce((acc, p) => ({ ...acc, [p.id]: p }), {}) ?? {},
+  )
+
+  const lastInning = data.lastInning
+  if (lastInning) {
+    innings.set([
+      ...innings.get().filter((i) => i.number !== lastInning.number),
+      lastInning,
+    ])
+  }
 }
