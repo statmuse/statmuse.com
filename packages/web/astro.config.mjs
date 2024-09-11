@@ -56,7 +56,13 @@ export default defineConfig({
   },
   adapter: aws({
     responseMode: 'buffer',
-    serverRoutes: ['ask', 'money/ask', 'auth/*', 'account/*'],
+    serverRoutes: [
+      'ask',
+      'money/ask',
+      'auth/*',
+      'account/*',
+      '_server-islands/*',
+    ],
   }),
   vite: {
     optimizeDeps: ['sst'],
