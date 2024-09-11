@@ -82,6 +82,7 @@ const date = dayjs(selectedDay)
           'rounded-none border-0 md:rounded-2xl': true,
           '-mx-3 pb-2 pt-4 px-3 @lg/hero:py-3 @lg/hero:px-5 md:mx-0 whitespace-nowrap': true,
         }}
+        team
       >
         <div class="relative text-center @lg/hero:text-left">
           <span class="absolute left-0 top-1/2 -translate-y-1/2 @lg/hero:hidden">
@@ -107,7 +108,7 @@ const date = dayjs(selectedDay)
           selected={domain ? domain.toLowerCase() : 'all'}
         />
         <div class="hidden @lg/hero:flex gap-3 items-center absolute right-3 bottom-2.5">
-          <div class="w-32 py-0.5 px-2 rounded-2xl flex justify-between items-center bg-red">
+          <div class="w-32 py-0.5 px-2 rounded-2xl flex justify-between items-center bg-team-secondary text-team-primary">
             <a
               href={`${Astro.url.pathname}?${new URLSearchParams({
                 date: dayjs(selectedDay)

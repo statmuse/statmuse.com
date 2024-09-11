@@ -38,7 +38,10 @@ for (const relativeDay of range(-7, 7)) {
 }
 ---
 
-<Base hideHeader={Astro.locals.platform === 'native'}>
+<Base
+  hideHeader={Astro.locals.platform === 'native'}
+  colors={{ foreground: '#fff', background: '#00c1d8' }}
+>
   <Hero {days} selectedDay={date.toISOString()} {domain} />
   {
     domain ? (
