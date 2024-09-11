@@ -13,6 +13,8 @@ import MlbLiveGame from './mlb-live-game.svelte'
 import CompletedGame from './completed-game.astro'
 import ScheduledGame from './scheduled-game.astro'
 import Panel from '@components/panel.astro'
+import State from './state.svelte'
+import Realtime from './realtime.svelte'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -82,8 +84,6 @@ const liveGameData = await Promise.all(
 for (const game of liveGameData) {
   store.addMlbGame(mlbGameScore(game))
 }
-
-console.log(liveGames)
 ---
 
 {
@@ -94,6 +94,7 @@ console.log(liveGames)
       <div class="flex overflow-auto divide-x divide-gray-6 dark:divide-gray-4">
         {liveGames.map((game) => (
           <MlbLiveGame
+            client:load
             {game}
             mini
             domain="MLB"
@@ -121,5 +122,26 @@ console.log(liveGames)
         ))}
       </div>
     </Panel>
+  )
+}
+
+{
+  liveGameData.length > 0 && (
+    <State
+      client:only="svelte"
+      games={liveGameData.map((g) => mlbGameScore(g))}
+    />
+  )
+}
+{
+  liveGames.length > 0 && (
+    <Realtime
+      client:only="svelte"
+      connectionParams={liveGames.map((g) => ({
+        domain: 'MLB',
+        gameId: g.id,
+        topic: 'score',
+      }))}
+    />
   )
 }
