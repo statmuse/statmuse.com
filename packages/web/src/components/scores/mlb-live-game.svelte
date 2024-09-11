@@ -14,6 +14,7 @@
   export let game: InProgressGame
   export let awayTeam: GameraTeamReference
   export let homeTeam: GameraTeamReference
+  export let mini = false
 </script>
 
 <EntityLink
@@ -27,8 +28,8 @@
   }}
   class="flex gap-3 py-2 px-3 text-inherit hover:no-underline"
 >
-  <div class="flex-1">
-    <div class="flex justify-between py-0.5">
+  <div class="flex-1 w-max">
+    <div class="flex justify-between gap-5 py-0.5">
       <div class="flex gap-1 items-center">
         <Image
           src={awayTeam?.logoImageUrl ?? ''}
@@ -37,7 +38,7 @@
           height={60}
           class="w-5 h-5 object-contain"
         />
-        <p>{awayTeam?.nickname}</p>
+        <p>{mini ? awayTeam?.abbreviation : awayTeam?.nickname}</p>
       </div>
       <p><Score domain="MLB" gameId={game.id} team="away" /></p>
     </div>
@@ -50,12 +51,15 @@
           height={60}
           class="w-5 h-5 object-contain"
         />
-        <p>{homeTeam?.nickname}</p>
+        <p>{mini ? homeTeam?.abbreviation : homeTeam?.nickname}</p>
       </div>
       <p><Score domain="MLB" gameId={game.id} team="home" /></p>
     </div>
   </div>
-  <div class="w-20 flex items-center justify-end text-right text-sm">
+  <div
+    class="flex items-center justify-end text-right text-sm"
+    class:w-20={!mini}
+  >
     <div>
       <p class="text-gray-8 bg-teal px-2 rounded-lg text-center w-fit">
         <Inning domain="MLB" gameId={game.id} />

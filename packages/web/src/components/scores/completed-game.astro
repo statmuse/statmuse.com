@@ -13,9 +13,10 @@ interface Props {
   awayTeam?: GameraTeamReference
   homeTeam?: GameraTeamReference
   domain: GameraDomain
+  mini?: boolean
 }
 
-const { game, awayTeam, homeTeam, domain } = Astro.props
+const { game, awayTeam, homeTeam, domain, mini } = Astro.props
 ---
 
 <EntityLink
@@ -29,10 +30,10 @@ const { game, awayTeam, homeTeam, domain } = Astro.props
   }}
   class="flex gap-3 py-2 px-3 text-inherit hover:no-underline"
 >
-  <div class="flex-1">
+  <div class="flex-1 w-max">
     <div
       class:list={{
-        'flex justify-between py-0.5': true,
+        'flex justify-between gap-5 py-0.5': true,
         'font-semibold': game.awayTeam.gameResult === 'win',
       }}
     >
@@ -44,13 +45,13 @@ const { game, awayTeam, homeTeam, domain } = Astro.props
           height={60}
           class="w-5 h-5 object-contain"
         />
-        <p>{awayTeam?.nickname}</p>
+        <p>{mini ? awayTeam?.abbreviation : awayTeam?.nickname}</p>
       </div>
       <p>{game.awayTeam.score}</p>
     </div>
     <div
       class:list={{
-        'flex justify-between py-0.5': true,
+        'flex justify-between gap-5 py-0.5': true,
         'font-semibold': game.homeTeam.gameResult === 'win',
       }}
     >
@@ -62,13 +63,16 @@ const { game, awayTeam, homeTeam, domain } = Astro.props
           height={60}
           class="w-5 h-5 object-contain"
         />
-        <p>{homeTeam?.nickname}</p>
+        <p>{mini ? homeTeam?.abbreviation : homeTeam?.nickname}</p>
       </div>
       <p>{game.homeTeam.score}</p>
     </div>
   </div>
   <div
-    class="w-20 flex items-center justify-end text-right text-sm text-gray-5"
+    class:list={{
+      'flex items-center justify-end text-right text-sm text-gray-5': true,
+      'w-20': !mini,
+    }}
   >
     <p>Final</p>
   </div>

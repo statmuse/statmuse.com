@@ -14,9 +14,10 @@ interface Props {
   awayTeam?: GameraTeamReference
   homeTeam?: GameraTeamReference
   domain: GameraDomain
+  mini?: boolean
 }
 
-const { game, awayTeam, homeTeam, domain } = Astro.props
+const { game, awayTeam, homeTeam, domain, mini } = Astro.props
 ---
 
 <EntityLink
@@ -28,9 +29,13 @@ const { game, awayTeam, homeTeam, domain } = Astro.props
     } @ ${homeTeam?.abbreviation}`,
     domain,
   }}
-  class="flex gap-3 py-2 px-3 text-inherit hover:no-underline"
+  class:list={{
+    'flex  py-2 px-3 text-inherit hover:no-underline': true,
+    'gap-3': !mini,
+    'gap-5': mini,
+  }}
 >
-  <div class="flex-1">
+  <div class="flex-1 w-max">
     <div class="flex gap-1 py-0.5">
       <Image
         src={awayTeam?.logoImageUrl ?? ''}
@@ -39,7 +44,7 @@ const { game, awayTeam, homeTeam, domain } = Astro.props
         height={60}
         class="w-5 h-5 object-contain"
       />
-      <p>{awayTeam?.nickname}</p>
+      <p>{mini ? awayTeam?.abbreviation : awayTeam?.nickname}</p>
     </div>
     <div class="flex gap-1 py-0.5">
       <Image
@@ -49,22 +54,42 @@ const { game, awayTeam, homeTeam, domain } = Astro.props
         height={60}
         class="w-5 h-5 object-contain"
       />
-      <p>{homeTeam?.nickname}</p>
+      <p>{mini ? homeTeam?.abbreviation : homeTeam?.nickname}</p>
     </div>
   </div>
+  {
+    !mini && (
+      <div class="w-12 flex items-center justify-end text-right text-sm text-gray-5">
+        {game.odds?.sportsbooks?.[0].homeTeam.spreadOdds.display ? (
+          <p>
+            {homeTeam?.abbreviation}{' '}
+            {game.odds?.sportsbooks?.[0].homeTeam.spreadOdds.display}
+          </p>
+        ) : undefined}
+      </div>
+    )
+  }
   <div
-    class="w-12 flex items-center justify-end text-right text-sm text-gray-5"
+    class:list={{
+      'flex items-center justify-end text-right text-sm': true,
+      'w-20': !mini,
+    }}
   >
-    {
-      game.odds?.sportsbooks?.[0].homeTeam.spreadOdds.display ? (
-        <p>
-          {homeTeam?.abbreviation}{' '}
-          {game.odds?.sportsbooks?.[0].homeTeam.spreadOdds.display}
-        </p>
-      ) : undefined
-    }
-  </div>
-  <div class="flex w-20 items-center justify-end text-right text-sm">
-    <Timestamp client:only="svelte" timestamp={game.gameTimestamp} />
+    <div class="text-nowrap">
+      <p class="py-1">
+        <Timestamp
+          client:only="svelte"
+          timeOnly
+          timestamp={game.gameTimestamp}
+        />
+      </p>
+      {
+        mini && (
+          <p class="text-gray-5 py-1">
+            {game.odds?.sportsbooks?.[0].homeTeam.spreadOdds.display}
+          </p>
+        )
+      }
+    </div>
   </div>
 </EntityLink>
