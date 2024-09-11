@@ -1,15 +1,32 @@
 <script lang="ts">
   import dayjs from 'dayjs'
+  import { onMount } from 'svelte'
 
   export let days: string[]
   export let selectedDay: string
   export let basePath: string
+
+  let container: HTMLElement
+
+  onMount(() => {
+    const parent = container.getBoundingClientRect()
+    const selected = container.querySelector<HTMLElement>('[data-selected]')
+
+    if (selected) {
+      const elem = selected.getBoundingClientRect()
+      container.scrollLeft =
+        elem.left - parent.left + (elem.width - parent.width) / 2
+    }
+  })
 </script>
 
-<div class={`flex gap-3 overflow-auto ${$$props.class}`}>
+<div bind:this={container} class={`flex gap-3 overflow-auto ${$$props.class}`}>
   {#each days as day (day)}
     {@const date = dayjs(day)}
-    <div class="group flex flex-col gap-1.5 overflow-clip">
+    <div
+      class="group flex flex-col gap-1.5 overflow-clip"
+      {...day === selectedDay ? { 'data-selected': '' } : {}}
+    >
       <a
         href={`${basePath}?${new URLSearchParams({
           date: date.format('YYYY-MM-DD'),

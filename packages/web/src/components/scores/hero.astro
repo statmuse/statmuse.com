@@ -69,6 +69,7 @@ const date = dayjs(selectedDay)
         </nav>
       </div>
       <DayNavigation
+        client:load
         class="-mb-3 -mx-3"
         {days}
         {selectedDay}
@@ -96,6 +97,7 @@ const date = dayjs(selectedDay)
           <h1 class="text-2xl font-semibold">Scores</h1>
         </div>
         <DayNavigation
+          client:load
           class="@lg/hero:hidden -mb-3"
           {days}
           {selectedDay}
