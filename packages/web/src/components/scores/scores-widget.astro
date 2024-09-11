@@ -1,0 +1,123 @@
+---
+import { getGameData, getGames, getPlayByPlay } from '@lib/gamera'
+import {
+  mlbGameScore,
+  type GameraDomain,
+  type GameraTeamReference,
+} from '@statmuse/core/gamera'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import * as store from './stores'
+import MlbLiveGame from './mlb-live-game.svelte'
+import CompletedGame from './completed-game.astro'
+import ScheduledGame from './scheduled-game.astro'
+import Panel from '@components/panel.astro'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
+interface Props {
+  domain: GameraDomain
+}
+
+const { domain } = Astro.props
+
+const date = dayjs().tz(Astro.locals.timezone, true)
+
+const prevDay = date.subtract(1, 'day').utc().format('YYYY-MM-DD')
+const nextDay = date.add(1, 'day').utc().format('YYYY-MM-DD')
+
+const response = await getGames({
+  context: Astro,
+  domain,
+  startGameDate: prevDay,
+  endGameDate: nextDay,
+  gameState: ['completed', 'inProgress', 'scheduled'],
+})
+
+if (!response) return undefined
+
+const { games, teams } = response
+
+const teamMap = teams.reduce<Record<number, GameraTeamReference | undefined>>(
+  (acc, t) => ({ ...acc, [t.teamId]: t }),
+  {},
+)
+
+const completedGames = games
+  .filter((g) => g.type === 'completed')
+  .filter(
+    (g) => dayjs(g.gameDate).tz(Astro.locals.timezone).date() === date.date(),
+  )
+  .sort((a, b) => a.gameDate.localeCompare(b.gameDate))
+const scheduledGames = games
+  .filter((g) => g.type === 'scheduled')
+  .filter(
+    (g) =>
+      dayjs(g.gameTimestamp).tz(Astro.locals.timezone).date() === date.date(),
+  )
+  .sort((a, b) => a.gameTimestamp.localeCompare(b.gameTimestamp))
+const liveGames = games
+  .filter((g) => g.type === 'inProgress')
+  .filter(
+    (g) => dayjs(g.gameDate).tz(Astro.locals.timezone).date() === date.date(),
+  )
+  .sort((a, b) => a.gameDate.localeCompare(b.gameDate))
+
+const liveGameData = await Promise.all(
+  liveGames.map(async (g) => {
+    const [gameData, playByPlay] = await Promise.allSettled([
+      getGameData({ context: Astro, gameId: g.gameId }),
+      getPlayByPlay({ context: Astro, gameId: g.gameId }),
+    ])
+    return {
+      gameData: gameData.status === 'fulfilled' ? gameData.value : undefined,
+      playByPlay:
+        playByPlay.status === 'fulfilled' ? playByPlay.value : undefined,
+    }
+  }),
+)
+
+for (const game of liveGameData) {
+  store.addMlbGame(mlbGameScore(game))
+}
+---
+
+{
+  (scheduledGames.length > 0 ||
+    completedGames.length > 0 ||
+    liveGames.length > 0) && (
+    <Panel class="!p-0">
+      <div class="flex overflow-auto divide-x divide-gray-6 dark:divide-gray-4">
+        {liveGames.map((game) => (
+          <MlbLiveGame
+            {game}
+            mini
+            domain="MLB"
+            awayTeam={teamMap[game.awayTeam.teamId]}
+            homeTeam={teamMap[game.homeTeam.teamId]}
+          />
+        ))}
+        {scheduledGames.map((game) => (
+          <ScheduledGame
+            {game}
+            mini
+            domain="MLB"
+            awayTeam={teamMap[game.awayTeamId]}
+            homeTeam={teamMap[game.homeTeamId]}
+          />
+        ))}
+        {completedGames.map((game) => (
+          <CompletedGame
+            {game}
+            mini
+            domain="MLB"
+            awayTeam={teamMap[game.awayTeam.teamId]}
+            homeTeam={teamMap[game.homeTeam.teamId]}
+          />
+        ))}
+      </div>
+    </Panel>
+  )
+}
