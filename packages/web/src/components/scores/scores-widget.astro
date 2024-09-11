@@ -23,7 +23,10 @@ interface Props {
 
 const { domain } = Astro.props
 
-const date = dayjs().tz(Astro.locals.timezone, true)
+const date = dayjs(dayjs().tz(Astro.locals.timezone).format('YYYY-MM-DD')).tz(
+  Astro.locals.timezone,
+  true,
+)
 
 const response = await getGames({
   context: Astro,
@@ -79,6 +82,8 @@ const liveGameData = await Promise.all(
 for (const game of liveGameData) {
   store.addMlbGame(mlbGameScore(game))
 }
+
+console.log(liveGames)
 ---
 
 {
