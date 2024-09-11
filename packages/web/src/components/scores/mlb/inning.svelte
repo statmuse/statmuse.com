@@ -7,6 +7,15 @@
 
   $: number = $scores[`${domain}-${gameId}`]?.inningNumber
   $: half = $scores[`${domain}-${gameId}`]?.inningHalf
+  $: outs = $scores[`${domain}-${gameId}`]?.outs
 </script>
 
-{`${half === 'bottom' ? 'Bot' : 'Top'} ${number}`}
+{`${
+  outs === 3 && half === 'bottom'
+    ? 'End'
+    : outs === 3 && half === 'top'
+    ? 'Mid'
+    : half === 'bottom'
+    ? 'Bot'
+    : 'Top'
+} ${number}`}
