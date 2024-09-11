@@ -23,14 +23,11 @@ const { date: dateString } = Astro.props
 
 const date = dayjs(dateString).tz(Astro.locals.timezone, true)
 
-const prevDay = date.subtract(1, 'day').utc().format('YYYY-MM-DD')
-const nextDay = date.add(1, 'day').utc().format('YYYY-MM-DD')
-
 const mlbGamesResponse = await getGames({
   context: Astro,
   domain: 'MLB',
-  startGameDate: prevDay,
-  endGameDate: nextDay,
+  startGameTimestamp: date.toISOString(),
+  endGameTimestamp: date.add(1, 'day').toISOString(),
   gameState: ['completed', 'inProgress', 'scheduled'],
 })
 

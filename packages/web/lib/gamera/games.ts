@@ -58,8 +58,8 @@ export const getGames = async <
   domain: string
   teamId?: string | number
   seasonYear?: string | number
-  startGameDate?: string
-  endGameDate?: string
+  startGameTimestamp?: string
+  endGameTimestamp?: string
   seasonType?: Season | Season[]
   gameState?: G | G[]
 }) => {
