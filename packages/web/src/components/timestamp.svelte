@@ -8,6 +8,7 @@
 
   export let timestamp
   export let dateOnly = false
+  export let timeOnly = false
 
   const now = dayjs()
   const gameDay = dayjs(timestamp)
@@ -19,6 +20,8 @@
 
 {#if dateOnly}
   {prefix}
+{:else if timeOnly}
+  {gameDay.format('h:mm A')}
 {:else}
   {`${prefix} ${gameDay.format('h:mm A')}`}
 {/if}
