@@ -70,67 +70,110 @@ for (const game of liveGameData) {
 }
 ---
 
-{
-  liveGames.length > 0 && (
-    <Fragment>
+<div
+  class="hidden md:grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-3"
+>
+  {
+    liveGames.map((game) => (
       <Panel class="!p-0">
-        <div class="divide-y divide-gray-6 dark:divide-gray-4 [&_astro-island]:block">
-          {liveGames.map((game) => (
-            <MlbLiveGame
-              client:load
+        <MlbLiveGame
+          client:load
+          {game}
+          awayTeam={teamMap[game.awayTeam.teamId]}
+          homeTeam={teamMap[game.homeTeam.teamId]}
+        />
+      </Panel>
+    ))
+  }
+  {
+    scheduledGames.map((game) => (
+      <Panel class="!p-0">
+        <ScheduledGame
+          {game}
+          {domain}
+          awayTeam={teamMap[game.awayTeamId]}
+          homeTeam={teamMap[game.homeTeamId]}
+        />
+      </Panel>
+    ))
+  }
+  {
+    completedGames.map((game) => (
+      <Panel class="!p-0">
+        <CompletedGame
+          {game}
+          {domain}
+          awayTeam={teamMap[game.awayTeam.teamId]}
+          homeTeam={teamMap[game.homeTeam.teamId]}
+        />
+      </Panel>
+    ))
+  }
+</div>
+
+<div class="md:hidden flex flex-col gap-3">
+  {
+    liveGames.length > 0 && (
+      <Fragment>
+        <Panel class="!p-0">
+          <div class="divide-y divide-gray-6 dark:divide-gray-4 [&_astro-island]:block">
+            {liveGames.map((game) => (
+              <MlbLiveGame
+                client:load
+                {game}
+                awayTeam={teamMap[game.awayTeam.teamId]}
+                homeTeam={teamMap[game.homeTeam.teamId]}
+              />
+            ))}
+          </div>
+        </Panel>
+        <State
+          client:only="svelte"
+          games={liveGameData.map((g) => mlbGameScore(g))}
+        />
+        <Realtime
+          client:only="svelte"
+          connectionParams={liveGames.map((g) => ({
+            domain,
+            gameId: g.id,
+            topic: 'score',
+          }))}
+        />
+      </Fragment>
+    )
+  }
+
+  {
+    scheduledGames.length > 0 && (
+      <Panel class="!p-0">
+        <div class="divide-y divide-gray-6 dark:divide-gray-4">
+          {scheduledGames.map((game) => (
+            <ScheduledGame
               {game}
+              {domain}
+              awayTeam={teamMap[game.awayTeamId]}
+              homeTeam={teamMap[game.homeTeamId]}
+            />
+          ))}
+        </div>
+      </Panel>
+    )
+  }
+
+  {
+    completedGames.length > 0 && (
+      <Panel class="!p-0">
+        <div class="divide-y divide-gray-6 dark:divide-gray-4">
+          {completedGames.map((game) => (
+            <CompletedGame
+              {game}
+              {domain}
               awayTeam={teamMap[game.awayTeam.teamId]}
               homeTeam={teamMap[game.homeTeam.teamId]}
             />
           ))}
         </div>
       </Panel>
-      <State
-        client:only="svelte"
-        games={liveGameData.map((g) => mlbGameScore(g))}
-      />
-      <Realtime
-        client:only="svelte"
-        connectionParams={liveGames.map((g) => ({
-          domain,
-          gameId: g.id,
-          topic: 'score',
-        }))}
-      />
-    </Fragment>
-  )
-}
-
-{
-  scheduledGames.length > 0 && (
-    <Panel class="!p-0">
-      <div class="divide-y divide-gray-6 dark:divide-gray-4">
-        {scheduledGames.map((game) => (
-          <ScheduledGame
-            {game}
-            {domain}
-            awayTeam={teamMap[game.awayTeamId]}
-            homeTeam={teamMap[game.homeTeamId]}
-          />
-        ))}
-      </div>
-    </Panel>
-  )
-}
-
-{
-  completedGames.length > 0 && (
-    <Panel class="!p-0">
-      <div class="divide-y divide-gray-6 dark:divide-gray-4">
-        {completedGames.map((game) => (
-          <CompletedGame
-            {game}
-            {domain}
-            awayTeam={teamMap[game.awayTeam.teamId]}
-            homeTeam={teamMap[game.homeTeam.teamId]}
-          />
-        ))}
-      </div>
-    </Panel>
-  )
-}
+    )
+  }
+</div>
