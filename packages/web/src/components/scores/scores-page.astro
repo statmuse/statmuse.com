@@ -9,6 +9,7 @@ import Games from './games.astro'
 import AllGames from './all-games.astro'
 import Hero from './hero.astro'
 import { Caching } from '@lib/caching'
+import type { AnalyticsPageviewProperties } from '@lib/analytics'
 
 interface Props {
   domain?: Extract<GameraDomain, 'MLB'>
@@ -56,6 +57,13 @@ const meta = {
 
 <Base
   {meta}
+  analytics={{
+    page_domain:
+      (domain?.toLowerCase() as AnalyticsPageviewProperties['page_domain']) ??
+      'sports',
+    page_type: 'schedule',
+    is_search: true,
+  }}
   hideHeader={Astro.locals.platform === 'native'}
   colors={{ foreground: '#fff', background: '#00c1d8' }}
 >
