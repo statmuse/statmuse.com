@@ -8,6 +8,7 @@ import type { GameraDomain } from '@statmuse/core/gamera'
 import Games from './games.astro'
 import AllGames from './all-games.astro'
 import Hero from './hero.astro'
+import { Caching } from '@lib/caching'
 
 interface Props {
   domain?: Extract<GameraDomain, 'MLB'>
@@ -39,6 +40,11 @@ for (const relativeDay of range(-7, 7)) {
     days.push(date.add(relativeDay, 'day').toISOString())
   }
 }
+
+Caching.swr(Astro, {
+  maxage: Astro.url.searchParams.get('date') ? 43200 : 1800,
+  revalidate: Astro.url.searchParams.get('date') ? 86400 : 14400,
+})
 ---
 
 <Base
