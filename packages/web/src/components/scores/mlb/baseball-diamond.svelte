@@ -12,7 +12,7 @@
 
 <Icon
   name="baseball-diamond"
-  class="w-6"
+  class="w-7"
   fillFirstBase={some(runners, (r) => r.endingBase === 1)}
   fillSecondBase={some(runners, (r) => r.endingBase === 2)}
   fillThirdBase={some(runners, (r) => r.endingBase === 3)}

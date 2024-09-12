@@ -36,30 +36,30 @@ const { game, awayTeam, homeTeam, domain, mini } = Astro.props
   }}
 >
   <div class="flex-1 w-max">
-    <div class="flex gap-1 py-0.5">
+    <div class="flex items-center gap-2 py-0.5">
       <Image
         src={awayTeam?.logoImageUrl ?? ''}
         alt={awayTeam?.name ?? ''}
         width={60}
         height={60}
-        class="w-5 h-5 object-contain"
+        class="w-4 h-4 object-contain"
       />
       <p>{mini ? awayTeam?.abbreviation : awayTeam?.nickname}</p>
     </div>
-    <div class="flex gap-1 py-0.5">
+    <div class="flex items-center gap-2 py-0.5">
       <Image
         src={homeTeam?.logoImageUrl ?? ''}
         alt={homeTeam?.name ?? ''}
         width={60}
         height={60}
-        class="w-5 h-5 object-contain"
+        class="w-4 h-4 object-contain"
       />
       <p>{mini ? homeTeam?.abbreviation : homeTeam?.nickname}</p>
     </div>
   </div>
   {
     !mini && (
-      <div class="w-12 flex items-center justify-end text-right text-sm text-gray-5">
+      <div class="w-max flex items-center justify-end text-right text-sm text-gray-5">
         {game.odds?.sportsbooks?.[0].homeTeam.spreadOdds.display ? (
           <p>
             {homeTeam?.abbreviation}{' '}
@@ -73,6 +73,7 @@ const { game, awayTeam, homeTeam, domain, mini } = Astro.props
     class:list={{
       'flex items-center justify-end text-right text-sm': true,
       'w-20': !mini,
+      'w-max': mini,
     }}
   >
     <div class="text-nowrap">

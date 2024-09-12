@@ -30,26 +30,26 @@
 >
   <div class="flex-1 w-max">
     <div class="flex justify-between gap-5 py-0.5">
-      <div class="flex gap-1 items-center">
+      <div class="flex gap-2 items-center">
         <Image
           src={awayTeam?.logoImageUrl ?? ''}
           alt={awayTeam?.name ?? ''}
           width={60}
           height={60}
-          class="w-5 h-5 object-contain"
+          class="w-4 h-4 object-contain"
         />
         <p>{mini ? awayTeam?.abbreviation : awayTeam?.nickname}</p>
       </div>
       <p><Score domain="MLB" gameId={game.id} team="away" /></p>
     </div>
-    <div class="flex justify-between py-0.5">
-      <div class="flex gap-1 items-center">
+    <div class="flex justify-between gap-5 py-0.5">
+      <div class="flex gap-2 items-center">
         <Image
           src={homeTeam?.logoImageUrl ?? ''}
           alt={homeTeam?.name ?? ''}
           width={60}
           height={60}
-          class="w-5 h-5 object-contain"
+          class="w-4 h-4 object-contain"
         />
         <p>{mini ? homeTeam?.abbreviation : homeTeam?.nickname}</p>
       </div>
@@ -58,15 +58,16 @@
   </div>
   <div
     class="flex items-center justify-end text-right text-sm"
+    class:w-max={mini}
     class:w-20={!mini}
   >
     <div>
       <p class="text-gray-8 bg-teal px-2 rounded-lg text-center w-fit">
         <Inning domain="MLB" gameId={game.id} />
       </p>
-      <div class="flex gap-1.5">
+      <div class="flex gap-1">
         <Baseballdiamond domain="MLB" gameId={game.id} />
-        <Outs class="scale-75" domain="MLB" gameId={game.id} />
+        <Outs class="scale-[0.65]" domain="MLB" gameId={game.id} />
       </div>
     </div>
   </div>

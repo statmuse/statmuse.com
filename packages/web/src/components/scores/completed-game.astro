@@ -37,13 +37,13 @@ const { game, awayTeam, homeTeam, domain, mini } = Astro.props
         'font-semibold': game.awayTeam.gameResult === 'win',
       }}
     >
-      <div class="flex gap-1 items-center">
+      <div class="flex gap-2 items-center">
         <Image
           src={awayTeam?.logoImageUrl ?? ''}
           alt={awayTeam?.name ?? ''}
           width={60}
           height={60}
-          class="w-5 h-5 object-contain"
+          class="w-4 h-4 object-contain"
         />
         <p>{mini ? awayTeam?.abbreviation : awayTeam?.nickname}</p>
       </div>
@@ -55,13 +55,13 @@ const { game, awayTeam, homeTeam, domain, mini } = Astro.props
         'font-semibold': game.homeTeam.gameResult === 'win',
       }}
     >
-      <div class="flex gap-1 items-center">
+      <div class="flex gap-2 items-center">
         <Image
           src={homeTeam?.logoImageUrl ?? ''}
           alt={homeTeam?.name ?? ''}
           width={60}
           height={60}
-          class="w-5 h-5 object-contain"
+          class="w-4 h-4 object-contain"
         />
         <p>{mini ? homeTeam?.abbreviation : homeTeam?.nickname}</p>
       </div>
@@ -70,8 +70,9 @@ const { game, awayTeam, homeTeam, domain, mini } = Astro.props
   </div>
   <div
     class:list={{
-      'flex items-center justify-end text-right text-sm text-gray-5': true,
-      'w-20': !mini,
+      'flex justify-end text-right text-sm text-gray-5': true,
+      'items-center w-20': !mini,
+      'py-1 pl-1.5': mini,
     }}
   >
     <p>Final</p>
