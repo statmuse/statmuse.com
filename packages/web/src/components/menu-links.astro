@@ -66,8 +66,12 @@ const menuLinks = [
         },
       ],
     },
-  ],
-  [
+    {
+      text: 'Scores',
+      icon: 'scores',
+      url: '/mlb/scores',
+      currentUrl: new RegExp('^/mlb/scores$'),
+    },
     {
       id: 'trending',
       text: 'Trending',
@@ -96,12 +100,6 @@ const menuLinks = [
         },
       ],
     },
-    {
-      text: 'Gallery',
-      icon: 'gallery',
-      url: '/players',
-      currentUrl: new RegExp('^(/(nba|nfl|nhl|mlb|pga|fc))?/players$'),
-    },
   ],
   [
     {
@@ -115,6 +113,12 @@ const menuLinks = [
       icon: 'glossary',
       url: '/product/data',
       currentUrl: new RegExp('^/product/data(/(nba|nfl|nhl|mlb|pga|fc))?$'),
+    },
+    {
+      text: 'Gallery',
+      icon: 'gallery',
+      url: '/players',
+      currentUrl: new RegExp('^(/(nba|nfl|nhl|mlb|pga|fc))?/players$'),
     },
   ],
   [
