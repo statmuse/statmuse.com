@@ -45,9 +45,17 @@ Caching.swr(Astro, {
   maxage: Astro.url.searchParams.get('date') ? 43200 : 1800,
   revalidate: Astro.url.searchParams.get('date') ? 86400 : 14400,
 })
+
+const meta = {
+  title: `${domain} Scores`,
+  description: `Live scores, results and schedule for the ${date.format(
+    'YYYY',
+  )} ${domain} season.`,
+}
 ---
 
 <Base
+  {meta}
   hideHeader={Astro.locals.platform === 'native'}
   colors={{ foreground: '#fff', background: '#00c1d8' }}
 >
