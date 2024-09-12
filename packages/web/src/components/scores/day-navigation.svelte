@@ -20,11 +20,14 @@
   })
 </script>
 
-<div bind:this={container} class={`flex gap-3 overflow-auto ${$$props.class}`}>
+<div
+  bind:this={container}
+  class={`flex gap-3 overflow-x-scroll no-scrollbar ${$$props.class}`}
+>
   {#each days as day (day)}
     {@const date = dayjs(day)}
     <div
-      class="group flex flex-col gap-1.5 overflow-clip"
+      class="group flex flex-col gap-1.5 overflow-clip shrink-0"
       {...day === selectedDate ? { 'data-selected': '' } : {}}
     >
       <a
