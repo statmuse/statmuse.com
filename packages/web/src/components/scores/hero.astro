@@ -6,7 +6,12 @@ import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import Nav from '@components/nav.astro'
 import type { GameraDomain } from '@statmuse/core/gamera'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import DatePicker from './date-picker.svelte'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 interface Props {
   days: string[]
@@ -29,7 +34,8 @@ const leageNavLinks = [
   },
 ]
 
-const date = dayjs(selectedDay)
+const date = dayjs(selectedDay).tz(Astro.locals.timezone, true)
+const today = dayjs().tz(Astro.locals.timezone)
 ---
 
 {
@@ -72,7 +78,7 @@ const date = dayjs(selectedDay)
         client:load
         class="-mb-3 -mx-3"
         {days}
-        {selectedDay}
+        selectedDate={date.toISOString()}
         basePath={Astro.url.pathname}
       />
     </Panel>
@@ -100,7 +106,7 @@ const date = dayjs(selectedDay)
           client:load
           class="@lg/hero:hidden -mb-3"
           {days}
-          {selectedDay}
+          selectedDate={date.toISOString()}
           basePath={Astro.url.pathname}
         />
         <Nav
@@ -113,24 +119,22 @@ const date = dayjs(selectedDay)
           <div class="w-32 py-0.5 px-2 rounded-2xl flex justify-between items-center bg-team-secondary text-team-primary">
             <a
               href={`${Astro.url.pathname}?${new URLSearchParams({
-                date: dayjs(selectedDay)
-                  .subtract(1, 'day')
-                  .format('YYYY-MM-DD'),
+                date: date.subtract(1, 'day').format('YYYY-MM-DD'),
               }).toString()}`}
               class="text-inherit"
             >
               <Icon name="next" class="w-4 h-4 rotate-180" />
             </a>
-            {date.date() === dayjs().date()
+            {date.date() === today.date()
               ? 'Today'
-              : date.date() === dayjs().subtract(1, 'day').date()
+              : date.date() === today.subtract(1, 'day').date()
               ? 'Yesterday'
-              : date.date() === dayjs().add(1, 'day').date()
+              : date.date() === today.add(1, 'day').date()
               ? 'Tomorrow'
               : date.format('ddd MMM D')}
             <a
               href={`${Astro.url.pathname}?${new URLSearchParams({
-                date: dayjs(selectedDay).add(1, 'day').format('YYYY-MM-DD'),
+                date: date.add(1, 'day').format('YYYY-MM-DD'),
               }).toString()}`}
               class="text-inherit"
             >

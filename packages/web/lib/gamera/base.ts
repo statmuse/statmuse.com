@@ -13,8 +13,6 @@ export async function request<T>(
     params as Record<string, string>,
   ).toString()}`
 
-  console.log('request url: ', requestUrl)
-
   try {
     const response = await fetch(requestUrl, {
       headers: getGameraHeaders(context),

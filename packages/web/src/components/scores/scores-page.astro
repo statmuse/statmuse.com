@@ -20,7 +20,10 @@ dayjs.extend(timezone)
 
 const parseDate = (dateParam: string | null) => {
   if (!dayjs(dateParam).isValid()) {
-    return dayjs().tz(Astro.locals.timezone)
+    return dayjs(dayjs().tz(Astro.locals.timezone).format('YYYY-MM-DD')).tz(
+      Astro.locals.timezone,
+      true,
+    )
   }
   return dayjs(dateParam).tz(Astro.locals.timezone, true)
 }
@@ -42,7 +45,7 @@ for (const relativeDay of range(-7, 7)) {
   hideHeader={Astro.locals.platform === 'native'}
   colors={{ foreground: '#fff', background: '#00c1d8' }}
 >
-  <Hero {days} selectedDay={date.toISOString()} {domain} />
+  <Hero {days} selectedDay={date.format('YYYY-MM-DD')} {domain} />
   {
     domain ? (
       <Games {domain} date={date.format('YYYY-MM-DD')} server:defer />

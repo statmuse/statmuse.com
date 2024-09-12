@@ -3,7 +3,7 @@
   import { onMount } from 'svelte'
 
   export let days: string[]
-  export let selectedDay: string
+  export let selectedDate: string
   export let basePath: string
 
   let container: HTMLElement
@@ -25,7 +25,7 @@
     {@const date = dayjs(day)}
     <div
       class="group flex flex-col gap-1.5 overflow-clip"
-      {...day === selectedDay ? { 'data-selected': '' } : {}}
+      {...day === selectedDate ? { 'data-selected': '' } : {}}
     >
       <a
         href={`${basePath}?${new URLSearchParams({
@@ -43,8 +43,8 @@
       </a>
       <div
         class="w-full h-5 -mb-2.5 bg-current rounded-2xl"
-        class:hidden={day !== selectedDay}
-        class:group-hover:block={day !== selectedDay}
+        class:hidden={day !== selectedDate}
+        class:group-hover:block={day !== selectedDate}
       />
     </div>
   {/each}

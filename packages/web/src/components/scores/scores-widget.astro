@@ -40,32 +40,18 @@ const response = await getGames({
 
 if (!response) return undefined
 
-const { games, teams } = response
+const { teams } = response
+
+const games = [...response.games].reverse()
 
 const teamMap = teams.reduce<Record<number, GameraTeamReference | undefined>>(
   (acc, t) => ({ ...acc, [t.teamId]: t }),
   {},
 )
 
-const completedGames = games
-  .filter((g) => g.type === 'completed')
-  .filter(
-    (g) => dayjs(g.gameDate).tz(Astro.locals.timezone).date() === date.date(),
-  )
-  .sort((a, b) => a.gameDate.localeCompare(b.gameDate))
-const scheduledGames = games
-  .filter((g) => g.type === 'scheduled')
-  .filter(
-    (g) =>
-      dayjs(g.gameTimestamp).tz(Astro.locals.timezone).date() === date.date(),
-  )
-  .sort((a, b) => a.gameTimestamp.localeCompare(b.gameTimestamp))
-const liveGames = games
-  .filter((g) => g.type === 'inProgress')
-  .filter(
-    (g) => dayjs(g.gameDate).tz(Astro.locals.timezone).date() === date.date(),
-  )
-  .sort((a, b) => a.gameDate.localeCompare(b.gameDate))
+const completedGames = games.filter((g) => g.type === 'completed')
+const scheduledGames = games.filter((g) => g.type === 'scheduled')
+const liveGames = games.filter((g) => g.type === 'inProgress')
 
 const liveGameData = await Promise.all(
   liveGames.map(async (g) => {

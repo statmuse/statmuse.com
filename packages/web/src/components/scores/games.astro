@@ -28,11 +28,6 @@ const { date: dateString, domain } = Astro.props
 
 const date = dayjs(dateString).tz(Astro.locals.timezone, true)
 
-console.log('timezone: ', Astro.locals.timezone)
-console.log('date string: ', dateString)
-console.log('start game timestamp: ', date.toISOString())
-console.log('end game timestamp: ', date.add(1, 'day').toISOString())
-
 const response = await getGames({
   context: Astro,
   domain,
@@ -43,37 +38,18 @@ const response = await getGames({
 
 if (!response) return undefined
 
-const { games, teams } = response
+const { teams } = response
+
+const games = [...response.games].reverse()
 
 const teamMap = teams.reduce<Record<number, GameraTeamReference | undefined>>(
   (acc, t) => ({ ...acc, [t.teamId]: t }),
   {},
 )
 
-const completedGames = games
-  .filter((g) => g.type === 'completed')
-  .filter(
-    (g) => dayjs(g.gameDate).tz(Astro.locals.timezone).date() === date.date(),
-  )
-  .sort((a, b) => a.gameDate.localeCompare(b.gameDate))
-const scheduledGames = games
-  .filter((g) => g.type === 'scheduled')
-  .filter(
-    (g) =>
-      dayjs(g.gameTimestamp).tz(Astro.locals.timezone).date() === date.date(),
-  )
-  .sort((a, b) => a.gameTimestamp.localeCompare(b.gameTimestamp))
-const liveGames = games
-  .filter((g) => g.type === 'inProgress')
-  .filter(
-    (g) => dayjs(g.gameDate).tz(Astro.locals.timezone).date() === date.date(),
-  )
-  .sort((a, b) => a.gameDate.localeCompare(b.gameDate))
-
-console.log('completed games: ')
-console.log(JSON.stringify(completedGames, null, 2))
-console.log('live games: ')
-console.log(JSON.stringify(liveGames, null, 2))
+const completedGames = games.filter((g) => g.type === 'completed')
+const scheduledGames = games.filter((g) => g.type === 'scheduled')
+const liveGames = games.filter((g) => g.type === 'inProgress')
 
 const liveGameData = await Promise.all(
   liveGames.map(async (g) => {
