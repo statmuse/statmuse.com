@@ -9,6 +9,9 @@ import robotsTxt from 'astro-robots-txt'
 // https://astro.build/config
 export default defineConfig({
   site: 'https://www.statmuse.com',
+  experimental: {
+    serverIslands: true,
+  },
   integrations: [
     tailwind({ applyBaseStyles: false }),
     react(),
@@ -53,7 +56,13 @@ export default defineConfig({
   },
   adapter: aws({
     responseMode: 'buffer',
-    serverRoutes: ['ask', 'money/ask', 'auth/*', 'account/*'],
+    serverRoutes: [
+      'ask',
+      'money/ask',
+      'auth/*',
+      'account/*',
+      '_server-islands/*',
+    ],
   }),
   vite: {
     optimizeDeps: ['sst'],

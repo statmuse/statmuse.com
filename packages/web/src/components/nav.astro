@@ -26,16 +26,19 @@ const { links, selected, href, teamColors, hero: pillBelow } = Astro.props
         <div class="group flex flex-col gap-1.5 overflow-clip">
           <a
             class:list={{
-              'whitespace-nowrap': true,
-              'text-team-secondary hover:no-underline': true,
+              'whitespace-nowrap hover:no-underline': true,
+              'text-team-secondary': teamColors,
+              'text-current': !teamColors,
             }}
             href={link.href ?? href(link.param)}
             set:html={link.text}
           />
           <div
             class:list={{
-              'w-full h-5 -mb-2.5 bg-team-secondary rounded-2xl': true,
+              'w-full h-5 -mb-2.5 rounded-2xl': true,
               'hidden group-hover:block': selected !== link.param,
+              'bg-team-secondary': teamColors,
+              'bg-current': !teamColors,
             }}
           />
         </div>
@@ -60,4 +63,5 @@ const { links, selected, href, teamColors, hero: pillBelow } = Astro.props
       ),
     )
   }
+  <slot />
 </nav>

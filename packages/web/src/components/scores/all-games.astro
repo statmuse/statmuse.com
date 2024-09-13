@@ -1,0 +1,122 @@
+---
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import { mlbGameScore, type GameraTeamReference } from '@statmuse/core/gamera'
+import { getGameData, getGames, getPlayByPlay } from '@lib/gamera'
+import Panel from '@components/panel.astro'
+import ScheduledGame from './scheduled-game.astro'
+import CompletedGame from './completed-game.astro'
+import MlbLiveGame from './mlb-live-game.svelte'
+import * as store from './stores'
+import State from './state.svelte'
+import Realtime from './realtime.svelte'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
+interface Props {
+  date: string
+}
+
+const { date: dateString } = Astro.props
+
+const date = dayjs(dateString).tz(Astro.locals.timezone, true)
+
+const mlbGamesResponse = await getGames({
+  context: Astro,
+  domain: 'MLB',
+  startGameTimestamp: date.toISOString(),
+  endGameTimestamp: date.add(1, 'day').toISOString(),
+  gameState: ['completed', 'inProgress', 'scheduled'],
+})
+
+if (!mlbGamesResponse) return undefined
+
+const { games, teams: mlbTeams } = mlbGamesResponse
+
+const mlbGames = [...games].reverse()
+
+const mlbTeamMap = mlbTeams.reduce<
+  Record<number, GameraTeamReference | undefined>
+>((acc, t) => ({ ...acc, [t.teamId]: t }), {})
+
+const mlbCompletedGames = mlbGames.filter((g) => g.type === 'completed')
+const mlbScheduledGames = mlbGames.filter((g) => g.type === 'scheduled')
+const mlbLiveGames = mlbGames.filter((g) => g.type === 'inProgress')
+
+const mlbLiveGameData = await Promise.all(
+  mlbLiveGames.map(async (g) => {
+    const [gameData, playByPlay] = await Promise.allSettled([
+      getGameData({ context: Astro, gameId: g.gameId }),
+      getPlayByPlay({ context: Astro, gameId: g.gameId }),
+    ])
+    return {
+      gameData: gameData.status === 'fulfilled' ? gameData.value : undefined,
+      playByPlay:
+        playByPlay.status === 'fulfilled' ? playByPlay.value : undefined,
+    }
+  }),
+)
+
+for (const game of mlbLiveGameData) {
+  store.addMlbGame(mlbGameScore(game))
+}
+---
+
+{
+  (mlbScheduledGames.length > 0 ||
+    mlbCompletedGames.length > 0 ||
+    mlbLiveGames.length > 0) && (
+    <Panel class="!p-0">
+      <h3 class="my-2 mx-3 font-semibold">MLB</h3>
+      <div class="divide-y divide-gray-6 dark:divide-gray-4 [&_astro-island:not(:first-of-type)]:block">
+        {mlbLiveGames.map((game) => (
+          <MlbLiveGame
+            {game}
+            client:load
+            domain="MLB"
+            awayTeam={mlbTeamMap[game.awayTeam.teamId]}
+            homeTeam={mlbTeamMap[game.homeTeam.teamId]}
+          />
+        ))}
+        {mlbScheduledGames.map((game) => (
+          <ScheduledGame
+            {game}
+            domain="MLB"
+            awayTeam={mlbTeamMap[game.awayTeamId]}
+            homeTeam={mlbTeamMap[game.homeTeamId]}
+          />
+        ))}
+        {mlbCompletedGames.map((game) => (
+          <CompletedGame
+            {game}
+            domain="MLB"
+            awayTeam={mlbTeamMap[game.awayTeam.teamId]}
+            homeTeam={mlbTeamMap[game.homeTeam.teamId]}
+          />
+        ))}
+      </div>
+    </Panel>
+  )
+}
+{
+  mlbLiveGameData.length > 0 && (
+    <State
+      client:only="svelte"
+      games={mlbLiveGameData.map((g) => mlbGameScore(g))}
+    />
+  )
+}
+{
+  mlbLiveGames.length > 0 && (
+    <Realtime
+      client:only="svelte"
+      connectionParams={mlbLiveGames.map((g) => ({
+        domain: 'MLB',
+        gameId: g.id,
+        topic: 'score',
+      }))}
+    />
+  )
+}

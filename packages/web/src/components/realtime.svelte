@@ -2,11 +2,21 @@
   import { iot, mqtt } from 'aws-iot-device-sdk-v2'
   import { v4 as uuidv4 } from 'uuid'
   import { onMount } from 'svelte'
-  import * as store from '@components/boxscores/mlb/stores'
+  import type { GameraDomain } from '@statmuse/core/gamera'
 
-  export let gameId: string
+  type ConnectionParam = {
+    domain: GameraDomain
+    gameId: number
+    topic: string
+  }
+
+  type SubscriptionHandler = (topic: string, payload: any) => void
+
+  export let connectionParams: ConnectionParam[]
+  export let subscriptionHandler: SubscriptionHandler
 
   let connection: mqtt.MqttClientConnection
+  let unmount = false
 
   async function createConnection() {
     if (connection) await connection.disconnect()
@@ -18,7 +28,9 @@
         '',
         `${import.meta.env.PUBLIC_STAGE}-statmuse-authorizer`,
         '',
-        gameId,
+        connectionParams
+          .map((p) => `${p.domain.toLowerCase()}:${p.gameId}`)
+          .join(' '),
       )
       .with_keep_alive_seconds(1200)
       .build()
@@ -29,15 +41,20 @@
     connection.on('connect', async () => {
       console.log('WS connected')
 
-      await connection.subscribe(
-        `statmuse/${import.meta.env.PUBLIC_STAGE}/mlb/game/${gameId}/#`,
-        mqtt.QoS.AtLeastOnce,
+      await Promise.allSettled(
+        connectionParams.map((p) =>
+          connection.subscribe(
+            `statmuse/${
+              import.meta.env.PUBLIC_STAGE
+            }/${p.domain.toLowerCase()}/game/${p.gameId}/${p.topic}`,
+            mqtt.QoS.AtLeastOnce,
+          ),
+        ),
       )
     })
 
-    connection.on('interrupt', (e) => {
-      console.log('interrupted, restarting', e, JSON.stringify(e))
-      createConnection()
+    connection.on('interrupt', () => {
+      if (!unmount) createConnection()
     })
 
     connection.on('error', (e) => {
@@ -57,7 +74,7 @@
 
     connection.on('message', (fullTopic, payload) => {
       const data = JSON.parse(new TextDecoder('utf8').decode(payload))
-      store.update(data)
+      subscriptionHandler(fullTopic, data)
     })
 
     connection.on('disconnect', console.log)
@@ -69,7 +86,10 @@
     createConnection()
 
     return () => {
-      if (connection) connection.disconnect()
+      if (connection) {
+        unmount = true
+        connection.disconnect()
+      }
     }
   })
 </script>

@@ -166,13 +166,16 @@
 <Panel class="!p-0">
   {#if team}
     <div class="px-3 pt-2">
-      <EntityLink entity={team.entity} class="flex gap-1 text-inherit">
+      <EntityLink
+        entity={team.entity}
+        class="flex items-center gap-2 text-inherit"
+      >
         <Image
           src={team.logoImageUrl ?? ''}
           alt={team.name ?? ''}
           width={60}
           height={60}
-          class="w-6 h-6 object-contain"
+          class="w-4 h-4 object-contain"
         />
         {team.abbreviation}
       </EntityLink>

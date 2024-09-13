@@ -87,14 +87,14 @@ const getOpponent = (
   >
     <EntityLink
       entity={awayTeam?.entity}
-      class="flex gap-1 absolute left-3 top-2 text-inherit"
+      class="flex items-center gap-2 absolute left-3 top-2 text-inherit"
     >
       <Image
         src={awayTeam?.logoImageUrl ?? ''}
         alt={awayTeam?.name ?? ''}
         width={60}
         height={60}
-        class="w-6 h-6 object-contain"
+        class="w-4 h-4 object-contain"
       />
       {awayTeam?.abbreviation}
     </EntityLink>
@@ -103,7 +103,7 @@ const getOpponent = (
 
     <EntityLink
       entity={homeTeam?.entity}
-      class="flex gap-1 absolute right-3 top-2 text-inherit"
+      class="flex items-center gap-2 absolute right-3 top-2 text-inherit"
     >
       {homeTeam?.abbreviation}
       <Image
@@ -111,7 +111,7 @@ const getOpponent = (
         alt={homeTeam?.name ?? ''}
         width={60}
         height={60}
-        class="w-6 h-6 object-contain"
+        class="w-4 h-4 object-contain"
       />
     </EntityLink>
   </div>
@@ -168,7 +168,7 @@ const getOpponent = (
                       alt={opponent?.name ?? ''}
                       width={60}
                       height={60}
-                      class="w-5 h-5 object-contain"
+                      class="w-4 h-4 object-contain"
                     />
                     {opponent?.abbreviation}
                   </Fragment>
@@ -225,7 +225,7 @@ const getOpponent = (
                       alt={opponent?.name ?? ''}
                       width={60}
                       height={60}
-                      class="w-5 h-5 object-contain"
+                      class="w-4 h-4 object-contain"
                     />
                     {opponent?.abbreviation}
                   </Fragment>

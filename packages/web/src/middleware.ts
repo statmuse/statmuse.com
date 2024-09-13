@@ -199,6 +199,10 @@ export const session = defineMiddleware(async (context, next) => {
   }
 
   locals.subscribed = locals.user?.stripe_subscription_status === 'active'
+
+  // set timezone in locals
+  locals.timezone = context.cookies.get('tz')?.value ?? 'America/New_York'
+
   return next()
 })
 

@@ -1,8 +1,10 @@
 import { Config } from 'sst/node/config'
-import type {
-  MlbGameDataResponse,
-  MlbPlayByPlayResponse,
-  MlbStatKey,
+import {
+  mlbBoxGameState,
+  mlbGameScore,
+  type MlbGameDataResponse,
+  type MlbPlayByPlayResponse,
+  type MlbStatKey,
 } from '@statmuse/core/gamera'
 import * as Realtime from '@statmuse/core/realtime'
 import { last } from 'lodash-es'
@@ -72,28 +74,13 @@ export const handler = async (event: any) => {
       fetchPlayByPlay({ gameId, version }),
     ])
 
-    const payload = {
-      lastInning: last(playByPlay.innings),
-      players: gameData.players,
-      gameScore: {
-        away: gameData.awayTeam.score,
-        home: gameData.homeTeam.score,
-      },
-      lineup: {
-        away: gameData.awayTeam.players,
-        home: gameData.homeTeam.players,
-      },
-      stats: {
-        away: gameData.awayTeam.stats,
-        home: gameData.homeTeam.stats,
-      },
-      lineScore: {
-        away: gameData.awayTeam.lineScore,
-        home: gameData.homeTeam.lineScore,
-      },
-    }
+    const gameState = mlbBoxGameState({ gameData, playByPlay })
+    const gameScore = mlbGameScore({ gameData, playByPlay })
 
-    Realtime.publish(`mlb/game/${gameId}/all`, payload)
+    Promise.allSettled([
+      Realtime.publish(`mlb/game/${gameId}/box`, gameState),
+      Realtime.publish(`mlb/game/${gameId}/score`, gameScore),
+    ])
   } catch (error) {
     console.error(error)
   }

@@ -714,3 +714,84 @@ export const formatPitchOutcome = (pitch: PitchAtBatEvent) => {
       return pitch.outcomeType ?? ''
   }
 }
+
+export interface MlbBoxGameState {
+  lastInning?: InningPlayByPlay
+  players?: GameraPlayerReference[]
+  gameScore: {
+    away: number
+    home: number
+  }
+  lineup: {
+    away?: PlayerGameModel[]
+    home?: PlayerGameModel[]
+  }
+  stats: {
+    away: TeamGameModel<MlbStatKey>['stats']
+    home: TeamGameModel<MlbStatKey>['stats']
+  }
+  lineScore: {
+    away: TeamGameModel<MlbStatKey>['lineScore']
+    home: TeamGameModel<MlbStatKey>['lineScore']
+  }
+}
+
+export interface MlbGameScore {
+  gameId: number
+  domain: 'MLB'
+  score: {
+    away: number
+    home: number
+  }
+  inningNumber: number
+  inningHalf: 'top' | 'bottom'
+  outs: number
+  runners: Runner[]
+}
+
+export const mlbBoxGameState = (data: {
+  gameData: MlbGameDataResponse<MlbStatKey>
+  playByPlay: MlbPlayByPlayResponse
+}): MlbBoxGameState => {
+  const { gameData, playByPlay } = data
+  return {
+    lastInning: last(playByPlay.innings),
+    players: gameData.players,
+    gameScore: {
+      away: gameData.awayTeam.score,
+      home: gameData.homeTeam.score,
+    },
+    lineup: {
+      away: gameData.awayTeam.players,
+      home: gameData.homeTeam.players,
+    },
+    stats: {
+      away: gameData.awayTeam.stats,
+      home: gameData.homeTeam.stats,
+    },
+    lineScore: {
+      away: gameData.awayTeam.lineScore,
+      home: gameData.homeTeam.lineScore,
+    },
+  }
+}
+
+export const mlbGameScore = (data: {
+  gameData?: MlbGameDataResponse<MlbStatKey>
+  playByPlay?: MlbPlayByPlayResponse
+}): MlbGameScore => {
+  const { gameData, playByPlay } = data
+
+  return {
+    gameId: gameData?.gameId ?? 0,
+    domain: 'MLB',
+    score: {
+      away: gameData?.awayTeam.score ?? 0,
+      home: gameData?.homeTeam.score ?? 0,
+    },
+    inningHalf: getCurrentHalfInning(playByPlay?.innings ?? [])?.half ?? 'top',
+    inningNumber: getCurrentInningNumber(playByPlay?.innings ?? []),
+    outs: getCurrentOuts(playByPlay?.innings ?? []),
+    runners: getCurrentRunners(playByPlay?.innings ?? []),
+  }
+}

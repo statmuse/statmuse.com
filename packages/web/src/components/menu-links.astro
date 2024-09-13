@@ -14,60 +14,69 @@ const { id } = Astro.props
 const menuLinks = [
   [
     {
+      id: 'home',
       text: 'Home',
       icon: 'all-home',
       url: '/',
       currentUrl: new RegExp('^/$'),
+      subLinks: [
+        {
+          text: 'FC',
+          icon: 'fc',
+          url: '/fc',
+          currentUrl: new RegExp('^/fc$'),
+        },
+        {
+          text: 'NBA',
+          icon: 'nba',
+          url: '/nba',
+          currentUrl: new RegExp('^/nba$'),
+        },
+        {
+          text: 'NFL',
+          icon: 'nfl',
+          url: '/nfl',
+          currentUrl: new RegExp('^/nfl$'),
+        },
+        {
+          text: 'NHL',
+          icon: 'nhl',
+          url: '/nhl',
+          currentUrl: new RegExp('^/nhl$'),
+        },
+        {
+          text: 'MLB',
+          icon: 'mlb',
+          url: '/mlb',
+          currentUrl: new RegExp('^/mlb$'),
+        },
+        {
+          text: 'PGA',
+          icon: 'pga',
+          url: '/pga',
+          currentUrl: new RegExp('^/pga$'),
+          beta: true,
+        },
+        {
+          text: 'Money',
+          icon: 'money',
+          url: '/money',
+          currentUrl: new RegExp('^/money$'),
+          beta: true,
+        },
+      ],
     },
     {
-      text: 'FC',
-      icon: 'fc',
-      url: '/fc',
-      currentUrl: new RegExp('^/fc$'),
+      text: 'Scores',
+      icon: 'scores',
+      url: '/mlb/scores',
+      currentUrl: new RegExp('^/mlb/scores$'),
     },
     {
-      text: 'NBA',
-      icon: 'nba',
-      url: '/nba',
-      currentUrl: new RegExp('^/nba$'),
-    },
-    {
-      text: 'NFL',
-      icon: 'nfl',
-      url: '/nfl',
-      currentUrl: new RegExp('^/nfl$'),
-    },
-    {
-      text: 'NHL',
-      icon: 'nhl',
-      url: '/nhl',
-      currentUrl: new RegExp('^/nhl$'),
-    },
-    {
-      text: 'MLB',
-      icon: 'mlb',
-      url: '/mlb',
-      currentUrl: new RegExp('^/mlb$'),
-    },
-    {
-      text: 'PGA',
-      icon: 'pga',
-      url: '/pga',
-      currentUrl: new RegExp('^/pga$'),
-      beta: true,
-    },
-    {
-      text: 'Money',
-      icon: 'money',
-      url: '/money',
-      currentUrl: new RegExp('^/money$'),
-      beta: true,
-    },
-  ],
-  [
-    {
+      id: 'trending',
       text: 'Trending',
       icon: 'trending-sports',
+      url: '/trending',
       subLinks: [
         {
           text: 'Trending Sports',
@@ -91,12 +100,6 @@ const menuLinks = [
         },
       ],
     },
-    {
-      text: 'Gallery',
-      icon: 'gallery',
-      url: '/players',
-      currentUrl: new RegExp('^(/(nba|nfl|nhl|mlb|pga|fc))?/players$'),
-    },
   ],
   [
     {
@@ -110,6 +113,12 @@ const menuLinks = [
       icon: 'glossary',
       url: '/product/data',
       currentUrl: new RegExp('^/product/data(/(nba|nfl|nhl|mlb|pga|fc))?$'),
+    },
+    {
+      text: 'Gallery',
+      icon: 'gallery',
+      url: '/players',
+      currentUrl: new RegExp('^(/(nba|nfl|nhl|mlb|pga|fc))?/players$'),
     },
   ],
   [
@@ -154,9 +163,10 @@ const menuLinks = [
   {
     menuLinks.map((links) => (
       <Panel>
-        <ul class="space-y-2 group/submenu">
+        <ul class="space-y-2">
           {links.map(
             ({
+              id: menuId,
               icon,
               text,
               url,
@@ -166,7 +176,7 @@ const menuLinks = [
               subLinks,
               beta,
             }) => (
-              <>
+              <div class="group/submenu">
                 <li>
                   {!subLinks ? (
                     <a
@@ -191,23 +201,32 @@ const menuLinks = [
                       )}
                     </a>
                   ) : (
-                    <label
-                      for={`${id}-trending-submenu`}
+                    <div
                       class:list={{
-                        'flex flex-1 items-center gap-3 text-inherit cursor-pointer': true,
+                        'flex items-center text-inherit cursor-pointer': true,
                         'md:flex-initial': true,
-                        'hover:text-teal hover:no-underline': true,
+                        'hover:text-teal': true,
                         '!text-teal': currentUrl?.test(Astro.url.pathname),
                         [classes ?? '']: !!classes,
                       }}
                     >
-                      <Icon name={icon} class="block w-5 h-5 object-cover" />
-                      <span class="flex-1">{text}</span>
-                      <Icon
-                        name="dropdown"
-                        class="block w-4 h-4 object-cover group-has-[input:checked]/submenu:rotate-180"
-                      />
-                    </label>
+                      <a
+                        href={url}
+                        class="flex-1 flex items-center gap-3 text-inherit hover:no-underline"
+                      >
+                        <Icon name={icon} class="block w-5 h-5 object-cover" />
+                        <span class="flex-1">{text}</span>
+                      </a>
+                      <label
+                        class="cursor-pointer w-7 flex justify-end"
+                        for={`${menuId}-${id}-trending-submenu`}
+                      >
+                        <Icon
+                          name="dropdown"
+                          class="block w-4 h-4 object-cover group-has-[input:checked]/submenu:rotate-180"
+                        />
+                      </label>
+                    </div>
                   )}
                 </li>
                 {subLinks && (
@@ -215,10 +234,10 @@ const menuLinks = [
                     <input
                       class="absolute top-0 opacity-0"
                       type="checkbox"
-                      id={`${id}-trending-submenu`}
+                      id={`${menuId}-${id}-trending-submenu`}
                     />
                     {subLinks?.map(
-                      ({ icon, text, url, external, currentUrl }) => (
+                      ({ icon, text, url, external, currentUrl, beta }) => (
                         <li>
                           <a
                             href={url}
@@ -238,13 +257,20 @@ const menuLinks = [
                               class="block w-5 h-5 object-cover"
                             />
                             {text}
+                            {beta && (
+                              <Icon
+                                name="beta"
+                                fill={text === 'Money' ? '#EFA125' : '#00C1D8'}
+                                class="block -ml-1.5 h-6 object-cover"
+                              />
+                            )}
                           </a>
                         </li>
                       ),
                     )}
                   </div>
                 )}
-              </>
+              </div>
             ),
           )}
         </ul>

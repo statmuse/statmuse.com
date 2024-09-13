@@ -154,6 +154,7 @@ export function Web({ stack }: StackContext) {
       PUBLIC_ANALYTICS_API_PROXY_URL: analytics.apiUrl,
       PUBLIC_STAGE: stack.stage,
       PUBLIC_IOT_HOST: realtime.endpointAddress,
+      ASTRO_KEY: 'HtR3JQfF+0GoE9d38agf9Cz02zclLodbGTUUV+yMweQ=',
     },
     regional: { prefetchSecrets: true },
     nodejs: { install: ['pg'], esbuild: { external: ['pg-native', 'sharp'] } },

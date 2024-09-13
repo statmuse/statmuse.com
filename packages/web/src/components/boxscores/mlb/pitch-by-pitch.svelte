@@ -28,7 +28,10 @@
 
   afterUpdate(() => {
     if (autoScroll) {
-      pitchSequenceContainer.scrollLeft = pitchSequenceContainer.scrollWidth
+      pitchSequenceContainer.scrollTo({
+        left: pitchSequenceContainer.scrollWidth,
+        behavior: 'smooth',
+      })
     }
   })
 

@@ -258,6 +258,7 @@
                       <OutsIndicator
                         class="scale-75"
                         vertical
+                        thickerBorder
                         outs={count.outs}
                       />
                       {#if pitches}

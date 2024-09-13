@@ -1,0 +1,79 @@
+---
+import Base from '@layouts/base.astro'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import { range } from 'lodash-es'
+import type { GameraDomain } from '@statmuse/core/gamera'
+import Games from './games.astro'
+import AllGames from './all-games.astro'
+import Hero from './hero.astro'
+import { Caching } from '@lib/caching'
+import type { AnalyticsPageviewProperties } from '@lib/analytics'
+
+interface Props {
+  domain?: Extract<GameraDomain, 'MLB'>
+}
+
+const { domain } = Astro.props
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
+const parseDate = (dateParam: string | null) => {
+  if (!dayjs(dateParam).isValid()) {
+    return dayjs(dayjs().tz(Astro.locals.timezone).format('YYYY-MM-DD')).tz(
+      Astro.locals.timezone,
+      true,
+    )
+  }
+  return dayjs(dateParam).tz(Astro.locals.timezone, true)
+}
+
+const date = parseDate(Astro.url.searchParams.get('date'))
+
+const days: string[] = []
+
+for (const relativeDay of range(-7, 7)) {
+  if (relativeDay < 0) {
+    days.push(date.subtract(Math.abs(relativeDay), 'day').toISOString())
+  } else {
+    days.push(date.add(relativeDay, 'day').toISOString())
+  }
+}
+
+Caching.swr(Astro, {
+  maxage: Astro.url.searchParams.get('date') ? 43200 : 1800,
+  revalidate: Astro.url.searchParams.get('date') ? 86400 : 14400,
+})
+// Caching.none(Astro)
+
+const meta = {
+  title: `${domain} Scores`,
+  description: `Live scores, results and schedule for the ${date.format(
+    'YYYY',
+  )} ${domain} season.`,
+}
+---
+
+<Base
+  {meta}
+  analytics={{
+    page_domain:
+      (domain?.toLowerCase() as AnalyticsPageviewProperties['page_domain']) ??
+      'sports',
+    page_type: 'schedule',
+    is_search: true,
+  }}
+  hideHeader={Astro.locals.platform === 'native'}
+  colors={{ foreground: '#fff', background: '#00c1d8' }}
+>
+  <Hero {days} selectedDay={date.format('YYYY-MM-DD')} {domain} />
+  {
+    domain ? (
+      <Games {domain} date={date.format('YYYY-MM-DD')} server:defer />
+    ) : (
+      <AllGames date={date.format('YYYY-MM-DD')} server:defer />
+    )
+  }
+</Base>

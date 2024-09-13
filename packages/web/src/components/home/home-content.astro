@@ -20,6 +20,7 @@ import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import Panel from '@components/panel.astro'
 import StnVideo from '@components/stn-video.svelte'
 import SelectableStandings from '@components/home/selectable-standings.svelte'
+import ScoresWidget from '@components/scores/scores-widget.astro'
 
 type ExampleSet = [string, { query: string; path: string }[]]
 
@@ -53,6 +54,14 @@ const {
 
 const league = Astro.params.league
 ---
+
+{
+  (domain === 'MLB' || domain === undefined) && (
+    <ScoresWidget domain="MLB" server:defer>
+      <Panel class="h-[83px]" slot="fallback" />
+    </ScoresWidget>
+  )
+}
 
 <div class="group">
   {

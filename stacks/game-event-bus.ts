@@ -37,7 +37,7 @@ export function GameEventBus({ stack }: StackContext) {
         },
       },
       targets: {
-        mlb: 'packages/functions/src/game-event.handler',
+        mlb: 'packages/functions/src/game-event/mlb.handler',
       },
     },
   })

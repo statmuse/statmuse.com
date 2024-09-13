@@ -1,3 +1,4 @@
+/// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
 
 interface ImportMetaEnv {
@@ -29,5 +30,6 @@ declare namespace App {
     nativeView?: 'home' | 'scores' | 'search' | 'trending' | 'more'
     deviceId?: string
     trendingData?: import('./types').TrendingItem
+    timezone: string
   }
 }

@@ -27,10 +27,28 @@ interface IotAuthorizerResponse {}
 export async function handler(
   event: IotAuthorizerEvent,
 ): Promise<IotAuthorizerResponse> {
-  const gameId = Buffer.from(
-    event.protocolData.mqtt.password,
-    'base64',
-  ).toString()
+  const games = Buffer.from(event.protocolData.mqtt.password, 'base64')
+    .toString()
+    .split(' ')
+
+  const policies = games.map((game) => {
+    const [domain, gameId] = game.split(':')
+    return {
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Action: 'iot:Receive',
+          Effect: 'Allow',
+          Resource: `arn:aws:iot:us-east-1:${process.env.ACCOUNT}:topic/${Config.APP}/${Config.STAGE}/${domain}/game/${gameId}/*`,
+        },
+        {
+          Action: 'iot:Subscribe',
+          Effect: 'Allow',
+          Resource: `arn:aws:iot:us-east-1:${process.env.ACCOUNT}:topicfilter/${Config.APP}/${Config.STAGE}/${domain}/game/${gameId}/*`,
+        },
+      ],
+    }
+  })
 
   const policy = {
     isAuthenticated: true, //A Boolean that determines whether client can connect.
@@ -48,21 +66,7 @@ export async function handler(
           },
         ],
       },
-      {
-        Version: '2012-10-17',
-        Statement: [
-          {
-            Action: 'iot:Receive',
-            Effect: 'Allow',
-            Resource: `arn:aws:iot:us-east-1:${process.env.ACCOUNT}:topic/${Config.APP}/${Config.STAGE}/mlb/game/${gameId}/*`,
-          },
-          {
-            Action: 'iot:Subscribe',
-            Effect: 'Allow',
-            Resource: `arn:aws:iot:us-east-1:${process.env.ACCOUNT}:topicfilter/${Config.APP}/${Config.STAGE}/mlb/game/${gameId}/*`,
-          },
-        ],
-      },
+      ...policies,
     ],
   }
 
