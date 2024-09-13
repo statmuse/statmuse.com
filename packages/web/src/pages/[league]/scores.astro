@@ -5,7 +5,7 @@ import { leagueToDomain, type LeagueParam } from '@lib/params'
 const league = (Astro.params.league as LeagueParam) ?? ''
 const domain = leagueToDomain(league)
 
-if (domain !== 'MLB') return Astro.redirect('/scores' + Astro.url.search)
+if (domain !== 'MLB') return Astro.redirect('/')
 ---
 
 <ScoresPage {domain} />
