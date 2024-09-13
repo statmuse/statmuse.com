@@ -152,7 +152,7 @@
   }
 
   [data-melt-calendar-cell][data-today] {
-    @apply outline outline-1 outline-gray-5/20;
+    @apply outline outline-1 outline-current;
   }
 
   [data-melt-calendar-cell][data-outside-visible-months] {
