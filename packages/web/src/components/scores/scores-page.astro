@@ -42,10 +42,10 @@ for (const relativeDay of range(-7, 7)) {
   }
 }
 
-Caching.swr(Astro, {
-  maxage: Astro.url.searchParams.get('date') ? 43200 : 1800,
-  revalidate: Astro.url.searchParams.get('date') ? 86400 : 14400,
-})
+// Caching.swr(Astro, {
+//   maxage: Astro.url.searchParams.get('date') ? 43200 : 1800,
+//   revalidate: Astro.url.searchParams.get('date') ? 86400 : 14400,
+// })
 
 const meta = {
   title: `${domain} Scores`,
