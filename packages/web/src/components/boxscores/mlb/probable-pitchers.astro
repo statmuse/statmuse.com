@@ -101,14 +101,14 @@ const homePlayer = playerMap?.[homePitcherId ?? 0]
       <div class="relative flex justify-center py-2">
         <EntityLink
           entity={awayTeam?.entity}
-          class="flex gap-1 absolute left-3 top-2 text-inherit"
+          class="flex gap-2 items-center absolute left-3 top-2 text-inherit"
         >
           <Image
             src={awayTeam?.logoImageUrl ?? ''}
             alt={awayTeam?.name ?? ''}
             width={60}
             height={60}
-            class="w-6 h-6 object-contain"
+            class="w-4 h-4 object-contain"
           />
           {awayTeam?.abbreviation}
         </EntityLink>
@@ -119,7 +119,7 @@ const homePlayer = playerMap?.[homePitcherId ?? 0]
 
         <EntityLink
           entity={homeTeam?.entity}
-          class="flex gap-1 absolute right-3 top-2 text-inherit"
+          class="flex gap-2 items-center absolute right-3 top-2 text-inherit"
         >
           {homeTeam?.abbreviation}
           <Image
@@ -127,7 +127,7 @@ const homePlayer = playerMap?.[homePitcherId ?? 0]
             alt={homeTeam?.name ?? ''}
             width={60}
             height={60}
-            class="w-6 h-6 object-contain"
+            class="w-4 h-4 object-contain"
           />
         </EntityLink>
       </div>

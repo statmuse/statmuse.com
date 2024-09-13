@@ -163,7 +163,7 @@ const menuLinks = [
   {
     menuLinks.map((links) => (
       <Panel>
-        <ul class="space-y-2 group/submenu">
+        <ul class="space-y-2">
           {links.map(
             ({
               id: menuId,
@@ -176,7 +176,7 @@ const menuLinks = [
               subLinks,
               beta,
             }) => (
-              <>
+              <div class="group/submenu">
                 <li>
                   {!subLinks ? (
                     <a
@@ -270,7 +270,7 @@ const menuLinks = [
                     )}
                   </div>
                 )}
-              </>
+              </div>
             ),
           )}
         </ul>

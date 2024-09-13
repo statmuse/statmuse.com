@@ -84,27 +84,27 @@
     <div class="pr-1">
       <EntityLink
         entity={awayTeam.entity}
-        class="flex gap-1 items-center text-inherit"
+        class="flex gap-2 items-center text-inherit"
       >
         <Image
           src={awayTeam.logoImageUrl ?? ''}
           alt={awayTeam.name ?? ''}
           width={60}
           height={60}
-          class="w-5 h-5 object-contain"
+          class="w-4 h-4 object-contain"
         />
         {awayTeam.abbreviation}
       </EntityLink>
       <EntityLink
         entity={homeTeam.entity}
-        class="flex gap-1 items-center text-inherit"
+        class="flex gap-2 items-center text-inherit"
       >
         <Image
           src={homeTeam.logoImageUrl ?? ''}
           alt={homeTeam.name ?? ''}
           width={60}
           height={60}
-          class="w-5 h-5 object-contain"
+          class="w-4 h-4 object-contain"
         />
         {homeTeam.abbreviation}
       </EntityLink>

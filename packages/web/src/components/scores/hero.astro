@@ -99,7 +99,7 @@ const today = dayjs().tz(Astro.locals.timezone)
         </div>
         <DayNavigation
           client:load
-          class="@lg/hero:hidden -mb-3"
+          class="@lg/hero:hidden -mb-3 -mx-3"
           {days}
           selectedDate={date.toISOString()}
           basePath={Astro.url.pathname}

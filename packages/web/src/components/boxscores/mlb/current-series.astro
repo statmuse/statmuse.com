@@ -88,13 +88,13 @@ if (gameIndex !== -1) {
                       game.awayTeam.gameResult === 'win',
                   }}
                 >
-                  <div class="flex gap-1 items-center">
+                  <div class="flex gap-2 items-center">
                     <Image
                       src={awayTeam?.logoImageUrl ?? ''}
                       alt={awayTeam?.name ?? ''}
                       width={60}
                       height={60}
-                      class="w-5 h-5 object-contain"
+                      class="w-4 h-4 object-contain"
                     />
                     <p>{awayTeam?.nickname}</p>
                   </div>
@@ -108,13 +108,13 @@ if (gameIndex !== -1) {
                       game.homeTeam.gameResult === 'win',
                   }}
                 >
-                  <div class="flex gap-1 items-center">
+                  <div class="flex gap-2 items-center">
                     <Image
                       src={homeTeam?.logoImageUrl ?? ''}
                       alt={homeTeam?.name ?? ''}
                       width={60}
                       height={60}
-                      class="w-5 h-5 object-contain"
+                      class="w-4 h-4 object-contain"
                     />
                     <p>{homeTeam?.nickname}</p>
                   </div>
@@ -153,28 +153,28 @@ if (gameIndex !== -1) {
               class="flex gap-3 py-2 text-inherit hover:no-underline"
             >
               <div class="flex-1">
-                <div class="flex gap-1 py-0.5">
+                <div class="flex items-center gap-2 py-0.5">
                   <Image
                     src={awayTeam?.logoImageUrl ?? ''}
                     alt={awayTeam?.name ?? ''}
                     width={60}
                     height={60}
-                    class="w-5 h-5 object-contain"
+                    class="w-4 h-4 object-contain"
                   />
                   <p>{awayTeam?.nickname}</p>
                 </div>
-                <div class="flex gap-1 py-0.5">
+                <div class="flex items-center gap-2 py-0.5">
                   <Image
                     src={homeTeam?.logoImageUrl ?? ''}
                     alt={homeTeam?.name ?? ''}
                     width={60}
                     height={60}
-                    class="w-5 h-5 object-contain"
+                    class="w-4 h-4 object-contain"
                   />
                   <p>{homeTeam?.nickname}</p>
                 </div>
               </div>
-              <div class="w-12 flex items-center justify-end text-right text-sm text-gray-5">
+              <div class="w-max flex items-center justify-end text-right text-sm text-gray-5">
                 {game.odds?.sportsbooks?.[0].homeTeam.spreadOdds.display ? (
                   <p>
                     {homeTeam?.abbreviation}{' '}
