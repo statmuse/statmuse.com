@@ -27,7 +27,7 @@
   {#each days as day (day)}
     {@const date = dayjs(day)}
     <div
-      class="group flex flex-col gap-1.5 overflow-clip shrink-0"
+      class="group/day-nav flex flex-col gap-1.5 overflow-clip shrink-0"
       {...day === selectedDate ? { 'data-selected': '' } : {}}
     >
       <a
@@ -45,9 +45,10 @@
           : date.format('ddd MMM D')}
       </a>
       <div
-        class="w-full h-5 -mb-2.5 bg-current rounded-2xl"
+        class={`w-full h-5 -mb-2.5 bg-current rounded-2xl ${
+          day !== selectedDate ? 'md:group-hover/day-nav:block' : ''
+        }`}
         class:hidden={day !== selectedDate}
-        class:group-hover:block={day !== selectedDate}
       />
     </div>
   {/each}
