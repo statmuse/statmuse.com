@@ -15,6 +15,7 @@ import ScheduledGame from './scheduled-game.astro'
 import Panel from '@components/panel.astro'
 import State from './state.svelte'
 import Realtime from './realtime.svelte'
+import Icon from '@components/icon.svelte'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -106,6 +107,13 @@ for (const game of liveGameData) {
             homeTeam={teamMap[game.homeTeam.teamId]}
           />
         ))}
+        <a
+          href="/mlb/scores"
+          class="py-2 px-3 text-inherit hover:no-underline flex items-center gap-2"
+        >
+          <span>More Scores</span>
+          <Icon name="next" class="w-4 h-4 shrink-0" />
+        </a>
       </div>
     </Panel>
   )
