@@ -23,11 +23,6 @@ const { days, selectedDay, domain } = Astro.props
 
 const leageNavLinks = [
   {
-    text: 'All',
-    href: '/scores' + Astro.url.search,
-    param: 'all',
-  },
-  {
     text: 'MLB',
     href: '/mlb/scores' + Astro.url.search,
     param: 'mlb',
@@ -114,7 +109,9 @@ const today = dayjs().tz(Astro.locals.timezone)
           hero
           links={leageNavLinks}
           selected={domain ? domain.toLowerCase() : 'all'}
-        />
+        >
+          <span class="opacity-50">More coming</span>
+        </Nav>
         <div class="hidden @lg/hero:flex gap-3 items-center absolute right-3 bottom-2.5">
           <div class="w-32 py-0.5 px-2 rounded-2xl flex justify-between items-center bg-team-secondary text-team-primary">
             <a
@@ -165,7 +162,11 @@ const today = dayjs().tz(Astro.locals.timezone)
         class="@lg/hero:hidden"
         links={leageNavLinks}
         selected={domain ? domain.toLowerCase() : 'all'}
-      />
+      >
+        <span class="p-1 px-3 text-center text-gray-5 whitespace-nowrap border rounded-full bg-gray-8 dark:bg-gray-3 border-gray-6 dark:border-none">
+          More coming
+        </span>
+      </Nav>
     </div>
   )
 }
