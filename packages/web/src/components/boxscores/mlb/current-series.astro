@@ -174,13 +174,13 @@ if (gameIndex !== -1) {
                   <p>{homeTeam?.nickname}</p>
                 </div>
               </div>
-              <div class="w-max flex items-center justify-end text-right text-sm text-gray-5">
-                {game.odds?.sportsbooks?.[0].homeTeam.spreadOdds.display ? (
-                  <p>
-                    {homeTeam?.abbreviation}{' '}
-                    {game.odds?.sportsbooks?.[0].homeTeam.spreadOdds.display}
-                  </p>
-                ) : undefined}
+              <div class="w-max flex flex-col justify-center text-right text-sm text-gray-5">
+                <p class="py-1">
+                  {game.odds?.sportsbooks?.[0].awayTeam.moneyline.display}
+                </p>
+                <p class="py-1">
+                  {game.odds?.sportsbooks?.[0].homeTeam.moneyline.display}
+                </p>
               </div>
               <div class="flex w-20 items-center justify-end text-right text-sm">
                 <div>
