@@ -66,9 +66,9 @@
   {#if renderAds && number % 3 === (reverseOrder ? 1 : 0)}
     <AditudeAdBanner
       divId={`plays-${number}`}
-      slotId={`pb-slot-incontent-${Math.ceil(number / 3) % 4}`}
+      slotId="pb-slot-banner"
       class="mx-auto"
-      placeholderClass="w-[300px] h-[250px] mx-auto"
+      placeholderClass="w-[320px] h-[100px] mx-auto"
       onlyMobile
       lazy
     />
