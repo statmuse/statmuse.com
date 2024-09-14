@@ -38,7 +38,7 @@
         }).toString()}`}
         class="text-inherit hover:no-underline"
       >
-        {selectedDate === null || date.date() === today.date()
+        {date.date() === today.date()
           ? 'Today'
           : date.date() === dayjs().subtract(1, 'day').date()
           ? 'Yesterday'
