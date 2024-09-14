@@ -8,10 +8,12 @@
 
   let container: HTMLElement
 
+  const today = dayjs()
+
   onMount(() => {
     const parent = container.getBoundingClientRect()
-    const selected = container.querySelector<HTMLElement>('[data-selected]')
-
+    const day = selectedDate ?? today.format('YYYY-MM-DD')
+    const selected = container.querySelector<HTMLElement>(`[data-day="${day}"]`)
     if (selected) {
       const elem = selected.getBoundingClientRect()
       container.scrollLeft =
@@ -28,11 +30,7 @@
     {@const date = dayjs(day)}
     <div
       class="group/day-nav flex flex-col gap-1.5 overflow-clip shrink-0"
-      {...day === selectedDate
-        ? { 'data-selected': '' }
-        : date.date() === dayjs().date()
-        ? { 'data-selected': '' }
-        : {}}
+      data-day={day}
     >
       <a
         href={`${basePath}?${new URLSearchParams({
@@ -40,7 +38,7 @@
         }).toString()}`}
         class="text-inherit hover:no-underline"
       >
-        {date.date() === dayjs().date()
+        {selectedDate === null || date.date() === today.date()
           ? 'Today'
           : date.date() === dayjs().subtract(1, 'day').date()
           ? 'Yesterday'
@@ -53,7 +51,7 @@
           day !== selectedDate ? 'md:group-hover/day-nav:block' : ''
         }`}
         class:!block={day === selectedDate ||
-          (selectedDate === null && date.date() === dayjs().date())}
+          (selectedDate === null && date.date() === today.date())}
       />
     </div>
   {/each}
