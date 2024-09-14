@@ -16,12 +16,18 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 
 interface Props {
-  date: string
+  now: string
+  date: string | null
 }
 
-const { date: dateString } = Astro.props
+const { date: dateString, now } = Astro.props
 
-const date = dayjs(dateString).tz(Astro.locals.timezone, true)
+const date = dateString
+  ? dayjs(dateString).tz(Astro.locals.timezone, true)
+  : dayjs(dayjs(now).tz(Astro.locals.timezone).format('YYYY-MM-DD')).tz(
+      Astro.locals.timezone,
+      true,
+    )
 
 const mlbGamesResponse = await getGames({
   context: Astro,

@@ -1,25 +1,19 @@
 ---
-import Icon from '@components/icon.svelte'
 import Panel from '@components/panel.astro'
+import DateSelection from './date-selection.svelte'
 import DayNavigation from './day-navigation.svelte'
 import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 import Nav from '@components/nav.astro'
 import type { GameraDomain } from '@statmuse/core/gamera'
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
 import DatePicker from './date-picker.svelte'
-
-dayjs.extend(utc)
-dayjs.extend(timezone)
 
 interface Props {
   days: string[]
-  selectedDay: string
+  selectedDate: string | null
   domain?: GameraDomain
 }
 
-const { days, selectedDay, domain } = Astro.props
+const { days, selectedDate, domain } = Astro.props
 
 const leageNavLinks = [
   {
@@ -28,9 +22,6 @@ const leageNavLinks = [
     param: 'mlb',
   },
 ]
-
-const date = dayjs(selectedDay).tz(Astro.locals.timezone, true)
-const today = dayjs().tz(Astro.locals.timezone)
 ---
 
 {
@@ -46,7 +37,7 @@ const today = dayjs().tz(Astro.locals.timezone)
           client:load
           class="w-5 h-5"
           basePath={Astro.url.pathname}
-          defaultDate={Astro.url.searchParams.get('date')}
+          defaultDate={selectedDate}
         />
         <nav
           class:list={{
@@ -69,11 +60,11 @@ const today = dayjs().tz(Astro.locals.timezone)
           ))}
         </nav>
       </div>
-      <DayNavigation
+      <DateSelection
         client:load
         class="-mb-3 -mx-3"
         {days}
-        selectedDate={date.toISOString()}
+        {selectedDate}
         basePath={Astro.url.pathname}
       />
     </Panel>
@@ -92,16 +83,16 @@ const today = dayjs().tz(Astro.locals.timezone)
               client:load
               class="w-5 h-5"
               basePath={Astro.url.pathname}
-              defaultDate={Astro.url.searchParams.get('date')}
+              defaultDate={selectedDate}
             />
           </span>
           <h1 class="text-2xl font-semibold">Scores</h1>
         </div>
-        <DayNavigation
+        <DateSelection
           client:load
           class="@lg/hero:hidden -mb-3 -mx-3"
           {days}
-          selectedDate={date.toISOString()}
+          {selectedDate}
           basePath={Astro.url.pathname}
         />
         <Nav
@@ -113,36 +104,16 @@ const today = dayjs().tz(Astro.locals.timezone)
           <span class="opacity-50">More coming</span>
         </Nav>
         <div class="hidden @lg/hero:flex gap-3 items-center absolute right-3 bottom-2.5">
-          <div class="w-32 py-0.5 px-2 rounded-2xl flex justify-between items-center bg-team-secondary text-team-primary">
-            <a
-              href={`${Astro.url.pathname}?${new URLSearchParams({
-                date: date.subtract(1, 'day').format('YYYY-MM-DD'),
-              }).toString()}`}
-              class="text-inherit"
-            >
-              <Icon name="next" class="w-4 h-4 rotate-180" />
-            </a>
-            {date.date() === today.date()
-              ? 'Today'
-              : date.date() === today.subtract(1, 'day').date()
-              ? 'Yesterday'
-              : date.date() === today.add(1, 'day').date()
-              ? 'Tomorrow'
-              : date.format('ddd MMM D')}
-            <a
-              href={`${Astro.url.pathname}?${new URLSearchParams({
-                date: date.add(1, 'day').format('YYYY-MM-DD'),
-              }).toString()}`}
-              class="text-inherit"
-            >
-              <Icon name="next" class="w-4 h-4" />
-            </a>
-          </div>
+          <DayNavigation
+            client:load
+            basePath={Astro.url.pathname}
+            {selectedDate}
+          />
           <DatePicker
             client:load
             class="w-5 h-5"
             basePath={Astro.url.pathname}
-            defaultDate={Astro.url.searchParams.get('date')}
+            defaultDate={selectedDate}
             placement="bottom-end"
           />
         </div>
