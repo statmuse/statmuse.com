@@ -33,7 +33,7 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
 
 <>
   {
-    representatives.length === 0 && fallback && (
+    representatives?.length === 0 && fallback && (
       <Image
         data-cy-illustration
         class="h-[158px] max-w-[250px] object-contain @lg/hero:object-[80%_center] mx-auto @lg/hero:mx-0 @lg/hero:-ml-[70px] -my-2 @lg/hero:-my-3"
@@ -46,7 +46,7 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
     )
   }
   {
-    representatives.length === 1 && (
+    representatives?.length === 1 && (
       <div
         class:list={{
           'flex items-end justify-center': true,
@@ -67,7 +67,7 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
     )
   }
   {
-    representatives.length === 3 && (
+    representatives?.length === 3 && (
       <div
         class:list={{
           'flex items-end justify-center w-[300px]': true,
@@ -110,7 +110,7 @@ const getIllustrationHeight = (image: GameraGalleryImage) => {
     )
   }
   {
-    representatives.length === 2 && (
+    representatives?.length === 2 && (
       <div
         class:list={{
           'flex items-end justify-center w-[240px]': true,

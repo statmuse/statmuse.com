@@ -205,7 +205,7 @@ const representatives = isTeam
   colors={{
     foregroundColor: bio.colors?.foregroundColor,
     backgroundColor:
-      representatives.length === 0 && domain !== 'NFL'
+      representatives?.length === 0 && domain !== 'NFL'
         ? hexToHSL(bio.colors?.backgroundColor ?? '#00c1d8', 0.2)
         : bio.colors?.backgroundColor,
   }}
