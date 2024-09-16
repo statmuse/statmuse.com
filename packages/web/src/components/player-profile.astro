@@ -262,6 +262,89 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       ['Blocked', 'BLK'],
     ],
   },
+  cfb: {
+    QB: [
+      {
+        label: 'Comp Pct',
+        value: (v) =>
+          formatPercentage(
+            ((v.CMP?.value as number) / (v.ATT?.value as number)) * 100,
+          ),
+      },
+      ['Pass Yds', 'YDS'],
+      ['Pass TD', 'TD'],
+      {
+        label: 'Yds/Pass',
+        value: (v) =>
+          formatNumber((v.YDS?.value as number) / (v.ATT?.value as number)),
+      },
+      ['Rating', 'RATE'],
+      ['Games', 'GP'],
+      ['Rush Yds', 'RUSHYDS'],
+      ['Rush TD', 'RUSHTD'],
+      ['Int', 'INT'],
+      ['Sacked', 'SCK'],
+    ],
+    RB: [
+      ['Att', 'ATT-ATT'],
+      ['Rush Yds', 'RUSHYDS'],
+      ['Rush TD', 'RUSHTD'],
+      ['Yds/Rush', 'YPC-YPC'],
+      ['Games', 'GP'],
+      ['Tot Yds', 'YDS-TOT YDS'],
+      ['Total TD', 'TD-TOT TD'],
+      {
+        label: 'Fum (L)',
+        value: (v) => `${v['FUM']?.value} (${v['LOST']?.value})`,
+      },
+    ],
+    WR: [
+      ['Rec', 'REC-REC'],
+      ['Rec Yds', 'RECYDS'],
+      ['Rec TD', 'RECTD'],
+      ['Games', 'GP'],
+      ['Yds/Rec', 'RECAVG'],
+      ['Targets', 'TRG-TRG'],
+    ],
+    DEF: [
+      ['Sacks', 'SCK'],
+      ['TFL', 'TFL'],
+      ['Int', 'INT'],
+      'FF',
+      ['Games', 'GP'],
+      ['Tackles', 'TKL'],
+      ['Pass Def', 'PDEF'],
+      {
+        label: 'TD',
+        value: (v) =>
+          `${
+            (v['FR TD']?.value as number) + (v['INT TD-TD']?.value as number)
+          }`,
+      },
+    ],
+    OL: [
+      ['Games', 'GP'],
+      ['Starts', 'GS'],
+    ],
+    K: [
+      'FGM',
+      'FGA',
+      'FG%',
+      ['Long', 'LNG'],
+      'XPM',
+      'XPA',
+      'XP%',
+      ['Games', 'GP'],
+    ],
+    P: [
+      ['Punts', 'PUNT'],
+      ['Yards', 'YDS'],
+      ['Avg', 'AVG'],
+      ['Games', 'GP'],
+      ['Long', 'LNG'],
+      ['Blocked', 'BLK'],
+    ],
+  },
   mlb: {
     DEFAULT: ['HR', 'RBI', 'AVG', 'OBP', 'SLG', 'AB', 'R', 'H', 'BB', 'SB'],
     P: [
@@ -330,6 +413,10 @@ const rows = stats?.grid.rows.slice(statPanelStartIndex, statPanelEndIndex)
 const statPanels = rows?.map(
   (r) => r[stats?.grid.columns[0].rowItemKey].display,
 )
+
+console.log('league: ', league)
+console.log('season stats columns: ', seasonStatColumns)
+
 const seasonLeagueColumns =
   league === 'pga' || league === 'money' ? [] : seasonStatColumns[league]
 const seasonLeagueStats = Array.isArray(seasonLeagueColumns)
@@ -349,6 +436,15 @@ const nextGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   },
   nba: ['G', 'PPG', 'RPG', 'APG'],
   nfl: {
+    QB: ['G', 'YDS', 'TD', 'INT'],
+    RB: ['G', ['ATT', 'ATT-ATT'], ['YDS', 'RUSHYDS'], ['TD', 'RUSHTD']],
+    WR: ['G', ['REC', 'REC-REC'], ['YDS', 'RECYDS'], ['TD', 'RECTD']],
+    DEF: ['G', ['SCK', 'SCK'], ['TFL', 'TFL'], ['INT', 'INT']],
+    OL: [['Starts', 'GS']],
+    K: ['G', 'FGM', ['Long', 'LNG']],
+    P: ['G', ['Punts', 'PUNT'], ['Avg', 'AVG'], ['Long', 'LNG']],
+  },
+  cfb: {
     QB: ['G', 'YDS', 'TD', 'INT'],
     RB: ['G', ['ATT', 'ATT-ATT'], ['YDS', 'RUSHYDS'], ['TD', 'RUSHTD']],
     WR: ['G', ['REC', 'REC-REC'], ['YDS', 'RECYDS'], ['TD', 'RECTD']],
@@ -419,6 +515,33 @@ const gamesStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   },
   nba: ['PTS', 'REB', 'AST', '3PM'],
   nfl: {
+    QB: ['YDS', 'TD', 'INT', 'RATE'],
+    RB: [
+      ['ATT', 'ATT-ATT'],
+      ['YDS', 'RUSHYDS'],
+      ['TD', 'RUSHTD'],
+      ['TOT TD', 'TD-TOT TD'],
+    ],
+    WR: [
+      ['REC', 'REC-REC'],
+      ['TRG', 'TRG-TRG'],
+      ['YDS', 'RECYDS'],
+      ['TD', 'RECTD'],
+    ],
+    DEF: ['SCK', 'TFL', 'INT', 'FF'],
+    OL: [['Starts', 'GS']],
+    K: [
+      { label: 'FG', value: (v) => `${v.FGM?.value}-${v.FGA?.value}` },
+      { label: 'XP', value: (v) => `${v.XPM?.value}-${v.XPA?.value}` },
+      ['Long', 'LNG'],
+    ],
+    P: [
+      ['Punts', 'PUNT'],
+      ['Avg', 'AVG'],
+      ['Long', 'LNG'],
+    ],
+  },
+  cfb: {
     QB: ['YDS', 'TD', 'INT', 'RATE'],
     RB: [
       ['ATT', 'ATT-ATT'],
