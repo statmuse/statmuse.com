@@ -81,7 +81,7 @@ const analyticsProperties = Object.assign(
     is_search: false,
     method: Astro.request.method,
     origin: Astro.locals.platform,
-    origin_scope: 'browser',
+    origin_scope: Astro.locals.platform === 'native' ? 'ios' : 'browser',
     page_domain: 'unknown',
     page_type: 'unknown',
     query: undefined,

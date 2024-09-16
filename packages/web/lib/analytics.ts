@@ -13,7 +13,7 @@ export type AnalyticsPageviewProperties = {
   is_search?: boolean
   method?: 'GET' | 'POST'
   origin?: 'web' | 'native'
-  origin_scope?: 'browser'
+  origin_scope?: 'browser' | 'ios' | 'android'
   page_domain?:
     | 'nba'
     | 'nfl'
@@ -93,7 +93,9 @@ export const segment = (window.segment =
         {},
       ) as AnalyticsBrowser))
 
-const getOrigin = (userAgent: string) => {
+const getOrigin = (userAgent: string, origin?: 'web' | 'native') => {
+  if (origin === 'native') return origin
+
   const isBot = isBotTest(userAgent)
   if (isBot && userAgent.includes('Google')) return 'web.googlebot'
   if (isBot) return 'web.bot'
@@ -186,7 +188,7 @@ export const getPageviewProps = (document: Document) => {
         ...flattenObj('tokenizationScore', tokenizationScore),
         ...getReferenceIds(contentReference),
         ...getSubjectItems(subject),
-        origin: getOrigin(navigator.userAgent),
+        origin: getOrigin(navigator.userAgent, props.origin),
       }
     } catch (_e) {
       return undefined
