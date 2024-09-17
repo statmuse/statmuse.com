@@ -1,4 +1,5 @@
 ---
+import Layout from '@layouts/base.astro'
 import GameLayout from '@layouts/game.astro'
 import NbaBoxscore from '@components/nba-boxscore.astro'
 import NflBoxscore from '@components/nfl-boxscore.astro'
@@ -9,6 +10,9 @@ import { Caching } from '@lib/caching'
 import { getGame } from '@lib/gamera'
 import { NOT_FOUND_404 } from '@lib/response'
 import { type LeagueParam, leagueToDomain } from '@lib/params'
+import Visuals from '@components/visuals.astro'
+import Hero from '@components/hero.astro'
+import { getHeroProps } from '@lib/gamera'
 
 const league = Astro.params.league as LeagueParam
 const game = Astro.params.game
@@ -27,6 +31,15 @@ Caching.swr(Astro)
   domain === 'MLB' ? (
     // New Boxscores
     <MlbBoxscore />
+  ) : domain === 'CFB' ? (
+    <Layout colors={data?.visual.summary.subject.colors}>
+      <Hero
+        class="@lg/hero:pr-12"
+        {...getHeroProps({ imageAlt: '', response: data })}
+        renderAdBanner
+      />
+      <Visuals response={data} />
+    </Layout>
   ) : (
     <GameLayout {data} {domain}>
       {(function () {

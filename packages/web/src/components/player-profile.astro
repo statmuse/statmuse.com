@@ -414,9 +414,6 @@ const statPanels = rows?.map(
   (r) => r[stats?.grid.columns[0].rowItemKey].display,
 )
 
-console.log('league: ', league)
-console.log('season stats columns: ', seasonStatColumns)
-
 const seasonLeagueColumns =
   league === 'pga' || league === 'money' ? [] : seasonStatColumns[league]
 const seasonLeagueStats = Array.isArray(seasonLeagueColumns)

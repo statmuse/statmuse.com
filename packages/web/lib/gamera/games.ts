@@ -4,6 +4,7 @@ import type {
   GameraAnswerMlbBoxScore,
   GameraAnswerNbaBoxScore,
   GameraAnswerNflBoxScore,
+  GameraAnswerCfbBoxScore,
   GameraAnswerNhlBoxScore,
   GameStatus,
   GameraGamesResponse,
@@ -19,6 +20,7 @@ import type { Context } from '@lib/session'
 interface Response {
   NBA: GameraAnswerNbaBoxScore
   NFL: GameraAnswerNflBoxScore
+  CFB: GameraAnswerCfbBoxScore
   MLB: GameraAnswerMlbBoxScore
   NHL: GameraAnswerNhlBoxScore
   EPL: GameraAnswerEplBoxScore

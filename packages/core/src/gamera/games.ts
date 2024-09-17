@@ -53,6 +53,10 @@ export interface GameraAnswerNflBoxScore extends GameraDefaultResponse {
   domain: 'NFL'
   visual: NflBoxScoreVisual
 }
+export interface GameraAnswerCfbBoxScore extends GameraDefaultResponse {
+  domain: 'CFB'
+  visual: NflBoxScoreVisual
+}
 export interface GameraAnswerMlbBoxScore extends GameraDefaultResponse {
   domain: 'MLB'
   visual: MlbBoxScoreVisual
