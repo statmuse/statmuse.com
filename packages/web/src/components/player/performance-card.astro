@@ -218,7 +218,11 @@ const lastGameStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
       ['Int', 'INT'],
       ['Sacked', 'SCK'],
       ['Long', 'LNG'],
-      ['Rating', 'RATE'],
+      {
+        label: 'Rating',
+        value: (v) => v.RTG?.display ?? v.RATE?.display,
+      },
+      // ['Rating', 'RTG'],
       ['Tot Yds', 'TOTALYDS-TOT YDS'],
       ['Tot TD', 'TOTALTD-TOT TD'],
       {
