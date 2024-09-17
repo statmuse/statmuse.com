@@ -423,7 +423,16 @@ const gamesStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   },
   nba: ['PTS', 'REB', 'AST', '3PM'],
   nfl: {
-    QB: ['YDS', 'TD', 'INT', 'RATE'],
+    QB: [
+      'YDS',
+      'TD',
+      'INT',
+      {
+        label: 'RTG',
+        value: (v) => v.RTG?.display ?? v.RATE?.display,
+      },
+      // 'RATE',
+    ],
     RB: [
       ['ATT', 'ATT-ATT'],
       ['YDS', 'RUSHYDS'],
