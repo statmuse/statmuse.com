@@ -784,3 +784,233 @@ export const mlbGameScore = (data: {
     runners: getCurrentRunners(playByPlay?.innings ?? []),
   }
 }
+
+export type NflGameStatus =
+  | 'scheduled'
+  | 'inProgress'
+  | 'halftime'
+  | 'completed'
+  | 'postponed'
+  | 'delayed'
+  | 'canceled'
+
+export type NflStatKey =
+  | 'Passing-Attempts'
+  | 'Passing-Completions'
+  | 'Passing-Yards'
+  | 'Passing-YardsPerAttempt'
+  | 'Passing-Touchdowns'
+  | 'Passing-Interceptions'
+  | 'Passing-Sacks'
+  | 'Passing-SackYards'
+  | 'Passing-Rating'
+  | 'Rushing-Attempts'
+  | 'Rushing-Yards'
+  | 'Rushing-YardsPerAttempt'
+  | 'Rushing-Touchdowns'
+  | 'Rushing-LongestRush'
+  | 'Receiving-Targets'
+  | 'Receiving-Receptions'
+  | 'Receiving-Yards'
+  | 'Receiving-YardsPerReception'
+  | 'Receiving-Touchdowns'
+  | 'Receiving-LongestReception'
+  | 'Fumbles'
+  | 'FumblesLost'
+  | 'FumbleRecoveries'
+  | 'Defensive-Sacks'
+  | 'Defensive-CombinedTackles'
+  | 'Defensive-Tackles'
+  | 'Defensive-TacklesForLoss'
+  | 'Defensive-Interceptions'
+  | 'Defensive-ForcedFumbles'
+  | 'Defensive-Touchdowns'
+  | 'Kicking-FieldGoalsAttempted'
+  | 'Kicking-FieldGoalsMade'
+  | 'Kicking-FieldGoalPercentage'
+  | 'Kicking-ExtraPointsAttempted'
+  | 'Kicking-ExtraPointsMade'
+  | 'Kicking-ExtraPointPercentage'
+  | 'Kicking-KickingPoints'
+  | 'Kicking-LongestFieldGoal'
+  | 'Punting-Punts'
+  | 'Punting-Yards'
+  | 'Punting-YardsAverage'
+  | 'Punting-LongestPunt'
+  | 'Kickoff-Returns'
+  | 'Kickoff-ReturnYards'
+  | 'Kickoff-ReturnYardsAverage'
+  | 'Kickoff-LongestReturns'
+  | 'Kickoff-ReturnTouchdowns'
+  | 'PuntReturn-PuntReturns'
+  | 'PuntReturn-Yards'
+  | 'PuntReturn-YardsPerPuntReturn'
+  | 'PuntReturn-LongestReturn'
+  | 'PuntReturn-Touchdowns'
+
+export type NflStatKeySet = {
+  passingTotals: Extract<
+    NflStatKey,
+    | 'Passing-Attempts'
+    | 'Passing-Completions'
+    | 'Passing-Yards'
+    | 'Passing-YardsPerAttempt'
+    | 'Passing-Touchdowns'
+    | 'Passing-Interceptions'
+    | 'Passing-Sacks'
+    | 'Passing-SackYards'
+    | 'Passing-Rating'
+  >
+  rushingTotals: Extract<
+    NflStatKey,
+    | 'Rushing-Attempts'
+    | 'Rushing-Yards'
+    | 'Rushing-YardsPerAttempt'
+    | 'Rushing-Touchdowns'
+    | 'Rushing-LongestRush'
+  >
+  receivingTotals: Extract<
+    NflStatKey,
+    | 'Receiving-Targets'
+    | 'Receiving-Receptions'
+    | 'Receiving-Yards'
+    | 'Receiving-YardsPerReception'
+    | 'Receiving-Touchdowns'
+    | 'Receiving-LongestReception'
+  >
+  defenseTotals: Extract<
+    NflStatKey,
+    | 'Defensive-Sacks'
+    | 'Defensive-CombinedTackles'
+    | 'Defensive-Tackles'
+    | 'Defensive-TacklesForLoss'
+    | 'Defensive-Interceptions'
+    | 'Defensive-ForcedFumbles'
+    | 'Defensive-Touchdowns'
+  >
+  kickoffReturnTotals: Extract<
+    NflStatKey,
+    | 'Kickoff-Returns'
+    | 'Kickoff-ReturnYards'
+    | 'Kickoff-ReturnYardsAverage'
+    | 'Kickoff-LongestReturns'
+    | 'Kickoff-ReturnTouchdowns'
+  >
+  puntReturnTotals: Extract<
+    NflStatKey,
+    | 'PuntReturn-PuntReturns'
+    | 'PuntReturn-Yards'
+    | 'PuntReturn-YardsPerPuntReturn'
+    | 'PuntReturn-LongestReturn'
+    | 'PuntReturn-Touchdowns'
+  >
+  kickingTotals: Extract<
+    NflStatKey,
+    | 'Kicking-FieldGoalsAttempted'
+    | 'Kicking-FieldGoalsMade'
+    | 'Kicking-FieldGoalPercentage'
+    | 'Kicking-ExtraPointsAttempted'
+    | 'Kicking-ExtraPointsMade'
+    | 'Kicking-ExtraPointPercentage'
+    | 'Kicking-KickingPoints'
+    | 'Kicking-LongestFieldGoal'
+  >
+  puntingTotals: Extract<
+    NflStatKey,
+    | 'Punting-Punts'
+    | 'Punting-Yards'
+    | 'Punting-YardsAverage'
+    | 'Punting-LongestPunt'
+  >
+  fumbleTotals: Extract<
+    NflStatKey,
+    'Fumbles' | 'FumblesLost' | 'FumbleRecoveries'
+  >
+}
+
+export type NflStatModel<Key extends NflStatKey> = {
+  [K in Key]+?: Value<number>
+}
+
+interface NflSeason extends Season {
+  week: number
+}
+
+interface NflOfficial {
+  assignment:
+    | 'referee'
+    | 'lineJudge'
+    | 'fieldJudge'
+    | 'backJudge'
+    | 'sideJudge'
+    | 'umpire'
+    | 'replayOfficial'
+    | 'downJudge'
+  fullName?: string
+  number?: number
+}
+
+export interface NflTeamGameModel<K extends NflStatKey> {
+  teamId: number
+  score: number
+  usedTimeouts: number
+  record: {
+    wins: number
+    losses: number
+    ties: number
+  }
+  gameResult: 'win' | 'loss' | 'tie'
+  stats: {
+    team: {
+      statsLookupKey: string
+      statsLookup: Record<string, StatModel<K>>
+    }
+    player: {
+      splits: {
+        groupIndex: number
+        splitType: string
+        statsLookupKey: string
+      }[]
+      statsLookupKey: string
+      StatsLookup: Record<string, StatModel<K>>
+    }
+  }
+  lineScore: {
+    periods?: {
+      period: number
+      points: number
+    }[]
+  }
+}
+
+export interface NflGameDataResponse<K extends NflStatKey> {
+  gameId: number
+  gameStatus: NflGameStatus
+  seasonYearDisplay?: string
+  season: NflSeason
+  gameDate: string
+  gameTimestamp: string
+  networkName: string
+  homeTeam: NflTeamGameModel<K>
+  awayTeam: NflTeamGameModel<K>
+  weather?: {
+    condition: string
+    temperatureFahrenheit: number
+    humidityPercentage: number
+    wind: {
+      speedMph: number
+      direction?: string
+    }
+  }
+  venue: {
+    name?: string
+    location?: string
+    roofType: 'open' | 'close'
+    surface: 'turf' | 'grass'
+  }
+  officials?: NflOfficial[]
+  teams?: GameraTeamReference[]
+  players?: GameraPlayerReference[]
+  odds?: BettingOdds
+  summary?: GameraToken[]
+}
