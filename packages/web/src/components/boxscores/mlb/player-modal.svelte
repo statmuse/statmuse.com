@@ -11,11 +11,11 @@
     getValue,
     tokensToText,
     type MlbStatKey,
-    type MlbStatModel,
+    type StatModel,
   } from '@statmuse/core/gamera'
   import Icon from '@components/icon.svelte'
 
-  type DisplayFn = (s?: MlbStatModel<MlbStatKey>) => string
+  type DisplayFn = (s?: StatModel<MlbStatKey>) => string
 
   $: statSections = (
     $selectedPlayer?.type === 'batter'
@@ -37,7 +37,7 @@
           {
             key: 'W/L',
             statKey: 'Pitching-Wins',
-            display: (s?: MlbStatModel<MlbStatKey>) => {
+            display: (s?: StatModel<MlbStatKey>) => {
               if (getValue(s ?? {}, 'Pitching-Wins') > 0) {
                 return 'W'
               }
@@ -56,7 +56,7 @@
             key: 'CG/SV',
             statKey: 'Pitching-CompleteGames',
 
-            display: (s?: MlbStatModel<MlbStatKey>) => {
+            display: (s?: StatModel<MlbStatKey>) => {
               if (getValue(s ?? {}, 'Pitching-CompleteGames') > 0) {
                 return 'CG'
               }

@@ -8,8 +8,9 @@ import type {
   GameraTeamReference,
   GameraPlayerReference,
   GameraGridColumn,
+  StatModel,
 } from './base'
-import type { MlbStatKey, MlbStatModel } from './games'
+import type { MlbStatKey } from './games'
 import type { PlayerInjury } from './injuries'
 
 export interface GameraPlayerBio {
@@ -129,7 +130,7 @@ export interface MlbPlayerStatsResponse<
   stats?: {
     splits: SplitGroup<S>[]
     statsLookupKey: string
-    statsLookup: Record<string, MlbStatModel<K>>
+    statsLookup: Record<string, StatModel<K>>
   }
   players?: GameraPlayerReference[]
 }
@@ -138,7 +139,7 @@ export const mapStatsResponseToGrid = <K extends MlbStatKey>(
   columns: (GameraGridColumn & { statKey: K })[],
   data: {
     player?: GameraPlayerReference
-    stats?: MlbStatModel<K>
+    stats?: StatModel<K>
     position?: string
   }[],
   injuredPlayerMap?: Record<number, PlayerInjury | undefined>,

@@ -188,8 +188,25 @@ export type GameStatus =
 
 export type SeasonType = 'regularSeason' | 'postseason'
 
-export type Season = {
+export interface Season {
   type: SeasonType
   year: number
   yearDisplay?: string
+}
+
+export type StatModel<Keys extends string> = {
+  [K in Keys]+?: Value<number>
+}
+
+export const getDisplay = <K extends string>(
+  statModel: StatModel<K>,
+  key: K,
+) => {
+  if (!statModel[key]) return ''
+  return statModel[key].display
+}
+
+export const getValue = <K extends string>(statModel: StatModel<K>, key: K) => {
+  if (!statModel[key]) return 0
+  return statModel[key].value
 }

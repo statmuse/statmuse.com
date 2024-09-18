@@ -7,6 +7,7 @@ import type {
   GameStatus,
   Game,
   BettingOdds,
+  StatModel,
 } from './base'
 import type {
   GameraDefaultResponse,
@@ -216,27 +217,7 @@ export type MlbStatKeySet = {
   >
 }
 
-export type MlbStatModel<StatKey extends MlbStatKey> = {
-  [K in StatKey]+?: Value<number>
-}
-
-export const getDisplay = <K extends MlbStatKey>(
-  statModel: MlbStatModel<K>,
-  key: K,
-) => {
-  if (!statModel[key]) return ''
-  return statModel[key].display
-}
-
-export const getValue = <K extends MlbStatKey>(
-  statModel: MlbStatModel<K>,
-  key: K,
-) => {
-  if (!statModel[key]) return 0
-  return statModel[key].value
-}
-
-export interface TeamGameModel<Keys extends MlbStatKey> {
+export interface TeamGameModel<K extends MlbStatKey> {
   teamId: number
   score: number
   record: {
@@ -245,11 +226,11 @@ export interface TeamGameModel<Keys extends MlbStatKey> {
   }
   gameResult: 'win' | 'loss' | 'noDecision' | 'suspended'
   stats?: {
-    stats?: MlbStatModel<Keys>
+    stats?: StatModel<K>
     splits?: {
       splitType?: string
       playerId: number
-      stats?: MlbStatModel<Keys>
+      stats?: StatModel<K>
     }[]
   }
   probablePitcher?: {

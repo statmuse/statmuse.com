@@ -6,7 +6,7 @@ import {
   type MlbGameDataResponse,
   type MlbPlayByPlayResponse,
   type GameraPlayerReference,
-  type MlbStatModel,
+  type StatModel,
   getCurrentAtBat,
   getCurrentAtBatCount,
   getCurrentRunners,
@@ -56,19 +56,19 @@ export const lineup = map<{
 
 export const stats = map<{
   away?: {
-    stats?: MlbStatModel<MlbStatKey>
+    stats?: StatModel<MlbStatKey>
     splits?: {
       splitType?: string
       playerId: number
-      stats?: MlbStatModel<MlbStatKey>
+      stats?: StatModel<MlbStatKey>
     }[]
   }
   home?: {
-    stats?: MlbStatModel<MlbStatKey>
+    stats?: StatModel<MlbStatKey>
     splits?: {
       splitType?: string
       playerId: number
-      stats?: MlbStatModel<MlbStatKey>
+      stats?: StatModel<MlbStatKey>
     }[]
   }
 }>({})
