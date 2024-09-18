@@ -4,15 +4,15 @@ import Panel from '@components/panel.astro'
 import type {
   GameraPlayerReference,
   MlbStatKey,
-  TeamGameModel,
+  MlbTeamGameModel,
 } from '@statmuse/core/gamera'
 import { getPlayerBio, getPlayerStats } from '@lib/gamera'
 import { find } from 'lodash-es'
 import EntityLink from '@components/entity-link.astro'
 
 interface Props {
-  awayTeamModel: TeamGameModel<MlbStatKey>
-  homeTeamModel: TeamGameModel<MlbStatKey>
+  awayTeamModel: MlbTeamGameModel<MlbStatKey>
+  homeTeamModel: MlbTeamGameModel<MlbStatKey>
   playerMap?: Record<number, GameraPlayerReference | undefined>
 }
 

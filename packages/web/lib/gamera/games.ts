@@ -5,7 +5,6 @@ import type {
   GameraAnswerNbaBoxScore,
   GameraAnswerNflBoxScore,
   GameraAnswerNhlBoxScore,
-  GameStatus,
   GameraGamesResponse,
   MlbGameDataResponse,
   MlbPlayByPlayResponse,
@@ -52,7 +51,7 @@ export async function getGame<T extends Domain>(props: {
 type Season = 'regularSeaaon' | 'postseason'
 
 export const getGames = async <
-  G extends Extract<GameStatus, 'scheduled' | 'inProgress' | 'completed'>,
+  G extends 'scheduled' | 'inProgress' | 'completed',
 >(props: {
   context: Context
   domain: string

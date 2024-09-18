@@ -4,14 +4,14 @@ import Base from '@layouts/base.astro'
 import type { ComponentProps } from 'astro/types'
 import type {
   GameraTeamReference,
-  GameStatus,
+  MlbGameStatus,
   MlbPlayByPlayResponse,
 } from '@statmuse/core/gamera'
 
 interface Props extends ComponentProps<typeof Base> {
   awayTeam?: GameraTeamReference
   homeTeam?: GameraTeamReference
-  status: GameStatus
+  status: MlbGameStatus
   useContainerQuery?: boolean
   playByPlay?: MlbPlayByPlayResponse
 }

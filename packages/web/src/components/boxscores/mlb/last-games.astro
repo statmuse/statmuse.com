@@ -6,7 +6,7 @@ import type {
   GameraGamesResponse,
   CompletedGame,
   GameraTeamReference,
-  TeamGameModel,
+  MlbTeamGameModel,
   MlbStatKey,
   GameraDomain,
 } from '@statmuse/core/gamera'
@@ -16,8 +16,8 @@ import { find, orderBy, zip } from 'lodash-es'
 interface Props {
   domain: GameraDomain
   teams: GameraTeamReference[]
-  awayTeamModel: TeamGameModel<MlbStatKey>
-  homeTeamModel: TeamGameModel<MlbStatKey>
+  awayTeamModel: MlbTeamGameModel<MlbStatKey>
+  homeTeamModel: MlbTeamGameModel<MlbStatKey>
   awayTeamCompletedGames?: GameraGamesResponse<CompletedGame>
   homeTeamCompletedGames?: GameraGamesResponse<CompletedGame>
 }

@@ -177,15 +177,6 @@ export const isInProgressGame = (game: Game): game is InProgressGame =>
 export const isCompletedGame = (game: Game): game is CompletedGame =>
   game.type === 'completed'
 
-export type GameStatus =
-  | 'scheduled'
-  | 'postponed'
-  | 'delayed'
-  | 'inProgress'
-  | 'suspended'
-  | 'completed'
-  | 'canceled'
-
 export type SeasonType = 'regularSeason' | 'postseason'
 
 export interface Season {

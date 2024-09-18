@@ -4,7 +4,6 @@ import type {
   GameraToken,
   Value,
   Season,
-  GameStatus,
   Game,
   BettingOdds,
   StatModel,
@@ -79,6 +78,15 @@ export interface GameraGamesResponse<G extends Game> {
   teams: GameraTeamReference[]
   games: G[]
 }
+
+export type MlbGameStatus =
+  | 'scheduled'
+  | 'postponed'
+  | 'delayed'
+  | 'inProgress'
+  | 'suspended'
+  | 'completed'
+  | 'canceled'
 
 export type Position =
   | 'pitcher'
@@ -217,7 +225,7 @@ export type MlbStatKeySet = {
   >
 }
 
-export interface TeamGameModel<K extends MlbStatKey> {
+export interface MlbTeamGameModel<K extends MlbStatKey> {
   teamId: number
   score: number
   record: {
@@ -243,7 +251,7 @@ export interface TeamGameModel<K extends MlbStatKey> {
   players?: PlayerGameModel[]
 }
 
-interface Official {
+interface MlbOfficial {
   assignment:
     | 'homePlate'
     | 'firstBase'
@@ -256,16 +264,16 @@ interface Official {
   fullName?: string
 }
 
-export interface MlbGameDataResponse<Keys extends MlbStatKey> {
+export interface MlbGameDataResponse<K extends MlbStatKey> {
   gameId: number
-  gameStatus: GameStatus
+  gameStatus: MlbGameStatus
   seasonYearDisplay?: string
   season: Season
   gameDate: string
   gameTimestamp: string
   networkName: string
-  homeTeam: TeamGameModel<Keys>
-  awayTeam: TeamGameModel<Keys>
+  homeTeam: MlbTeamGameModel<K>
+  awayTeam: MlbTeamGameModel<K>
   weather?: {
     temperatureFahrenheit: number
     cloudCoveragePercentage: number
@@ -279,7 +287,7 @@ export interface MlbGameDataResponse<Keys extends MlbStatKey> {
     location?: string
   }
   timeOfDay: 'day' | 'night'
-  officials?: Official[]
+  officials?: MlbOfficial[]
   teams?: GameraTeamReference[]
   players?: GameraPlayerReference[]
   odds?: BettingOdds
@@ -460,7 +468,7 @@ export interface InningPlayByPlay {
 export interface MlbPlayByPlayResponse {
   gameId: number
   gameTimestamp: string
-  gameStatus: GameStatus
+  gameStatus: MlbGameStatus
   homeTeam: Pick<GameraTeamReference, 'teamId'>
   awayTeam: Pick<GameraTeamReference, 'teamId'>
   innings: InningPlayByPlay[]
@@ -708,12 +716,12 @@ export interface MlbBoxGameState {
     home?: PlayerGameModel[]
   }
   stats: {
-    away: TeamGameModel<MlbStatKey>['stats']
-    home: TeamGameModel<MlbStatKey>['stats']
+    away: MlbTeamGameModel<MlbStatKey>['stats']
+    home: MlbTeamGameModel<MlbStatKey>['stats']
   }
   lineScore: {
-    away: TeamGameModel<MlbStatKey>['lineScore']
-    home: TeamGameModel<MlbStatKey>['lineScore']
+    away: MlbTeamGameModel<MlbStatKey>['lineScore']
+    home: MlbTeamGameModel<MlbStatKey>['lineScore']
   }
 }
 

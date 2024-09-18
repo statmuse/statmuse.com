@@ -2,7 +2,7 @@
 import {
   formatMlbPosition,
   mapStatsResponseToGrid,
-  type TeamGameModel,
+  type MlbTeamGameModel,
   type MlbStatKey,
   type MlbPlayerStatsResponse,
   type MlbStatKeySet,
@@ -19,7 +19,7 @@ import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 interface Props {
   team: 'home' | 'away'
   opposingPitcher?: GameraPlayerReference
-  teamModel: TeamGameModel<MlbStatKey>
+  teamModel: MlbTeamGameModel<MlbStatKey>
   teamPlayerStats?: MlbPlayerStatsResponse<MlbStatKey, 'player'>
   teamPlayerStatsAgainstPitcher?: MlbPlayerStatsResponse<
     MlbStatKeySet['battingStandard'],
