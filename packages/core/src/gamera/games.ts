@@ -149,7 +149,7 @@ export interface PlayerGameModel {
   }
 }
 
-export type MlbStatKey =
+export type MlbPitchingStatKey =
   | 'Pitching-CompleteGames'
   | 'Pitching-EarnedRunAverage'
   | 'Pitching-EarnedRuns'
@@ -166,6 +166,8 @@ export type MlbStatKey =
   | 'Pitching-Strikeouts'
   | 'Pitching-Walks'
   | 'Pitching-Wins'
+
+export type MlbBattingStatKey =
   | 'Batting-AtBats'
   | 'Batting-BattingAverage'
   | 'Batting-CaughtStealing'
@@ -182,47 +184,15 @@ export type MlbStatKey =
   | 'Batting-Strikeouts'
   | 'Batting-Triples'
   | 'Batting-Walks'
+
+export type MlbStatKey =
+  | MlbPitchingStatKey
+  | MlbBattingStatKey
   | 'Fielding-Errors'
 
 export type MlbStatKeySet = {
-  pitchingStandard: Extract<
-    MlbStatKey,
-    | 'Pitching-CompleteGames'
-    | 'Pitching-EarnedRunAverage'
-    | 'Pitching-EarnedRuns'
-    | 'Pitching-GamesPitched'
-    | 'Pitching-GamesStarted'
-    | 'Pitching-HitBatsmen'
-    | 'Pitching-Hits'
-    | 'Pitching-HomeRuns'
-    | 'Pitching-InningsPitched'
-    | 'Pitching-Losses'
-    | 'Pitching-Runs'
-    | 'Pitching-Saves'
-    | 'Pitching-Shutouts'
-    | 'Pitching-Strikeouts'
-    | 'Pitching-Walks'
-    | 'Pitching-Wins'
-  >
-  battingStandard: Extract<
-    MlbStatKey,
-    | 'Batting-AtBats'
-    | 'Batting-BattingAverage'
-    | 'Batting-CaughtStealing'
-    | 'Batting-Doubles'
-    | 'Batting-HitByPitches'
-    | 'Batting-Hits'
-    | 'Batting-HomeRuns'
-    | 'Batting-GamesPlayed'
-    | 'Batting-OnBasePercentage'
-    | 'Batting-Runs'
-    | 'Batting-RunsBattedIn'
-    | 'Batting-SluggingPercentage'
-    | 'Batting-StolenBases'
-    | 'Batting-Strikeouts'
-    | 'Batting-Triples'
-    | 'Batting-Walks'
-  >
+  pitchingStandard: MlbPitchingStatKey
+  battingStandard: MlbBattingStatKey
 }
 
 export interface MlbTeamGameModel<K extends MlbStatKey> {
@@ -794,7 +764,7 @@ export type NflGameStatus =
   | 'delayed'
   | 'canceled'
 
-export type NflStatKey =
+export type NflPassingStatKey =
   | 'Passing-Attempts'
   | 'Passing-Completions'
   | 'Passing-Yards'
@@ -804,20 +774,25 @@ export type NflStatKey =
   | 'Passing-Sacks'
   | 'Passing-SackYards'
   | 'Passing-Rating'
+
+export type NflRushingStatKey =
   | 'Rushing-Attempts'
   | 'Rushing-Yards'
   | 'Rushing-YardsPerAttempt'
   | 'Rushing-Touchdowns'
   | 'Rushing-LongestRush'
+
+export type NflReceivingStatKey =
   | 'Receiving-Targets'
   | 'Receiving-Receptions'
   | 'Receiving-Yards'
   | 'Receiving-YardsPerReception'
   | 'Receiving-Touchdowns'
   | 'Receiving-LongestReception'
-  | 'Fumbles'
-  | 'FumblesLost'
-  | 'FumbleRecoveries'
+
+export type NflFumblesStatKey = 'Fumbles' | 'FumblesLost' | 'FumbleRecoveries'
+
+export type NflDefenseStatKey =
   | 'Defensive-Sacks'
   | 'Defensive-CombinedTackles'
   | 'Defensive-Tackles'
@@ -825,6 +800,8 @@ export type NflStatKey =
   | 'Defensive-Interceptions'
   | 'Defensive-ForcedFumbles'
   | 'Defensive-Touchdowns'
+
+export type NflKickingStatKey =
   | 'Kicking-FieldGoalsAttempted'
   | 'Kicking-FieldGoalsMade'
   | 'Kicking-FieldGoalPercentage'
@@ -833,99 +810,48 @@ export type NflStatKey =
   | 'Kicking-ExtraPointPercentage'
   | 'Kicking-KickingPoints'
   | 'Kicking-LongestFieldGoal'
+
+export type NflPuntingStatKey =
   | 'Punting-Punts'
   | 'Punting-Yards'
   | 'Punting-YardsAverage'
   | 'Punting-LongestPunt'
+
+export type NflKickoffStatKey =
   | 'Kickoff-Returns'
   | 'Kickoff-ReturnYards'
   | 'Kickoff-ReturnYardsAverage'
   | 'Kickoff-LongestReturns'
   | 'Kickoff-ReturnTouchdowns'
+
+export type NflPuntReturnStatKey =
   | 'PuntReturn-PuntReturns'
   | 'PuntReturn-Yards'
   | 'PuntReturn-YardsPerPuntReturn'
   | 'PuntReturn-LongestReturn'
   | 'PuntReturn-Touchdowns'
 
+export type NflStatKey =
+  | NflPassingStatKey
+  | NflRushingStatKey
+  | NflReceivingStatKey
+  | NflFumblesStatKey
+  | NflDefenseStatKey
+  | NflKickingStatKey
+  | NflPuntingStatKey
+  | NflKickoffStatKey
+  | NflPuntReturnStatKey
+
 export type NflStatKeySet = {
-  passingTotals: Extract<
-    NflStatKey,
-    | 'Passing-Attempts'
-    | 'Passing-Completions'
-    | 'Passing-Yards'
-    | 'Passing-YardsPerAttempt'
-    | 'Passing-Touchdowns'
-    | 'Passing-Interceptions'
-    | 'Passing-Sacks'
-    | 'Passing-SackYards'
-    | 'Passing-Rating'
-  >
-  rushingTotals: Extract<
-    NflStatKey,
-    | 'Rushing-Attempts'
-    | 'Rushing-Yards'
-    | 'Rushing-YardsPerAttempt'
-    | 'Rushing-Touchdowns'
-    | 'Rushing-LongestRush'
-  >
-  receivingTotals: Extract<
-    NflStatKey,
-    | 'Receiving-Targets'
-    | 'Receiving-Receptions'
-    | 'Receiving-Yards'
-    | 'Receiving-YardsPerReception'
-    | 'Receiving-Touchdowns'
-    | 'Receiving-LongestReception'
-  >
-  defenseTotals: Extract<
-    NflStatKey,
-    | 'Defensive-Sacks'
-    | 'Defensive-CombinedTackles'
-    | 'Defensive-Tackles'
-    | 'Defensive-TacklesForLoss'
-    | 'Defensive-Interceptions'
-    | 'Defensive-ForcedFumbles'
-    | 'Defensive-Touchdowns'
-  >
-  kickoffReturnTotals: Extract<
-    NflStatKey,
-    | 'Kickoff-Returns'
-    | 'Kickoff-ReturnYards'
-    | 'Kickoff-ReturnYardsAverage'
-    | 'Kickoff-LongestReturns'
-    | 'Kickoff-ReturnTouchdowns'
-  >
-  puntReturnTotals: Extract<
-    NflStatKey,
-    | 'PuntReturn-PuntReturns'
-    | 'PuntReturn-Yards'
-    | 'PuntReturn-YardsPerPuntReturn'
-    | 'PuntReturn-LongestReturn'
-    | 'PuntReturn-Touchdowns'
-  >
-  kickingTotals: Extract<
-    NflStatKey,
-    | 'Kicking-FieldGoalsAttempted'
-    | 'Kicking-FieldGoalsMade'
-    | 'Kicking-FieldGoalPercentage'
-    | 'Kicking-ExtraPointsAttempted'
-    | 'Kicking-ExtraPointsMade'
-    | 'Kicking-ExtraPointPercentage'
-    | 'Kicking-KickingPoints'
-    | 'Kicking-LongestFieldGoal'
-  >
-  puntingTotals: Extract<
-    NflStatKey,
-    | 'Punting-Punts'
-    | 'Punting-Yards'
-    | 'Punting-YardsAverage'
-    | 'Punting-LongestPunt'
-  >
-  fumbleTotals: Extract<
-    NflStatKey,
-    'Fumbles' | 'FumblesLost' | 'FumbleRecoveries'
-  >
+  passingTotals: NflPassingStatKey
+  rushingTotals: NflRushingStatKey
+  receivingTotals: NflReceivingStatKey
+  defenseTotals: NflDefenseStatKey
+  kickoffReturnTotals: NflKickoffStatKey
+  puntReturnTotals: NflPuntReturnStatKey
+  kickingTotals: NflKickingStatKey
+  puntingTotals: NflPuntingStatKey
+  fumbleTotals: NflFumblesStatKey
 }
 
 export type NflStatModel<Key extends NflStatKey> = {
