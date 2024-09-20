@@ -375,7 +375,7 @@ async function update(
       const image = record.image
       const background = record.background
       const foreground = record.foreground
-      const url = record.url
+      const url = new URL(record.url)
 
       if (league === 'MONEY') {
         const assets: Asset[] = []
@@ -392,7 +392,7 @@ async function update(
         }
 
         queries.push({
-          uri: url,
+          uri: url.pathname + url.search,
           league,
           query: query ?? assets[0]?.name.toLowerCase(),
           count,
@@ -435,7 +435,7 @@ async function update(
             .filter((p) => !!p) || []
 
         queries.push({
-          uri: url,
+          uri: url.pathname + url.search,
           league,
           query:
             query ??
