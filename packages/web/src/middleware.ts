@@ -144,8 +144,7 @@ export const session = defineMiddleware(async (context, next) => {
         ? session.properties.visitorId
         : undefined
 
-    if (!visitorId) session = await Session.create(context)
-    console.log({ 'new session': session })
+    console.log({ visitorId })
     const visitor = await Visitor.get(visitorId!)
     if (!visitor) throw new Error('No visitor found')
     locals.visitor = visitor
@@ -173,11 +172,17 @@ export const session = defineMiddleware(async (context, next) => {
   }
 
   if (locals.platform === 'native') {
+    const visitorId =
+      session.type === 'visitor'
+        ? session.properties.id
+        : session.type === 'user'
+        ? session.properties.visitorId
+        : undefined
     session.type = 'user'
     Session.update(context, {
-      id: locals.visitorId,
-      userId: locals.visitorId,
-      visitorId: locals.visitorId,
+      id: visitorId,
+      userId: visitorId,
+      visitorId,
       subscriptionStatus: 'active',
     })
   }
