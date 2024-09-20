@@ -9,6 +9,7 @@ import type { ContentReference as KanedamaContentReference } from '@statmuse/cor
 import { isBotTest } from '@lib/useragent'
 
 export type AnalyticsPageviewProperties = {
+  country: string
   is_error?: boolean
   is_search?: boolean
   method?: 'GET' | 'POST'
