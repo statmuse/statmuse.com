@@ -173,7 +173,9 @@ export const session = defineMiddleware(async (context, next) => {
   if (locals.platform === 'native') {
     session.type = 'user'
     Session.update(context, {
+      id: locals.visitorId,
       userId: locals.visitorId,
+      visitorId: locals.visitorId,
       subscriptionStatus: 'active',
     })
   }
