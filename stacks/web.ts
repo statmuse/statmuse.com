@@ -1,10 +1,4 @@
-import {
-  type StackContext,
-  AstroSite,
-  use,
-  KinesisStream,
-  Table,
-} from 'sst/constructs'
+import { type StackContext, AstroSite, use, Table } from 'sst/constructs'
 import { SubnetType } from 'aws-cdk-lib/aws-ec2'
 import { API } from './api'
 import { DNS } from './dns'
@@ -18,8 +12,6 @@ import {
   CacheQueryStringBehavior,
   CachePolicy,
   CachedMethods,
-  Endpoint,
-  RealtimeLogConfig,
   ResponseHeadersPolicy,
   ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront'
@@ -29,9 +21,7 @@ import {
   Code,
   LayerVersion,
   Runtime,
-  StartingPosition,
 } from 'aws-cdk-lib/aws-lambda'
-import { StreamMode } from 'aws-cdk-lib/aws-kinesis'
 import { Trending } from './trending'
 import { ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53'
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets'
@@ -74,52 +64,6 @@ export function Web({ stack }: StackContext) {
     code: Code.fromAsset('layers/sharp'),
     compatibleRuntimes: [Runtime.NODEJS_18_X],
     compatibleArchitectures: [Architecture.ARM_64],
-  })
-
-  const cfLogStream = new KinesisStream(stack, 'cf-realtime-logs-stream', {
-    consumers: {
-      consumer: {
-        function: {
-          handler: 'packages/functions/src/analytics/track.handler',
-          timeout: '1 minute',
-          memorySize: '256 MB',
-          bind: [secrets.SEGMENT_WRITE_KEY],
-          prefetchSecrets: true,
-        },
-        cdk: {
-          eventSource: {
-            reportBatchItemFailures: true,
-            bisectBatchOnError: true,
-            startingPosition: StartingPosition.TRIM_HORIZON,
-            parallelizationFactor: 10,
-          },
-        },
-      },
-    },
-    cdk: { stream: { streamMode: StreamMode.ON_DEMAND } },
-  })
-
-  const realtimeLogConfig = new RealtimeLogConfig(stack, 'cf-realtime-logs', {
-    endPoints: [Endpoint.fromKinesisStream(cfLogStream.cdk.stream)],
-    fields: [
-      'timestamp',
-      'c-ip',
-      'time-to-first-byte',
-      'sc-status',
-      'cs-method',
-      'cs-uri-stem',
-      'x-edge-location',
-      'time-taken',
-      'cs-user-agent',
-      'cs-referer',
-      'cs-cookie',
-      'x-edge-result-type',
-      'sc-content-type',
-      'c-country',
-      'cs-headers',
-      'asn',
-    ],
-    samplingRate: 100,
   })
 
   const domainName = isProd ? 'www.statmuse.com' : dns.domain
@@ -178,7 +122,6 @@ export function Web({ stack }: StackContext) {
         enableAcceptEncodingBrotli: true,
       }),
       distribution: {
-        defaultBehavior: { realtimeLogConfig },
         webAclId: isProd
           ? 'arn:aws:wafv2:us-east-1:723112830140:global/webacl/statmuse-com-acl/e2ab5696-ad18-4946-a192-f534187ce9b5'
           : undefined,
