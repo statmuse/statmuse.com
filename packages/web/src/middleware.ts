@@ -134,6 +134,7 @@ export const session = defineMiddleware(async (context, next) => {
     session = await Session.create(context)
 
   locals.session = session
+  console.log({ session })
 
   if (!locals.visitor) {
     const visitorId =
@@ -143,8 +144,8 @@ export const session = defineMiddleware(async (context, next) => {
         ? session.properties.visitorId
         : undefined
 
-    console.log({ visitorId })
     if (!visitorId) session = await Session.create(context)
+    console.log({ 'new session': session })
     const visitor = await Visitor.get(visitorId!)
     if (!visitor) throw new Error('No visitor found')
     locals.visitor = visitor
