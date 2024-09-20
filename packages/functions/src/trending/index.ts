@@ -10,7 +10,6 @@ import {
   type GameraResponse,
 } from '@statmuse/core/gamera'
 import * as Context from '@statmuse/core/context'
-import * as Ask from '@statmuse/core/ask'
 import { Table } from 'sst/node/table'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { PutCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
@@ -30,7 +29,18 @@ const headers: Record<string, string> = {
 const athena = new AthenaClient()
 const s3 = new S3Client({})
 const athenaProps = { athena, s3, workgroup: 'primary' }
-type Query = { uri: string; count: number }
+type Query = {
+  url: string
+  count: number
+  domain: string
+  query?: string
+  players?: string
+  teams?: string
+  assets?: string
+  image?: string
+  background?: string
+  foreground?: string
+}
 const athenaClient = new AthenaExpress<Query>(athenaProps)
 
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({}), {
@@ -314,17 +324,26 @@ async function update(
       : last24HoursPredicate
 
   const sql = `
-    SELECT uri, COUNT(*) as count
-    FROM statmuse.cdn_request
+    SELECT context_page_url as url, query, page_domain as domain, players, teams, assets, subject_image as image, subject_background_color as background, subject_foreground_color as foreground, count(*) as count
+    FROM statmuse.pageview
     WHERE 
-      regexp_like(uri, '^/${
-        league === 'ALL' ? '\\w+' : `${league.toLowerCase()}`
-      }/ask[/|?]')
-      AND method = 'GET'
-      AND prefetch = false
+      is_search = True
+      and (origin = 'web' or origin = 'native')
+      and channel = 'client'
       AND ${timeframePredicate}
       ${location !== 'GLOBAL' ? `AND country = '${location}'` : ''}
-    GROUP BY uri
+      ${
+        league !== 'ALL'
+          ? `AND page_domain = '${
+              league === 'FC'
+                ? 'epl'
+                : league === 'MONEY'
+                ? 'finance'
+                : league.toLowerCase()
+            }'`
+          : ''
+      }
+    GROUP BY context_page_url, players, teams, assets, page_domain, query, subject_image, subject_background_color, subject_foreground_color
     ORDER BY COUNT(*) DESC
     LIMIT ${LIMIT};
   `.trim()
@@ -347,111 +366,87 @@ async function update(
   const chunks = chunk(results, 10)
   for (const batch of chunks) {
     const promises = batch.map(async (record) => {
-      const uri = decodeURIComponent(record.uri)
-      const count = Number(record.count)
-
-      let [, leagueName, , query] = record.uri.split('/')
-      const league = leagueName.toUpperCase() as League
-      if (query) query = query.replace(/-/g, ' ')
-      if (!query && !record.uri.includes('?q=')) return
-
-      if (!query) query = record.uri.split('?q=')[1]?.replace(/\+/g, ' ')
-      try {
-        query = decodeURIComponent(query)
-      } catch (error) {
-        console.log('error decoding', query)
-        console.error(error)
-      }
+      const playerIds = JSON.parse(record.players ?? '[]') as number[]
+      const teamIds = JSON.parse(record.players ?? '[]') as number[]
+      const assetIds = JSON.parse(record.assets ?? '[]') as string[]
+      const query = record.query
+      const domain = record.domain
+      const count = record.count
+      const image = record.image
+      const background = record.background
+      const foreground = record.foreground
+      const url = record.url
 
       if (league === 'MONEY') {
-        const ask = await Ask.getFinance({ query })
-        const response = ask?.answer
-        if (!response || response.type === 'error') return
-
-        const subject = response.visual?.summary?.subject
-        const contentReference = response.visual?.contentReference
-
         const assets: Asset[] = []
-        for (const assetId of contentReference?.questionTags?.assetIds || []) {
+        for (const assetId of assetIds) {
           const asset = await getAsset(assetId)
 
           if (!asset) {
-            console.log('no asset found', assetId)
-            console.log('query', query)
-            console.log('contentReference', contentReference)
+            console.log('no asset found: ', assetId)
+            console.log('query: ', query)
             continue
           }
 
           assets.push(asset)
         }
 
-        const image = subject?.imageUrl
-        const background = subject?.colors?.background
-        const foreground = subject?.colors?.foreground
-
         queries.push({
-          uri,
+          uri: url,
           league,
-          query,
+          query: query ?? assets[0]?.name.toLowerCase(),
           count,
-          image,
-          background,
-          foreground,
+          image: image ?? assets[0]?.image,
+          background: background ?? assets[0]?.background,
+          foreground: foreground ?? assets[0]?.background,
           assets,
         })
       } else {
-        const context_id = contexts.find((c) =>
-          leagueName === 'fc' ? c.name === 'epl' : c.name === leagueName,
-        )?.id
-
-        let { answer: response } = (await Ask.get({ context_id, query })) || {}
-        if (!response && !isProduction) response = await ask({ league, query })
-        if (!response || response.type === 'error') return
-
-        const subject = response.visual?.summary?.subject
-        const contentReference = response.visual?.contentReference
-
         const players =
-          contentReference?.questionTags?.playerIds
+          playerIds
             .map((id) => {
-              const player = leaguePlayers[league].find((p) => p.id === id)
+              const player = leaguePlayers[
+                domain === 'epl' ? 'FC' : domain.toUpperCase()
+              ]?.find((p) => p.id === id)
               if (!player) {
-                console.log('no player found', id)
-                console.log('query', query)
-                console.log('contentReference', contentReference)
+                console.log('no player found: ', id)
+                console.log('query: ', query)
                 return undefined
               }
 
-              return player
+              return player as Player
             })
             .filter((p) => !!p) || []
+
         const teams =
-          contentReference?.questionTags?.teamIds
+          teamIds
             .map((id) => {
-              const team = leagueTeams[league].find((t) => t.id === id)
+              const team = leagueTeams[
+                domain === 'epl' ? 'FC' : domain.toUpperCase()
+              ]?.find((t) => t.id === id)
               if (!team) {
-                console.log('no team found', id)
-                console.log('query', query)
-                console.log('contentReference', contentReference)
+                console.log('no team found: ', id)
+                console.log('query: ', query)
                 return undefined
               }
 
-              return team
+              return team as Team
             })
             .filter((p) => !!p) || []
-
-        const image = subject?.imageUrl
-        const background = subject?.colors?.background
-        const foreground = subject?.colors?.foreground
 
         queries.push({
-          uri,
+          uri: url,
           league,
-          query,
+          query:
+            query ??
+            players[0]?.name.toLowerCase() ??
+            teams[0]?.name.name?.toLowerCase(),
           count,
-          image,
-          background,
-          foreground,
+          image: image ?? players[0]?.image ?? teams[0]?.image,
+          background:
+            background ?? players[0]?.background ?? teams[0]?.background,
+          foreground:
+            foreground ?? players[0]?.foreground ?? teams[0]?.foreground,
           players,
           teams,
         })
