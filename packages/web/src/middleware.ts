@@ -169,6 +169,14 @@ export const session = defineMiddleware(async (context, next) => {
     })
   }
 
+  if (locals.platform === 'native') {
+    session.type = 'user'
+    Session.update(context, {
+      userId: locals.visitorId,
+      subscriptionStatus: 'active',
+    })
+  }
+
   const setCookie = (key: string, value: string) => {
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
@@ -198,7 +206,9 @@ export const session = defineMiddleware(async (context, next) => {
     setCookie('___ajs_anonymous_id', vid.value)
   }
 
-  locals.subscribed = locals.user?.stripe_subscription_status === 'active'
+  locals.subscribed =
+    locals.user?.stripe_subscription_status === 'active' ||
+    locals.platform === 'native'
 
   // set timezone in locals
   locals.timezone = context.cookies.get('tz')?.value ?? 'America/New_York'
