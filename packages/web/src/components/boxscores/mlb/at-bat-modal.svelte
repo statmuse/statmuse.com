@@ -6,6 +6,7 @@
   import Panel from '@components/panel.svelte'
   import PitchByPitch from './pitch-by-pitch.svelte'
   import { tokensToText } from '@statmuse/core/gamera'
+  import { isNativeMobile } from '@lib/stores'
 </script>
 
 {#if $selectedAtBat}
@@ -14,7 +15,9 @@
     on:click={() => selectedAtBat.set(undefined)}
   >
     <div
-      class="px-2 py-2 flex flex-col gap-2 w-full md:w-fit absolute left-1/2 top-2 md:top-1/2 -translate-x-1/2 md:-translate-y-1/2"
+      class="px-2 py-2 flex flex-col gap-2 w-full md:w-fit absolute left-1/2 md:top-1/2 -translate-x-1/2 md:-translate-y-1/2"
+      class:top-2={!$isNativeMobile}
+      class:top-10={$isNativeMobile}
       on:click|stopPropagation
     >
       <div
