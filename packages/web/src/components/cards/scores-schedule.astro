@@ -21,6 +21,7 @@ if (
   !scoresResponse ||
   scoresResponse.games.length === 0 ||
   !scheduleResponse ||
+  scheduleResponse.error ||
   scheduleResponse.games.length === 0
 )
   return undefined

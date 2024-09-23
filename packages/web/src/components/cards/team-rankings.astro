@@ -20,7 +20,7 @@ interface Props {
 
 const { domain, response, adSlot, soccerLeague } = Astro.props
 
-if (!response || response.cards.length === 0) return undefined
+if (!response || response.error || response.cards.length === 0) return undefined
 
 const filterTeamCards = (card: TeamCard) =>
   [

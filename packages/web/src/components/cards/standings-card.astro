@@ -33,6 +33,10 @@ export type Props = {
         group?: keyof StandingsNfl['rank']
       }
     | {
+        domain: 'CFB'
+        group?: keyof StandingsNfl['rank']
+      }
+    | {
         domain: 'NHL'
         group?: keyof StandingsNhl['rank']
       }
@@ -83,7 +87,7 @@ const getColumns = (name?: string) => {
     ]
   }
 
-  if (props.domain === 'NFL') {
+  if (props.domain === 'NFL' || props.domain === 'CFB') {
     columns = [
       ...columns,
       {
@@ -193,7 +197,7 @@ const getRow = (
     }
   }
 
-  if (props.domain === 'NFL') {
+  if (props.domain === 'NFL' || props.domain === 'CFB') {
     const nflTeam = team as StandingsNfl
     return {
       RANK: {
