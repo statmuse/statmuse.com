@@ -1,10 +1,10 @@
 ---
 import GameLayout from '@layouts/game.astro'
 import NbaBoxscore from '@components/nba-boxscore.astro'
-import NflBoxscore from '@components/nfl-boxscore.astro'
 import NhlBoxscore from '@components/nhl-boxscore.astro'
 import EplBoxscore from '@components/epl-boxscore.astro'
 import MlbBoxscore from '@components/boxscores/mlb/mlb-boxscore.astro'
+import NflBoxscore from '@components/boxscores/nfl/nfl-boxscore.astro'
 import { Caching } from '@lib/caching'
 import { getGame } from '@lib/gamera'
 import { NOT_FOUND_404 } from '@lib/response'
@@ -15,9 +15,10 @@ const game = Astro.params.game
 if (!game || !league) return NOT_FOUND_404
 
 const domain = leagueToDomain(league)
-const data =
-  domain !== 'MLB' ? await getGame({ context: Astro, domain, game }) : undefined
-if (!data && domain !== 'MLB') return NOT_FOUND_404
+const data = !['MLB', 'NFL'].includes(domain)
+  ? await getGame({ context: Astro, domain, game })
+  : undefined
+if (!data && !['MLB', 'NFL'].includes(domain)) return NOT_FOUND_404
 if (data?.type === 'error') return NOT_FOUND_404
 
 Caching.swr(Astro)
@@ -27,14 +28,14 @@ Caching.swr(Astro)
   domain === 'MLB' ? (
     // New Boxscores
     <MlbBoxscore />
+  ) : domain === 'NFL' ? (
+    <NflBoxscore />
   ) : (
     <GameLayout {data} {domain}>
       {(function () {
         switch (data.domain) {
           case 'NBA':
             return <NbaBoxscore {data} />
-          case 'NFL':
-            return <NflBoxscore {data} />
           case 'NHL':
             return <NhlBoxscore {data} />
           case 'EPL':

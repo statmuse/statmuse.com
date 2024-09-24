@@ -3,8 +3,8 @@ import NflPregameBoxscore from './nfl-pregame-boxscore.astro'
 import NflLivegameBoxscore from './nfl-livegame-boxscore.astro'
 import NflPostgameBoxscore from './nfl-postgame-boxscore.astro'
 import { parseGameId } from '@lib/parse'
-import { NOT_FOUND_404 } from '@lib/response'
 import { getGameData } from '@lib/gamera'
+import Error from '@layouts/error.astro'
 
 const { game } = Astro.params
 const gameId = parseGameId(game ?? '')
@@ -25,22 +25,27 @@ const gameData = await getGameData({
     'rushingTotals',
   ],
 })
-
-if (!gameData) return NOT_FOUND_404
 ---
 
-{
-  (function () {
-    switch (gameData.gameStatus) {
-      case 'scheduled':
-      case 'delayed':
-      case 'postponed':
-        return <NflPregameBoxscore {gameData} {gameId} />
-      case 'inProgress':
-      case 'halftime':
-        return <NflLivegameBoxscore {gameData} {gameId} />
-      case 'completed':
-        return <NflPostgameBoxscore {gameData} {gameId} />
-    }
-  })()
-}
+<Error
+  render={!gameData || !!gameData.error}
+  status={404}
+  message="NFL game not found"
+>
+  {
+    gameData &&
+      (function () {
+        switch (gameData.gameStatus) {
+          case 'scheduled':
+          case 'delayed':
+          case 'postponed':
+            return <NflPregameBoxscore {gameData} {gameId} />
+          case 'inProgress':
+          case 'halftime':
+            return <NflLivegameBoxscore {gameData} {gameId} />
+          case 'completed':
+            return <NflPostgameBoxscore {gameData} {gameId} />
+        }
+      })()
+  }
+</Error>
