@@ -134,7 +134,6 @@ export const session = defineMiddleware(async (context, next) => {
     session = await Session.create(context)
 
   locals.session = session
-  console.log({ session })
 
   if (!locals.visitor) {
     const visitorId =
