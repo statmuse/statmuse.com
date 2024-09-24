@@ -940,3 +940,18 @@ export interface NflGameDataResponse<K extends NflStatKey> {
   odds?: BettingOdds
   summary?: GameraToken[]
 }
+
+export type StatKeySetByDomain = {
+  NFL: NflStatKeySet
+  MLB: MlbStatKeySet
+}
+
+export type StatKeyByDomain = {
+  NFL: NflStatKey
+  MLB: MlbStatKey
+}
+
+export type GameDataResponseByDomain<K extends NflStatKey | MlbStatKey> = {
+  NFL: NflGameDataResponse<Extract<K, NflStatKey>>
+  MLB: MlbGameDataResponse<Extract<K, MlbStatKey>>
+}

@@ -6,10 +6,11 @@ import type {
   GameraAnswerNflBoxScore,
   GameraAnswerNhlBoxScore,
   GameraGamesResponse,
-  MlbGameDataResponse,
   MlbPlayByPlayResponse,
-  MlbStatKeySet,
-  MlbStatKey,
+  GameraDomain,
+  StatKeySetByDomain,
+  StatKeyByDomain,
+  GameDataResponseByDomain,
 } from '@statmuse/core/gamera'
 import { parseGameId } from '@lib/parse'
 import { request } from '@lib/gamera/base'
@@ -83,19 +84,21 @@ export const getGames = async <
 }
 
 export const getGameData = async <
-  SetKey extends keyof MlbStatKeySet,
-  Key extends MlbStatKey,
+  D extends Extract<GameraDomain, 'MLB' | 'NFL'>,
+  SetKey extends keyof StatKeySetByDomain[D],
+  Key extends StatKeyByDomain[D],
 >(props: {
   context: Context
+  domain: D
   gameId: string | number
   statKeySet?: SetKey[] | SetKey
   statKey?: Key[] | Key
 }) => {
   try {
-    const { gameId, context, ...params } = props
-    const path = `mlb/games/${gameId}`
+    const { domain, gameId, context, ...params } = props
+    const path = `${domain.toLowerCase()}/games/${gameId}`
     const data = await request<
-      MlbGameDataResponse<MlbStatKeySet[SetKey] | Key>
+      GameDataResponseByDomain<StatKeySetByDomain[D][SetKey] | Key>[D]
     >(
       context,
       path,
