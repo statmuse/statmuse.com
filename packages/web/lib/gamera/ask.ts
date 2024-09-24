@@ -264,7 +264,11 @@ export async function handleResponse(
 
   const boxscore = response.visual.detail?.find((d) => d.type === 'boxScore')
   if (boxscore && response.visual.domain === 'MLB') {
-    const game = await getGameData({ context, gameId: boxscore.gameId })
+    const game = await getGameData({
+      context,
+      domain: 'MLB',
+      gameId: boxscore.gameId,
+    })
 
     if (game) {
       const awayTeam = game.teams?.find(
