@@ -44,9 +44,11 @@ const seasonSchedule = await getTeamSeasonSchedule({
   year,
 })
 
-let mlbGames: GameraGamesResponse<ScheduledGame | InProgressGame> | undefined
-if (league === 'mlb') {
-  mlbGames = await getGames({
+let gamesResponse:
+  | GameraGamesResponse<ScheduledGame | InProgressGame>
+  | undefined
+if (league === 'mlb' || league === 'nfl') {
+  gamesResponse = await getGames({
     context: Astro,
     domain: league,
     teamId: parseTeamId(team),
@@ -80,9 +82,9 @@ Caching.swr(Astro)
 
 <TeamLayout {bio} {meta} page="schedule">
   {
-    mlbGames && mlbGames.games.length > 0 && (
+    gamesResponse && gamesResponse.games.length > 0 && (
       <UpcomingGames
-        response={mlbGames}
+        response={gamesResponse}
         teamId={Number.parseInt(parseTeamId(team))}
         domain={league}
       />
@@ -91,7 +93,7 @@ Caching.swr(Astro)
   {
     seasonSchedule?.grid &&
       seasonSchedule.grid.columns.length > 0 &&
-      !mlbGames && (
+      !gamesResponse && (
         <Grid
           title={seasonSchedule.grid.name}
           data={seasonSchedule.grid}
