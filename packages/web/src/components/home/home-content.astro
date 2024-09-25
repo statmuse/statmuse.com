@@ -482,6 +482,25 @@ const league = Astro.params.league
     if (input) input.checked = true
   }
 
+  document.addEventListener('swipe-left', () => {
+    const stat = document.querySelector<HTMLInputElement>(`input#stat`)
+    const musing = document.querySelector<HTMLInputElement>(`input#musing`)
+    if (stat?.checked) {
+      musing!.checked = true
+    } else {
+      stat!.checked = true
+    }
+  })
+  document.addEventListener('swipe-right', () => {
+    const stat = document.querySelector<HTMLInputElement>(`input#stat`)
+    const musing = document.querySelector<HTMLInputElement>(`input#musing`)
+    if (stat?.checked) {
+      musing!.checked = true
+    } else {
+      stat!.checked = true
+    }
+  })
+
   document.addEventListener('astro:after-swap', () => {
     const contentSelection = localStorage.getItem('content-selection')
     if (contentSelection) {

@@ -61,6 +61,12 @@ const links: NavLink[] = [
   { text: 'Bio', param: 'bio' },
 ]
 
+const currentIndex = links.findIndex((l) => l.param === page)
+const nextLink = links[(currentIndex + 1) % links.length]
+const next = nextLink?.href ?? playerPath + '/' + nextLink?.param
+const previousLink = links[(currentIndex + links.length - 1) % links.length]
+const previous = previousLink?.href ?? playerPath + '/' + previousLink?.param
+
 const title = `${bio.usedName} - ${bio.team?.name || bio.domain} ${
   bio.position || 'Player'
 }`
@@ -146,3 +152,12 @@ const share = {
     )
   }
 </Layout>
+
+<script define:vars={{ next, previous }}>
+  document.addEventListener('swipe-left', () => {
+    window.location.href = next
+  })
+  document.addEventListener('swipe-right', () => {
+    window.location.href = previous
+  })
+</script>

@@ -140,6 +140,12 @@ if (isTeam) {
 
 links.push({ text: 'History', href: `${teamPath}/history`, param: 'history' })
 
+const currentIndex = links.findIndex((l) => l.param === page)
+const nextLink = links[(currentIndex + 1) % links.length]
+const next = nextLink?.href ?? teamPath + '/' + nextLink?.param
+const previousLink = links[(currentIndex + links.length - 1) % links.length]
+const previous = previousLink?.href ?? teamPath + '/' + previousLink?.param
+
 const title = `${bio.name} Overview`
 const description = isTeam
   ? bio.summaryNlg
@@ -281,3 +287,12 @@ const representatives = isTeam
   <Explore {league} additionalQuestions={bio.additionalQuestions} />
   {ANSWER_CARDS_ENABLED && <AnswerCards {domain} />}
 </Layout>
+
+<script define:vars={{ next, previous }}>
+  document.addEventListener('swipe-left', () => {
+    window.location.href = next
+  })
+  document.addEventListener('swipe-right', () => {
+    window.location.href = previous
+  })
+</script>
