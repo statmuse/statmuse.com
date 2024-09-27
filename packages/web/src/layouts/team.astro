@@ -60,7 +60,7 @@ const year = isTeam ? bio.season.name : undefined
 const currentSeason = isTeam
   ? bio.season?.all?.find((s) => s.name === year)
   : undefined
-const parts = currentSeason?.entity.id.split('/') || []
+const parts = currentSeason?.entity.id?.split('/') || []
 let yearId: string | undefined = parts[1]
 
 if (isFranchise) {
@@ -70,7 +70,7 @@ if (isFranchise) {
     teamId: Astro.props.bio.teamId.toString(),
   })
 
-  yearId = latestSeason?.entity.id.split('/')[1]
+  yearId = latestSeason?.entity.id?.split('/')[1]
 }
 
 const links: NavLink[] = []

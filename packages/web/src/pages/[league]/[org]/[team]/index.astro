@@ -16,7 +16,7 @@ const latestSeason = await getTeamFranchiseLatestSeason({
   domain,
   teamId: teamId.toString(),
 })
-const year = latestSeason?.entity.id.split('/')[1] as string
+const year = latestSeason?.entity.id?.split('/')[1] as string
 if (!year) return NOT_FOUND_404
 
 return Astro.redirect(

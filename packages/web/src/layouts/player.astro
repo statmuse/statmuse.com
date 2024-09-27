@@ -148,7 +148,7 @@ const share = {
   <Explore {league} additionalQuestions={bio.additionalQuestions} />
   {
     ANSWER_CARDS_ENABLED && (
-      <AnswerCards {domain} teamId={bio.team?.entity.id.split('/')[0]} />
+      <AnswerCards {domain} teamId={bio.team?.entity.id?.split('/')[0]} />
     )
   }
 </Layout>
