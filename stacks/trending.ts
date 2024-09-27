@@ -6,7 +6,7 @@ import { Secrets } from './secrets'
 
 export function Trending({ stack }: StackContext) {
   const isProd = stack.stage === 'production'
-  const isStaging = stack.stage === 'staging'
+  const isStaging = stack.stage.includes('staging')
   const { vpc, rdsCredentialsSecret } = use(Imports)
   const { lambdaSecurityGroup, environment } = use(API)
   const secrets = use(Secrets)
