@@ -56,7 +56,7 @@ if (overview && !overview.bio.hasStats && Astro.request.method === 'POST') {
     domain,
     teamId: overview.teamId.toString(),
   })
-  year = latestSeason?.entity.id.split('/')[1] as string
+  year = latestSeason?.entity.id?.split('/')[1] as string
   overview = await getTeamSeasonOverview({
     context: Astro,
     domain,

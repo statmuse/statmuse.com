@@ -26,7 +26,7 @@ export type GameraEntity = {
   shortDisplay?: string
   domain: GameraDomain
   type: 'player' | 'teamFranchise' | 'teamSeason' | 'game' | 'player-ask'
-  id: string
+  id?: string
   parameters?: Record<string, string>
   baseResourcePath?: string
 }

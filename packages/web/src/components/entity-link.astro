@@ -8,7 +8,7 @@ interface Props extends HTMLAttributes<'a'> {
 
 const { entity, ...rest } = Astro.props
 // const entityDisplay = get(entity, 'display')
-const url = entity ? getUrlForEntity(entity) : undefined
+const url = entity && entity.id ? getUrlForEntity(entity) : undefined
 // const title = children !== entityDisplay ? entityDisplay : ''
 const title = ''
 ---

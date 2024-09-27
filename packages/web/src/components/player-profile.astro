@@ -195,7 +195,11 @@ const seasonStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
         value: (v) =>
           formatNumber((v.YDS?.value as number) / (v.ATT?.value as number)),
       },
-      ['Rating', 'RATE'],
+      {
+        label: 'Rating',
+        value: (v) => v.RTG?.display ?? v.RATE?.display,
+      },
+      // ['Rating', 'RTG'], // use this once backend changes happen
       ['Games', 'GP'],
       ['Rush Yds', 'RUSHYDS'],
       ['Rush TD', 'RUSHTD'],
@@ -512,7 +516,16 @@ const gamesStatColumns: Record<League, Stat[] | Record<string, Stat[]>> = {
   },
   nba: ['PTS', 'REB', 'AST', '3PM'],
   nfl: {
-    QB: ['YDS', 'TD', 'INT', 'RATE'],
+    QB: [
+      'YDS',
+      'TD',
+      'INT',
+      {
+        label: 'RTG',
+        value: (v) => v.RTG?.display ?? v.RATE?.display,
+      },
+      // 'RATE',
+    ],
     RB: [
       ['ATT', 'ATT-ATT'],
       ['YDS', 'RUSHYDS'],

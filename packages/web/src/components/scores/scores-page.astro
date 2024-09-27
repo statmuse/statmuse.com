@@ -31,6 +31,9 @@ for (const relativeDay of range(-7, 7)) {
   }
 }
 
+const next = (date ?? now).add(1, 'day').format('YYYY-MM-DD')
+const previous = (date ?? now).subtract(1, 'day').format('YYYY-MM-DD')
+
 Caching.swr(Astro, {
   maxage: Astro.url.searchParams.get('date') ? 43200 : 1800,
   revalidate: Astro.url.searchParams.get('date') ? 86400 : 14400,
@@ -65,3 +68,20 @@ const meta = {
     )
   }
 </Base>
+
+<script define:vars={{ next, previous }}>
+  document.addEventListener('swipe-left', () => {
+    const url = new URL(window.location)
+    const params = new URLSearchParams(url.search)
+    params.set('date', next)
+    url.search = params.toString()
+    window.location.href = url.toString()
+  })
+  document.addEventListener('swipe-right', () => {
+    const url = new URL(window.location)
+    const params = new URLSearchParams(url.search)
+    params.set('date', previous)
+    url.search = params.toString()
+    window.location.href = url.toString()
+  })
+</script>

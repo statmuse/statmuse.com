@@ -245,8 +245,8 @@ export async function handleResponse(
     const teamOverview = await getTeamSeasonOverview({
       context,
       domain: teamProfile.entity.domain,
-      team: teamProfile.entity.id,
-      year: teamProfile.entity.id,
+      team: teamProfile.entity.id ?? '',
+      year: teamProfile.entity.id ?? '',
     })
 
     if (teamOverview?.bio.hasStats) {
@@ -255,7 +255,7 @@ export async function handleResponse(
       const team = await getTeamFranchiseLatestSeason({
         context,
         domain: teamProfile.entity.domain,
-        teamId: teamProfile.entity.id.split('/')[0],
+        teamId: teamProfile.entity.id?.split('/')[0] ?? '',
       })
 
       redirectUrl = getUrlForEntity(team?.entity)
@@ -326,7 +326,7 @@ export function handleAskResponseFromPost(response: GameraResponse) {
   ) as TeamProfileDetail
 
   if (teamProfile && teamProfile.entity.type === 'teamSeason') {
-    const [teamId, year] = teamProfile.entity.id.split('/')
+    const [teamId, year] = teamProfile.entity.id?.split('/') ?? ['', '']
     return {
       query,
       type: teamProfile.entity.type,
