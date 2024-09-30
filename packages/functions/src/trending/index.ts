@@ -371,7 +371,7 @@ async function update(
       const assetIds = JSON.parse(record.assets ?? '[]') as string[]
       const query = record.query
       const domain = record.domain
-      const count = record.count
+      const count = Number(record.count)
       const image = record.image
       const background = record.background
       const foreground = record.foreground
