@@ -14,6 +14,7 @@ import { Table } from 'sst/node/table'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { PutCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import { createSlug } from '@statmuse/core/path'
+import { last } from 'lodash-es'
 const gameraApiUrl = process.env.GAMERA_API_URL
 const gameraApiKey = Config.GAMERA_API_KEY
 const kanedamaApiUrl = process.env.KANEDAMA_API_URL
@@ -33,6 +34,7 @@ type Query = {
   url: string
   count: number
   domain: string
+  page_type: string
   query?: string
   players?: string
   teams?: string
@@ -324,12 +326,12 @@ async function update(
       : last24HoursPredicate
 
   const sql = `
-    SELECT context_page_url as url, query, page_domain as domain, players, teams, assets, subject_image as image, subject_background_color as background, subject_foreground_color as foreground, count(*) as count
+    SELECT context_page_url as url, query, page_domain as domain, page_type, players, teams, assets, subject_image as image, subject_background_color as background, subject_foreground_color as foreground, count(*) as count
     FROM statmuse.pageview
     WHERE 
       is_search = True
-      and (origin = 'web' or origin = 'native')
-      and channel = 'client'
+      AND (origin = 'web' OR origin = 'native')
+      AND channel = 'client'
       AND ${timeframePredicate}
       ${location !== 'GLOBAL' ? `AND country = '${location}'` : ''}
       ${
@@ -343,7 +345,8 @@ async function update(
             }'`
           : ''
       }
-    GROUP BY context_page_url, players, teams, assets, page_domain, query, subject_image, subject_background_color, subject_foreground_color
+      AND page_type NOT IN ('schedule', 'game')
+    GROUP BY context_page_url, players, teams, assets, page_domain, page_type, query, subject_image, subject_background_color, subject_foreground_color
     ORDER BY COUNT(*) DESC
     LIMIT ${LIMIT};
   `.trim()
@@ -376,6 +379,22 @@ async function update(
       const background = record.background
       const foreground = record.foreground
       const url = new URL(record.url)
+      const pageType = record.page_type
+
+      if (pageType === 'player') {
+        const playerSlug = url.pathname.split('/')[3]
+        const playerId = last(playerSlug.split('-'))
+        if (playerId) {
+          playerIds.push(Number(playerId))
+        }
+      }
+      if (pageType === 'team') {
+        const teamSlug = url.pathname.split('/')[3]
+        const teamId = last(teamSlug.split('-'))
+        if (teamId) {
+          teamIds.push(Number(teamId))
+        }
+      }
 
       if (league === 'MONEY') {
         const assets: Asset[] = []
