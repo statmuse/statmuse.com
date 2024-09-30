@@ -266,27 +266,27 @@ async function getAsset(assetId: string) {
   if (existing) return existing
 
   const profile = await fetchAsset(assetId)
-  if (!profile.asset) {
+  if (!profile?.asset) {
     console.log('profile', profile)
     return undefined
   }
 
-  const image = profile.subjectImage
-  const name = profile.asset.canonicalName || profile.asset.officialName
+  const image = profile?.subjectImage
+  const name = profile?.asset.canonicalName || profile?.asset.officialName || ''
   const asset = {
-    id: profile.asset.assetId,
+    id: profile?.asset.assetId,
     name,
-    symbol: profile.asset.symbol,
+    symbol: profile?.asset.symbol,
     uri:
-      profile.asset.type === 'Stock'
+      profile?.asset.type === 'Stock'
         ? `/money/symbol/${profile.asset.symbol}`
         : `/money/ask/${createSlug(name)}`,
     image: image?.imageUrl,
-    background: image.colors?.background,
-    foreground: image.colors?.foreground,
-    class: profile.asset.class,
-    type: profile.asset.type,
-    exchange: profile.asset.exchange,
+    background: image?.colors?.background,
+    foreground: image?.colors?.foreground,
+    class: profile?.asset.class,
+    type: profile?.asset.type,
+    exchange: profile?.asset.exchange,
   }
   assetDetails.push(asset)
 
