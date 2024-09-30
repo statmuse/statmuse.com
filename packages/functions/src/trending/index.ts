@@ -307,6 +307,8 @@ async function update(
   if (leaguePlayers.NBA === undefined) await populatePlayers()
   if (leagueTeams.NBA === undefined) await populateTeams()
 
+  console.log(leagueTeams)
+
   const thisYearPredicate = `DATE(day) >= DATE('${new Date().getFullYear()}-01-01')`
   const last24HoursPredicate = `
     ((DATE(day) >= current_date - interval '1' day
