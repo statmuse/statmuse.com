@@ -7,9 +7,7 @@ import {
   getUrlForEntity,
   type GameraEntity,
   type GameraTeamSeasonBio,
-  type GameraResponse,
 } from '@statmuse/core/gamera'
-import * as Context from '@statmuse/core/context'
 import { Table } from 'sst/node/table'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { PutCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
@@ -48,9 +46,6 @@ const athenaClient = new AthenaExpress<Query>(athenaProps)
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({}), {
   marshallOptions: { removeUndefinedValues: true },
 })
-
-const stage = process.env.SST_STAGE as string
-const isProduction = stage === 'production'
 
 declare module 'sst/node/job' {
   export interface JobTypes {
@@ -117,8 +112,6 @@ const countries = [
   'ES',
   'SE',
 ] as const
-
-const contexts = await Context.list()
 
 type League = (typeof leagues)[number]
 type SportsLeague = Exclude<League, 'MONEY'>
@@ -872,36 +865,6 @@ async function handleDailyUpdate() {
         await update(timeframe, league, country)
       }
     }
-  }
-}
-
-async function ask(options: {
-  league: League
-  query: string
-  conversationToken?: string
-  preferredDomain?: string
-}) {
-  const league = options.league === 'FC' ? 'epl' : options.league
-  const query = options.query
-  const params: Record<string, string> = {
-    input: query,
-  }
-  if (options.conversationToken) {
-    params['conversationToken'] = options.conversationToken
-  }
-  if (options.preferredDomain) {
-    params['preferredDomain'] = options.preferredDomain
-  }
-  const path = `${league ? league.toLowerCase() + '/' : ''}answer`
-  const requestUrl = `${gameraApiUrl}${path}?${new URLSearchParams(
-    params as Record<string, string>,
-  ).toString()}`
-  try {
-    const response = await fetch(requestUrl, { headers })
-    return response.json() as Promise<GameraResponse>
-  } catch (error) {
-    console.error(error)
-    return undefined
   }
 }
 
