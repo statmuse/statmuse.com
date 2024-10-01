@@ -377,16 +377,24 @@ async function update(
 
       if (pageType === 'player') {
         const playerSlug = url.pathname.split('/')[3]
-        const playerId = last(playerSlug.split('-'))
-        if (playerId) {
-          playerIds.push(Number(playerId))
+        if (playerSlug) {
+          const playerId = last(playerSlug.split('-'))
+          if (playerId) {
+            playerIds.push(Number(playerId))
+          }
+        } else {
+          console.log('missing player slug on record: ', record)
         }
       }
       if (pageType === 'team') {
         const teamSlug = url.pathname.split('/')[3]
-        const teamId = last(teamSlug.split('-'))
-        if (teamId) {
-          teamIds.push(Number(teamId))
+        if (teamSlug) {
+          const teamId = last(teamSlug.split('-'))
+          if (teamId) {
+            teamIds.push(Number(teamId))
+          }
+        } else {
+          console.log('missing team slug on record: ', record)
         }
       }
 
