@@ -364,7 +364,7 @@ async function update(
   for (const batch of chunks) {
     const promises = batch.map(async (record) => {
       const playerIds = JSON.parse(record.players ?? '[]') as number[]
-      const teamIds = JSON.parse(record.players ?? '[]') as number[]
+      const teamIds = JSON.parse(record.teams ?? '[]') as number[]
       const assetIds = JSON.parse(record.assets ?? '[]') as string[]
       const query = record.query
       const domain = record.domain
