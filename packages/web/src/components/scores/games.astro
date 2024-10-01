@@ -22,7 +22,7 @@ dayjs.extend(timezone)
 interface Props {
   now: string
   date: string | null
-  domain: GameraDomain
+  domain: Extract<GameraDomain, 'MLB' | 'NFL'>
 }
 
 const { date: dateString, domain, now } = Astro.props
@@ -62,8 +62,8 @@ const liveGames = games.filter((g) => g.type === 'inProgress')
 const liveGameData = await Promise.all(
   liveGames.map(async (g) => {
     const [gameData, playByPlay] = await Promise.allSettled([
-      getGameData({ context: Astro, gameId: g.gameId }),
-      getPlayByPlay({ context: Astro, gameId: g.gameId }),
+      getGameData({ context: Astro, domain, gameId: g.gameId }),
+      getPlayByPlay({ context: Astro, domain, gameId: g.gameId }),
     ])
     return {
       gameData: gameData.status === 'fulfilled' ? gameData.value : undefined,

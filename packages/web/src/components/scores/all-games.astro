@@ -54,8 +54,8 @@ const mlbLiveGames = mlbGames.filter((g) => g.type === 'inProgress')
 const mlbLiveGameData = await Promise.all(
   mlbLiveGames.map(async (g) => {
     const [gameData, playByPlay] = await Promise.allSettled([
-      getGameData({ context: Astro, gameId: g.gameId }),
-      getPlayByPlay({ context: Astro, gameId: g.gameId }),
+      getGameData({ context: Astro, domain: 'MLB', gameId: g.gameId }),
+      getPlayByPlay({ context: Astro, domain: 'MLB', gameId: g.gameId }),
     ])
     return {
       gameData: gameData.status === 'fulfilled' ? gameData.value : undefined,

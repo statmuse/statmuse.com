@@ -15,10 +15,13 @@ const game = Astro.params.game
 if (!game || !league) return NOT_FOUND_404
 
 const domain = leagueToDomain(league)
-const data = !['MLB', 'NFL'].includes(domain)
+
+const newBoxscores = ['MLB', 'NFL']
+
+const data = !newBoxscores.includes(domain)
   ? await getGame({ context: Astro, domain, game })
   : undefined
-if (!data && !['MLB', 'NFL'].includes(domain)) return NOT_FOUND_404
+if (!data && !newBoxscores.includes(domain)) return NOT_FOUND_404
 if (data?.type === 'error') return NOT_FOUND_404
 
 Caching.swr(Astro)

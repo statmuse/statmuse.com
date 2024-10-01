@@ -58,7 +58,7 @@ const [awayTeamGames, standings, playByPlay] = await Promise.all([
     gameState: ['completed', 'inProgress', 'scheduled'],
   }),
   getStandingsRaw({ context: Astro, domain: 'mlb', seasonYear: season.year }),
-  getPlayByPlay({ context: Astro, gameId }),
+  getPlayByPlay({ context: Astro, domain: 'MLB', gameId }),
 ])
 
 store.init({ gameData, playByPlay })

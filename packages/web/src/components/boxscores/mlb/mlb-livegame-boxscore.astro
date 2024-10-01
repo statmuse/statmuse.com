@@ -70,7 +70,7 @@ const [homeTeamGames, awayTeamGames, playByPlay, standings, injuries] =
       seasonYear,
       gameState: ['scheduled', 'inProgress', 'completed'],
     }),
-    getPlayByPlay({ context: Astro, gameId }),
+    getPlayByPlay({ context: Astro, domain: 'MLB', gameId }),
     getStandingsRaw({ context: Astro, domain: 'mlb' }),
     getInjuries({ context: Astro }),
   ])
