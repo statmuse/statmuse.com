@@ -941,6 +941,105 @@ export interface NflGameDataResponse<K extends NflStatKey> {
   summary?: GameraToken[]
 }
 
+type NflDriveEndReason =
+  | 'unknown'
+  | 'touchdown'
+  | 'safety'
+  | 'fieldGoal'
+  | 'missedFieldGoal'
+  | 'muffedFieldGoal'
+  | 'blockedFieldGoal'
+  | 'blockedFieldGoalDowns'
+  | 'blockedFieldGoalSafety'
+  | 'punt'
+  | 'blockedPunt'
+  | 'blockedPuntDowns'
+  | 'blockedPuntSafety'
+  | 'downs'
+  | 'interception'
+  | 'fumble'
+  | 'fumbleSafety'
+  | 'endOfHalf'
+  | 'endOfGame'
+
+export interface NflDrive {
+  driveSequnce: number
+  duration: string
+  flags: {
+    isScoringDrive: boolean
+  }
+  gainYards: number
+  endReason?: NflDriveEndReason
+}
+
+interface PlaySituation {
+  clock: string
+  down?: number
+  yardsToFirst?: number
+  possessionTeamId: number
+  location: {
+    teamId: number
+    yardLine: number
+  }
+}
+
+interface NflNonPlayEvent {
+  type: 'nonPlay'
+  nonPlayType:
+    | 'timeout'
+    | 'tvTimeout'
+    | 'periodEnd'
+    | 'twoMinuteWarning'
+    | 'gameOver'
+    | 'comment'
+  eventSequence: number
+  period: number
+  driveSequence?: number
+  clock: string
+  description?: GameraToken[]
+}
+
+interface NflPlayEvent {
+  type: 'play'
+  playType:
+    | 'conversion'
+    | 'extraPoint'
+    | 'fieldGoal'
+    | 'kickoff'
+    | 'pass'
+    | 'penalty'
+    | 'punt'
+    | 'rush'
+    | 'freeKick'
+    | 'play'
+    | 'fairCatchKick'
+  eventSequence: number
+  period: number
+  driveSequence: number
+  startSituation: PlaySituation
+  endSituatiion: PlaySituation
+  homePoints: number
+  awayPoints: number
+  flags: {
+    isScoringPlay: boolean
+  }
+  description?: GameraToken[]
+}
+
+export type NflEvent = NflNonPlayEvent | NflPlayEvent
+
+export interface NflPlayByPlayResponse {
+  gameId: number
+  gameDate: string
+  gameTimestamp?: string
+  gameStatus: NflGameStatus
+  homeTeam: Pick<GameraTeamReference, 'teamId'>
+  awayTeam: Pick<GameraTeamReference, 'teamId'>
+  drives?: NflDrive[]
+  events?: NflEvent[]
+  scoringEvents?: never
+}
+
 export type StatKeySetByDomain = {
   NFL: NflStatKeySet
   MLB: MlbStatKeySet
