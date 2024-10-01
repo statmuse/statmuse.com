@@ -364,6 +364,7 @@ async function update(
     players?: Player[]
     teams?: Team[]
     assets?: Asset[]
+    type: string
   }[] = []
 
   const chunks = chunk(results, 10)
@@ -412,6 +413,7 @@ async function update(
 
         queries.push({
           uri: url.pathname + url.search,
+          type: pageType,
           league,
           query: query ?? assets[0]?.name.toLowerCase(),
           count,
@@ -459,6 +461,7 @@ async function update(
 
         queries.push({
           uri: url.pathname + url.search,
+          type: pageType,
           league,
           query:
             query ??
@@ -648,7 +651,9 @@ async function update(
   if (topPlayer) {
     const id = topPlayer.id
     const queriesForPlayer = queries
-      .filter((q) => q.players?.map((p) => p.id).includes(id))
+      .filter(
+        (q) => q.type === 'ask' && q.players?.map((p) => p.id).includes(id),
+      )
       .sort((a, b) => b.count - a.count)
       .slice(0, STORE)
 
@@ -671,7 +676,9 @@ async function update(
   if (topTeam) {
     const id = uniqueTeamId(topTeam)
     const queriesForTeam = queries
-      .filter((q) => q.teams?.map(uniqueTeamId).includes(id))
+      .filter(
+        (q) => q.type === 'ask' && q.teams?.map(uniqueTeamId).includes(id),
+      )
       .sort((a, b) => b.count - a.count)
       .slice(0, STORE)
 
