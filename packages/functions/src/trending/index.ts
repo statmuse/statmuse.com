@@ -574,6 +574,7 @@ async function update(
       name: 'Searches',
       key: 'searches',
       items: queries
+        .filter((q) => q.type === 'ask')
         .map((q) => ({
           title: q.query,
           uri: q.uri,
