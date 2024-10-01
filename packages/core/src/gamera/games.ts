@@ -1054,3 +1054,8 @@ export type GameDataResponseByDomain<K extends NflStatKey | MlbStatKey> = {
   NFL: NflGameDataResponse<Extract<K, NflStatKey>>
   MLB: MlbGameDataResponse<Extract<K, MlbStatKey>>
 }
+
+export type PlayByPlayResponseByDomain = {
+  NFL: NflPlayByPlayResponse
+  MLB: MlbPlayByPlayResponse
+}

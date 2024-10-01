@@ -6,11 +6,11 @@ import type {
   GameraAnswerNflBoxScore,
   GameraAnswerNhlBoxScore,
   GameraGamesResponse,
-  MlbPlayByPlayResponse,
   GameraDomain,
   StatKeySetByDomain,
   StatKeyByDomain,
   GameDataResponseByDomain,
+  PlayByPlayResponseByDomain,
 } from '@statmuse/core/gamera'
 import { parseGameId } from '@lib/parse'
 import { request } from '@lib/gamera/base'
@@ -115,14 +115,17 @@ export const getGameData = async <
   }
 }
 
-export const getPlayByPlay = async (props: {
+export const getPlayByPlay = async <
+  D extends Extract<GameraDomain, 'MLB' | 'NFL'>,
+>(props: {
   context: Context
+  domain: D
   gameId: string | number
 }) => {
   try {
-    const { gameId, context } = props
-    const path = `mlb/games/${gameId}/playByPlay`
-    const data = await request<MlbPlayByPlayResponse>(context, path)
+    const { context, domain, gameId } = props
+    const path = `${domain}/games/${gameId}/playByPlay`
+    const data = await request<PlayByPlayResponseByDomain[D]>(context, path)
     if (data.error) {
       return undefined
     }
