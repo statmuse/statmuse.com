@@ -143,6 +143,7 @@ export const session = defineMiddleware(async (context, next) => {
         ? session.properties.visitorId
         : undefined
 
+    console.log({ visitorId })
     const visitor = await Visitor.get(visitorId!)
     if (!visitor) throw new Error('No visitor found')
     locals.visitor = visitor
@@ -166,6 +167,22 @@ export const session = defineMiddleware(async (context, next) => {
   ) {
     Session.update(context, {
       subscriptionStatus: locals.user.stripe_subscription_status,
+    })
+  }
+
+  if (locals.platform === 'native') {
+    const visitorId =
+      session.type === 'visitor'
+        ? session.properties.id
+        : session.type === 'user'
+        ? session.properties.visitorId
+        : undefined
+    session.type = 'user'
+    Session.update(context, {
+      id: visitorId,
+      userId: visitorId,
+      visitorId,
+      subscriptionStatus: 'active',
     })
   }
 
@@ -198,7 +215,9 @@ export const session = defineMiddleware(async (context, next) => {
     setCookie('___ajs_anonymous_id', vid.value)
   }
 
-  locals.subscribed = locals.user?.stripe_subscription_status === 'active'
+  locals.subscribed =
+    locals.user?.stripe_subscription_status === 'active' ||
+    locals.platform === 'native'
 
   // set timezone in locals
   locals.timezone = context.cookies.get('tz')?.value ?? 'America/New_York'

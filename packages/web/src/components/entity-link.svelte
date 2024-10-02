@@ -16,7 +16,7 @@
     x: GameraEntity | KanedamaEntity,
   ): x is KanedamaEntity => x.type === 'assetProfile' || x.type === 'btcBlock'
 
-  if (entity) {
+  if (entity && entity.id) {
     url = isKanedamaEntity(entity)
       ? getUrlForKanedamaEntity(entity)
       : getUrlForGameraEntity(entity)

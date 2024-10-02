@@ -14,6 +14,7 @@
     type StatModel,
   } from '@statmuse/core/gamera'
   import Icon from '@components/icon.svelte'
+  import { isNativeMobile } from '@lib/stores'
 
   type DisplayFn = (s?: StatModel<MlbStatKey>) => string
 
@@ -111,7 +112,9 @@
     on:click={() => selectedId.set(undefined)}
   >
     <div
-      class="px-2 py-2 flex flex-col md:flex-row items-start gap-2 w-full md:w-fit absolute left-1/2 top-2 md:top-1/2 -translate-x-1/2 md:-translate-y-1/2"
+      class="px-2 py-2 flex flex-col md:flex-row items-start gap-2 w-full md:w-fit absolute left-1/2 md:top-1/2 -translate-x-1/2 md:-translate-y-1/2"
+      class:top-2={!$isNativeMobile}
+      class:top-10={$isNativeMobile}
       on:click|stopPropagation
     >
       <div class="flex flex-col gap-2 w-full md:w-[380px] md:-mt-11">

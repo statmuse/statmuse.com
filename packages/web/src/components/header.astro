@@ -14,6 +14,8 @@ interface Props {
 const query = Astro.props.query ?? ''
 const conversationToken = Astro.props.conversationToken
 const preferredDomain = Astro.props.preferredDomain ?? ''
+const showSearchBarOnNative =
+  Astro.locals.platform === 'native' && Astro.url.pathname.includes('/ask')
 ---
 
 <div
@@ -23,15 +25,14 @@ const preferredDomain = Astro.props.preferredDomain ?? ''
     'bg-team-primary-bg dark:bg-team-primary-dark-bg': true,
     'md:bg-gray-7 dark:md:bg-gray-2 sticky top-0': true,
     '-mx-3 px-3 md:px-0 md:mx-0': true,
-    'pt-14': Astro.locals.nativeView === 'search',
+    'pt-14': showSearchBarOnNative,
     '': false,
   }}
 >
   {
-    (Astro.locals.platform === 'web' ||
-      Astro.locals.nativeView === 'search') && (
+    (Astro.locals.platform === 'web' || showSearchBarOnNative) && (
       <Fragment>
-        {Astro.locals.nativeView !== 'search' && (
+        {!showSearchBarOnNative && (
           <div class="flex xl:w-[210px] xl:justify-center shrink-0">
             <DropdownMenu showElephant class="xl:hidden" />
             <a
@@ -63,7 +64,7 @@ const preferredDomain = Astro.props.preferredDomain ?? ''
             />
           </div>
         </div>
-        {Astro.locals.nativeView !== 'search' && (
+        {!showSearchBarOnNative && (
           <div class="justify-end hidden md:flex min-w-[140px]">
             <AuthMenu client:load />
           </div>

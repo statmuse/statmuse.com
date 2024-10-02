@@ -60,7 +60,7 @@ const year = isTeam ? bio.season.name : undefined
 const currentSeason = isTeam
   ? bio.season?.all?.find((s) => s.name === year)
   : undefined
-const parts = currentSeason?.entity.id.split('/') || []
+const parts = currentSeason?.entity.id?.split('/') || []
 let yearId: string | undefined = parts[1]
 
 if (isFranchise) {
@@ -70,7 +70,7 @@ if (isFranchise) {
     teamId: Astro.props.bio.teamId.toString(),
   })
 
-  yearId = latestSeason?.entity.id.split('/')[1]
+  yearId = latestSeason?.entity.id?.split('/')[1]
 }
 
 const links: NavLink[] = []
@@ -139,6 +139,12 @@ if (isTeam) {
 }
 
 links.push({ text: 'History', href: `${teamPath}/history`, param: 'history' })
+
+const currentIndex = links.findIndex((l) => l.param === page)
+const nextLink = links[(currentIndex + 1) % links.length]
+const next = nextLink?.href ?? teamPath + '/' + nextLink?.param
+const previousLink = links[(currentIndex + links.length - 1) % links.length]
+const previous = previousLink?.href ?? teamPath + '/' + previousLink?.param
 
 const title = `${bio.name} Overview`
 const description = isTeam
@@ -281,3 +287,12 @@ const representatives = isTeam
   <Explore {league} additionalQuestions={bio.additionalQuestions} />
   {ANSWER_CARDS_ENABLED && <AnswerCards {domain} />}
 </Layout>
+
+<script define:vars={{ next, previous }}>
+  document.addEventListener('swipe-left', () => {
+    window.location.href = next
+  })
+  document.addEventListener('swipe-right', () => {
+    window.location.href = previous
+  })
+</script>

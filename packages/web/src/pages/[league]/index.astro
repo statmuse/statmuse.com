@@ -96,8 +96,8 @@ if (domain !== 'PGA') {
           getTeamSeasonBio({
             context: Astro,
             domain: r.teams[0]?.entity.domain,
-            team: r.teams[0]?.entity.id,
-            year: r.teams[0]?.entity.id,
+            team: r.teams[0]?.entity.id ?? '',
+            year: r.teams[0]?.entity.id ?? '',
           }),
       ),
     )
@@ -119,8 +119,8 @@ if (domain !== 'PGA') {
           getTeamSeasonBio({
             context: Astro,
             domain: r.teams[0]?.entity.domain,
-            team: r.teams[0]?.entity.id,
-            year: r.teams[0]?.entity.id,
+            team: r.teams[0]?.entity.id ?? '',
+            year: r.teams[0]?.entity.id ?? '',
           }),
       ),
     )
@@ -142,8 +142,8 @@ if (domain !== 'PGA') {
           getTeamSeasonBio({
             context: Astro,
             domain: r.teams[0].entity.domain,
-            team: r.teams[0].entity.id,
-            year: r.teams[0].entity.id,
+            team: r.teams[0].entity.id ?? '',
+            year: r.teams[0].entity.id ?? '',
           }),
       ),
     )
