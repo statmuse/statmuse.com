@@ -538,9 +538,6 @@ const canonicalUrl = meta?.canonical
       document.addEventListener('astro:page-load', async () => {
         maybeRewriteUrl(window, document)
 
-        // default page tracking
-        segment.page(referrer ? { referrer } : {})
-
         const eventProps = getPageviewProps(document)
 
         if (eventProps) {
