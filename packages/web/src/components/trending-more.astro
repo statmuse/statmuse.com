@@ -15,7 +15,7 @@ const { items, prominent } = Astro.props
   {
     items?.length ? (
       <>
-        <ol class="list-none space-y-3 gap-3 justify-center sm:gap-3 md:columns-2 lg:columns-3">
+        <ol class="list-none grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-3">
           {items.map((item, index) => (
             <Panel class="break-inside-avoid-column">
               <TrendingListItem
