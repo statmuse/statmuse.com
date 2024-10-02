@@ -7,14 +7,12 @@ import {
   getUrlForEntity,
   type GameraEntity,
   type GameraTeamSeasonBio,
-  type GameraResponse,
 } from '@statmuse/core/gamera'
-import * as Context from '@statmuse/core/context'
-import * as Ask from '@statmuse/core/ask'
 import { Table } from 'sst/node/table'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { PutCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import { createSlug } from '@statmuse/core/path'
+import { last } from 'lodash-es'
 const gameraApiUrl = process.env.GAMERA_API_URL
 const gameraApiKey = Config.GAMERA_API_KEY
 const kanedamaApiUrl = process.env.KANEDAMA_API_URL
@@ -30,15 +28,24 @@ const headers: Record<string, string> = {
 const athena = new AthenaClient()
 const s3 = new S3Client({})
 const athenaProps = { athena, s3, workgroup: 'primary' }
-type Query = { uri: string; count: number }
+type Query = {
+  url: string
+  count: number
+  domain: string
+  page_type: string
+  query?: string
+  players?: string
+  teams?: string
+  assets?: string
+  image?: string
+  background?: string
+  foreground?: string
+}
 const athenaClient = new AthenaExpress<Query>(athenaProps)
 
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({}), {
   marshallOptions: { removeUndefinedValues: true },
 })
-
-const stage = process.env.SST_STAGE as string
-const isProduction = stage === 'production'
 
 declare module 'sst/node/job' {
   export interface JobTypes {
@@ -105,8 +112,6 @@ const countries = [
   'ES',
   'SE',
 ] as const
-
-const contexts = await Context.list()
 
 type League = (typeof leagues)[number]
 type SportsLeague = Exclude<League, 'MONEY'>
@@ -254,27 +259,27 @@ async function getAsset(assetId: string) {
   if (existing) return existing
 
   const profile = await fetchAsset(assetId)
-  if (!profile.asset) {
+  if (!profile?.asset) {
     console.log('profile', profile)
     return undefined
   }
 
-  const image = profile.subjectImage
-  const name = profile.asset.canonicalName || profile.asset.officialName
+  const image = profile?.subjectImage
+  const name = profile?.asset.canonicalName || profile?.asset.officialName || ''
   const asset = {
-    id: profile.asset.assetId,
+    id: profile?.asset.assetId,
     name,
-    symbol: profile.asset.symbol,
+    symbol: profile?.asset.symbol,
     uri:
-      profile.asset.type === 'Stock'
+      profile?.asset.type === 'Stock'
         ? `/money/symbol/${profile.asset.symbol}`
         : `/money/ask/${createSlug(name)}`,
     image: image?.imageUrl,
-    background: image.colors?.background,
-    foreground: image.colors?.foreground,
-    class: profile.asset.class,
-    type: profile.asset.type,
-    exchange: profile.asset.exchange,
+    background: image?.colors?.background,
+    foreground: image?.colors?.foreground,
+    class: profile?.asset.class,
+    type: profile?.asset.type,
+    exchange: profile?.asset.exchange,
   }
   assetDetails.push(asset)
 
@@ -314,17 +319,27 @@ async function update(
       : last24HoursPredicate
 
   const sql = `
-    SELECT uri, COUNT(*) as count
-    FROM statmuse.cdn_request
+    SELECT context_page_url as url, query, page_domain as domain, page_type, players, teams, assets, subject_image as image, subject_background_color as background, subject_foreground_color as foreground, count(*) as count
+    FROM statmuse.pageview
     WHERE 
-      regexp_like(uri, '^/${
-        league === 'ALL' ? '\\w+' : `${league.toLowerCase()}`
-      }/ask[/|?]')
-      AND method = 'GET'
-      AND prefetch = false
+      is_search = True
+      AND (origin = 'web' OR origin = 'native')
+      AND channel = 'client'
       AND ${timeframePredicate}
       ${location !== 'GLOBAL' ? `AND country = '${location}'` : ''}
-    GROUP BY uri
+      ${
+        league !== 'ALL'
+          ? `AND page_domain = '${
+              league === 'FC'
+                ? 'epl'
+                : league === 'MONEY'
+                ? 'finance'
+                : league.toLowerCase()
+            }'`
+          : ''
+      }
+      AND page_type NOT IN ('schedule', 'game')
+    GROUP BY context_page_url, players, teams, assets, page_domain, page_type, query, subject_image, subject_background_color, subject_foreground_color
     ORDER BY COUNT(*) DESC
     LIMIT ${LIMIT};
   `.trim()
@@ -342,116 +357,123 @@ async function update(
     players?: Player[]
     teams?: Team[]
     assets?: Asset[]
+    type: string
   }[] = []
 
   const chunks = chunk(results, 10)
   for (const batch of chunks) {
     const promises = batch.map(async (record) => {
-      const uri = decodeURIComponent(record.uri)
+      const playerIds = JSON.parse(record.players ?? '[]') as number[]
+      const teamIds = JSON.parse(record.teams ?? '[]') as number[]
+      const assetIds = JSON.parse(record.assets ?? '[]') as string[]
+      const query = record.query
+      const domain = record.domain
       const count = Number(record.count)
+      const image = record.image
+      const background = record.background
+      const foreground = record.foreground
+      const url = new URL(record.url)
+      const pageType = record.page_type
 
-      let [, leagueName, , query] = record.uri.split('/')
-      const league = leagueName.toUpperCase() as League
-      if (query) query = query.replace(/-/g, ' ')
-      if (!query && !record.uri.includes('?q=')) return
-
-      if (!query) query = record.uri.split('?q=')[1]?.replace(/\+/g, ' ')
-      try {
-        query = decodeURIComponent(query)
-      } catch (error) {
-        console.log('error decoding', query)
-        console.error(error)
+      if (pageType === 'player') {
+        const playerSlug = url.pathname.split('/')[3]
+        if (playerSlug) {
+          const playerId = last(playerSlug.split('-'))
+          if (playerId) {
+            playerIds.push(Number(playerId))
+          }
+        } else {
+          console.log('missing player slug on record: ', record)
+        }
+      }
+      if (pageType === 'team') {
+        const teamSlug = url.pathname.split('/')[3]
+        if (teamSlug) {
+          const teamId = last(teamSlug.split('-'))
+          if (teamId) {
+            teamIds.push(Number(teamId))
+          }
+        } else {
+          console.log('missing team slug on record: ', record)
+        }
       }
 
       if (league === 'MONEY') {
-        const ask = await Ask.getFinance({ query })
-        const response = ask?.answer
-        if (!response || response.type === 'error') return
-
-        const subject = response.visual?.summary?.subject
-        const contentReference = response.visual?.contentReference
-
         const assets: Asset[] = []
-        for (const assetId of contentReference?.questionTags?.assetIds || []) {
+        for (const assetId of assetIds) {
           const asset = await getAsset(assetId)
 
           if (!asset) {
-            console.log('no asset found', assetId)
-            console.log('query', query)
-            console.log('contentReference', contentReference)
+            console.log('no asset found: ', assetId)
+            console.log('query: ', query)
             continue
           }
 
           assets.push(asset)
         }
 
-        const image = subject?.imageUrl
-        const background = subject?.colors?.background
-        const foreground = subject?.colors?.foreground
-
         queries.push({
-          uri,
+          uri: url.pathname + url.search,
+          type: pageType,
           league,
-          query,
+          query: query ?? assets[0]?.name.toLowerCase(),
           count,
-          image,
-          background,
-          foreground,
+          image: image ?? assets[0]?.image,
+          background: background ?? assets[0]?.background,
+          foreground: foreground ?? assets[0]?.background,
           assets,
         })
       } else {
-        const context_id = contexts.find((c) =>
-          leagueName === 'fc' ? c.name === 'epl' : c.name === leagueName,
-        )?.id
-
-        let { answer: response } = (await Ask.get({ context_id, query })) || {}
-        if (!response && !isProduction) response = await ask({ league, query })
-        if (!response || response.type === 'error') return
-
-        const subject = response.visual?.summary?.subject
-        const contentReference = response.visual?.contentReference
-
         const players =
-          contentReference?.questionTags?.playerIds
+          playerIds
             .map((id) => {
-              const player = leaguePlayers[league].find((p) => p.id === id)
+              const player = leaguePlayers[
+                domain === 'epl' ? 'FC' : domain.toUpperCase()
+              ]?.find((p) => p.id === id)
               if (!player) {
-                console.log('no player found', id)
-                console.log('query', query)
-                console.log('contentReference', contentReference)
+                if (league !== 'PGA') {
+                  console.log('no player found: ', id)
+                  console.log('query: ', query)
+                }
                 return undefined
               }
 
-              return player
+              return player as Player
             })
             .filter((p) => !!p) || []
+
         const teams =
-          contentReference?.questionTags?.teamIds
+          teamIds
             .map((id) => {
-              const team = leagueTeams[league].find((t) => t.id === id)
+              const team = leagueTeams[
+                domain === 'epl' ? 'FC' : domain.toUpperCase()
+              ]?.find((t) => t.id === id)
               if (!team) {
-                console.log('no team found', id)
-                console.log('query', query)
-                console.log('contentReference', contentReference)
+                if (league !== 'PGA') {
+                  console.log('no team found: ', id)
+                  console.log('query: ', query)
+                }
                 return undefined
               }
 
-              return team
+              return team as Team
             })
             .filter((p) => !!p) || []
-
-        const image = subject?.imageUrl
-        const background = subject?.colors?.background
-        const foreground = subject?.colors?.foreground
 
         queries.push({
-          uri,
+          uri: url.pathname + url.search,
+          type: pageType,
           league,
-          query,
+          query:
+            query ??
+            players[0]?.name.toLowerCase() ??
+            teams[0]?.name.name?.toLowerCase(),
           count,
-          image,
-          background,
-          foreground,
+          image: image ?? players[0]?.image ?? teams[0]?.image,
+          background:
+            background ?? players[0]?.background ?? teams[0]?.background,
+          foreground:
+            foreground ?? players[0]?.foreground ?? teams[0]?.foreground,
           players,
           teams,
         })
@@ -560,6 +582,7 @@ async function update(
       name: 'Searches',
       key: 'searches',
       items: queries
+        .filter((q) => q.type === 'ask')
         .map((q) => ({
           title: q.query,
           uri: q.uri,
@@ -630,7 +653,9 @@ async function update(
   if (topPlayer) {
     const id = topPlayer.id
     const queriesForPlayer = queries
-      .filter((q) => q.players?.map((p) => p.id).includes(id))
+      .filter(
+        (q) => q.type === 'ask' && q.players?.map((p) => p.id).includes(id),
+      )
       .sort((a, b) => b.count - a.count)
       .slice(0, STORE)
 
@@ -653,7 +678,9 @@ async function update(
   if (topTeam) {
     const id = uniqueTeamId(topTeam)
     const queriesForTeam = queries
-      .filter((q) => q.teams?.map(uniqueTeamId).includes(id))
+      .filter(
+        (q) => q.type === 'ask' && q.teams?.map(uniqueTeamId).includes(id),
+      )
       .sort((a, b) => b.count - a.count)
       .slice(0, STORE)
 
@@ -847,36 +874,6 @@ async function handleDailyUpdate() {
         await update(timeframe, league, country)
       }
     }
-  }
-}
-
-async function ask(options: {
-  league: League
-  query: string
-  conversationToken?: string
-  preferredDomain?: string
-}) {
-  const league = options.league === 'FC' ? 'epl' : options.league
-  const query = options.query
-  const params: Record<string, string> = {
-    input: query,
-  }
-  if (options.conversationToken) {
-    params['conversationToken'] = options.conversationToken
-  }
-  if (options.preferredDomain) {
-    params['preferredDomain'] = options.preferredDomain
-  }
-  const path = `${league ? league.toLowerCase() + '/' : ''}answer`
-  const requestUrl = `${gameraApiUrl}${path}?${new URLSearchParams(
-    params as Record<string, string>,
-  ).toString()}`
-  try {
-    const response = await fetch(requestUrl, { headers })
-    return response.json() as Promise<GameraResponse>
-  } catch (error) {
-    console.error(error)
-    return undefined
   }
 }
 
