@@ -122,8 +122,7 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
   status={gameData.gameStatus}
   {awayTeam}
   {homeTeam}
-  {playByPlay}
-  useContainerQuery
+  playByPlay={!!playByPlay}
 >
   <LivegameHero
     slot="hero"
@@ -251,7 +250,7 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
               'group-has-[#away-box:checked]/teams:text-gray-2': true,
             }}
           >
-            {awayTeam.nickname}
+            {awayTeam?.nickname}
           </label>
           <label
             for="home-box"
@@ -260,7 +259,7 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
               'group-has-[#home-box:checked]/teams:text-gray-2': true,
             }}
           >
-            {homeTeam.nickname}
+            {homeTeam?.nickname}
           </label>
         </div>
         <div class="hidden has-[#away-box:checked]:flex flex-col gap-3">

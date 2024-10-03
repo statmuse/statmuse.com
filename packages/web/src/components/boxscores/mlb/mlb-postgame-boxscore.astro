@@ -117,8 +117,7 @@ Caching.swr(Astro)
   status={gameData.gameStatus}
   {awayTeam}
   {homeTeam}
-  {playByPlay}
-  useContainerQuery
+  playByPlay={!!playByPlay}
 >
   <PostgameHero
     slot="hero"
@@ -147,7 +146,7 @@ Caching.swr(Astro)
         <div
           class:list={{
             'w-full h-5 -mb-2.5 bg-current rounded-2xl': true,
-            'hidden group-has-[#summary:checked]:block group-hover/nav:block': true,
+            'hidden group-has-[#summary:checked]/boxscore:block group-hover/nav:block': true,
           }}
         >
         </div>
@@ -163,7 +162,7 @@ Caching.swr(Astro)
         <div
           class:list={{
             'w-full h-5 -mb-2.5 bg-current rounded-2xl': true,
-            'hidden group-has-[#box:checked]:block group-hover/nav:block': true,
+            'hidden group-has-[#box:checked]/boxscore:block group-hover/nav:block': true,
           }}
         >
         </div>
