@@ -124,13 +124,13 @@ const pitchingStats = [
             style={
               stat.compare(awayBattingStats, homeBattingStats)
                 ? {
-                    background: awayTeam?.colors.backgroundColor,
-                    color: awayTeam?.colors.foregroundColor,
+                    background: awayTeam?.colors?.backgroundColor,
+                    color: awayTeam?.colors?.foregroundColor,
                   }
                 : {}
             }
           >
-            {awayBattingStats[stat.key]?.display}
+            {awayBattingStats?.[stat.key]?.display}
           </p>
           <p class="text-gray-5">{stat.key}</p>
           <p
@@ -138,13 +138,13 @@ const pitchingStats = [
             style={
               stat.compare(homeBattingStats, awayBattingStats)
                 ? {
-                    background: homeTeam?.colors.backgroundColor,
-                    color: homeTeam?.colors.foregroundColor,
+                    background: homeTeam?.colors?.backgroundColor,
+                    color: homeTeam?.colors?.foregroundColor,
                   }
                 : {}
             }
           >
-            {homeBattingStats[stat.key]?.display}
+            {homeBattingStats?.[stat.key]?.display}
           </p>
         </div>
       ))
@@ -157,13 +157,13 @@ const pitchingStats = [
             style={
               stat.compare(awayPitchingStats, homePitchingStats)
                 ? {
-                    background: awayTeam?.colors.backgroundColor,
-                    color: awayTeam?.colors.foregroundColor,
+                    background: awayTeam?.colors?.backgroundColor,
+                    color: awayTeam?.colors?.foregroundColor,
                   }
                 : {}
             }
           >
-            {awayPitchingStats[stat.key]?.display}
+            {awayPitchingStats?.[stat.key]?.display}
           </p>
           <p class="text-gray-5">{stat.key}</p>
           <p
@@ -171,13 +171,13 @@ const pitchingStats = [
             style={
               stat.compare(homePitchingStats, awayPitchingStats)
                 ? {
-                    background: homeTeam?.colors.backgroundColor,
-                    color: homeTeam?.colors.foregroundColor,
+                    background: homeTeam?.colors?.backgroundColor,
+                    color: homeTeam?.colors?.foregroundColor,
                   }
                 : {}
             }
           >
-            {homePitchingStats[stat.key]?.display}
+            {homePitchingStats?.[stat.key]?.display}
           </p>
         </div>
       ))
