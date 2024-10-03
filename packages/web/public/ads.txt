@@ -684,3 +684,7 @@ smaato.com, 1100047713, RESELLER, 07bcf65f187117b4
 smartadserver.com, 4342, RESELLER
 smartadserver.com, 4012, RESELLER
 video.unrulymedia.com, 266978658, RESELLER
+
+#SheMedia
+pmc.com, 1242402, DIRECT, 8dd52f825890bb44
+rubiconproject.com, 10278, RESELLER, 0bfd66d529a55807
