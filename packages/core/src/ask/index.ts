@@ -120,7 +120,7 @@ export const upsert = async (params: {
     const newAskEvent: NewAskEvent = {
       id: randomUUID(),
       query_raw: params.query,
-      conversation_token: response.conversation.token,
+      conversation_token: response.conversation?.token ?? '',
       ask_id: ask.id,
       visitor_id: params.visitorId,
       user_id: params.userId,
