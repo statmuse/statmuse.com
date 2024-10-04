@@ -896,9 +896,14 @@ export interface NflTeamGameModel<K extends NflStatKey> {
         groupIndex: number
         splitType: string
         statsLookupKey: string
+        splits: {
+          playerId: number
+          splitType: string
+          statsLookupKey: string
+        }[]
       }[]
       statsLookupKey: string
-      StatsLookup: Record<string, StatModel<K>>
+      statsLookup: Record<string, StatModel<K>>
     }
   }
   lineScore: {
