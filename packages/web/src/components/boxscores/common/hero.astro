@@ -1,0 +1,274 @@
+---
+import Timestamp from '@components/timestamp.svelte'
+import Share from '@components/share/index.svelte'
+import Image from '@components/image.astro'
+import Inning from '../mlb/inning.svelte'
+import Score from '../mlb/score.svelte'
+import type {
+  GameraTeamReference,
+  CompletedGame,
+  GameraDomain,
+  MlbGameStatus,
+  NflGameStatus,
+} from '@statmuse/core/gamera'
+import { hexToHSL } from '@lib/color'
+import EntityLink from '@components/entity-link.astro'
+
+interface Props {
+  domain: GameraDomain
+  status: MlbGameStatus | NflGameStatus
+  awayTeam?: GameraTeamReference
+  homeTeam?: GameraTeamReference
+  network?: string
+  timestamp?: string
+  inningNumber?: number
+  awayTeamGames?: CompletedGame[]
+  homeTeamGames?: CompletedGame[]
+  awayRecord?: { wins: number; losses: number }
+  homeRecord?: { wins: number; losses: number }
+}
+
+const getTeamFromGameResult = (teamId?: number, game?: CompletedGame) => {
+  return game?.awayTeam.teamId === teamId
+    ? game?.awayTeam
+    : game?.homeTeam.teamId === teamId
+    ? game?.homeTeam
+    : undefined
+}
+
+const aggTeamRecord =
+  (teamId?: number) =>
+  (record?: { wins: number; losses: number }, game: CompletedGame) => {
+    if (!record) return record
+
+    const team = getTeamFromGameResult(teamId, game)
+
+    if (team?.gameResult === 'win') {
+      return {
+        ...record,
+        wins: record.wins + 1,
+      }
+    }
+
+    if (team?.gameResult === 'loss') {
+      return {
+        ...record,
+        losses: record.losses + 1,
+      }
+    }
+  }
+
+const {
+  domain,
+  network,
+  timestamp,
+  status,
+  awayRecord,
+  homeRecord,
+  awayTeam,
+  homeTeam,
+  awayTeamGames,
+  homeTeamGames,
+  inningNumber,
+} = Astro.props
+
+const awayTeamRecord =
+  awayRecord ??
+  getTeamFromGameResult(awayTeam?.teamId, awayTeamGames?.[0])?.record
+const homeTeamRecord =
+  homeRecord ??
+  getTeamFromGameResult(homeTeam?.teamId, homeTeamGames?.[0])?.record
+
+const awayTeamRecordLast5 = awayTeamGames
+  ?.slice(0, 5)
+  .reduce(
+    aggTeamRecord(awayTeam?.teamId),
+    awayTeam?.teamId ? { wins: 0, losses: 0 } : undefined,
+  )
+const homeTeamRecordLast5 = homeTeamGames
+  ?.slice(0, 5)
+  .reduce(
+    aggTeamRecord(homeTeam?.teamId),
+    homeTeam?.teamId ? { wins: 0, losses: 0 } : undefined,
+  )
+---
+
+<div
+  class:list={{
+    '-mx-3 md:mx-0': true,
+    'h-[45px] flex px-3 py-2 justify-center relative': true,
+    'bg-gray-7 dark:bg-gray-2 md:bg-gray-8 md:dark:bg-gray-3': true,
+    'md:border-t md:border-x md:rounded-t-2xl md:border-gray-6 md:dark:border-gray-3': true,
+  }}
+>
+  <p class="text-gray-5 absolute left-3 top-2">
+    {
+      status === 'completed' ? (
+        <Timestamp client:only="svelte" {timestamp} dateOnly />
+      ) : (
+        network
+      )
+    }
+  </p>
+  {
+    (() => {
+      switch (domain) {
+        case 'MLB':
+          return status === 'completed' ? (
+            <p>
+              Final
+              {inningNumber && inningNumber !== 9 ? `/${inningNumber}` : ''}
+            </p>
+          ) : status === 'inProgress' ? (
+            <Inning client:load />
+          ) : (
+            <Timestamp client:only="svelte" {timestamp} />
+          )
+        case 'NFL':
+          return null
+        default:
+          return null
+      }
+    })()
+  }
+  <div class="absolute right-3 top-2">
+    <Share client:load share={{ url: Astro.url.href }} />
+  </div>
+</div>
+
+<div
+  class:list={{
+    '-mx-3 md:mx-0': true,
+    'flex h-20 -mt-3 overflow-clip': true,
+    'md:rounded-b-2xl': !Astro.slots.has('default'),
+  }}
+>
+  <div
+    class="flex-1 flex relative justify-end text-right"
+    style={{
+      background: hexToHSL(awayTeam?.colors?.backgroundColor ?? '', 0.2),
+      color: awayTeam?.colors?.foregroundColor,
+    }}
+  >
+    <Image
+      src={awayTeam?.logoImageUrl ?? ''}
+      alt={awayTeam?.name ?? ''}
+      width={140}
+      height={140}
+      class="absolute left-0 h-full object-contain -translate-x-1/3"
+    />
+    <div
+      class:list={{
+        'px-3 flex flex-col justify-center': true,
+        'leading-none': status !== 'scheduled',
+      }}
+    >
+      <EntityLink
+        entity={awayTeam?.entity}
+        class="text-inherit hover:no-underline group/link"
+      >
+        <h4 class="font-semibold text-lg">
+          {
+            status !== 'scheduled' && awayTeamRecord && (
+              <span class="text-sm font-normal">{`${awayTeamRecord.wins}-${awayTeamRecord.losses}`}</span>
+            )
+          }{' '}<span class="group-hover/link:underline">
+            {
+              status === 'scheduled'
+                ? awayTeam?.nickname
+                : awayTeam?.abbreviation
+            }
+          </span>
+        </h4>
+      </EntityLink>
+      {
+        status !== 'scheduled' && (
+          <p class="text-2xl">
+            <Score client:load={status !== 'completed'} teamKey="away" />
+          </p>
+        )
+      }
+      {
+        status === 'scheduled' && awayTeamRecord && (
+          <p class="text-[16px]">{`${awayTeamRecord.wins}-${awayTeamRecord.losses}`}</p>
+        )
+      }
+      {
+        status === 'scheduled' && awayTeamRecordLast5 && (
+          <p class="text-[16px]">{`${awayTeamRecordLast5.wins}-${awayTeamRecordLast5.losses} in Last 5`}</p>
+        )
+      }
+    </div>
+  </div>
+  <div
+    class="flex-1 flex relative"
+    style={{
+      background: hexToHSL(homeTeam?.colors?.backgroundColor ?? '', 0.2),
+      color: homeTeam?.colors?.foregroundColor,
+    }}
+  >
+    <Image
+      src={homeTeam?.logoImageUrl ?? ''}
+      alt={homeTeam?.name ?? ''}
+      width={140}
+      height={140}
+      class="absolute right-0 h-full object-contain translate-x-1/3"
+    />
+    <div
+      class:list={{
+        'px-3 flex flex-col justify-center': true,
+        'leading-none': status !== 'scheduled',
+      }}
+    >
+      <EntityLink
+        entity={homeTeam?.entity}
+        class="text-inherit hover:no-underline group/link"
+      >
+        <h4 class="font-semibold text-lg">
+          <span class="group-hover/link:underline">
+            {
+              status === 'scheduled'
+                ? homeTeam?.nickname
+                : homeTeam?.abbreviation
+            }
+          </span>{' '}{
+            status !== 'scheduled' && homeTeamRecord && (
+              <span class="text-sm font-normal">{`${homeTeamRecord.wins}-${homeTeamRecord.losses}`}</span>
+            )
+          }
+        </h4>
+      </EntityLink>
+      {
+        status !== 'scheduled' && (
+          <p class="text-2xl">
+            <Score client:load={status !== 'completed'} teamKey="home" />
+          </p>
+        )
+      }
+      {
+        status === 'scheduled' && homeTeamRecord && (
+          <p class="text-[16px]">{`${homeTeamRecord.wins}-${homeTeamRecord.losses}`}</p>
+        )
+      }
+      {
+        status === 'scheduled' && homeTeamRecordLast5 && (
+          <p class="text-[16px]">{`${homeTeamRecordLast5.wins}-${homeTeamRecordLast5.losses} in Last 5`}</p>
+        )
+      }
+    </div>
+  </div>
+</div>
+
+{
+  Astro.slots.has('default') && (
+    <div
+      class:list={{
+        '-mx-3 md:mx-0 -mt-3': true,
+        'bg-gray-7 dark:bg-gray-2 md:bg-gray-8 md:dark:bg-gray-3': true,
+        'md:border-b md:border-x md:rounded-b-2xl md:border-gray-6 md:dark:border-gray-3': true,
+      }}
+    >
+      <slot />
+    </div>
+  )
+}
