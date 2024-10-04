@@ -1,0 +1,56 @@
+---
+import type { NflGameDataResponse, NflStatKey } from '@statmuse/core/gamera'
+import Base from '../common/layout.astro'
+import Hero from '../common/hero.astro'
+import { getPlayByPlay } from '@lib/gamera'
+import { find } from 'lodash-es'
+
+interface Props {
+  gameId: string
+  gameData: NflGameDataResponse<NflStatKey>
+}
+
+const { gameId, gameData } = Astro.props
+
+const {
+  gameDate,
+  gameTimestamp,
+  awayTeam: awayTeamModel,
+  homeTeam: homeTeamModel,
+  teams,
+  season,
+} = gameData
+
+const playByPlay = await getPlayByPlay({
+  context: Astro,
+  gameId,
+  domain: 'NFL',
+})
+
+const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
+const homeTeam = find(teams, { teamId: homeTeamModel.teamId })
+---
+
+<Base status={gameData.gameStatus} {awayTeam} {homeTeam}>
+  <Hero
+    slot="hero"
+    domain="NFL"
+    status={gameData.gameStatus}
+    timestamp={gameTimestamp ?? gameDate}
+    awayRecord={awayTeamModel.record}
+    homeRecord={homeTeamModel.record}
+    nflWeekNumber={season.week}
+    {awayTeam}
+    {homeTeam}
+  />
+
+  <Fragment slot="summary">Summary</Fragment>
+  <Fragment slot="away">
+    {awayTeam?.nickname}
+  </Fragment>
+  <Fragment slot="home">
+    {homeTeam?.nickname}
+  </Fragment>
+  <Fragment slot="drives">Drives</Fragment>
+  <Fragment slot="team-stats">Team Stats</Fragment>
+</Base>
