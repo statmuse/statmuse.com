@@ -3,7 +3,7 @@ import Timestamp from '@components/timestamp.svelte'
 import Share from '@components/share/index.svelte'
 import Image from '@components/image.astro'
 import Inning from '../mlb/inning.svelte'
-import Score from '../mlb/score.svelte'
+import MlbScore from '../mlb/score.svelte'
 import type {
   GameraTeamReference,
   CompletedGame,
@@ -22,6 +22,7 @@ interface Props {
   network?: string
   timestamp?: string
   inningNumber?: number
+  nflWeekNumber?: number
   awayTeamGames?: CompletedGame[]
   homeTeamGames?: CompletedGame[]
   awayRecord?: { wins: number; losses: number }
@@ -70,6 +71,7 @@ const {
   awayTeamGames,
   homeTeamGames,
   inningNumber,
+  nflWeekNumber,
 } = Astro.props
 
 const awayTeamRecord =
@@ -103,8 +105,10 @@ const homeTeamRecordLast5 = homeTeamGames
 >
   <p class="text-gray-5 absolute left-3 top-2">
     {
-      status === 'completed' ? (
+      domain === 'MLB' && status === 'completed' ? (
         <Timestamp client:only="svelte" {timestamp} dateOnly />
+      ) : domain === 'NFL' && status === 'completed' ? (
+        `Week ${nflWeekNumber}`
       ) : (
         network
       )
@@ -125,7 +129,7 @@ const homeTeamRecordLast5 = homeTeamGames
             <Timestamp client:only="svelte" {timestamp} />
           )
         case 'NFL':
-          return null
+          return status === 'completed' ? 'Final' : undefined
         default:
           return null
       }
@@ -151,13 +155,17 @@ const homeTeamRecordLast5 = homeTeamGames
       color: awayTeam?.colors?.foregroundColor,
     }}
   >
-    <Image
-      src={awayTeam?.logoImageUrl ?? ''}
-      alt={awayTeam?.name ?? ''}
-      width={140}
-      height={140}
-      class="absolute left-0 h-full object-contain -translate-x-1/3"
-    />
+    {
+      domain !== 'NFL' && (
+        <Image
+          src={awayTeam?.logoImageUrl ?? ''}
+          alt={awayTeam?.name ?? ''}
+          width={140}
+          height={140}
+          class="absolute left-0 h-full object-contain -translate-x-1/3"
+        />
+      )
+    }
     <div
       class:list={{
         'px-3 flex flex-col justify-center': true,
@@ -185,7 +193,18 @@ const homeTeamRecordLast5 = homeTeamGames
       {
         status !== 'scheduled' && (
           <p class="text-2xl">
-            <Score client:load={status !== 'completed'} teamKey="away" />
+            {(() => {
+              switch (domain) {
+                case 'MLB':
+                  return status === 'completed' ? (
+                    <MlbScore teamKey="away" />
+                  ) : (
+                    <MlbScore client:load teamKey="away" />
+                  )
+                default:
+                  return '0'
+              }
+            })()}
           </p>
         )
       }
@@ -208,13 +227,17 @@ const homeTeamRecordLast5 = homeTeamGames
       color: homeTeam?.colors?.foregroundColor,
     }}
   >
-    <Image
-      src={homeTeam?.logoImageUrl ?? ''}
-      alt={homeTeam?.name ?? ''}
-      width={140}
-      height={140}
-      class="absolute right-0 h-full object-contain translate-x-1/3"
-    />
+    {
+      domain !== 'NFL' && (
+        <Image
+          src={homeTeam?.logoImageUrl ?? ''}
+          alt={homeTeam?.name ?? ''}
+          width={140}
+          height={140}
+          class="absolute right-0 h-full object-contain translate-x-1/3"
+        />
+      )
+    }
     <div
       class:list={{
         'px-3 flex flex-col justify-center': true,
@@ -242,7 +265,18 @@ const homeTeamRecordLast5 = homeTeamGames
       {
         status !== 'scheduled' && (
           <p class="text-2xl">
-            <Score client:load={status !== 'completed'} teamKey="home" />
+            {(() => {
+              switch (domain) {
+                case 'MLB':
+                  return status === 'completed' ? (
+                    <MlbScore teamKey="home" />
+                  ) : (
+                    <MlbScore client:load teamKey="home" />
+                  )
+                default:
+                  return '0'
+              }
+            })()}
           </p>
         )
       }
