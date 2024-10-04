@@ -41,6 +41,15 @@ const toggleLinks = [
     team: homeTeam,
   },
   {
+    label: 'drives',
+    render: Astro.slots.has('drives'),
+  },
+  {
+    label: 'team-stats',
+    render: Astro.slots.has('team-stats'),
+    text: 'Team Stats',
+  },
+  {
     label: 'plays',
     render: Astro.slots.has('plays') && playByPlay,
   },
@@ -85,6 +94,14 @@ const toggleLinks = [
                   link.label === 'plays',
                 'group-has-[#plays:checked]/boxscore:bg-teal group-has-[#plays:checked]/boxscore:text-gray-8':
                   link.label === 'plays',
+                'group-has-[#drives:checked]/boxscore:dark:bg-gray-7 group-has-[#drives:checked]/boxscore:dark:text-gray-2':
+                  link.label === 'drives',
+                'group-has-[#drives:checked]/boxscore:bg-teal group-has-[#drives:checked]/boxscore:text-gray-8':
+                  link.label === 'drives',
+                'group-has-[#team-stats:checked]/boxscore:dark:bg-gray-7 group-has-[#team-stats:checked]/boxscore:dark:text-gray-2':
+                  link.label === 'team-stats',
+                'group-has-[#team-stats:checked]/boxscore:bg-teal group-has-[#team-stats:checked]/boxscore:text-gray-8':
+                  link.label === 'team-stats',
                 'group-has-[#home:checked]/boxscore:bg-team-primary group-has-[#home:checked]/boxscore:text-team-secondary group-has-[#home:checked]/boxscore:border-team-primary':
                   link.label === 'home',
                 'group-has-[#away:checked]/boxscore:bg-team-primary group-has-[#away:checked]/boxscore:text-team-secondary group-has-[#away:checked]/boxscore:border-team-primary':
@@ -98,7 +115,7 @@ const toggleLinks = [
               }
               for={link.label}
             >
-              {link.team?.nickname ?? link.label}
+              {link.team?.nickname ?? link.text ?? link.label}
             </label>
           ),
       )
@@ -212,6 +229,40 @@ const toggleLinks = [
           id="home"
         />
         <slot name="home" />
+      </div>
+    )
+  }
+  {
+    Astro.slots.has('drives') && (
+      <div
+        class:list={{
+          'hidden has-[#drives:checked]:flex flex-col gap-3': true,
+        }}
+      >
+        <input
+          class="absolute opacity-0"
+          type="radio"
+          name="boxscore"
+          id="drives"
+        />
+        <slot name="drives" />
+      </div>
+    )
+  }
+  {
+    Astro.slots.has('team-stats') && (
+      <div
+        class:list={{
+          'hidden has-[#team-stats:checked]:flex flex-col gap-3': true,
+        }}
+      >
+        <input
+          class="absolute opacity-0"
+          type="radio"
+          name="boxscore"
+          id="team-stats"
+        />
+        <slot name="team-stats" />
       </div>
     )
   }
