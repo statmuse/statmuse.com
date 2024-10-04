@@ -23,7 +23,7 @@ import {
   type MlbStatKey,
 } from '@statmuse/core/gamera'
 import TeamPlayerStats from './team-player-stats.astro'
-import PregameHero from './pregame-hero.astro'
+import Hero from '../common/hero.astro'
 import Odds from './odds.astro'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
@@ -214,14 +214,16 @@ const meta = {
   {awayTeam}
   {homeTeam}
 >
-  <PregameHero
+  <Hero
     slot="hero"
+    domain="MLB"
+    status={gameData.gameStatus}
     network={networkName}
     timestamp={gameTimestamp}
-    {awayTeam}
     awayTeamGames={awayTeamGames?.games.filter((g) => g.type === 'completed')}
-    {homeTeam}
     homeTeamGames={homeTeamGames?.games.filter((g) => g.type === 'completed')}
+    {awayTeam}
+    {homeTeam}
   >
     <nav
       class:list={{
@@ -279,7 +281,8 @@ const meta = {
         </div>
       </div>
     </nav>
-  </PregameHero>
+  </Hero>
+
   <div
     slot="preview"
     class="space-y-3 gap-3 justify-center @xl/boxscore:columns-2"

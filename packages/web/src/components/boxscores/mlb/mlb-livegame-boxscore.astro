@@ -18,7 +18,7 @@ import Matchup from './matchup.svelte'
 import LivePitchByPitch from './live-pitch-by-pitch.svelte'
 import Linescore from './linescore.svelte'
 import PlayByPlay from './play-by-play.svelte'
-import LivegameHero from './livegame-hero.astro'
+import Hero from '../common/hero.astro'
 import BattingStats from './batting-stats.svelte'
 import PitchingStats from './pitching-stats.svelte'
 import Standings from './standings.astro'
@@ -124,13 +124,15 @@ Caching.swr(Astro, { maxage: 15, revalidate: 25 })
   {homeTeam}
   playByPlay={!!playByPlay}
 >
-  <LivegameHero
+  <Hero
     slot="hero"
+    domain="MLB"
+    status={gameData.gameStatus}
     network={networkName}
-    {awayTeam}
     awayTeamGames={awayTeamGames?.games.filter((g) => g.type === 'completed')}
-    {homeTeam}
     homeTeamGames={homeTeamGames?.games.filter((g) => g.type === 'completed')}
+    {awayTeam}
+    {homeTeam}
   />
 
   <div slot="game" class="flex gap-3">

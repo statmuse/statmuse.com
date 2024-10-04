@@ -9,7 +9,7 @@ import {
   type MlbStatKey,
 } from '@statmuse/core/gamera'
 import { find } from 'lodash-es'
-import PostgameHero from './postgame-hero.astro'
+import Hero from '../common/hero.astro'
 import GameInfo from './game-info.astro'
 import CurrentSeries from './current-series.astro'
 import Standings from './standings.astro'
@@ -119,14 +119,16 @@ Caching.swr(Astro)
   {homeTeam}
   playByPlay={!!playByPlay}
 >
-  <PostgameHero
+  <Hero
     slot="hero"
+    domain="MLB"
+    status={gameData.gameStatus}
     timestamp={gameTimestamp ?? gameDate}
-    {awayTeam}
     awayRecord={awayTeamModel.record}
-    {homeTeam}
     homeRecord={homeTeamModel.record}
     inningNumber={gameData.awayTeam.lineScore?.length}
+    {awayTeam}
+    {homeTeam}
   >
     <nav
       class:list={{
@@ -168,7 +170,7 @@ Caching.swr(Astro)
         </div>
       </div>
     </nav>
-  </PostgameHero>
+  </Hero>
 
   {
     playByPlay && (
