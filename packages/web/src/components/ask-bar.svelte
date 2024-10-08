@@ -273,6 +273,7 @@
                 query: e.currentTarget?.value,
               }),
             )
+            e.currentTarget?.blur()
           } else {
             expand = true
             loadSuggestions(e.currentTarget?.value)

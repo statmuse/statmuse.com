@@ -233,7 +233,7 @@ const meta = {
       <div class="group/nav flex flex-col gap-1.5 overflow-clip">
         <label
           class:list={{
-            'cursor-pointer whitespace-nowrap': true,
+            'not-mobile cursor-pointer whitespace-nowrap': true,
           }}
           for="preview"
           set:html="Preview"
@@ -249,7 +249,7 @@ const meta = {
       <div class="group/nav flex flex-col gap-1.5 overflow-clip">
         <label
           class:list={{
-            'cursor-pointer whitespace-nowrap': true,
+            'not-mobile cursor-pointer whitespace-nowrap': true,
           }}
           for="away"
           set:html={awayTeam?.nickname}
@@ -265,7 +265,7 @@ const meta = {
       <div class="group/nav flex flex-col gap-1.5 overflow-clip">
         <label
           class:list={{
-            'cursor-pointer whitespace-nowrap': true,
+            'not-mobile cursor-pointer whitespace-nowrap': true,
           }}
           for="home"
           set:html={homeTeam?.nickname}

@@ -15,6 +15,7 @@
   } from '@statmuse/core/gamera'
   import Icon from '@components/icon.svelte'
   import { isNativeMobile } from '@lib/stores'
+  import { onMount } from 'svelte'
 
   type DisplayFn = (s?: MlbStatModel<MlbStatKey>) => string
 
@@ -102,6 +103,19 @@
   // }
 
   $: atBat = $selectedPlayer?.atBats[atBatIndex]
+
+  function onSwipe() {
+    selectedId.set(undefined)
+  }
+
+  onMount(function () {
+    document.addEventListener('swipe-right', onSwipe)
+    document.addEventListener('swipe-left', onSwipe)
+    return () => {
+      document.removeEventListener('swipe-right', onSwipe)
+      document.removeEventListener('swipe-left', onSwipe)
+    }
+  })
 </script>
 
 {#if $selectedPlayer}
