@@ -954,7 +954,7 @@ export interface NflGameDataResponse<K extends NflStatKey> {
   summary?: GameraToken[]
 }
 
-type NflDriveEndReason =
+export type NflDriveEndReason =
   | 'unknown'
   | 'touchdown'
   | 'safety'
@@ -976,7 +976,7 @@ type NflDriveEndReason =
   | 'endOfGame'
 
 export interface NflDrive {
-  driveSequnce: number
+  driveSequence: number
   duration: string
   flags: {
     isScoringDrive: boolean
@@ -1030,7 +1030,7 @@ interface NflPlayEvent {
   period: number
   driveSequence: number
   startSituation: PlaySituation
-  endSituatiion: PlaySituation
+  endSituation: PlaySituation
   homePoints: number
   awayPoints: number
   flags: {
