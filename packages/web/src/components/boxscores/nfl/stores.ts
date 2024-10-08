@@ -1,10 +1,12 @@
 import type {
+  NflDrive,
+  NflEvent,
   NflGameDataResponse,
   NflPlayByPlayResponse,
   NflStatKey,
   StatModel,
 } from '@statmuse/core/gamera'
-import { map } from 'nanostores'
+import { map, atom } from 'nanostores'
 
 export const playerStats = map<{
   away?: {
@@ -48,6 +50,10 @@ export const teamStats = map<{
   }
 }>({})
 
+export const drives = atom<NflDrive[]>([])
+
+export const events = atom<NflEvent[]>([])
+
 export const init = (props: {
   gameData: NflGameDataResponse<NflStatKey>
   playByPlay?: NflPlayByPlayResponse
@@ -60,4 +66,6 @@ export const init = (props: {
     away: props.gameData.awayTeam.stats.team,
     home: props.gameData.homeTeam.stats.team,
   })
+  drives.set(props.playByPlay?.drives ?? [])
+  events.set(props.playByPlay?.events ?? [])
 }
