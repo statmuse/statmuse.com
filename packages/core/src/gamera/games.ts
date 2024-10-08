@@ -20,6 +20,14 @@ import type {
 } from './answer'
 import { findLast, some, last } from 'lodash-es'
 
+export const ordinalNumber = (number: number) => {
+  const suffixes = ['th', 'st', 'nd', 'rd']
+  const value = number % 100
+  return (
+    number + (suffixes[(value - 20) % 10] || suffixes[value] || suffixes[0])
+  )
+}
+
 export interface NbaBoxScoreVisual extends Visual {
   domain: 'NBA'
   detail: [NbaHistoricalBoxScore, GameraGenericGridsDetail]
