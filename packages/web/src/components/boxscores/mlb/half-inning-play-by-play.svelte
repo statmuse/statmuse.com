@@ -19,6 +19,7 @@
   import { findLast, some } from 'lodash-es'
   import { players, selectedAtBat } from './stores'
   import OutsIndicator from './outs-indicator.svelte'
+  import { hexToRgba } from '@lib/color'
 
   export let inningTitle: string
   export let inning: InningHalf
@@ -46,7 +47,9 @@
       {#if event.type !== 'atBat'}
         <div
           class="-mx-3 px-3"
-          style={colors ? `border-color: ${colors.foregroundColor}` : ''}
+          style={colors
+            ? `border-color: ${hexToRgba(colors.foregroundColor, 0.5)}`
+            : ''}
         >
           <div class="flex mt-1">
             <div class="flex-1 space-y-1 pb-2 pt-1">
@@ -71,7 +74,9 @@
           {#if isLineupChange(atBatEvent)}
             <div
               class="-mx-3 px-3"
-              style={colors ? `border-color: ${colors.foregroundColor}` : ''}
+              style={colors
+                ? `border-color: ${hexToRgba(colors.foregroundColor, 0.5)}`
+                : ''}
             >
               <div class="flex mt-1">
                 <div class="flex-1 space-y-1 pb-2 pt-1">
@@ -96,7 +101,9 @@
               {@const runners = atBatEvent.runners}
               <div
                 class="-mx-3 px-3"
-                style={colors ? `border-color: ${colors.foregroundColor}` : ''}
+                style={colors
+                  ? `border-color: ${hexToRgba(colors.foregroundColor, 0.5)}`
+                  : ''}
               >
                 <div class="flex mt-1">
                   <div class="flex-1 space-y-1 pb-2 pt-1">
@@ -131,7 +138,10 @@
                   <div
                     class="-mx-3 px-3"
                     style={colors
-                      ? `border-color: ${colors.foregroundColor}`
+                      ? `border-color: ${hexToRgba(
+                          colors.foregroundColor,
+                          0.5,
+                        )}`
                       : ''}
                   >
                     <div class="flex mt-1">
@@ -173,7 +183,10 @@
                   <div
                     class="-mx-3 px-3"
                     style={colors
-                      ? `border-color: ${colors.foregroundColor}`
+                      ? `border-color: ${hexToRgba(
+                          colors.foregroundColor,
+                          0.5,
+                        )}`
                       : ''}
                   >
                     <div class="flex mt-1">
@@ -225,7 +238,9 @@
         {#if event.description}
           <div
             class="-mx-3 px-3 cursor-pointer"
-            style={colors ? `border-color: ${colors.foregroundColor}` : ''}
+            style={colors
+              ? `border-color: ${hexToRgba(colors.foregroundColor, 0.5)}`
+              : ''}
             on:click={() =>
               selectedAtBat.set({
                 atBat: event,

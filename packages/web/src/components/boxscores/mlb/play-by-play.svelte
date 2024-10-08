@@ -1,9 +1,10 @@
 <script lang="ts">
   import HalfInningPlayByPlay from './half-inning-play-by-play.svelte'
   import { innings, scoringInnings } from './stores'
-  import type {
-    GameraTeamReference,
-    InningPlayByPlay,
+  import {
+    ordinalNumber,
+    type GameraTeamReference,
+    type InningPlayByPlay,
   } from '@statmuse/core/gamera/index'
   import AditudeAdBanner from '@components/aditude-ad-banner.svelte'
 
@@ -29,7 +30,7 @@
   {#if reverseOrder}
     {#if bottomHalf.events.length > 0}
       <HalfInningPlayByPlay
-        inningTitle={`Bottom ${number}`}
+        inningTitle={`Bottom ${ordinalNumber(number)}`}
         inningNumber={number}
         inning={bottomHalf}
         colors={homeTeam?.colors}
@@ -38,7 +39,7 @@
     {/if}
     {#if topHalf.events.length > 0}
       <HalfInningPlayByPlay
-        inningTitle={`Top ${number}`}
+        inningTitle={`Top ${ordinalNumber(number)}`}
         inningNumber={number}
         inning={topHalf}
         colors={awayTeam?.colors}
@@ -48,7 +49,7 @@
   {:else}
     {#if topHalf.events.length > 0}
       <HalfInningPlayByPlay
-        inningTitle={`Top ${number}`}
+        inningTitle={`Top ${ordinalNumber(number)}`}
         inningNumber={number}
         inning={topHalf}
         colors={awayTeam?.colors}
@@ -56,7 +57,7 @@
     {/if}
     {#if bottomHalf.events.length > 0}
       <HalfInningPlayByPlay
-        inningTitle={`Bottom ${number}`}
+        inningTitle={`Bottom ${ordinalNumber(number)}`}
         inningNumber={number}
         inning={bottomHalf}
         colors={homeTeam?.colors}
