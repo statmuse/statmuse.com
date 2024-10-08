@@ -52,3 +52,26 @@ export const hexToHSL = (hex: string, darken?: number) => {
 
   return `hsl(${h} ${s}% ${l}%)`
 }
+
+export const hexToRgba = (hex: string, alpha?: number = 1) => {
+  // Remove the '#' if it's there
+  hex = hex.replace(/^#/, '')
+
+  // Check if the input is a valid 3 or 6-character hex code
+  if (hex.length === 3) {
+    // Expand shorthand hex (#03F) to full form (#0033FF)
+    hex = hex
+      .split('')
+      .map((char) => char + char)
+      .join('')
+  }
+
+  // Convert the 6-character hex code to RGB
+  const bigint = parseInt(hex, 16)
+
+  const r = (bigint >> 16) & 255 // Extract red
+  const g = (bigint >> 8) & 255 // Extract green
+  const b = bigint & 255 // Extract blue
+
+  return `rgba(${r},${g},${b},${alpha})`
+}
