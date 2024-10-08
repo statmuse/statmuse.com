@@ -3,7 +3,6 @@ import * as User from '@statmuse/core/user'
 import * as Visitor from '@statmuse/core/visitor'
 import { defineMiddleware, sequence } from 'astro:middleware'
 import { getTrendingData } from '@lib/trending'
-import { verifyLegacySession } from '@lib/jwt-builder'
 
 export const logging = defineMiddleware(async (context, next) => {
   if (context.url.pathname.startsWith('/_image')) {
