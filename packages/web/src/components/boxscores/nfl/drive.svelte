@@ -12,6 +12,7 @@
   import { events } from './stores'
   import Icon from '@components/icon.svelte'
   import { hexToRgba } from '@lib/color'
+  import { last } from 'lodash-es'
 
   export let drive: NflDrive
   export let teamMap: Record<number, GameraTeamReference | undefined>
@@ -57,25 +58,31 @@
   foreground={team?.colors?.foregroundColor}
 >
   <div
-    class="flex items-center gap-3 cursor-pointer"
+    class="flex justify-between cursor-pointer"
     on:click={() => (isOpen = !isOpen)}
   >
-    <Icon name={!isOpen ? 'dropdown' : 'dropdown-up'} class="w-4 h-4" />
+    <div class="flex items-center gap-3">
+      <Icon name={!isOpen ? 'dropdown' : 'dropdown-up'} class="w-4 h-4" />
 
-    <div
-      class="rounded-2xl px-2"
-      style={isOpen && team?.colors
-        ? `background:${team.colors.foregroundColor};color:${team.colors.backgroundColor};`
-        : undefined}
-    >
-      {endOfDrive(drive.endReason)}
+      <div
+        class="rounded-2xl px-2"
+        style={isOpen && team?.colors
+          ? `background:${team.colors.foregroundColor};color:${team.colors.backgroundColor};`
+          : undefined}
+      >
+        {endOfDrive(drive.endReason)}
+      </div>
+
+      <span class="opacity-50">
+        {plays.length} plays,
+        {drive.gainYards} yd,
+        {drive.duration}
+      </span>
     </div>
-
-    <span class="opacity-50">
-      {plays.length} plays,
-      {drive.gainYards} yd,
-      {drive.duration}
-    </span>
+    {#if plays.length > 0}
+      {@const lastPlay = last(plays)}
+      <div>{lastPlay?.awayPoints}-{lastPlay?.homePoints}</div>
+    {/if}
   </div>
   {#if isOpen}
     <div class="flex flex-col divide-y">
