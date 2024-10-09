@@ -14,10 +14,10 @@
     "svelte-check": "svelte-check"
   },
   "dependencies": {
-    "@astrojs/node": "8.3.3",
+    "@astrojs/node": "8.3.4",
     "@astrojs/react": "3.6.2",
-    "@astrojs/svelte": "5.7.0",
-    "@astrojs/tailwind": "5.1.0",
+    "@astrojs/svelte": "5.7.2",
+    "@astrojs/tailwind": "5.1.1",
     "@aws-sdk/client-bedrock-runtime": "^3.525.0",
     "@aws-sdk/client-dynamodb": "^3.499.0",
     "@aws-sdk/client-iot-data-plane": "^3.624.0",
@@ -31,7 +31,7 @@
     "@sendgrid/client": "^7.7.0",
     "@sendgrid/mail": "^7.7.0",
     "@tailwindcss/container-queries": "^0.1.1",
-    "astro": "4.15.6",
+    "astro": "4.15.12",
     "astro-robots-txt": "^1.0.0",
     "astro-sst": "2.40.7",
     "aws-iot-device-sdk-v2": "^1.20.0",
@@ -66,7 +66,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.3",
+    "@astrojs/check": "^0.9.4",
     "@internationalized/date": "^3.5.5",
     "@melt-ui/pp": "^0.3.0",
     "@melt-ui/svelte": "^0.83.0",
