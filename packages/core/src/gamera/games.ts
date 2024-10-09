@@ -1041,6 +1041,46 @@ interface NflPlayEvent {
 
 export type NflEvent = NflNonPlayEvent | NflPlayEvent
 
+type ScoringType =
+  | 'defensiveInterceptionTouchdown'
+  | 'defensiveTwoPointConversion'
+  | 'blockedFieldGoalReturnTouchdown'
+  | 'fieldGoalMade'
+  | 'missedFieldGoalReturnTouchdown'
+  | 'fumbleRecoveryTouchdown'
+  | 'kickoffReturnTouchdown'
+  | 'kickoffRecoveryTouchdown'
+  | 'lateralTouchdown'
+  | 'passingTouchdown'
+  | 'blockedPuntReturnTouchdown'
+  | 'puntReturnTouchdown'
+  | 'rushingTouchdown'
+  | 'safety'
+
+export interface NflScoringEvent {
+  scoreSequence: number
+  eventSequence?: number
+  period: number
+  scoringTeamId: number
+  scoringType: ScoringType
+  homePoints: number
+  awayPoints: number
+  description?: GameraToken[]
+  touchdownPlayerId?: number
+  touchdownPassingPlayerId?: number
+  safetyPlayerId?: number
+  fieldGoalKickingPlayerId?: number
+  twoPointConversion?: {
+    isSuccessful: boolean
+    passingPlayerId?: number
+    playerId?: number
+  }
+  extraPoint?: {
+    isSuccessful: boolean
+    kickingPlayerId?: number
+  }
+}
+
 export interface NflPlayByPlayResponse {
   gameId: number
   gameDate: string
@@ -1050,7 +1090,7 @@ export interface NflPlayByPlayResponse {
   awayTeam: Pick<GameraTeamReference, 'teamId'>
   drives?: NflDrive[]
   events?: NflEvent[]
-  scoringEvents?: never
+  scoringEvents?: NflScoringEvent[]
 }
 
 export type StatKeySetByDomain = {
