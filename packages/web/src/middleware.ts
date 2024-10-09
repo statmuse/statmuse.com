@@ -134,35 +134,6 @@ export const session = defineMiddleware(async (context, next) => {
     })
   }
 
-  const setCookie = (key: string, value: string) => {
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-
-    const local = context.url.hostname === 'localhost'
-    context.cookies.set(key, decodeURIComponent(value), {
-      path: '/',
-      domain: local ? undefined : 'statmuse.com',
-      expires: tomorrow,
-      maxAge: 31536000,
-    })
-  }
-
-  const uid = context.cookies.get('ajs_user_id')
-  if (uid) {
-    // giving it more chances to make it into the
-    // cloudfront realtime logs lol
-    setCookie('_ajs_user_id', uid.value)
-    setCookie('__ajs_user_id', uid.value)
-    setCookie('___ajs_user_id', uid.value)
-  }
-
-  const vid = context.cookies.get('ajs_anonymous_id')
-  if (vid) {
-    setCookie('_ajs_anonymous_id', vid.value)
-    setCookie('__ajs_anonymous_id', vid.value)
-    setCookie('___ajs_anonymous_id', vid.value)
-  }
-
   locals.subscribed =
     locals.user?.stripe_subscription_status === 'active' ||
     locals.platform === 'native'
