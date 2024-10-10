@@ -688,3 +688,39 @@ video.unrulymedia.com, 266978658, RESELLER
 #SheMedia
 pmc.com, 1242402, DIRECT, 8dd52f825890bb44
 rubiconproject.com, 10278, RESELLER, 0bfd66d529a55807
+
+# online media solutions
+brightcom.com, 21028, DIRECT
+onlinemediasolutions.com, 21028, DIRECT
+pubmatic.com, 161332, RESELLER, 5d62403b186f2ace
+amxrtb.com, 105199514, RESELLER
+rubiconproject.com, 20416, RESELLER, 0bfd66d529a55807
+onomagic.com, 210281, DIRECT
+video.unrulymedia.com, 6694405583287859332, RESELLER
+onetag.com, 75753f1ebcc343c, RESELLER
+openx.com, 537153209, RESELLER, 6a698e2ec38604c6
+lijit.com, 374814, RESELLER, fafdf38b16bf6b2b
+yieldmo.com, 2757543169808605705, RESELLER
+audienciad.com, 210282, DIRECT
+onetag.com, 7b561459c997848, RESELLER
+appnexus.com, 15629, RESELLER, f5ab79cb980f11d1
+appnexus.com, 11801, RESELLER
+aps.amazon.com, 48266a61-b3d9-4cb7-b172-553abc6a42a4, DIRECT
+pubmatic.com, 163517, RESELLER, 5d62403b186f2ace
+advibe.media, 821028, DIRECT
+Media.net, 8CUB46Z7R, RESELLER
+indexexchange.com, 197494, RESELLER, 50b1c356f2c5c8fc
+loopme.com, 12733, RESELLER, 6c8d5f95897a5a3b
+rubiconproject.com, 24364, RESELLER, 0bfd66d529a55807
+getmediamx.com, 1221028, DIRECT
+smartadserver.com, 4483, RESELLER
+limpid.tv, 921028, DIRECT
+rubiconproject.com, 25722, RESELLER, 0bfd66d529a55807
+sonobi.com, 3aed893727, RESELLER, d1a215d9eb5aee9e
+themediagrid.com, IRK975, RESELLER, 35d5010d7789b49d
+rubiconproject.com, 21310, RESELLER, 0bfd66d529a55807
+appnexus.com, 15127, RESELLER
+sharethrough.com, UxId3u8j, RESELLER, d53b998a7bd4ecd2
+pmc.com, 1242344, DIRECT, 8dd52f825890bb44
+rubiconproject.com, 10278, RESELLER, 0bfd66d529a55807
+adyoulike.com, e9a771d72c076dbe3cafc2c6477f9238, RESELLER
