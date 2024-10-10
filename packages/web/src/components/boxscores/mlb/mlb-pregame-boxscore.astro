@@ -99,7 +99,7 @@ const [
     year: gameData.seasonYearDisplay ?? '',
     params: {},
   }),
-  getInjuries({ context: Astro }),
+  getInjuries({ context: Astro, domain: 'MLB' }),
   getStandingsRaw({ context: Astro, domain: 'mlb' }),
   getMlbPlayerSplits({
     context: Astro,

@@ -72,7 +72,7 @@ const [homeTeamGames, awayTeamGames, playByPlay, standings, injuries] =
     }),
     getPlayByPlay({ context: Astro, domain: 'MLB', gameId }),
     getStandingsRaw({ context: Astro, domain: 'mlb' }),
-    getInjuries({ context: Astro }),
+    getInjuries({ context: Astro, domain: 'MLB' }),
   ])
 
 const awayTeam = find(teams, { teamId: awayTeamModel.teamId })
