@@ -1,8 +1,10 @@
 import type {
+  GameraPlayerReference,
   NflDrive,
   NflEvent,
   NflGameDataResponse,
   NflPlayByPlayResponse,
+  NflScoringEvent,
   NflStatKey,
   StatModel,
 } from '@statmuse/core/gamera'
@@ -54,6 +56,12 @@ export const drives = atom<NflDrive[]>([])
 
 export const events = atom<NflEvent[]>([])
 
+export const scoringEvents = atom<NflScoringEvent[]>([])
+
+export const players = map<Record<number, GameraPlayerReference | undefined>>(
+  {},
+)
+
 export const init = (props: {
   gameData: NflGameDataResponse<NflStatKey>
   playByPlay?: NflPlayByPlayResponse
@@ -68,4 +76,5 @@ export const init = (props: {
   })
   drives.set(props.playByPlay?.drives ?? [])
   events.set(props.playByPlay?.events ?? [])
+  scoringEvents.set(props.playByPlay?.scoringEvents ?? [])
 }
