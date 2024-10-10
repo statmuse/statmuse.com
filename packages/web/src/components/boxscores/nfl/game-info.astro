@@ -1,0 +1,67 @@
+---
+import Panel from '@components/panel.astro'
+import type { NflGameDataResponse, NflStatKey } from '@statmuse/core/gamera'
+import { find } from 'lodash-es'
+import Icon from '@components/icon.svelte'
+import dayjs from 'dayjs'
+
+interface Props {
+  venue?: NflGameDataResponse<NflStatKey>['venue']
+  weather: NflGameDataResponse<NflStatKey>['weather']
+  officials: NflGameDataResponse<NflStatKey>['officials']
+  gameTimestamp: string
+}
+
+const { venue, weather, officials, gameTimestamp } = Astro.props
+---
+
+<Panel title="Game Info">
+  <div class="space-y-3">
+    <div class="flex gap-1.5 items-center">
+      <Icon name="calendar" class="w-5 h-5" />{
+        dayjs(gameTimestamp).format('MMMM D, YYYY')
+      }
+    </div>
+    {
+      venue && (
+        <div>
+          <p class="flex gap-1.5 items-center">
+            <Icon name="stadium" class="w-5 h-5" />
+            {venue.name}
+          </p>
+          <p class="text-sm text-gray-5 ml-[29px]">{venue.location}</p>
+        </div>
+      )
+    }
+    {
+      weather && (
+        <div class="flex gap-3">
+          <p class="flex gap-1.5 items-center">
+            <Icon name="sun-cloud" class="w-5 h-5" />
+            {weather.temperatureFahrenheit}°
+          </p>
+          <p class="flex gap-1.5 items-center">
+            <Icon name="wind" class="w-5 h-5" />
+            {`${weather.wind.speedMph} mph ${weather.wind.direction}`}
+          </p>
+        </div>
+      )
+    }
+    {
+      officials && officials.length > 0 && (
+        <div class="flex gap-1.5">
+          <Icon name="umpire" class="w-5 h-5 mt-0.5" />
+          <div>
+            Referees:
+            {officials.map((official) => (
+              <Fragment>
+                {official.fullName}{' '}
+                <span class="text-gray-5">#{official.number}</span>,{' '}
+              </Fragment>
+            ))}
+          </div>
+        </div>
+      )
+    }
+  </div>
+</Panel>

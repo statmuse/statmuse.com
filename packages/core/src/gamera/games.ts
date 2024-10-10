@@ -933,7 +933,22 @@ export interface NflGameDataResponse<K extends NflStatKey> {
   homeTeam: NflTeamGameModel<K>
   awayTeam: NflTeamGameModel<K>
   weather?: {
-    condition: string
+    condition:
+      | 'sunny'
+      | 'mostlySunny'
+      | 'partlySunny'
+      | 'clear'
+      | 'mostlyClear'
+      | 'cloudy'
+      | 'mostlyCloudy'
+      | 'partlyCloudy'
+      | 'overcast'
+      | 'rain'
+      | 'lightRain'
+      | 'thunderstorms'
+      | 'mist'
+      | 'snow'
+      | 'lightSnow'
     temperatureFahrenheit: number
     humidityPercentage: number
     wind: {
