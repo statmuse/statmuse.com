@@ -11,7 +11,7 @@ import type {
   StatModel,
 } from './base'
 import type { MlbStatKey } from './games'
-import type { PlayerInjury } from './injuries'
+import type { MlbPlayerInjury } from './injuries'
 
 export interface GameraPlayerBio {
   domain: GameraDomain
@@ -142,7 +142,7 @@ export const mapStatsResponseToGrid = <K extends MlbStatKey>(
     stats?: StatModel<K>
     position?: string
   }[],
-  injuredPlayerMap?: Record<number, PlayerInjury | undefined>,
+  injuredPlayerMap?: Record<number, MlbPlayerInjury | undefined>,
 ): GameraGrid => {
   const [, ...restColumns] = columns
 

@@ -9,7 +9,7 @@ import {
   type GameraGridColumn,
   type GameraGrid,
   type GameraPlayerReference,
-  type PlayerInjury,
+  type MlbPlayerInjury,
 } from '@statmuse/core/gamera'
 import MlbPlayerLeaders from './mlb-player-leaders.astro'
 import Grid from '@components/grid.svelte'
@@ -25,7 +25,7 @@ interface Props {
     MlbStatKeySet['battingStandard'],
     'player'
   >
-  playerInjuries?: PlayerInjury[]
+  playerInjuries?: MlbPlayerInjury[]
 }
 
 const {
@@ -58,7 +58,7 @@ const playerMap = players.reduce<
 }, {})
 
 const injuredPlayerMap = playerInjuries.reduce<
-  Record<number, PlayerInjury | undefined>
+  Record<number, MlbPlayerInjury | undefined>
 >(
   (acc, p) => ({
     ...acc,

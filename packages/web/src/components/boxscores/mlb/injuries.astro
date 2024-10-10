@@ -5,13 +5,13 @@ import Image from '@components/image.astro'
 import Panel from '@components/panel.astro'
 import {
   formatMlbPosition,
-  type TeamInjuryResponse,
+  type MlbInjuryResponse,
 } from '@statmuse/core/gamera'
 import { zip } from 'lodash-es'
 
 interface Props {
-  awayTeamInjuries?: TeamInjuryResponse['teams'][number]
-  homeTeamInjuries?: TeamInjuryResponse['teams'][number]
+  awayTeamInjuries?: MlbInjuryResponse['teams'][number]
+  homeTeamInjuries?: MlbInjuryResponse['teams'][number]
 }
 
 const { awayTeamInjuries, homeTeamInjuries } = Astro.props
@@ -22,7 +22,7 @@ const awayTeam = awayTeamInjuries?.team
 const homeTeam = homeTeamInjuries?.team
 
 const injuryDescription = (
-  injury: TeamInjuryResponse['teams'][number]['players'][number]['injuries'][number],
+  injury: MlbInjuryResponse['teams'][number]['players'][number]['injuries'][number],
 ) => {
   let timeline
   switch (injury.injuryStatus) {

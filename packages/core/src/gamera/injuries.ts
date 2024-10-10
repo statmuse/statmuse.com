@@ -1,7 +1,7 @@
 import type { GameraTeamReference, GameraPlayerReference } from './base'
 import type { Position } from './games'
 
-interface Injury {
+interface MlbInjury {
   description: string
   injuryStatus:
     | 'day7InjuredList'
@@ -11,17 +11,37 @@ interface Injury {
     | 'dayToDay'
 }
 
-export interface PlayerInjury {
+export interface MlbPlayerInjury {
   player: GameraPlayerReference
-  injuries: Injury[]
+  injuries: MlbInjury[]
   position: Position
 }
 
-interface TeamInjury {
+interface MlbTeamInjury {
   team: GameraTeamReference
-  players: PlayerInjury[]
+  players: MlbPlayerInjury[]
 }
 
-export interface TeamInjuryResponse {
-  teams: TeamInjury[]
+export interface MlbInjuryResponse {
+  teams: MlbTeamInjury[]
+}
+
+interface NflInjury {
+  playerId: number
+  teamId: number
+  week: number
+  season: 'regularSeason' | 'postseason'
+  gameStatus?: 'questionable' | 'doubtful' | 'out'
+  practiceStatus: 'didNotPractice' | 'limited' | 'full'
+  primaryIssue?: string
+  secondaryIssue?: string
+}
+
+export interface NflInjuryResponse {
+  injuries?: NflInjury[]
+}
+
+export type InjuriesResponseByDomain = {
+  MLB: MlbInjuryResponse
+  NFL: NflInjuryResponse
 }
