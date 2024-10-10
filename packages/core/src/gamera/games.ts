@@ -1037,6 +1037,13 @@ interface NflPlayEvent {
     isScoringPlay: boolean
   }
   description?: GameraToken[]
+  longSnapperPlayerId?: number
+  holderPlayerId?: number
+  kickingPlayerId?: number
+  yardsAfterCatch?: number
+  yardsAfterContact?: number
+  kickBlockedPlayerId?: number
+  fumbleForcedPlayerId?: number
 }
 
 export type NflEvent = NflNonPlayEvent | NflPlayEvent
