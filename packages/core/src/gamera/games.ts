@@ -1048,7 +1048,7 @@ interface NflPlayEvent {
 
 export type NflEvent = NflNonPlayEvent | NflPlayEvent
 
-type ScoringType =
+export type NflScoringType =
   | 'defensiveInterceptionTouchdown'
   | 'defensiveTwoPointConversion'
   | 'blockedFieldGoalReturnTouchdown'
@@ -1069,7 +1069,7 @@ export interface NflScoringEvent {
   eventSequence?: number
   period: number
   scoringTeamId: number
-  scoringType: ScoringType
+  scoringType: NflScoringType
   homePoints: number
   awayPoints: number
   description?: GameraToken[]
